@@ -1,0 +1,30 @@
+// This file was auto-generated from YAML files
+
+package v1_10
+
+func init() {
+	Profile["/tosca/kubernetes/1.10/nodes.yaml"] = `
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+imports:
+- capabilities.yaml
+- relationships.yaml
+
+node_types:
+
+  kubernetes.Service:
+    description: >-
+      Represents a collection of workloads (pods and controllers) and resources that all use the
+      same selector.
+    derived_from: tosca.nodes.Root
+    capabilities:
+      metadata: kubernetes.Metadata
+      service: kubernetes.Service
+      deployment: kubernetes.Deployment
+    requirements:
+    - route:
+        capability: kubernetes.Service
+        relationship: kubernetes.Route
+        occurrences: [ 0, UNBOUNDED ]
+`
+}

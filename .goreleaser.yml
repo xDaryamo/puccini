@@ -1,0 +1,60 @@
+
+builds:
+
+- main: ./puccini-tosca
+  binary: puccini-tosca
+  goarch:
+  - amd64
+  goos:
+  - linux
+  - darwin
+  - windows
+
+- main: ./puccini-js
+  binary: puccini-js
+  goarch:
+  - amd64
+  goos:
+  - linux
+  - darwin
+  - windows
+
+nfpm:
+
+  formats:
+  - rpm
+  - deb
+  homepage: https://github.com/tliron/puccini
+  maintainer: Tal Liron <tal.liron@gmail.com>
+  description: Deliberately stateless cloud topology management and deployment tools.
+  license: Apache 2.0
+  files:
+    puccini-csar: /usr/local/bin/puccini-csar
+
+archive:
+
+  files:
+  - README.md
+  - LICENSE
+  - NOTICE
+  - puccini-csar
+  - examples/kubernetes/bookinfo/*
+  - examples/kubernetes/bookinfo/types/*
+  - examples/tosca-grammar/*
+  - examples/tosca-grammar/imports/*
+
+  format_overrides:
+  - goos: windows
+    format: zip
+
+checksum:
+
+  name_template: checksums.txt
+
+release:
+
+  #disable: true
+
+  github:
+    owner: tliron
+    name: puccini

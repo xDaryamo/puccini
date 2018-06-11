@@ -1,0 +1,66 @@
+package v1_1
+
+import (
+	"github.com/tliron/puccini/tosca"
+)
+
+//
+// NodeType
+//
+
+type NodeType struct {
+	*Type `name:"node type"`
+
+	PropertyDefinitions    PropertyDefinitions    `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
+	AttributeDefinitions   AttributeDefinitions   `read:"attributes,AttributeDefinition" inherit:"attributes,Parent"`
+	CapabilityDefinitions  CapabilityDefinitions  `read:"capabilities,CapabilityDefinition" inherit:"capabilities,Parent"`
+	RequirementDefinitions RequirementDefinitions `read:"requirements,{}RequirementDefinition" inherit:"requirements,Parent"` // sequenced list, but we read it into map
+	InterfaceDefinitions   InterfaceDefinitions   `read:"interfaces,InterfaceDefinition" inherit:"interfaces,Parent"`
+	ArtifactDefinitions    ArtifactDefinitions    `read:"artifacts,ArtifactDefinition" inherit:"artifacts,Parent"`
+
+	Parent *NodeType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
+}
+
+func NewNodeType(context *tosca.Context) *NodeType {
+	return &NodeType{
+		Type:                   NewType(context),
+		PropertyDefinitions:    make(PropertyDefinitions),
+		AttributeDefinitions:   make(AttributeDefinitions),
+		CapabilityDefinitions:  make(CapabilityDefinitions),
+		RequirementDefinitions: make(RequirementDefinitions),
+		InterfaceDefinitions:   make(InterfaceDefinitions),
+		ArtifactDefinitions:    make(ArtifactDefinitions),
+	}
+}
+
+// tosca.Reader signature
+func ReadNodeType(context *tosca.Context) interface{} {
+	self := NewNodeType(context)
+	context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
+	return self
+}
+
+func init() {
+	Readers["NodeType"] = ReadNodeType
+}
+
+// tosca.Hierarchical interface
+func (self *NodeType) GetParent() interface{} {
+	return self.Parent
+}
+
+// tosca.Inherits interface
+func (self *NodeType) Inherit() {
+	log.Infof("{inherit} node type: %s", self.Name)
+
+	if self.Parent == nil {
+		return
+	}
+
+	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
+	self.AttributeDefinitions.Inherit(self.Parent.AttributeDefinitions)
+	self.CapabilityDefinitions.Inherit(self.Parent.CapabilityDefinitions)
+	self.RequirementDefinitions.Inherit(self.Parent.RequirementDefinitions)
+	self.InterfaceDefinitions.Inherit(self.Parent.InterfaceDefinitions)
+	self.ArtifactDefinitions.Inherit(self.Parent.ArtifactDefinitions)
+}

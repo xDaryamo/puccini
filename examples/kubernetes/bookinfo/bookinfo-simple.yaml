@@ -1,0 +1,35 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+imports:
+- types/bookinfo.yaml
+
+topology_template:
+
+  node_templates:
+
+    productpage:
+      type: Productpage
+
+    reviews:
+      type: Reviews
+      requirements:
+      - ratings: ratings
+  
+    details:
+      type: Details
+  
+    ratings:
+      type: Ratings
+
+  groups:
+
+    # TODO
+    bookinfo:
+      type: kubernetes.Namespace
+      properties:
+        namespace: bookinfo
+      members:
+      - productpage
+      - reviews
+      - details
+      - ratings

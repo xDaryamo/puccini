@@ -1,0 +1,17 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+node_types:
+
+  # We're going to allow this single node to be substituted by an entire service 
+  SuperLoadBalancer:
+    derived_from: LoadBalancer
+    requirements:
+    # We require hosts for our internal components 
+    - admin_host:
+        capability: Container
+        node: Compute
+        relationship: HostedOn
+    - db_host:
+        capability: Container
+        node: Compute
+        relationship: HostedOn

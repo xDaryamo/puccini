@@ -1,0 +1,49 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+# To apply the constraints run:
+#   puccini-tosca parse --coerce --input ram=1gib inputs-and-outputs.yaml
+
+topology_template:
+
+  inputs:
+    # Like properties and attributes, inputs are required by default
+    # (But you can set "required" to false)
+    # If any required inputs do not have a value then the parser will fail with a problem report
+    cores:
+      type: integer
+      # You can also assign the "value" field here, but it really works identically to "default"
+      default: 4
+      # Inputs can have constraints
+      constraints:
+      - less_than: 8
+    ram:
+      type: scalar-unit.size
+      # This property is required and doesn't have "default" (or "value"),
+      # So you *must* specify it in the CLI:
+      #   puccini-tosca --input ram=1gib ...
+      # (The inputs are in JSON format, which you'll need if you're using a complex data type)
+
+  node_templates:
+
+    server:
+      type: Compute
+      capabilities:
+        host:
+          properties:
+            num_cpus: { get_input: cores }
+            mem_size: { get_input: ram }
+      attributes:
+        # Let's give the attribute an initial value (see: attributes.yaml)
+        # But the idea is that it would be updated by the deployment
+        # (That's outside the scope of puccini-tosca)
+        public_address: <unknown>
+
+  # The most common use case for outputs is to use the "get_attribute" function
+  # To see the actual output value (based on the initial value we set for the attribute) you will
+  # have to call the function via "coerce":
+  #   puccini-tosca --input 'ram="1 gib"' --coerce ...
+  outputs:
+    url:
+      type: string
+      # You can also assign the "default" field here, but it really works identically to "value"
+      value: { concat: [ 'http://', { get_attribute: [ server, public_address ] }, ':8080' ] }

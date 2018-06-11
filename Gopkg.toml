@@ -1,0 +1,27 @@
+[[constraint]]
+  branch = "master"
+  name = "github.com/dop251/goja"
+
+[[constraint]]
+  name = "github.com/fatih/color"
+  version = "1.7.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/hokaccha/go-prettyjson"
+
+[[constraint]]
+  name = "github.com/op/go-logging"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/spf13/cobra"
+  version = "0.0.3"
+
+[[constraint]]
+  name = "gopkg.in/yaml.v2"
+  version = "2.2.1"
+
+[prune]
+  go-tests = true
+  unused-packages = true

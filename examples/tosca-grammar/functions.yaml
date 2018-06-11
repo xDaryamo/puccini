@@ -1,0 +1,52 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+# To evaluate the functions run:
+#   puccini-tosca parse --coerce functions.yaml
+
+# Also see: functions-custom.yaml
+
+node_types:
+
+  Ports:
+    derived_from: Root
+    properties:
+      user_port:
+        type: PortInfo
+        required: false
+      admin_port:
+        type: PortInfo
+        required: false
+      management_port:
+        type: PortInfo
+        required: false
+
+topology_template:
+
+  node_templates:
+
+    ports1:
+      type: Ports
+      properties:
+        user_port:
+          addresses:
+          # You can use functions in any property, attribute, input, or output assignment
+          # (and *only* there)
+          - { concat: [ local, host ] }
+          - { token: [ ip=10.0.0.2, =, 1 ] }
+          # Functions can be nested
+          - { concat: [ 127, ., 0, ., { concat: [ 0, ., 1 ] } ] }
+        admin_port:
+          addresses:
+          - ::1
+        # Some functions support special "modelable entity names", such as "SELF"
+        management_port: { get_property: [ SELF, admin_port ] }
+
+    ports2:
+      type: Ports
+      properties:
+        user_port:
+          # This function returns a list
+          addresses: { get_nodes_of_type: Ports }
+        management_port:
+          addresses:
+          - { get_property: [ ports1, management_port, addresses, 0 ] }

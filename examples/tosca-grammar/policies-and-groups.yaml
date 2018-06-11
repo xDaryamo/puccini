@@ -1,0 +1,85 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+policy_types:
+
+  Backup:
+    derived_from: Root
+    targets:
+    # Targets can include both node types and group types
+    - Compute
+    - Redundants
+    
+  ContinuousBackup:
+    derived_from: Backup
+    # Properties are how you configure the policy
+    properties:
+      frequency:
+        type:
+          scalar-unit.time
+    targets:
+    # We've inherited our parent's targets and are also adding one more
+    - ObjectStorage
+
+group_types:
+
+  Redundants:
+    derived_from: Root
+    # Groups can have properties (and interfaces, too)
+    properties:
+      priority:
+        type:
+          float
+    members:
+    # Members can only be node types (so, no nested groups)
+    - Compute
+
+node_types:
+
+  SuperCompute:
+    derived_from: Compute
+
+topology_template:
+
+  node_templates:
+
+    server1:
+      type: Compute
+
+    server2:
+      type: Compute
+
+    server3:
+      type: Compute
+
+    server4:
+      type: SuperCompute
+
+    storage:
+      type: ObjectStorage
+      properties:
+        name: My Storage
+
+  groups:
+
+    redundants:
+      type: Redundants
+      properties:
+        priority: 0.8
+      members:
+      # Member node templates must match our definition at the group type
+      # (Can include derived types)
+      - server3
+      - server4
+
+  policies:
+
+    backup:
+      type: ContinuousBackup
+      properties:
+        frequency: .5 d
+      targets:
+      # Target node templates and groups must match our definition at the policy type
+      # (Can include derived types)
+      - storage
+      - server2
+      - redundants
