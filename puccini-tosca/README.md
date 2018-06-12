@@ -61,7 +61,7 @@ print out using ",", e.g. `-p 2,3,4`. Per phase you will see:
 
 * Phase 1: Read. The hierarchy of imported units starting at the service template URL.
 * Phase 2: Namespaces. All names per type. Each imported unit has its own namespace.
-* Phase 3: Hierarchies. Tree of all tapes by fully qualified name. Each imported unit has its own
+* Phase 3: Hierarchies. Tree of all types by fully qualified name. Each imported unit has its own
   type hierarchy.
 * Phase 4: Inheritance. A tree of all inheritance tasks and their dependencies by path.  
 * Phase 5: Rendering. Dumps the rendered entities.
@@ -74,7 +74,7 @@ path that more-or-less follows JSON. For example, a path can be:
     topology_template.node_templates['store'].properties['name']
 
 The switch will search for all paths that contains your string, e.g. `-e properties`. You can even
-include one or more wildcards, e.g. `-e 'node\*properties\*data`.
+include one or more wildcards, e.g. `-e 'node*properties*data'`.
 
 One more useful switch is `--coerce/-c` which works similarly to `puccini-js exec tosca.coerce`.
 This is provided as a convenience to allow **puccini-tosca** to be more self-contained. Note that it
