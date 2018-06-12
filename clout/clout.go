@@ -124,7 +124,7 @@ func (self *Vertex) NewEdgeTo(target *Vertex) *Edge {
 	return edge
 }
 
-type MarshalablEdge struct {
+type MarshalableEdge struct {
 	Metadata   ard.Map `json:"metadata" yaml:"metadata"`
 	Properties ard.Map `json:"properties" yaml:"properties"`
 	TargetID   string  `json:"targetID" yaml:"targetID"`
@@ -136,15 +136,15 @@ func (self *Edge) Marshalable() interface{} {
 		targetID = self.Target.ID
 	}
 
-	return &MarshalablEdge{
+	return &MarshalableEdge{
 		Metadata:   self.Metadata,
 		Properties: self.Properties,
 		TargetID:   targetID,
 	}
 }
 
-func (self *Edge) Unmarshal(f func(m *MarshalablEdge) error) error {
-	var m MarshalablEdge
+func (self *Edge) Unmarshal(f func(m *MarshalableEdge) error) error {
+	var m MarshalableEdge
 	err := f(&m)
 	if err != nil {
 		return err
@@ -167,14 +167,14 @@ func (self *Edge) MarshalYAML() (interface{}, error) {
 
 // json.Unmarshaler interface
 func (self *Edge) UnmarshalJSON(data []byte) error {
-	return self.Unmarshal(func(m *MarshalablEdge) error {
+	return self.Unmarshal(func(m *MarshalableEdge) error {
 		return json.Unmarshal(data, m)
 	})
 }
 
 // yaml.Unmarshaler interface
 func (self *Edge) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	return self.Unmarshal(func(m *MarshalablEdge) error {
+	return self.Unmarshal(func(m *MarshalableEdge) error {
 		return unmarshal(m)
 	})
 }

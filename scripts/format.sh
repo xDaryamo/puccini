@@ -23,7 +23,7 @@ gofmt -w -s -e \
 	"$ROOT/tosca/normal" \
 	"$ROOT/tosca/parser" \
 	"$ROOT/tosca/problems" \
-	"$ROOT/tosca/profiles/kubernetes/v1_0" \
+	"$ROOT/tosca/profiles/kubernetes/v1_10" \
 	"$ROOT/tosca/profiles/simple/v1_1" \
 	"$ROOT/tosca/profiles/simple-for-nfv/v1_0" \
 	"$ROOT/tosca/reflection" \

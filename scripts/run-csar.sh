@@ -3,7 +3,10 @@ set -e
 
 HERE=$(dirname "$(readlink -f "$0")")
 ROOT=$(realpath "$HERE/..")
-PATH=":$ROOT:~/go/bin:$PATH"
+
+. "$HERE/env.sh"
+
+PATH="$ROOT:$GOPATH/bin:$PATH"
 
 "$HERE/build.sh"
 

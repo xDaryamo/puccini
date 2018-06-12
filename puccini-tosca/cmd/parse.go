@@ -47,12 +47,13 @@ var parseCmd = &cobra.Command{
 		if examine != "" {
 			// Examine cancels printing phases
 			printPhases = nil
-		} else if printPhases == nil {
-			// Default to printing phase 6
-			printPhases = []uint{6}
 		}
 
-		Parse(urlString)
+		s := Parse(urlString)
+
+		if (examine == "") && (len(printPhases) == 0) {
+			format.Print(s, ardFormat, true)
+		}
 	},
 }
 
@@ -213,7 +214,7 @@ func ParseInputs() {
 		if len(s) != 2 {
 			common.Errorf("malformed input: %s", input)
 		}
-		value, err := format.Decode(s[1], ardFormat)
+		value, err := format.Decode(s[1], "yaml")
 		common.ValidateError(err)
 		inputValues[s[0]] = value
 	}

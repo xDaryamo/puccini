@@ -17,7 +17,7 @@ files within it.
 
 Also useful (or necessary) is the `--input/-i` switch, which lets you set the inputs for the TOSCA
 topology template. You may specify this switch multiple times for as many inputs as necessary.
-The format is `name=value`, where `value` is JSON-encoded. For example, to set an integer:
+The format is `name=value`, where `value` is YAML-encoded. For example, to set an integer:
 
     --input cores=4
 
@@ -27,7 +27,7 @@ To set a string:
 
 To set a complex data type:
 
-    --input 'port={"type":"tcp","number":8080}'
+    --input 'port={type:tcp,number:8080}'
 
 If TOSCA parsing/compilation fails will emit a colorful problem report to stderr and exit with 1.
 Thus you can use the `--quiet/-q` switch if all you want to do is check for successful compilation.
