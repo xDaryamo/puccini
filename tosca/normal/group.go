@@ -10,7 +10,7 @@ type Group struct {
 	Description     string           `json:"description" yaml:"description"`
 	Types           Types            `json:"types" yaml:"types"`
 	Properties      Constrainables   `json:"properties" yaml:"properties"`
-	Interfaces      Interfaces       `json:"interfaces"yaml:"interfaces"`
+	Interfaces      Interfaces       `json:"interfaces" yaml:"interfaces"`
 	Members         []*NodeTemplate  `json:"-" yaml:"-"`
 	Policies        []*Policy        `json:"-" yaml:"-"`
 }

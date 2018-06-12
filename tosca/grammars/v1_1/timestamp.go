@@ -35,7 +35,7 @@ type Timestamp struct {
 	Hour           uint32  `json:"hour" yaml:"hour"`
 	Minute         uint32  `json:"minute" yaml:"minute"`
 	Second         uint32  `json:"second" yaml:"second"`
-	Fraction       float64 `json:"fraction" yaml:"fraction`
+	Fraction       float64 `json:"fraction" yaml:"fraction"`
 	TZSign         string  `json:"tzSign" yaml:"tzSign"`
 	TZHour         uint32  `json:"tzHour" yaml:"tzHour"`
 	TZMinute       uint32  `json:"tzMinute" yaml:"tzMinute"`

@@ -18,7 +18,7 @@ type Value struct {
 	ConstraintClauses ConstraintClauses
 	Description       *string
 
-	rendered bool `json:"-" yaml:"-"`
+	rendered bool
 }
 
 func NewValue(context *tosca.Context) *Value {

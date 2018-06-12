@@ -60,7 +60,7 @@ func testParse(t *testing.T, url string, inputs map[string]interface{}) {
 			return
 		}
 
-		c = compiler.Coerce(c, p)
+		compiler.Coerce(c, p)
 		if !p.Empty() {
 			t.Errorf("%s", p)
 		}

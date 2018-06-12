@@ -71,7 +71,7 @@ node_types:
     attributes:
       # ARIA NOTE: The attributes are only described in section [5.9.2.5 Definition], but are not
       # mentioned in section [5.9.2.2 Attributes]. Additionally, it does not seem to make sense to
-      # deprecate inherited attributes, as it breaks the inheritence contract.
+      # deprecate inherited attributes, as it breaks the inheritance contract.
       private_address:
         type: string
         status: deprecated

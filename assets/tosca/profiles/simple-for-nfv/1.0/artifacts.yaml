@@ -67,7 +67,7 @@ artifact_types:
           Identifies the operating system used in the software image.
         type: string
         required: false
-      supported _virtualization_enviroment:
+      supported _virtualization_environment:
         description: >-
           Identifies the virtualization environments (e.g. hypervisor) compatible with this software
           image.
