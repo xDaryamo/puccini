@@ -62,7 +62,7 @@ function generateService(capability, metadata) {
 		metadata: metadata,
 		spec: {}
 	};
-	
+
 	for (k in capability.properties) {
 		v = capability.properties[k];
 		spec.spec[k] = v;
@@ -72,7 +72,7 @@ function generateService(capability, metadata) {
 	if (spec.spec.selector === undefined) {
 		spec.spec.selector = metadata.labels;
 	}
-	
+
 	specs.push(spec);
 }
 
@@ -83,7 +83,7 @@ function generateDeployment(capability, labels) {
 		metadata: metadata,
 		spec: {}
 	};
-	
+
 	for (p in capability.properties) {
 		v = capability.properties[p];
 		switch (p) {
@@ -137,7 +137,7 @@ function convertScalarUnit(v) {
 
 function convertAmount(v) {
 	if (v.factor !== undefined)
-		return (v.factor * 100) + '%' 
+		return (v.factor * 100) + '%';
 	return v.count;
 }
 `

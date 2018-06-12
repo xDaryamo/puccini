@@ -131,6 +131,6 @@ function convertScalarUnit(v) {
 
 function convertAmount(v) {
 	if (v.factor !== undefined)
-		return (v.factor * 100) + '%' 
+		return (v.factor * 100) + '%';
 	return v.count;
 }
