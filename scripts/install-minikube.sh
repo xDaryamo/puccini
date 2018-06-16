@@ -2,8 +2,8 @@
 set -e
 
 KUBECTL_VERSION=1.10.4
-MINIKUBE_VERSION=0.27.0
-~                                              
+MINIKUBE_VERSION=0.28.0
+
 HERE=$(dirname "$(readlink -f "$0")")
 
 if [ "$EUID" -ne 0 ]; then
