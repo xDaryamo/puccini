@@ -173,7 +173,7 @@ Puccini.
 
 The decision to use an interpreted programming language is intentional and important. Unlike some
 Kubernetes tools ([Helm](https://helm.sh/)), we do not treat YAML files as plain text to be
-manipulated by an anemic text templating language, where just working around YAML's strict
+manipulated by an anemic text templating language, where working around YAML's strict
 indentation is a nightmare.
 
 JavaScript lets you manipulate data structures directly using a full-blown, conventional language.
