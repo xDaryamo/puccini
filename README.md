@@ -9,37 +9,10 @@ Deliberately stateless cloud topology management and deployment tools for Kubern
 
 Check out the [quickstart guide](QUICKSTART.md).
 
-Clout
------
-
-Introducing the cloud topology ("clou-" + "t") representation language, which can be formatted as
-YAML/JSON/XML.
-
-Clout is essentially a big, unopinionated, implementation-specific dump of vertexes and the edges
-between them with un-typed, non-validated properties. Rule #1 of Clout is that everything and the
-kitchen sink should be in one Clout file. Really, anything goes: specifications, configurations,
-metadata, annotations, source code, documentation, and even text-encoded binaries. (The only
-possible exception might be that you would want to store security certificates and keys
-elsewhere.)
-
-In itself Clout is an unremarkable format. Think of it as a way to gather various deployment specs
-for disparate technologies in one place while allowing for the *relationships* (edges) between
-entities to be specified and annotated. That's the topology.
-
-Clout is not supposed to be human-readable or human-manageable. The idea is to use tools (Clout
-frontends and processors) to deal with its complexity. We have some great ones for you here. For
-example, with Puccini you can use just a little bit of TOSCA to generate a single big Clout file
-that describes a complex Kubernetes service mesh.
-
-If Clout's file size is an issue, it's good to know that Clout is usually eminently compressible,
-comprising just text with quite a lot of repetition.
-
-* [Clout documentation](clout/README.md)
-
 puccini-tosca
 -------------
 
-Clout frontend for TOSCA. Parses a TOSCA service template and compiles it to Clout.
+Clout frontend for TOSCA. Parses a TOSCA service template and compiles it to Clout (see below).
 
 Why [TOSCA](https://www.oasis-open.org/committees/tosca/)? It's a high-level language designed
 exactly for modeling and validating cloud topologies with reusable and inheritable objects. It
@@ -51,6 +24,11 @@ ever-changing specificities of the infrastructure.
 capability, relationship, policy, and other types, as well as straightforward JavaScript code to
 generate [Kubernetes](https://kubernetes.io/)/[Istio](https://istio.io/) specs.
 
+We support
+[CSAR files](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/os/TOSCA-Simple-Profile-YAML-v1.1-os.html#_Toc489606742)
+(TOSCA packages) in addition to YAML files. We're even including a simple CSAR creation tool,
+**puccini-csar**.
+
 How do TOSCA, Clout, JavaScript, and Kubernetes all fit together in Puccini? Consider this: with a
 single command line you can take a TOSCA service template, compile it with **puccini-tosca**, pipe
 the Clout through the **puccini-js** processor, which will run JavaScript to generate Kubernetes
@@ -60,11 +38,6 @@ which will finally upload the specs to a running Kubernetes cluster. Like so:
      puccini-tosca compile my-app.yaml | puccini-js exec kubernetes.generate | kubectl apply -f -
 
 Et voilà, your abstract design became a running deployment.
-
-We support
-[CSAR files](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/os/TOSCA-Simple-Profile-YAML-v1.1-os.html#_Toc489606742)
-(TOSCA packages) in addition to YAML files. We're even including a simple CSAR creation tool,
-**puccini-csar**.
 
 ### Standalone Parser
 
@@ -92,7 +65,7 @@ puccini-js
 
 Clout processor for JavaScript. Executes existing JavaScript in a Clout file. For example, it can
 execute the Kubernetes spec generation code inserted by **puccini-tosca**. It also supports
-executing intrinsic functions (for example, TOSCA's).
+executing intrinsic functions and value constraints (for example, TOSCA's).
 
 Also supported are implementation-specific JavaScript "plugins" that allow you to extend existing
 functionality. For example, you can add a plugin for Kubernetes to handle custom application needs,
@@ -145,6 +118,44 @@ favorite workflow engine, such as [Ansible](https://www.ansible.com/) or a
 implementation.
 
 * [**puccini-js** documentation](puccini-js/README.md)
+
+Clout
+-----
+
+Introducing the cloud topology ("clou-" + "t") representation language, which can be formatted as
+YAML/JSON/XML.
+
+Clout is an intermediary format for your deployments. As an analogy, consider a program written in
+the C language. First, you must *compile* the C source into machine code for your hardware
+architecture. Then, you *link* the compiled object, together with various libraries, into a
+deployable executable for a specific target platform. Clout here is the compiled object. If you only
+care about the final result then you won't see the Clout at all. However, this decoupling allows for
+a more powerful tool chain. For example, some tools might change your Clout after the initial
+compilation (to scale out, to optimize, to add platform hooks, debugging features, etc.) and then
+you just need to "re-link" in order to update your deployment. This can happen without requiring
+you to update your original source design. It may also possible to "de-compile" some cloud
+deployments so that you can generate a Clout without "source code".
+
+Clout is essentially a big, unopinionated, implementation-specific dump of vertexes and the edges
+between them with un-typed, non-validated properties. Rule #1 of Clout is that everything and the
+kitchen sink should be in one Clout file. Really, anything goes: specifications, configurations,
+metadata, annotations, source code, documentation, and even text-encoded binaries. (The only
+possible exception might be that you would want to store security certificates and keys
+elsewhere.)
+
+In itself Clout is an unremarkable format. Think of it as a way to gather various deployment specs
+for disparate technologies in one place while allowing for the *relationships* (edges) between
+entities to be specified and annotated. That's the topology.
+
+Clout is not supposed to be human-readable or human-manageable. The idea is to use tools (Clout
+frontends and processors) to deal with its complexity. We have some great ones for you here. For
+example, with Puccini you can use just a little bit of TOSCA to generate a single big Clout file
+that describes a complex Kubernetes service mesh.
+
+If Clout's file size is an issue, it's good to know that Clout is usually eminently compressible,
+comprising just text with quite a lot of repetition.
+
+* [Clout documentation](clout/README.md)
 
 FAQ
 ---
