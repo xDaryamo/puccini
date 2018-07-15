@@ -39,7 +39,3 @@ func ReadMetadata(context *tosca.Context) interface{} {
 
 	return self
 }
-
-func init() {
-	Readers["Metadata"] = ReadMetadata
-}

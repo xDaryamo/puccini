@@ -38,10 +38,6 @@ func ReadValue(context *tosca.Context) interface{} {
 	return NewValue(context)
 }
 
-func init() {
-	Readers["Value"] = ReadValue
-}
-
 // tosca.Mappable interface
 func (self *Value) GetKey() string {
 	return self.Name
@@ -253,11 +249,11 @@ type Values map[string]*Value
 func (self Values) RenderMissingValue(definition *AttributeDefinition, kind string, required bool, context *tosca.Context) {
 	if definition.Default != nil {
 		self[definition.Name] = definition.Default
+	} else if required {
+		context.MapChild(definition.Name, nil).ReportPropertyRequired(kind)
 	} else if kind == "attribute" {
 		// Attributes should always appear, even if they have no default value
 		self[definition.Name] = NewValue(context.MapChild(definition.Name, nil))
-	} else if required {
-		context.MapChild(definition.Name, nil).ReportPropertyRequired(kind)
 	}
 }
 

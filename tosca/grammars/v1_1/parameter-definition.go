@@ -26,10 +26,6 @@ func ReadParameterDefinition(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["ParameterDefinition"] = ReadParameterDefinition
-}
-
 func (self *ParameterDefinition) Render(kind string) {
 	// TODO: what to do if there is no "type"?
 

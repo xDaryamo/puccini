@@ -81,10 +81,6 @@ func ReadConstraintClause(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["ConstraintClause"] = ReadConstraintClause
-}
-
 func (self *ConstraintClause) NewFunction(context *tosca.Context) *tosca.Function {
 	arguments := make([]interface{}, len(self.Arguments))
 	for index, argument := range self.Arguments {

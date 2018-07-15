@@ -94,8 +94,3 @@ func ReadRangeEntity(context *tosca.Context) interface{} {
 	self.Range = ReadRange(context).(Range)
 	return self
 }
-
-func init() {
-	Readers["range"] = ReadRange
-	Readers["RangeEntity"] = ReadRangeEntity
-}

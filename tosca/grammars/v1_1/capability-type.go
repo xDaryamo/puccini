@@ -34,10 +34,6 @@ func ReadCapabilityType(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["CapabilityType"] = ReadCapabilityType
-}
-
 // tosca.Hierarchical interface
 func (self *CapabilityType) GetParent() interface{} {
 	return self.Parent

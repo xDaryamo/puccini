@@ -45,10 +45,6 @@ func ReadCapabilityDefinition(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["CapabilityDefinition"] = ReadCapabilityDefinition
-}
-
 // tosca.Mappable interface
 func (self *CapabilityDefinition) GetKey() string {
 	return self.Name

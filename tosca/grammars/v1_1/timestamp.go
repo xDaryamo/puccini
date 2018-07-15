@@ -137,10 +137,6 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["timestamp"] = ReadTimestamp
-}
-
 // fmt.Stringify interface
 func (self *Timestamp) String() string {
 	return self.String_

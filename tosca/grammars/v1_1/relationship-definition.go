@@ -37,10 +37,6 @@ func ReadRelationshipDefinition(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["RelationshipDefinition"] = ReadRelationshipDefinition
-}
-
 func (self *RelationshipDefinition) NewDefaultAssignment(context *tosca.Context) *RelationshipAssignment {
 	assignment := NewRelationshipAssignment(context)
 	assignment.RelationshipTemplateOrRelationshipTypeName = self.RelationshipTypeName

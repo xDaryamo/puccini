@@ -37,10 +37,6 @@ func ReadOperationAssignment(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["OperationAssignment"] = ReadOperationAssignment
-}
-
 // tosca.Mappable interface
 func (self *OperationAssignment) GetKey() string {
 	return self.Name

@@ -1,7 +1,6 @@
 package v1_1
 
 import (
-	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -26,21 +25,25 @@ func NewCapabilityMapping(context *tosca.Context) *CapabilityMapping {
 func ReadCapabilityMapping(context *tosca.Context) interface{} {
 	self := NewCapabilityMapping(context)
 	if context.ValidateType("list") {
-		list := context.Data.(ard.List)
-		if len(list) != 2 {
-			context.Report("must be 2")
-			return self
+		strings := context.ReadStringListFixed(2)
+		if strings != nil {
+			self.NodeTemplateName = &(*strings)[0]
+			self.CapabilityName = &(*strings)[1]
 		}
-
-		nodeTemplateNameContext := context.ListChild(0, list[0])
-		capabilityNameContext := context.ListChild(1, list[1])
-
-		self.NodeTemplateName = nodeTemplateNameContext.ReadString()
-		self.CapabilityName = capabilityNameContext.ReadString()
 	}
 	return self
 }
 
-func init() {
-	Readers["CapabilityMapping"] = ReadCapabilityMapping
+// tosca.Renderable interface
+func (self *CapabilityMapping) Render() {
+	log.Info("{render} capability mapping")
+
+	if (self.NodeTemplate == nil) || (self.CapabilityName == nil) {
+		return
+	}
+
+	name := *self.CapabilityName
+	if _, ok := self.NodeTemplate.Capabilities[name]; !ok {
+		self.Context.ListChild(1, name).ReportReferenceNotFound("capability", self.NodeTemplate)
+	}
 }

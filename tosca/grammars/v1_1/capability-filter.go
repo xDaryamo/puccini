@@ -30,10 +30,6 @@ func ReadCapabilityFilter(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["CapabilityFilter"] = ReadCapabilityFilter
-}
-
 // tosca.Mappable interface
 func (self *CapabilityFilter) GetKey() string {
 	return self.Name

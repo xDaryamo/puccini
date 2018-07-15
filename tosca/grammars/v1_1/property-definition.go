@@ -26,10 +26,6 @@ func ReadPropertyDefinition(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["PropertyDefinition"] = ReadPropertyDefinition
-}
-
 func (self *PropertyDefinition) Inherit(parentDefinition *PropertyDefinition) {
 	if parentDefinition != nil {
 		self.AttributeDefinition.Inherit(parentDefinition.AttributeDefinition)

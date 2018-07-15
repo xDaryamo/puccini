@@ -36,10 +36,6 @@ func ReadRelationshipType(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["RelationshipType"] = ReadRelationshipType
-}
-
 // tosca.Hierarchical interface
 func (self *RelationshipType) GetParent() interface{} {
 	return self.Parent

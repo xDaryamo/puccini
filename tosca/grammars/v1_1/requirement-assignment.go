@@ -41,10 +41,6 @@ func ReadRequirementAssignment(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["RequirementAssignment"] = ReadRequirementAssignment
-}
-
 func NewDefaultRequirementAssignment(definition *RequirementDefinition, context *tosca.Context) *RequirementAssignment {
 	self := NewRequirementAssignment(context.MapChild(definition.Name, nil))
 	self.NodeTemplateNameOrNodeTypeName = definition.NodeTypeName

@@ -39,10 +39,6 @@ func ReadTopologyTemplate(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["TopologyTemplate"] = ReadTopologyTemplate
-}
-
 func (self *TopologyTemplate) GetNodeTemplatesOfType(nodeType *NodeType) []*NodeTemplate {
 	var nodeTemplates []*NodeTemplate
 	for _, nodeTemplate := range self.NodeTemplates {
@@ -69,6 +65,7 @@ func (self *TopologyTemplate) SetInputs(inputs map[string]interface{}) {
 				if typeName == "integer" {
 					// In JSON, everything is a float
 					// But we want to support inputs coming from JSON
+					// So we'll auto-convert
 					switch v := childContext.Data.(type) {
 					case float64:
 						childContext.Data = int64(v)

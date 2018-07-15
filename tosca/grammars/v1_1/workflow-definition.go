@@ -35,10 +35,6 @@ func ReadWorkflowDefinition(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["WorkflowDefinition"] = ReadWorkflowDefinition
-}
-
 // tosca.Mappable interface
 func (self *WorkflowDefinition) GetKey() string {
 	return self.Name

@@ -1,7 +1,6 @@
 package v1_1
 
 import (
-	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -26,21 +25,37 @@ func NewRequirementMapping(context *tosca.Context) *RequirementMapping {
 func ReadRequirementMapping(context *tosca.Context) interface{} {
 	self := NewRequirementMapping(context)
 	if context.ValidateType("list") {
-		list := context.Data.(ard.List)
-		if len(list) != 2 {
-			context.Report("must be 2")
-			return self
+		strings := context.ReadStringListFixed(2)
+		if strings != nil {
+			self.NodeTemplateName = &(*strings)[0]
+			self.RequirementName = &(*strings)[1]
 		}
-
-		nodeTemplateNameContext := context.ListChild(0, list[0])
-		requirementNameContext := context.ListChild(1, list[1])
-
-		self.NodeTemplateName = nodeTemplateNameContext.ReadString()
-		self.RequirementName = requirementNameContext.ReadString()
 	}
 	return self
 }
 
-func init() {
-	Readers["RequirementMapping"] = ReadRequirementMapping
+// tosca.Renderable interface
+func (self *RequirementMapping) Render() {
+	log.Info("{render} requirement mapping")
+
+	if (self.NodeTemplate == nil) || (self.RequirementName == nil) {
+		return
+	}
+
+	name := *self.RequirementName
+	found := false
+	for _, requirement := range self.NodeTemplate.Requirements {
+		if requirement.Name == name {
+			if found {
+				self.Context.ListChild(1, name).ReportReferenceAmbiguous("requirement", self.NodeTemplate)
+				break
+			} else {
+				found = true
+			}
+		}
+	}
+
+	if !found {
+		self.Context.ListChild(1, name).ReportReferenceNotFound("requirement", self.NodeTemplate)
+	}
 }

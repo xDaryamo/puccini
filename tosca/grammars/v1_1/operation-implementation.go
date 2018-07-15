@@ -31,10 +31,6 @@ func ReadOperationImplementation(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["OperationImplementation"] = ReadOperationImplementation
-}
-
 func (self *OperationImplementation) Normalize(o *normal.Operation) {
 	if self.Primary != nil {
 		o.Implementation = *self.Primary

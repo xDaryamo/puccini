@@ -32,7 +32,3 @@ func ReadEntrySchema(context *tosca.Context) interface{} {
 	}
 	return self
 }
-
-func init() {
-	Readers["EntrySchema"] = ReadEntrySchema
-}

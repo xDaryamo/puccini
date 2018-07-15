@@ -241,6 +241,15 @@ func (self *Context) ReadStringList() *[]string {
 	return nil
 }
 
+func (self *Context) ReadStringListFixed(length int) *[]string {
+	strings := self.ReadStringList()
+	if (strings != nil) && (len(*strings) != length) {
+		self.ReportValueWrongLength("list", length)
+		return nil
+	}
+	return strings
+}
+
 func (self *Context) ReadStringMap() *map[string]string {
 	if self.ValidateType("map") {
 		strings := make(map[string]string)

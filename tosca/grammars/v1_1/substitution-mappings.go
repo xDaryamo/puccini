@@ -30,14 +30,10 @@ func ReadSubstitutionMappings(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["SubstitutionMappings"] = ReadSubstitutionMappings
-}
-
 func (self *SubstitutionMappings) IsRequirementMapped(nodeTemplate *NodeTemplate, requirementName string) bool {
-	for _, mappedRequirement := range self.RequirementMappings {
-		if mappedRequirement.NodeTemplate == nodeTemplate {
-			if (mappedRequirement.RequirementName != nil) && (*mappedRequirement.RequirementName == requirementName) {
+	for _, mapping := range self.RequirementMappings {
+		if mapping.NodeTemplate == nodeTemplate {
+			if (mapping.RequirementName != nil) && (*mapping.RequirementName == requirementName) {
 				return true
 			}
 		}
@@ -45,11 +41,11 @@ func (self *SubstitutionMappings) IsRequirementMapped(nodeTemplate *NodeTemplate
 	return false
 }
 
-func (self *SubstitutionMappings) Normalize(s *normal.ServiceTemplate) {
+func (self *SubstitutionMappings) Normalize(s *normal.ServiceTemplate) *normal.Substitution {
 	log.Info("{normalize} substitution mappings")
 
 	if self.NodeType == nil {
-		return
+		return nil
 	}
 
 	t := s.NewSubstitution()
@@ -60,25 +56,27 @@ func (self *SubstitutionMappings) Normalize(s *normal.ServiceTemplate) {
 		t.TypeMetadata = metadata
 	}
 
-	for _, mapped := range self.CapabilityMappings {
-		if (mapped.NodeTemplate == nil) || (mapped.CapabilityName == nil) {
+	for _, mapping := range self.CapabilityMappings {
+		if (mapping.NodeTemplate == nil) || (mapping.CapabilityName == nil) {
 			continue
 		}
 
-		if n, ok := s.NodeTemplates[mapped.NodeTemplate.Name]; ok {
-			if c, ok := n.Capabilities[*mapped.CapabilityName]; ok {
+		if n, ok := s.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+			if c, ok := n.Capabilities[*mapping.CapabilityName]; ok {
 				t.CapabilityMappings[n] = c
 			}
 		}
 	}
 
-	for _, mapped := range self.RequirementMappings {
-		if (mapped.NodeTemplate == nil) || (mapped.RequirementName == nil) {
+	for _, mapping := range self.RequirementMappings {
+		if (mapping.NodeTemplate == nil) || (mapping.RequirementName == nil) {
 			continue
 		}
 
-		if n, ok := s.NodeTemplates[mapped.NodeTemplate.Name]; ok {
-			t.RequirementMappings[n] = *mapped.RequirementName
+		if n, ok := s.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+			t.RequirementMappings[n] = *mapping.RequirementName
 		}
 	}
+
+	return t
 }

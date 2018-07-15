@@ -8,11 +8,11 @@ import (
 )
 
 var plainFormatter = logging.MustStringFormatter(
-	`%{time:2006/01/02 15:04:05.000} %{level:7.7s} [%{module}] %{message}`,
+	`%{time:2006/01/02 15:04:05.000} %{level:8.8s} [%{module}] %{message}`,
 )
 
 var colorFormatter = logging.MustStringFormatter(
-	`%{color}%{time:2006/01/02 15:04:05.000} %{level:7.7s} [%{module}] %{message}%{color:reset}`,
+	`%{color}%{time:2006/01/02 15:04:05.000} %{level:8.8s} [%{module}] %{message}%{color:reset}`,
 )
 
 func ConfigureLogging(verbosity int, file *string) {

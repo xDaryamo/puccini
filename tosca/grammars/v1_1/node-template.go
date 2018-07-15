@@ -48,10 +48,6 @@ func ReadNodeTemplate(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["NodeTemplate"] = ReadNodeTemplate
-}
-
 func (self *NodeTemplate) GetCapabilitiesOfType(capabilityType *CapabilityType) []*CapabilityAssignment {
 	var capabilities []*CapabilityAssignment
 	for _, capability := range self.Capabilities {

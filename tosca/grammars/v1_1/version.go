@@ -79,10 +79,6 @@ func ReadVersion(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["version"] = ReadVersion
-}
-
 // fmt.Stringify interface
 func (self *Version) String() string {
 	return self.String_

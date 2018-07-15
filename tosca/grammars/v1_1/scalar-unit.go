@@ -224,9 +224,3 @@ func (self ScalarUnitSizes) Get(unit string, context *tosca.Context) (string, fl
 	}
 	panic("as long as the regexp does it's job we should never get here")
 }
-
-func init() {
-	Readers["scalar-unit.size"] = ReadScalarUnitSize
-	Readers["scalar-unit.time"] = ReadScalarUnitTime
-	Readers["scalar-unit.frequency"] = ReadScalarUnitFrequency
-}

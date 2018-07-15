@@ -29,10 +29,6 @@ func ReadConditionClause(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["ConditionClause"] = ReadConditionClause
-}
-
 func (self *ConditionClause) readField(context *tosca.Context) bool {
 	switch context.Name {
 	case "and":

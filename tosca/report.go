@@ -45,6 +45,10 @@ func (self *Context) ReportValueWrongType(requiredTypeNames ...string) {
 	self.ReportPathf("\"%s\" instead of %s", format.ColorTypeName(PrimitiveTypeName(self.Data)), format.ColoredOptions(requiredTypeNames, format.ColorTypeName))
 }
 
+func (self *Context) ReportValueWrongLength(typeName string, length int) {
+	self.ReportPathf("\"%s\" does not have %d elements", format.ColorTypeName(typeName), length)
+}
+
 func (self *Context) ReportValueMalformed(typeName string, reason string) {
 	if reason == "" {
 		self.ReportPathf("malformed \"%s\": %s", format.ColorTypeName(typeName), self.FormatBadData())
@@ -131,6 +135,18 @@ func (self *Context) ReportUndefined(kind string) {
 
 func (self *Context) ReportUnknown(kind string) {
 	self.ReportPathf("unknown %s: %s", kind, self.FormatBadData())
+}
+
+func (self *Context) ReportReferenceNotFound(kind string, entityPtr interface{}) {
+	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
+	name := GetContext(entityPtr).Name
+	self.ReportPathf("%s not found in %s \"%s\": %s", kind, typeName, format.ColorName(name), self.FormatBadData())
+}
+
+func (self *Context) ReportReferenceAmbiguous(kind string, entityPtr interface{}) {
+	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
+	name := GetContext(entityPtr).Name
+	self.ReportPathf("%s ambiguous in %s \"%s\": %s", kind, typeName, format.ColorName(name), self.FormatBadData())
 }
 
 func (self *Context) ReportPropertyRequired(kind string) {

@@ -34,10 +34,6 @@ func ReadGroupType(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["GroupType"] = ReadGroupType
-}
-
 // tosca.Hierarchical interface
 func (self *GroupType) GetParent() interface{} {
 	return self.Parent

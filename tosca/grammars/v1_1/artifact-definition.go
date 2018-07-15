@@ -47,10 +47,6 @@ func ReadArtifactDefinition(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["ArtifactDefinition"] = ReadArtifactDefinition
-}
-
 func (self *ArtifactDefinition) GetExtension() string {
 	if self.File == nil {
 		return ""

@@ -5,6 +5,10 @@ node_types:
   # We're going to allow this single node to be substituted by an entire service 
   SuperLoadBalancer:
     derived_from: LoadBalancer
+    properties:
+      version:
+        type: version
+        required: false
     requirements:
     # We require hosts for our internal components 
     - admin_host:

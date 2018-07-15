@@ -39,10 +39,6 @@ func ReadImport(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["Import"] = ReadImport
-}
-
 func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 	if self.File == nil {
 		return nil, false

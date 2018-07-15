@@ -29,7 +29,3 @@ func ReadNodeFilter(context *tosca.Context) interface{} {
 	context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
 	return self
 }
-
-func init() {
-	Readers["NodeFilter"] = ReadNodeFilter
-}

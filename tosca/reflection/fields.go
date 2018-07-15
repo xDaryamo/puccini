@@ -17,14 +17,32 @@ func GetStructFields(type_ reflect.Type) []reflect.StructField {
 	for i := 0; i < numField; i++ {
 		structField := type_.Field(i)
 		if structField.Anonymous && (structField.Type.Kind() == reflect.Ptr) {
-			structFields = append(structFields, GetStructFields(structField.Type.Elem())...)
+			for _, structField = range GetStructFields(structField.Type.Elem()) {
+				structFields = appendStructField(structFields, structField)
+			}
 		} else {
-			structFields = append(structFields, structField)
+			structFields = appendStructField(structFields, structField)
 		}
 	}
 
 	structFieldsCache.Store(type_, structFields)
 
+	return structFields
+}
+
+func appendStructField(structFields []reflect.StructField, structField reflect.StructField) []reflect.StructField {
+	found := false
+	for index, f := range structFields {
+		if f.Name == structField.Name {
+			// Override
+			structFields[index] = structField
+			found = true
+			break
+		}
+	}
+	if !found {
+		structFields = append(structFields, structField)
+	}
 	return structFields
 }
 

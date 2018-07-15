@@ -24,10 +24,6 @@ func ReadArtifact(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["Artifact"] = ReadArtifact
-}
-
 func (self *Artifact) Render(definition *ArtifactDefinition) {
 	if self.ArtifactType == nil {
 		return

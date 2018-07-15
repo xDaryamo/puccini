@@ -40,10 +40,6 @@ func ReadRelationshipTemplate(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["RelationshipTemplate"] = ReadRelationshipTemplate
-}
-
 // tosca.Renderable interface
 func (self *RelationshipTemplate) Render() {
 	log.Infof("{render} relationship template: %s", self.Name)

@@ -34,10 +34,6 @@ func ReadDataType(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["DataType"] = ReadDataType
-}
-
 // tosca.Hierarchical interface
 func (self *DataType) GetParent() interface{} {
 	return self.Parent

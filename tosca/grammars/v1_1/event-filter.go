@@ -29,7 +29,3 @@ func ReadEventFilter(context *tosca.Context) interface{} {
 	context.ReadFields(self, Readers)
 	return self
 }
-
-func init() {
-	Readers["EventFilter"] = ReadEventFilter
-}

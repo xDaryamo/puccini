@@ -38,10 +38,6 @@ func ReadTriggerDefinition(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["TriggerDefinition"] = ReadTriggerDefinition
-}
-
 // tosca.Renderable interface
 func (self *TriggerDefinition) Render() {
 	log.Infof("{render} trigger definition: %s", self.Name)

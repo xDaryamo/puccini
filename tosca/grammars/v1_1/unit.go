@@ -43,10 +43,6 @@ func ReadUnit(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["Unit"] = ReadUnit
-}
-
 // parser.Importer interface
 func (self *Unit) GetImportSpecs() []*tosca.ImportSpec {
 	var importSpecs []*tosca.ImportSpec

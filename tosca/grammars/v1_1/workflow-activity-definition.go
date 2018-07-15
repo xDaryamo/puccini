@@ -58,7 +58,3 @@ func ReadWorkflowActivityDefinition(context *tosca.Context) interface{} {
 	}
 	return self
 }
-
-func init() {
-	Readers["WorkflowActivityDefinition"] = ReadWorkflowActivityDefinition
-}

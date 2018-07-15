@@ -41,10 +41,6 @@ func ReadRequirementDefinition(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["RequirementDefinition"] = ReadRequirementDefinition
-}
-
 // tosca.Mappable interface
 func (self *RequirementDefinition) GetKey() string {
 	return self.Name

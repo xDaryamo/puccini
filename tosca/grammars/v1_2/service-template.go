@@ -1,7 +1,8 @@
-package v1_1
+package v1_2
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/grammars/v1_1"
 	"github.com/tliron/puccini/tosca/normal"
 )
 
@@ -10,20 +11,26 @@ import (
 //
 
 type ServiceTemplate struct {
-	*Unit `name:"service template"`
+	*v1_1.ServiceTemplate
 
 	TopologyTemplate *TopologyTemplate `read:"topology_template,TopologyTemplate"`
 }
 
 func NewServiceTemplate(context *tosca.Context) *ServiceTemplate {
-	return &ServiceTemplate{Unit: NewUnit(context)}
+	return &ServiceTemplate{ServiceTemplate: v1_1.NewServiceTemplate(context)}
 }
 
 // tosca.Reader signature
 func ReadServiceTemplate(context *tosca.Context) interface{} {
 	self := NewServiceTemplate(context)
-	context.ScriptNamespace.Merge(DefaultScriptNamespace)
+	context.ScriptNamespace.Merge(v1_1.DefaultScriptNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self, Readers), "dsl_definitions"))
+
+	// Hook up inheritance
+	if self.TopologyTemplate != nil {
+		self.ServiceTemplate.TopologyTemplate = self.TopologyTemplate.TopologyTemplate
+	}
+
 	return self
 }
 
@@ -31,13 +38,11 @@ func ReadServiceTemplate(context *tosca.Context) interface{} {
 func (self *ServiceTemplate) Normalize() *normal.ServiceTemplate {
 	log.Info("{normalize} service template")
 
-	s := normal.NewServiceTemplate()
+	s := self.ServiceTemplate.Normalize()
 
-	s.ScriptNamespace = self.Context.ScriptNamespace
-
-	self.Unit.Normalize(s)
-	if self.TopologyTemplate != nil {
-		self.TopologyTemplate.Normalize(s)
+	// Hook up inheritance
+	if (s != nil) && (self.TopologyTemplate != nil) && (self.TopologyTemplate.SubstitutionMappings != nil) {
+		self.TopologyTemplate.SubstitutionMappings.Normalize(s)
 	}
 
 	return s

@@ -40,10 +40,6 @@ func ReadNodeType(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["NodeType"] = ReadNodeType
-}
-
 // tosca.Hierarchical interface
 func (self *NodeType) GetParent() interface{} {
 	return self.Parent

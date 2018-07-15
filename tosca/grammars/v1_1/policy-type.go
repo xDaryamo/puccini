@@ -34,10 +34,6 @@ func ReadPolicyType(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["PolicyType"] = ReadPolicyType
-}
-
 // tosca.Hierarchical interface
 func (self *PolicyType) GetParent() interface{} {
 	return self.Parent

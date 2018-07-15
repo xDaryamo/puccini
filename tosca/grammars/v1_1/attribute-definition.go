@@ -37,10 +37,6 @@ func ReadAttributeDefinition(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["AttributeDefinition"] = ReadAttributeDefinition
-}
-
 // tosca.Mappable interface
 func (self *AttributeDefinition) GetKey() string {
 	return self.Name

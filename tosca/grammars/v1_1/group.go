@@ -39,10 +39,6 @@ func ReadGroup(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["Group"] = ReadGroup
-}
-
 // tosca.Renderable interface
 func (self *Group) Render() {
 	log.Infof("{render} group: %s", self.Name)

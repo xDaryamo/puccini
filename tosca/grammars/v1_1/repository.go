@@ -35,10 +35,6 @@ func ReadRepository(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["Repository"] = ReadRepository
-}
-
 // tosca.Renderable interface
 func (self *Repository) Render() {
 	log.Infof("{render} repository: %s", self.Name)

@@ -32,10 +32,6 @@ func ReadArtifactType(context *tosca.Context) interface{} {
 	return self
 }
 
-func init() {
-	Readers["ArtifactType"] = ReadArtifactType
-}
-
 // tosca.Hierarchical interface
 func (self *ArtifactType) GetParent() interface{} {
 	return self.Parent

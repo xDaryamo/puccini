@@ -74,12 +74,20 @@ func (self *Clout) Normalize() (*Clout, error) {
 }
 
 //
+// HasMetadata
+//
+
+type HasMetadata interface {
+	GetMetadata() ard.Map
+}
+
+//
 // Vertex
 //
 
 type Vertex struct {
-	ID         string  `json:"-" yaml:"-"`
 	Metadata   ard.Map `json:"metadata" yaml:"metadata"`
+	ID         string  `json:"-" yaml:"-"`
 	Properties ard.Map `json:"properties" yaml:"properties"`
 	EdgesOut   Edges   `json:"edgesOut" yaml:"edgesOut"`
 	EdgesIn    Edges   `json:"-" yaml:"-"`
@@ -95,6 +103,11 @@ func (self *Clout) NewVertex(id string) *Vertex {
 	}
 	self.Vertexes[id] = vertex
 	return vertex
+}
+
+// HasMetadata interface
+func (self *Vertex) GetMetadata() ard.Map {
+	return self.Metadata
 }
 
 type Vertexes map[string]*Vertex
@@ -122,6 +135,11 @@ func (self *Vertex) NewEdgeTo(target *Vertex) *Edge {
 	self.EdgesOut = append(self.EdgesOut, edge)
 	target.EdgesIn = append(target.EdgesIn, edge)
 	return edge
+}
+
+// HasMetadata interface
+func (self *Edge) GetMetadata() ard.Map {
+	return self.Metadata
 }
 
 type MarshalableEdge struct {
