@@ -7,13 +7,24 @@ import (
 
 func Encode(data interface{}, format string) (string, error) {
 	switch format {
-	case "json":
-		return EncodeJson(data, Indent)
 	case "yaml", "":
 		return EncodeYaml(data)
+	case "json":
+		return EncodeJson(data, Indent)
+	case "xml":
+		return EncodeXml(data, Indent)
 	default:
 		return "", fmt.Errorf("unsupported format: %s", format)
 	}
+}
+
+func EncodeYaml(data interface{}) (string, error) {
+	var writer strings.Builder
+	err := WriteYaml(data, &writer)
+	if err != nil {
+		return "", err
+	}
+	return writer.String(), nil
 }
 
 func EncodeJson(data interface{}, indent string) (string, error) {
@@ -30,9 +41,9 @@ func EncodeJson(data interface{}, indent string) (string, error) {
 	return s, nil
 }
 
-func EncodeYaml(data interface{}) (string, error) {
+func EncodeXml(data interface{}, indent string) (string, error) {
 	var writer strings.Builder
-	err := WriteYaml(data, &writer)
+	err := WriteXml(data, &writer, indent)
 	if err != nil {
 		return "", err
 	}

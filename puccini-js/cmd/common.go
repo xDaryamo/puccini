@@ -46,6 +46,8 @@ func ReadClout(path string) (*clout.Clout, error) {
 	case "yaml", "":
 		return clout.DecodeYaml(reader)
 		// c.WriteYaml(os.Stdout)
+	case "xml":
+		return clout.DecodeXml(reader)
 	default:
 		return nil, fmt.Errorf("unsupported format: %s", f)
 	}

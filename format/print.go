@@ -2,6 +2,7 @@ package format
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/hokaccha/go-prettyjson"
 )
@@ -14,13 +15,19 @@ func init() {
 
 func Print(data interface{}, format string, pretty bool) error {
 	switch format {
-	case "json":
-		return PrintJson(data, pretty)
 	case "yaml", "":
 		return PrintYaml(data, pretty)
+	case "json":
+		return PrintJson(data, pretty)
+	case "xml":
+		return PrintXml(data, pretty)
 	default:
 		return fmt.Errorf("unsupported format: %s", format)
 	}
+}
+
+func PrintYaml(data interface{}, pretty bool) error {
+	return WriteYaml(data, os.Stdout)
 }
 
 func PrintJson(data interface{}, pretty bool) error {
@@ -31,20 +38,22 @@ func PrintJson(data interface{}, pretty bool) error {
 		}
 		fmt.Printf("%s\n", bytes)
 	} else {
-		s, err := EncodeJson(data, Indent)
-		if err != nil {
-			return err
-		}
-		fmt.Print(s)
+		return WriteJson(data, os.Stdout, "")
 	}
 	return nil
 }
 
-func PrintYaml(data interface{}, pretty bool) error {
-	s, err := EncodeYaml(data)
+func PrintXml(data interface{}, pretty bool) error {
+	indent := ""
+	if pretty {
+		indent = Indent
+	}
+	err := WriteXml(data, os.Stdout, indent)
 	if err != nil {
 		return err
 	}
-	fmt.Print(s)
+	if pretty {
+		fmt.Println()
+	}
 	return nil
 }

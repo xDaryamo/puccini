@@ -2,6 +2,7 @@ package ard
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"io"
 
 	"gopkg.in/yaml.v2"
@@ -28,4 +29,14 @@ func DecodeYaml(reader io.Reader) (Map, error) {
 		return nil, err
 	}
 	return EnsureMap(data), nil
+}
+
+func DecodeXml(reader io.Reader) (Map, error) {
+	data := make(Map)
+	decoder := xml.NewDecoder(reader)
+	err := decoder.Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+	return data, err
 }

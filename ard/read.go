@@ -22,6 +22,8 @@ func ReadURL(url_ url.URL) (Map, error) {
 		return DecodeYaml(reader)
 	case "json":
 		return DecodeJson(reader)
+	case "xml":
+		return DecodeXml(reader)
 	default:
 		return nil, fmt.Errorf("unsupported format: \"%s\"", format)
 	}

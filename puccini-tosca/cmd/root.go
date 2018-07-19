@@ -17,7 +17,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&common.Quiet, "quiet", "q", false, "suppress output")
 	rootCmd.PersistentFlags().StringVarP(&logTo, "log", "l", "", "log to file (defaults to stderr)")
 	rootCmd.PersistentFlags().CountVarP(&verbosity, "verbosity", "v", "add a log verbosity level (can be used twice)")
-	rootCmd.PersistentFlags().StringVarP(&ardFormat, "format", "f", "", "force format (\"yaml\" or \"json\")")
+	rootCmd.PersistentFlags().StringVarP(&ardFormat, "format", "f", "", "force format (\"yaml\", \"json\", or \"xml\")")
 
 	rootCmd.Flags().StringVarP(&bashCompletionTo, "bash-completion", "b", "", "generate bash completion file")
 }

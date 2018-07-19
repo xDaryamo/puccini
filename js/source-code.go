@@ -25,7 +25,6 @@ func ToJavaScriptStyle(name string) string {
 		}
 		r := make([]rune, 1, length-1)
 		r[0] = unicode.ToLower(runes[0])
-		//fmt.Printf("!!! %s\n", string(append(r, runes[1:]...)))
 		return string(append(r, runes[1:]...))
 	}
 	return name

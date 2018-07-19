@@ -2,6 +2,7 @@ package format
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io"
 
@@ -11,23 +12,15 @@ import (
 
 func Read(reader io.Reader, format string) (interface{}, error) {
 	switch format {
-	case "json":
-		return ReadJson(reader)
 	case "yaml", "":
 		return ReadYaml(reader)
+	case "json":
+		return ReadJson(reader)
+	case "xml":
+		return ReadXml(reader)
 	default:
 		return "", fmt.Errorf("unsupported format: %s", format)
 	}
-}
-
-func ReadJson(reader io.Reader) (interface{}, error) {
-	var data interface{}
-	decoder := json.NewDecoder(reader)
-	err := decoder.Decode(&data)
-	if err != nil {
-		return nil, err
-	}
-	return data, err
 }
 
 func ReadYaml(reader io.Reader) (interface{}, error) {
@@ -40,4 +33,24 @@ func ReadYaml(reader io.Reader) (interface{}, error) {
 	}
 	data, _ = ard.EnsureValue(data)
 	return data, nil
+}
+
+func ReadJson(reader io.Reader) (interface{}, error) {
+	var data interface{}
+	decoder := json.NewDecoder(reader)
+	err := decoder.Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+	return data, err
+}
+
+func ReadXml(reader io.Reader) (interface{}, error) {
+	var data interface{}
+	decoder := xml.NewDecoder(reader)
+	err := decoder.Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+	return data, err
 }
