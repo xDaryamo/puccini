@@ -13,7 +13,7 @@ type PolicyType struct {
 
 	PropertyDefinitions            PropertyDefinitions `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
 	TargetNodeTypeOrGroupTypeNames *[]string           `read:"targets" inherit:"targets,Parent"`
-	TriggerDefinitions             TriggerDefinitions  `read:"triggers" inherit:"triggers,Parent"`
+	TriggerDefinitions             TriggerDefinitions  `read:"triggers,TriggerDefinition" inherit:"triggers,Parent"`
 
 	Parent           *PolicyType  `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
 	TargetNodeTypes  []*NodeType  `lookup:"targets,TargetNodeTypeOrGroupTypeNames" inherit:"targets,Parent" json:"-" yaml:"-"`
@@ -24,6 +24,7 @@ func NewPolicyType(context *tosca.Context) *PolicyType {
 	return &PolicyType{
 		Type:                NewType(context),
 		PropertyDefinitions: make(PropertyDefinitions),
+		TriggerDefinitions:  make(TriggerDefinitions),
 	}
 }
 

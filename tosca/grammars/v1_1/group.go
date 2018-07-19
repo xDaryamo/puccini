@@ -89,5 +89,11 @@ func (self *Group) Normalize(s *normal.ServiceTemplate) *normal.Group {
 		}
 	}
 
+	for _, nodeTemplate := range self.MemberNodeTemplates {
+		if n, ok := s.NodeTemplates[nodeTemplate.Name]; ok {
+			g.Members = append(g.Members, n)
+		}
+	}
+
 	return g
 }

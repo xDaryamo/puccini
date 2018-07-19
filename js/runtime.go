@@ -2,8 +2,10 @@ package js
 
 import (
 	"fmt"
+	"os"
 	"reflect"
 
+	"github.com/beevik/etree"
 	"github.com/dop251/goja"
 	"github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/common"
@@ -13,9 +15,14 @@ import (
 func NewRuntime(name string) *goja.Runtime {
 	runtime := goja.New()
 	runtime.SetFieldNameMapper(mapper)
+	runtime.Set("stdout", os.Stdout)
+	runtime.Set("stderr", os.Stderr)
+	runtime.Set("stdin", os.Stdin)
 	runtime.Set("log", format.NewLog(log, name))
 	runtime.Set("sprintf", fmt.Sprintf)
 	runtime.Set("timestamp", common.Timestamp)
+	runtime.Set("newKey", clout.NewKey)
+	runtime.Set("newXmlDocument", etree.NewDocument)
 	return runtime
 }
 

@@ -31,6 +31,9 @@ func TestParse(t *testing.T) {
 	testParse(t, "tosca-grammar/substitution-mapping.yaml", nil)
 	testParse(t, "tosca-grammar/unicode.yaml", nil)
 	testParse(t, "tosca-grammar/workflows.yaml", nil)
+	testParse(t, "js/generate.yaml", nil)
+	testParse(t, "js/generate-xml.yaml", nil)
+	testParse(t, "kubernetes/bookinfo/bookinfo-simple.yaml", nil)
 }
 
 var ROOT string

@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  digest = "1:f25dfe4538112147d22e4c8437efbc2e216112bec37277534ffe146935064ea8"
+  name = "github.com/beevik/etree"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "9d7e8feddccb4ed1b8afb54e368bd323d2ff652c"
+  version = "v1.0.1"
+
+[[projects]]
   digest = "1:975f3864da443fad01c3ea07fae30307cfb6301c62cf4051e97b1476b708ae86"
   name = "github.com/dlclark/regexp2"
   packages = [
@@ -151,6 +159,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/beevik/etree",
     "github.com/dop251/goja",
     "github.com/fatih/color",
     "github.com/hokaccha/go-prettyjson",

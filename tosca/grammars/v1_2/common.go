@@ -11,9 +11,9 @@ var log = logging.MustGetLogger("grammars.v1_2")
 var Readers = make(map[string]tosca.Reader)
 
 func init() {
+	Readers["Artifact"] = v1_1.ReadArtifact
 	Readers["ArtifactDefinition"] = v1_1.ReadArtifactDefinition
 	Readers["ArtifactType"] = v1_1.ReadArtifactType
-	Readers["Artifact"] = v1_1.ReadArtifact
 	Readers["AttributeDefinition"] = v1_1.ReadAttributeDefinition
 	Readers["CapabilityAssignment"] = v1_1.ReadCapabilityAssignment
 	Readers["CapabilityDefinition"] = v1_1.ReadCapabilityDefinition
@@ -25,8 +25,8 @@ func init() {
 	Readers["DataType"] = v1_1.ReadDataType
 	Readers["EntrySchema"] = v1_1.ReadEntrySchema
 	Readers["EventFilter"] = v1_1.ReadEventFilter
-	Readers["GroupType"] = v1_1.ReadGroupType
 	Readers["Group"] = v1_1.ReadGroup
+	Readers["GroupType"] = v1_1.ReadGroupType
 	Readers["Import"] = v1_1.ReadImport
 	Readers["InterfaceAssignment"] = v1_1.ReadInterfaceAssignment
 	Readers["InterfaceDefinition"] = v1_1.ReadInterfaceDefinition
@@ -40,8 +40,8 @@ func init() {
 	Readers["OperationDefinition"] = v1_1.ReadOperationDefinition
 	Readers["OperationImplementation"] = v1_1.ReadOperationImplementation
 	Readers["ParameterDefinition"] = v1_1.ReadParameterDefinition
-	Readers["PolicyType"] = v1_1.ReadPolicyType
 	Readers["Policy"] = v1_1.ReadPolicy
+	Readers["PolicyType"] = v1_1.ReadPolicyType
 	Readers["PropertyDefinition"] = v1_1.ReadPropertyDefinition
 	Readers["PropertyMapping"] = ReadPropertyMapping // new
 	Readers["range"] = v1_1.ReadRange
@@ -62,6 +62,7 @@ func init() {
 	Readers["timestamp"] = v1_1.ReadTimestamp
 	Readers["TopologyTemplate"] = ReadTopologyTemplate // override
 	Readers["TriggerDefinition"] = v1_1.ReadTriggerDefinition
+	Readers["TriggerDefinitionCondition"] = v1_1.ReadTriggerDefinitionCondition
 	Readers["Unit"] = v1_1.ReadUnit
 	Readers["Value"] = v1_1.ReadValue
 	Readers["version"] = v1_1.ReadVersion

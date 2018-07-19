@@ -3,10 +3,10 @@ clout.exec('tosca.utils');
 
 tosca.coerce();
 
-specs = []
+specs = [];
 
-for (name in clout.vertexes) {
-	vertex = clout.vertexes[name];
+for (v in clout.vertexes) {
+	vertex = clout.vertexes[v];
 	if (!tosca.isNodeTemplate(vertex))
 		continue;
 	nodeTemplate = vertex.properties;

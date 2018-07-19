@@ -16,8 +16,8 @@ tosca.traverseValues = function(traverser) {
 		tosca.traverseObjectValues(traverser, clout.properties.tosca.outputs);
 	}
 
-	for (name in clout.vertexes) {
-		vertex = clout.vertexes[name];
+	for (v in clout.vertexes) {
+		vertex = clout.vertexes[v];
 		if (!tosca.isNodeTemplate(vertex))
 			continue;
 		nodeTemplate = vertex.properties;

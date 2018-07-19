@@ -78,7 +78,53 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 		}
 	}
 
-	// TODO: groups and policies?
+	groups := make(map[string]*clout.Vertex)
+
+	// Groups
+	for _, group := range s.Groups {
+		v := c.NewVertex(clout.NewKey())
+
+		groups[group.Name] = v
+
+		SetMetadata(v, "group")
+		v.Properties["name"] = group.Name
+		v.Properties["description"] = group.Description
+		v.Properties["types"] = group.Types
+		v.Properties["properties"] = group.Properties
+		v.Properties["interfaces"] = group.Interfaces
+
+		for _, nodeTemplate := range group.Members {
+			vv := nodeTemplates[nodeTemplate.Name]
+			e := v.NewEdgeTo(vv)
+
+			SetMetadata(e, "member")
+		}
+	}
+
+	// Policies
+	for _, policy := range s.Policies {
+		v := c.NewVertex(clout.NewKey())
+
+		SetMetadata(v, "policy")
+		v.Properties["name"] = policy.Name
+		v.Properties["description"] = policy.Description
+		v.Properties["types"] = policy.Types
+		v.Properties["properties"] = policy.Properties
+
+		for _, nodeTemplate := range policy.NodeTemplateTargets {
+			vv := nodeTemplates[nodeTemplate.Name]
+			e := v.NewEdgeTo(vv)
+
+			SetMetadata(e, "nodeTemplateTarget")
+		}
+
+		for _, group := range policy.GroupTargets {
+			vv := groups[group.Name]
+			e := v.NewEdgeTo(vv)
+
+			SetMetadata(e, "groupTarget")
+		}
+	}
 
 	// Substitution
 	if s.Substitution != nil {

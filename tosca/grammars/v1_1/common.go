@@ -13,9 +13,9 @@ var Readers = make(map[string]tosca.Reader)
 var DefaultScriptNamespace = make(tosca.ScriptNamespace)
 
 func init() {
+	Readers["Artifact"] = ReadArtifact
 	Readers["ArtifactDefinition"] = ReadArtifactDefinition
 	Readers["ArtifactType"] = ReadArtifactType
-	Readers["Artifact"] = ReadArtifact
 	Readers["AttributeDefinition"] = ReadAttributeDefinition
 	Readers["CapabilityAssignment"] = ReadCapabilityAssignment
 	Readers["CapabilityDefinition"] = ReadCapabilityDefinition
@@ -27,8 +27,8 @@ func init() {
 	Readers["DataType"] = ReadDataType
 	Readers["EntrySchema"] = ReadEntrySchema
 	Readers["EventFilter"] = ReadEventFilter
-	Readers["GroupType"] = ReadGroupType
 	Readers["Group"] = ReadGroup
+	Readers["GroupType"] = ReadGroupType
 	Readers["Import"] = ReadImport
 	Readers["InterfaceAssignment"] = ReadInterfaceAssignment
 	Readers["InterfaceDefinition"] = ReadInterfaceDefinition
@@ -41,8 +41,8 @@ func init() {
 	Readers["OperationDefinition"] = ReadOperationDefinition
 	Readers["OperationImplementation"] = ReadOperationImplementation
 	Readers["ParameterDefinition"] = ReadParameterDefinition
-	Readers["PolicyType"] = ReadPolicyType
 	Readers["Policy"] = ReadPolicy
+	Readers["PolicyType"] = ReadPolicyType
 	Readers["PropertyDefinition"] = ReadPropertyDefinition
 	Readers["range"] = ReadRange
 	Readers["RangeEntity"] = ReadRangeEntity
@@ -62,6 +62,7 @@ func init() {
 	Readers["timestamp"] = ReadTimestamp
 	Readers["TopologyTemplate"] = ReadTopologyTemplate
 	Readers["TriggerDefinition"] = ReadTriggerDefinition
+	Readers["TriggerDefinitionCondition"] = ReadTriggerDefinitionCondition
 	Readers["Unit"] = ReadUnit
 	Readers["Value"] = ReadValue
 	Readers["version"] = ReadVersion

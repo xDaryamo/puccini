@@ -13,10 +13,11 @@ type Policy struct {
 	*Entity `name:"policy"`
 	Name    string `namespace:""`
 
-	PolicyTypeName                 *string   `read:"type" require:"type"`
-	Description                    *string   `read:"description" inherit:"description,PolicyType"`
-	Properties                     Values    `read:"properties,Value"`
-	TargetNodeTemplateOrGroupNames *[]string `read:"targets"`
+	PolicyTypeName                 *string            `read:"type" require:"type"`
+	Description                    *string            `read:"description" inherit:"description,PolicyType"`
+	Properties                     Values             `read:"properties,Value"`
+	TargetNodeTemplateOrGroupNames *[]string          `read:"targets"`
+	TriggerDefinitions             TriggerDefinitions `read:"triggers,TriggerDefinition" inherit:"triggers,PolicyType"`
 
 	PolicyType          *PolicyType     `lookup:"type,PolicyTypeName" json:"-" yaml:"-"`
 	TargetNodeTemplates []*NodeTemplate `lookup:"targets,TargetNodeTemplateOrGroupNames" json:"-" yaml:"-"`
@@ -25,9 +26,10 @@ type Policy struct {
 
 func NewPolicy(context *tosca.Context) *Policy {
 	return &Policy{
-		Entity:     NewEntity(context),
-		Name:       context.Name,
-		Properties: make(Values),
+		Entity:             NewEntity(context),
+		Name:               context.Name,
+		Properties:         make(Values),
+		TriggerDefinitions: make(TriggerDefinitions),
 	}
 }
 
@@ -91,6 +93,18 @@ func (self *Policy) Normalize(s *normal.ServiceTemplate) *normal.Policy {
 	}
 
 	self.Properties.Normalize(p.Properties)
+
+	for _, nodeTemplate := range self.TargetNodeTemplates {
+		if n, ok := s.NodeTemplates[nodeTemplate.Name]; ok {
+			p.NodeTemplateTargets = append(p.NodeTemplateTargets, n)
+		}
+	}
+
+	for _, group := range self.TargetGroups {
+		if g, ok := s.Groups[group.Name]; ok {
+			p.GroupTargets = append(p.GroupTargets, g)
+		}
+	}
 
 	return p
 }
