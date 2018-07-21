@@ -4,11 +4,10 @@ import (
 	"fmt"
 
 	"github.com/dop251/goja"
-	"github.com/tliron/puccini/clout"
 )
 
-func GetPlugins(name string, c *clout.Clout) ([]goja.Value, error) {
-	scripts, err := GetScripts(name, c)
+func GetPlugins(name string, clout *CloutContext) ([]goja.Value, error) {
+	scripts, err := GetScripts(name, clout.Clout)
 	if err != nil {
 		return nil, nil
 	}
@@ -26,7 +25,7 @@ func GetPlugins(name string, c *clout.Clout) ([]goja.Value, error) {
 			return nil, err
 		}
 
-		runtime := NewRuntime("plugin")
+		runtime := clout.NewRuntime()
 		_, err = runtime.RunProgram(program)
 		if err != nil {
 			return nil, err

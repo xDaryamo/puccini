@@ -38,9 +38,9 @@ for (v in clout.vertexes) {
 	}
 
 	// Run plugins
-	plugins = puccini.getPlugins('kubernetes.plugins');
-	for (i in plugins) {
-		plugin = plugins[i];
+	plugins = clout.getPlugins('kubernetes.plugins');
+	for (p in plugins) {
+		plugin = plugins[p];
 		log.debugf('calling plugin: %s', plugin.name);
 		if (plugin.process)
 			entries = plugin.process(clout, vertex, entries);

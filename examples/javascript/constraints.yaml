@@ -1,0 +1,38 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+# To apply the constraints run:
+#   puccini-tosca parse --coerce constraints.yaml
+
+# Also see: functions.yaml
+
+metadata:
+
+  # Your code must provide a global function named "validate"
+  # The first argument is always the value to validate
+  # It must return "true" if valid
+  puccini-js.source.multiple_of: |-
+    function validate(value, multiple) {
+      if (arguments.length !== 2)
+        throw 'must have 1 argument';
+      return (value / multiple) % 1 == 0;
+    }
+
+node_types:
+
+  Rack:
+    derived_from: Root
+    properties:
+      slots:
+        type: integer
+        constraints:
+        # Our custom constraint
+        - multiple_of: 4
+
+topology_template:
+
+  node_templates:
+
+    rack:
+      type: Rack
+      properties:
+        slots: 8

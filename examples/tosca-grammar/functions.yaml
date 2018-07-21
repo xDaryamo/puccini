@@ -3,8 +3,6 @@ tosca_definitions_version: tosca_simple_yaml_1_1
 # To evaluate the functions run:
 #   puccini-tosca parse --coerce functions.yaml
 
-# Also see: functions-custom.yaml
-
 node_types:
 
   Ports:
@@ -40,6 +38,9 @@ topology_template:
           - ::1
         # Some functions support special "modelable entity names", such as "SELF"
         management_port: { get_property: [ SELF, admin_port ] }
+
+        # In Puccini you can also create your own custom functions
+        # See: examples/javascript/functions.yaml
 
     ports2:
       type: Ports

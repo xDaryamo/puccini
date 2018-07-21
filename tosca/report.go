@@ -17,16 +17,16 @@ func (self *Context) Report(message string) {
 	*self.Problems = append(*self.Problems, problems.Problem{Message: message, URL: self.URL.String()})
 }
 
-func (self *Context) Reportf(format string, arg ...interface{}) {
-	self.Report(fmt.Sprintf(format, arg...))
+func (self *Context) Reportf(f string, arg ...interface{}) {
+	self.Report(fmt.Sprintf(f, arg...))
 }
 
 func (self *Context) ReportPath(message string) {
 	self.Report(fmt.Sprintf("%s: %s", format.ColorPath(self.Path), message))
 }
 
-func (self *Context) ReportPathf(format string, arg ...interface{}) {
-	self.ReportPath(fmt.Sprintf(format, arg...))
+func (self *Context) ReportPathf(f string, arg ...interface{}) {
+	self.ReportPath(fmt.Sprintf(f, arg...))
 }
 
 func (self *Context) ReportError(err error) {

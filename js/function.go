@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/format"
 )
 
@@ -14,17 +13,17 @@ import (
 //
 
 type Function struct {
-	Clout       *clout.Clout `json:"-" yaml:"-"`
-	Name        string       `json:"name" yaml:"name"`
-	Path        string       `json:"path" yaml:"path"`
-	Arguments   []Coercible  `json:"arguments" yaml:"arguments"`
-	Constraints Constraints  `json:"constraints" yaml:"constraints"`
-	Site        interface{}  `json:"-" yaml:"-"`
-	Source      interface{}  `json:"-" yaml:"-"`
-	Target      interface{}  `json:"-" yaml:"-"`
+	Context     *CloutContext `json:"-" yaml:"-"`
+	Name        string        `json:"name" yaml:"name"`
+	Path        string        `json:"path" yaml:"path"`
+	Arguments   []Coercible   `json:"arguments" yaml:"arguments"`
+	Constraints Constraints   `json:"constraints" yaml:"constraints"`
+	Site        interface{}   `json:"-" yaml:"-"`
+	Source      interface{}   `json:"-" yaml:"-"`
+	Target      interface{}   `json:"-" yaml:"-"`
 }
 
-func NewFunction(data interface{}, site interface{}, source interface{}, target interface{}, c *clout.Clout) (*Function, error) {
+func (self *CloutContext) NewFunction(data interface{}, site interface{}, source interface{}, target interface{}) (*Function, error) {
 	map_, ok := data.(ard.Map)
 	if !ok {
 		return nil, fmt.Errorf("not a function")
@@ -35,7 +34,12 @@ func NewFunction(data interface{}, site interface{}, source interface{}, target 
 		return nil, fmt.Errorf("not a function")
 	}
 
-	self := Function{Clout: c, Site: site, Source: source, Target: target}
+	c := Function{
+		Context: self,
+		Site:    site,
+		Source:  source,
+		Target:  target,
+	}
 
 	f, ok := function.(ard.Map)
 	if !ok {
@@ -46,7 +50,7 @@ func NewFunction(data interface{}, site interface{}, source interface{}, target 
 	if !ok {
 		return nil, fmt.Errorf("malformed function: no \"name\"")
 	}
-	self.Name, ok = v.(string)
+	c.Name, ok = v.(string)
 	if !ok {
 		return nil, fmt.Errorf("malformed function: \"name\" not a string")
 	}
@@ -55,7 +59,7 @@ func NewFunction(data interface{}, site interface{}, source interface{}, target 
 	if !ok {
 		return nil, fmt.Errorf("malformed function: no \"path\"")
 	}
-	self.Path, ok = v.(string)
+	c.Path, ok = v.(string)
 	if !ok {
 		return nil, fmt.Errorf("malformed function: \"path\" not a string")
 	}
@@ -69,22 +73,22 @@ func NewFunction(data interface{}, site interface{}, source interface{}, target 
 		return nil, fmt.Errorf("malformed function: \"arguments\" not a list")
 	}
 
-	self.Arguments = make([]Coercible, len(originalArguments))
+	c.Arguments = make([]Coercible, len(originalArguments))
 	for index, argument := range originalArguments {
 		var err error
-		self.Arguments[index], err = NewCoercible(argument, site, source, target, c)
+		c.Arguments[index], err = self.NewCoercible(argument, site, source, target)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	var err error
-	self.Constraints, err = NewConstraints(map_, c)
+	c.Constraints, err = self.NewConstraints(map_)
 	if err != nil {
 		return nil, err
 	}
 
-	return &self, nil
+	return &c, nil
 }
 
 func (self *Function) Signature(arguments []interface{}) string {
@@ -104,7 +108,7 @@ func (self *Function) Coerce() (interface{}, error) {
 
 	log.Infof("{evaluate} %s %s", self.Path, self.Signature(arguments))
 
-	r, err := CallClout(self.Clout, self.Site, self.Source, self.Target, self.Name, "evaluate", arguments)
+	r, err := self.Context.CallFunction(self.Site, self.Source, self.Target, self.Name, "evaluate", arguments)
 	if err != nil {
 		return nil, self.WrapError(arguments, err)
 	}
@@ -137,7 +141,7 @@ func (self *Function) Validate(value interface{}) (bool, error) {
 
 	log.Infof("{validate} %s %s", self.Path, self.Signature(arguments))
 
-	r, err := CallClout(self.Clout, self.Site, self.Source, self.Target, self.Name, "validate", arguments)
+	r, err := self.Context.CallFunction(self.Site, self.Source, self.Target, self.Name, "validate", arguments)
 	if err != nil {
 		return false, self.WrapError(arguments, err)
 	}

@@ -4,12 +4,11 @@ import (
 	"fmt"
 
 	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/clout"
 )
 
 type Constraints []*Function
 
-func NewConstraints(map_ ard.Map, c *clout.Clout) (Constraints, error) {
+func (self *CloutContext) NewConstraints(map_ ard.Map) (Constraints, error) {
 	v, ok := map_["constraints"]
 	if !ok {
 		return nil, nil
@@ -23,7 +22,7 @@ func NewConstraints(map_ ard.Map, c *clout.Clout) (Constraints, error) {
 	constraints := make(Constraints, len(list))
 	for index, element := range list {
 		var err error
-		constraints[index], err = NewFunction(element, nil, nil, nil, c)
+		constraints[index], err = self.NewFunction(element, nil, nil, nil)
 		if err != nil {
 			return nil, err
 		}

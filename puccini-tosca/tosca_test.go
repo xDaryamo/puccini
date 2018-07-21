@@ -1,4 +1,4 @@
-package parser
+package main
 
 import (
 	"fmt"
@@ -8,6 +8,7 @@ import (
 	"github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parser"
 	"github.com/tliron/puccini/tosca/problems"
 )
 
@@ -17,7 +18,6 @@ func TestParse(t *testing.T) {
 	testParse(t, "tosca-grammar/data-types.yaml", nil)
 	testParse(t, "tosca-grammar/descriptions.yaml", nil)
 	testParse(t, "tosca-grammar/dsl-definitions.yaml", nil)
-	testParse(t, "tosca-grammar/functions-custom.yaml", nil)
 	testParse(t, "tosca-grammar/functions.yaml", nil)
 	testParse(t, "tosca-grammar/inputs-and-outputs.yaml", map[string]interface{}{"ram": "1gib"})
 	testParse(t, "tosca-grammar/interfaces.yaml", nil)
@@ -31,8 +31,10 @@ func TestParse(t *testing.T) {
 	testParse(t, "tosca-grammar/substitution-mapping.yaml", nil)
 	testParse(t, "tosca-grammar/unicode.yaml", nil)
 	testParse(t, "tosca-grammar/workflows.yaml", nil)
-	testParse(t, "js/generate.yaml", nil)
-	testParse(t, "js/generate-xml.yaml", nil)
+	testParse(t, "javascript/constraints.yaml", nil)
+	testParse(t, "javascript/functions.yaml", nil)
+	testParse(t, "javascript/exec.yaml", nil)
+	testParse(t, "javascript/xml.yaml", nil)
 	testParse(t, "kubernetes/bookinfo/bookinfo-simple.yaml", nil)
 }
 
@@ -53,7 +55,7 @@ func testParse(t *testing.T, url string, inputs map[string]interface{}) {
 		var p *problems.Problems
 		var err error
 
-		if s, p, err = Parse(fmt.Sprintf("%s/examples/%s", ROOT, url), inputs); err != nil {
+		if s, p, err = parser.Parse(fmt.Sprintf("%s/examples/%s", ROOT, url), inputs); err != nil {
 			t.Errorf("%s\n%s", err.Error(), p)
 			return
 		}

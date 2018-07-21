@@ -4,10 +4,9 @@ import (
 	"fmt"
 
 	"github.com/dop251/goja"
-	"github.com/tliron/puccini/clout"
 )
 
-func Call(runtime *goja.Runtime, functionName string, arguments []interface{}) (interface{}, error) {
+func CallFunction(runtime *goja.Runtime, functionName string, arguments []interface{}) (interface{}, error) {
 	value := runtime.Get(functionName)
 	if value == nil {
 		return nil, fmt.Errorf("script does not have a \"%s\" function", functionName)
@@ -29,28 +28,4 @@ func Call(runtime *goja.Runtime, functionName string, arguments []interface{}) (
 	}
 
 	return r.Export(), nil
-}
-
-func CallClout(c *clout.Clout, site interface{}, source interface{}, target interface{}, name string, functionName string, arguments []interface{}) (interface{}, error) {
-	sourceCode, err := GetScriptSourceCode(name, c)
-	if err != nil {
-		return nil, err
-	}
-
-	program, err := GetProgram(name, sourceCode)
-	if err != nil {
-		return nil, err
-	}
-
-	runtime := NewCloutRuntime(name, c)
-	runtime.Set("site", site)
-	runtime.Set("source", source)
-	runtime.Set("target", target)
-
-	_, err = runtime.RunProgram(program)
-	if err != nil {
-		return nil, err
-	}
-
-	return Call(runtime, functionName, arguments)
 }

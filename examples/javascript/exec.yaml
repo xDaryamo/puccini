@@ -1,0 +1,49 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+# To execute the scriptlet run:
+#   puccini-tosca compile exec.yaml | puccini-js exec endpoints
+
+# Also see: functions.yaml
+
+metadata:
+  # Make sure to look at imports/endpoints.js
+  puccini-js.import.endpoints: imports/endpoints.js
+
+topology_template:
+
+  node_templates:
+
+    frontend:
+      type: LoadBalancer
+      capabilities:
+        client:
+          properties:
+            port: 80
+      requirements:
+      - application: application
+
+    application:
+      type: WebApplication
+      capabilities:
+        app_endpoint:
+          properties:
+            protocol: http
+            port: 8080
+
+    node_js:
+      type: WebServer
+      capabilities:
+        admin_endpoint:
+          properties:
+            protocol: http
+            port: 8081
+        data_endpoint:
+          properties:
+            port: 9000
+
+    host:
+      type: Compute
+      capabilities:
+        endpoint:
+          properties:
+            port: 9001

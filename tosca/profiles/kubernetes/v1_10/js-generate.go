@@ -9,10 +9,10 @@ clout.exec('tosca.utils');
 
 tosca.coerce();
 
-specs = []
+specs = [];
 
-for (name in clout.vertexes) {
-	vertex = clout.vertexes[name];
+for (v in clout.vertexes) {
+	vertex = clout.vertexes[v];
 	if (!tosca.isNodeTemplate(vertex))
 		continue;
 	nodeTemplate = vertex.properties;
@@ -44,9 +44,9 @@ for (name in clout.vertexes) {
 	}
 
 	// Run plugins
-	plugins = puccini.getPlugins('kubernetes.plugins');
-	for (i in plugins) {
-		plugin = plugins[i];
+	plugins = clout.getPlugins('kubernetes.plugins');
+	for (p in plugins) {
+		plugin = plugins[p];
 		log.debugf('calling plugin: %s', plugin.name);
 		if (plugin.process)
 			entries = plugin.process(clout, vertex, entries);

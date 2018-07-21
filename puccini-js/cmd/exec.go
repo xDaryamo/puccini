@@ -42,9 +42,8 @@ func Exec(name string, sourceCode string, c *clout.Clout) error {
 		return err
 	}
 
-	runtime := js.NewCloutRuntime(name, c)
-	runtime.Set("puccini", NewPuccini(c))
-
+	context := js.NewContext(name, log, common.Quiet, ardFormat, output)
+	_, runtime := context.NewCloutContext(c)
 	_, err = runtime.RunProgram(program)
 
 	return js.UnwrapError(err)

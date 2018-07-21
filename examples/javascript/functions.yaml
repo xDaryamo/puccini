@@ -1,0 +1,45 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+# To evaluate the functions run:
+#   puccini-tosca parse --coerce functions.yaml
+
+# Also see: examples/tosca-grammar/functions.yaml, examples/tosca-grammar/metadata.yaml
+
+metadata:
+
+  # Use metadata prefixed with "puccini-js.source." to embed JavaScript source code
+  # The postfix is the function name
+  # Your code must provide a global function named "evaluate"
+  # It can have any number of arguments
+  puccini-js.source.in_bed: |-
+    function evaluate() {
+      a = [];
+      for (i in arguments) {
+        a.push(arguments[i] + ' in bed');
+      }
+      return a.join('; ');
+    }
+
+  # You can also use "puccini-js.import." if you prefer to import source code from a separate file
+  puccini-js.import.double: imports/double.js
+
+node_types:
+
+  Rack:
+    derived_from: Root
+    properties:
+      status:
+        type: string
+      slots:
+        type: integer
+
+topology_template:
+
+  node_templates:
+
+    rack:
+      type: Rack
+      properties:
+        # Using our custom functions
+        status: { in_bed: [ Sleeping, Eating, Coding ] }
+        slots: { double: 4 }

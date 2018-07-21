@@ -14,21 +14,24 @@ func Coerce(c *clout.Clout, p *problems.Problems) *clout.Clout {
 		return c
 	}
 
-	Transform(PrepareValue, c, p)
-	Transform(CoerceValue, c, p)
+	context := js.NewContext("coerce", log, false, "yaml", "")
+	cloutContext, _ := context.NewCloutContext(c)
+
+	Transform(PrepareValue, cloutContext, p)
+	Transform(CoerceValue, cloutContext, p)
 
 	return c
 }
 
 // Transformer signature
-func PrepareValue(value interface{}, site interface{}, source interface{}, target interface{}, c *clout.Clout) (interface{}, bool, error) {
+func PrepareValue(value interface{}, site interface{}, source interface{}, target interface{}, context *js.CloutContext) (interface{}, bool, error) {
 	var err error
-	value, err = js.NewCoercible(value, site, source, target, c)
+	value, err = context.NewCoercible(value, site, source, target)
 	return value, true, err
 }
 
 // Transformer signature
-func CoerceValue(value interface{}, site interface{}, source interface{}, target interface{}, c *clout.Clout) (interface{}, bool, error) {
+func CoerceValue(value interface{}, site interface{}, source interface{}, target interface{}, context *js.CloutContext) (interface{}, bool, error) {
 	coercible, ok := value.(js.Coercible)
 	if !ok {
 		return nil, false, nil

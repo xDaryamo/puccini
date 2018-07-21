@@ -22,18 +22,18 @@ func NewLog(logger *logging.Logger, name string) *Log {
 	}
 }
 
-func (self *Log) Errorf(fmt string, args ...interface{}) {
-	self.logger.Errorf(self.prefix+fmt, args...)
+func (self *Log) Errorf(f string, args ...interface{}) {
+	self.logger.Errorf(self.prefix+f, args...)
 }
 
-func (self *Log) Warningf(fmt string, args ...interface{}) {
-	self.logger.Warningf(self.prefix+fmt, args...)
+func (self *Log) Warningf(f string, args ...interface{}) {
+	self.logger.Warningf(self.prefix+f, args...)
 }
 
-func (self *Log) Infof(fmt string, args ...interface{}) {
-	self.logger.Infof(self.prefix+fmt, args...)
+func (self *Log) Infof(f string, args ...interface{}) {
+	self.logger.Infof(self.prefix+f, args...)
 }
 
-func (self *Log) Debugf(fmt string, args ...interface{}) {
-	self.logger.Debugf(self.prefix+fmt, args...)
+func (self *Log) Debugf(f string, args ...interface{}) {
+	self.logger.Debugf(self.prefix+f, args...)
 }

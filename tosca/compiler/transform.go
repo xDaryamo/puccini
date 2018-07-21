@@ -7,25 +7,25 @@ import (
 	"github.com/tliron/puccini/tosca/problems"
 )
 
-type Transformer func(interface{}, interface{}, interface{}, interface{}, *clout.Clout) (interface{}, bool, error)
+type Transformer func(interface{}, interface{}, interface{}, interface{}, *js.CloutContext) (interface{}, bool, error)
 
-func Transform(transformer Transformer, c *clout.Clout, p *problems.Problems) {
-	if tosca, ok := GetMap(c.Properties, "tosca"); ok {
-		TransformValues(transformer, tosca, "inputs", nil, nil, nil, c, p)
-		TransformValues(transformer, tosca, "outputs", nil, nil, nil, c, p)
+func Transform(transformer Transformer, context *js.CloutContext, p *problems.Problems) {
+	if tosca, ok := GetMap(context.Properties, "tosca"); ok {
+		TransformValues(transformer, tosca, "inputs", nil, nil, nil, context, p)
+		TransformValues(transformer, tosca, "outputs", nil, nil, nil, context, p)
 	}
 
-	for _, vertex := range c.Vertexes {
+	for _, vertex := range context.Vertexes {
 		if nodeTemplate, ok := GetToscaVertexProperties(vertex); ok {
-			TransformValues(transformer, nodeTemplate, "properties", vertex, nil, nil, c, p)
-			TransformValues(transformer, nodeTemplate, "attributes", vertex, nil, nil, c, p)
-			TransformInterfaces(transformer, nodeTemplate, vertex, nil, nil, c, p)
+			TransformValues(transformer, nodeTemplate, "properties", vertex, nil, nil, context, p)
+			TransformValues(transformer, nodeTemplate, "attributes", vertex, nil, nil, context, p)
+			TransformInterfaces(transformer, nodeTemplate, vertex, nil, nil, context, p)
 
 			if capabilities, ok := GetMap(nodeTemplate, "capabilities"); ok {
 				for _, value := range capabilities {
 					if capability, ok := value.(ard.Map); ok {
-						TransformValues(transformer, capability, "properties", vertex, nil, nil, c, p)
-						TransformValues(transformer, capability, "attributes", vertex, nil, nil, c, p)
+						TransformValues(transformer, capability, "properties", vertex, nil, nil, context, p)
+						TransformValues(transformer, capability, "attributes", vertex, nil, nil, context, p)
 					}
 				}
 			}
@@ -33,7 +33,7 @@ func Transform(transformer Transformer, c *clout.Clout, p *problems.Problems) {
 			if artifacts, ok := GetMap(nodeTemplate, "artifacts"); ok {
 				for _, value := range artifacts {
 					if artifact, ok := value.(ard.Map); ok {
-						TransformValues(transformer, artifact, "properties", vertex, nil, nil, c, p)
+						TransformValues(transformer, artifact, "properties", vertex, nil, nil, context, p)
 					}
 				}
 			}
@@ -41,15 +41,15 @@ func Transform(transformer Transformer, c *clout.Clout, p *problems.Problems) {
 
 		for _, edge := range vertex.EdgesOut {
 			if relationship, ok := GetToscaEdgeProperties(edge); ok {
-				TransformValues(transformer, relationship, "properties", edge, vertex, edge.Target, c, p)
-				TransformValues(transformer, relationship, "attributes", edge, vertex, edge.Target, c, p)
-				TransformInterfaces(transformer, relationship, edge, vertex, edge.Target, c, p)
+				TransformValues(transformer, relationship, "properties", edge, vertex, edge.Target, context, p)
+				TransformValues(transformer, relationship, "attributes", edge, vertex, edge.Target, context, p)
+				TransformInterfaces(transformer, relationship, edge, vertex, edge.Target, context, p)
 			}
 		}
 	}
 }
 
-func TransformValues(transformer Transformer, o ard.Map, fieldName string, site interface{}, source interface{}, target interface{}, c *clout.Clout, p *problems.Problems) {
+func TransformValues(transformer Transformer, o ard.Map, fieldName string, site interface{}, source interface{}, target interface{}, context *js.CloutContext, p *problems.Problems) {
 	value, ok := o[fieldName]
 	if !ok {
 		return
@@ -62,7 +62,7 @@ func TransformValues(transformer Transformer, o ard.Map, fieldName string, site 
 
 	for k, v := range map_ {
 		var err error
-		v, ok, err = transformer(v, site, source, target, c)
+		v, ok, err = transformer(v, site, source, target, context)
 		if !ok {
 			continue
 		}
@@ -78,15 +78,15 @@ func TransformValues(transformer Transformer, o ard.Map, fieldName string, site 
 	}
 }
 
-func TransformInterfaces(transformer Transformer, o ard.Map, site interface{}, source interface{}, target interface{}, c *clout.Clout, p *problems.Problems) {
+func TransformInterfaces(transformer Transformer, o ard.Map, site interface{}, source interface{}, target interface{}, context *js.CloutContext, p *problems.Problems) {
 	if interfaces, ok := GetMap(o, "interfaces"); ok {
 		for _, value := range interfaces {
 			if intr, ok := value.(ard.Map); ok {
-				TransformValues(transformer, intr, "inputs", site, source, target, c, p)
+				TransformValues(transformer, intr, "inputs", site, source, target, context, p)
 				if operations, ok := GetMap(intr, "operations"); ok {
 					for _, value := range operations {
 						if operation, ok := value.(ard.Map); ok {
-							TransformValues(transformer, operation, "inputs", site, source, target, c, p)
+							TransformValues(transformer, operation, "inputs", site, source, target, context, p)
 						}
 					}
 				}

@@ -81,6 +81,9 @@ node_types:
         constraints:
         - in_range: [ 1m, 1h ]
 
+      # In Puccini you can also create your own custom constraints
+      # See: examples/javascript/constraints.yaml
+
 data_types:
 
   Complex:

@@ -2,7 +2,6 @@ package js
 
 import (
 	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/clout"
 )
 
 //
@@ -10,47 +9,50 @@ import (
 //
 
 type Value struct {
-	Clout       *clout.Clout `json:"-" yaml:"-"`
-	Value       interface{}  `json:"value" yaml:"value"`
-	Constraints Constraints  `json:"constraints" yaml:"constraints"`
+	Context     *CloutContext `json:"-" yaml:"-"`
+	Value       interface{}   `json:"value" yaml:"value"`
+	Constraints Constraints   `json:"constraints" yaml:"constraints"`
 }
 
-func NewValue(data interface{}, site interface{}, source interface{}, target interface{}, c *clout.Clout) (*Value, error) {
-	self := Value{Clout: c, Value: data}
+func (self *CloutContext) NewValue(data interface{}, site interface{}, source interface{}, target interface{}) (*Value, error) {
+	c := Value{
+		Context: self,
+		Value:   data,
+	}
 
 	var err error
 	if map_, ok := data.(ard.Map); ok {
 		if v, ok := map_["value"]; ok {
-			self.Value = v
+			c.Value = v
 		} else if v, ok := map_["list"]; ok {
 			if l, ok := v.(ard.List); ok {
-				self.Value, err = NewCoercibleList(l, site, source, target, c)
+				c.Value, err = self.NewCoercibleList(l, site, source, target)
 				if err != nil {
 					return nil, err
 				}
 			} else {
-				return &self, nil
+				return &c, nil
 			}
 		} else if v, ok := map_["map"]; ok {
 			if m, ok := v.(ard.Map); ok {
-				self.Value, err = NewCoercibleMap(m, site, source, target, c)
+				c.Value, err = self.NewCoercibleMap(m, site, source, target)
 				if err != nil {
 					return nil, err
 				}
 			} else {
-				return &self, nil
+				return &c, nil
 			}
 		} else {
-			return &self, nil
+			return &c, nil
 		}
 
-		self.Constraints, err = NewConstraints(map_, c)
+		c.Constraints, err = self.NewConstraints(map_)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return &self, nil
+	return &c, nil
 }
 
 // Coercible interface
