@@ -2,6 +2,7 @@ package v1_1
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -42,9 +43,28 @@ func (self *WorkflowDefinition) GetKey() string {
 
 // tosca.Renderable interface
 func (self *WorkflowDefinition) Render() {
-	log.Info("{render} workflow definition")
+	log.Infof("{render} workflow definition: %s", self.Name)
 
-	self.StepDefinitions.Render(self.Context.FieldChild("steps", nil))
+	self.StepDefinitions.Render()
+}
+
+func (self *WorkflowDefinition) Normalize(s *normal.ServiceTemplate) *normal.Workflow {
+	log.Infof("{normalize} workflow: %s", self.Name)
+
+	w := s.NewWorkflow(self.Name)
+
+	if self.Description != nil {
+		w.Description = *self.Description
+	}
+
+	// TODO: support property definitions
+	//self.InputDefinitions.Normalize(w.Inputs)
+
+	for _, step := range self.StepDefinitions {
+		step.Normalize(w, s)
+	}
+
+	return w
 }
 
 //

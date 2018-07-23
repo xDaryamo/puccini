@@ -1,4 +1,69 @@
 tosca_definitions_version: tosca_simple_yaml_1_1
 
+# To execute the scriptlet run:
+#   puccini-tosca compile xml.yaml | puccini-js exec generate
+
+# Also see: exec.yaml
+
 metadata:
-  puccini-js.import.generate: imports/generate-xml.js
+  # Make sure to look at imports/bpmn.js
+  puccini-js.import.bpmn: imports/bpmn.js
+
+interface_types:
+
+  Backup:
+    start_backup: {}
+
+node_types:
+
+  MyDB:
+    derived_from: DBMS
+    interfaces:
+      Backup:
+        type: Backup
+
+topology_template:
+
+  node_templates:
+
+    web:
+      type: WebServer
+
+    db:
+      type: MyDB
+
+    server:
+      type: Compute
+
+  workflows:
+
+    backup:
+      steps:
+        notify_users:
+          target: web
+          activities: []
+          on_success:
+          - shutdown
+          - backup
+        shutdown:
+          target: web
+          activities:
+          - set_state: down
+          on_success:
+          - restart
+        backup:
+          target: db
+          activities:
+          - set_state: down
+          - call_operation: Backup.start_backup 
+          on_failure:
+          - notify_admins
+          on_success:
+          - restart
+        restart:
+          target: db
+          activities: []
+        notify_admins:
+          target: web
+          activities: []
+  

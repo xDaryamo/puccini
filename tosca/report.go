@@ -45,6 +45,10 @@ func (self *Context) ReportValueWrongType(requiredTypeNames ...string) {
 	self.ReportPathf("\"%s\" instead of %s", format.ColorTypeName(PrimitiveTypeName(self.Data)), format.ColoredOptions(requiredTypeNames, format.ColorTypeName))
 }
 
+func (self *Context) ReportValueWrongFormat(f string) {
+	self.ReportPathf("wrong format, must be \"%s\": %s", f, self.FormatBadData())
+}
+
 func (self *Context) ReportValueWrongLength(typeName string, length int) {
 	self.ReportPathf("\"%s\" does not have %d elements", format.ColorTypeName(typeName), length)
 }

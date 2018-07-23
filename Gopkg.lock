@@ -22,7 +22,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0e6528ed14a83d6ae0108b229640f2568f9dafc6bf5ad577173568f26408ea1a"
+  digest = "1:bb29cb859ed4086bc2ee44bf14ec03eaf5d7c84735e432f1d2011cc706d39808"
   name = "github.com/dop251/goja"
   packages = [
     ".",
@@ -32,7 +32,7 @@
     "token",
   ]
   pruneopts = "UT"
-  revision = "9183045acc25574e0dd2ad37d5e7f978b1a4de12"
+  revision = "ef8c030e3c96c5054c2f10ef925e7041e0583c07"
 
 [[projects]]
   digest = "1:865079840386857c809b72ce300be7580cb50d3d3129ce11bf9aa6ca2bc1934a"
@@ -119,11 +119,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:549be3f136b79ab1cc2a6c093c38954d0c04d060303510ed42b5a3825619848d"
+  digest = "1:d773e525476aefa22ea944a5425a9bfb99819b2e67eeb9b1966454fd57522bbf"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "bff228c7b664c5fce602223a05fb708fd8654986"
+  revision = "ac767d655b305d4e9612f5f6e33120b9176c4ad4"
 
 [[projects]]
   digest = "1:35624e69f9044fc305110dc5b80828ae19b4084780b0a3f85ed9bc0a7cb31f43"

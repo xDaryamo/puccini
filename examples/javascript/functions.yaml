@@ -3,7 +3,7 @@ tosca_definitions_version: tosca_simple_yaml_1_1
 # To evaluate the functions run:
 #   puccini-tosca parse --coerce functions.yaml
 
-# Also see: examples/tosca-grammar/functions.yaml, examples/tosca-grammar/metadata.yaml
+# Also see: examples/grammar/functions.yaml, examples/grammar/metadata.yaml
 
 metadata:
 

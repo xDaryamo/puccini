@@ -103,6 +103,9 @@ func (self *TopologyTemplate) Normalize(s *normal.ServiceTemplate) {
 	for _, p := range self.Policies {
 		s.Policies[p.Name] = p.Normalize(s)
 	}
+	for _, w := range self.WorkflowDefinitions {
+		s.Workflows[w.Name] = w.Normalize(s)
+	}
 
 	for _, nodeTemplate := range self.NodeTemplates {
 		nodeTemplate.SatisfyRequirements(s, self)

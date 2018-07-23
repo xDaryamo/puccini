@@ -1,4 +1,3 @@
-
 // This scriptlet gathers all endpoint capabilities and generates a report
 
 // "clout.exec" is used to execute other scriptlets in the Clout file
@@ -21,15 +20,16 @@ for (v in clout.vertexes) {
 
 	for (c in nodeTemplate.capabilities) {
 		capability = nodeTemplate.capabilities[c];
-		
+
 		// We'll skip capabilities that do not inherit from Endpoint
 		if (!('tosca.capabilities.Endpoint' in capability.types))
 			continue;
-		
+
+		// Adding to the report
 		endpoints.push({
-			name: nodeTemplate.name + '.' + c,
-			protocol: capability.properties.protocol,
-			port: capability.properties.port,
+			name : nodeTemplate.name + '.' + c,
+			protocol : capability.properties.protocol,
+			port : capability.properties.port,
 		});
 	}
 }

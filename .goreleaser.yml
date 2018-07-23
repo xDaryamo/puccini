@@ -38,10 +38,12 @@ archive:
   - LICENSE
   - NOTICE
   - puccini-csar
+  - examples/grammar/*
+  - examples/grammar/imports/*
+  - examples/javascript/*
+  - examples/javascript/imports/*
   - examples/kubernetes/bookinfo/*
   - examples/kubernetes/bookinfo/types/*
-  - examples/tosca-grammar/*
-  - examples/tosca-grammar/imports/*
 
   format_overrides:
   - goos: windows

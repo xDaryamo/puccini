@@ -53,7 +53,7 @@ type WorkflowStep struct {
 	// Filters
 	OnSuccessSteps []*WorkflowStep     `json:"-" yaml:"-"`
 	OnFailureSteps []*WorkflowStep     `json:"-" yaml:"-"`
-	Activies       []*WorkflowActivity `json:"-" yaml:"-"`
+	Activities     []*WorkflowActivity `json:"-" yaml:"-"`
 }
 
 func (self *Workflow) NewStep(name string) *WorkflowStep {
@@ -62,7 +62,7 @@ func (self *Workflow) NewStep(name string) *WorkflowStep {
 		Name:           name,
 		OnSuccessSteps: make([]*WorkflowStep, 0),
 		OnFailureSteps: make([]*WorkflowStep, 0),
-		Activies:       make([]*WorkflowActivity, 0),
+		Activities:     make([]*WorkflowActivity, 0),
 	}
 	self.Steps[name] = step
 	return step
@@ -79,8 +79,15 @@ type WorkflowSteps map[string]*WorkflowStep
 //
 
 type WorkflowActivity struct {
-	DelegateWorkflow *Workflow  `json:"-" yaml:"-"`
-	InlineWorkflow   *Workflow  `json:"-" yaml:"-"`
-	SetNodeState     string     `json:"setNodeState" yaml:"setNodeState"`
-	CallOperation    *Operation `json:"callOperation" yaml:"callOperation"`
+	Step             *WorkflowStep `json:"-" yaml:"-"`
+	DelegateWorkflow *Workflow     `json:"-" yaml:"-"`
+	InlineWorkflow   *Workflow     `json:"-" yaml:"-"`
+	SetNodeState     string        `json:"setNodeState" yaml:"setNodeState"`
+	CallOperation    *Operation    `json:"callOperation" yaml:"callOperation"`
+}
+
+func (self *WorkflowStep) NewActivity() *WorkflowActivity {
+	activity := &WorkflowActivity{Step: self}
+	self.Activities = append(self.Activities, activity)
+	return activity
 }

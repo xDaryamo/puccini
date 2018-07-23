@@ -29,8 +29,8 @@ topology_template:
     app:
       type: Application
       properties:
-        # Another special kind of target is "HOST"
-        # It refers to the target of any "HostedOn" relationship we have
+        # Another special kind of target is "HOST", which can be used in nodes and their capabilities
+        # It refers to the target of any "HostedOn" relationship from the node
         url: { get_attribute: [ HOST, public_address ] }
       requirements:
       - host:

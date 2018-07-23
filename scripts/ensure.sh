@@ -12,4 +12,4 @@ go get -u github.com/golang/dep/cmd/dep
 cd "$PROJECT"
 
 #"$GOPATH/bin/dep" init
-"$GOPATH/bin/dep" ensure
+"$GOPATH/bin/dep" ensure "$@"

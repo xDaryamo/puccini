@@ -2,6 +2,7 @@ package v1_1
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -21,6 +22,8 @@ type WorkflowStepDefinition struct {
 
 	TargetNodeTemplate *NodeTemplate `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`
 	TargetGroup        *Group        `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`
+	OnSuccessSteps     []*WorkflowStepDefinition
+	OnFailureSteps     []*WorkflowStepDefinition
 }
 
 func NewWorkflowStepDefinition(context *tosca.Context) *WorkflowStepDefinition {
@@ -43,20 +46,62 @@ func (self *WorkflowStepDefinition) GetKey() string {
 	return self.Name
 }
 
+func (self *WorkflowStepDefinition) Render(definitions WorkflowStepDefinitions) {
+	if self.OnSuccessStepNames != nil {
+		for index, name := range *self.OnSuccessStepNames {
+			if s, ok := definitions[name]; ok {
+				self.OnSuccessSteps = append(self.OnSuccessSteps, s)
+			} else {
+				self.Context.ListChild(index, name).ReportUnknown("step")
+			}
+		}
+	}
+
+	if self.OnFailureStepNames != nil {
+		for index, name := range *self.OnFailureStepNames {
+			if s, ok := definitions[name]; ok {
+				self.OnFailureSteps = append(self.OnFailureSteps, s)
+			} else {
+				self.Context.ListChild(index, name).ReportUnknown("step")
+			}
+		}
+	}
+
+	for _, activity := range self.ActivityDefinitions {
+		activity.Render(self)
+	}
+}
+
+func (self *WorkflowStepDefinition) Normalize(w *normal.Workflow, s *normal.ServiceTemplate) *normal.WorkflowStep {
+	log.Infof("{normalize} workflow step: %s", self.Name)
+
+	st := w.NewStep(self.Name)
+
+	if self.TargetNodeTemplate != nil {
+		if n, ok := s.NodeTemplates[self.TargetNodeTemplate.Name]; ok {
+			st.TargetNodeTemplate = n
+		}
+	} else if self.TargetGroup != nil {
+		if g, ok := s.Groups[self.TargetGroup.Name]; ok {
+			st.TargetGroup = g
+		}
+	}
+
+	for _, activity := range self.ActivityDefinitions {
+		activity.Normalize(st, s)
+	}
+
+	return st
+}
+
 //
 // WorkflowStepDefinitions
 //
 
 type WorkflowStepDefinitions map[string]*WorkflowStepDefinition
 
-func (self WorkflowStepDefinitions) Render(context *tosca.Context) {
+func (self WorkflowStepDefinitions) Render() {
 	for _, step := range self {
-		if step.OnSuccessStepNames != nil {
-			for index, name := range *step.OnSuccessStepNames {
-				if _, ok := self[name]; !ok {
-					context.ListChild(index, name).ReportUnknown("step")
-				}
-			}
-		}
+		step.Render(self)
 	}
 }

@@ -85,8 +85,8 @@ replaces the call stubs with the returned values:
     puccini-js exec tosca.coerce my-clout.yaml --output=coerced-clout.yaml
 
 A useful side benefit of this implementation is we allow you to easily extend TOSCA by
-[adding your own functions/constraints](examples/tosca-grammar/functions-custom.yaml). Obviously,
-such custom functions are not part of the TOSCA spec and will not be compatible with other TOSCA
+[adding your own functions/constraints](examples/grammar/functions-custom.yaml). Obviously, such
+custom functions are not part of the TOSCA spec and will not be compatible with other TOSCA
 implementations.
 
 ### TOSCA Attributes
@@ -221,8 +221,8 @@ insists on not having an opinion.
 TOSCA has a feature called "substitution mapping", which is useful for modeling service composition.
 However, it's a design feature. The implementation, which would likely be very complex, is up to
 your orchestration tool chain. See our examples
-[here](examples/tosca-grammar/substitution-mapping.yaml) and
-[here](examples/tosca-grammar/substitution-mapping-client.yaml).
+[here](examples/grammar/substitution-mapping.yaml) and
+[here](examples/grammar/substitution-mapping-client.yaml).
 
 ### TOSCA is so complicated! Help?
 
@@ -230,9 +230,9 @@ I know, right? Now imagine writing a parser for it... Not only is it a complex l
 [spec itself](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html)
 (as of version 1.1) has many contradictions, errors, and gaps.
 
-To help you out we've included [examples](examples/tosca-grammar/) of TOSCA core grammatical
-features, with some running commentary. Treat them as your playground. Also, if you have 4 hours to
-spare, grab some snacks, get comfortable, and watch this free online course for TOSCA 1.0:
+To help you out we've included [examples](examples/grammar/) of TOSCA core grammatical features,
+with some running commentary. Treat them as your playground. Also, if you have 4 hours to spare,
+grab some snacks, get comfortable, and watch this free online course for TOSCA 1.0:
 [part 1](https://www.youtube.com/watch?v=aMkqLI6o-58),
 [part 2](https://www.youtube.com/watch?v=6xGmpi--7-A).
 

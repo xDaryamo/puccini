@@ -10,5 +10,7 @@ PATH="$GOPATH/bin:$PATH"
 
 "$HERE/build.sh"
 
+echo 'testing...'
+
 ROOT="$ROOT" GOCACHE=off \
 go test github.com/tliron/puccini/puccini-tosca

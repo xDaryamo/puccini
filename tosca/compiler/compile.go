@@ -65,8 +65,8 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 		v := nodeTemplates[name]
 
 		for _, relationship := range nodeTemplate.Relationships {
-			vv := nodeTemplates[relationship.TargetNodeTemplate.Name]
-			e := v.NewEdgeTo(vv)
+			nv := nodeTemplates[relationship.TargetNodeTemplate.Name]
+			e := v.NewEdgeTo(nv)
 
 			SetMetadata(e, "relationship")
 			e.Properties["name"] = relationship.Name
@@ -94,8 +94,8 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 		v.Properties["interfaces"] = group.Interfaces
 
 		for _, nodeTemplate := range group.Members {
-			vv := nodeTemplates[nodeTemplate.Name]
-			e := v.NewEdgeTo(vv)
+			nv := nodeTemplates[nodeTemplate.Name]
+			e := v.NewEdgeTo(nv)
 
 			SetMetadata(e, "member")
 		}
@@ -112,17 +112,85 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 		v.Properties["properties"] = policy.Properties
 
 		for _, nodeTemplate := range policy.NodeTemplateTargets {
-			vv := nodeTemplates[nodeTemplate.Name]
-			e := v.NewEdgeTo(vv)
+			nv := nodeTemplates[nodeTemplate.Name]
+			e := v.NewEdgeTo(nv)
 
 			SetMetadata(e, "nodeTemplateTarget")
 		}
 
 		for _, group := range policy.GroupTargets {
-			vv := groups[group.Name]
-			e := v.NewEdgeTo(vv)
+			gv := groups[group.Name]
+			e := v.NewEdgeTo(gv)
 
 			SetMetadata(e, "groupTarget")
+		}
+	}
+
+	workflows := make(map[string]*clout.Vertex)
+
+	// Workflows
+	for _, workflow := range s.Workflows {
+		v := c.NewVertex(clout.NewKey())
+
+		workflows[workflow.Name] = v
+
+		SetMetadata(v, "workflow")
+		v.Properties["name"] = workflow.Name
+		v.Properties["description"] = workflow.Description
+	}
+
+	// Workflow steps
+	for name, workflow := range s.Workflows {
+		v := workflows[name]
+
+		for _, step := range workflow.Steps {
+			sv := c.NewVertex(clout.NewKey())
+
+			SetMetadata(sv, "workflowStep")
+			sv.Properties["name"] = step.Name
+
+			e := v.NewEdgeTo(sv)
+			SetMetadata(e, "workflowStep")
+
+			if step.TargetNodeTemplate != nil {
+				nv := nodeTemplates[step.TargetNodeTemplate.Name]
+				e = sv.NewEdgeTo(nv)
+				SetMetadata(e, "nodeTemplateTarget")
+			} else if step.TargetGroup != nil {
+				gv := groups[step.TargetGroup.Name]
+				e = sv.NewEdgeTo(gv)
+				SetMetadata(e, "groupTarget")
+			} else {
+				// This would happen only if there was a parsing error
+				continue
+			}
+
+			// Workflow activities
+			for sequence, activity := range step.Activities {
+				av := c.NewVertex(clout.NewKey())
+
+				e = sv.NewEdgeTo(av)
+				SetMetadata(e, "workflowActivity")
+				e.Properties["sequence"] = sequence
+
+				SetMetadata(av, "workflowActivity")
+				if activity.DelegateWorkflow != nil {
+					wv := workflows[activity.DelegateWorkflow.Name]
+					e = av.NewEdgeTo(wv)
+					SetMetadata(e, "delegateWorflow")
+				} else if activity.InlineWorkflow != nil {
+					wv := workflows[activity.InlineWorkflow.Name]
+					e = av.NewEdgeTo(wv)
+					SetMetadata(e, "inlineWorflow")
+				} else if activity.SetNodeState != "" {
+					av.Properties["setNodeState"] = activity.SetNodeState
+				} else if activity.CallOperation != nil {
+					m := make(ard.Map)
+					m["interface"] = activity.CallOperation.Interface.Name
+					m["operation"] = activity.CallOperation.Name
+					av.Properties["callOperation"] = m
+				}
+			}
 		}
 	}
 
@@ -166,8 +234,6 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 			e.Properties["interface"] = interface_
 		}
 	}
-
-	// TODO: workflows
 
 	// TODO: call JavaScript plugins
 

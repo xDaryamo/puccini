@@ -49,11 +49,10 @@ func (self *Clout) Resolve() error {
 
 		for _, e := range v.EdgesOut {
 			var ok bool
-			e.Target, ok = self.Vertexes[e.targetID]
+			e.Target, ok = self.Vertexes[e.TargetID]
 			if !ok {
-				return fmt.Errorf("could not resolve Clout, bad TargetID: \"%s\"", e.targetID)
+				return fmt.Errorf("could not resolve Clout, bad TargetID: \"%s\"", e.TargetID)
 			}
-			e.targetID = ""
 
 			e.Source = v
 			e.Metadata = ard.EnsureMap(e.Metadata)
@@ -120,9 +119,8 @@ type Edge struct {
 	Metadata   ard.Map
 	Properties ard.Map
 	Source     *Vertex
+	TargetID   string
 	Target     *Vertex
-
-	targetID string
 }
 
 func (self *Vertex) NewEdgeTo(target *Vertex) *Edge {
@@ -169,7 +167,7 @@ func (self *Edge) Unmarshal(f func(m *MarshalableEdge) error) error {
 	}
 	self.Metadata = m.Metadata
 	self.Properties = m.Properties
-	self.targetID = m.TargetID
+	self.TargetID = m.TargetID
 	return nil
 }
 

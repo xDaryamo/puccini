@@ -5,19 +5,23 @@ package normal
 //
 
 type Interface struct {
-	Name        string         `json:"-" yaml:"-"`
-	Description string         `json:"description" yaml:"description"`
-	Types       Types          `json:"types" yaml:"types"`
-	Inputs      Constrainables `json:"inputs" yaml:"inputs"`
-	Operations  Operations     `json:"operations" yaml:"operations"`
+	NodeTemplate *NodeTemplate  `json:"-" yaml:"-"`
+	Group        *Group         `json:"-" yaml:"-"`
+	Relationship *Relationship  `json:"-" yaml:"-"`
+	Name         string         `json:"-" yaml:"-"`
+	Description  string         `json:"description" yaml:"description"`
+	Types        Types          `json:"types" yaml:"types"`
+	Inputs       Constrainables `json:"inputs" yaml:"inputs"`
+	Operations   Operations     `json:"operations" yaml:"operations"`
 }
 
 func (self *NodeTemplate) NewInterface(name string) *Interface {
 	intr := &Interface{
-		Name:       name,
-		Types:      make(Types),
-		Inputs:     make(Constrainables),
-		Operations: make(Operations),
+		NodeTemplate: self,
+		Name:         name,
+		Types:        make(Types),
+		Inputs:       make(Constrainables),
+		Operations:   make(Operations),
 	}
 	self.Interfaces[name] = intr
 	return intr
@@ -25,6 +29,7 @@ func (self *NodeTemplate) NewInterface(name string) *Interface {
 
 func (self *Group) NewInterface(name string) *Interface {
 	intr := &Interface{
+		Group:      self,
 		Name:       name,
 		Types:      make(Types),
 		Inputs:     make(Constrainables),
@@ -36,10 +41,11 @@ func (self *Group) NewInterface(name string) *Interface {
 
 func (self *Relationship) NewInterface(name string) *Interface {
 	intr := &Interface{
-		Name:       name,
-		Types:      make(Types),
-		Inputs:     make(Constrainables),
-		Operations: make(Operations),
+		Relationship: self,
+		Name:         name,
+		Types:        make(Types),
+		Inputs:       make(Constrainables),
+		Operations:   make(Operations),
 	}
 	self.Interfaces[name] = intr
 	return intr
@@ -66,6 +72,7 @@ type Operation struct {
 
 func (self *Interface) NewOperation(name string) *Operation {
 	operation := &Operation{
+		Interface:    self,
 		Name:         name,
 		Dependencies: make([]string, 0),
 		Inputs:       make(Constrainables),
