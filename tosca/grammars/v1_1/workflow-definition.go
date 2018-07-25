@@ -60,8 +60,13 @@ func (self *WorkflowDefinition) Normalize(s *normal.ServiceTemplate) *normal.Wor
 	// TODO: support property definitions
 	//self.InputDefinitions.Normalize(w.Inputs)
 
-	for _, step := range self.StepDefinitions {
-		step.Normalize(w, s)
+	sts := make(normal.WorkflowSteps)
+	for name, step := range self.StepDefinitions {
+		sts[name] = step.Normalize(w, s)
+	}
+
+	for name, step := range self.StepDefinitions {
+		step.NormalizeNext(sts[name], w)
 	}
 
 	return w

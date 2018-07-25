@@ -17,12 +17,19 @@ bpmn = puccini.newXmlDocument();
 bpmn.createProcInst('xml', 'version="1.0" encoding="UTF-8"');
 
 definitions = bpmn.createElement('bpmn:definitions');
+definitions.createAttr('id', 'definitions');
 definitions.createAttr('xmlns:bpmn', 'http://www.omg.org/spec/BPMN/20100524/MODEL');
-definitions.createAttr('xmlns:bpmndi', "http://www.omg.org/spec/BPMN/20100524/DI");
+definitions.createAttr('xmlns:bpmndi', 'http://www.omg.org/spec/BPMN/20100524/DI');
 definitions.createAttr('xmlns:di', 'http://www.omg.org/spec/DD/20100524/DI');
 definitions.createAttr('xmlns:dc', 'http://www.omg.org/spec/DD/20100524/DC');
+definitions.createAttr('typeLanguage', 'http://www.java.com/javaTypes');
+definitions.createAttr('expressionLanguage', 'http://www.mvel.org/2.0');
 definitions.createAttr('targetNamespace', 'http://bpmn.io/schema/bpmn');
 definitions.createAttr('exporter', 'puccini');
+
+event = definitions.createElement('bpmn:startEvent');
+event.createAttr('id', clout.newKey());
+event.createAttr('name', 'Start');
 
 processes = [];
 
@@ -82,5 +89,10 @@ for (v in clout.vertexes) {
 	}
 }
 
-bpmn.indent(2);
-bpmn.writeTo(puccini.stdout);
+event = definitions.createElement('bpmn:endEvent');
+event.createAttr('id', clout.newKey());
+event.createAttr('name', 'End');
+event.createElement('terminateEventDefinition');
+
+// Puccini will always write an XML document in XML, ignoring the --format switch
+puccini.write(bpmn);

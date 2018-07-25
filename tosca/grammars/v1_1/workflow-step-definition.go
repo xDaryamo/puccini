@@ -94,6 +94,16 @@ func (self *WorkflowStepDefinition) Normalize(w *normal.Workflow, s *normal.Serv
 	return st
 }
 
+func (self *WorkflowStepDefinition) NormalizeNext(st *normal.WorkflowStep, w *normal.Workflow) {
+	for _, next := range self.OnSuccessSteps {
+		st.OnSuccessSteps = append(st.OnSuccessSteps, w.Steps[next.Name])
+	}
+
+	for _, next := range self.OnFailureSteps {
+		st.OnFailureSteps = append(st.OnFailureSteps, w.Steps[next.Name])
+	}
+}
+
 //
 // WorkflowStepDefinitions
 //

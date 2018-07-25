@@ -24,33 +24,42 @@ tosca.traverseValues = function(traverser) {
 
 	for (v in clout.vertexes) {
 		vertex = clout.vertexes[v];
-		if (!tosca.isNodeTemplate(vertex))
-			continue;
-		nodeTemplate = vertex.properties;
+		if (tosca.isNodeTemplate(vertex)) {
+			nodeTemplate = vertex.properties;
+	
+			tosca.traverseObjectValues(traverser, nodeTemplate.properties, vertex);
+			tosca.traverseObjectValues(traverser, nodeTemplate.attributes, vertex);
+			tosca.traverseInterfaceValues(traverser, nodeTemplate.interfaces, vertex)
+	
+			for (c in nodeTemplate.capabilities) {
+				capability = nodeTemplate.capabilities[c];
+				tosca.traverseObjectValues(traverser, capability.properties, vertex);
+				tosca.traverseObjectValues(traverser, capability.attributes, vertex);
+			}
+	
+			for (a in nodeTemplate.artifacts) {
+				artifact = nodeTemplate.artifacts[a];
+				tosca.traverseObjectValues(traverser, artifact.properties, vertex);
+			}
+	
+			for (e in vertex.edgesOut) {
+				edge = vertex.edgesOut[e];
+				if (!tosca.isTosca(edge, 'relationship'))
+					continue;
+				relationship = edge.properties;
+				tosca.traverseObjectValues(traverser, relationship.properties, edge, vertex, edge.target);
+				tosca.traverseObjectValues(traverser, relationship.attributes, edge, vertex, edge.target);
+				tosca.traverseInterfaceValues(traverser, relationship.interfaces, edge, vertex, edge.target);
+			}
+		} else if (tosca.isTosca(vertex, 'group')) {
+			group = vertex.properties;
 
-		tosca.traverseObjectValues(traverser, nodeTemplate.properties, vertex);
-		tosca.traverseObjectValues(traverser, nodeTemplate.attributes, vertex);
-		tosca.traverseInterfaceValues(traverser, nodeTemplate.interfaces, vertex)
+			tosca.traverseObjectValues(traverser, group.properties, vertex);
+			tosca.traverseInterfaceValues(traverser, group.interfaces, vertex)
+		} else if (tosca.isTosca(vertex, 'policy')) {
+			policy = vertex.properties;
 
-		for (c in nodeTemplate.capabilities) {
-			capability = nodeTemplate.capabilities[c];
-			tosca.traverseObjectValues(traverser, capability.properties, vertex);
-			tosca.traverseObjectValues(traverser, capability.attributes, vertex);
-		}
-
-		for (a in nodeTemplate.artifacts) {
-			artifact = nodeTemplate.artifacts[a];
-			tosca.traverseObjectValues(traverser, artifact.properties, vertex);
-		}
-
-		for (e in vertex.edgesOut) {
-			edge = vertex.edgesOut[e];
-			if (!tosca.isTosca(edge, 'relationship'))
-				continue;
-			relationship = edge.properties;
-			tosca.traverseObjectValues(traverser, relationship.properties, edge, vertex, edge.target);
-			tosca.traverseObjectValues(traverser, relationship.attributes, edge, vertex, edge.target);
-			tosca.traverseInterfaceValues(traverser, relationship.interfaces, edge, vertex, edge.target);
+			tosca.traverseObjectValues(traverser, policy.properties, vertex);
 		}
 	}
 };

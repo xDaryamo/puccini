@@ -3,6 +3,7 @@ package v1_1
 import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -64,6 +65,11 @@ func ReadTriggerDefinition(context *tosca.Context) interface{} {
 	return self
 }
 
+// tosca.Mappable interface
+func (self *TriggerDefinition) GetKey() string {
+	return self.Name
+}
+
 // tosca.Renderable interface
 func (self *TriggerDefinition) Render() {
 	log.Infof("{render} trigger definition: %s", self.Name)
@@ -72,9 +78,7 @@ func (self *TriggerDefinition) Render() {
 	}
 }
 
-// tosca.Mappable interface
-func (self *TriggerDefinition) GetKey() string {
-	return self.Name
+func (self *TriggerDefinition) Normalize(s *normal.ServiceTemplate) {
 }
 
 //
@@ -82,3 +86,9 @@ func (self *TriggerDefinition) GetKey() string {
 //
 
 type TriggerDefinitions map[string]*TriggerDefinition
+
+func (self TriggerDefinitions) Normalize(p *normal.Policy, s *normal.ServiceTemplate) {
+	for _, triggerDefinition := range self {
+		triggerDefinition.Normalize(s)
+	}
+}

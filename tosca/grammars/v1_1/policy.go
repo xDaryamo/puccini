@@ -106,5 +106,7 @@ func (self *Policy) Normalize(s *normal.ServiceTemplate) *normal.Policy {
 		}
 	}
 
+	self.TriggerDefinitions.Normalize(p, s)
+
 	return p
 }

@@ -143,8 +143,12 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 	for name, workflow := range s.Workflows {
 		v := workflows[name]
 
+		steps := make(map[string]*clout.Vertex)
+
 		for _, step := range workflow.Steps {
 			sv := c.NewVertex(clout.NewKey())
+
+			steps[step.Name] = sv
 
 			SetMetadata(sv, "workflowStep")
 			sv.Properties["name"] = step.Name
@@ -190,6 +194,22 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 					m["operation"] = activity.CallOperation.Name
 					av.Properties["callOperation"] = m
 				}
+			}
+		}
+
+		for _, step := range workflow.Steps {
+			sv := steps[step.Name]
+
+			for _, next := range step.OnSuccessSteps {
+				nsv := steps[next.Name]
+				e := sv.NewEdgeTo(nsv)
+				SetMetadata(e, "onSuccess")
+			}
+
+			for _, next := range step.OnFailureSteps {
+				nsv := steps[next.Name]
+				e := sv.NewEdgeTo(nsv)
+				SetMetadata(e, "onFailure")
 			}
 		}
 	}

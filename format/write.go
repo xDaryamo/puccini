@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/beevik/etree"
 	"gopkg.in/yaml.v2"
 )
 
@@ -24,6 +25,13 @@ func WriteOrPrint(data interface{}, format string, pretty bool, output string) e
 }
 
 func Write(data interface{}, format string, indent string, writer io.Writer) error {
+	// Special handling for etree
+	if xmlDocument, ok := data.(*etree.Document); ok {
+		xmlDocument.Indent(IndentSpaces)
+		_, err := xmlDocument.WriteTo(writer)
+		return err
+	}
+
 	switch format {
 	case "yaml", "":
 		return WriteYaml(data, writer)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/beevik/etree"
 	"github.com/hokaccha/go-prettyjson"
 )
 
@@ -14,6 +15,13 @@ func init() {
 }
 
 func Print(data interface{}, format string, pretty bool) error {
+	// Special handling for etree
+	if xmlDocument, ok := data.(*etree.Document); ok {
+		xmlDocument.Indent(IndentSpaces)
+		_, err := xmlDocument.WriteTo(os.Stdout)
+		return err
+	}
+
 	switch format {
 	case "yaml", "":
 		return PrintYaml(data, pretty)
