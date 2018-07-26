@@ -63,6 +63,7 @@ type Interfaces map[string]*Interface
 
 type Operation struct {
 	Interface      *Interface     `json:"-" yaml:"-"`
+	PolicyTrigger  *PolicyTrigger `json:"-" yaml:"-"`
 	Name           string         `json:"-" yaml:"-"`
 	Description    string         `json:"description" yaml:"description"`
 	Implementation string         `json:"implementation" yaml:"implementation"`
@@ -79,6 +80,15 @@ func (self *Interface) NewOperation(name string) *Operation {
 	}
 	self.Operations[name] = operation
 	return operation
+}
+
+func (self *PolicyTrigger) NewOperation() *Operation {
+	self.Operation = &Operation{
+		PolicyTrigger: self,
+		Dependencies:  make([]string, 0),
+		Inputs:        make(Constrainables),
+	}
+	return self.Operation
 }
 
 //

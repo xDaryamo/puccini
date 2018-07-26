@@ -78,7 +78,18 @@ func (self *TriggerDefinition) Render() {
 	}
 }
 
-func (self *TriggerDefinition) Normalize(s *normal.ServiceTemplate) {
+func (self *TriggerDefinition) Normalize(p *normal.Policy, s *normal.ServiceTemplate) *normal.PolicyTrigger {
+	t := p.NewTrigger()
+
+	if self.OperationAction != nil {
+		self.OperationAction.Normalize(t.NewOperation())
+	} else if self.WorkflowDefinition != nil {
+		t.Workflow = s.Workflows[self.WorkflowDefinition.Name]
+	}
+
+	// TODO: missing fields
+
+	return t
 }
 
 //
@@ -89,6 +100,6 @@ type TriggerDefinitions map[string]*TriggerDefinition
 
 func (self TriggerDefinitions) Normalize(p *normal.Policy, s *normal.ServiceTemplate) {
 	for _, triggerDefinition := range self {
-		triggerDefinition.Normalize(s)
+		triggerDefinition.Normalize(p, s)
 	}
 }

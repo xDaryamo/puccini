@@ -100,11 +100,15 @@ func (self *TopologyTemplate) Normalize(s *normal.ServiceTemplate) {
 	for _, g := range self.Groups {
 		s.Groups[g.Name] = g.Normalize(s)
 	}
-	for _, p := range self.Policies {
-		s.Policies[p.Name] = p.Normalize(s)
-	}
+	// Workflow must be normalized after node templates and groups
+	// (because step activities might call operations on them)
 	for _, w := range self.WorkflowDefinitions {
 		s.Workflows[w.Name] = w.Normalize(s)
+	}
+	// Policies must be normalized after workflows
+	// (because policy triggers might call them)
+	for _, p := range self.Policies {
+		s.Policies[p.Name] = p.Normalize(s)
 	}
 
 	for _, nodeTemplate := range self.NodeTemplates {

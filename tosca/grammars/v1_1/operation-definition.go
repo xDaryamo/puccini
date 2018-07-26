@@ -2,6 +2,7 @@ package v1_1
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -51,6 +52,19 @@ func (self *OperationDefinition) Inherit(parentDefinition *OperationDefinition) 
 	} else {
 		self.InputDefinitions.Inherit(nil)
 	}
+}
+
+func (self *OperationDefinition) Normalize(o *normal.Operation) {
+	if self.Description != nil {
+		o.Description = *self.Description
+	}
+
+	if self.Implementation != nil {
+		self.Implementation.Normalize(o)
+	}
+
+	// TODO: input definitions
+	//self.InputsDefinitions.Normalize(o.Inputs)
 }
 
 //

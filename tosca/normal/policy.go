@@ -12,6 +12,7 @@ type Policy struct {
 	Properties          Constrainables   `json:"properties" yaml:"properties"`
 	GroupTargets        []*Group         `json:"-" yaml:"-"`
 	NodeTemplateTargets []*NodeTemplate  `json:"-" yaml:"-"`
+	Triggers            []*PolicyTrigger `json:"-" yaml:"-"`
 }
 
 func (self *ServiceTemplate) NewPolicy(name string) *Policy {
@@ -32,3 +33,23 @@ func (self *ServiceTemplate) NewPolicy(name string) *Policy {
 //
 
 type Policies map[string]*Policy
+
+//
+// PolicyTrigger
+//
+
+type PolicyTrigger struct {
+	Policy    *Policy    `json:"-" yaml:"-"`
+	EventType string     `json:"eventType" yaml:"eventType"`
+	Operation *Operation `json:"operation" yaml:"operation"`
+	Workflow  *Workflow  `json:"workflow" yaml:"workflow"`
+	// TODO: missing fields
+}
+
+func (self *Policy) NewTrigger() *PolicyTrigger {
+	trigger := &PolicyTrigger{
+		Policy: self,
+	}
+	self.Triggers = append(self.Triggers, trigger)
+	return trigger
+}

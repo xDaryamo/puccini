@@ -101,31 +101,6 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 		}
 	}
 
-	// Policies
-	for _, policy := range s.Policies {
-		v := c.NewVertex(clout.NewKey())
-
-		SetMetadata(v, "policy")
-		v.Properties["name"] = policy.Name
-		v.Properties["description"] = policy.Description
-		v.Properties["types"] = policy.Types
-		v.Properties["properties"] = policy.Properties
-
-		for _, nodeTemplate := range policy.NodeTemplateTargets {
-			nv := nodeTemplates[nodeTemplate.Name]
-			e := v.NewEdgeTo(nv)
-
-			SetMetadata(e, "nodeTemplateTarget")
-		}
-
-		for _, group := range policy.GroupTargets {
-			gv := groups[group.Name]
-			e := v.NewEdgeTo(gv)
-
-			SetMetadata(e, "groupTarget")
-		}
-	}
-
 	workflows := make(map[string]*clout.Vertex)
 
 	// Workflows
@@ -210,6 +185,51 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 				nsv := steps[next.Name]
 				e := sv.NewEdgeTo(nsv)
 				SetMetadata(e, "onFailure")
+			}
+		}
+	}
+
+	// Policies
+	for _, policy := range s.Policies {
+		v := c.NewVertex(clout.NewKey())
+
+		SetMetadata(v, "policy")
+		v.Properties["name"] = policy.Name
+		v.Properties["description"] = policy.Description
+		v.Properties["types"] = policy.Types
+		v.Properties["properties"] = policy.Properties
+
+		for _, nodeTemplate := range policy.NodeTemplateTargets {
+			nv := nodeTemplates[nodeTemplate.Name]
+			e := v.NewEdgeTo(nv)
+
+			SetMetadata(e, "nodeTemplateTarget")
+		}
+
+		for _, group := range policy.GroupTargets {
+			gv := groups[group.Name]
+			e := v.NewEdgeTo(gv)
+
+			SetMetadata(e, "groupTarget")
+		}
+
+		for _, trigger := range policy.Triggers {
+			if trigger.Operation != nil {
+				to := c.NewVertex(clout.NewKey())
+
+				SetMetadata(to, "operation")
+				to.Properties["description"] = trigger.Operation.Description
+				to.Properties["implementation"] = trigger.Operation.Implementation
+				to.Properties["dependencies"] = trigger.Operation.Dependencies
+				to.Properties["inputs"] = trigger.Operation.Inputs
+
+				e := v.NewEdgeTo(to)
+				SetMetadata(e, "policyTriggerOperation")
+			} else if trigger.Workflow != nil {
+				wv := workflows[trigger.Workflow.Name]
+
+				e := v.NewEdgeTo(wv)
+				SetMetadata(e, "policyTriggerWorkflow")
 			}
 		}
 	}
