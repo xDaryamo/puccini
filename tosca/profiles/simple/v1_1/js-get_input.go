@@ -14,7 +14,7 @@ function evaluate(input) {
 		throw 'Clout is not TOSCA';
 	inputs = clout.properties.tosca.inputs;
 	if (!(input in inputs))
-		throw sprintf('input "%s" not found', input);
+		throw puccini.sprintf('input "%s" not found', input);
 	r = inputs[input];
 	r = clout.coerce(r);
 	return r;

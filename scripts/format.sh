@@ -20,10 +20,13 @@ gofmt -w -s -e \
 	"$ROOT/tosca/compiler" \
 	"$ROOT/tosca/csar" \
 	"$ROOT/tosca/grammars/v1_1" \
+	"$ROOT/tosca/grammars/v1_2" \
 	"$ROOT/tosca/normal" \
 	"$ROOT/tosca/parser" \
 	"$ROOT/tosca/problems" \
-	"$ROOT/tosca/profiles/kubernetes/v1_10" \
+	"$ROOT/tosca/profiles/bpmn/v1_0" \
+	"$ROOT/tosca/profiles/kubernetes/v1_0" \
+	"$ROOT/tosca/profiles/openstack/v1_0" \
 	"$ROOT/tosca/profiles/simple/v1_1" \
 	"$ROOT/tosca/profiles/simple-for-nfv/v1_0" \
 	"$ROOT/tosca/reflection" \

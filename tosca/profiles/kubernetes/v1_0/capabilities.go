@@ -1,9 +1,9 @@
 // This file was auto-generated from YAML files
 
-package v1_10
+package v1_0
 
 func init() {
-	Profile["/tosca/kubernetes/1.10/capabilities.yaml"] = `
+	Profile["/tosca/kubernetes/1.0/capabilities.yaml"] = `
 tosca_definitions_version: tosca_simple_yaml_1_1
 
 imports:

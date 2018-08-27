@@ -12,8 +12,8 @@ func (self *Context) ImportScript(name string, path string) {
 	var nativeArgumentIndexes []uint
 	name, nativeArgumentIndexes = parseScriptName(name)
 	self.ScriptNamespace[name] = &Script{
-		Origin: self.URL.Origin(),
-		Path:   path,
+		Origin:                self.URL.Origin(),
+		Path:                  path,
 		NativeArgumentIndexes: nativeArgumentIndexes,
 	}
 }

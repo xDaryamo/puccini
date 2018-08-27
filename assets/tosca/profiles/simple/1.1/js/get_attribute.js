@@ -8,7 +8,7 @@ function evaluate(entity, attribute) {
 	nodeTemplate = tosca.getNodeTemplate(entity);
 	attributes = nodeTemplate.attributes;
 	if (!(attribute in attributes))
-		throw sprintf('attribute "%s" not found in "%s"', attribute, nodeTemplate.name);
+		throw puccini.sprintf('attribute "%s" not found in "%s"', attribute, nodeTemplate.name);
 	r = clout.coerce(attributes[attribute]);
 	for (i = 2; i < length; i++)
 		r = r[arguments[i]];

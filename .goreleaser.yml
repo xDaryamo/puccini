@@ -38,12 +38,8 @@ archive:
   - LICENSE
   - NOTICE
   - puccini-csar
-  - examples/grammar/*
-  - examples/grammar/imports/*
-  - examples/javascript/*
-  - examples/javascript/imports/*
-  - examples/kubernetes/bookinfo/*
-  - examples/kubernetes/bookinfo/types/*
+  - assets/**
+  - examples/**
 
   format_overrides:
   - goos: windows

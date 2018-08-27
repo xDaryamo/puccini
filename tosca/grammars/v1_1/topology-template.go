@@ -25,7 +25,7 @@ type TopologyTemplate struct {
 
 func NewTopologyTemplate(context *tosca.Context) *TopologyTemplate {
 	return &TopologyTemplate{
-		Entity: NewEntity(context),
+		Entity:                     NewEntity(context),
 		InputParameterDefinitions:  make(ParameterDefinitions),
 		OutputParameterDefinitions: make(ParameterDefinitions),
 		WorkflowDefinitions:        make(WorkflowDefinitions),

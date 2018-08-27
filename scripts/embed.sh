@@ -86,4 +86,6 @@ EOT
 
 profile simple 1.1
 profile simple-for-nfv 1.0
-profile kubernetes 1.10
+profile kubernetes 1.0
+profile openstack 1.0
+profile bpmn 1.0

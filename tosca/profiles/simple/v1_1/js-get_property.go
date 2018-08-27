@@ -14,7 +14,7 @@ function evaluate(entity, property) {
 	nodeTemplate = tosca.getNodeTemplate(entity);
 	properties = nodeTemplate.properties;
 	if (!(property in properties))
-		throw sprintf('property "%s" not found in "%s"', property, nodeTemplate.name);
+		throw puccini.sprintf('property "%s" not found in "%s"', property, nodeTemplate.name);
 	r = clout.coerce(properties[property]);
 	for (i = 2; i < length; i++)
 		r = r[arguments[i]];

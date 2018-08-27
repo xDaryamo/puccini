@@ -1,9 +1,9 @@
 // This file was auto-generated from YAML files
 
-package v1_10
+package v1_0
 
 func init() {
-	Profile["/tosca/kubernetes/1.10/js/workflow.js"] = `
+	Profile["/tosca/kubernetes/1.0/js/workflow.js"] = `
 
 // TODO
 

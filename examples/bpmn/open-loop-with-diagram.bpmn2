@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- origin at X=0.0 Y=0.0 -->
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:java="http://www.java.com/javaTypes" id="definitions" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.4.2.Final-v20171109-1930-B1" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://bpmn.io/schema/bpmn" typeLanguage="http://www.java.com/javaTypes">
+  <bpmn:process id="_17w9rHsQbrp9W30prWJq6iCc2r7" name="backup workflow" isExecutable="true">
+    <bpmn:scriptTask id="_17w9rIrnWP59dYhrGjKlYjj8TYb" name="shutdown step" scriptFormat="javascript">
+      <bpmn:incoming>_17w9rG3FrHziw65uUw76pXlB24L</bpmn:incoming>
+      <bpmn:outgoing>_17w9rGLChZYrVZQDicOcmlGQoGQ</bpmn:outgoing>
+      <bpmn:script>
+nodeTemplates = [];
+groups = [];
+nodeTemplates.push(&quot;frontend&quot;);
+setNodeState(nodeTemplates, groups, &quot;down&quot;);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="_17w9rFXwyymH0XPNuOYA613QUTc" name="backup step" scriptFormat="javascript">
+      <bpmn:incoming>_17w9rBlfY8PJdVk4EPE58noIMUX</bpmn:incoming>
+      <bpmn:outgoing>_17w9rBiGd0fLaBOdFkgyPhLpieQ</bpmn:outgoing>
+      <bpmn:script>
+nodeTemplates = [];
+groups = [];
+nodeTemplates.push(&quot;vnf&quot;);
+setNodeState(nodeTemplates, groups, &quot;down&quot;);
+callOperation(nodeTemplates, groups, &quot;Backup&quot;, &quot;start_backup&quot;);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="_17w9rGt1HJE61vZfe4wWAk8Dc8P" name="restart step" scriptFormat="javascript">
+      <bpmn:incoming>_17w9rE4RP3vwHhcGfvKEXcVnqwR</bpmn:incoming>
+      <bpmn:outgoing>_17w9rFBJmv7G0z6MYI3zT9H2hfX</bpmn:outgoing>
+      <bpmn:script>
+nodeTemplates = [];
+groups = [];
+nodeTemplates.push(&quot;frontend&quot;);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="_17w9rITSbuUrrcG6O14wyBeySST" name="notify_admins step" scriptFormat="javascript">
+      <bpmn:incoming>_17w9rIN93mYr7PgzMSi2UeaEkcG</bpmn:incoming>
+      <bpmn:outgoing>_17w9rDJNtGCAYdSUUCh7DDdudZU</bpmn:outgoing>
+      <bpmn:script>
+nodeTemplates = [];
+groups = [];
+nodeTemplates.push(&quot;agent&quot;);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="_17w9rFHXbEyD6kmGsL9blLmImyd" name="notify_users step" scriptFormat="javascript">
+      <bpmn:incoming>_17w9rBnk3JkW0vcriaPakoD4eyo</bpmn:incoming>
+      <bpmn:outgoing>_17w9rG2DQb5Ygh9a8C36bkwYbif</bpmn:outgoing>
+      <bpmn:script>
+nodeTemplates = [];
+groups = [];
+nodeTemplates.push(&quot;agent&quot;);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:startEvent id="_17w9rEuv8ABdvlAwfBQJk1rBu9c" name="start">
+      <bpmn:outgoing>_17w9rBnk3JkW0vcriaPakoD4eyo</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="_17w9rCEFEhJMAHnmsP7KMwLabM2" name="end">
+      <bpmn:incoming>_17w9rEKAoUZ5apO9MV46foajlW1</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1"/>
+    </bpmn:endEvent>
+    <bpmn:parallelGateway id="_17w9rGlo30zIezR0MqPfY4KjREk" name="converge" gatewayDirection="Converging">
+      <bpmn:incoming>_17w9rFBJmv7G0z6MYI3zT9H2hfX</bpmn:incoming>
+      <bpmn:incoming>_17w9rDJNtGCAYdSUUCh7DDdudZU</bpmn:incoming>
+      <bpmn:outgoing>_17w9rEKAoUZ5apO9MV46foajlW1</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="_17w9rEKAoUZ5apO9MV46foajlW1" sourceRef="_17w9rGlo30zIezR0MqPfY4KjREk" targetRef="_17w9rCEFEhJMAHnmsP7KMwLabM2"/>
+    <bpmn:parallelGateway id="_17w9rC9GaG67yfQQGT8mXY7ey4G" name="converge" gatewayDirection="Converging">
+      <bpmn:incoming>_17w9rGLChZYrVZQDicOcmlGQoGQ</bpmn:incoming>
+      <bpmn:incoming>_17w9rJ1OTWvjMYHTyQX0qNHH1WT</bpmn:incoming>
+      <bpmn:outgoing>_17w9rE4RP3vwHhcGfvKEXcVnqwR</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="_17w9rBnk3JkW0vcriaPakoD4eyo" sourceRef="_17w9rEuv8ABdvlAwfBQJk1rBu9c" targetRef="_17w9rFHXbEyD6kmGsL9blLmImyd"/>
+    <bpmn:parallelGateway id="_17w9rDCgoWgx7dazvHnaelA71Ef" name="diverge" gatewayDirection="Diverging">
+      <bpmn:incoming>_17w9rBiGd0fLaBOdFkgyPhLpieQ</bpmn:incoming>
+      <bpmn:outgoing>_17w9rJ1OTWvjMYHTyQX0qNHH1WT</bpmn:outgoing>
+      <bpmn:outgoing>_17w9rIN93mYr7PgzMSi2UeaEkcG</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="_17w9rFBJmv7G0z6MYI3zT9H2hfX" sourceRef="_17w9rGt1HJE61vZfe4wWAk8Dc8P" targetRef="_17w9rGlo30zIezR0MqPfY4KjREk"/>
+    <bpmn:sequenceFlow id="_17w9rDJNtGCAYdSUUCh7DDdudZU" sourceRef="_17w9rITSbuUrrcG6O14wyBeySST" targetRef="_17w9rGlo30zIezR0MqPfY4KjREk"/>
+    <bpmn:parallelGateway id="_17w9rD9OmEtMcccZpbPdRXNTDnR" name="diverge" gatewayDirection="Diverging">
+      <bpmn:incoming>_17w9rG2DQb5Ygh9a8C36bkwYbif</bpmn:incoming>
+      <bpmn:outgoing>_17w9rG3FrHziw65uUw76pXlB24L</bpmn:outgoing>
+      <bpmn:outgoing>_17w9rBlfY8PJdVk4EPE58noIMUX</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="_17w9rGLChZYrVZQDicOcmlGQoGQ" sourceRef="_17w9rIrnWP59dYhrGjKlYjj8TYb" targetRef="_17w9rC9GaG67yfQQGT8mXY7ey4G"/>
+    <bpmn:sequenceFlow id="_17w9rBiGd0fLaBOdFkgyPhLpieQ" sourceRef="_17w9rFXwyymH0XPNuOYA613QUTc" targetRef="_17w9rDCgoWgx7dazvHnaelA71Ef"/>
+    <bpmn:sequenceFlow id="_17w9rJ1OTWvjMYHTyQX0qNHH1WT" sourceRef="_17w9rDCgoWgx7dazvHnaelA71Ef" targetRef="_17w9rC9GaG67yfQQGT8mXY7ey4G"/>
+    <bpmn:sequenceFlow id="_17w9rIN93mYr7PgzMSi2UeaEkcG" sourceRef="_17w9rDCgoWgx7dazvHnaelA71Ef" targetRef="_17w9rITSbuUrrcG6O14wyBeySST"/>
+    <bpmn:sequenceFlow id="_17w9rE4RP3vwHhcGfvKEXcVnqwR" sourceRef="_17w9rC9GaG67yfQQGT8mXY7ey4G" targetRef="_17w9rGt1HJE61vZfe4wWAk8Dc8P"/>
+    <bpmn:sequenceFlow id="_17w9rG2DQb5Ygh9a8C36bkwYbif" sourceRef="_17w9rFHXbEyD6kmGsL9blLmImyd" targetRef="_17w9rD9OmEtMcccZpbPdRXNTDnR"/>
+    <bpmn:sequenceFlow id="_17w9rG3FrHziw65uUw76pXlB24L" sourceRef="_17w9rD9OmEtMcccZpbPdRXNTDnR" targetRef="_17w9rIrnWP59dYhrGjKlYjj8TYb"/>
+    <bpmn:sequenceFlow id="_17w9rBlfY8PJdVk4EPE58noIMUX" sourceRef="_17w9rD9OmEtMcccZpbPdRXNTDnR" targetRef="_17w9rFXwyymH0XPNuOYA613QUTc"/>
+  </bpmn:process>
+  <bpmn:process id="_17w9rIbOGYIOZUpEooZYjvvjofE" name="notify_on_high_load policy" isExecutable="true">
+    <bpmn:scriptTask id="_17w9rH9ia1Qe773APG5ERyfbYhX" name="operation on host1" scriptFormat="javascript">
+      <bpmn:incoming>_17w9rISFAVUirNA4vJ3yI9zTHMo</bpmn:incoming>
+      <bpmn:outgoing>_17w9rExKM01U0A5QJz04kzi6Sy1</bpmn:outgoing>
+      <bpmn:script>
+callOperation(&quot;host1&quot;, &quot;scripts/get_cpu_metrics.sh&quot;);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="_17w9rDpSr8Ak25KetMyOhNa11vP" name="operation on host2" scriptFormat="javascript">
+      <bpmn:incoming>_17w9rIOdtJ9zrccD6WKLx8V5953</bpmn:incoming>
+      <bpmn:outgoing>_17w9rGfx2In5giTLlNUeq2eA57W</bpmn:outgoing>
+      <bpmn:script>
+callOperation(&quot;host2&quot;, &quot;scripts/get_cpu_metrics.sh&quot;);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:startEvent id="_17w9rGQO0Y9jmNHOmFgLFvPiUMq" name="start">
+      <bpmn:outgoing>_17w9rGKeV2Ey3S3m5l04pw9bqJA</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="_17w9rDXJLShjiL4FAmtFpuNdS0Y" name="end">
+      <bpmn:incoming>_17w9rD9hw3tfaq41HyGfbkBu3kS</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_2"/>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="_17w9rFKqch9wQkIZsru5eypBFXl" name="startProcess" scriptFormat="javascript">
+      <bpmn:incoming>_17w9rH9oPLLSby0U9R9xPxmmhLo</bpmn:incoming>
+      <bpmn:outgoing>_17w9rD9hw3tfaq41HyGfbkBu3kS</bpmn:outgoing>
+      <bpmn:script>
+startProcess(&quot;NotifyUser&quot;);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="_17w9rD9hw3tfaq41HyGfbkBu3kS" sourceRef="_17w9rFKqch9wQkIZsru5eypBFXl" targetRef="_17w9rDXJLShjiL4FAmtFpuNdS0Y"/>
+    <bpmn:parallelGateway id="_17w9rDi4xlGaah4409F64imXOX4" name="diverge" gatewayDirection="Diverging">
+      <bpmn:incoming>_17w9rGKeV2Ey3S3m5l04pw9bqJA</bpmn:incoming>
+      <bpmn:outgoing>_17w9rISFAVUirNA4vJ3yI9zTHMo</bpmn:outgoing>
+      <bpmn:outgoing>_17w9rIOdtJ9zrccD6WKLx8V5953</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="_17w9rCpGVkHoLtu0L7xV6iqvuYn" name="converge" gatewayDirection="Converging">
+      <bpmn:incoming>_17w9rExKM01U0A5QJz04kzi6Sy1</bpmn:incoming>
+      <bpmn:incoming>_17w9rGfx2In5giTLlNUeq2eA57W</bpmn:incoming>
+      <bpmn:outgoing>_17w9rH9oPLLSby0U9R9xPxmmhLo</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="_17w9rGKeV2Ey3S3m5l04pw9bqJA" sourceRef="_17w9rGQO0Y9jmNHOmFgLFvPiUMq" targetRef="_17w9rDi4xlGaah4409F64imXOX4"/>
+    <bpmn:sequenceFlow id="_17w9rH9oPLLSby0U9R9xPxmmhLo" sourceRef="_17w9rCpGVkHoLtu0L7xV6iqvuYn" targetRef="_17w9rFKqch9wQkIZsru5eypBFXl"/>
+    <bpmn:sequenceFlow id="_17w9rISFAVUirNA4vJ3yI9zTHMo" sourceRef="_17w9rDi4xlGaah4409F64imXOX4" targetRef="_17w9rH9ia1Qe773APG5ERyfbYhX"/>
+    <bpmn:sequenceFlow id="_17w9rExKM01U0A5QJz04kzi6Sy1" sourceRef="_17w9rH9ia1Qe773APG5ERyfbYhX" targetRef="_17w9rCpGVkHoLtu0L7xV6iqvuYn"/>
+    <bpmn:sequenceFlow id="_17w9rIOdtJ9zrccD6WKLx8V5953" sourceRef="_17w9rDi4xlGaah4409F64imXOX4" targetRef="_17w9rDpSr8Ak25KetMyOhNa11vP"/>
+    <bpmn:sequenceFlow id="_17w9rGfx2In5giTLlNUeq2eA57W" sourceRef="_17w9rDpSr8Ak25KetMyOhNa11vP" targetRef="_17w9rCpGVkHoLtu0L7xV6iqvuYn"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_1" bpmnElement="_17w9rHsQbrp9W30prWJq6iCc2r7">
+      <bpmndi:BPMNShape id="BPMNShape_ScriptTask_1" bpmnElement="_17w9rIrnWP59dYhrGjKlYjj8TYb">
+        <dc:Bounds height="50.0" width="110.0" x="396.0" y="75.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_1" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="14.0" width="79.0" x="411.0" y="93.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ScriptTask_2" bpmnElement="_17w9rFXwyymH0XPNuOYA613QUTc">
+        <dc:Bounds height="50.0" width="110.0" x="396.0" y="175.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_2" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="14.0" width="66.0" x="418.0" y="193.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ScriptTask_3" bpmnElement="_17w9rGt1HJE61vZfe4wWAk8Dc8P">
+        <dc:Bounds height="50.0" width="110.0" x="730.0" y="125.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_3" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="14.0" width="60.0" x="755.0" y="143.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ScriptTask_4" bpmnElement="_17w9rITSbuUrrcG6O14wyBeySST">
+        <dc:Bounds height="50.0" width="110.0" x="730.0" y="251.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_4" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="14.0" width="102.0" x="734.0" y="269.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ScriptTask_5" bpmnElement="_17w9rFHXbEyD6kmGsL9blLmImyd">
+        <dc:Bounds height="50.0" width="110.0" x="136.0" y="125.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_5" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="14.0" width="92.0" x="145.0" y="143.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_1" bpmnElement="_17w9rEuv8ABdvlAwfBQJk1rBu9c">
+        <dc:Bounds height="36.0" width="36.0" x="50.0" y="132.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_6" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="14.0" width="23.0" x="56.0" y="168.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="_17w9rCEFEhJMAHnmsP7KMwLabM2">
+        <dc:Bounds height="36.0" width="36.0" x="980.0" y="182.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_7" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="14.0" width="21.0" x="987.0" y="218.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ParallelGateway_1" bpmnElement="_17w9rGlo30zIezR0MqPfY4KjREk" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="881.0" y="175.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_8" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="14.0" width="51.0" x="881.0" y="225.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ParallelGateway_2" bpmnElement="_17w9rC9GaG67yfQQGT8mXY7ey4G" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="631.0" y="125.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_9" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="14.0" width="51.0" x="631.0" y="175.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ParallelGateway_3" bpmnElement="_17w9rDCgoWgx7dazvHnaelA71Ef" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="550.0" y="175.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_10" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="14.0" width="41.0" x="554.0" y="225.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ParallelGateway_4" bpmnElement="_17w9rD9OmEtMcccZpbPdRXNTDnR" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="296.0" y="125.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_11" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="14.0" width="41.0" x="300.0" y="175.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="_17w9rG3FrHziw65uUw76pXlB24L" sourceElement="BPMNShape_ParallelGateway_4" targetElement="BPMNShape_ScriptTask_1">
+        <di:waypoint xsi:type="dc:Point" x="321.0" y="125.0"/>
+        <di:waypoint xsi:type="dc:Point" x="321.0" y="100.0"/>
+        <di:waypoint xsi:type="dc:Point" x="396.0" y="100.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_12"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="_17w9rGLChZYrVZQDicOcmlGQoGQ" sourceElement="BPMNShape_ScriptTask_1" targetElement="BPMNShape_ParallelGateway_2">
+        <di:waypoint xsi:type="dc:Point" x="506.0" y="100.0"/>
+        <di:waypoint xsi:type="dc:Point" x="656.0" y="100.0"/>
+        <di:waypoint xsi:type="dc:Point" x="656.0" y="125.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_13"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="_17w9rBlfY8PJdVk4EPE58noIMUX" sourceElement="BPMNShape_ParallelGateway_4" targetElement="BPMNShape_ScriptTask_2">
+        <di:waypoint xsi:type="dc:Point" x="321.0" y="175.0"/>
+        <di:waypoint xsi:type="dc:Point" x="321.0" y="200.0"/>
+        <di:waypoint xsi:type="dc:Point" x="396.0" y="200.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_14"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="_17w9rBiGd0fLaBOdFkgyPhLpieQ" sourceElement="BPMNShape_ScriptTask_2" targetElement="BPMNShape_ParallelGateway_3">
+        <di:waypoint xsi:type="dc:Point" x="506.0" y="200.0"/>
+        <di:waypoint xsi:type="dc:Point" x="528.0" y="200.0"/>
+        <di:waypoint xsi:type="dc:Point" x="550.0" y="200.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_15"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_5" bpmnElement="_17w9rE4RP3vwHhcGfvKEXcVnqwR" sourceElement="BPMNShape_ParallelGateway_2" targetElement="BPMNShape_ScriptTask_3">
+        <di:waypoint xsi:type="dc:Point" x="681.0" y="150.0"/>
+        <di:waypoint xsi:type="dc:Point" x="705.0" y="150.0"/>
+        <di:waypoint xsi:type="dc:Point" x="730.0" y="150.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_16"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_6" bpmnElement="_17w9rFBJmv7G0z6MYI3zT9H2hfX" sourceElement="BPMNShape_ScriptTask_3" targetElement="BPMNShape_ParallelGateway_1">
+        <di:waypoint xsi:type="dc:Point" x="840.0" y="150.0"/>
+        <di:waypoint xsi:type="dc:Point" x="906.0" y="150.0"/>
+        <di:waypoint xsi:type="dc:Point" x="906.0" y="175.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_17"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_7" bpmnElement="_17w9rIN93mYr7PgzMSi2UeaEkcG" sourceElement="BPMNShape_ParallelGateway_3" targetElement="BPMNShape_ScriptTask_4">
+        <di:waypoint xsi:type="dc:Point" x="575.0" y="225.0"/>
+        <di:waypoint xsi:type="dc:Point" x="575.0" y="276.0"/>
+        <di:waypoint xsi:type="dc:Point" x="730.0" y="276.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_18"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_8" bpmnElement="_17w9rDJNtGCAYdSUUCh7DDdudZU" sourceElement="BPMNShape_ScriptTask_4" targetElement="BPMNShape_ParallelGateway_1">
+        <di:waypoint xsi:type="dc:Point" x="840.0" y="276.0"/>
+        <di:waypoint xsi:type="dc:Point" x="906.0" y="276.0"/>
+        <di:waypoint xsi:type="dc:Point" x="906.0" y="225.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_19"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_9" bpmnElement="_17w9rBnk3JkW0vcriaPakoD4eyo" sourceElement="BPMNShape_StartEvent_1" targetElement="BPMNShape_ScriptTask_5">
+        <di:waypoint xsi:type="dc:Point" x="86.0" y="150.0"/>
+        <di:waypoint xsi:type="dc:Point" x="111.0" y="150.0"/>
+        <di:waypoint xsi:type="dc:Point" x="136.0" y="150.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_20"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_10" bpmnElement="_17w9rG2DQb5Ygh9a8C36bkwYbif" sourceElement="BPMNShape_ScriptTask_5" targetElement="BPMNShape_ParallelGateway_4">
+        <di:waypoint xsi:type="dc:Point" x="246.0" y="150.0"/>
+        <di:waypoint xsi:type="dc:Point" x="271.0" y="150.0"/>
+        <di:waypoint xsi:type="dc:Point" x="296.0" y="150.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_21"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_11" bpmnElement="_17w9rEKAoUZ5apO9MV46foajlW1" sourceElement="BPMNShape_ParallelGateway_1" targetElement="BPMNShape_EndEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="931.0" y="200.0"/>
+        <di:waypoint xsi:type="dc:Point" x="955.0" y="200.0"/>
+        <di:waypoint xsi:type="dc:Point" x="980.0" y="200.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_22"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_12" bpmnElement="_17w9rJ1OTWvjMYHTyQX0qNHH1WT" sourceElement="BPMNShape_ParallelGateway_3" targetElement="BPMNShape_ParallelGateway_2">
+        <di:waypoint xsi:type="dc:Point" x="600.0" y="200.0"/>
+        <di:waypoint xsi:type="dc:Point" x="656.0" y="200.0"/>
+        <di:waypoint xsi:type="dc:Point" x="656.0" y="175.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_23"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+    <bpmndi:BPMNLabelStyle id="BPMNLabelStyle_1">
+      <dc:Font name="arial" size="9.0"/>
+    </bpmndi:BPMNLabelStyle>
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_2" name="notify_on_high_load policy">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_2" bpmnElement="_17w9rIbOGYIOZUpEooZYjvvjofE">
+      <bpmndi:BPMNShape id="BPMNShape_ScriptTask_6" bpmnElement="_17w9rH9ia1Qe773APG5ERyfbYhX">
+        <dc:Bounds height="50.0" width="110.0" x="240.0" y="50.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_24" labelStyle="BPMNLabelStyle_2">
+          <dc:Bounds height="14.0" width="102.0" x="244.0" y="68.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ScriptTask_7" bpmnElement="_17w9rDpSr8Ak25KetMyOhNa11vP">
+        <dc:Bounds height="50.0" width="110.0" x="240.0" y="207.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_25" labelStyle="BPMNLabelStyle_2">
+          <dc:Bounds height="14.0" width="102.0" x="244.0" y="225.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_2" bpmnElement="_17w9rGQO0Y9jmNHOmFgLFvPiUMq">
+        <dc:Bounds height="36.0" width="36.0" x="43.0" y="133.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_26" labelStyle="BPMNLabelStyle_2">
+          <dc:Bounds height="14.0" width="23.0" x="49.0" y="169.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_2" bpmnElement="_17w9rDXJLShjiL4FAmtFpuNdS0Y">
+        <dc:Bounds height="36.0" width="36.0" x="680.0" y="133.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_27" labelStyle="BPMNLabelStyle_2">
+          <dc:Bounds height="14.0" width="21.0" x="687.0" y="169.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ScriptTask_8" bpmnElement="_17w9rFKqch9wQkIZsru5eypBFXl">
+        <dc:Bounds height="50.0" width="110.0" x="520.0" y="126.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_28" labelStyle="BPMNLabelStyle_2">
+          <dc:Bounds height="14.0" width="67.0" x="541.0" y="144.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ParallelGateway_5" bpmnElement="_17w9rDi4xlGaah4409F64imXOX4" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="130.0" y="126.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_29" labelStyle="BPMNLabelStyle_2">
+          <dc:Bounds height="14.0" width="41.0" x="134.0" y="176.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ParallelGateway_6" bpmnElement="_17w9rCpGVkHoLtu0L7xV6iqvuYn" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="416.0" y="126.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_30" labelStyle="BPMNLabelStyle_2">
+          <dc:Bounds height="14.0" width="51.0" x="416.0" y="176.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_13" bpmnElement="_17w9rISFAVUirNA4vJ3yI9zTHMo" sourceElement="BPMNShape_ParallelGateway_5" targetElement="BPMNShape_ScriptTask_6">
+        <di:waypoint xsi:type="dc:Point" x="155.0" y="126.0"/>
+        <di:waypoint xsi:type="dc:Point" x="155.0" y="75.0"/>
+        <di:waypoint xsi:type="dc:Point" x="240.0" y="75.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_31"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_14" bpmnElement="_17w9rExKM01U0A5QJz04kzi6Sy1" sourceElement="BPMNShape_ScriptTask_6" targetElement="BPMNShape_ParallelGateway_6">
+        <di:waypoint xsi:type="dc:Point" x="350.0" y="75.0"/>
+        <di:waypoint xsi:type="dc:Point" x="441.0" y="75.0"/>
+        <di:waypoint xsi:type="dc:Point" x="441.0" y="126.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_32"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_15" bpmnElement="_17w9rIOdtJ9zrccD6WKLx8V5953" sourceElement="BPMNShape_ParallelGateway_5" targetElement="BPMNShape_ScriptTask_7">
+        <di:waypoint xsi:type="dc:Point" x="155.0" y="176.0"/>
+        <di:waypoint xsi:type="dc:Point" x="155.0" y="232.0"/>
+        <di:waypoint xsi:type="dc:Point" x="240.0" y="232.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_33"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_16" bpmnElement="_17w9rGfx2In5giTLlNUeq2eA57W" sourceElement="BPMNShape_ScriptTask_7" targetElement="BPMNShape_ParallelGateway_6">
+        <di:waypoint xsi:type="dc:Point" x="350.0" y="232.0"/>
+        <di:waypoint xsi:type="dc:Point" x="441.0" y="232.0"/>
+        <di:waypoint xsi:type="dc:Point" x="441.0" y="176.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_34"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_17" bpmnElement="_17w9rGKeV2Ey3S3m5l04pw9bqJA" sourceElement="BPMNShape_StartEvent_2" targetElement="BPMNShape_ParallelGateway_5">
+        <di:waypoint xsi:type="dc:Point" x="79.0" y="151.0"/>
+        <di:waypoint xsi:type="dc:Point" x="104.0" y="151.0"/>
+        <di:waypoint xsi:type="dc:Point" x="130.0" y="151.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_35"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_18" bpmnElement="_17w9rD9hw3tfaq41HyGfbkBu3kS" sourceElement="BPMNShape_ScriptTask_8" targetElement="BPMNShape_EndEvent_2">
+        <di:waypoint xsi:type="dc:Point" x="630.0" y="151.0"/>
+        <di:waypoint xsi:type="dc:Point" x="655.0" y="151.0"/>
+        <di:waypoint xsi:type="dc:Point" x="680.0" y="151.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_36"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_19" bpmnElement="_17w9rH9oPLLSby0U9R9xPxmmhLo" sourceElement="BPMNShape_ParallelGateway_6" targetElement="BPMNShape_ScriptTask_8">
+        <di:waypoint xsi:type="dc:Point" x="466.0" y="151.0"/>
+        <di:waypoint xsi:type="dc:Point" x="493.0" y="151.0"/>
+        <di:waypoint xsi:type="dc:Point" x="520.0" y="151.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_37"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+    <bpmndi:BPMNLabelStyle id="BPMNLabelStyle_2">
+      <dc:Font name="arial" size="9.0"/>
+    </bpmndi:BPMNLabelStyle>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

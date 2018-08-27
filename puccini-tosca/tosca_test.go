@@ -32,10 +32,11 @@ func TestParse(t *testing.T) {
 	testParse(t, "grammar/unicode.yaml", nil)
 	testParse(t, "grammar/workflows.yaml", nil)
 	testParse(t, "javascript/constraints.yaml", nil)
-	testParse(t, "javascript/functions.yaml", nil)
 	testParse(t, "javascript/exec.yaml", nil)
-	testParse(t, "javascript/xml.yaml", nil)
+	testParse(t, "javascript/functions.yaml", nil)
 	testParse(t, "kubernetes/bookinfo/bookinfo-simple.yaml", nil)
+	testParse(t, "openstack/hello-world.yaml", nil)
+	testParse(t, "bpmn/open-loop.yaml", nil)
 }
 
 var ROOT string

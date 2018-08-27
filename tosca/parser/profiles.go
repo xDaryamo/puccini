@@ -1,7 +1,9 @@
 package parser
 
 import (
-	kubernetes_v1_10 "github.com/tliron/puccini/tosca/profiles/kubernetes/v1_10"
+	bpmn_v1_0 "github.com/tliron/puccini/tosca/profiles/bpmn/v1_0"
+	kubernetes_v1_0 "github.com/tliron/puccini/tosca/profiles/kubernetes/v1_0"
+	openstack_v1_0 "github.com/tliron/puccini/tosca/profiles/openstack/v1_0"
 	simpleForNFV_v1_0 "github.com/tliron/puccini/tosca/profiles/simple-for-nfv/v1_0"
 	simple_v1_1 "github.com/tliron/puccini/tosca/profiles/simple/v1_1"
 
@@ -17,7 +19,15 @@ func init() {
 		url.Internal[k] = v
 	}
 
-	for k, v := range kubernetes_v1_10.Profile {
+	for k, v := range kubernetes_v1_0.Profile {
+		url.Internal[k] = v
+	}
+
+	for k, v := range openstack_v1_0.Profile {
+		url.Internal[k] = v
+	}
+
+	for k, v := range bpmn_v1_0.Profile {
 		url.Internal[k] = v
 	}
 }

@@ -42,10 +42,10 @@ tosca.getNodeTemplate = function(entity) {
 			if (tosca.isNodeTemplate(vertex) && (vertex.properties.name === entity))
 				return vertex.properties;
 		}
-		throw sprintf('node template "%s" not found', entity);
+		throw puccini.sprintf('node template "%s" not found', entity);
 	}
 	if (!tosca.isTosca(vertex))
-		throw sprintf('node template "%s" not found', entity);
+		throw puccini.sprintf('node template "%s" not found', entity);
 	return vertex.properties;
 };
 

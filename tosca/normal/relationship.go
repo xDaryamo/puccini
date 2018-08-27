@@ -55,9 +55,9 @@ func (self *Relationship) Marshalable() interface{} {
 		Attributes             Constrainables `json:"attributes" yaml:"attributes"`
 		Interfaces             Interfaces     `json:"interfaces" yaml:"interfaces"`
 	}{
-		Name:        self.Name,
-		Description: self.Description,
-		Types:       self.Types,
+		Name:                   self.Name,
+		Description:            self.Description,
+		Types:                  self.Types,
 		TargetNodeTemplateName: targetNodeTemplateName,
 		TargetCapabilityName:   targetCapabilityName,
 		Properties:             self.Properties,

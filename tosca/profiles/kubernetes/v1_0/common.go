@@ -1,6 +1,6 @@
 // This file was auto-generated from YAML files
 
-package v1_10
+package v1_0
 
 import (
 	"sync/atomic"
@@ -8,7 +8,7 @@ import (
 	"github.com/tliron/puccini/url"
 )
 
-const URL = "internal:/tosca/kubernetes/1.10/profile.yaml"
+const URL = "internal:/tosca/kubernetes/1.0/profile.yaml"
 
 var Profile = make(map[string]string)
 
