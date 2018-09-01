@@ -9,7 +9,7 @@ import (
 
 func init() {
 	rootCmd.AddCommand(execCmd)
-	execCmd.Flags().StringVarP(&output, "output", "o", "", "output to file (instead of stdout)")
+	execCmd.Flags().StringVarP(&output, "output", "o", "", "output to file or directory (default is stdout)")
 }
 
 var execCmd = &cobra.Command{

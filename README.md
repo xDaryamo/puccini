@@ -8,7 +8,9 @@ Puccini
 Deliberately stateless cloud topology management and deployment tools based on
 [TOSCA](https://www.oasis-open.org/committees/tosca/).
 
-Check out the [quickstart guide](QUICKSTART.md).
+Impatient? Check out the [quickstart guide](QUICKSTART.md).
+
+Developer? Check out the [development guide](scripts/README.md).
 
 puccini-tosca
 -------------
@@ -206,10 +208,8 @@ of TOSCA's
 or [Simple Profile for NFV](http://docs.oasis-open.org/tosca/tosca-nfv/v1.0/tosca-nfv-v1.0.html)
 types (Compute, BlockStorage, VDU, etc.). Still, if you find these so-called "normative" types
 useful, they are included in Puccini and will be compiled into Clout. You may write your own
-JavaScript to deploy them to your cloud orchestration environment. For example, it could make sense
-to generate an OpenStack [Heat](https://wiki.openstack.org/wiki/Heat) template, or even call the
-OpenStack APIs directly, allowing you to go from TOSCA through Clout to OpenStack, just as we go
-from TOSCA to Kubernetes.
+JavaScript to deploy them to your cloud orchestration environment. But, we encourage you to consider
+carefully whether this is a good idea. We think it's a dead end.
 
 Generally speaking, the notion that a single set of normative types could be used for all the
 various cloud and container platforms out there is a pipe dream. The devil is in the details, and

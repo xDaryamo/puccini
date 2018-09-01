@@ -35,17 +35,13 @@ func ReadClout(path string) (*clout.Clout, error) {
 		defer readerCloser.Close()
 	}
 
-	f := ardFormat
-	if f == "" {
-		f = url_.Format()
-	}
+	f := url_.Format()
 
 	switch f {
 	case "json":
 		return clout.DecodeJson(reader)
 	case "yaml", "":
 		return clout.DecodeYaml(reader)
-		// c.WriteYaml(os.Stdout)
 	case "xml":
 		return clout.DecodeXml(reader)
 	default:

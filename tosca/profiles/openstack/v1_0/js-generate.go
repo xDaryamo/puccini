@@ -40,6 +40,6 @@ for (v in clout.vertexes) {
 	//provision.tasks.push();
 }
 
-puccini.write(playbook);
+puccini.write(playbook, 'main.' + puccini.format);
 `
 }

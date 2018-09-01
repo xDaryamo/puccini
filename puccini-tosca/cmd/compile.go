@@ -12,7 +12,7 @@ var output string
 func init() {
 	rootCmd.AddCommand(compileCmd)
 	compileCmd.Flags().StringArrayVarP(&inputs, "input", "i", []string{}, "specify an input (name=JSON)")
-	compileCmd.Flags().StringVarP(&output, "output", "o", "", "output Clout to file (instead of stdout)")
+	compileCmd.Flags().StringVarP(&output, "output", "o", "", "output Clout to file (default is stdout)")
 }
 
 var compileCmd = &cobra.Command{
