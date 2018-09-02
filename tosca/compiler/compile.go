@@ -35,6 +35,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 	c.Metadata["puccini-tosca"] = metadata
 
 	tosca := make(ard.Map)
+	tosca["description"] = s.Description
 	tosca["metadata"] = s.Metadata
 	tosca["inputs"] = s.Inputs
 	tosca["outputs"] = s.Outputs

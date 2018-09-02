@@ -3,6 +3,9 @@ tosca_definitions_version: tosca_simple_yaml_1_1
 # You can add a human-readable "description" almost anywhere in TOSCA
 # Descriptions are compiled into Clout
 
+description: >-
+  My service
+
 node_types:
 
   Server:
@@ -20,7 +23,7 @@ node_types:
         description: Cost in US dollars
 
   SuperServer:
-    # If youi don't specify a description then it will be inherited
+    # If you don't specify a description then it will be inherited
     derived_from: Server
     properties:
       memory_configurations:
@@ -43,6 +46,11 @@ data_types:
     description: RAM size
 
 topology_template:
+
+  description: >-
+    My service template.
+
+    Note that when compiled this description will be appended to the service level description.
 
   node_templates:
 

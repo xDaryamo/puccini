@@ -91,6 +91,14 @@ func (self *TopologyTemplate) Render() {
 func (self *TopologyTemplate) Normalize(s *normal.ServiceTemplate) {
 	log.Info("{normalize} topology template")
 
+	if self.Description != nil {
+		// Append to description in service template
+		if s.Description != "" {
+			s.Description += "\n\n"
+		}
+		s.Description += *self.Description
+	}
+
 	self.InputParameterDefinitions.Normalize(s.Inputs, self.Context.FieldChild("inputs", nil))
 	self.OutputParameterDefinitions.Normalize(s.Outputs, self.Context.FieldChild("outputs", nil))
 

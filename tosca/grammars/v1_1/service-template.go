@@ -12,6 +12,7 @@ import (
 type ServiceTemplate struct {
 	*Unit `name:"service template"`
 
+	Description      *string           `read:"description"`
 	TopologyTemplate *TopologyTemplate `read:"topology_template,TopologyTemplate"`
 }
 
@@ -32,6 +33,10 @@ func (self *ServiceTemplate) Normalize() *normal.ServiceTemplate {
 	log.Info("{normalize} service template")
 
 	s := normal.NewServiceTemplate()
+
+	if self.Description != nil {
+		s.Description = *self.Description
+	}
 
 	s.ScriptNamespace = self.Context.ScriptNamespace
 
