@@ -5,11 +5,13 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"path/filepath"
+	"path"
 	"strings"
 
 	"github.com/tliron/puccini/common"
 )
+
+// Note: we *must* use the "path" package rather than "filepath" to ensure consistenty with Windows
 
 var Internal = make(map[string]string)
 
@@ -34,9 +36,9 @@ func NewValidInternalURL(path string) (*InternalURL, error) {
 	return &InternalURL{path, data}, nil
 }
 
-func NewValidRelativeInternalURL(path string, origin *InternalURL) (*InternalURL, error) {
-	path = filepath.Join(origin.Path, path)
-	return NewValidInternalURL(path)
+func NewValidRelativeInternalURL(path_ string, origin *InternalURL) (*InternalURL, error) {
+	path_ = path.Join(origin.Path, path_)
+	return NewValidInternalURL(path_)
 }
 
 func ReadInternalURL(path string, reader io.Reader) (*InternalURL, error) {
@@ -67,7 +69,7 @@ func (self *InternalURL) Format() string {
 
 // URL interface
 func (self *InternalURL) Origin() URL {
-	return &InternalURL{filepath.Dir(self.Path), ""}
+	return &InternalURL{path.Dir(self.Path), ""}
 }
 
 // URL interface

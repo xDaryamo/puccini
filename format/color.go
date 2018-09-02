@@ -1,10 +1,20 @@
 package format
 
 import (
+	"io"
 	"strings"
 
 	"github.com/fatih/color"
 )
+
+var Stdout io.Writer
+
+var Stderr io.Writer
+
+func init() {
+	Stdout = color.Output
+	Stderr = color.Error
+}
 
 type Colorizer func(name string) string
 

@@ -38,7 +38,7 @@ func (self *Context) PrintHierarchies(indent int) {
 		context := import_.GetContext()
 		if len(context.Hierarchy.Children) > 0 {
 			format.PrintIndent(indent)
-			fmt.Printf("%s\n", format.ColorValue(context.URL.String()))
+			fmt.Fprintf(format.Stdout, "%s\n", format.ColorValue(context.URL.String()))
 			context.Hierarchy.Print(indent)
 		}
 	}

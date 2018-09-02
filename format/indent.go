@@ -14,5 +14,5 @@ func IndentString(indent int) string {
 }
 
 func PrintIndent(indent int) {
-	fmt.Print(IndentString(indent))
+	fmt.Fprint(Stdout, IndentString(indent))
 }

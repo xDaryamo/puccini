@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/op/go-logging"
+	"github.com/fatih/color"
 )
 
 var plainFormatter = logging.MustStringFormatter(
@@ -33,7 +34,7 @@ func ConfigureLogging(verbosity int, file *string) {
 		backend = logging.NewLogBackend(f, "", 0)
 		logging.SetFormatter(plainFormatter)
 	} else {
-		backend = logging.NewLogBackend(os.Stderr, "", 0)
+		backend = logging.NewLogBackend(color.Error, "", 0)
 		logging.SetFormatter(colorFormatter)
 	}
 

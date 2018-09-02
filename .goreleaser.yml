@@ -26,7 +26,7 @@ nfpm:
   - deb
   homepage: https://github.com/tliron/puccini
   maintainer: Tal Liron <tal.liron@gmail.com>
-  description: Deliberately stateless cloud topology management and deployment tools.
+  description: Deliberately stateless cloud topology management and deployment tools based on TOSCA.
   license: Apache 2.0
   files:
     puccini-csar: /usr/local/bin/puccini-csar

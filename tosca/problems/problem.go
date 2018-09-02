@@ -3,7 +3,6 @@ package problems
 import (
 	"fmt"
 	"io"
-	"os"
 	"sort"
 	"strings"
 
@@ -73,7 +72,7 @@ func (self Problems) Write(writer io.Writer) bool {
 // Print
 
 func (self Problems) Print() bool {
-	return self.Write(os.Stderr)
+	return self.Write(format.Stderr)
 }
 
 // sort.Interface

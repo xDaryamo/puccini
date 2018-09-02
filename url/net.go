@@ -4,8 +4,10 @@ import (
 	"io"
 	"net/http"
 	gourl "net/url"
-	"path/filepath"
+	"path"
 )
+
+// Note: we *must* use the "path" package rather than "filepath" to ensure consistenty with Windows
 
 //
 // NetURL
@@ -52,7 +54,7 @@ func (self *NetURL) Format() string {
 // URL interface
 func (self *NetURL) Origin() URL {
 	url_ := *self
-	url_.URL.Path = filepath.Dir(url_.URL.Path)
+	url_.URL.Path = path.Dir(url_.URL.Path)
 	return &url_
 }
 

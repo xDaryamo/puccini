@@ -3,13 +3,15 @@ package common
 import (
 	"fmt"
 	"os"
+
+	"github.com/fatih/color"
 )
 
 var Quiet bool
 
 func Errorf(message string, args ...interface{}) {
 	if !Quiet {
-		fmt.Fprintf(os.Stderr, message+"\n", args...)
+		fmt.Fprintf(color.Error, message+"\n", args...)
 	}
 	os.Exit(1)
 }

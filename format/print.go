@@ -2,7 +2,6 @@ package format
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/beevik/etree"
 	"github.com/hokaccha/go-prettyjson"
@@ -18,7 +17,7 @@ func Print(data interface{}, format string, pretty bool) error {
 	// Special handling for etree
 	if xmlDocument, ok := data.(*etree.Document); ok {
 		xmlDocument.Indent(IndentSpaces)
-		_, err := xmlDocument.WriteTo(os.Stdout)
+		_, err := xmlDocument.WriteTo(Stdout)
 		return err
 	}
 
@@ -35,7 +34,7 @@ func Print(data interface{}, format string, pretty bool) error {
 }
 
 func PrintYaml(data interface{}, pretty bool) error {
-	return WriteYaml(data, os.Stdout)
+	return WriteYaml(data, Stdout)
 }
 
 func PrintJson(data interface{}, pretty bool) error {
@@ -44,9 +43,9 @@ func PrintJson(data interface{}, pretty bool) error {
 		if err != nil {
 			return err
 		}
-		fmt.Printf("%s\n", bytes)
+		fmt.Fprintf(Stdout, "%s\n", bytes)
 	} else {
-		return WriteJson(data, os.Stdout, "")
+		return WriteJson(data, Stdout, "")
 	}
 	return nil
 }
@@ -56,12 +55,12 @@ func PrintXml(data interface{}, pretty bool) error {
 	if pretty {
 		indent = Indent
 	}
-	err := WriteXml(data, os.Stdout, indent)
+	err := WriteXml(data, Stdout, indent)
 	if err != nil {
 		return err
 	}
 	if pretty {
-		fmt.Println()
+		fmt.Fprintln(Stdout)
 	}
 	return nil
 }

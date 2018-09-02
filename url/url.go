@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"io"
 	gourl "net/url"
-	"path/filepath"
+	"path"
 )
+
+// Note: we *must* use the "path" package rather than "filepath" to ensure consistenty with Windows
 
 //
 // URL
@@ -13,7 +15,7 @@ import (
 
 type URL interface {
 	String() string
-	Format() string // yaml|json
+	Format() string // yaml|json|xml
 	Origin() URL    // base dir, is not a valid URL
 	Key() string    // for maps
 	Open() (io.Reader, error)
@@ -65,10 +67,10 @@ func NewValidURL(url string, origins []URL) (URL, error) {
 	return nil, fmt.Errorf("unsupported URL format: %s", url)
 }
 
-func newRelativeURL(path string, origins []URL, avoidNet bool) (URL, error) {
+func newRelativeURL(path_ string, origins []URL, avoidNet bool) (URL, error) {
 	// Absolute file path?
-	if filepath.IsAbs(path) {
-		url, err := NewValidFileURL(path)
+	if path.IsAbs(path_) {
+		url, err := NewValidFileURL(path_)
 		if err != nil {
 			return nil, err
 		}
@@ -81,15 +83,15 @@ func newRelativeURL(path string, origins []URL, avoidNet bool) (URL, error) {
 
 			switch o := origin.(type) {
 			case *FileURL:
-				url_, err = NewValidRelativeFileURL(path, o)
+				url_, err = NewValidRelativeFileURL(path_, o)
 			case *NetURL:
 				if !avoidNet {
-					url_, err = NewValidRelativeNetURL(path, o)
+					url_, err = NewValidRelativeNetURL(path_, o)
 				}
 			case *InternalURL:
-				url_, err = NewValidRelativeInternalURL(path, o)
+				url_, err = NewValidRelativeInternalURL(path_, o)
 			case *ZipURL:
-				url_, err = NewValidRelativeZipURL(path, o)
+				url_, err = NewValidRelativeZipURL(path_, o)
 			}
 
 			if err == nil {
@@ -98,9 +100,9 @@ func newRelativeURL(path string, origins []URL, avoidNet bool) (URL, error) {
 		}
 
 		// Try relative to work dir
-		url_, err := NewValidFileURL(path)
+		url_, err := NewValidFileURL(path_)
 		if err != nil {
-			return nil, fmt.Errorf("URL not found: %s", path)
+			return nil, fmt.Errorf("URL not found: %s", path_)
 		}
 
 		return url_, nil
