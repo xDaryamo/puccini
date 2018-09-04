@@ -13,7 +13,7 @@ import (
 
 func WriteOrPrint(data interface{}, format string, pretty bool, output string) error {
 	if output != "" {
-		f, err := os.OpenFile(output, os.O_WRONLY|os.O_CREATE, 0644)
+		f, err := os.OpenFile(output, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 		if err != nil {
 			return err
 		}

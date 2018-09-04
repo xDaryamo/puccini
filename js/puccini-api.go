@@ -51,14 +51,28 @@ func (self *PucciniApi) NewXmlDocument() *etree.Document {
 	return etree.NewDocument()
 }
 
-func (self *PucciniApi) Write(data interface{}, path string) {
-	output := self.context.Output
-	if path != "" {
-		output = filepath.Join(output, path)
-		err := os.MkdirAll(filepath.Dir(output), os.ModePerm)
+func (self *PucciniApi) WriteString(data string, path string) {
+	output := self.getOutput(path)
+	if !self.context.Quiet || (output != "") {
+		var f *os.File
+
+		if output != "" {
+			fmt.Fprintf(self.Stdout, "writing %s\n", output)
+			var err error
+			f, err = os.OpenFile(output, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+			self.context.ValidateError(err)
+			defer f.Close()
+		} else {
+			f = self.Stdout
+		}
+
+		_, err := f.WriteString(data)
 		self.context.ValidateError(err)
 	}
+}
 
+func (self *PucciniApi) Write(data interface{}, path string) {
+	output := self.getOutput(path)
 	if !self.context.Quiet || (output != "") {
 		if output != "" {
 			fmt.Fprintf(self.Stdout, "writing %s\n", output)
@@ -66,4 +80,14 @@ func (self *PucciniApi) Write(data interface{}, path string) {
 		err := format.WriteOrPrint(data, self.context.ArdFormat, true, output)
 		self.context.ValidateError(err)
 	}
+}
+
+func (self *PucciniApi) getOutput(path string) string {
+	output := self.context.Output
+	if path != "" {
+		output = filepath.Join(output, path)
+		err := os.MkdirAll(filepath.Dir(output), os.ModePerm)
+		self.context.ValidateError(err)
+	}
+	return output
 }
