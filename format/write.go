@@ -11,9 +11,13 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+func OpenFileForWrite(path string) (*os.File, error) {
+	return os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+}
+
 func WriteOrPrint(data interface{}, format string, pretty bool, output string) error {
 	if output != "" {
-		f, err := os.OpenFile(output, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+		f, err := OpenFileForWrite(output)
 		if err != nil {
 			return err
 		}

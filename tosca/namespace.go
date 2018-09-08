@@ -10,7 +10,7 @@ import (
 	"github.com/tliron/puccini/tosca/reflection"
 )
 
-type NameTransformer func(string) []string
+type NameTransformer func(string, interface{}) []string
 
 //
 // Namespace
@@ -83,7 +83,7 @@ func (self Namespace) Merge(namespace Namespace, nameTransformer NameTransformer
 			var names []string
 
 			if nameTransformer != nil {
-				names = append(names, nameTransformer(name)...)
+				names = append(names, nameTransformer(name, entityPtr)...)
 			} else {
 				names = []string{name}
 			}

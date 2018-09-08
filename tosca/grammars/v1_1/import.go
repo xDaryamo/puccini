@@ -80,24 +80,28 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 }
 
 func newImportNameTransformer(prefix *string) tosca.NameTransformer {
-	return func(name string) []string {
+	return func(name string, entityPtr interface{}) []string {
 		var names []string
 
-		if strings.HasPrefix(name, "tosca.") {
-			// Reserved "tosca." names also get shorthand and prefixed names
-			s := strings.Split(name, ".")
+		if type_, ok := entityPtr.(*Type); ok {
+			if normative, ok := type_.Metadata["normative"]; ok {
+				if (normative == "true") && strings.HasPrefix(name, "tosca.") {
+					// Reserved "tosca." names also get shorthand and prefixed names
+					s := strings.Split(name, ".")
 
-			// Find where the shorthand starts (e.g. "Endpoint.Public")
-			firstShorthandSegment := len(s) - 1
-			for i, segment := range s {
-				if (len(segment) > 0) && unicode.IsUpper([]rune(segment)[0]) {
-					firstShorthandSegment = i
-					break
+					// Find where the shorthand starts (e.g. "Endpoint.Public")
+					firstShorthandSegment := len(s) - 1
+					for i, segment := range s {
+						if (len(segment) > 0) && unicode.IsUpper([]rune(segment)[0]) {
+							firstShorthandSegment = i
+							break
+						}
+					}
+					shorthand := strings.Join(s[firstShorthandSegment:], ".")
+
+					names = append(names, shorthand, fmt.Sprintf("tosca:%s", shorthand))
 				}
 			}
-			shorthand := strings.Join(s[firstShorthandSegment:], ".")
-
-			names = append(names, shorthand, fmt.Sprintf("tosca:%s", shorthand))
 		}
 
 		if (prefix != nil) && (*prefix != "") {

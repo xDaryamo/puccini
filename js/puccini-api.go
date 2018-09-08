@@ -51,13 +51,27 @@ func (self *PucciniApi) NewXmlDocument() *etree.Document {
 	return etree.NewDocument()
 }
 
-func (self *PucciniApi) WriteString(data string, path string) {
-	output := self.getOutput(path)
-	if !self.context.Quiet || (output != "") {
+func (self *PucciniApi) Write(data interface{}, path string) {
+	output := self.context.Output
+	if path != "" {
+		output = filepath.Join(output, path)
+		err := os.MkdirAll(filepath.Dir(output), os.ModePerm)
+		self.context.ValidateError(err)
+	}
+
+	if self.context.Quiet && (output == "") {
+		return
+	}
+
+	if output != "" {
+		fmt.Fprintf(self.Stdout, "writing %s\n", output)
+	}
+
+	if s, ok := data.(string); ok {
+		// String is a special case: we just write the string contents
 		var f *os.File
 
 		if output != "" {
-			fmt.Fprintf(self.Stdout, "writing %s\n", output)
 			var err error
 			f, err = os.OpenFile(output, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 			self.context.ValidateError(err)
@@ -66,28 +80,10 @@ func (self *PucciniApi) WriteString(data string, path string) {
 			f = self.Stdout
 		}
 
-		_, err := f.WriteString(data)
+		_, err := f.WriteString(s)
 		self.context.ValidateError(err)
-	}
-}
-
-func (self *PucciniApi) Write(data interface{}, path string) {
-	output := self.getOutput(path)
-	if !self.context.Quiet || (output != "") {
-		if output != "" {
-			fmt.Fprintf(self.Stdout, "writing %s\n", output)
-		}
+	} else {
 		err := format.WriteOrPrint(data, self.context.ArdFormat, true, output)
 		self.context.ValidateError(err)
 	}
-}
-
-func (self *PucciniApi) getOutput(path string) string {
-	output := self.context.Output
-	if path != "" {
-		output = filepath.Join(output, path)
-		err := os.MkdirAll(filepath.Dir(output), os.ModePerm)
-		self.context.ValidateError(err)
-	}
-	return output
 }
