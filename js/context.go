@@ -44,7 +44,7 @@ func (self *Context) NewRuntime() *goja.Runtime {
 
 func (self *Context) Errorf(f string, args ...interface{}) {
 	if !self.Quiet {
-		fmt.Fprintf(self.Stderr, f+"\n", args...)
+		fmt.Fprintln(self.Stderr, format.ColorError(fmt.Sprintf(f, args...)))
 	}
 	os.Exit(1)
 }

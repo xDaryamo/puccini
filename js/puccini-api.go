@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/beevik/etree"
+	"github.com/fatih/color"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/format"
 )
@@ -51,11 +52,12 @@ func (self *PucciniApi) NewXmlDocument() *etree.Document {
 	return etree.NewDocument()
 }
 
-func (self *PucciniApi) Write(data interface{}, path string) {
+func (self *PucciniApi) Write(data interface{}, path string, dontOverwrite bool) {
 	output := self.context.Output
 	if path != "" {
 		output = filepath.Join(output, path)
-		err := os.MkdirAll(filepath.Dir(output), os.ModePerm)
+		var err error
+		output, err = filepath.Abs(output)
 		self.context.ValidateError(err)
 	}
 
@@ -64,26 +66,44 @@ func (self *PucciniApi) Write(data interface{}, path string) {
 	}
 
 	if output != "" {
-		fmt.Fprintf(self.Stdout, "writing %s\n", output)
+		_, err := os.Stat(output)
+		var message string
+		var skip bool
+		if (err == nil) || os.IsExist(err) {
+			if dontOverwrite {
+				message = color.RedString("skippping:  ")
+				skip = true
+			} else {
+				message = color.YellowString("overwriting:")
+			}
+		} else {
+			message = color.GreenString("writing:    ")
+		}
+		if !self.context.Quiet {
+			fmt.Fprintln(self.Stdout, fmt.Sprintf("%s %s", message, output))
+		}
+		if skip {
+			return
+		}
 	}
 
+	var err error
 	if s, ok := data.(string); ok {
 		// String is a special case: we just write the string contents
 		var f *os.File
 
 		if output != "" {
 			var err error
-			f, err = os.OpenFile(output, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+			f, err = format.OpenFileForWrite(output)
 			self.context.ValidateError(err)
 			defer f.Close()
 		} else {
 			f = self.Stdout
 		}
 
-		_, err := f.WriteString(s)
-		self.context.ValidateError(err)
+		_, err = f.WriteString(s)
 	} else {
-		err := format.WriteOrPrint(data, self.context.ArdFormat, true, output)
-		self.context.ValidateError(err)
+		err = format.WriteOrPrint(data, self.context.ArdFormat, true, output)
 	}
+	self.context.ValidateError(err)
 }

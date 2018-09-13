@@ -6,13 +6,22 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 
 	"github.com/beevik/etree"
 	"gopkg.in/yaml.v2"
 )
 
+const DIRECTORY_WRITE_PERMISSIONS = 0755
+
+const FILE_WRITE_PERMISSIONS = 0644
+
 func OpenFileForWrite(path string) (*os.File, error) {
-	return os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	err := os.MkdirAll(filepath.Dir(path), DIRECTORY_WRITE_PERMISSIONS)
+	if err != nil {
+		return nil, err
+	}
+	return os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, FILE_WRITE_PERMISSIONS)
 }
 
 func WriteOrPrint(data interface{}, format string, pretty bool, output string) error {

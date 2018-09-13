@@ -9,9 +9,9 @@ import (
 
 var Quiet bool
 
-func Errorf(message string, args ...interface{}) {
+func Errorf(f string, args ...interface{}) {
 	if !Quiet {
-		fmt.Fprintf(color.Error, message+"\n", args...)
+		fmt.Fprintln(color.Error, color.RedString(fmt.Sprintf(f, args...)))
 	}
 	os.Exit(1)
 }

@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/op/go-logging"
 	"github.com/fatih/color"
+	"github.com/op/go-logging"
 )
+
+const FILE_WRITE_PERMISSIONS = 0644
 
 var plainFormatter = logging.MustStringFormatter(
 	`%{time:2006/01/02 15:04:05.000} %{level:8.8s} [%{module}] %{message}`,
@@ -25,9 +27,10 @@ func ConfigureLogging(verbosity int, file *string) {
 
 	var backend *logging.LogBackend
 	if file != nil {
-		f, err := os.OpenFile(*file, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+		f, err := os.OpenFile(*file, os.O_WRONLY|os.O_CREATE|os.O_APPEND, FILE_WRITE_PERMISSIONS)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "log file error: %s\n", err)
+			message := fmt.Sprintf("log file error: %s", err)
+			fmt.Fprintln(color.Error, color.RedString(message))
 			os.Exit(1)
 		}
 		//defer f.Close()
