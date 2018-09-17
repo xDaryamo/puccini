@@ -59,6 +59,6 @@ func (self *Context) Traverse(phase string, traverse reflection.Traverser) {
 
 func (self *Context) PrintImports(indent int) {
 	format.PrintIndent(indent)
-	fmt.Printf("%s\n", format.ColorValue(self.ServiceTemplate.GetContext().URL.String()))
+	fmt.Fprintf(format.Stdout, "%s\n", format.ColorValue(self.ServiceTemplate.GetContext().URL.String()))
 	self.ServiceTemplate.PrintImports(indent, format.TreePrefix{})
 }

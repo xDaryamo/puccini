@@ -8,6 +8,7 @@ import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/common"
+	"github.com/tliron/puccini/format"
 	"github.com/tliron/puccini/js"
 )
 
@@ -44,7 +45,7 @@ func ListValue(value interface{}, path []string) {
 	switch v := value.(type) {
 	case string:
 		if !common.Quiet {
-			fmt.Printf("%s\n", strings.Join(path, "."))
+			fmt.Fprintf(format.Stdout, "%s\n", strings.Join(path, "."))
 		}
 	case ard.Map:
 		for key, vv := range v {

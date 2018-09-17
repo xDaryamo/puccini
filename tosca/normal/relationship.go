@@ -89,7 +89,7 @@ func (self *Relationship) Print(indent int, treePrefix format.TreePrefix, last b
 	}
 
 	treePrefix.Print(indent, last)
-	fmt.Printf("%s -> %s @ %s\n", format.ColorName(self.Name), format.ColorName(targetCapabilityName), format.ColorTypeName(targetNodeTemplateName))
+	fmt.Fprintf(format.Stdout, "%s -> %s @ %s\n", format.ColorName(self.Name), format.ColorName(targetCapabilityName), format.ColorTypeName(targetNodeTemplateName))
 }
 
 //

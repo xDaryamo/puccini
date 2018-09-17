@@ -5,53 +5,30 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"os"
-	"path/filepath"
 
 	"github.com/beevik/etree"
 	"gopkg.in/yaml.v2"
 )
 
-const DIRECTORY_WRITE_PERMISSIONS = 0755
-
-const FILE_WRITE_PERMISSIONS = 0644
-
-func OpenFileForWrite(path string) (*os.File, error) {
-	err := os.MkdirAll(filepath.Dir(path), DIRECTORY_WRITE_PERMISSIONS)
-	if err != nil {
-		return nil, err
-	}
-	return os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, FILE_WRITE_PERMISSIONS)
-}
-
-func WriteOrPrint(data interface{}, format string, pretty bool, output string) error {
-	if output != "" {
-		f, err := OpenFileForWrite(output)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-		return Write(data, format, Indent, f)
-	} else {
-		return Print(data, format, pretty)
-	}
-}
-
 func Write(data interface{}, format string, indent string, writer io.Writer) error {
+	// Special handling for strings
+	if s, ok := data.(string); ok {
+		_, err := io.WriteString(writer, s)
+		return err
+	}
+
 	// Special handling for etree
 	if xmlDocument, ok := data.(*etree.Document); ok {
-		xmlDocument.Indent(IndentSpaces)
-		_, err := xmlDocument.WriteTo(writer)
-		return err
+		return WriteXmlDocument(xmlDocument, writer, indent)
 	}
 
 	switch format {
 	case "yaml", "":
 		return WriteYaml(data, writer)
 	case "json":
-		return WriteJson(data, writer, Indent)
+		return WriteJson(data, writer, indent)
 	case "xml":
-		return WriteXml(data, writer, Indent)
+		return WriteXml(data, writer, indent)
 	default:
 		return fmt.Errorf("unsupported format: %s", format)
 	}
@@ -95,4 +72,10 @@ func WriteXml(data interface{}, writer io.Writer, indent string) error {
 	encoder := xml.NewEncoder(writer)
 	encoder.Indent("", indent)
 	return encoder.Encode(data)
+}
+
+func WriteXmlDocument(xmlDocument *etree.Document, writer io.Writer, indent string) error {
+	xmlDocument.Indent(len(indent))
+	_, err := xmlDocument.WriteTo(writer)
+	return err
 }

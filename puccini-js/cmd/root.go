@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/tliron/puccini/common"
+	"github.com/tliron/puccini/format"
 )
 
 var logTo string
@@ -38,7 +39,7 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if bashCompletionTo != "" {
 			if !common.Quiet {
-				fmt.Printf("generating bash completion script: %s\n", bashCompletionTo)
+				fmt.Fprintf(format.Stdout, "generating bash completion script: %s\n", bashCompletionTo)
 			}
 			cmd.GenBashCompletionFile(bashCompletionTo)
 		}

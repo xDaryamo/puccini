@@ -15,15 +15,15 @@ func (self TreePrefix) Print(indent int, last bool) {
 
 	for _, element := range self {
 		if element {
-			fmt.Print("  ")
+			fmt.Fprint(Stdout, "  ")
 		} else {
-			fmt.Print("│ ")
+			fmt.Fprint(Stdout, "│ ")
 		}
 	}
 
 	if last {
-		fmt.Print("└─")
+		fmt.Fprint(Stdout, "└─")
 	} else {
-		fmt.Print("├─")
+		fmt.Fprint(Stdout, "├─")
 	}
 }

@@ -52,7 +52,7 @@ func (self *Task) Done() {
 
 func (self *Task) Print(indent int) {
 	format.PrintIndent(indent)
-	fmt.Printf("%s\n", format.ColorPath(self.Name))
+	fmt.Fprintf(format.Stdout, "%s\n", format.ColorPath(self.Name))
 	self.PrintDependencies(indent, format.TreePrefix{})
 }
 
@@ -74,7 +74,7 @@ func (self *Task) PrintDependencies(indent int, treePrefix format.TreePrefix) {
 
 func (self *Task) PrintDependency(indent int, treePrefix format.TreePrefix, last bool) {
 	treePrefix.Print(indent, last)
-	fmt.Printf("%s\n", self.Name)
+	fmt.Fprintf(format.Stdout, "%s\n", self.Name)
 }
 
 func (self *Task) AddDependency(task *Task) {

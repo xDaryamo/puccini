@@ -112,7 +112,7 @@ func (self Namespace) Print(indent int) {
 	for _, type_ := range types {
 		forType := self[type_]
 		format.PrintIndent(indent)
-		fmt.Printf("%s\n", format.ColorTypeName(type_.Elem().String()))
+		fmt.Fprintf(format.Stdout, "%s\n", format.ColorTypeName(type_.Elem().String()))
 
 		// Sort names
 		names := make([]string, len(forType))
@@ -125,7 +125,7 @@ func (self Namespace) Print(indent int) {
 
 		for _, name := range names {
 			format.PrintIndent(nameIndent)
-			fmt.Printf("%s\n", name)
+			fmt.Fprintf(format.Stdout, "%s\n", name)
 		}
 	}
 }

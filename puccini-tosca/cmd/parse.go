@@ -95,7 +95,7 @@ func Parse(urlString string) *normal.ServiceTemplate {
 
 		if !common.Quiet && ToPrintPhase(1) {
 			if len(printPhases) > 1 {
-				fmt.Printf("%s\n", format.ColorHeading("Imports"))
+				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Imports"))
 			}
 			context.PrintImports(1)
 		}
@@ -107,7 +107,7 @@ func Parse(urlString string) *normal.ServiceTemplate {
 		context.LookupNames()
 		if !common.Quiet && ToPrintPhase(2) {
 			if len(printPhases) > 1 {
-				fmt.Printf("%s\n", format.ColorHeading("Namespaces"))
+				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Namespaces"))
 			}
 			context.PrintNamespaces(1)
 		}
@@ -118,7 +118,7 @@ func Parse(urlString string) *normal.ServiceTemplate {
 		context.AddHierarchies()
 		if !common.Quiet && ToPrintPhase(3) {
 			if len(printPhases) > 1 {
-				fmt.Printf("%s\n", format.ColorHeading("Hierarchies"))
+				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Hierarchies"))
 			}
 			context.PrintHierarchies(1)
 		}
@@ -129,7 +129,7 @@ func Parse(urlString string) *normal.ServiceTemplate {
 		tasks := context.GetInheritTasks()
 		if !common.Quiet && ToPrintPhase(4) {
 			if len(printPhases) > 1 {
-				fmt.Printf("%s\n", format.ColorHeading("Inheritance Tasks"))
+				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Inheritance Tasks"))
 			}
 			tasks.Print(1)
 		}
@@ -144,10 +144,10 @@ func Parse(urlString string) *normal.ServiceTemplate {
 		if !common.Quiet && ToPrintPhase(5) {
 			sort.Sort(entityPtrs)
 			if len(printPhases) > 1 {
-				fmt.Printf("%s\n", format.ColorHeading("Rendering"))
+				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Rendering"))
 			}
 			for _, entityPtr := range entityPtrs {
-				fmt.Printf("%s:\n", format.ColorPath(tosca.GetContext(entityPtr).Path))
+				fmt.Fprintf(format.Stdout, "%s:\n", format.ColorPath(tosca.GetContext(entityPtr).Path))
 				err = format.Print(entityPtr, ardFormat, true)
 				common.ValidateError(err)
 			}
@@ -167,7 +167,7 @@ func Parse(urlString string) *normal.ServiceTemplate {
 
 			// Only print if there are no problems
 			if !common.Quiet && ToPrintPhase(6) && context.Problems.Empty() {
-				fmt.Printf("%s\n", format.ColorHeading("Topology"))
+				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Topology"))
 				s.PrintRelationships(1)
 			}
 		}
@@ -180,7 +180,7 @@ func Parse(urlString string) *normal.ServiceTemplate {
 		} else if !common.Quiet {
 			for _, entityPtr := range entityPtrs {
 				if len(entityPtrs) > 0 {
-					fmt.Printf("%s\n", format.ColorPath(tosca.GetContext(entityPtr).Path))
+					fmt.Fprintf(format.Stdout, "%s\n", format.ColorPath(tosca.GetContext(entityPtr).Path))
 				}
 				err = format.Print(entityPtr, ardFormat, true)
 				common.ValidateError(err)

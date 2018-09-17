@@ -14,11 +14,18 @@ func init() {
 }
 
 func Print(data interface{}, format string, pretty bool) error {
+	// Special handling for strings
+	if s, ok := data.(string); ok {
+		if pretty {
+			s += "\n"
+		}
+		_, err := fmt.Fprint(Stdout, s)
+		return err
+	}
+
 	// Special handling for etree
 	if xmlDocument, ok := data.(*etree.Document); ok {
-		xmlDocument.Indent(IndentSpaces)
-		_, err := xmlDocument.WriteTo(Stdout)
-		return err
+		return PrintXmlDocument(xmlDocument, pretty)
 	}
 
 	switch format {
@@ -63,4 +70,14 @@ func PrintXml(data interface{}, pretty bool) error {
 		fmt.Fprintln(Stdout)
 	}
 	return nil
+}
+
+func PrintXmlDocument(xmlDocument *etree.Document, pretty bool) error {
+	if pretty {
+		xmlDocument.Indent(IndentSpaces)
+	} else {
+		xmlDocument.Indent(0)
+	}
+	_, err := xmlDocument.WriteTo(Stdout)
+	return err
 }

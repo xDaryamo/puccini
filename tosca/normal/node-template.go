@@ -49,7 +49,7 @@ func (self *ServiceTemplate) NewNodeTemplate(name string) *NodeTemplate {
 
 func (self *NodeTemplate) Print(indent int) {
 	format.PrintIndent(indent)
-	fmt.Printf("%s\n", format.ColorTypeName(self.Name))
+	fmt.Fprintf(format.Stdout, "%s\n", format.ColorTypeName(self.Name))
 
 	length := len(self.Relationships)
 	last := length - 1

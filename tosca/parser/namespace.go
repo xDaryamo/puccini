@@ -39,7 +39,7 @@ func (self *Context) PrintNamespaces(indent int) {
 		context := import_.GetContext()
 		if len(context.Namespace) > 0 {
 			format.PrintIndent(indent)
-			fmt.Printf("%s\n", format.ColorValue(context.URL.String()))
+			fmt.Fprintf(format.Stdout, "%s\n", format.ColorValue(context.URL.String()))
 			context.Namespace.Print(childIndent)
 		}
 	}

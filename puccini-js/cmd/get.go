@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/tliron/puccini/common"
+	"github.com/tliron/puccini/format"
 	"github.com/tliron/puccini/js"
 )
 
@@ -34,7 +35,7 @@ var getCmd = &cobra.Command{
 
 		if !common.Quiet {
 			// TODO: write to file?
-			fmt.Println(sourceCode)
+			fmt.Fprintln(format.Stdout, sourceCode)
 		}
 	},
 }

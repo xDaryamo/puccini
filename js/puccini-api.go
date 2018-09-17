@@ -61,11 +61,11 @@ func (self *PucciniApi) Write(data interface{}, path string, dontOverwrite bool)
 		self.context.ValidateError(err)
 	}
 
-	if self.context.Quiet && (output == "") {
-		return
-	}
-
-	if output != "" {
+	if output == "" {
+		if self.context.Quiet {
+			return
+		}
+	} else {
 		_, err := os.Stat(output)
 		var message string
 		var skip bool
@@ -87,23 +87,6 @@ func (self *PucciniApi) Write(data interface{}, path string, dontOverwrite bool)
 		}
 	}
 
-	var err error
-	if s, ok := data.(string); ok {
-		// String is a special case: we just write the string contents
-		var f *os.File
-
-		if output != "" {
-			var err error
-			f, err = format.OpenFileForWrite(output)
-			self.context.ValidateError(err)
-			defer f.Close()
-		} else {
-			f = self.Stdout
-		}
-
-		_, err = f.WriteString(s)
-	} else {
-		err = format.WriteOrPrint(data, self.context.ArdFormat, true, output)
-	}
+	err := format.WriteOrPrint(data, self.context.ArdFormat, true, output)
 	self.context.ValidateError(err)
 }

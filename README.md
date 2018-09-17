@@ -162,8 +162,8 @@ artifacts with `kubectl cp` and executes them with `kubectl exec`.
 Clout
 -----
 
-Introducing the cloud topology ("clou-" + "t") representation language, which can be formatted as
-YAML/JSON/XML.
+Introducing the **clou**d **t**opology ("clou" + "t") representation language, which can be
+formatted as YAML/JSON/XML.
 
 Clout is an intermediary format for your deployments. As an analogy, consider a program written in
 the C language. First, you must *compile* the C source into machine code for your hardware
@@ -238,7 +238,7 @@ then be interpreted and run almost anywhere.
 Our chosen ECMAScript engine is [goja](https://github.com/dop251/goja), which is 100% Go and does
 not require any external dependencies.
 
-### Can't I use simple text templating instead of JavaScript?
+### Can't I use simple text templating instead of intrinsic functions and JavaScript?
 
 Nothing is stopping you. You can pipe the input and output to and from the text translator of your
 choice at any point in the tool chain. Here's an example using
@@ -246,15 +246,24 @@ choice at any point in the tool chain. Here's an example using
 
     puccini-tosca compile my-app.yaml | gomplate | puccini-js exec kubernetes.generate
 
-Your TOSCA can then inject expressions into values, such as `username: '{{.Env.USER}}'`.
+Your TOSCA can then inject expressions into values, such as `username: "{{.Env.USER}}"`.
 
-### Instead of one big Clout file can I compose a service from several interrelated Clout files?
+Just make sure that your templating engine can emit valid YAML where appropriate (for example, it
+should be able to escape quotation marks).
 
-Clout intentionally does *not* support service composition. Each Clout file is its own universe. If you
-need to relate vertexes in one Clout file to others, then it's up to you and your tools to describe
-that composition, possibly by combining multiple Clout files into one. There's simply no
-one-size-fits-all way Clout could do it—namespaces? proxies? catalogs? repositories?—so it
-insists on not having an opinion.
+A useful convention could be to add a file extension to mark a file for text template processing.
+For example, `.yaml.j2` could be recognized as requiring Jinja2 template processing, after which the
+`.j2` extension would be stripped.
+
+### Can I compose a single service from several interrelated Clout files?
+
+Clout intentionally does *not* support service composition. Each Clout file is its own universe. If
+you need to create edges between vertexes in one Clout file and vertexes in other Clout files, then
+it's up to you and your tools to design and implement that integration. The solution could be very
+elaborate indeed: the two Clouts might represent services with very different lifecycles, that run
+in different clouds, that are handled by different orchestrators. And the connection might require
+complex networking to achieve. There's simply no one-size-fits-all way Puccini could do
+it—namespaces? proxies? catalogs? repositories?—so it insists on not having an opinion.
 
 TOSCA has a feature called "substitution mapping", which is useful for modeling service composition.
 However, it's a design feature. The implementation, which would likely be very complex, is up to

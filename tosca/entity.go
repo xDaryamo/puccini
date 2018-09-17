@@ -50,7 +50,6 @@ type Mappable interface {
 
 // From Mappable interface
 func GetKey(entityPtr interface{}) string {
-	//fmt.Printf("%s\n", entity.Type())
 	mappable, ok := entityPtr.(Mappable)
 	if !ok {
 		panic(fmt.Sprintf("entity does not implement \"Mappable\" interface: %T", entityPtr))

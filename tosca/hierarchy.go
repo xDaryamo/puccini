@@ -266,7 +266,7 @@ func (self *Hierarchy) PrintChildren(indent int, treePrefix format.TreePrefix) {
 func (self *Hierarchy) PrintChild(indent int, treePrefix format.TreePrefix, last bool) {
 	treePrefix.Print(indent, last)
 	if self.EntityPtr != nil {
-		fmt.Printf("%s\n", format.ColorTypeName(self.GetContext().Name))
+		fmt.Fprintf(format.Stdout, "%s\n", format.ColorTypeName(self.GetContext().Name))
 	}
 }
 
