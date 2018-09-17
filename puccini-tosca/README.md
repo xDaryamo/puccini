@@ -71,7 +71,7 @@ print out using ",", e.g. `-p 2,3,4`. Per phase you will see:
 The `--examine/-e` switch can be used to dump a specific parsed entity. Each entity is given a
 path that more-or-less follows JSON. For example, a path can be:
 
-    topology_template.node_templates['store'].properties['name']
+    topology_template.node_templates["store"].properties["name"]
 
 The switch will search for all paths that contains your string, e.g. `-e properties`. You can even
 include one or more wildcards, e.g. `-e 'node*properties*data'`.

@@ -73,7 +73,7 @@ func Parse(urlString string) *normal.ServiceTemplate {
 
 	var s *normal.ServiceTemplate
 
-	context := parser.NewContext()
+	context := parser.NewContext(quirks)
 
 	// Phase 1: Read
 	if stopAtPhase >= 1 {

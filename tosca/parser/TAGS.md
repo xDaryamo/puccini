@@ -13,8 +13,8 @@ Read phase. The key is used to extract data from the ARD.
 The type of the data can usually be discovered via reflection on the field. However, non-primitive
 types require a registered "reader" to be specified via the long form.
 
-Note that we use pointers to signify the semantic different between uassigned fields and fields with
-zero values. That's why a field would be a "*string" rather than a "string".
+Note that we use pointers to signify the semantic different between unassigned fields and fields
+with zero values. That's why a field would be a "*string" rather than a "string".
 
 Set the key to "?" to collect all keys not used by other fields in the type. (E.g., this is how
 a TOSCA interface would read all the operations.)
@@ -29,6 +29,9 @@ Specify "[]reader" for a list of non-unique elements. (E.g. TOSCA constraint cla
 
 Specify "{}reader" for sequenced list of non-unique elements. (E.g. TOSCA node\_type.requirements
 and node\_template.requirements.)
+
+Also, you can specify "!reader" to mark the field as important, meaning that it will be read before
+any other fields. You can combine "!" with "[]" and "{}".
 
 (Note: node\_type.requirements, as opposed to node\_template.requirements, are really "fake"
 sequenced lists, because actually you cannot repeat the same definition name more than once.

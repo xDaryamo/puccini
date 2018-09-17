@@ -17,7 +17,7 @@ func (self *Context) ReadServiceTemplate(url_ url.URL) bool {
 }
 
 func (self *Context) readRootEntity(url_ url.URL, readers Grammars) bool {
-	toscaContext := tosca.NewContext(self.Problems)
+	toscaContext := tosca.NewContext(self.Problems, self.Quirks)
 	toscaContext.URL = url_
 
 	self.WG.Add(1)

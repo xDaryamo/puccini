@@ -13,14 +13,18 @@ import (
 type Context struct {
 	ServiceTemplate *Import
 	Problems        *problems.Problems
+	Quirks          []string
 	Imports         Imports
 	Parsing         sync.Map
 	WG              sync.WaitGroup
 	Locker          sync.Mutex
 }
 
-func NewContext() Context {
-	return Context{Problems: &problems.Problems{}}
+func NewContext(quirks []string) Context {
+	return Context{
+		Problems: &problems.Problems{},
+		Quirks:   quirks,
+	}
 }
 
 func (self *Context) AddImport(import_ *Import) {

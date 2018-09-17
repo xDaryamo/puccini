@@ -279,15 +279,15 @@ func NewInheritFields(entityPtr interface{}) []*InheritField {
 	var inheritFields []*InheritField
 
 	entity := reflect.ValueOf(entityPtr).Elem()
-	for _, tag := range reflection.GetFieldTagsForValue(entity, "inherit") {
-		key, referenceFieldName := parseInheritTag(tag.Tag)
+	for fieldName, tag := range reflection.GetFieldTagsForValue(entity, "inherit") {
+		key, referenceFieldName := parseInheritTag(tag)
 
-		referenceField, referredField, ok := reflection.GetReferredField(entity, referenceFieldName, tag.FieldName)
+		referenceField, referredField, ok := reflection.GetReferredField(entity, referenceFieldName, fieldName)
 		if !ok {
 			continue
 		}
 
-		field := entity.FieldByName(tag.FieldName)
+		field := entity.FieldByName(fieldName)
 
 		inheritFields = append(inheritFields, &InheritField{entity, referenceField.Interface(), key, field, referredField})
 	}

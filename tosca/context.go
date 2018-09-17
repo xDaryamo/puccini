@@ -39,14 +39,17 @@ type Context struct {
 	ScriptNamespace ScriptNamespace
 	Hierarchy       *Hierarchy
 	Problems        *problems.Problems
+	Quirks          []string
+	ReadOverrides   map[string]string
 }
 
-func NewContext(problems *problems.Problems) Context {
+func NewContext(problems *problems.Problems, quirks []string) Context {
 	return Context{
 		Namespace:       make(Namespace),
 		ScriptNamespace: make(ScriptNamespace),
 		Hierarchy:       &Hierarchy{},
 		Problems:        problems,
+		Quirks:          quirks,
 	}
 }
 
@@ -63,6 +66,15 @@ func (self *Context) Is(typeNames ...string) bool {
 		}
 	}
 	return valid
+}
+
+func (self *Context) HasQuirk(quirk string) bool {
+	for _, q := range self.Quirks {
+		if q == quirk {
+			return true
+		}
+	}
+	return false
 }
 
 //
@@ -87,6 +99,7 @@ func (self *Context) FieldChild(name string, data interface{}) *Context {
 		ScriptNamespace: self.ScriptNamespace,
 		Hierarchy:       self.Hierarchy,
 		Problems:        self.Problems,
+		Quirks:          self.Quirks,
 	}
 }
 
@@ -116,13 +129,14 @@ func (self *Context) MapChild(name string, data interface{}) *Context {
 	return &Context{
 		Parent:          self,
 		Name:            name,
-		Path:            fmt.Sprintf("%s['%s']", self.Path, name),
+		Path:            fmt.Sprintf("%s[\"%s\"]", self.Path, name),
 		URL:             self.URL,
 		Data:            data,
 		Namespace:       self.Namespace,
 		ScriptNamespace: self.ScriptNamespace,
 		Hierarchy:       self.Hierarchy,
 		Problems:        self.Problems,
+		Quirks:          self.Quirks,
 	}
 }
 
@@ -137,6 +151,7 @@ func (self *Context) ListChild(index int, data interface{}) *Context {
 		ScriptNamespace: self.ScriptNamespace,
 		Hierarchy:       self.Hierarchy,
 		Problems:        self.Problems,
+		Quirks:          self.Quirks,
 	}
 }
 
@@ -151,6 +166,7 @@ func (self *Context) SequencedListChild(index int, name string, data interface{}
 		ScriptNamespace: self.ScriptNamespace,
 		Hierarchy:       self.Hierarchy,
 		Problems:        self.Problems,
+		Quirks:          self.Quirks,
 	}
 }
 
@@ -163,6 +179,7 @@ func (self *Context) Import(url_ url.URL) *Context {
 		ScriptNamespace: make(ScriptNamespace),
 		Hierarchy:       &Hierarchy{},
 		Problems:        self.Problems,
+		Quirks:          self.Quirks,
 	}
 }
 
@@ -177,5 +194,6 @@ func (self *Context) WithData(data interface{}) *Context {
 		ScriptNamespace: self.ScriptNamespace,
 		Hierarchy:       self.Hierarchy,
 		Problems:        self.Problems,
+		Quirks:          self.Quirks,
 	}
 }

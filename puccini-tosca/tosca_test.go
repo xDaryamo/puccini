@@ -56,7 +56,7 @@ func testParse(t *testing.T, url string, inputs map[string]interface{}) {
 		var p *problems.Problems
 		var err error
 
-		if s, p, err = parser.Parse(fmt.Sprintf("%s/examples/%s", ROOT, url), inputs); err != nil {
+		if s, p, err = parser.Parse(fmt.Sprintf("%s/examples/%s", ROOT, url), nil, inputs); err != nil {
 			t.Errorf("%s\n%s", err.Error(), p)
 			return
 		}

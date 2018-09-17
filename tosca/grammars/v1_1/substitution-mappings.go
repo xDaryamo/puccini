@@ -25,6 +25,13 @@ func NewSubstitutionMappings(context *tosca.Context) *SubstitutionMappings {
 
 // tosca.Reader signature
 func ReadSubstitutionMappings(context *tosca.Context) interface{} {
+	if context.HasQuirk("substitution_mappings.requirements.list") {
+		if context.ReadOverrides == nil {
+			context.ReadOverrides = make(map[string]string)
+		}
+		context.ReadOverrides["RequirementMappings"] = "requirements,{}RequirementMapping"
+	}
+
 	self := NewSubstitutionMappings(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
 	return self

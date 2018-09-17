@@ -20,11 +20,11 @@ func LookupFields(entityPtr interface{}) bool {
 	context := tosca.GetContext(entityPtr)
 	entity := reflect.ValueOf(entityPtr).Elem()
 
-	for _, tag := range reflection.GetFieldTagsForValue(entity, "lookup") {
-		lookupFieldKey, lookupFieldName, report := parseLookupTag(tag.Tag)
+	for fieldName, tag := range reflection.GetFieldTagsForValue(entity, "lookup") {
+		lookupFieldKey, lookupFieldName, report := parseLookupTag(tag)
 
 		// Field to fill in
-		targetField := entity.FieldByName(tag.FieldName)
+		targetField := entity.FieldByName(fieldName)
 
 		// Field with lookup name
 		lookupField := entity.FieldByName(lookupFieldName)

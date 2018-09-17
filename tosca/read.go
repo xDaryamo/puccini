@@ -30,22 +30,35 @@ func (self *Context) ReadFields(entityPtr interface{}, readers map[string]Reader
 	entity := reflect.ValueOf(entityPtr).Elem()
 	tags := reflection.GetFieldTagsForValue(entity, "read")
 
+	// Read tag overrides
+	if self.ReadOverrides != nil {
+		for fieldName, tag := range self.ReadOverrides {
+			tags[fieldName] = tag
+		}
+	}
+
 	// Gather all tagged keys
 	for _, tag := range tags {
-		t := strings.Split(tag.Tag, ",")
+		t := strings.Split(tag, ",")
 		keys = append(keys, t[0])
 	}
 
-	for _, tag := range tags {
-		key, mode, read := parseReadTag(tag.Tag, readers)
-
-		keys = append(keys, key)
-
-		if key != "?" {
-			self.readField(entity, data, key, tag.FieldName, mode, read)
+	// Parse tags
+	var readInfos []*ReadInfo
+	for fieldName, tag := range tags {
+		readInfo := parseReadTag(fieldName, tag, readers)
+		if readInfo.Important {
+			// Important fields come first
+			readInfos = append([]ReadInfo{readInfo}, readInfos...)
 		} else {
+			readInfos = append(readInfos, readInfo)
+		}
+	}
+
+	for _, readInfo := range readInfos {
+		if readInfo.Key == "?" {
 			// Iterate all keys that aren't tagged
-			for key = range data {
+			for key := range data {
 				tagged := false
 				for _, k := range keys {
 					if key == k {
@@ -54,9 +67,11 @@ func (self *Context) ReadFields(entityPtr interface{}, readers map[string]Reader
 					}
 				}
 				if !tagged {
-					self.readField(entity, data, key, tag.FieldName, ReadFieldModeItem, read)
+					self.readField(entity, data, key, readInfo.FieldName, ReadFieldModeItem, readInfo.Read)
 				}
 			}
+		} else {
+			self.readField(entity, data, readInfo.Key, readInfo.FieldName, readInfo.Mode, readInfo.Read)
 		}
 	}
 
@@ -178,35 +193,51 @@ func (self *Context) setMapItem(field reflect.Value, item interface{}) {
 	field.SetMapIndex(keyValue, itemValue)
 }
 
-func parseReadTag(tag string, readers map[string]Reader) (string, int, Reader) {
+type ReadInfo struct {
+	FieldName string
+	Key       string
+	Important bool
+	Mode      int
+	Read      Reader
+}
+
+func parseReadTag(fieldName string, tag string, readers map[string]Reader) *ReadInfo {
 	t := strings.Split(tag, ",")
 
-	key := t[0]
-	mode := ReadFieldModeDefault
+	var readInfo = ReadInfo{
+		FieldName: fieldName,
+		Key:       t[0],
+		Mode:      ReadFieldModeDefault,
+	}
 
 	var readerName string
-	var read Reader
 	if len(t) > 1 {
 		readerName = t[1]
+
+		if strings.HasPrefix(readerName, "!") {
+			// Important
+			readerName = readerName[1:]
+			readInfo.Important = true
+		}
 
 		if strings.HasPrefix(readerName, "[]") {
 			// List
 			readerName = readerName[2:]
-			mode = ReadFieldModeList
+			readInfo.Mode = ReadFieldModeList
 		} else if strings.HasPrefix(readerName, "{}") {
 			// Sequenced list
 			readerName = readerName[2:]
-			mode = ReadFieldModeSequencedList
+			readInfo.Mode = ReadFieldModeSequencedList
 		}
 
 		var ok bool
-		read, ok = readers[readerName]
+		readInfo.Read, ok = readers[readerName]
 		if !ok {
 			panic(fmt.Sprintf("reader not found: %s", readerName))
 		}
 	}
 
-	return key, mode, read
+	return &readInfo
 }
 
 func panicMissingReader(entity reflect.Value) {

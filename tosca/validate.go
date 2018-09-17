@@ -37,10 +37,10 @@ func (self *Context) ValidateType(requiredTypeNames ...string) bool {
 func ValidateRequiredFields(entityPtr interface{}) bool {
 	context := GetContext(entityPtr)
 	entity := reflect.ValueOf(entityPtr).Elem()
-	for _, tag := range reflection.GetFieldTagsForValue(entity, "require") {
-		field := entity.FieldByName(tag.FieldName)
+	for fieldName, tag := range reflection.GetFieldTagsForValue(entity, "require") {
+		field := entity.FieldByName(fieldName)
 		if reflection.IsNil(field) {
-			context.FieldChild(tag.Tag, nil).ReportFieldMissing()
+			context.FieldChild(tag, nil).ReportFieldMissing()
 		}
 	}
 	return true

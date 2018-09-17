@@ -8,8 +8,8 @@ import (
 	"github.com/tliron/puccini/url"
 )
 
-func Parse(urlString string, inputs map[string]interface{}) (*normal.ServiceTemplate, *problems.Problems, error) {
-	context := NewContext()
+func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*normal.ServiceTemplate, *problems.Problems, error) {
+	context := NewContext(quirks)
 
 	url_, err := url.NewValidURL(urlString, nil)
 	if err != nil {
