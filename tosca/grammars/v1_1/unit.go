@@ -18,7 +18,7 @@ type Unit struct {
 	*Entity `name:"unit"`
 
 	ToscaDefinitionsVersion *string             `read:"tosca_definitions_version" require:"tosca_definitions_version"`
-	Metadata                Metadata            `read:"metadata,Metadata"`
+	Metadata                Metadata            `read:"metadata,!Metadata"`
 	Repositories            []*Repository       `read:"repositories,Repository"`
 	Imports                 []*Import           `read:"imports,[]Import"`
 	ArtifactTypes           []*ArtifactType     `read:"artifact_types,ArtifactType" hierarchy:""`

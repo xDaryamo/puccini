@@ -35,7 +35,7 @@ any other fields. You can combine "!" with "[]" and "{}".
 
 (Note: node\_type.requirements, as opposed to node\_template.requirements, are really "fake"
 sequenced lists, because actually you cannot repeat the same definition name more than once.
-The reason the TOSCA spec has this inconsistentcy is likely to make the syntax more like the
+The reason the TOSCA spec has this inconsistency is likely to make the syntax more like the
 syntax in node\_template.)
 
 ### require:"key"

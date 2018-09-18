@@ -49,7 +49,7 @@ func (self *Context) ReadFields(entityPtr interface{}, readers map[string]Reader
 		readInfo := parseReadTag(fieldName, tag, readers)
 		if readInfo.Important {
 			// Important fields come first
-			readInfos = append([]ReadInfo{readInfo}, readInfos...)
+			readInfos = append([]*ReadInfo{readInfo}, readInfos...)
 		} else {
 			readInfos = append(readInfos, readInfo)
 		}
