@@ -44,12 +44,23 @@ the Clout and are intended to be executed when necessary. To validate them you c
 
 Alternatively, you can use the `parse` command (see below).
 
+Finally, **pucini-tosca** supports "quirks", via the `--quirk/-x` switch, which are variations on
+the default grammar rules. The reason this is required is unfortunate: the low quality of the TOSCA
+spec, riddled as it is with gaps, inconsistencies, and errors, means that there's too much room for
+varying interpretations of the spec as well as missing functionality. Puccini aims to adhere as
+closely as possible to the spec, literally and in spirit, but also must be pragmatic. Quirks allow
+Puccini to smooth incompatibilities with other tools and work around a few TOSCA pain points. The
+list of supported quirks is maintained [here](QUIRKS.md). Example of us:
+
+    puccini-tosca compile weird.yaml -x substitution_mappings.requirements.list
+
+
 `parse`
 -------
 
 If you need more diagnostics for TOSCA parsing use the `parse` command. It works similarly to
 `compile` but does not emit Clout. Instead, it provides you various switches for examining the
-internal working of Puccini's TOSCA parser.
+internal workings of Puccini's TOSCA parser.
 
 Use `--stop/-s` to specify a [phase](../tosca/parser/README.md) (1-6) at which you wish the parser
 to stop. This could be useful if you're getting too many problems in your report and wish to

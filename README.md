@@ -20,6 +20,7 @@ Clout frontend for TOSCA. Parses a TOSCA service template and compiles it to Clo
 Why TOSCA? It's a high-level language designed exactly for modeling and validating cloud topologies
 with reusable and inheritable objects. It allows architects to focus on application logic and
 requirements without being bogged down by the ever-changing specificities of the infrastructure.
+We support TOSCA 1.1 as well as the recent draft of TOSCA 1.2.
 
 **puccini-tosca** comes with TOSCA profiles for the
 [Kubernetes](assets/tosca/profiles/kubernetes/1.0/) and
