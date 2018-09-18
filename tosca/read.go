@@ -44,19 +44,19 @@ func (self *Context) ReadFields(entityPtr interface{}, readers map[string]Reader
 	}
 
 	// Parse tags
-	var readInfos []*ReadInfo
+	var readFields []*ReadField
 	for fieldName, tag := range tags {
-		readInfo := parseReadTag(fieldName, tag, readers)
-		if readInfo.Important {
+		readField := NewReadField(fieldName, tag, readers)
+		if readField.Important {
 			// Important fields come first
-			readInfos = append([]*ReadInfo{readInfo}, readInfos...)
+			readFields = append([]*ReadField{readField}, readFields...)
 		} else {
-			readInfos = append(readInfos, readInfo)
+			readFields = append(readFields, readField)
 		}
 	}
 
-	for _, readInfo := range readInfos {
-		if readInfo.Key == "?" {
+	for _, readField := range readFields {
+		if readField.Wildcard {
 			// Iterate all keys that aren't tagged
 			for key := range data {
 				tagged := false
@@ -67,48 +67,117 @@ func (self *Context) ReadFields(entityPtr interface{}, readers map[string]Reader
 					}
 				}
 				if !tagged {
-					self.readField(entity, data, key, readInfo.FieldName, ReadFieldModeItem, readInfo.Read)
+					readField.Key = key
+					readField.Read(entity, data, self)
 				}
 			}
 		} else {
-			self.readField(entity, data, readInfo.Key, readInfo.FieldName, readInfo.Mode, readInfo.Read)
+			readField.Read(entity, data, self)
 		}
 	}
 
 	return keys
 }
 
-func (self *Context) readField(entity reflect.Value, data ard.Map, key string, fieldName string, mode int, read Reader) {
-	childData, ok := data[key]
+func (self *Context) setMapItem(field reflect.Value, item interface{}) {
+	key := GetKey(item)
+	keyValue := reflect.ValueOf(key)
+	itemValue := reflect.ValueOf(item)
+
+	existing := field.MapIndex(keyValue)
+	if existing.IsValid() {
+		self.ReportMapKeyReused(key)
+	}
+
+	field.SetMapIndex(keyValue, itemValue)
+}
+
+//
+// ReadField
+//
+
+type ReadField struct {
+	FieldName string
+	Key       string
+	Reader    Reader
+	Mode      int
+	Important bool
+	Wildcard  bool
+}
+
+func NewReadField(fieldName string, tag string, readers map[string]Reader) *ReadField {
+	t := strings.Split(tag, ",")
+
+	var self = ReadField{
+		FieldName: fieldName,
+		Key:       t[0],
+	}
+
+	if self.Key == "?" {
+		self.Wildcard = true
+		self.Mode = ReadFieldModeItem
+	} else {
+		self.Mode = ReadFieldModeDefault
+	}
+
+	var readerName string
+	if len(t) > 1 {
+		readerName = t[1]
+
+		if strings.HasPrefix(readerName, "!") {
+			// Important
+			readerName = readerName[1:]
+			self.Important = true
+		}
+
+		if strings.HasPrefix(readerName, "[]") {
+			// List
+			readerName = readerName[2:]
+			self.Mode = ReadFieldModeList
+		} else if strings.HasPrefix(readerName, "{}") {
+			// Sequenced list
+			readerName = readerName[2:]
+			self.Mode = ReadFieldModeSequencedList
+		}
+
+		var ok bool
+		self.Reader, ok = readers[readerName]
+		if !ok {
+			panic(fmt.Sprintf("reader not found: %s", readerName))
+		}
+	}
+
+	return &self
+}
+
+func (self *ReadField) Read(entity reflect.Value, data ard.Map, context *Context) {
+	childData, ok := data[self.Key]
 	if !ok {
 		return
 	}
 
-	context := self.FieldChild(key, childData)
-	field := entity.FieldByName(fieldName)
+	context = context.FieldChild(self.Key, childData)
+	field := entity.FieldByName(self.FieldName)
 
-	if read != nil {
+	if self.Reader != nil {
 		fieldType := field.Type()
 		if reflection.IsSliceOfPtrToStruct(fieldType) {
 			// Field is compatible with []*interface{}
-			if read == nil {
-				panicMissingReader(entity)
-			}
 			slice := field
-			switch mode {
+			switch self.Mode {
 			case ReadFieldModeList:
-				context.ReadListItems(read, func(item interface{}) {
+				context.ReadListItems(self.Reader, func(item interface{}) {
 					slice = reflect.Append(slice, reflect.ValueOf(item))
 				})
 			case ReadFieldModeSequencedList:
-				context.ReadSequencedListItems(read, func(item interface{}) {
+				context.ReadSequencedListItems(self.Reader, func(item interface{}) {
 					slice = reflect.Append(slice, reflect.ValueOf(item))
 				})
 			case ReadFieldModeItem:
 				length := slice.Len()
-				slice = reflect.Append(slice, reflect.ValueOf(read(self.ListChild(length, childData))))
+				slice = reflect.Append(slice, reflect.ValueOf(self.Reader(context.ListChild(length, childData))))
 			default:
-				context.ReadMapItems(read, func(item interface{}) {
+				context.ReadMapItems(self.Reader, func(item interface{}) {
 					slice = reflect.Append(slice, reflect.ValueOf(item))
 				})
 			}
@@ -120,30 +189,25 @@ func (self *Context) readField(entity reflect.Value, data ard.Map, key string, f
 			field.Set(slice)
 		} else if reflection.IsMapOfStringToPtrToStruct(fieldType) {
 			// Field is compatible with map[string]*interface{}
-			if read == nil {
-				panicMissingReader(entity)
-			}
-			switch mode {
+			switch self.Mode {
 			case ReadFieldModeList:
-				context.ReadListItems(read, func(item interface{}) {
+				context.ReadListItems(self.Reader, func(item interface{}) {
 					context.setMapItem(field, item)
 				})
 			case ReadFieldModeSequencedList:
-				context.ReadSequencedListItems(read, func(item interface{}) {
+				context.ReadSequencedListItems(self.Reader, func(item interface{}) {
 					context.setMapItem(field, item)
 				})
 			case ReadFieldModeItem:
-				context.setMapItem(field, read(self.MapChild(key, childData)))
+				context.setMapItem(field, self.Reader(context.MapChild(self.Key, childData)))
 			default:
-				context.ReadMapItems(read, func(item interface{}) {
+				context.ReadMapItems(self.Reader, func(item interface{}) {
 					context.setMapItem(field, item)
 				})
 			}
 		} else {
-			if read == nil {
-				panicMissingReader(entity)
-			}
-			item := read(context)
+			// Field is compatible with *interface{}
+			item := self.Reader(context)
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
@@ -175,73 +239,9 @@ func (self *Context) readField(entity reflect.Value, data ard.Map, key string, f
 				field.Set(reflect.ValueOf(item))
 			}
 		} else {
-			panic(fmt.Sprintf("\"read\" tag's field type \"%T\" is not supported in struct: %T.%s", fieldEntityPtr, entity.Interface(), fieldName))
+			panic(fmt.Sprintf("\"read\" tag's field type \"%T\" is not supported in struct: %T.%s", fieldEntityPtr, entity.Interface(), self.FieldName))
 		}
 	}
-}
-
-func (self *Context) setMapItem(field reflect.Value, item interface{}) {
-	key := GetKey(item)
-	keyValue := reflect.ValueOf(key)
-	itemValue := reflect.ValueOf(item)
-
-	existing := field.MapIndex(keyValue)
-	if existing.IsValid() {
-		self.ReportMapKeyReused(key)
-	}
-
-	field.SetMapIndex(keyValue, itemValue)
-}
-
-type ReadInfo struct {
-	FieldName string
-	Key       string
-	Important bool
-	Mode      int
-	Read      Reader
-}
-
-func parseReadTag(fieldName string, tag string, readers map[string]Reader) *ReadInfo {
-	t := strings.Split(tag, ",")
-
-	var readInfo = ReadInfo{
-		FieldName: fieldName,
-		Key:       t[0],
-		Mode:      ReadFieldModeDefault,
-	}
-
-	var readerName string
-	if len(t) > 1 {
-		readerName = t[1]
-
-		if strings.HasPrefix(readerName, "!") {
-			// Important
-			readerName = readerName[1:]
-			readInfo.Important = true
-		}
-
-		if strings.HasPrefix(readerName, "[]") {
-			// List
-			readerName = readerName[2:]
-			readInfo.Mode = ReadFieldModeList
-		} else if strings.HasPrefix(readerName, "{}") {
-			// Sequenced list
-			readerName = readerName[2:]
-			readInfo.Mode = ReadFieldModeSequencedList
-		}
-
-		var ok bool
-		readInfo.Read, ok = readers[readerName]
-		if !ok {
-			panic(fmt.Sprintf("reader not found: %s", readerName))
-		}
-	}
-
-	return &readInfo
-}
-
-func panicMissingReader(entity reflect.Value) {
-	panic(fmt.Sprintf("\"read\" tag's field type must be specified in struct %T", entity.Interface()))
 }
 
 //
