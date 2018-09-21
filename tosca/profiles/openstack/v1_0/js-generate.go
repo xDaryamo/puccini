@@ -25,20 +25,25 @@ writeClouds();
 writeCfg();
 
 function writeTopology() {
+	servers = [];
+	
 	for (v in clout.vertexes) {
 		vertex = clout.vertexes[v];
 		if (!tosca.isNodeTemplate(vertex, 'openstack.Nova.Server'))
 			continue;
 		nodeTemplate = vertex.properties;
+		
+		//puccini.log.errorf('%s', JSON.stringify(nodeTemplate, null, '  '));
 
-		// provision.tasks.push();
+		servers.push({
+			name: nodeTemplate.name,
+			image: nodeTemplate.properties.image,
+			flavor: nodeTemplate.properties.flavor
+		});
 	}
 
 	puccini.write({
-		servers: [{
-			type: 'x',
-			flavor: '123'
-		}]
+		servers: servers
 	}, 'vars/topology.' + puccini.format);
 }
 
@@ -110,8 +115,8 @@ function writeRoleServers() {
 		with_items: '{{ topology.servers }}',
 		os_server: {
 		    state: 'present',
-		    name: '{{ item.type }}-{{ item.index }}.{{ topology.site_name }}.{{ topology.zone }}',
-		    image: '{{ topology.image }}',
+		    name: '{{ item.name }}',
+		    image: '{{ item.image }}',
 		    flavor: '{{ item.flavor }}',
 		    key_name: '{{ keypair.key.name }}'
 		}
@@ -142,31 +147,22 @@ function writeRoleServers() {
 
 function writeInventory() {
 	puccini.write({
-		all: {
-			hosts: {
-				localhost: {
-					ansible_connection: 'local'
-				}
-			}
-		}
+		all: {}
 	}, 'inventory.' + puccini.format);
 }
 
 function writeClouds() {
-	// TODO: use a policy?
 	puccini.write({
 		clouds: {
-			mycloud: {
-				region_name: 'ORD',
-				auth_type: 'rackspace_apikey',
+			'default': {
 				auth: {
-					username: 'tliron',
-					api_key: '',
-					auth_url: 'https://identity.api.rackspacecloud.com/v2.0/'
+					auth_url: 'AUTH_URL'
+					username: 'USERNAME',
+					password: 'PASSWORD'
 				}
 			}
 		}
-	}, 'clouds.' + puccini.format);
+	}, 'clouds.' + puccini.format, true);
 }
 
 function writeCfg() {

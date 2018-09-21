@@ -2,6 +2,7 @@ package tosca
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca/problems"
@@ -129,7 +130,7 @@ func (self *Context) MapChild(name string, data interface{}) *Context {
 	return &Context{
 		Parent:          self,
 		Name:            name,
-		Path:            fmt.Sprintf("%s[\"%s\"]", self.Path, name),
+		Path:            fmt.Sprintf("%s[\"%s\"]", strings.Replace(self.Path, "\"", "\\\"", -1), name),
 		URL:             self.URL,
 		Data:            data,
 		Namespace:       self.Namespace,
