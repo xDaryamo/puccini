@@ -18,9 +18,9 @@ func WriteOrPrint(data interface{}, format string, pretty bool, output string) e
 	}
 }
 
-const DIRECTORY_WRITE_PERMISSIONS = 0755
+const DIRECTORY_WRITE_PERMISSIONS = 0700
 
-const FILE_WRITE_PERMISSIONS = 0644
+const FILE_WRITE_PERMISSIONS = 0600
 
 func OpenFileForWrite(path string) (*os.File, error) {
 	err := os.MkdirAll(filepath.Dir(path), DIRECTORY_WRITE_PERMISSIONS)

@@ -8,7 +8,7 @@ import (
 	"github.com/op/go-logging"
 )
 
-const FILE_WRITE_PERMISSIONS = 0644
+const FILE_WRITE_PERMISSIONS = 0600
 
 var plainFormatter = logging.MustStringFormatter(
 	`%{time:2006/01/02 15:04:05.000} %{level:8.8s} [%{module}] %{message}`,
