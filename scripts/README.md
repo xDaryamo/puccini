@@ -47,6 +47,12 @@ You might find it convenient to have `~/go/bin` on your search path. For Bash, a
 The Go compiler will only compile changed files. Also, it's a very fast compiler. So, generally you
 should not be concerned about this step in your toolchain.
 
+[install-bash-completion.sh](install-bash-completion.sh)
+--------------------------------------------------------
+
+Installs bash completion scripts for the current user, for the current build of Puccini. This allows
+you to press TAB to complete commands starting with `puccini-tosca`, `puccini-js`, etc.
+
 [embed.sh](embed.sh)
 --------------------
 
