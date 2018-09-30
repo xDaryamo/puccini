@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/format"
@@ -34,8 +32,8 @@ var getCmd = &cobra.Command{
 		common.ValidateError(err)
 
 		if !common.Quiet {
-			// TODO: write to file?
-			fmt.Fprintln(format.Stdout, sourceCode)
+			err = format.WriteOrPrint(sourceCode, ardFormat, false, output)
+			common.ValidateError(err)
 		}
 	},
 }

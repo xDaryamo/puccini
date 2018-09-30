@@ -39,9 +39,7 @@ var putCmd = &cobra.Command{
 		err = js.SetScriptSourceCode(name, js.Cleanup(sourceCode), c)
 		common.ValidateError(err)
 
-		if !common.Quiet || (output != "") {
-			err = format.WriteOrPrint(c, ardFormat, true, output)
-			common.ValidateError(err)
-		}
+		err = format.WriteOrPrint(c, ardFormat, true, output)
+		common.ValidateError(err)
 	},
 }

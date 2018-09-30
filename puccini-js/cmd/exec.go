@@ -5,6 +5,7 @@ import (
 	"github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/js"
+	"github.com/tliron/puccini/url"
 )
 
 func init() {
@@ -13,7 +14,7 @@ func init() {
 }
 
 var execCmd = &cobra.Command{
-	Use:   "exec [COMMAND] [[Clout PATH or URL]]",
+	Use:   "exec [COMMAND or JavaScript PATH or URL] [[Clout PATH or URL]]",
 	Short: "Execute JavaScript in Clout",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 2),
@@ -28,8 +29,20 @@ var execCmd = &cobra.Command{
 		c, err := ReadClout(path)
 		common.ValidateError(err)
 
+		// Try loading JavaScript from Clout
 		sourceCode, err := js.GetScriptSourceCode(name, c)
-		common.ValidateError(err)
+
+		if err != nil {
+			// Try loading JavaScript from path or URL
+			url_, err := url.NewValidURL(name, nil)
+			common.ValidateError(err)
+
+			sourceCode, err = url.Read(url_)
+			common.ValidateError(err)
+
+			err = js.SetScriptSourceCode(name, js.Cleanup(sourceCode), c)
+			common.ValidateError(err)
+		}
 
 		err = Exec(name, sourceCode, c)
 		common.ValidateError(err)
