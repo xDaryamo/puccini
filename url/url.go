@@ -31,11 +31,13 @@ func NewURL(url string) (URL, error) {
 		case "http", "https":
 			return NewNetURL(u), nil
 		case "internal":
-			return NewInternalURL(u.Path), nil
+			return NewInternalURL(url[9:]), nil
 		case "zip":
 			return NewZipURLFromURL(url)
-		case "file", "":
+		case "file":
 			return NewFileURL(u.Path), nil
+		case "":
+			return NewFileURL(url), nil
 		}
 	}
 
@@ -53,14 +55,14 @@ func NewValidURL(url string, origins []URL) (URL, error) {
 		case "http", "https":
 			return NewValidNetURL(u)
 		case "internal":
-			return NewValidInternalURL(u.Path)
+			return NewValidInternalURL(url[9:])
 		case "zip":
 			return NewValidZipURLFromURL(url)
 		case "file":
 			// They're rarely used, but relative "file:" URLs are possible
 			return newRelativeURL(u.Path, origins, true)
 		case "":
-			return newRelativeURL(u.Path, origins, false)
+			return newRelativeURL(url, origins, false)
 		}
 	}
 
