@@ -55,11 +55,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0bc83661c08d37ec8898b9c998f6107a47209e36a3a190a725d74f90c54cd816"
+  digest = "1:6727359c2ab1efe714cc87acb36be6cf15a3aae078d8ae736a17fec787dab307"
   name = "github.com/hokaccha/go-prettyjson"
   packages = ["."]
   pruneopts = "UT"
-  revision = "d229c224a219dcf41e9d2af4684b9782f33f5eb7"
+  revision = "f579f869bbfea48a61fbea09207cadd1aaeceb83"
 
 [[projects]]
   digest = "1:870d441fe217b8e689d7949fef6e43efbc787e50f200cb1e70dbca9204a1d6be"
@@ -78,12 +78,12 @@
   version = "v0.0.9"
 
 [[projects]]
-  digest = "1:d4d17353dbd05cb52a2a52b7fe1771883b682806f68db442b436294926bbfafb"
+  digest = "1:0981502f9816113c9c8c4ac301583841855c8cf4da8c72f696b3ebedf6d0e4e5"
   name = "github.com/mattn/go-isatty"
   packages = ["."]
   pruneopts = "UT"
-  revision = "0360b2af4f38e8d38c7fce2a9f4e702702d73a39"
-  version = "v0.0.3"
+  revision = "6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c"
+  version = "v0.0.4"
 
 [[projects]]
   digest = "1:5b3b29ce0e569f62935d9541dff2e16cc09df981ebde48e82259076a73a3d0c7"
@@ -119,11 +119,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:19f92ce03256cc8a4467054842ec81f081985becd92bbc443e7604dfe801e6a8"
+  digest = "1:e2ced6fdf654069e8713c96012275fbd245381673d53e8c8ace640b28441a28b"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "4910a1d54f876d7b22162a85f4d066d3ee649450"
+  revision = "e4b3c5e9061176387e7cea65e4dc5853801f3fb7"
 
 [[projects]]
   digest = "1:0f60a87d38e0f08d784e6a11a700314475970acfd7f5a14929e55facaba54ac8"

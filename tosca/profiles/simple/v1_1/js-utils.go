@@ -26,22 +26,22 @@ tosca.traverseValues = function(traverser) {
 		vertex = clout.vertexes[v];
 		if (tosca.isNodeTemplate(vertex)) {
 			nodeTemplate = vertex.properties;
-	
+
 			tosca.traverseObjectValues(traverser, nodeTemplate.properties, vertex);
 			tosca.traverseObjectValues(traverser, nodeTemplate.attributes, vertex);
 			tosca.traverseInterfaceValues(traverser, nodeTemplate.interfaces, vertex)
-	
+
 			for (c in nodeTemplate.capabilities) {
 				capability = nodeTemplate.capabilities[c];
 				tosca.traverseObjectValues(traverser, capability.properties, vertex);
 				tosca.traverseObjectValues(traverser, capability.attributes, vertex);
 			}
-	
+
 			for (a in nodeTemplate.artifacts) {
 				artifact = nodeTemplate.artifacts[a];
 				tosca.traverseObjectValues(traverser, artifact.properties, vertex);
 			}
-	
+
 			for (e in vertex.edgesOut) {
 				edge = vertex.edgesOut[e];
 				if (!tosca.isTosca(edge, 'relationship'))
@@ -66,10 +66,10 @@ tosca.traverseValues = function(traverser) {
 
 tosca.traverseInterfaceValues = function(interfaces, site, source, target) {
 	for (i in interfaces) {
-		intr = interfaces[i];
-		tosca.traverseObjectValues(traverser, intr.inputs, site, source, target);
-		for (o in intr.operations)
-			tosca.traverseObjectValues(traverser, intr.operations[o].Inputs, site, source, target);
+		interface_ = interfaces[i];
+		tosca.traverseObjectValues(traverser, interface_.inputs, site, source, target);
+		for (o in interface_.operations)
+			tosca.traverseObjectValues(traverser, interface_.operations[o].Inputs, site, source, target);
 	}
 };
 

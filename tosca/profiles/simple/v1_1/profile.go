@@ -16,6 +16,7 @@ tosca_definitions_version: tosca_simple_yaml_1_1
 
 metadata:
   puccini-js.import.tosca.coerce: js/coerce.js
+  puccini-js.import.tosca.visualize: js/visualize.js
   puccini-js.import.tosca.utils: js/utils.js
   puccini-js.import.tosca.helpers: js/helpers.js
 

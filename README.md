@@ -10,7 +10,7 @@ Deliberately stateless cloud topology management and deployment tools based on
 
 Impatient? Check out the [quickstart guide](QUICKSTART.md).
 
-Developer? Check out the [development guide](scripts/README.md).
+Developer! Please check out the [development guide](scripts/README.md).
 
 puccini-tosca
 -------------
@@ -30,10 +30,9 @@ These include node, capability, relationship, policy, and other types, as well a
 JavaScript code to provide orchestration integrations.
 Also included are detailed [examples](examples/README.md) using these profiles to get you started.
 
-We support
-[CSAR files](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/os/TOSCA-Simple-Profile-YAML-v1.1-os.html#_Toc489606742)
-(TOSCA packages) in addition to YAML files. We're even including a simple CSAR creation tool,
-**puccini-csar**.
+TOSCA in YAML is supported, as well as packaged
+[CSAR files](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/os/TOSCA-Simple-Profile-YAML-v1.1-os.html#_Toc489606742).
+We're even including a simple CSAR creation tool, **puccini-csar**.
 
 How do TOSCA, Clout, JavaScript, and cloud infrastructures all fit together in Puccini? Consider
 this: with a single command line you can take a TOSCA service template, compile it with
@@ -64,6 +63,13 @@ The TOSCA-to-Clout compiler just takes the parsed data structure and dumps it in
 includes any JavaScript required to process the Clout. Thusly Clout functions as an "intermediate
 representation" (IR) for TOSCA.
 
+### Visualiztion
+
+You can graphically visualize the compiled TOSCA in a dynamic web page via the embedded
+**tosca.visualize** JavaScript. A one-line example:
+
+    puccini-tosca compile my-app.yaml | puccini-js exec tosca.visualize > /tmp/my-app.html && xdg-open /tmp/my-app.html
+
 * [**puccini-tosca** documentation](puccini-tosca/README.md)
 * [TOSCA parser documentation](tosca/parser/README.md)
 
@@ -71,8 +77,8 @@ puccini-js
 ----------
 
 Clout processor for JavaScript. Executes existing JavaScript in a Clout file. For example, it can
-execute the Kubernetes spec generation code inserted by **puccini-tosca**. It also supports
-executing intrinsic functions and value constraints (for example, TOSCA's).
+execute the Kubernetes spec generation code inserted by **puccini-tosca**, as well as TOSCA
+intrinsic functions and value constraints.
 
 Also supported are implementation-specific JavaScript "plugins" that allow you to extend existing
 functionality. For example, you can add a plugin for Kubernetes to handle custom application needs,
@@ -83,7 +89,7 @@ permanently or piping through to add and execute them on-the-fly.
 ### TOSCA Intrinsic Functions and Constraints
 
 These are implemented in JavaScript so that they can be put into the Clout and then be executed
-by **puccini-js**, allowing a compiled-from-TOSCA Clout file to be entirely independent from TOSCA.
+by **puccini-js**, allowing a compiled-from-TOSCA Clout file to be entirely independent of TOSCA.
 The Clout lives on its own.
 
 To call these functions we provide the **tosca.coerce** JavaScript, which calls all functions and

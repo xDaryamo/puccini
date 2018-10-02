@@ -11,5 +11,8 @@ go get -u github.com/golang/dep/cmd/dep
 
 cd "$PROJECT"
 
-#"$GOPATH/bin/dep" init
+if [ ! -f Gopkg.toml ]; then
+	"$GOPATH/bin/dep" init
+fi
+
 "$GOPATH/bin/dep" ensure "$@"
