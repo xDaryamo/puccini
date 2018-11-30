@@ -7,6 +7,8 @@ import (
 //
 // PropertyDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.8
+//
 
 type PropertyDefinition struct {
 	*AttributeDefinition `name:"property definition"`

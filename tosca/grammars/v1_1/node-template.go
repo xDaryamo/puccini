@@ -8,6 +8,8 @@ import (
 //
 // NodeTemplate
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.7.3
+//
 
 type NodeTemplate struct {
 	*Entity `name:"node template"`

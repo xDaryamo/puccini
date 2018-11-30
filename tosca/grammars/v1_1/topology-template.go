@@ -8,6 +8,8 @@ import (
 //
 // TopologyTemplate
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.8
+//
 
 type TopologyTemplate struct {
 	*Entity `name:"topology template"`
@@ -105,20 +107,24 @@ func (self *TopologyTemplate) Normalize(s *normal.ServiceTemplate) {
 	for _, n := range self.NodeTemplates {
 		s.NodeTemplates[n.Name] = n.Normalize(s)
 	}
+
 	for _, g := range self.Groups {
 		s.Groups[g.Name] = g.Normalize(s)
 	}
-	// Workflow must be normalized after node templates and groups
+
+	// Workflows must be normalized after node templates and groups
 	// (because step activities might call operations on them)
 	for _, w := range self.WorkflowDefinitions {
 		s.Workflows[w.Name] = w.Normalize(s)
 	}
+
 	// Policies must be normalized after workflows
 	// (because policy triggers might call them)
 	for _, p := range self.Policies {
 		s.Policies[p.Name] = p.Normalize(s)
 	}
 
+	// TODO: move to Clout
 	for _, nodeTemplate := range self.NodeTemplates {
 		nodeTemplate.SatisfyRequirements(s, self)
 	}
@@ -126,6 +132,4 @@ func (self *TopologyTemplate) Normalize(s *normal.ServiceTemplate) {
 	if self.SubstitutionMappings != nil {
 		self.SubstitutionMappings.Normalize(s)
 	}
-
-	// TODO: workflows
 }

@@ -13,44 +13,48 @@ policy_types:
   tosca.policies.Root:
     metadata:
       normative: 'true'
-      specification: tosca-simple-1.1
-      specification_section: 5.11.1
+      citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
+      citation_location: 5.11.1
     description: >-
-      This is the default (root) TOSCA Policy Type definition that all other TOSCA base Policy Types derive from.
+      This is the default (root) TOSCA Policy Type definition that all other TOSCA base Policy Types
+      derive from.
 
   tosca.policies.Placement:
     metadata:
       normative: 'true'
-      specification: tosca-simple-1.1
-      specification_section: 5.11.2
+      citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
+      citation_location: 5.11.2
     description: >-
-      This is the default (root) TOSCA Policy Type definition that is used to govern placement of TOSCA nodes or groups of nodes.
+      This is the default (root) TOSCA Policy Type definition that is used to govern placement of
+      TOSCA nodes or groups of nodes.
     derived_from: tosca.policies.Root
 
   tosca.policies.Scaling:
     metadata:
       normative: 'true'
-      specification: tosca-simple-1.1
-      specification_section: 5.11.3
+      citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
+      citation_location: 5.11.3
     description: >-
-      This is the default (root) TOSCA Policy Type definition that is used to govern scaling of TOSCA nodes or groups of nodes.
+      This is the default (root) TOSCA Policy Type definition that is used to govern scaling of
+      TOSCA nodes or groups of nodes.
     derived_from: tosca.policies.Root
 
   tosca.policies.Update:
     metadata:
       normative: 'true'
-      specification: tosca-simple-1.1
-      specification_section: 5.11.4
+      citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
+      citation_location: 5.11.4
     description: >-
-      This is the default (root) TOSCA Policy Type definition that is used to govern update of TOSCA nodes or groups of nodes.
+      This is the default (root) TOSCA Policy Type definition that is used to govern update of TOSCA
+      nodes or groups of nodes.
     derived_from: tosca.policies.Root
 
   tosca.policies.Performance:
     metadata:
       normative: 'true'
-      specification: tosca-simple-1.1
-      specification_section: 5.11.5
+      citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
+      citation_location: 5.11.5
     description: >-
-      This is the default (root) TOSCA Policy Type definition that is used to declare performance requirements for TOSCA nodes or
-      groups of nodes.
+      This is the default (root) TOSCA Policy Type definition that is used to declare performance
+      requirements for TOSCA nodes or groups of nodes.
     derived_from: tosca.policies.Root

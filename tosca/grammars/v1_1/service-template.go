@@ -8,6 +8,10 @@ import (
 //
 // ServiceTemplate
 //
+// See Unit
+//
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.9
+//
 
 type ServiceTemplate struct {
 	*Unit `name:"service template"`

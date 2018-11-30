@@ -7,6 +7,8 @@ import (
 //
 // AttributeDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.10
+//
 
 type AttributeDefinition struct {
 	*Entity `name:"attribute definition"`

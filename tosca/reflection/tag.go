@@ -7,7 +7,7 @@ import (
 func GetTaggedFields(entityPtr interface{}, name string) []reflect.Value {
 	var fields []reflect.Value
 	entity := reflect.ValueOf(entityPtr).Elem()
-	for fieldName, _ := range GetFieldTagsForValue(entity, name) {
+	for fieldName := range GetFieldTagsForValue(entity, name) {
 		field := entity.FieldByName(fieldName)
 		fields = append(fields, field)
 	}

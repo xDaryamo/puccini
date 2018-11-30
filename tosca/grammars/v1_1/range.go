@@ -10,6 +10,8 @@ import (
 //
 // Range
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.2.3
+//
 
 type Range struct {
 	Lower uint64 `json:"lower" yaml:"lower"`

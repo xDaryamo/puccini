@@ -7,6 +7,8 @@ import (
 //
 // EventFilter
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.15
+//
 
 type EventFilter struct {
 	*Entity `name:"event filter" json:"-" yaml:"-"`

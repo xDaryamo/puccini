@@ -6,4 +6,7 @@ set -e
 
 virtualenv --system-site-packages env
 . env/bin/activate
-pip install ansible==2.7.0rc3 os-client-config==1.31.2 rackspaceauth==0.8.1
+pip install \
+	ansible==2.7.2 \
+	os-client-config==1.31.2 \
+	rackspaceauth==0.8.1

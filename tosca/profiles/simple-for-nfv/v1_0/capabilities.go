@@ -22,8 +22,8 @@ capability_types:
   tosca.capabilities.nfv.VirtualBindable:
     metadata:
       normative: 'true'
-      specification: tosca-simple-nfv-1.0
-      specification_section: 5.5.1
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation_location: 5.5.1
     description: >-
       A node type that includes the VirtualBindable capability indicates that it can be pointed by
       tosca.relationships.nfv.VirtualBindsTo relationship type.
@@ -32,22 +32,22 @@ capability_types:
   tosca.capabilities.nfv.Metric:
     metadata:
       normative: 'true'
-      specification: tosca-simple-nfv-1.0
-      specification_section: 5.5.2
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation_location: 5.5.2
     description: >-
-      A node type that includes the Metric capability indicates that it can be monitored using an nfv.relationships.Monitor
-      relationship type.
+      A node type that includes the Metric capability indicates that it can be monitored using an
+      nfv.relationships.Monitor relationship type.
     derived_from: tosca.capabilities.Endpoint
 
   tosca.capabilities.nfv.VirtualCompute:
     metadata:
       normative: 'true'
-      specification: tosca-simple-nfv-1.0
-      specification_section: 5.5.3
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation_location: 5.5.3
     derived_from: tosca.capabilities.Root
     properties:
       requested_additional_capabilities:
-        # ARIA NOTE: in section [5.5.3.1 Properties] the name of this property is
+        # ERRATUM: in section [5.5.3.1 Properties] the name of this property is
         # "request_additional_capabilities", and its type is not a map, but
         # tosca.datatypes.nfv.RequestedAdditionalCapability
         description: >-

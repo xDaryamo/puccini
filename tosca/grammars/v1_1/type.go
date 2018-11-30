@@ -7,6 +7,8 @@ import (
 //
 // Type
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.1
+//
 
 type Type struct {
 	*Entity `json:"-" yaml:"-"`

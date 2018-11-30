@@ -8,6 +8,8 @@ import (
 //
 // InterfaceMapping
 //
+// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.8.11
+//
 
 type InterfaceMapping struct {
 	*v1_1.Entity `name:"interface mapping"`

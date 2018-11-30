@@ -43,6 +43,7 @@ func init() {
 	Readers["Policy"] = v1_1.ReadPolicy
 	Readers["PolicyType"] = v1_1.ReadPolicyType
 	Readers["PropertyDefinition"] = v1_1.ReadPropertyDefinition
+	Readers["PropertyFilter"] = v1_1.ReadPropertyFilter
 	Readers["PropertyMapping"] = ReadPropertyMapping // new
 	Readers["range"] = v1_1.ReadRange
 	Readers["RangeEntity"] = v1_1.ReadRangeEntity

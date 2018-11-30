@@ -7,6 +7,8 @@ import (
 //
 // WorkflowPreconditionDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.20
+//
 
 type WorkflowPreconditionDefinition struct {
 	*Entity `name:"workflow precondition definition"`

@@ -5,6 +5,8 @@ package v1_1
 func init() {
 	Profile["/tosca/simple/1.1/js/token.js"] = `
 
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 4.3.2
+
 function evaluate(v, separators, index) {
 	if (arguments.length !== 3)
 		throw 'must have 3 arguments';

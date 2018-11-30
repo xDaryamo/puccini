@@ -9,6 +9,12 @@ import (
 //
 // ArtifactDefinition
 //
+// Attaches to NodeType
+//
+// (See Artifact for a variation that attaches to NodeTemplate)
+//
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.6
+//
 
 type ArtifactDefinition struct {
 	*Entity `name:"artifact"`

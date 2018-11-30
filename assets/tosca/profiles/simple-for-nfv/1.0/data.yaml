@@ -11,17 +11,17 @@ tosca_definitions_version: tosca_simple_yaml_1_1
 data_types:
 
   tosca.datatypes.nfv.L2AddressData:
-    # TBD
+    # ERRATUM: TBD
     metadata:
       normative: 'true'
-      specification: tosca-simple-nfv-1.0
-      specification_section: 5.3.1
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation_location: 5.3.1
 
   tosca.datatypes.nfv.L3AddressData:
     metadata:
       normative: 'true'
-      specification: tosca-simple-nfv-1.0
-      specification_section: 5.3.2
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation_location: 5.3.2
     description: >-
       The L3AddressData type is a complex TOSCA data type used to describe L3AddressData information
       element as defined in [ETSI GS NFV-IFA 011], it provides the information on the IP addresses
@@ -57,8 +57,8 @@ data_types:
   tosca.datatypes.nfv.AddressData:
     metadata:
       normative: 'true'
-      specification: tosca-simple-nfv-1.0
-      specification_section: 5.3.3
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation_location: 5.3.3
     description: >-
       The AddressData type is a complex TOSCA data type used to describe AddressData information
       element as defined in [ETSI GS NFV-IFA 011], it provides information on the addresses to be
@@ -92,13 +92,13 @@ data_types:
   tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements:
     metadata:
       normative: 'true'
-      specification: tosca-simple-nfv-1.0
-      specification_section: 5.3.4
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation_location: 5.3.4
     description: >-
       The VirtualNetworkInterfaceRequirements type is a complex TOSCA data type used to describe
       VirtualNetworkInterfaceRequirements information element as defined in [ETSI GS NFV-IFA 011],
-      it provides the information to specify requirements on a virtual network interface realising the
-      CPs instantiated from this CPD.
+      it provides the information to specify requirements on a virtual network interface realising
+      the CPs instantiated from this CPD.
     derived_from: tosca.datatypes.Root
     properties:
       name:
@@ -121,14 +121,14 @@ data_types:
         description: >-
           Specifies a requirement such as the support of SR-IOV, a particular data plane
           acceleration library, an API to be exposed by a NIC, etc.
-        type: string # ARIA NOTE: the spec says "not specified", but TOSCA requires a type
+        type: string # ERRATUM: the spec says "not specified", but TOSCA requires a type
         required: true
 
   tosca.datatypes.nfv.ConnectivityType:
     metadata:
       normative: 'true'
-      specification: tosca-simple-nfv-1.0
-      specification_section: 5.3.5
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation_location: 5.3.5
     description: >-
       The TOSCA ConnectivityType type is a complex TOSCA data type used to describe ConnectivityType
       information element as defined in [ETSI GS NFV-IFA 011].
@@ -151,8 +151,8 @@ data_types:
   tosca.datatypes.nfv.RequestedAdditionalCapability:
     metadata:
       normative: 'true'
-      specification: tosca-simple-nfv-1.0
-      specification_section: 5.3.6
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation_location: 5.3.6
     description: >-
       RequestAdditionalCapability describes additional capability for a particular VDU.
     derived_from: tosca.datatypes.Root
@@ -189,8 +189,8 @@ data_types:
   tosca.datatypes.nfv.VirtualMemory:
     metadata:
       normative: 'true'
-      specification: tosca-simple-nfv-1.0
-      specification_section: 5.3.7
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation_location: 5.3.7
     description: >-
       VirtualMemory describes virtual memory for a particular VDU.
     derived_from: tosca.datatypes.Root
@@ -217,8 +217,8 @@ data_types:
   tosca.datatypes.nfv.VirtualCpu:
     metadata:
       normative: 'true'
-      specification: tosca-simple-nfv-1.0
-      specification_section: 5.3.8
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation_location: 5.3.8
     description: >-
       VirtualMemory describes virtual memory for a particular VDU.
     derived_from: tosca.datatypes.Root
@@ -252,8 +252,8 @@ data_types:
   tosca.datatypes.nfv.VirtualCpuPinning:
     metadata:
       normative: 'true'
-      specification: tosca-simple-nfv-1.0
-      specification_section: 5.3.9
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation_location: 5.3.9
     description: >-
       VirtualCpuPinning describes CPU pinning configuration for a particular CPU.
     derived_from: tosca.datatypes.Root
@@ -277,9 +277,9 @@ data_types:
   tosca.datatypes.nfv.VnfcConfigurableProperties:
     metadata:
       normative: 'true'
-      specification: tosca-simple-nfv-1.0
-      specification_section: 5.3.10
-    # ARIA NOTE: description is mangled in spec
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation_location: 5.3.10
+    # ERRATUM: description is mangled in spec
     description: >-
       VnfcConfigurableProperties describes additional configurable properties of a VNFC.
     derived_from: tosca.datatypes.Root

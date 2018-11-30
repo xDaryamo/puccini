@@ -34,6 +34,8 @@ var ConstraintClauseNativeArgumentIndexes = map[string][]uint{
 //
 // ConstraintClause
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
+//
 
 type ConstraintClause struct {
 	*Entity               `name:"constraint clause"`

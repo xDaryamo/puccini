@@ -13,6 +13,8 @@ import (
 //
 // Import
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.7
+//
 
 type Import struct {
 	*Entity `name:"import" json:"-" yaml:"-"`

@@ -8,6 +8,8 @@ import (
 //
 // PropertyMapping
 //
+// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.8.8
+//
 
 type PropertyMapping struct {
 	*v1_1.Entity `name:"property mapping"`

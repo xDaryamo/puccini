@@ -9,6 +9,11 @@ import (
 //
 // Value
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.9
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.11
+//
+
+// TODO: see [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.11.22 for example of long format
 
 type Value struct {
 	*Entity `name:"value"`

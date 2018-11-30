@@ -9,8 +9,10 @@ import (
 //
 // TriggerDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.16
+//
 
-// Note: The TOSCA 1.1 spec is mangled, we will jump right to 2.1 here
+// Note: The TOSCA 1.1 spec is mangled, we will jump right to 1.2 here
 
 type TriggerDefinition struct {
 	*Entity `name:"trigger definition" json:"-" yaml:"-"`

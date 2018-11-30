@@ -7,6 +7,8 @@ import (
 //
 // InterfaceType
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.5
+//
 
 type InterfaceType struct {
 	*Type `name:"interface type"`

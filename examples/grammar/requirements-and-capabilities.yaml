@@ -127,7 +127,7 @@ topology_template:
           node_filter:
             properties:
               age:
-              - lesser_than: 100 d
+              - less_than: 100 d
 
     # You can also put "node_filter" at the node itself, in which case the filter will
     # apply to *all* requirements
@@ -136,7 +136,7 @@ topology_template:
       node_filter:
         properties:
           age:
-          - lesser_than: 100 d
+          - less_than: 100 d
       requirements:
       - socket:
           capability: Socket

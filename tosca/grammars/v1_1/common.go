@@ -44,6 +44,7 @@ func init() {
 	Readers["Policy"] = ReadPolicy
 	Readers["PolicyType"] = ReadPolicyType
 	Readers["PropertyDefinition"] = ReadPropertyDefinition
+	Readers["PropertyFilter"] = ReadPropertyFilter
 	Readers["range"] = ReadRange
 	Readers["RangeEntity"] = ReadRangeEntity
 	Readers["RelationshipAssignment"] = ReadRelationshipAssignment

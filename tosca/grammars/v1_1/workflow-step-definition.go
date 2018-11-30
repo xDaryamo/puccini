@@ -8,6 +8,8 @@ import (
 //
 // WorkflowStepDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.21
+//
 
 type WorkflowStepDefinition struct {
 	*Entity `name:"workflow step definition"`

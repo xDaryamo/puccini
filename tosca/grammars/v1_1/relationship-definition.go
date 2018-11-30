@@ -7,6 +7,8 @@ import (
 //
 // RelationshipDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.3.2.3
+//
 
 type RelationshipDefinition struct {
 	*Entity `name:"relationship definition"`

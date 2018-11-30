@@ -8,6 +8,8 @@ import (
 //
 // Group
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.7.5
+//
 
 type Group struct {
 	*Entity `name:"group"`

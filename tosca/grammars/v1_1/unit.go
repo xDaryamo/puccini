@@ -13,6 +13,10 @@ import (
 //
 // Unit
 //
+// See ServiceTemplate
+//
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.9
+//
 
 type Unit struct {
 	*Entity `name:"unit"`

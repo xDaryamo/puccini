@@ -7,6 +7,8 @@ import (
 //
 // InterfaceDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.14
+//
 
 type InterfaceDefinition struct {
 	*Entity `name:"interface definition" json:"-" yaml:"-"`

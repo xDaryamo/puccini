@@ -8,6 +8,9 @@ import (
 //
 // SubstitutionMappings
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 2.10
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 2.11
+//
 
 type SubstitutionMappings struct {
 	*Entity `name:"substitution mappings"`

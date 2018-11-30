@@ -7,6 +7,8 @@ import (
 //
 // CapabilityMapping
 //
+// Attaches to SubstitutionMappings
+//
 
 type CapabilityMapping struct {
 	*Entity `name:"capability mapping"`

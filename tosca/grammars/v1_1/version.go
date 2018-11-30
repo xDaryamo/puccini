@@ -16,6 +16,8 @@ var VersionRE = regexp.MustCompile(
 //
 // Version
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.2.2
+//
 
 type Version struct {
 	String_ string `json:"$str" yaml:"$str"`

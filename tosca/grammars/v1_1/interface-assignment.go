@@ -8,6 +8,8 @@ import (
 //
 // InterfaceAssignment
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.14
+//
 
 type InterfaceAssignment struct {
 	*Entity `name:"interface" json:"-" yaml:"-"`

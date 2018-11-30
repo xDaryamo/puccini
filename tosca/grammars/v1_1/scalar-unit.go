@@ -57,6 +57,8 @@ var ScalarUnitFrequencySizes = ScalarUnitSizes{
 //
 // ScalarUnitSize
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.2.6.4
+//
 
 type ScalarUnitSize struct {
 	Number  uint64 `json:"$number" yaml:"$number"`
@@ -103,6 +105,8 @@ func (self *ScalarUnitSize) Compare(data interface{}) (int, error) {
 //
 // ScalarUnitTime
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.2.6.5
+//
 
 type ScalarUnitTime struct {
 	Number  float64 `json:"$number" yaml:"$number"`
@@ -148,6 +152,8 @@ func (self *ScalarUnitTime) Compare(data interface{}) (int, error) {
 
 //
 // ScalarUnitFrequency
+//
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.2.6.6
 //
 
 type ScalarUnitFrequency struct {
@@ -222,5 +228,5 @@ func (self ScalarUnitSizes) Get(unit string, context *tosca.Context) (string, fl
 			return u, size
 		}
 	}
-	panic("as long as the regexp does it's job we should never get here")
+	panic("as long as the regexp does its job we should never get here")
 }

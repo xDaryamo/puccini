@@ -7,6 +7,8 @@ import (
 //
 // CapabilityDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.2
+//
 
 type CapabilityDefinition struct {
 	*Entity `name:"capability definition"`

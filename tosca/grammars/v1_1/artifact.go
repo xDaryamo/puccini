@@ -8,6 +8,10 @@ import (
 //
 // Artifact
 //
+// Attaches to NodeTemplate
+//
+// (See ArtifactDefinition for a variation that attaches to NodeType)
+//
 
 type Artifact struct {
 	*ArtifactDefinition

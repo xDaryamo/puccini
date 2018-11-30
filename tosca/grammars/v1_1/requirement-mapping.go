@@ -7,6 +7,8 @@ import (
 //
 // RequirementMapping
 //
+// Attaches to SubstitutionMappings
+//
 
 type RequirementMapping struct {
 	*Entity `name:"requirement mapping"`

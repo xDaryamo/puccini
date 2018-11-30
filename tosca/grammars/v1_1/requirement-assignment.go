@@ -8,19 +8,21 @@ import (
 //
 // RequirementAssignment
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.7.2
+//
 
 type RequirementAssignment struct {
 	*Entity `name:"requirement"`
 	Name    string
 
-	NodeTemplateNameOrNodeTypeName     *string                 `read:"node"`
-	CapabilityNameOrCapabilityTypeName *string                 `read:"capability"`
-	Relationship                       *RelationshipAssignment `read:"relationship,RelationshipAssignment"`
-	NodeFilter                         *NodeFilter             `read:"node_filter,NodeFilter"`
+	TargetNodeTemplateNameOrNodeTypeName     *string                 `read:"node"`
+	TargetCapabilityNameOrCapabilityTypeName *string                 `read:"capability"`
+	Relationship                             *RelationshipAssignment `read:"relationship,RelationshipAssignment"`
+	TargetNodeFilter                         *NodeFilter             `read:"node_filter,NodeFilter"`
 
-	NodeTemplate   *NodeTemplate   `lookup:"node,NodeTemplateNameOrNodeTypeName" json:"-" yaml:"-"`
-	NodeType       *NodeType       `lookup:"node,NodeTemplateNameOrNodeTypeName" json:"-" yaml:"-"`
-	CapabilityType *CapabilityType `lookup:"capability,?CapabilityNameOrCapabilityTypeName" json:"-" yaml:"-"`
+	TargetNodeTemplate   *NodeTemplate   `lookup:"node,TargetNodeTemplateNameOrNodeTypeName" json:"-" yaml:"-"`
+	TargetNodeType       *NodeType       `lookup:"node,TargetNodeTemplateNameOrNodeTypeName" json:"-" yaml:"-"`
+	TargetCapabilityType *CapabilityType `lookup:"capability,?TargetCapabilityNameOrCapabilityTypeName" json:"-" yaml:"-"`
 }
 
 func NewRequirementAssignment(context *tosca.Context) *RequirementAssignment {
@@ -36,17 +38,17 @@ func ReadRequirementAssignment(context *tosca.Context) interface{} {
 	if context.Is("map") {
 		context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
 	} else if context.ValidateType("map", "string") {
-		self.NodeTemplateNameOrNodeTypeName = context.ReadString()
+		self.TargetNodeTemplateNameOrNodeTypeName = context.ReadString()
 	}
 	return self
 }
 
 func NewDefaultRequirementAssignment(definition *RequirementDefinition, context *tosca.Context) *RequirementAssignment {
 	self := NewRequirementAssignment(context.MapChild(definition.Name, nil))
-	self.NodeTemplateNameOrNodeTypeName = definition.NodeTypeName
-	self.NodeType = definition.NodeType
-	self.CapabilityNameOrCapabilityTypeName = definition.CapabilityTypeName
-	self.CapabilityType = definition.CapabilityType
+	self.TargetNodeTemplateNameOrNodeTypeName = definition.TargetNodeTypeName
+	self.TargetNodeType = definition.TargetNodeType
+	self.TargetCapabilityNameOrCapabilityTypeName = definition.TargetCapabilityTypeName
+	self.TargetCapabilityType = definition.TargetCapabilityType
 	return self
 }
 
@@ -71,17 +73,19 @@ func (self *RequirementAssignment) Satisfy(s *normal.ServiceTemplate, n *normal.
 		return
 	}
 
+	// Candidate node templates
+
 	var candidateNodeTemplates []*NodeTemplate
 
-	if self.NodeTemplate != nil {
+	if self.TargetNodeTemplate != nil {
 		// Just this node template
-		candidateNodeTemplates = []*NodeTemplate{self.NodeTemplate}
-	} else if self.NodeType != nil {
+		candidateNodeTemplates = []*NodeTemplate{self.TargetNodeTemplate}
+	} else if self.TargetNodeType != nil {
 		// Gather node templates of this type
-		candidateNodeTemplates = topologyTemplate.GetNodeTemplatesOfType(self.NodeType)
-	} else if definition.NodeType != nil {
+		candidateNodeTemplates = topologyTemplate.GetNodeTemplatesOfType(self.TargetNodeType)
+	} else if definition.TargetNodeType != nil {
 		// Gather node templates of this type
-		candidateNodeTemplates = topologyTemplate.GetNodeTemplatesOfType(definition.NodeType)
+		candidateNodeTemplates = topologyTemplate.GetNodeTemplatesOfType(definition.TargetNodeType)
 	} else {
 		// All node templates
 		for _, nodeTemplate := range topologyTemplate.NodeTemplates {
@@ -89,13 +93,23 @@ func (self *RequirementAssignment) Satisfy(s *normal.ServiceTemplate, n *normal.
 		}
 	}
 
-	// TODO: node filter
+	// Filter candidate node templates
+
+	if nodeTemplate.NodeFilter != nil {
+		candidateNodeTemplates = nodeTemplate.NodeFilter.FilterNodeTemplates(candidateNodeTemplates)
+	}
+
+	if self.TargetNodeFilter != nil {
+		candidateNodeTemplates = self.TargetNodeFilter.FilterNodeTemplates(candidateNodeTemplates)
+	}
 
 	if len(candidateNodeTemplates) == 0 {
 		log.Debugf("{satisfy} %s: no candidate node templates", self.Context.Path)
 		self.Context.ReportUnsatisfiedRequirement()
 		return
 	}
+
+	// Find first matching capability in candidate node templates
 
 	for _, candidateNodeTemplate := range candidateNodeTemplates {
 		if candidateNodeTemplate == nodeTemplate {
@@ -107,22 +121,22 @@ func (self *RequirementAssignment) Satisfy(s *normal.ServiceTemplate, n *normal.
 
 		var candidateCapabilities []*CapabilityAssignment
 
-		if self.CapabilityType != nil {
+		if self.TargetCapabilityType != nil {
 			// Gather capabilities of the specified type
-			log.Debugf("{satisfy} %s: gathering \"%s\" capabilities in node template: %s", self.Context.Path, self.CapabilityType.Name, candidateNodeTemplate.Name)
-			candidateCapabilities = candidateNodeTemplate.GetCapabilitiesOfType(self.CapabilityType)
-		} else if self.CapabilityNameOrCapabilityTypeName != nil {
+			log.Debugf("{satisfy} %s: gathering \"%s\" capabilities in node template: %s", self.Context.Path, self.TargetCapabilityType.Name, candidateNodeTemplate.Name)
+			candidateCapabilities = candidateNodeTemplate.GetCapabilitiesOfType(self.TargetCapabilityType)
+		} else if self.TargetCapabilityNameOrCapabilityTypeName != nil {
 			// Just this specified named capability
-			if candidateCapability, ok := candidateNodeTemplate.GetCapabilityByName(*self.CapabilityNameOrCapabilityTypeName, definition.CapabilityType); ok {
+			if candidateCapability, ok := candidateNodeTemplate.GetCapabilityByName(*self.TargetCapabilityNameOrCapabilityTypeName, definition.TargetCapabilityType); ok {
 				log.Debugf("{satisfy} %s: using capability named \"%s\" in node template: %s", self.Context.Path, candidateCapability.Name, candidateNodeTemplate.Name)
 				candidateCapabilities = []*CapabilityAssignment{candidateCapability}
 			} else {
-				log.Debugf("{satisfy} %s: capability named %s is wrong type in node template: %s", self.Context.Path, self.CapabilityNameOrCapabilityTypeName, candidateNodeTemplate.Name)
+				log.Debugf("{satisfy} %s: capability named %s is wrong type in node template: %s", self.Context.Path, self.TargetCapabilityNameOrCapabilityTypeName, candidateNodeTemplate.Name)
 			}
-		} else if definition.CapabilityType != nil {
+		} else if definition.TargetCapabilityType != nil {
 			// Gather capabilities of the type specified in the requirement definition
-			log.Debugf("{satisfy} %s: gathering \"%s\" capabilities in node template: %s", self.Context.Path, definition.CapabilityType.Name, candidateNodeTemplate.Name)
-			candidateCapabilities = candidateNodeTemplate.GetCapabilitiesOfType(definition.CapabilityType)
+			log.Debugf("{satisfy} %s: gathering \"%s\" capabilities in node template: %s", self.Context.Path, definition.TargetCapabilityType.Name, candidateNodeTemplate.Name)
+			candidateCapabilities = candidateNodeTemplate.GetCapabilitiesOfType(definition.TargetCapabilityType)
 		}
 
 		if len(candidateCapabilities) == 0 {

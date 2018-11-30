@@ -7,6 +7,8 @@ import (
 //
 // PolicyType
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.12
+//
 
 type PolicyType struct {
 	*Type `name:"policy type"`

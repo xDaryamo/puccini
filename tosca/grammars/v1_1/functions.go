@@ -7,7 +7,12 @@ import (
 	profile "github.com/tliron/puccini/tosca/profiles/simple/v1_1"
 )
 
+//
 // Built-in functions
+//
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 4
+//
+
 var FunctionSourceCode = map[string]string{
 	"concat":               profile.Profile["/tosca/simple/1.1/js/concat.js"],
 	"token":                profile.Profile["/tosca/simple/1.1/js/token.js"],

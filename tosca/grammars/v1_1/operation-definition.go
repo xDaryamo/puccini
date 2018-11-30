@@ -8,6 +8,8 @@ import (
 //
 // OperationDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.13
+//
 
 type OperationDefinition struct {
 	*Entity `name:"operation definition"`

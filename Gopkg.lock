@@ -22,7 +22,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:92d224d9ea2b2b8104d9cf1cc44379c11308b7cd15c7434c791959434652572c"
+  digest = "1:46790e712d8cd1af3f724882d7dcda83044cdcd049e2b230cdd6dba8d2f48801"
   name = "github.com/dop251/goja"
   packages = [
     ".",
@@ -32,7 +32,7 @@
     "token",
   ]
   pruneopts = "UT"
-  revision = "ef8c030e3c96c5054c2f10ef925e7041e0583c07"
+  revision = "2dd08a5fc66566421076e9f70c5946989fb3ba76"
 
 [[projects]]
   digest = "1:865079840386857c809b72ce300be7580cb50d3d3129ce11bf9aa6ca2bc1934a"
@@ -94,12 +94,12 @@
   version = "v1"
 
 [[projects]]
-  digest = "1:8a3e7525dc0cf0236b163166800ecbc78d6c8c5d7ac956996e7b3bef8cfadc41"
+  digest = "1:c2a594011eed07da14918c519a5b1d08e4bafb2497037f6a426dc310428df4d3"
   name = "github.com/segmentio/ksuid"
   packages = ["."]
   pruneopts = "UT"
-  revision = "112f929a3020abfcd06b77c963ec919130796a35"
-  version = "1.0.1"
+  revision = "ffd9a8aaaf8f40792e055371eba06542348e991e"
+  version = "v1.0.2"
 
 [[projects]]
   digest = "1:645cabccbb4fa8aab25a956cbcbdf6a6845ca736b2c64e197ca7cbb9d210b939"
@@ -110,20 +110,20 @@
   version = "v0.0.3"
 
 [[projects]]
-  digest = "1:dab83a1bbc7ad3d7a6ba1a1cc1760f25ac38cdf7d96a5cdd55cd915a4f5ceaf9"
+  digest = "1:c1b1102241e7f645bc8e0c22ae352e8f0dc6484b6cb4d132fa9f24174e0119e2"
   name = "github.com/spf13/pflag"
   packages = ["."]
   pruneopts = "UT"
-  revision = "9a97c102cda95a86cec2345a6f09f55a939babf5"
-  version = "v1.0.2"
+  revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
+  version = "v1.0.3"
 
 [[projects]]
   branch = "master"
-  digest = "1:e2ced6fdf654069e8713c96012275fbd245381673d53e8c8ace640b28441a28b"
+  digest = "1:8775d8a768d9e65e8b659172804aac5db1fc8d563ba766470a6c2698c57c61a7"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "e4b3c5e9061176387e7cea65e4dc5853801f3fb7"
+  revision = "4ed8d59d0b35e1e29334a206d1b3f38b1e5dfb31"
 
 [[projects]]
   digest = "1:0f60a87d38e0f08d784e6a11a700314475970acfd7f5a14929e55facaba54ac8"
@@ -148,12 +148,12 @@
   version = "v0.3.0"
 
 [[projects]]
-  digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
+  digest = "1:4d2e5a73dc1500038e504a8d78b986630e3626dc027bc030ba5c75da257cdb96"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
   pruneopts = "UT"
-  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
-  version = "v2.2.1"
+  revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
+  version = "v2.2.2"
 
 [solve-meta]
   analyzer-name = "dep"

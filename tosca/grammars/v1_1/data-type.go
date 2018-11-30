@@ -8,6 +8,8 @@ import (
 //
 // DataType
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.6
+//
 
 type DataType struct {
 	*Type `name:"data type"`

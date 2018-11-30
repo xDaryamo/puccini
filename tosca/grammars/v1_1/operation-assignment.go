@@ -8,6 +8,8 @@ import (
 //
 // OperationAssignment
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.13
+//
 
 type OperationAssignment struct {
 	*Entity `name:"operation"`

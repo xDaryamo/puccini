@@ -7,6 +7,8 @@ import (
 //
 // ArtifactType
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.4
+//
 
 type ArtifactType struct {
 	*Type `name:"artifact type"`

@@ -130,7 +130,7 @@ func (self *Context) MapChild(name string, data interface{}) *Context {
 	return &Context{
 		Parent:          self,
 		Name:            name,
-		Path:            fmt.Sprintf("%s[\"%s\"]", strings.Replace(self.Path, "\"", "\\\"", -1), name),
+		Path:            fmt.Sprintf("%s[\"%s\"]", self.Path, strings.Replace(name, "\"", "\\\"", -1)),
 		URL:             self.URL,
 		Data:            data,
 		Namespace:       self.Namespace,

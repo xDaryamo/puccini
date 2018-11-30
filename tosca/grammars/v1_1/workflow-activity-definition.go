@@ -11,6 +11,8 @@ import (
 //
 // WorkflowActivityDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.17
+//
 
 type WorkflowActivityDefinition struct {
 	*Entity `name:"workflow activity definition"`

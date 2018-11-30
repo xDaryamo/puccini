@@ -8,6 +8,8 @@ import (
 //
 // CapabilityAssignment
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.7.1
+//
 
 type CapabilityAssignment struct {
 	*Entity `name:"capability"`

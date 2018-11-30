@@ -7,19 +7,21 @@ import (
 //
 // CapabilityFilter
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.6
+//
 
 type CapabilityFilter struct {
 	*Entity `name:"capability filter"`
 	Name    string
 
-	Properties Values `read:"properties,Value"`
+	Properties PropertyFilters `read:"properties,PropertyFilter"`
 }
 
 func NewCapabilityFilter(context *tosca.Context) *CapabilityFilter {
 	return &CapabilityFilter{
 		Entity:     NewEntity(context),
 		Name:       context.Name,
-		Properties: make(Values),
+		Properties: make(PropertyFilters),
 	}
 }
 

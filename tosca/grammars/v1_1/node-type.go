@@ -7,6 +7,8 @@ import (
 //
 // NodeType
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.9
+//
 
 type NodeType struct {
 	*Type `name:"node type"`

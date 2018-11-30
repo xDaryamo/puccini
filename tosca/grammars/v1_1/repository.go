@@ -8,6 +8,8 @@ import (
 //
 // Repository
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.5
+//
 
 type Repository struct {
 	*Entity `name:"repository"`

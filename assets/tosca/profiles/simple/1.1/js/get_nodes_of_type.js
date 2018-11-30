@@ -1,4 +1,6 @@
 
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 4.7.1
+
 clout.exec('tosca.helpers');
 
 function evaluate(typeName) {

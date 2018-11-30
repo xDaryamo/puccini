@@ -8,6 +8,8 @@ import (
 //
 // Policy
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.7.6
+//
 
 type Policy struct {
 	*Entity `name:"policy"`

@@ -7,6 +7,8 @@ import (
 //
 // ConditionClause
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.19
+//
 
 type ConditionClause struct {
 	*Entity `name:"condition clause"`

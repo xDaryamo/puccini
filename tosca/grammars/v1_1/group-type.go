@@ -4,6 +4,12 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
+//
+// GroupType
+//
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.11
+//
+
 type GroupType struct {
 	*Type `name:"group type"`
 

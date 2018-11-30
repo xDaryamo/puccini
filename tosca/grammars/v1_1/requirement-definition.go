@@ -7,18 +7,20 @@ import (
 //
 // RequirementDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.3
+//
 
 type RequirementDefinition struct {
 	*Entity `name:"requirement definition"`
 	Name    string
 
-	NodeTypeName           *string                 `read:"node"`
-	CapabilityTypeName     *string                 `read:"capability"` // required only if cannot be inherited
-	RelationshipDefinition *RelationshipDefinition `read:"relationship,RelationshipDefinition"`
-	Occurrences            *RangeEntity            `read:"occurrences,RangeEntity"`
+	TargetNodeTypeName       *string                 `read:"node"`
+	TargetCapabilityTypeName *string                 `read:"capability"` // required only if cannot be inherited
+	RelationshipDefinition   *RelationshipDefinition `read:"relationship,RelationshipDefinition"`
+	Occurrences              *RangeEntity            `read:"occurrences,RangeEntity"`
 
-	NodeType       *NodeType       `lookup:"node,NodeTypeName" json:"-" yaml:"-"`
-	CapabilityType *CapabilityType `lookup:"capability,CapabilityTypeName" json:"-" yaml:"-"`
+	TargetNodeType       *NodeType       `lookup:"node,TargetNodeTypeName" json:"-" yaml:"-"`
+	TargetCapabilityType *CapabilityType `lookup:"capability,TargetCapabilityTypeName" json:"-" yaml:"-"`
 
 	capabilityMissingProblemReported bool
 }
@@ -36,7 +38,7 @@ func ReadRequirementDefinition(context *tosca.Context) interface{} {
 	if context.Is("map") {
 		context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
 	} else if context.ValidateType("map", "string") {
-		self.CapabilityTypeName = context.ReadString()
+		self.TargetCapabilityTypeName = context.ReadString()
 	}
 	return self
 }
@@ -48,11 +50,11 @@ func (self *RequirementDefinition) GetKey() string {
 
 func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefinition) {
 	if parentDefinition != nil {
-		if (self.NodeTypeName == nil) && (parentDefinition.NodeTypeName != nil) {
-			self.NodeTypeName = parentDefinition.NodeTypeName
+		if (self.TargetNodeTypeName == nil) && (parentDefinition.TargetNodeTypeName != nil) {
+			self.TargetNodeTypeName = parentDefinition.TargetNodeTypeName
 		}
-		if (self.CapabilityTypeName == nil) && (parentDefinition.CapabilityTypeName != nil) {
-			self.CapabilityTypeName = parentDefinition.CapabilityTypeName
+		if (self.TargetCapabilityTypeName == nil) && (parentDefinition.TargetCapabilityTypeName != nil) {
+			self.TargetCapabilityTypeName = parentDefinition.TargetCapabilityTypeName
 		}
 		if (self.RelationshipDefinition == nil) && (parentDefinition.RelationshipDefinition != nil) {
 			self.RelationshipDefinition = parentDefinition.RelationshipDefinition
@@ -60,23 +62,23 @@ func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefiniti
 		if (self.Occurrences == nil) && (parentDefinition.Occurrences != nil) {
 			self.Occurrences = parentDefinition.Occurrences
 		}
-		if (self.NodeType == nil) && (parentDefinition.NodeType != nil) {
-			self.NodeType = parentDefinition.NodeType
+		if (self.TargetNodeType == nil) && (parentDefinition.TargetNodeType != nil) {
+			self.TargetNodeType = parentDefinition.TargetNodeType
 		}
-		if (self.CapabilityType == nil) && (parentDefinition.CapabilityType != nil) {
-			self.CapabilityType = parentDefinition.CapabilityType
+		if (self.TargetCapabilityType == nil) && (parentDefinition.TargetCapabilityType != nil) {
+			self.TargetCapabilityType = parentDefinition.TargetCapabilityType
 		}
 
 		// Validate type compatibility
-		if (self.NodeType != nil) && (parentDefinition.NodeType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.NodeType, self.NodeType) {
-			self.Context.ReportIncompatibleType(self.NodeType.Name, parentDefinition.NodeType.Name)
+		if (self.TargetNodeType != nil) && (parentDefinition.TargetNodeType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.TargetNodeType, self.TargetNodeType) {
+			self.Context.ReportIncompatibleType(self.TargetNodeType.Name, parentDefinition.TargetNodeType.Name)
 		}
-		if (self.CapabilityType != nil) && (parentDefinition.CapabilityType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.CapabilityType, self.CapabilityType) {
-			self.Context.ReportIncompatibleType(self.CapabilityType.Name, parentDefinition.CapabilityType.Name)
+		if (self.TargetCapabilityType != nil) && (parentDefinition.TargetCapabilityType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.TargetCapabilityType, self.TargetCapabilityType) {
+			self.Context.ReportIncompatibleType(self.TargetCapabilityType.Name, parentDefinition.TargetCapabilityType.Name)
 		}
 	}
 
-	if self.CapabilityTypeName == nil {
+	if self.TargetCapabilityTypeName == nil {
 		// Avoid reporting more than once
 		if !self.capabilityMissingProblemReported {
 			self.Context.FieldChild("capability", nil).ReportFieldMissing()

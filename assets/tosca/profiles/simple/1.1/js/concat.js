@@ -1,4 +1,6 @@
 
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 4.3.1
+
 function evaluate() {
 	a = [];
 	length = arguments.length;

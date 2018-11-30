@@ -8,6 +8,8 @@ import (
 //
 // ParameterDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.12
+//
 
 type ParameterDefinition struct {
 	*PropertyDefinition `name:"parameter definition"`

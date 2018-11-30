@@ -8,13 +8,15 @@ import (
 //
 // RelationshipAssignment
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.7.2.2.3
+//
 
 type RelationshipAssignment struct {
 	*Entity `name:"relationship"`
 
 	RelationshipTemplateOrRelationshipTypeName *string              `read:"type"`
 	Properties                                 Values               `read:"properties,Value"`
-	Attributes                                 Values               `read:"attributes,Value"`
+	Attributes                                 Values               `read:"attributes,Value"` // missing in spec
 	Interfaces                                 InterfaceAssignments `read:"interfaces,InterfaceAssignment"`
 
 	RelationshipTemplate *RelationshipTemplate `lookup:"type,RelationshipTemplateOrRelationshipTypeName" json:"-" yaml:"-"`

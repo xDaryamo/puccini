@@ -7,6 +7,8 @@ import (
 //
 // CapabilityType
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.7
+//
 
 type CapabilityType struct {
 	*Type `name:"capability type"`
