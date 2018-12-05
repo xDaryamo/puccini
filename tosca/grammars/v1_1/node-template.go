@@ -15,17 +15,17 @@ type NodeTemplate struct {
 	*Entity `name:"node template"`
 	Name    string `namespace:""`
 
-	Directives           *[]string              `read:"directives"`
-	CopyNodeTemplateName *string                `read:"copy"`
-	NodeTypeName         *string                `read:"type" require:"type"`
-	Description          *string                `read:"description" inherit:"description,NodeType"`
-	Properties           Values                 `read:"properties,Value"`
-	Attributes           Values                 `read:"attributes,Value"`
-	Capabilities         CapabilityAssignments  `read:"capabilities,CapabilityAssignment"`
-	Requirements         RequirementAssignments `read:"requirements,{}RequirementAssignment"`
-	Interfaces           InterfaceAssignments   `read:"interfaces,InterfaceAssignment"`
-	Artifacts            Artifacts              `read:"artifacts,Artifact"`
-	NodeFilter           *NodeFilter            `read:"node_filter,NodeFilter"`
+	Directives                   *[]string              `read:"directives"`
+	CopyNodeTemplateName         *string                `read:"copy"`
+	NodeTypeName                 *string                `read:"type" require:"type"`
+	Description                  *string                `read:"description" inherit:"description,NodeType"`
+	Properties                   Values                 `read:"properties,Value"`
+	Attributes                   Values                 `read:"attributes,Value"`
+	Capabilities                 CapabilityAssignments  `read:"capabilities,CapabilityAssignment"`
+	Requirements                 RequirementAssignments `read:"requirements,{}RequirementAssignment"`
+	RequirementTargetsNodeFilter *NodeFilter            `read:"node_filter,NodeFilter"`
+	Interfaces                   InterfaceAssignments   `read:"interfaces,InterfaceAssignment"`
+	Artifacts                    Artifacts              `read:"artifacts,Artifact"`
 
 	CopyNodeTemplate *NodeTemplate `lookup:"copy,CopyNodeTemplateName" json:"-" yaml:"-"`
 	NodeType         *NodeType     `lookup:"type,NodeTypeName" json:"-" yaml:"-"`
@@ -138,9 +138,9 @@ func (self *NodeTemplate) Normalize(s *normal.ServiceTemplate) *normal.NodeTempl
 	return n
 }
 
-func (self *NodeTemplate) SatisfyRequirements(s *normal.ServiceTemplate, topologyTemplate *TopologyTemplate) {
+func (self *NodeTemplate) NormalizeRequirements(s *normal.ServiceTemplate) {
 	n := s.NodeTemplates[self.Name]
 	for _, requirement := range self.Requirements {
-		requirement.Satisfy(s, n, self, topologyTemplate)
+		requirement.Normalize(self, s, n)
 	}
 }

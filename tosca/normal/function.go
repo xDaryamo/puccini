@@ -33,3 +33,15 @@ func (self *Function) SetDescription(description string) {
 //
 
 type Functions []*Function
+
+//
+// FunctionsMap
+//
+
+type FunctionsMap map[string]Functions
+
+//
+// FunctionsMapMap
+//
+
+type FunctionsMapMap map[string]FunctionsMap

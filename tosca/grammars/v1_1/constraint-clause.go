@@ -52,6 +52,7 @@ func NewConstraintClause(context *tosca.Context) *ConstraintClause {
 // tosca.Reader signature
 func ReadConstraintClause(context *tosca.Context) interface{} {
 	self := NewConstraintClause(context)
+
 	if context.ValidateType("map") {
 		map_ := context.Data.(ard.Map)
 		if len(map_) != 1 {
@@ -80,19 +81,21 @@ func ReadConstraintClause(context *tosca.Context) interface{} {
 			break
 		}
 	}
+
 	return self
 }
 
-func (self *ConstraintClause) NewFunction(context *tosca.Context) *tosca.Function {
+func (self *ConstraintClause) NewFunction(context *tosca.Context, strict bool) *tosca.Function {
 	arguments := make([]interface{}, len(self.Arguments))
 	for index, argument := range self.Arguments {
 		if self.IsNativeArgument(uint(index)) {
-			if self.DataType == nil {
+			if self.DataType != nil {
+				value := ReadValue(context.ListChild(index, argument)).(*Value)
+				value.RenderAttribute(self.DataType, nil, false)
+				argument = value.Data
+			} else if strict {
 				panic("no data type for native argument")
 			}
-			value := ReadValue(context.ListChild(index, argument)).(*Value)
-			value.RenderAttribute(self.DataType, nil, false)
-			argument = value.Data
 		}
 		arguments[index] = argument
 	}
@@ -124,9 +127,19 @@ func (self ConstraintClauses) Render(constraints *ConstraintClauses, dataType *D
 	}
 }
 
-func (self ConstraintClauses) Normalize(context *tosca.Context, constrainable normal.Constrainable) {
+func (self ConstraintClauses) Normalize(context *tosca.Context) normal.Functions {
+	var functions normal.Functions
 	for _, constraintClause := range self {
-		function := constraintClause.NewFunction(context)
+		function := constraintClause.NewFunction(context, false)
+		NormalizeFunctionArguments(function, context)
+		functions = append(functions, normal.NewFunction(function))
+	}
+	return functions
+}
+
+func (self ConstraintClauses) NormalizeConstrainable(context *tosca.Context, constrainable normal.Constrainable) {
+	for _, constraintClause := range self {
+		function := constraintClause.NewFunction(context, true)
 		NormalizeFunctionArguments(function, context)
 		constrainable.AddConstraint(function)
 	}

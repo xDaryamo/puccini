@@ -9,12 +9,12 @@ node_types:
     # Though requirements are a sequenced list, you cannot specify the same name more than once at the node type
     # (You can do so at the node template)
     requirements:
-    # The short form is just to specify a target capability type
+    # The short notation is just to specify a target capability type
     - socket: Socket
 
   Fan:
     requirements:
-    # The long form let's us further specify a target node type
+    # The long notation let's us further specify a target node type
     # And also (optionally) a default relationship type
     - socket:
         capability: SuperSocket
@@ -22,7 +22,7 @@ node_types:
         relationship: SmartPlug
         # You can also control the number of times the requirement can be assigned per node template
         # The implied default is the range [1,1]
-        # Note that if you do specify "occurrences" a requrement will *not* be automatically assigned
+        # Note that if you specify "occurrences" a requirement will *not* be automatically assigned
         occurrences: [ 2, 4 ]
 
   PowerPanel:
@@ -89,7 +89,7 @@ topology_template:
       requirements:
       - socket: PowerPanel
 
-    # With the long form you can also specify the name of the capability at the target node
+    # With the long notation you can also specify the name of the capability at the target node
     # Which must match the capability type specified at the requirement definition
     # Or be a derived type -- in this case it's a SuperSocket
     light4:
@@ -127,7 +127,8 @@ topology_template:
           node_filter:
             properties:
               age:
-              - less_than: 100 d
+              # Note that special data types are not supported here
+              - less_than: 8640000 # 100 d -> seconds
 
     # You can also put "node_filter" at the node itself, in which case the filter will
     # apply to *all* requirements
@@ -136,7 +137,7 @@ topology_template:
       node_filter:
         properties:
           age:
-          - less_than: 100 d
+          - less_than: 8640000 # 100 d -> seconds
       requirements:
       - socket:
           capability: Socket
@@ -149,12 +150,12 @@ topology_template:
           capability: Socket
           node_filter:
             capabilities:
-              socket3:
+              emergency:
                 properties:
                   frequency:
-                  - greater_than: 100 hz
+                  - greater_than: 100 # 100 hz
  
-    # You can add a relationship to the requirement
+    # You can add a relationship type to the requirement
     # (If you don't, Puccini creates an empty relationship with no properties)
     light10:
       type: LightBulb
@@ -162,7 +163,7 @@ topology_template:
       - socket:
           relationship: SmartPlug
 
-    # The long form lets you assign values to the relationship
+    # The long notation lets you assign values to the relationship
     light11:
       type: LightBulb
       requirements:
@@ -172,7 +173,8 @@ topology_template:
             properties:
               vendor: Smart Appliances Industries
 
-    # Yet another option is to use a relationship template
+    # Yet another option is to use a relationship template instead of a relationship type
+    # (A confusing and unnecessary feature)
     light12:
       type: LightBulb
       requirements:

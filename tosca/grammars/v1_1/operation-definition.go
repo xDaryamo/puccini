@@ -31,11 +31,15 @@ func NewOperationDefinition(context *tosca.Context) *OperationDefinition {
 // tosca.Reader signature
 func ReadOperationDefinition(context *tosca.Context) interface{} {
 	self := NewOperationDefinition(context)
+
 	if context.Is("map") {
+		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
 	} else if context.ValidateType("map", "string") {
+		// Short notation
 		self.Implementation = ReadOperationImplementation(context).(*OperationImplementation)
 	}
+
 	return self
 }
 

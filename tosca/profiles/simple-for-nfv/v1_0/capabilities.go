@@ -54,7 +54,7 @@ capability_types:
           Describes additional capability for a particular VDU.
         type: map
         entry_schema:
-           type: tosca.datatypes.nfv.RequestedAdditionalCapability
+          type: tosca.datatypes.nfv.RequestedAdditionalCapability
         required: false
       virtual_memory:
         description: >-

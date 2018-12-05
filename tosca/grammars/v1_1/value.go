@@ -236,7 +236,7 @@ func (self *Value) Normalize() normal.Constrainable {
 		constrainable = normal.NewValue(self.Data)
 	}
 
-	self.ConstraintClauses.Normalize(self.Context, constrainable)
+	self.ConstraintClauses.NormalizeConstrainable(self.Context, constrainable)
 
 	if self.Description != nil {
 		constrainable.SetDescription(*self.Description)

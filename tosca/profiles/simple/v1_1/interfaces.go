@@ -84,7 +84,7 @@ interface_types:
     remove_target:
       description: >-
         Operation to remove a target node.
-    remove_source: # NOTE: does not appear in spec, but is mentioned
+    remove_source: # ERRATUM: does not appear in spec, but is mentioned
       description: >-
         Operation to remove the source node.
 `

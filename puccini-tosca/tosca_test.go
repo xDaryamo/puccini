@@ -47,7 +47,7 @@ func init() {
 
 func testParse(t *testing.T, url string, inputs map[string]interface{}) {
 	t.Run(url, func(t *testing.T) {
-		// Running the tests in parallel is not for speed -
+		// Running the tests in parallel is not for speed;
 		// it actually allowed us to find several concurrency bugs
 		t.Parallel()
 
@@ -66,7 +66,7 @@ func testParse(t *testing.T, url string, inputs map[string]interface{}) {
 			return
 		}
 
-		compiler.Coerce(c, p)
+		compiler.Resolve(c, p)
 		if !p.Empty() {
 			t.Errorf("%s", p)
 		}

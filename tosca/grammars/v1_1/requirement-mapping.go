@@ -26,6 +26,7 @@ func NewRequirementMapping(context *tosca.Context) *RequirementMapping {
 // tosca.Reader signature
 func ReadRequirementMapping(context *tosca.Context) interface{} {
 	self := NewRequirementMapping(context)
+
 	if context.ValidateType("list") {
 		strings := context.ReadStringListFixed(2)
 		if strings != nil {
@@ -33,6 +34,7 @@ func ReadRequirementMapping(context *tosca.Context) interface{} {
 			self.RequirementName = &(*strings)[1]
 		}
 	}
+
 	return self
 }
 

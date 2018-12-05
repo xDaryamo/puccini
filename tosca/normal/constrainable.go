@@ -34,8 +34,8 @@ func NewConstrainableList(length int) *ConstrainableList {
 }
 
 // Constrainable interface
-func (self *ConstrainableList) AddConstraint(constraint *tosca.Function) {
-	self.Constraints = append(self.Constraints, NewFunction(constraint))
+func (self *ConstrainableList) AddConstraint(function *tosca.Function) {
+	self.Constraints = append(self.Constraints, NewFunction(function))
 }
 
 // Constrainable interface

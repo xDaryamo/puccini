@@ -35,6 +35,7 @@ func NewWorkflowActivityDefinition(context *tosca.Context) *WorkflowActivityDefi
 // tosca.Reader signature
 func ReadWorkflowActivityDefinition(context *tosca.Context) interface{} {
 	self := NewWorkflowActivityDefinition(context)
+
 	if context.ValidateType("map") {
 		map_ := context.Data.(ard.Map)
 		if len(map_) != 1 {
@@ -63,6 +64,7 @@ func ReadWorkflowActivityDefinition(context *tosca.Context) interface{} {
 			break
 		}
 	}
+
 	return self
 }
 

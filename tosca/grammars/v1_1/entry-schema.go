@@ -25,10 +25,14 @@ func NewEntrySchema(context *tosca.Context) *EntrySchema {
 // tosca.Reader signature
 func ReadEntrySchema(context *tosca.Context) interface{} {
 	self := NewEntrySchema(context)
+
 	if context.Is("map") {
+		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
 	} else if context.ValidateType("map", "string") {
+		// Short notation
 		self.DataTypeName = context.ReadString()
 	}
+
 	return self
 }

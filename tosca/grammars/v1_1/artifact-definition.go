@@ -44,12 +44,16 @@ func NewArtifactDefinition(context *tosca.Context) *ArtifactDefinition {
 // tosca.Reader signature
 func ReadArtifactDefinition(context *tosca.Context) interface{} {
 	self := NewArtifactDefinition(context)
+
 	if context.Is("map") {
+		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
 	} else if context.ValidateType("map", "string") {
+		// Short notation
 		self.File = context.ReadString()
 		// TODO: infer ArtifactTypeName from content's URI
 	}
+
 	return self
 }
 

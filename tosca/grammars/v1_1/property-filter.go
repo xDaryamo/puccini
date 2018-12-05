@@ -2,6 +2,7 @@ package v1_1
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -28,9 +29,11 @@ func NewPropertyFilter(context *tosca.Context) *PropertyFilter {
 // tosca.Reader signature
 func ReadPropertyFilter(context *tosca.Context) interface{} {
 	self := NewPropertyFilter(context)
+
 	context.ReadListItems(ReadConstraintClause, func(item interface{}) {
 		self.ConstraintClauses = append(self.ConstraintClauses, item.(*ConstraintClause))
 	})
+
 	return self
 }
 
@@ -39,14 +42,14 @@ func (self *PropertyFilter) GetKey() string {
 	return self.Name
 }
 
-// TODO: move to Clout
-func (self *PropertyFilter) Apply(nodeTemplate *NodeTemplate) bool {
-	if _, ok := nodeTemplate.Properties[self.Name]; ok {
-		//var constrainable = value.Normalize()
-		//self.ConstraintClauses.Normalize(value.Context, constrainable)
+func (self *PropertyFilter) Normalize(functionsMap normal.FunctionsMap) normal.Functions {
+	if len(self.ConstraintClauses) == 0 {
+		return nil
 	}
 
-	return true
+	functions := self.ConstraintClauses.Normalize(self.Context)
+	functionsMap[self.Name] = functions
+	return functions
 }
 
 //
@@ -55,17 +58,8 @@ func (self *PropertyFilter) Apply(nodeTemplate *NodeTemplate) bool {
 
 type PropertyFilters map[string]*PropertyFilter
 
-// TODO: move to Clout
-func (self PropertyFilters) Apply(nodeTemplate *NodeTemplate) bool {
-	if len(self) == 0 {
-		return true
-	}
-
+func (self PropertyFilters) Normalize(functionsMap normal.FunctionsMap) {
 	for _, propertyFilter := range self {
-		if !propertyFilter.Apply(nodeTemplate) {
-			return false
-		}
+		propertyFilter.Normalize(functionsMap)
 	}
-
-	return true
 }

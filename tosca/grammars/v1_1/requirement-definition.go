@@ -14,13 +14,13 @@ type RequirementDefinition struct {
 	*Entity `name:"requirement definition"`
 	Name    string
 
-	TargetNodeTypeName       *string                 `read:"node"`
 	TargetCapabilityTypeName *string                 `read:"capability"` // required only if cannot be inherited
+	TargetNodeTypeName       *string                 `read:"node"`
 	RelationshipDefinition   *RelationshipDefinition `read:"relationship,RelationshipDefinition"`
 	Occurrences              *RangeEntity            `read:"occurrences,RangeEntity"`
 
-	TargetNodeType       *NodeType       `lookup:"node,TargetNodeTypeName" json:"-" yaml:"-"`
 	TargetCapabilityType *CapabilityType `lookup:"capability,TargetCapabilityTypeName" json:"-" yaml:"-"`
+	TargetNodeType       *NodeType       `lookup:"node,TargetNodeTypeName" json:"-" yaml:"-"`
 
 	capabilityMissingProblemReported bool
 }
@@ -35,11 +35,15 @@ func NewRequirementDefinition(context *tosca.Context) *RequirementDefinition {
 // tosca.Reader signature
 func ReadRequirementDefinition(context *tosca.Context) interface{} {
 	self := NewRequirementDefinition(context)
+
 	if context.Is("map") {
+		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
 	} else if context.ValidateType("map", "string") {
+		// Short notation
 		self.TargetCapabilityTypeName = context.ReadString()
 	}
+
 	return self
 }
 
@@ -50,11 +54,11 @@ func (self *RequirementDefinition) GetKey() string {
 
 func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefinition) {
 	if parentDefinition != nil {
-		if (self.TargetNodeTypeName == nil) && (parentDefinition.TargetNodeTypeName != nil) {
-			self.TargetNodeTypeName = parentDefinition.TargetNodeTypeName
-		}
 		if (self.TargetCapabilityTypeName == nil) && (parentDefinition.TargetCapabilityTypeName != nil) {
 			self.TargetCapabilityTypeName = parentDefinition.TargetCapabilityTypeName
+		}
+		if (self.TargetNodeTypeName == nil) && (parentDefinition.TargetNodeTypeName != nil) {
+			self.TargetNodeTypeName = parentDefinition.TargetNodeTypeName
 		}
 		if (self.RelationshipDefinition == nil) && (parentDefinition.RelationshipDefinition != nil) {
 			self.RelationshipDefinition = parentDefinition.RelationshipDefinition
@@ -62,19 +66,19 @@ func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefiniti
 		if (self.Occurrences == nil) && (parentDefinition.Occurrences != nil) {
 			self.Occurrences = parentDefinition.Occurrences
 		}
-		if (self.TargetNodeType == nil) && (parentDefinition.TargetNodeType != nil) {
-			self.TargetNodeType = parentDefinition.TargetNodeType
-		}
 		if (self.TargetCapabilityType == nil) && (parentDefinition.TargetCapabilityType != nil) {
 			self.TargetCapabilityType = parentDefinition.TargetCapabilityType
 		}
+		if (self.TargetNodeType == nil) && (parentDefinition.TargetNodeType != nil) {
+			self.TargetNodeType = parentDefinition.TargetNodeType
+		}
 
 		// Validate type compatibility
-		if (self.TargetNodeType != nil) && (parentDefinition.TargetNodeType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.TargetNodeType, self.TargetNodeType) {
-			self.Context.ReportIncompatibleType(self.TargetNodeType.Name, parentDefinition.TargetNodeType.Name)
-		}
 		if (self.TargetCapabilityType != nil) && (parentDefinition.TargetCapabilityType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.TargetCapabilityType, self.TargetCapabilityType) {
 			self.Context.ReportIncompatibleType(self.TargetCapabilityType.Name, parentDefinition.TargetCapabilityType.Name)
+		}
+		if (self.TargetNodeType != nil) && (parentDefinition.TargetNodeType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.TargetNodeType, self.TargetNodeType) {
+			self.Context.ReportIncompatibleType(self.TargetNodeType.Name, parentDefinition.TargetNodeType.Name)
 		}
 	}
 

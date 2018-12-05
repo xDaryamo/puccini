@@ -21,6 +21,7 @@ func NewConditionClause(context *tosca.Context) *ConditionClause {
 // tosca.Reader signature
 func ReadConditionClause(context *tosca.Context) interface{} {
 	self := NewConditionClause(context)
+
 	if context.ValidateType("map") {
 		for _, childContext := range context.FieldChildren() {
 			if !self.readField(childContext) {
@@ -28,6 +29,7 @@ func ReadConditionClause(context *tosca.Context) interface{} {
 			}
 		}
 	}
+
 	return self
 }
 

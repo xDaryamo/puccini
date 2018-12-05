@@ -27,15 +27,15 @@ var listCmd = &cobra.Command{
 			path = args[0]
 		}
 
-		c, err := ReadClout(path)
+		clout_, err := ReadClout(path)
 		common.ValidateError(err)
 
-		List(c)
+		List(clout_)
 	},
 }
 
-func List(c *clout.Clout) {
-	metadata, err := js.GetMetadata(c)
+func List(clout_ *clout.Clout) {
+	metadata, err := js.GetMetadata(clout_)
 	common.ValidateError(err)
 
 	ListValue(metadata, nil)

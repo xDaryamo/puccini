@@ -83,7 +83,7 @@ func (self *CloutContext) NewFunction(data interface{}, site interface{}, source
 	}
 
 	var err error
-	c.Constraints, err = self.NewConstraints(map_)
+	c.Constraints, err = self.NewConstraintsForValue(map_)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +130,7 @@ func (self *Function) CoerceArguments() ([]interface{}, error) {
 	return arguments, nil
 }
 
-func (self *Function) Validate(value interface{}) (bool, error) {
+func (self *Function) Validate(value interface{}, errorWhenInvalid bool) (bool, error) {
 	arguments, err := self.CoerceArguments()
 	if err != nil {
 		return false, err
@@ -152,7 +152,11 @@ func (self *Function) Validate(value interface{}) (bool, error) {
 	}
 
 	if !valid {
-		return false, self.NewError(arguments, "")
+		if errorWhenInvalid {
+			return false, self.NewError(arguments, "")
+		} else {
+			return false, nil
+		}
 	}
 
 	return true, nil

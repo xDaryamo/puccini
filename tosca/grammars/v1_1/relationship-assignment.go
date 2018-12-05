@@ -14,13 +14,13 @@ import (
 type RelationshipAssignment struct {
 	*Entity `name:"relationship"`
 
-	RelationshipTemplateOrRelationshipTypeName *string              `read:"type"`
-	Properties                                 Values               `read:"properties,Value"`
-	Attributes                                 Values               `read:"attributes,Value"` // missing in spec
-	Interfaces                                 InterfaceAssignments `read:"interfaces,InterfaceAssignment"`
+	RelationshipTemplateNameOrTypeName *string              `read:"type"`
+	Properties                         Values               `read:"properties,Value"`
+	Attributes                         Values               `read:"attributes,Value"` // missing in spec
+	Interfaces                         InterfaceAssignments `read:"interfaces,InterfaceAssignment"`
 
-	RelationshipTemplate *RelationshipTemplate `lookup:"type,RelationshipTemplateOrRelationshipTypeName" json:"-" yaml:"-"`
-	RelationshipType     *RelationshipType     `lookup:"type,RelationshipTemplateOrRelationshipTypeName" json:"-" yaml:"-"`
+	RelationshipTemplate *RelationshipTemplate `lookup:"type,RelationshipTemplateNameOrTypeName" json:"-" yaml:"-"`
+	RelationshipType     *RelationshipType     `lookup:"type,RelationshipTemplateNameOrTypeName" json:"-" yaml:"-"`
 }
 
 func NewRelationshipAssignment(context *tosca.Context) *RelationshipAssignment {
@@ -35,11 +35,15 @@ func NewRelationshipAssignment(context *tosca.Context) *RelationshipAssignment {
 // tosca.Reader signature
 func ReadRelationshipAssignment(context *tosca.Context) interface{} {
 	self := NewRelationshipAssignment(context)
+
 	if context.Is("map") {
+		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
 	} else if context.ValidateType("map", "string") {
-		self.RelationshipTemplateOrRelationshipTypeName = context.ReadString()
+		// Short notation
+		self.RelationshipTemplateNameOrTypeName = context.ReadString()
 	}
+
 	return self
 }
 

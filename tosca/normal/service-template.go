@@ -33,11 +33,3 @@ func NewServiceTemplate() *ServiceTemplate {
 		ScriptNamespace: make(tosca.ScriptNamespace),
 	}
 }
-
-// Print
-
-func (self *ServiceTemplate) PrintRelationships(indent int) {
-	for _, nodeTemplate := range self.NodeTemplates {
-		nodeTemplate.Print(indent)
-	}
-}

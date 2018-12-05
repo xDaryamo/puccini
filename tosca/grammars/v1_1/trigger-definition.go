@@ -53,7 +53,7 @@ func ReadTriggerDefinition(context *tosca.Context) interface{} {
 				if childContext.Is("map") {
 					// Note that OperationDefinition can also be a string, but there is no way
 					// for us to differentiate between that an workflow ID, so we support only
-					// the long form
+					// the long notation
 					self.OperationAction = ReadOperationDefinition(childContext).(*OperationDefinition)
 				} else {
 					self.WorkflowAction = childContext.ReadString()

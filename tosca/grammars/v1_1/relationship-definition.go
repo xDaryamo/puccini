@@ -31,17 +31,21 @@ func NewRelationshipDefinition(context *tosca.Context) *RelationshipDefinition {
 // tosca.Reader signature
 func ReadRelationshipDefinition(context *tosca.Context) interface{} {
 	self := NewRelationshipDefinition(context)
+
 	if context.Is("map") {
+		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
 	} else if context.ValidateType("map", "string") {
+		// Short notation
 		self.RelationshipTypeName = context.ReadString()
 	}
+
 	return self
 }
 
 func (self *RelationshipDefinition) NewDefaultAssignment(context *tosca.Context) *RelationshipAssignment {
 	assignment := NewRelationshipAssignment(context)
-	assignment.RelationshipTemplateOrRelationshipTypeName = self.RelationshipTypeName
+	assignment.RelationshipTemplateNameOrTypeName = self.RelationshipTypeName
 	assignment.RelationshipType = self.RelationshipType
 	return assignment
 }

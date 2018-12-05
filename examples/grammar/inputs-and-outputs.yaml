@@ -1,7 +1,7 @@
 tosca_definitions_version: tosca_simple_yaml_1_1
 
-# To see the constraints in action run:
-#   puccini-tosca parse --coerce --input ram=1gib inputs-and-outputs.yaml
+# To see the constraints and outputs in action run:
+#   puccini-tosca compile --coerce --input ram=1gib inputs-and-outputs.yaml
 
 topology_template:
 
@@ -38,10 +38,7 @@ topology_template:
         # (That's outside the scope of puccini-tosca)
         public_address: <unknown>
 
-  # The most common use case for outputs is to use the "get_attribute" function
-  # To see the actual output value (based on the initial value we set for the attribute) you will
-  # have to call the function via "coerce":
-  #   puccini-tosca --input 'ram="1 gib"' --coerce ...
+  # Outputs are commonly used for the "get_attribute" function
   outputs:
     url:
       type: string

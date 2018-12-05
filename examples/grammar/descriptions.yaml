@@ -31,7 +31,7 @@ node_types:
         type: map
         entry_schema:
           type: RAMSize
-          # Using the long-form for "entry_schema" you can specify a description for it
+          # Using the long notation for "entry_schema" you can specify a description for it
           # (Which will override the type's description)
           description: Soldered RAM size
         default:

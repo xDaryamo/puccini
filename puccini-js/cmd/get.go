@@ -25,10 +25,10 @@ var getCmd = &cobra.Command{
 			path = args[1]
 		}
 
-		c, err := ReadClout(path)
+		clout, err := ReadClout(path)
 		common.ValidateError(err)
 
-		sourceCode, err := js.GetScriptSourceCode(name, c)
+		sourceCode, err := js.GetScriptSourceCode(name, clout)
 		common.ValidateError(err)
 
 		if !common.Quiet {

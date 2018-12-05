@@ -41,7 +41,7 @@ func (self *CloutContext) CallFunction(site interface{}, source interface{}, tar
 		return nil, err
 	}
 
-	runtime := self.NewRuntime() //(name)
+	runtime := self.NewRuntime()
 	runtime.Set("site", site)
 	runtime.Set("source", source)
 	runtime.Set("target", target)

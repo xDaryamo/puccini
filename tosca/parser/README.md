@@ -9,6 +9,7 @@ and unclarity in the TOSCA specification. Where ambiguous we adhere to the spiri
 especially in regards to object-oriented polymorphism. Our prime directive is to ensure that an
 inherited node type does not break the contract of the base node type.
 
+
 Coding Principles
 -----------------
 
@@ -41,7 +42,7 @@ This first phase validates syntax. Higher level grammar is validated in subseque
     * Files/URLs not found
     * I/O errors
     * Textual decoding errors
-2. Parse YAML to [ARD](../ard/README.md)
+2. Parse YAML to [ARD](../../ard/README.md)
     * YAML parsing errors
 3. Parse ARD to TOSCA data structures, normalizing all short notations to their full form
     * Required fields not set
@@ -49,6 +50,7 @@ This first phase validates syntax. Higher level grammar is validated in subseque
     * Unsupported fields used
 4. Handle TOSCA imports recursively and concurrently
     * Import causes an endless loop
+
 
 Phase 2: Namespaces
 -------------------
@@ -70,6 +72,7 @@ And then:
 5. Lookup fields from namespace
     * Name not found
 
+
 Phase 3: Hierarchies
 --------------------
 
@@ -83,6 +86,7 @@ Recursively, starting at tips of the import hierarchy:
     * Type's parent causes an endless loop
     * Type's parent is incomplete
 3. Merge hierarchy into parent unit's
+
 
 Phase 4: Inheritance
 --------------------
@@ -126,6 +130,7 @@ of the capability definition.
 At the end of this phase the types are considered "complete" in that we should not need to access
 their parents for any data. All fields have been inherited.
 
+
 Phase 5: Rendering
 ------------------
 
@@ -146,24 +151,3 @@ for the requirement to be automatically assigned if not explicitly specified.
 
 At the end of this phase the templates are considered "complete" in that we should not have to
 access their types for any data. All fields have been rendered.
-
-Phase 6: Topology
------------------
-
-This is where we create the flat topology: relationships from templates to capabilities (the
-"sockets", if you will) in other node templates. We call this "normalizing" the templates.
-
-For capabilities, we take into account the `occurrences` field, which limits the number of times a
-capability may be be used for relationships.
-
-There's no elaboration in the TOSCA spec on what `occurrences` means. Our interpretation is that it
-does *not* relate to the capacity of our actual resources. While it may be possible for an
-orchestrator to provision an extra node to allow for more capacity, that would also change the
-topology by creating additional relationships, and generally it would be an overly simplistic
-strategy for scaling. TOSCA's role, and thus Puccini's, should merely be to validate the design. Thus
-requirements-and-capabilities should have nothing to do with resource provisioning.
-
-Relatedly, we also allow for relationship loops: for example, two node templates can have `DependsOn`
-relationships with each other. This doesn't necessarily imply a problem: they could, for example, be
-provisioned simultaneously. Whether or not orchestrators can deal with such loops is beyond the
-scope of Puccini and TOSCA.

@@ -2,6 +2,7 @@ package v1_1
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -13,14 +14,14 @@ import (
 type NodeFilter struct {
 	*Entity `name:"node filter"`
 
-	Properties        PropertyFilters   `read:"properties,PropertyFilter"`
+	PropertyFilters   PropertyFilters   `read:"properties,PropertyFilter"`
 	CapabilityFilters CapabilityFilters `read:"capabilities,CapabilityFilter"`
 }
 
 func NewNodeFilter(context *tosca.Context) *NodeFilter {
 	return &NodeFilter{
 		Entity:            NewEntity(context),
-		Properties:        make(PropertyFilters),
+		PropertyFilters:   make(PropertyFilters),
 		CapabilityFilters: make(CapabilityFilters),
 	}
 }
@@ -32,17 +33,7 @@ func ReadNodeFilter(context *tosca.Context) interface{} {
 	return self
 }
 
-func (self *NodeFilter) FilterNodeTemplates(nodeTemplates []*NodeTemplate) []*NodeTemplate {
-	if len(self.Properties) == 0 {
-		return nodeTemplates
-	}
-
-	var filteredNodeTemplates []*NodeTemplate
-	for _, nodeTemplate := range nodeTemplates {
-		if self.Properties.Apply(nodeTemplate) {
-			filteredNodeTemplates = append(filteredNodeTemplates, nodeTemplate)
-		}
-	}
-
-	return filteredNodeTemplates
+func (self *NodeFilter) Normalize(r *normal.Requirement) {
+	self.PropertyFilters.Normalize(r.NodeTemplatePropertyConstraints)
+	self.CapabilityFilters.Normalize(r)
 }

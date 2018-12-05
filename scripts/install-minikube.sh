@@ -8,7 +8,7 @@ if [ "$EUID" -ne 0 ]; then
 	exit 1
 fi
 
-KUBECTL_VERSION=v1.12.3
+KUBECTL_VERSION=v1.13.0
 MINIKUBE_VERSION=v0.30.0
 OVERWRITE=false
 

@@ -6,31 +6,33 @@ import (
 	"github.com/tliron/puccini/tosca/problems"
 )
 
-func Coerce(c *clout.Clout, p *problems.Problems) *clout.Clout {
-	var err error
-	c, err = c.Normalize()
+// This has the same result as tosca.coerce in JavaScript
+func Coerce(clout_ *clout.Clout, problems_ *problems.Problems) *clout.Clout {
+	context := js.NewContext("tosca.coerce", log, false, "yaml", "")
+	err := context.Exec(clout_, "tosca.coerce")
 	if err != nil {
-		p.ReportError(err)
-		return c
+		problems_.ReportError(err)
 	}
 
-	context := js.NewContext("coerce", log, false, "yaml", "")
-	cloutContext, _ := context.NewCloutContext(c)
+	// Convert all values to JavaScript coercibles
+	//TransformValues(ValueToCoercible, context, problems_)
 
-	Transform(PrepareValue, cloutContext, p)
-	Transform(CoerceValue, cloutContext, p)
+	// Coerce all coercibles
+	//TransformValues(CoerceValue, context, problems_)
 
-	return c
+	return clout_
 }
 
-// Transformer signature
-func PrepareValue(value interface{}, site interface{}, source interface{}, target interface{}, context *js.CloutContext) (interface{}, bool, error) {
+// TODO: remove
+
+// ValueTransformer signature
+func ValueToCoercible(value interface{}, site interface{}, source interface{}, target interface{}, context *js.CloutContext) (interface{}, bool, error) {
 	var err error
 	value, err = context.NewCoercible(value, site, source, target)
 	return value, true, err
 }
 
-// Transformer signature
+// ValueTransformer signature
 func CoerceValue(value interface{}, site interface{}, source interface{}, target interface{}, context *js.CloutContext) (interface{}, bool, error) {
 	coercible, ok := value.(js.Coercible)
 	if !ok {

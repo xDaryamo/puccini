@@ -26,11 +26,11 @@ var execCmd = &cobra.Command{
 			path = args[1]
 		}
 
-		c, err := ReadClout(path)
+		clout_, err := ReadClout(path)
 		common.ValidateError(err)
 
 		// Try loading JavaScript from Clout
-		sourceCode, err := js.GetScriptSourceCode(name, c)
+		sourceCode, err := js.GetScriptSourceCode(name, clout_)
 
 		if err != nil {
 			// Try loading JavaScript from path or URL
@@ -40,11 +40,11 @@ var execCmd = &cobra.Command{
 			sourceCode, err = url.Read(url_)
 			common.ValidateError(err)
 
-			err = js.SetScriptSourceCode(name, js.Cleanup(sourceCode), c)
+			err = js.SetScriptSourceCode(name, js.Cleanup(sourceCode), clout_)
 			common.ValidateError(err)
 		}
 
-		err = Exec(name, sourceCode, c)
+		err = Exec(name, sourceCode, clout_)
 		common.ValidateError(err)
 	},
 }
@@ -55,8 +55,8 @@ func Exec(name string, sourceCode string, c *clout.Clout) error {
 		return err
 	}
 
-	context := js.NewContext(name, log, common.Quiet, ardFormat, output)
-	_, runtime := context.NewCloutContext(c)
+	jsContext := js.NewContext(name, log, common.Quiet, ardFormat, output)
+	_, runtime := jsContext.NewCloutContext(c)
 	_, err = runtime.RunProgram(program)
 
 	return js.UnwrapError(err)

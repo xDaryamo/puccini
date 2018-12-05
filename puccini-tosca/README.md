@@ -1,19 +1,57 @@
 puccini-tosca
 =============
 
+### Format
+
+The default format for input/output is YAML, but you can switch to JSON using `--format/-f`. Note
+that Clout in JSON may lose some type information (e.g. JSON doesn't distinguish between an integer
+and a float).
+
+### TOSCA Quirks
+
+**pucini-tosca** supports "quirks", via the `--quirk/-x` switch, which are variations on the default
+grammar rules. The reason this is required is unfortunate: the low quality of the TOSCA
+spec, riddled as it is with gaps, inconsistencies, and errors, means that there's too much room for
+varying interpretations of the spec as well as missing functionality. Puccini aims to adhere as
+closely as possible to the spec, literally and in spirit, but also must be pragmatic. Quirks allow
+Puccini to smooth incompatibilities with other tools and work around a few TOSCA pain points.
+Example of use:
+
+    puccini-tosca compile weird.yaml -x substitution_mappings.requirements.list
+
+The list of supported quirks is maintained [here](../tosca/parser/QUIRKS.md).
+
+### Errors and Debugging
+
+Logs are written to stderr (with colors) by default Use `--log/-l` to output to a file (without
+colors). Use `--verbose/-v` to add log verbosity. This can be used twice for maximum verbosity:
+`-vv`.
+
+If TOSCA compilation or parsing fails it will emit a colorful problem report to stderr and exit with
+code 1. You can use the `--quiet/-q` switch if all you want to do is check for success.
+
+
 `compile`
 ---------
 
 The most common command is `compile`. The optional input is a filesystem path or URL to a TOSCA
 service template YAML file or a CSAR file. If no input is provided will attempt to read YAML
 from stdin. By default the compiled Clout will be output to stdout, but you can use the
-`--output/-o` switch to specify a file (or direct to a file in the shell via `>`).
+`--output/-o` switch to specify a file (or direct to a file in the shell via `>`):
+
+    puccini-tosca compile service.yaml --output clout.yaml
+
+or:
+
+    puccini-tosca compile service.yaml > clout.yaml
 
 If your TOSCA service template YAML imports other units, and these imported paths are relative,
 then Puccini will assume that they are relative to the base URL of the main service template file.
 This allows you to move your files around, and even host them at a URL, without changing the file
 contents. This works as expected even within a CSAR file because Puccini uses `zip:` URLs to locate
 files within it.
+
+### Inputs
 
 Also useful (or necessary) is the `--input/-i` switch, which lets you set the inputs for the TOSCA
 topology template. You may specify this switch multiple times for as many inputs as necessary.
@@ -29,31 +67,38 @@ To set a complex data type:
 
     --input 'port={type:tcp,number:8080}'
 
-If TOSCA parsing/compilation fails will emit a colorful problem report to stderr and exit with 1.
-Thus you can use the `--quiet/-q` switch if all you want to do is check for successful compilation.
+### Resolution
 
-The default format for input/output is YAML, but you can switch to JSON using `--format/-f`. Note
-that Clout in JSON may lose some type information (e.g. JSON doesn't distinguish between an integer
-and a float).
+By default, the compiler will resolve the topology, which attempts to satisfy requirements with
+capabilities and create relationships (Clout edges) between node templates. This can be disabled
+via the `--resolve/-r` switch:
 
-Note that TOSCA functions and constraints are not called during compilation. They are embedded in
-the Clout and are intended to be executed when necessary. To validate them you can use the
-`tosca.coerce` JavaScript with **puccini-js**:
+    puccini-tosca compile --resolve=false service.yaml
 
-    puccini-tosca compile tosca.yaml | puccini-js exec tosca.coerce
+Topology resolution can be applied after compilation on an existing Clout via the embedded
+**tosca.resolve** JavaScript:
 
-Alternatively, you can use the `parse` command (see below).
+    cat clout.yaml | puccini-js exec tosca.resolve
+    
+Read more about resolution [here](../tosca/compiler/RESOLUTION.md).
 
-Finally, **pucini-tosca** supports "quirks", via the `--quirk/-x` switch, which are variations on
-the default grammar rules. The reason this is required is unfortunate: the low quality of the TOSCA
-spec, riddled as it is with gaps, inconsistencies, and errors, means that there's too much room for
-varying interpretations of the spec as well as missing functionality. Puccini aims to adhere as
-closely as possible to the spec, literally and in spirit, but also must be pragmatic. Quirks allow
-Puccini to smooth incompatibilities with other tools and work around a few TOSCA pain points. The
-list of supported quirks is maintained [here](QUIRKS.md). Example of us:
+### Coercion
 
-    puccini-tosca compile weird.yaml -x substitution_mappings.requirements.list
+TOSCA functions are embedded in the Clout and are intended to be executed when necessary. Thus they
+not called during compilation, unless they are needed for topology resolution. If you want to call
+all of them and see the evaluated results, pipe the Clout through **puccini-js** and execute the
+embedded **tosca.coerce** JavaScript: 
 
+    cat clout.yaml | puccini-js exec tosca.coerce
+
+Values can be re-coerced later according to changing attributes and other external factors.
+
+As a convenience, `compile` can call **tosca.coerce** for you via the `--coerce/-c` switch:
+
+    puccini-tosca compile --coerce service.yaml
+
+Note that doing so means you do *not* get the original compiled output.
+ 
 
 `parse`
 -------
@@ -62,7 +107,7 @@ If you need more diagnostics for TOSCA parsing use the `parse` command. It works
 `compile` but does not emit Clout. Instead, it provides you various switches for examining the
 internal workings of Puccini's TOSCA parser.
 
-Use `--stop/-s` to specify a [phase](../tosca/parser/README.md) (1-6) at which you wish the parser
+Use `--stop/-s` to specify a [phase](../tosca/parser/README.md) (1-5) at which you wish the parser
 to stop. This could be useful if you're getting too many problems in your report and wish to
 minimize them to a more manageable list. (`-s 0` will skip the parser entirely and just check that
 the input is readable.)
@@ -77,7 +122,6 @@ print out using ",", e.g. `-p 2,3,4`. Per phase you will see:
 * Phase 4: Inheritance. A tree of all inheritance tasks and their dependencies by path.  
 * Phase 5: Rendering. Dumps the rendered entities.
   More useful, perhaps, would be the `--examine/-e` switch (see below).
-* Phase 6: Topology. Tree representation of node template relationships.
 
 The `--examine/-e` switch can be used to dump a specific parsed entity. Each entity is given a
 path that more-or-less follows JSON. For example, a path can be:
@@ -86,8 +130,3 @@ path that more-or-less follows JSON. For example, a path can be:
 
 The switch will search for all paths that contains your string, e.g. `-e properties`. You can even
 include one or more wildcards, e.g. `-e 'node*properties*data'`.
-
-One more useful switch is `--coerce/-c` which works similarly to `puccini-js exec tosca.coerce`.
-This is provided as a convenience to allow **puccini-tosca** to be more self-contained. Note that it
-only tests that coercion is successful and does not emit the coerced values. For that, use
-**puccini-js**.

@@ -27,7 +27,7 @@ var putCmd = &cobra.Command{
 			cloutPath = args[2]
 		}
 
-		c, err := ReadClout(cloutPath)
+		clout, err := ReadClout(cloutPath)
 		common.ValidateError(err)
 
 		url_, err := url.NewValidURL(jsUrl, nil)
@@ -36,10 +36,10 @@ var putCmd = &cobra.Command{
 		sourceCode, err := url.Read(url_)
 		common.ValidateError(err)
 
-		err = js.SetScriptSourceCode(name, js.Cleanup(sourceCode), c)
+		err = js.SetScriptSourceCode(name, js.Cleanup(sourceCode), clout)
 		common.ValidateError(err)
 
-		err = format.WriteOrPrint(c, ardFormat, true, output)
+		err = format.WriteOrPrint(clout, ardFormat, true, output)
 		common.ValidateError(err)
 	},
 }

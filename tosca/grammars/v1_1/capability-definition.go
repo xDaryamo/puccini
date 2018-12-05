@@ -39,11 +39,15 @@ func NewCapabilityDefinition(context *tosca.Context) *CapabilityDefinition {
 // tosca.Reader signature
 func ReadCapabilityDefinition(context *tosca.Context) interface{} {
 	self := NewCapabilityDefinition(context)
+
 	if context.Is("map") {
+		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
 	} else if context.ValidateType("map", "string") {
+		// Short notation
 		self.CapabilityTypeName = context.ReadString()
 	}
+
 	return self
 }
 

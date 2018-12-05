@@ -8,8 +8,8 @@ If you don't have access to a running Kubernetes cluster, an easy way to get one
 a quick script to get them both:
 
     cd /tmp
-    wget -O kubectl https://storage.googleapis.com/kubernetes-release/release/v1.11.2/bin/linux/amd64/kubectl
-    wget -O minikube https://storage.googleapis.com/minikube/releases/v0.28.2/minikube-linux-amd64
+    wget -O kubectl https://storage.googleapis.com/kubernetes-release/release/v1.13.0/bin/linux/amd64/kubectl
+    wget -O minikube https://storage.googleapis.com/minikube/releases/v0.30.0/minikube-linux-amd64
     chmod +x kubectl minikube
     sudo mv kubectl minikube /usr/bin/
 

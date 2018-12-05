@@ -46,7 +46,7 @@ func (self *CloutContext) NewValue(data interface{}, site interface{}, source in
 			return &c, nil
 		}
 
-		c.Constraints, err = self.NewConstraints(map_)
+		c.Constraints, err = self.NewConstraintsForValue(map_)
 		if err != nil {
 			return nil, err
 		}

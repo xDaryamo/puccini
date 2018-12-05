@@ -70,7 +70,7 @@ EOT
 func init() {
 	Profile["/tosca/$GROUP/$VERSION/$SOURCE_NAME"] = \`
 EOT
-		cat "$SOURCE" >> "$DEST"
+		cat "$SOURCE" | sed 's/`/` + "`" + `/g' >> "$DEST"
 		cat << EOT >> "$DEST"
 \`
 }
@@ -78,9 +78,6 @@ EOT
 	done
 
 	echo "embedded in $DEST_DIR"
-
-	# TODO fake escape backticks to:
-	# ` + "`" + `
 }
 
 

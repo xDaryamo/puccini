@@ -13,12 +13,12 @@ import (
 type EventFilter struct {
 	*Entity `name:"event filter" json:"-" yaml:"-"`
 
-	NodeTemplateNameOrNodeTypeName *string `read:"node"`
-	RequirementName                *string `read:"requirement"`
-	CapabilityName                 *string `read:"capability"`
+	NodeTemplateNameOrTypeName *string `read:"node"`
+	RequirementName            *string `read:"requirement"`
+	CapabilityName             *string `read:"capability"`
 
-	NodeTemplate *NodeTemplate `lookup:"node,NodeTemplateNameOrNodeTypeName" json:"-" yaml:"-"`
-	NodeType     *NodeType     `lookup:"node,NodeTemplateNameOrNodeTypeName" json:"-" yaml:"-"`
+	NodeTemplate *NodeTemplate `lookup:"node,NodeTemplateNameOrTypeName" json:"-" yaml:"-"`
+	NodeType     *NodeType     `lookup:"node,NodeTemplateNameOrTypeName" json:"-" yaml:"-"`
 }
 
 func NewEventFilter(context *tosca.Context) *EventFilter {

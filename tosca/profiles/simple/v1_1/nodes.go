@@ -27,7 +27,9 @@ node_types:
       citation_location: 5.9.1
     description: >-
       The TOSCA Root Node Type is the default type that all other TOSCA base Node Types derive from.
-      This allows for all TOSCA nodes to have a consistent set of features for modeling and management (e.g., consistent definitions for requirements, capabilities and lifecycle interfaces).
+      This allows for all TOSCA nodes to have a consistent set of features for modeling and
+      management (e.g., consistent definitions for requirements, capabilities and lifecycle
+      interfaces).
     attributes:
       tosca_id:
         description: >-
@@ -363,12 +365,12 @@ node_types:
         description: >-
           The Floating (IP) client's on the public network can connect to.
         type: tosca.capabilities.Endpoint.Public
-        occurrences: [ 0, UNBOUNDED ] # NOTE: it seems unnecessary to specify this, as it is the implied default
+        occurrences: [ 0, UNBOUNDED ] # ERRATUM: this is the implied default
     requirements:
     - application:
         capability: tosca.capabilities.Endpoint
         relationship: tosca.relationships.RoutesTo
-        occurrences: [ 0, UNBOUNDED ]
+        occurrences: [ 0, UNBOUNDED ] # ERRATUM: this is the implied default
 
   tosca.nodes.network.Network:
     metadata:

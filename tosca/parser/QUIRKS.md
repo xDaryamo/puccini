@@ -1,7 +1,8 @@
 Puccini TOSCA Quirks
 ====================
 
-These are activated via the `--quirk/-x` switch for [**puccini-tosca**](README.md):
+These are activated via the `--quirk/-x` switch for
+[**puccini-tosca**](../../puccini-tosca/README.md):
 
 * **substitution_mappings.requirements.list**: According to the examples in the spec, the
   `requirements` key under `substitution_mappings` is syntactically a map. However, this syntax is

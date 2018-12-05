@@ -2,10 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_1
 
 imports:
 
-# Tthe short form of import merges the names into our global namespace
+# The short notation of import merges the names into our global namespace
 - imports/nginx.yaml
 
-# Use the long form of import to specify "namespace_prefix" 
+# Use the long notation of import to specify "namespace_prefix" 
 - file: imports/mongodb.yaml
   namespace_prefix: mongodb
 
@@ -18,7 +18,7 @@ topology_template:
       type: NginX
 
     db:
-      # With the prefix we specified in the import
+      # With the namespace prefix we specified in the import
       type: mongodb:MongoDB
 
     server1:
@@ -26,9 +26,9 @@ topology_template:
       type: tosca.nodes.Compute
 
     server2:
-      # Normative types also have the "tosca" prefix
-      type: tosca:Compute
- 
-    server3:
-      # Normative types also have a short form (meaning that you can't use these names yourself)
+      # Normative types also have a short alias (meaning that you can't use these names yourself)
       type: Compute
+
+    server3:
+      # Normative types also have the "tosca" prefix for the short alias
+      type: tosca:Compute

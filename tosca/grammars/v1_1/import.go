@@ -34,11 +34,15 @@ func NewImport(context *tosca.Context) *Import {
 // tosca.Reader signature
 func ReadImport(context *tosca.Context) interface{} {
 	self := NewImport(context)
+
 	if context.Is("map") {
+		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
 	} else if context.ValidateType("map", "string") {
+		// Short notation
 		self.File = context.ReadString()
 	}
+
 	return self
 }
 

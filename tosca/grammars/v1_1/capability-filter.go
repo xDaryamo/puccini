@@ -2,6 +2,7 @@ package v1_1
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -14,14 +15,14 @@ type CapabilityFilter struct {
 	*Entity `name:"capability filter"`
 	Name    string
 
-	Properties PropertyFilters `read:"properties,PropertyFilter"`
+	PropertyFilters PropertyFilters `read:"properties,PropertyFilter"`
 }
 
 func NewCapabilityFilter(context *tosca.Context) *CapabilityFilter {
 	return &CapabilityFilter{
-		Entity:     NewEntity(context),
-		Name:       context.Name,
-		Properties: make(PropertyFilters),
+		Entity:          NewEntity(context),
+		Name:            context.Name,
+		PropertyFilters: make(PropertyFilters),
 	}
 }
 
@@ -37,8 +38,26 @@ func (self *CapabilityFilter) GetKey() string {
 	return self.Name
 }
 
+func (self CapabilityFilter) Normalize(r *normal.Requirement) normal.FunctionsMap {
+	if len(self.PropertyFilters) == 0 {
+		return nil
+	}
+
+	functionsMap := make(normal.FunctionsMap)
+	r.CapabilityPropertyConstraints[self.Name] = functionsMap
+	self.PropertyFilters.Normalize(functionsMap)
+
+	return functionsMap
+}
+
 //
 // CapabilityFilters
 //
 
 type CapabilityFilters map[string]*CapabilityFilter
+
+func (self CapabilityFilters) Normalize(r *normal.Requirement) {
+	for _, capabilityFilter := range self {
+		capabilityFilter.Normalize(r)
+	}
+}

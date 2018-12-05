@@ -10,7 +10,6 @@ import (
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/format"
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
 	"github.com/tliron/puccini/url"
@@ -19,17 +18,15 @@ import (
 var inputs []string
 var stopAtPhase uint32
 var printPhases []uint
-var coerce bool
 var examine string
 
 var inputValues = make(map[string]interface{})
 
 func init() {
 	rootCmd.AddCommand(parseCmd)
-	parseCmd.Flags().StringArrayVarP(&inputs, "input", "i", []string{}, "specify an input (name=value)")
-	parseCmd.Flags().Uint32VarP(&stopAtPhase, "stop", "s", 6, "parser phase at which to stop")
+	parseCmd.Flags().StringArrayVarP(&inputs, "input", "i", []string{}, "specify an input (name=YAML)")
+	parseCmd.Flags().Uint32VarP(&stopAtPhase, "stop", "s", 5, "parser phase at which to stop")
 	parseCmd.Flags().UintSliceVarP(&printPhases, "print", "p", nil, "parser phases to print")
-	parseCmd.Flags().BoolVarP(&coerce, "coerce", "c", false, "emit final values (calls intrinsic functions)")
 	parseCmd.Flags().StringVarP(&examine, "examine", "e", "", "examine entities with path, may use '*' for wildcards (disables --print)")
 }
 
@@ -49,7 +46,7 @@ var parseCmd = &cobra.Command{
 			printPhases = nil
 		}
 
-		s := Parse(urlString)
+		_, s := Parse(urlString)
 
 		if (examine == "") && (len(printPhases) == 0) {
 			format.Print(s, ardFormat, true)
@@ -57,7 +54,7 @@ var parseCmd = &cobra.Command{
 	},
 }
 
-func Parse(urlString string) *normal.ServiceTemplate {
+func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	ParseInputs()
 
 	var url_ url.URL
@@ -70,8 +67,6 @@ func Parse(urlString string) *normal.ServiceTemplate {
 		url_, err = url.NewValidURL(urlString, nil)
 	}
 	common.ValidateError(err)
-
-	var s *normal.ServiceTemplate
 
 	context := parser.NewContext(quirks)
 
@@ -154,24 +149,18 @@ func Parse(urlString string) *normal.ServiceTemplate {
 		}
 	}
 
+	// TODO: moved to compilation
 	// Phase 6: Topology
-	if stopAtPhase >= 6 {
-		var ok bool
-		if s, ok = parser.Normalize(context.ServiceTemplate.EntityPtr); ok {
-			if coerce {
-				// Check for coercion problems
-				clout, err := compiler.Compile(s)
-				common.ValidateError(err)
-				compiler.Coerce(clout, context.Problems)
-			}
-
-			// Only print if there are no problems
-			if !common.Quiet && ToPrintPhase(6) && context.Problems.Empty() {
-				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Topology"))
-				s.PrintRelationships(1)
-			}
-		}
-	}
+	// if stopAtPhase >= 6 {
+	// 	var ok bool
+	// 	if s, ok = parser.Normalize(context.ServiceTemplate.EntityPtr); ok {
+	// 		// Only print if there are no problems
+	// 		if !common.Quiet && ToPrintPhase(6) && context.Problems.Empty() {
+	// 			fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Topology"))
+	// 			s.PrintRelationships(1)
+	// 		}
+	// 	}
+	// }
 
 	if examine != "" {
 		entityPtrs := context.Gather(examine)
@@ -196,7 +185,13 @@ func Parse(urlString string) *normal.ServiceTemplate {
 		os.Exit(1)
 	}
 
-	return s
+	// Normalize
+	s, ok := parser.Normalize(context.ServiceTemplate.EntityPtr)
+	if !ok {
+		common.Error("grammar does not support normalization")
+	}
+
+	return context, s
 }
 
 func ToPrintPhase(phase uint) bool {

@@ -12,6 +12,7 @@ Impatient? Check out the [quickstart guide](QUICKSTART.md).
 
 Developer! Please check out the [development guide](scripts/README.md).
 
+
 puccini-tosca
 -------------
 
@@ -47,23 +48,30 @@ Et voilà, your abstract design became a running deployment.
 
 ### Standalone Parser
 
-Puccini's [TOSCA parser](tosca/parser/) is available as an independent Go library. Its 6 phases do
-normalization, validation, inheritance, and assignment of TOSCA's many types and templates, finally
-satisfying requirements with capabilities, resulting in a
-[flat, serializable data structure](tosca/normal/) that can easily be consumed by your
-program. Validation error messages are precise and useful. It's a very, very fast parser, enough
-that it can be usefully embedded in editors and IDEs for validating TOSCA while typing.
+Puccini's [TOSCA parser](tosca/parser/README.md) is available as an independent Go library. Its 5
+phases do normalization, validation, inheritance, and assignment of TOSCA's many types and
+templates, resulting in a [flat, serializable data structure](tosca/normal/README.md) that can
+easily be consumed by your program. Validation error messages are precise and useful. It's a very,
+very fast parser, enough that it can be usefully embedded in editors and IDEs for validating TOSCA
+while typing.
 
 TOSCA is a complex object-oriented language. Considerable effort has been put into adhering to every
 aspect the grammar, especially in regards to value type checking and type inheritance contracts.
+Due to the inconsistencies in the specification, we also [quirks](tosca/parser/QUIRKS.md) that
+represent alternative interpretations.
 
 ### Compiler
 
-The TOSCA-to-Clout compiler just takes the parsed data structure and dumps it into Clout. It also
-includes any JavaScript required to process the Clout. Thusly Clout functions as an "intermediate
-representation" (IR) for TOSCA.
+The TOSCA-to-Clout compiler's main role is to take the parsed data structure and dump it into
+Clout. It also includes any JavaScript required to process the Clout. Thusly Clout functions as an
+"intermediate representation" (IR) for TOSCA.
 
-### Visualiztion
+By default the compiler also performs [topology resolution](tosca/compiler/RESOLUTION.md), which
+attempts to satisfy requirements with capabilities, thus creating the relationships (Clout edges)
+between node templates. Resolution is handled internally via the embedded **tosca.resolve**
+JavaScript.
+
+### Visualization
 
 You can graphically visualize the compiled TOSCA in a dynamic web page via the embedded
 **tosca.visualize** JavaScript. A one-line example:
@@ -73,12 +81,13 @@ You can graphically visualize the compiled TOSCA in a dynamic web page via the e
 * [**puccini-tosca** documentation](puccini-tosca/README.md)
 * [TOSCA parser documentation](tosca/parser/README.md)
 
+
 puccini-js
 ----------
 
 Clout processor for JavaScript. Executes existing JavaScript in a Clout file. For example, it can
 execute the Kubernetes spec generation code inserted by **puccini-tosca**, as well as TOSCA
-intrinsic functions and value constraints.
+functions and value constraints.
 
 Also supported are implementation-specific JavaScript "plugins" that allow you to extend existing
 functionality. For example, you can add a plugin for Kubernetes to handle custom application needs,
@@ -86,7 +95,7 @@ such as adding sidecars, routers, loadbalancers, etc. Indeed, Istio support is i
 plugin. You can also use **puccini-js** to add plugins to the Clout file, either storing them
 permanently or piping through to add and execute them on-the-fly.
 
-### TOSCA Intrinsic Functions and Constraints
+### TOSCA Functions and Constraints
 
 These are implemented in JavaScript so that they can be put into the Clout and then be executed
 by **puccini-js**, allowing a compiled-from-TOSCA Clout file to be entirely independent of TOSCA.
@@ -95,28 +104,27 @@ The Clout lives on its own.
 To call these functions we provide the **tosca.coerce** JavaScript, which calls all functions and
 replaces the call stubs with the returned values:
 
-    puccini-js exec tosca.coerce my-clout.yaml --output=coerced-clout.yaml
+    puccini-js exec tosca.coerce my-clout.yaml > coerced-clout.yaml
 
 A useful side benefit of this implementation is we allow you to easily extend TOSCA by
 [adding your own functions/constraints](examples/javascript/functions.yaml). Obviously, such custom
-functions are not part of the TOSCA spec and will not be compatible with other TOSCA
-implementations.
+functions are not part of the TOSCA spec and may be incompatible with other TOSCA implementations.
 
 ### TOSCA Attributes
 
 TOSCA attributes (as opposed to properties) represent live data in a running deployment. And the
-intrinsic function, `get_attribute`, allows other values to make use of this live data. The
-implication is that some values in the Clout should change as these attributes change. But also,
-attribute definitions in TOSCA allow you to define constraints on the value, so we must also make
-sure that the new data complies with them.
+function `get_attribute` allows other values to make use of this live data. The implication is that
+some values in the Clout should change as these attributes change. But also, attribute definitions
+in TOSCA allow you to define constraints on the value, so we must also make sure that the new data
+complies with them.
 
 Our solution has two steps. First, we have JavaScript (**kubernetes.update**) that extracts these
 attributes from a Kubernetes cluster (by calling **kubectl**) and updates the Clout. Second, we
-run **tosca.coerce**, which not only calls instrinsic functions but also applies the constraints.
+run **tosca.coerce**, which not only calls TOSCA functions but also applies the constraints.
 
 Putting it all together, let's refresh a Clout:
 
-    puccini-js exec kubernetes.update my-clout.yaml | puccini-js exec tosca.coerce -o coerced-clout.yaml
+    puccini-js exec kubernetes.update my-clout.yaml | puccini-js exec tosca.coerce > coerced-clout.yaml
 
 ### TOSCA Workflows, Operations, and Policy Triggers
 
@@ -125,11 +133,7 @@ Putting it all together, let's refresh a Clout:
 TOSCA workflows are an abstraction of task graphs that are tightly coupled with the topology. They
 represent the "classical" orchestration paradigm, which procedurally (in serial and/or in parallel)
 executes individual self-contained operations that when successful achieve a total state for an
-application. This paradigm is notoriously bad at handling failure, which may leave components in
-various states and the application as a whole at an indeterminate one. Such breakage must usually
-be fixed manually, or else require a complete automated reset of the application involving painful
-downtime. Oh, well. Until this paradigm is replaced with more cloud-native solutions across all
-cloud infrastructures, we're going to have to live with it.  
+application.
 
 TOSCA Profiles in Puccini may come with built-in domain-specific "normative" workflows. For example,
 OpenStack has workflows to provision and remove its resources. TOSCA 1.1 further introduced custom
@@ -144,11 +148,11 @@ Ansible OpenStack roles. Custom operation artifacts, if included, are deployed t
 machines and executed. Effectively, the combination of TOSCA + Ansible provides an equivalent set of
 features to
 [HOT](https://docs.openstack.org/heat/latest/template_guide/hot_guide.html) +
-[Heat](https://wiki.openstack.org/wiki/Heat). Indeed, it's worth pointing out that the HOT language
-is superficially and historically related to TOSCA. Actually, TOSCA + Ansible is more powerful and
-flexible, because the TOSCA language is much richer than HOT, and Ansible is a general-purpose
-orchestrator that can do a lot more than Heat. The generated playbooks comprise roles that can be
-imported and used in other playbooks.
+[Heat](https://docs.openstack.org/heat/latest/)/[Mistral](https://docs.openstack.org/mistral/latest/).
+Indeed, it's worth pointing out that the HOT language is superficially and historically related to
+TOSCA. Actually, TOSCA + Ansible is more powerful and flexible, because the TOSCA language is much
+richer than HOT, and Ansible is a general-purpose orchestrator that can do a lot more than Heat. The
+generated playbooks comprise roles that can be imported and used in other playbooks.
 
 Puccini's BPMN profile lets you generate [BPMN2](https://www.omg.org/spec/BPMN/) processes from
 TOSCA workflows and policy triggers. These allow for tight integration with enterprise process
@@ -157,14 +161,15 @@ industry). The generated processes can also be included as sub-processes within 
 processes. 
 
 Kubernetes doesn't normally require workflows: its "scheduling" paradigm is a declarative
-alternative to the "classical" procedural orchestration paradigm. As it provides a truly
+alternative to the classical procedural orchestration paradigm. As it provides a truly
 cloud-native environment, Kubernetes applications are better off orchestrating themselves, for
 example by relying on [operators](https://github.com/operator-framework/operator-sdk) to do the
 heavy lifting. Still, it could make sense to use workflows for certain externally triggered
 features. Puccini's solution is straightforward: it can generate an Ansible playbook that deploys
-artifacts with `kubectl cp` and executes them with `kubectl exec`.
+TOSCA artifacts with `kubectl cp` and executes them with `kubectl exec`.
 
 * [**puccini-js** documentation](puccini-js/README.md)
+
 
 Clout
 -----
@@ -203,6 +208,7 @@ If Clout's file size is an issue, it's good to know that Clout is usually eminen
 comprising just text with quite a lot of repetition.
 
 * [Clout documentation](clout/README.md)
+
 
 FAQ
 ---
@@ -245,7 +251,7 @@ then be interpreted and run almost anywhere.
 Our chosen ECMAScript engine is [goja](https://github.com/dop251/goja), which is 100% Go and does
 not require any external dependencies.
 
-### Can't I use simple text templating instead of intrinsic functions and JavaScript?
+### Can't I use simple text templating instead of TOSCA functions and JavaScript?
 
 Nothing is stopping you. You can pipe the input and output to and from the text translator of your
 choice at any point in the tool chain. Here's an example using

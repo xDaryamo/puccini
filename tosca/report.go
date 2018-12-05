@@ -70,19 +70,19 @@ func (self *Context) ReportImportLoop(url_ url.URL) {
 }
 
 func (self *Context) ReportRepositoryInaccessible(repositoryName string) {
-	self.ReportPathf("repository \"%s\" inaccessible", format.ColorValue(repositoryName))
+	self.ReportPathf("inaccessible repository \"%s\"", format.ColorValue(repositoryName))
 }
 
 func (self *Context) ReportFieldMissing() {
-	self.ReportPath("field is required")
+	self.ReportPath("missing required field")
 }
 
 func (self *Context) ReportFieldUnsupported() {
-	self.ReportPath("field is unsupported")
+	self.ReportPath("unsupported field")
 }
 
 func (self *Context) ReportFieldUnsupportedValue() {
-	self.ReportPathf("field has unsupported value: %s", self.FormatBadData())
+	self.ReportPathf("unsupported value for field: %s", self.FormatBadData())
 }
 
 func (self *Context) ReportFieldMalformedSequencedList() {
@@ -94,7 +94,7 @@ func (self *Context) ReportPrimitiveType() {
 }
 
 func (self *Context) ReportMapKeyReused(key string) {
-	self.ReportPathf("map key reused: %s", format.ColorValue(key))
+	self.ReportPathf("reused map key: %s", format.ColorValue(key))
 }
 
 //
@@ -106,7 +106,7 @@ func (self *Context) ReportNameAmbiguous(type_ reflect.Type, name string, entity
 	for i, entityPtr := range entityPtrs {
 		url[i] = GetContext(entityPtr).URL.String()
 	}
-	self.Reportf("%s name \"%s\" is ambiguous, can be in %s", GetEntityTypeName(type_), format.ColorName(name), format.ColoredOptions(url, format.ColorValue))
+	self.Reportf("ambiguous %s name \"%s\", can be in %s", GetEntityTypeName(type_), format.ColorName(name), format.ColoredOptions(url, format.ColorValue))
 }
 
 func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) {
@@ -114,7 +114,7 @@ func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) {
 	for _, type_ := range types {
 		entityTypeNames = append(entityTypeNames, GetEntityTypeName(type_))
 	}
-	self.ReportPathf("field refers to unknown %s: %s", format.Options(entityTypeNames), self.FormatBadData())
+	self.ReportPathf("unknown %s reference: %s", format.Options(entityTypeNames), self.FormatBadData())
 }
 
 //
@@ -126,7 +126,7 @@ func (self *Context) ReportInheritanceLoop(parent interface{}) {
 }
 
 func (self *Context) ReportTypeIncomplete(parent interface{}) {
-	self.ReportPathf("derives from incomplete type \"%s\"", format.ColorTypeName(GetContext(parent).Name))
+	self.ReportPathf("deriving from incomplete type \"%s\"", format.ColorTypeName(GetContext(parent).Name))
 }
 
 //
@@ -144,13 +144,13 @@ func (self *Context) ReportUnknown(kind string) {
 func (self *Context) ReportReferenceNotFound(kind string, entityPtr interface{}) {
 	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
 	name := GetContext(entityPtr).Name
-	self.ReportPathf("%s not found in %s \"%s\": %s", kind, typeName, format.ColorName(name), self.FormatBadData())
+	self.ReportPathf("unknown %s reference in %s \"%s\": %s", kind, typeName, format.ColorName(name), self.FormatBadData())
 }
 
 func (self *Context) ReportReferenceAmbiguous(kind string, entityPtr interface{}) {
 	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
 	name := GetContext(entityPtr).Name
-	self.ReportPathf("%s ambiguous in %s \"%s\": %s", kind, typeName, format.ColorName(name), self.FormatBadData())
+	self.ReportPathf("ambiguous %s in %s \"%s\": %s", kind, typeName, format.ColorName(name), self.FormatBadData())
 }
 
 func (self *Context) ReportPropertyRequired(kind string) {
@@ -183,12 +183,4 @@ func (self *Context) ReportIncompatible(name string, typeName string, kind strin
 
 func (self *Context) ReportIncompatibleExtension(extension string, requiredExtensions []string) {
 	self.ReportPathf("extension \"%s\" is not %s", format.ColorValue(extension), format.ColoredOptions(requiredExtensions, format.ColorValue))
-}
-
-//
-// Normalize
-//
-
-func (self *Context) ReportUnsatisfiedRequirement() {
-	self.ReportPathf("cannot satisfy requirement \"%s\"", format.ColorValue(self.Name))
 }

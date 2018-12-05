@@ -26,6 +26,7 @@ func NewCapabilityMapping(context *tosca.Context) *CapabilityMapping {
 // tosca.Reader signature
 func ReadCapabilityMapping(context *tosca.Context) interface{} {
 	self := NewCapabilityMapping(context)
+
 	if context.ValidateType("list") {
 		strings := context.ReadStringListFixed(2)
 		if strings != nil {
@@ -33,6 +34,7 @@ func ReadCapabilityMapping(context *tosca.Context) interface{} {
 			self.CapabilityName = &(*strings)[1]
 		}
 	}
+
 	return self
 }
 
