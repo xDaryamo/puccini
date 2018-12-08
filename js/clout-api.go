@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/dop251/goja"
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/clout"
 )
 
@@ -92,7 +93,7 @@ func (self *CloutApi) Exec(name string) error {
 	return err
 }
 
-func (self *CloutApi) Prepare(value goja.Value, site interface{}, source interface{}, target interface{}) (Coercible, error) {
+func (self *CloutApi) NewCoercible(value goja.Value, site interface{}, source interface{}, target interface{}) (Coercible, error) {
 	if goja.IsUndefined(value) {
 		return nil, fmt.Errorf("undefined")
 	}
@@ -101,6 +102,22 @@ func (self *CloutApi) Prepare(value goja.Value, site interface{}, source interfa
 		return nil, err
 	}
 	return coercible, nil
+}
+
+func (self *CloutApi) NewConstraints(value goja.Value, site interface{}, source interface{}, target interface{}) (Constraints, error) {
+	if goja.IsUndefined(value) {
+		return nil, fmt.Errorf("undefined")
+	}
+	exported := value.Export()
+	list_, ok := exported.(ard.List)
+	if !ok {
+		return nil, fmt.Errorf("not an array")
+	}
+	constraints, err := self.context.NewConstraints(list_, site, source, target)
+	if err != nil {
+		return nil, err
+	}
+	return constraints, nil
 }
 
 func (self *CloutApi) Coerce(value interface{}) (interface{}, error) {

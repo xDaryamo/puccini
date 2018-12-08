@@ -83,7 +83,7 @@ func (self *CloutContext) NewFunction(data interface{}, site interface{}, source
 	}
 
 	var err error
-	c.Constraints, err = self.NewConstraintsForValue(map_)
+	c.Constraints, err = self.NewConstraintsForValue(map_, site, source, target)
 	if err != nil {
 		return nil, err
 	}

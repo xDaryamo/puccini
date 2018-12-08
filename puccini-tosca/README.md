@@ -23,12 +23,17 @@ The list of supported quirks is maintained [here](../tosca/parser/QUIRKS.md).
 
 ### Errors and Debugging
 
-Logs are written to stderr (with colors) by default Use `--log/-l` to output to a file (without
+If TOSCA compilation or parsing fails it will emit a colorful problem report to stderr and exit with
+code 1. You can use the `--quiet/-q` to avoid output if all you want to do is check for success.
+
+Logs are written to stderr (with colors) by default. Use `--log/-l` to output to a file (without
 colors). Use `--verbose/-v` to add log verbosity. This can be used twice for maximum verbosity:
 `-vv`.
 
-If TOSCA compilation or parsing fails it will emit a colorful problem report to stderr and exit with
-code 1. You can use the `--quiet/-q` switch if all you want to do is check for success.
+A simple trick for if you just want to see the logs on the console: just redirect stdout to
+`/dev/null` (stderr will still be present):
+
+    puccini-tosca compile service.yaml -vv > /dev/null
 
 
 `compile`

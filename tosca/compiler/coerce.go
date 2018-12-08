@@ -9,7 +9,7 @@ import (
 // This has the same result as tosca.coerce in JavaScript
 func Coerce(clout_ *clout.Clout, problems_ *problems.Problems) *clout.Clout {
 	context := js.NewContext("tosca.coerce", log, false, "yaml", "")
-	err := context.Exec(clout_, "tosca.coerce")
+	err := context.Exec(clout_, "tosca.coerce", map[string]interface{}{"problems": problems_})
 	if err != nil {
 		problems_.ReportError(err)
 	}

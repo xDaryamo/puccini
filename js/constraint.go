@@ -8,11 +8,11 @@ import (
 
 type Constraints []*Function
 
-func (self *CloutContext) NewConstraints(list ard.List) (Constraints, error) {
+func (self *CloutContext) NewConstraints(list ard.List, site interface{}, source interface{}, target interface{}) (Constraints, error) {
 	constraints := make(Constraints, len(list))
 	for index, element := range list {
 		var err error
-		constraints[index], err = self.NewFunction(element, nil, nil, nil)
+		constraints[index], err = self.NewFunction(element, site, source, target)
 		if err != nil {
 			return nil, err
 		}
@@ -21,7 +21,7 @@ func (self *CloutContext) NewConstraints(list ard.List) (Constraints, error) {
 	return constraints, nil
 }
 
-func (self *CloutContext) NewConstraintsForValue(map_ ard.Map) (Constraints, error) {
+func (self *CloutContext) NewConstraintsForValue(map_ ard.Map, site interface{}, source interface{}, target interface{}) (Constraints, error) {
 	v, ok := map_["constraints"]
 	if !ok {
 		return nil, nil
@@ -32,7 +32,7 @@ func (self *CloutContext) NewConstraintsForValue(map_ ard.Map) (Constraints, err
 		return nil, fmt.Errorf("malformed \"constraints\"")
 	}
 
-	return self.NewConstraints(list)
+	return self.NewConstraints(list, site, source, target)
 }
 
 func (self Constraints) Validate(value interface{}) (bool, error) {

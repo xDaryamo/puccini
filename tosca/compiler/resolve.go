@@ -9,15 +9,15 @@ import (
 )
 
 func Resolve(clout_ *clout.Clout, problems_ *problems.Problems) *clout.Clout {
-	/*context := js.NewContext("tosca.resolve", log, false, "yaml", "")
-	err := context.Exec(clout_, "tosca.resolve")
+	context := js.NewContext("tosca.resolve", log, false, "yaml", "")
+	err := context.Exec(clout_, "tosca.resolve", map[string]interface{}{"problems": problems_})
 	if err != nil {
 		problems_.ReportError(err)
 	}
 
-	return clout_*/
+	return clout_
 
-	jsContext := js.NewContext("resolve", log, false, "yaml", "")
+	/*jsContext := js.NewContext("resolve", log, false, "yaml", "")
 	context, _ := jsContext.NewCloutContext(clout_)
 
 	for _, vertex := range context.Vertexes {
@@ -32,10 +32,10 @@ func Resolve(clout_ *clout.Clout, problems_ *problems.Problems) *clout.Clout {
 		}
 	}
 
-	return clout_
+	return clout_*/
 }
 
-// TODO: move to JavaScript
+// TODO: remove
 
 //
 // Resolver
@@ -116,7 +116,6 @@ func (self *Resolver) Resolve() {
 				var valid = true
 				if candidateCapabilities, ok := GetMap(candidateNodeTemplate, "capabilities"); ok {
 					for candidateCapabilityName, candidateCapability := range candidateCapabilities {
-						//log.Debugf("%s > %s", capabilityPropertyConstraintsMap, candidateCapabilityName)
 						if capabilityPropertyConstraints, ok := GetMap(capabilityPropertyConstraintsMap, candidateCapabilityName); ok {
 							if c, ok := candidateCapability.(ard.Map); ok {
 								if !self.ArePropertiesValid("capability", candidateCapabilityName, c, vertex, capabilityPropertyConstraints) {
@@ -241,7 +240,7 @@ func (self *Resolver) IsSubstituted() bool {
 func (self *Resolver) ArePropertiesValid(kind string, name string, entity ard.Map, targetVertex *clout.Vertex, constraintsMap ard.Map) bool {
 	for propertyName, constraints := range constraintsMap {
 		if c, ok := constraints.(ard.List); ok {
-			if cc, err := self.Context.NewConstraints(c); err == nil {
+			if cc, err := self.Context.NewConstraints(c, self.SourceVertex, self.SourceVertex, targetVertex); err == nil {
 				if properties, ok := GetMap(entity, "properties"); ok {
 					if property, ok := properties[propertyName]; ok {
 						// TODO: site, source, and target

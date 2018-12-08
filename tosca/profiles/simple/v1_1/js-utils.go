@@ -8,7 +8,7 @@ func init() {
 clout.exec('tosca.helpers');
 
 tosca.prepare = function() {
-	tosca.traverseValues(clout.prepare);
+	tosca.traverseValues(clout.newCoercible);
 };
 
 tosca.coerce = function() {
@@ -22,8 +22,8 @@ tosca.traverseValues = function(traverser) {
 		tosca.traverseObjectValues(traverser, clout.properties.tosca.outputs);
 	}
 
-	for (v in clout.vertexes) {
-		vertex = clout.vertexes[v];
+	for (vertexId in clout.vertexes) {
+		vertex = clout.vertexes[vertexId];
 		if (tosca.isNodeTemplate(vertex)) {
 			nodeTemplate = vertex.properties;
 
@@ -31,21 +31,22 @@ tosca.traverseValues = function(traverser) {
 			tosca.traverseObjectValues(traverser, nodeTemplate.attributes, vertex);
 			tosca.traverseInterfaceValues(traverser, nodeTemplate.interfaces, vertex)
 
-			for (c in nodeTemplate.capabilities) {
-				capability = nodeTemplate.capabilities[c];
+			for (capabilityName in nodeTemplate.capabilities) {
+				capability = nodeTemplate.capabilities[capabilityName];
 				tosca.traverseObjectValues(traverser, capability.properties, vertex);
 				tosca.traverseObjectValues(traverser, capability.attributes, vertex);
 			}
 
-			for (a in nodeTemplate.artifacts) {
-				artifact = nodeTemplate.artifacts[a];
+			for (artifactName in nodeTemplate.artifacts) {
+				artifact = nodeTemplate.artifacts[artifactName];
 				tosca.traverseObjectValues(traverser, artifact.properties, vertex);
 			}
 
-			for (e in vertex.edgesOut) {
+			for (e = 0; e < vertex.edgesOut.length; e++) {
 				edge = vertex.edgesOut[e];
 				if (!tosca.isTosca(edge, 'relationship'))
 					continue;
+
 				relationship = edge.properties;
 				tosca.traverseObjectValues(traverser, relationship.properties, edge, vertex, edge.target);
 				tosca.traverseObjectValues(traverser, relationship.attributes, edge, vertex, edge.target);
@@ -65,11 +66,11 @@ tosca.traverseValues = function(traverser) {
 };
 
 tosca.traverseInterfaceValues = function(interfaces, site, source, target) {
-	for (i in interfaces) {
-		interface_ = interfaces[i];
+	for (interfaceName in interfaces) {
+		interface_ = interfaces[interfaceName];
 		tosca.traverseObjectValues(traverser, interface_.inputs, site, source, target);
-		for (o in interface_.operations)
-			tosca.traverseObjectValues(traverser, interface_.operations[o].Inputs, site, source, target);
+		for (operationName in interface_.operations)
+			tosca.traverseObjectValues(traverser, interface_.operations[operationName].Inputs, site, source, target);
 	}
 };
 

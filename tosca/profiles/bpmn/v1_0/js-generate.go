@@ -41,15 +41,15 @@ function createPolicyProcess(id, vertex) {
 	process = createProcess(id, policy.name + ' policy');
 
 	tasks = [];
-	for (e in vertex.edgesOut) {
+	for (e = 0; e < vertex.edgesOut.length; e++) {
 		edge = vertex.edgesOut[e];
 		if (!tosca.isTosca(edge, 'nodeTemplateTarget') && !tosca.isTosca(edge, 'groupTarget'))
 			continue;
 		target = edge.target.properties;
 
 		// Iterate edges
-		for (e in vertex.edgesOut) {
-			edge = vertex.edgesOut[e];
+		for (ee = 0; ee < vertex.edgesOut.length; ee++) {
+			edge = vertex.edgesOut[ee];
 			if (tosca.isTosca(edge, 'policyTriggerOperation')) {
 				task = createPolicyTriggerOperationTask(target, edge.target.properties);
 				tasks.push(task);
@@ -94,7 +94,7 @@ function createWorkflowProcess(id, vertex) {
 
 	// Iterate steps
 	tasks = {};
-	for (e in vertex.edgesOut) {
+	for (e = 0; e < vertex.edgesOut.length; e++) {
 		edge = vertex.edgesOut[e];
 		if (!tosca.isTosca(edge, 'workflowStep'))
 			continue;
