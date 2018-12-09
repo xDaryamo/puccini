@@ -56,7 +56,7 @@ func ReadRange(context *tosca.Context) interface{} {
 				upperOk = true
 			}
 		} else if upperContext.Data.(string) == "UNBOUNDED" {
-			self.Upper = math.MaxUint32
+			self.Upper = math.MaxUint64
 			upperOk = true
 		} else {
 			context.ReportValueMalformed("range", "upper bound string not UNBOUNDED")

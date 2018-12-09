@@ -37,7 +37,7 @@ tosca.getNodeTemplate = function(entity) {
 		vertex = tosca.getHost(site);
 		break;
 	default:
-		for (vertexId in clout.vertexes) {
+		for (var vertexId in clout.vertexes) {
 			vertex = clout.vertexes[vertexId];
 			if (tosca.isNodeTemplate(vertex) && (vertex.properties.name === entity))
 				return vertex.properties;
@@ -50,10 +50,10 @@ tosca.getNodeTemplate = function(entity) {
 };
 
 tosca.getHost = function(vertex) {
-	for (e = 0; e < vertex.edgesOut.length; e++) {
+	for (var e = 0; e < vertex.edgesOut.length; e++) {
 		edge = vertex.edgesOut[e];
 		if (tosca.isTosca(edge, 'relationship')) {
-			for (typeName in edge.properties.types) {
+			for (var typeName in edge.properties.types) {
 				type = edge.properties.types[typeName];
 				if (type.metadata.role === 'host')
 					return edge.target;

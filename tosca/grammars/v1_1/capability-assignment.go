@@ -1,6 +1,8 @@
 package v1_1
 
 import (
+	"math"
+
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
@@ -55,6 +57,15 @@ func (self *CapabilityAssignment) Normalize(n *normal.NodeTemplate, definition *
 
 	if definition.Description != nil {
 		c.Description = *definition.Description
+	}
+
+	if definition.Occurrences != nil {
+		c.MinRelationshipCount = definition.Occurrences.Range.Lower
+		c.MaxRelationshipCount = definition.Occurrences.Range.Upper
+	} else {
+		// Default occurrences is [ 0, UNBOUNDED ]
+		c.MinRelationshipCount = 0
+		c.MaxRelationshipCount = math.MaxUint64
 	}
 
 	if types, ok := normal.GetTypes(self.Context.Hierarchy, definition.CapabilityType); ok {

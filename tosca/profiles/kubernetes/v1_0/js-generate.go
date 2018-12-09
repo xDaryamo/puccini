@@ -11,7 +11,7 @@ tosca.coerce();
 
 specs = [];
 
-for (vertexId in clout.vertexes) {
+for (var vertexId in clout.vertexes) {
 	vertex = clout.vertexes[vertexId];
 	if (!tosca.isNodeTemplate(vertex))
 		continue;
@@ -19,7 +19,7 @@ for (vertexId in clout.vertexes) {
 
 	// Find metadata
 	metadata = {};
-	for (capabilityName in nodeTemplate.capabilities) {
+	for (var capabilityName in nodeTemplate.capabilities) {
 		capability = nodeTemplate.capabilities[capabilityName];
 		if ('kubernetes.Metadata' in capability.types) {
 			metadata = capability.properties;
@@ -33,7 +33,7 @@ for (vertexId in clout.vertexes) {
 	metadata.labels.service = nodeTemplate.name;
 
 	// Generate specs
-	for (capabilityName in nodeTemplate.capabilities) {
+	for (var capabilityName in nodeTemplate.capabilities) {
 		capability = nodeTemplate.capabilities[capabilityName];
 		if ('kubernetes.Service' in capability.types)
 			generateService(capability, metadata);
@@ -43,7 +43,7 @@ for (vertexId in clout.vertexes) {
 
 	// Run plugins
 //	plugins = clout.getPlugins('kubernetes.plugins');
-//	for (p in plugins) {
+//	for (var p in plugins) {
 //		plugin = plugins[p];
 //		log.debugf('calling plugin: %s', plugin.name);
 //		if (plugin.process)
@@ -61,7 +61,7 @@ function generateService(capability, metadata) {
 		spec: {}
 	};
 
-	for (propertyName in capability.properties) {
+	for (var propertyName in capability.properties) {
 		v = capability.properties[propertyName];
 		spec.spec[propertyName] = v;
 	}
@@ -81,7 +81,7 @@ function generateDeployment(capability, labels) {
 		spec: {}
 	};
 
-	for (propertyName in capability.properties) {
+	for (var propertyName in capability.properties) {
 		v = capability.properties[propertyName];
 		switch (propertyName) {
 		case 'minReadySeconds':
@@ -102,7 +102,7 @@ function generateDeployment(capability, labels) {
 			break;
 		case 'template':
 			s = {};
-			for (t in v) {
+			for (var t in v) {
 				vv = v[t];
 				switch (t) {
 				case 'activeDeadlineSeconds':

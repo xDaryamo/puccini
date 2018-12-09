@@ -16,7 +16,7 @@ tosca.traverseValues = function(traverser) {
 		tosca.traverseObjectValues(traverser, clout.properties.tosca.outputs);
 	}
 
-	for (vertexId in clout.vertexes) {
+	for (var vertexId in clout.vertexes) {
 		vertex = clout.vertexes[vertexId];
 		if (tosca.isNodeTemplate(vertex)) {
 			nodeTemplate = vertex.properties;
@@ -25,18 +25,18 @@ tosca.traverseValues = function(traverser) {
 			tosca.traverseObjectValues(traverser, nodeTemplate.attributes, vertex);
 			tosca.traverseInterfaceValues(traverser, nodeTemplate.interfaces, vertex)
 
-			for (capabilityName in nodeTemplate.capabilities) {
+			for (var capabilityName in nodeTemplate.capabilities) {
 				capability = nodeTemplate.capabilities[capabilityName];
 				tosca.traverseObjectValues(traverser, capability.properties, vertex);
 				tosca.traverseObjectValues(traverser, capability.attributes, vertex);
 			}
 
-			for (artifactName in nodeTemplate.artifacts) {
+			for (var artifactName in nodeTemplate.artifacts) {
 				artifact = nodeTemplate.artifacts[artifactName];
 				tosca.traverseObjectValues(traverser, artifact.properties, vertex);
 			}
 
-			for (e = 0; e < vertex.edgesOut.length; e++) {
+			for (var e = 0; e < vertex.edgesOut.length; e++) {
 				edge = vertex.edgesOut[e];
 				if (!tosca.isTosca(edge, 'relationship'))
 					continue;
@@ -60,15 +60,15 @@ tosca.traverseValues = function(traverser) {
 };
 
 tosca.traverseInterfaceValues = function(interfaces, site, source, target) {
-	for (interfaceName in interfaces) {
+	for (var interfaceName in interfaces) {
 		interface_ = interfaces[interfaceName];
 		tosca.traverseObjectValues(traverser, interface_.inputs, site, source, target);
-		for (operationName in interface_.operations)
+		for (var operationName in interface_.operations)
 			tosca.traverseObjectValues(traverser, interface_.operations[operationName].Inputs, site, source, target);
 	}
 };
 
 tosca.traverseObjectValues = function(traverser, o, site, source, target) {
-	for (k in o)
+	for (var k in o)
 		o[k] = traverser(o[k], site, source, target);
 };

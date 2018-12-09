@@ -34,7 +34,7 @@ if (tosca.isTosca(clout)) {
 	header = '<h1>Clout</h1>';
 }
 
-for (id in clout.vertexes) {
+for (var id in clout.vertexes) {
 	vertex = clout.vertexes[id];
 	addVertex(id, vertex);
 }
@@ -86,7 +86,7 @@ function addVertex(id, vertex) {
 
 	nodes.push(node);
 
-	for (e in vertex.edgesOut)
+	for (var e in vertex.edgesOut)
 		addEdge(id, vertex.edgesOut[e]);
 }
 

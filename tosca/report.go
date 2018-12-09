@@ -184,3 +184,7 @@ func (self *Context) ReportIncompatible(name string, typeName string, kind strin
 func (self *Context) ReportIncompatibleExtension(extension string, requiredExtensions []string) {
 	self.ReportPathf("extension \"%s\" is not %s", format.ColorValue(extension), format.ColoredOptions(requiredExtensions, format.ColorValue))
 }
+
+func (self *Context) ReportNotInRange(name string, value uint64, lower uint64, upper uint64) {
+	self.ReportPathf("%s is %d, must be >= %d and <= %d", name, value, lower, upper)
+}

@@ -1,6 +1,8 @@
 package v1_1
 
 import (
+	"fmt"
+
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
@@ -104,18 +106,33 @@ type RequirementAssignments []*RequirementAssignment
 
 func (self *RequirementAssignments) Render(definitions RequirementDefinitions, context *tosca.Context) {
 	for key, definition := range definitions {
-		found := false
-		for _, assignment := range *self {
-			if assignment.Name == key {
-				found = true
-				break
-			}
-		}
-
-		if !found && (definition.Occurrences == nil) {
+		if definition.Occurrences == nil {
 			// The TOSCA spec says that occurrences has an "implied default of [1,1]"
 			// Our interpretation is that we should automatically add a single assignment if none was specified
-			*self = append(*self, NewDefaultRequirementAssignment(len(*self), definition, context))
+
+			found := false
+			for _, assignment := range *self {
+				if assignment.Name == key {
+					found = true
+					break
+				}
+			}
+
+			if !found {
+				*self = append(*self, NewDefaultRequirementAssignment(len(*self), definition, context))
+			}
+		} else {
+			// Check occurrences
+			var count uint64
+			for _, assignment := range *self {
+				if assignment.Name == key {
+					count++
+				}
+			}
+
+			if !definition.Occurrences.Range.InRange(count) {
+				context.ReportNotInRange(fmt.Sprintf("number of requirement \"%s\" assignments", definition.Name), count, definition.Occurrences.Range.Lower, definition.Occurrences.Range.Upper)
+			}
 		}
 	}
 

@@ -9,21 +9,21 @@ node_types:
     # Though requirements are a sequenced list, you cannot specify the same name more than once at the node type
     # (You can do so at the node template)
     requirements:
-    # The short notation is just to specify a target capability type
+    # The short notation is used to just specify a target capability type
     - socket: Socket
 
   Fan:
     requirements:
-    # The long notation let's us further specify a target node type
+    # The long notation lets us further specify a target node type
     # And also (optionally) a default relationship type
     - socket:
         capability: SuperSocket
         node: PowerPanel
         relationship: SmartPlug
-        # You can also control the number of times the requirement can be assigned per node template
-        # The implied default is the range [1,1]
-        # Note that if you specify "occurrences" a requirement will *not* be automatically assigned
-        occurrences: [ 2, 4 ]
+        # You can also control the number of times the requirement *must* be assigned per node template
+        # The implied default is the range of [ 1, 1 ]
+        # Note that if you don't specify "occurrences" then a requirement will be automatically assigned
+        occurrences: [ 2, UNBOUNDED ]
 
   PowerPanel:
     properties:
@@ -32,7 +32,13 @@ node_types:
     capabilities:
       main: Socket
       aux: Socket
-      emergency: SuperSocket
+      emergency:
+        type: SuperSocket
+        # The long notation lets us specify "occurrences", which is how many times the capability *must* be required
+        # This applies to the resolution phase and doest *not* have a grammatical (parsing) effect
+        # (It's thus *very* different from "occurrences" in requirements)
+        # The default is [ 0, UNBOUNDED ]
+        occurrences: [ 2, 4 ]
 
 capability_types:
 
@@ -193,7 +199,7 @@ topology_template:
             properties:
               vendor: PowerEmperor
               failsafe: false
-      # Because the "occurrences" for this requirement is [2,4] we must assign it at least twice
+      # Because the "occurrences" for this requirement is [ 2, 4 ] we must assign it at least twice
       - socket:
           relationship:
             properties:

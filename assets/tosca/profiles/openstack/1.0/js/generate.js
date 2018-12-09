@@ -21,7 +21,7 @@ writeCfg();
 function writeTopology() {
 	servers = [];
 	
-	for (vertexId in clout.vertexes) {
+	for (var vertexId in clout.vertexes) {
 		vertex = clout.vertexes[vertexId];
 		if (!tosca.isNodeTemplate(vertex, 'openstack.Nova.Server'))
 			continue;

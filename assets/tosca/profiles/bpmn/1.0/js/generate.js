@@ -17,7 +17,7 @@ definitions.createAttr('expressionLanguage', 'http://www.mvel.org/2.0');
 definitions.createAttr('targetNamespace', 'http://bpmn.io/schema/bpmn');
 definitions.createAttr('exporter', 'puccini');
 
-for (id in clout.vertexes) {
+for (var id in clout.vertexes) {
 	vertex = clout.vertexes[id];
 
 	if (tosca.isTosca(vertex, 'policy') && ('bpmn.Process' in vertex.properties.types))
@@ -35,14 +35,14 @@ function createPolicyProcess(id, vertex) {
 	process = createProcess(id, policy.name + ' policy');
 
 	tasks = [];
-	for (e = 0; e < vertex.edgesOut.length; e++) {
+	for (var e = 0; e < vertex.edgesOut.length; e++) {
 		edge = vertex.edgesOut[e];
 		if (!tosca.isTosca(edge, 'nodeTemplateTarget') && !tosca.isTosca(edge, 'groupTarget'))
 			continue;
 		target = edge.target.properties;
 
 		// Iterate edges
-		for (ee = 0; ee < vertex.edgesOut.length; ee++) {
+		for (var ee = 0; ee < vertex.edgesOut.length; ee++) {
 			edge = vertex.edgesOut[ee];
 			if (tosca.isTosca(edge, 'policyTriggerOperation')) {
 				task = createPolicyTriggerOperationTask(target, edge.target.properties);
@@ -67,7 +67,7 @@ function createPolicyProcess(id, vertex) {
 		createSequenceFlow(process, endGateway, endTask);
 	}
 
-	for (t in tasks) {
+	for (var t = 0; t < tasks.length; t++) {
 		task = tasks[t];
 		createSequenceFlow(process, startGateway, task);
 		createSequenceFlow(process, task, endGateway);
@@ -88,7 +88,7 @@ function createWorkflowProcess(id, vertex) {
 
 	// Iterate steps
 	tasks = {};
-	for (e = 0; e < vertex.edgesOut.length; e++) {
+	for (var e = 0; e < vertex.edgesOut.length; e++) {
 		edge = vertex.edgesOut[e];
 		if (!tosca.isTosca(edge, 'workflowStep'))
 			continue;
@@ -100,7 +100,7 @@ function createWorkflowProcess(id, vertex) {
 	}
 
 	// Link previous tasks in graph
-	for (name in tasks) {
+	for (var name in tasks) {
 		task = tasks[name];
 		for (n in task.next) {
 			nextName = task.next[n];
@@ -110,16 +110,16 @@ function createWorkflowProcess(id, vertex) {
 
 	// Count first tasks
 	first = 0;
-	for (t in tasks) {
-		task = tasks[t];
+	for (var name in tasks) {
+		task = tasks[name];
 		if (task.prev.length === 0)
 			first++;
 	}
 
 	// Count last tasks
 	last = 0;
-	for (t in tasks) {
-		task = tasks[t];
+	for (var name in tasks) {
+		task = tasks[name];
 		if (task.next.length === 0)
 			last++;
 	}
@@ -138,8 +138,8 @@ function createWorkflowProcess(id, vertex) {
 	}
 
 	// Incoming
-	for (t in tasks) {
-		task = tasks[t];
+	for (var name in tasks) {
+		task = tasks[name];
 		if (task.prev.length === 0)
 			createSequenceFlow(process, startGateway, task.task);
 		else if (task.prev.length > 1)
@@ -147,8 +147,8 @@ function createWorkflowProcess(id, vertex) {
 	}
 
 	// Outgoing
-	for (t in tasks) {
-		task = tasks[t];
+	for (var name in tasks) {
+		task = tasks[name];
 		if (task.next.length === 0)
 			createSequenceFlow(process, task.task, endGateway);
 		else if (task.next.length > 1)
@@ -156,8 +156,8 @@ function createWorkflowProcess(id, vertex) {
 	}
 
 	// Link incoming to outgoing
-	for (t in tasks) {
-		task = tasks[t];
+	for (var name in tasks) {
+		task = tasks[name];
 
 		if (getAttr(task.task, 'id') != getAttr(task.incoming, 'id'))
 			createSequenceFlow(process, task.incoming, task.task);
@@ -165,7 +165,7 @@ function createWorkflowProcess(id, vertex) {
 		if (getAttr(task.task, 'id') != getAttr(task.outgoing, 'id'))
 			createSequenceFlow(process, task.task, task.outgoing);
 
-		for (n in task.next) {
+		for (var n = 0; n < task.next.length; n++) {
 			next = tasks[task.next[n]];
 			createSequenceFlow(process, task.outgoing, next.incoming);
 		}
@@ -181,7 +181,7 @@ function createWorkflowTask(step, stepID, tasks) {
 
 	// Iterate edges
 	activities = [];
-	for (ee in step.edgesOut) {
+	for (var ee =- 0; ee < step.edgesOut.length; ee++) {
 		edge = step.edgesOut[ee];
 		if (tosca.isTosca(edge, 'nodeTemplateTarget'))
 			code += puccini.sprintf('\nnodeTemplates.push("%s");', edge.target.properties.name);
@@ -199,7 +199,7 @@ function createWorkflowTask(step, stepID, tasks) {
 	}
 
 	// Iterate activities
-	for (a in activities) {
+	for (var a = 0; a < activities.length; a++) {
 		activity = activities[a];
 		if (activity.setNodeState)
 			code += puccini.sprintf('\nsetNodeState(nodeTemplates, groups, "%s");', activity.setNodeState);
@@ -266,7 +266,7 @@ function getID(element) {
 
 function getAttr(element, key) {
 	r = null;
-	for (a in element.attr) {
+	for (var a = 0; a < element.attr.length; a++) {
 		attr = element.attr[a];
 		if (attr.key === key)
 			r = attr.value;

@@ -18,7 +18,7 @@ function evaluate(entity, property) {
 	if (!(property in properties))
 		throw puccini.sprintf('property "%s" not found in "%s"', property, nodeTemplate.name);
 	r = clout.coerce(properties[property]);
-	for (i = 2; i < length; i++)
+	for (var i = 2; i < length; i++)
 		r = r[arguments[i]];
 	return r;
 }
