@@ -7,6 +7,10 @@ This is where we create the flat topology: relationships from templates to capab
 Resolution is handled via the **tosca.resolve** JavaScript embedded in the Clout. This allows you
 to re-resolve an existing compiled Clout according to varying factors.
 
+
+Capability Occurrences
+----------------------
+
 For capabilities we take into account the `occurrences` field, which limits the number of times a
 capability may be be used for relationships.
 
@@ -17,7 +21,30 @@ topology by creating additional relationships, and generally it would be an over
 strategy for scaling. TOSCA's role, and thus Puccini's, should merely be to validate the design.
 Thus requirements-and-capabilities should have nothing to do with resource provisioning.
 
-Relatedly, we also allow for relationship loops: for example, two node templates can have
-`DependsOn` relationships with each other. This doesn't necessarily imply a problem: they could, for
-example, be provisioned simultaneously. Whether or not orchestrators can deal with such loops is
-beyond the scope of Puccini and TOSCA.
+That said, `occurrences` does introduce a subtle restriction on how requirements are satisfied. It
+means that some capabilities might have a *minimum* number of relationships attached to them, or
+else a problem is reported. Likewise, some capabilities will allow for a *maximum* number of
+possible relationships. Allocating these restricted slots in such a way that all requirements can be
+satisfied while keeping all minimums fulfilled would require a non-trivial algorithm.
+
+Currently, Puccini's algorithm is not ideal. It does report problems, and it does try to prioritize
+some capabilities with `occurrences` restrictions over others. However, it still iterates
+requirements one at a time, meaning that it may very well miss on finding a problem-free topology.
+It at least guarantees that the results will be consistent by ensuring a reproducible order of
+iteration via alphanumeric sorting.
+
+A better algorithm would require either 1) trying various sort orders until one succeeds, or 2)
+finding a more sophisticated way to prioritize certain pairs of requirements-and-capabilities.
+Both approaches are difficult. 
+
+
+Loops
+-----
+
+Puccini allows for relationship loops: for example, two node templates can have `DependsOn`
+relationships with each other. Semantically, this is not a problem. However, practically it could
+be a problem for some orchestrators. 
+
+A good orchestrator would know what to do. For example, mutually dependent resources could be
+provisioned simultaneously. Whether or not orchestrators can deal with such loops is beyond the
+scope of Puccini and TOSCA.

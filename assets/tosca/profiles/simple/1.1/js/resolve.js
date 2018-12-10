@@ -1,6 +1,9 @@
 
 clout.exec('tosca.utils');
 
+// TODO: must "temporarily" coerce all values by adding a special object attribute
+// remove the attribute when done
+
 nodeTemplateVertexes = [];
 for (var vertexId in clout.vertexes) {
 	vertex = clout.vertexes[vertexId];
