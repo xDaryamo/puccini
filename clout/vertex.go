@@ -9,8 +9,9 @@ import (
 //
 
 type Vertex struct {
-	Metadata   ard.Map `json:"metadata" yaml:"metadata"`
+	Clout      *Clout  `json:"-" yaml:"-"`
 	ID         string  `json:"-" yaml:"-"`
+	Metadata   ard.Map `json:"metadata" yaml:"metadata"`
 	Properties ard.Map `json:"properties" yaml:"properties"`
 	EdgesOut   Edges   `json:"edgesOut" yaml:"edgesOut"`
 	EdgesIn    Edges   `json:"-" yaml:"-"`
@@ -18,6 +19,7 @@ type Vertex struct {
 
 func (self *Clout) NewVertex(id string) *Vertex {
 	vertex := &Vertex{
+		Clout:      self,
 		ID:         id,
 		Metadata:   make(ard.Map),
 		Properties: make(ard.Map),
@@ -26,6 +28,10 @@ func (self *Clout) NewVertex(id string) *Vertex {
 	}
 	self.Vertexes[id] = vertex
 	return vertex
+}
+
+func (self *Vertex) Remove() {
+	delete(self.Clout.Vertexes, self.ID)
 }
 
 // Entity interface
@@ -37,5 +43,9 @@ func (self *Vertex) GetMetadata() ard.Map {
 func (self *Vertex) GetProperties() ard.Map {
 	return self.Properties
 }
+
+//
+// Vertexes
+//
 
 type Vertexes map[string]*Vertex

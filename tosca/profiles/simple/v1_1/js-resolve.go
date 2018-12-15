@@ -10,11 +10,18 @@ clout.exec('tosca.utils');
 // TODO: must "temporarily" coerce all values by adding a special object attribute
 // remove the attribute when done
 
+// Remove existing relationships
 nodeTemplateVertexes = [];
 for (var vertexId in clout.vertexes) {
 	vertex = clout.vertexes[vertexId];
-	if (tosca.isNodeTemplate(vertex))
+	if (tosca.isNodeTemplate(vertex)) {
 		nodeTemplateVertexes.push(vertex);
+		for (var e = 0; e < vertex.edgesOut.length; e++) {
+			edge = vertex.edgesOut[e];
+			if (tosca.isTosca(edge, 'requirement'))
+				edge.remove();
+		}
+	}
 }
 
 // For consistent results, we will sort the node templates by name
@@ -46,6 +53,8 @@ for (var v = 0; v < nodeTemplateVertexes.length; v++) {
 			notEnoughRelationships(nodeTemplate.name, capabilityName, relationshipCount, minRelationshipCount)
 	}
 }
+
+puccini.write(clout)
 
 function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 	path = requirement.path;
@@ -310,14 +319,14 @@ function isMaxCountGreater(a, b) {
 
 function unsatisfied(path, name, message) {
 	if (typeof problems === 'undefined')
-		puccini.log.infof('%s: could not satisfy "%s" because %s', path, name, message);
+		throw puccini.sprintf('%s: could not satisfy "%s" because %s', path, name, message);
 	else
 		problems.reportf('%s: could not satisfy "%s" because %s', path, name, message);
 }
 
 function notEnoughRelationships(nodeTemplateName, capabilityName, relationshipCount, minRelationshipCount) {
 	if (typeof problems === 'undefined')
-		puccini.log.infof('capability "%s" of node template "%s" does not have enough relationships: %d < %d', capabilityName, nodeTemplateName, relationshipCount, minRelationshipCount);
+		throw puccini.sprintf('capability "%s" of node template "%s" does not have enough relationships: %d < %d', capabilityName, nodeTemplateName, relationshipCount, minRelationshipCount);
 	else
 		problems.reportf('capability "%s" of node template "%s" does not have enough relationships: %d < %d', capabilityName, nodeTemplateName, relationshipCount, minRelationshipCount);
 }

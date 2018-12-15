@@ -30,6 +30,11 @@ func (self *Vertex) NewEdgeTo(target *Vertex) *Edge {
 	return edge
 }
 
+func (self *Edge) Remove() {
+	self.Source.EdgesOut = self.Source.EdgesOut.Remove(self)
+	self.Target.EdgesIn = self.Target.EdgesIn.Remove(self)
+}
+
 // Entity interface
 func (self *Edge) GetMetadata() ard.Map {
 	return self.Metadata
@@ -100,3 +105,12 @@ func (self *Edge) UnmarshalYAML(unmarshal func(interface{}) error) error {
 //
 
 type Edges []*Edge
+
+func (self Edges) Remove(edge *Edge) Edges {
+	for index, e := range self {
+		if e == edge {
+			return append(self[:index], self[index+1:]...)
+		}
+	}
+	return self
+}

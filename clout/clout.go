@@ -42,6 +42,7 @@ func (self *Clout) Resolve() error {
 	self.Properties = ard.EnsureMap(self.Properties)
 
 	for key, v := range self.Vertexes {
+		v.Clout = self
 		v.ID = key
 		v.Metadata = ard.EnsureMap(v.Metadata)
 		v.Properties = ard.EnsureMap(v.Properties)

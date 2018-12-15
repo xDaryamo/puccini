@@ -18,23 +18,24 @@ puccini-tosca
 
 Clout frontend for TOSCA. Parses a TOSCA service template and compiles it to Clout (see below).
 
-Why TOSCA? It's a high-level language designed exactly for modeling and validating cloud topologies
-with reusable and inheritable objects. It allows architects to focus on application logic and
+Why TOSCA? It's a high-level language designed for modeling and validating cloud topologies using
+reusable and inheritable objects. It allows architects to focus on application logic and
 requirements without being bogged down by the ever-changing specificities of the infrastructure.
-We support TOSCA 1.1 as well as the recent draft of TOSCA 1.2.
+We support TOSCA 1.1 and as the recent draft of TOSCA 1.2.
 
 **puccini-tosca** comes with TOSCA profiles for the
 [Kubernetes](assets/tosca/profiles/kubernetes/1.0/) and
 [OpenStack](assets/tosca/profiles/openstack/1.0/) cloud infrastructures, as well as
 [BPMN processes](assets/tosca/profiles/bpmn/1.0/).
-These include node, capability, relationship, policy, and other types, as well as straightforward
-JavaScript code to provide orchestration integrations.
-Also included are detailed [examples](examples/README.md) using these profiles to get you started.
+Profiles include node, capability, relationship, policy, and other types. Also included are detailed
+[examples](examples/README.md) using these profiles to get you started. These profiles would work
+with any TOSCA-compliant product.
 
-TOSCA in YAML is supported, as well as packaged
+TOSCA is supported as pure YAML files, as well as packaged
 [CSAR files](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/os/TOSCA-Simple-Profile-YAML-v1.1-os.html#_Toc489606742).
 We're even including a simple CSAR creation tool, **puccini-csar**.
 
+What's special to Puccini is the inclusion of JavaScript code to provide orchestration integration.
 How do TOSCA, Clout, JavaScript, and cloud infrastructures all fit together in Puccini? Consider
 this: with a single command line you can take a TOSCA service template, compile it with
 **puccini-tosca**, pipe the Clout through the **puccini-js** processor, which will run JavaScript to
@@ -55,10 +56,12 @@ easily be consumed by your program. Validation error messages are precise and us
 very fast parser, enough that it can be usefully embedded in editors and IDEs for validating TOSCA
 while typing.
 
-TOSCA is a complex object-oriented language. Considerable effort has been put into adhering to every
-aspect the grammar, especially in regards to value type checking and type inheritance contracts.
-Due to the inconsistencies in the specification, we also [quirks](tosca/parser/QUIRKS.md) that
-represent alternative interpretations.
+TOSCA is a complex object-oriented language. We put considerable effort into adhering to every
+aspect of the grammar, especially in regards to value type checking and type inheritance contracts,
+which are key to delivering the object-oriented promise of extensibility while maintaining reliable
+compatibility. Unfortunately, the TOSCA specification is famously inconsistent and imprecise. For
+this reason, the Puccini parser also supports [quirk modes](tosca/parser/QUIRKS.md) that enable
+alternative behaviors based on differing interpretations.
 
 ### Compiler
 
