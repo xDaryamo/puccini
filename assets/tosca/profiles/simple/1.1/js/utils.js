@@ -1,12 +1,16 @@
 
 clout.exec('tosca.helpers');
 
-tosca.prepare = function() {
+tosca.toCoercibles = function() {
 	tosca.traverseValues(clout.newCoercible);
 };
 
+tosca.unwrapCoercibles = function() {
+	tosca.traverseValues(clout.unwrap);
+};
+
 tosca.coerce = function() {
-	tosca.prepare();
+	tosca.toCoercibles();
 	tosca.traverseValues(clout.coerce);
 };
 

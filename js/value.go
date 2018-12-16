@@ -59,14 +59,26 @@ func (self *CloutContext) NewValue(data interface{}, site interface{}, source in
 func (self *Value) Coerce() (interface{}, error) {
 	r := self.Value
 
-	// Embedded Coercible (either a CoercibleList or a CoercibleMap)
-	if c, ok := r.(Coercible); ok {
+	if coercibleList, ok := r.(CoercibleList); ok {
+		// Embedded CoercibleList
 		var err error
-		r, err = c.Coerce()
+		r, err = coercibleList.Coerce()
+		if err != nil {
+			return nil, err
+		}
+	} else if coercibleMap, ok := r.(CoercibleMap); ok {
+		// Embedded CoercibleMap
+		var err error
+		r, err = coercibleMap.Coerce()
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	return self.Constraints.Apply(r)
+}
+
+// Coercible interface
+func (self *Value) Unwrap() interface{} {
+	return self.Value
 }

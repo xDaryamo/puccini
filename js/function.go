@@ -14,13 +14,14 @@ import (
 
 type Function struct {
 	Context     *CloutContext `json:"-" yaml:"-"`
-	Name        string        `json:"name" yaml:"name"`
+	Name        string        `json:"function" yaml:"function"`
 	Path        string        `json:"path" yaml:"path"`
 	Arguments   []Coercible   `json:"arguments" yaml:"arguments"`
 	Constraints Constraints   `json:"constraints" yaml:"constraints"`
 	Site        interface{}   `json:"-" yaml:"-"`
 	Source      interface{}   `json:"-" yaml:"-"`
 	Target      interface{}   `json:"-" yaml:"-"`
+	Notation    ard.Map       `json:"-" yaml:"-"`
 }
 
 func (self *CloutContext) NewFunction(data interface{}, site interface{}, source interface{}, target interface{}) (*Function, error) {
@@ -35,10 +36,11 @@ func (self *CloutContext) NewFunction(data interface{}, site interface{}, source
 	}
 
 	c := Function{
-		Context: self,
-		Site:    site,
-		Source:  source,
-		Target:  target,
+		Context:  self,
+		Site:     site,
+		Source:   source,
+		Target:   target,
+		Notation: map_,
 	}
 
 	f, ok := function.(ard.Map)
@@ -116,6 +118,11 @@ func (self *Function) Coerce() (interface{}, error) {
 	// TODO: Coerce result?
 
 	return self.Constraints.Apply(r)
+}
+
+// Coercible interface
+func (self *Function) Unwrap() interface{} {
+	return self.Notation
 }
 
 func (self *Function) CoerceArguments() ([]interface{}, error) {

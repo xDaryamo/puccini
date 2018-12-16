@@ -1,9 +1,6 @@
 
 clout.exec('tosca.utils');
 
-// TODO: must "temporarily" coerce all values by adding a special object attribute
-// remove the attribute when done
-
 // Remove existing relationships
 nodeTemplateVertexes = [];
 for (var vertexId in clout.vertexes) {
@@ -22,6 +19,8 @@ for (var vertexId in clout.vertexes) {
 nodeTemplateVertexes.sort(function(a, b) {
 	return a.properties.name < b.properties.name ? -1 : 1;
 });
+
+tosca.toCoercibles();
 
 // Resolve all requirements
 for (var v = 0; v < nodeTemplateVertexes.length; v++) {
@@ -48,6 +47,8 @@ for (var v = 0; v < nodeTemplateVertexes.length; v++) {
 	}
 }
 
+tosca.unwrapCoercibles();
+
 puccini.write(clout)
 
 function resolve(sourceVertex, sourceNodeTemplate, requirement) {
@@ -59,7 +60,7 @@ function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 		return;
 	}
 
-	candidates = gatherCandidateNodeTemplates(requirement);
+	candidates = gatherCandidateNodeTemplates(sourceVertex, requirement);
 	if (candidates.length === 0) {
 		unsatisfied(path, name, 'there are no candidate node templates');
 		return;
@@ -102,7 +103,7 @@ function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 	addRelationship(sourceVertex, requirement, chosen.vertex, chosen.capabilityName);
 }
 
-function gatherCandidateNodeTemplates(requirement) {
+function gatherCandidateNodeTemplates(sourceVertex, requirement) {
 	path = requirement.path;
 	nodeTemplateName = requirement.nodeTemplateName;
 	nodeTypeName = requirement.nodeTypeName;
@@ -126,7 +127,7 @@ function gatherCandidateNodeTemplates(requirement) {
 		}
 
 		// Node filter
-		if ((nodeTemplatePropertyConstraints.length !== 0) && !arePropertiesValid(path, 'node template', candidateNodeTemplateName, candidateNodeTemplate, nodeTemplatePropertyConstraints)) {
+		if ((nodeTemplatePropertyConstraints.length !== 0) && !arePropertiesValid(path, sourceVertex, 'node template', candidateNodeTemplateName, candidateNodeTemplate, nodeTemplatePropertyConstraints)) {
 			puccini.log.debugf('{resolve} %s: properties of node template "%s" do not match constraints', path, candidateNodeTemplateName);
 			continue;
 		}
@@ -139,7 +140,7 @@ function gatherCandidateNodeTemplates(requirement) {
 			for (var candidateCapabilityName in candidateCapabilities) {
 				candidateCapability = candidateCapabilities[candidateCapabilityName];
 				capabilityPropertyConstraints = capabilityPropertyConstraintsMap[candidateCapabilityName];
-				if ((capabilityPropertyConstraints !== undefined) && (capabilityPropertyConstraints.length !== 0) && !arePropertiesValid(path, 'capability', candidateCapabilityName, candidateCapability, capabilityPropertyConstraints)) {
+				if ((capabilityPropertyConstraints !== undefined) && (capabilityPropertyConstraints.length !== 0) && !arePropertiesValid(path, sourceVertex, 'capability', candidateCapabilityName, candidateCapability, capabilityPropertyConstraints)) {
 					puccini.log.debugf('{resolve} %s: properties of capability "%s" in node template "%s" do not match constraints', path, candidateCapabilityName, candidateNodeTemplateName);
 					valid = false;
 					break;
@@ -234,6 +235,7 @@ function addRelationship(sourceVertex, requirement, targetVertex, capabilityName
 			capability: capabilityName
 		};
 	else
+		// Untyped relationship
 		edge.properties = {
 			name: requirement.name,
 			description: '',
@@ -255,7 +257,7 @@ function countRelationships(vertex, capabilityName) {
 	return count;
 }
 
-function arePropertiesValid(path, kind, name, entity, constraintsMap) {
+function arePropertiesValid(path, sourceVertex, kind, name, entity, constraintsMap) {
 	valid = true;
 
 	properties = entity.properties;
@@ -268,10 +270,9 @@ function arePropertiesValid(path, kind, name, entity, constraintsMap) {
 			valid = false;
 			break;
 		}
-		property = clout.newCoercible(property, null, null, null)
 
 		constraints = constraintsMap[propertyName];
-		constraints = clout.newConstraints(constraints, null, null, null)
+		constraints = clout.newConstraints(constraints, sourceVertex, sourceVertex, entity)
 		if (!constraints.validate(property)) {
 			// return false; GOJA: returning from inside for-loop is broken
 			valid = false;

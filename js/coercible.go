@@ -10,6 +10,7 @@ import (
 
 type Coercible interface {
 	Coerce() (interface{}, error)
+	Unwrap() interface{}
 }
 
 func (self *CloutContext) NewCoercible(data interface{}, site interface{}, source interface{}, target interface{}) (Coercible, error) {
@@ -38,7 +39,6 @@ func (self *CloutContext) NewCoercibleList(list ard.List, site interface{}, sour
 	return c, nil
 }
 
-// Coercible interface
 func (self CoercibleList) Coerce() (interface{}, error) {
 	value := make(ard.List, len(self))
 	for index, coercible := range self {
@@ -69,7 +69,6 @@ func (self *CloutContext) NewCoercibleMap(map_ ard.Map, site interface{}, source
 	return c, nil
 }
 
-// Coercible interface
 func (self CoercibleMap) Coerce() (interface{}, error) {
 	value := make(ard.Map)
 	for key, coercible := range self {

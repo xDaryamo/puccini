@@ -42,15 +42,15 @@ func (self *Context) NewRuntime() *goja.Runtime {
 	return runtime
 }
 
-func (self *Context) Errorf(f string, args ...interface{}) {
+func (self *Context) Failf(f string, args ...interface{}) {
 	if !self.Quiet {
 		fmt.Fprintln(self.Stderr, format.ColorError(fmt.Sprintf(f, args...)))
 	}
 	os.Exit(1)
 }
 
-func (self *Context) ValidateError(err error) {
+func (self *Context) FailOnError(err error) {
 	if err != nil {
-		self.Errorf("%s", err)
+		self.Failf("%s", err)
 	}
 }

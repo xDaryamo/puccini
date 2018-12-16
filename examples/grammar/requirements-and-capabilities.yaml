@@ -75,6 +75,11 @@ relationship_types:
 
 topology_template:
 
+  inputs:
+    age:
+      type: scalar-unit.time
+      default: 5 d
+
   node_templates:
 
     # Because the "socket" requirement is not controlled by "occurrences" at the node type
@@ -208,7 +213,7 @@ topology_template:
     main_panel:
       type: PowerPanel
       properties:
-        age: 5 d
+        age: { get_input: age }
       capabilities:
         main:
           properties:

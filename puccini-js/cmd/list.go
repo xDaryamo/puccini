@@ -28,7 +28,7 @@ var listCmd = &cobra.Command{
 		}
 
 		clout_, err := ReadClout(path)
-		common.ValidateError(err)
+		common.FailOnError(err)
 
 		List(clout_)
 	},
@@ -36,7 +36,7 @@ var listCmd = &cobra.Command{
 
 func List(clout_ *clout.Clout) {
 	metadata, err := js.GetMetadata(clout_)
-	common.ValidateError(err)
+	common.FailOnError(err)
 
 	ListValue(metadata, nil)
 }

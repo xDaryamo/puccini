@@ -50,5 +50,5 @@ var rootCmd = &cobra.Command{
 
 func Execute() {
 	err := rootCmd.Execute()
-	common.ValidateError(err)
+	common.FailOnError(err)
 }

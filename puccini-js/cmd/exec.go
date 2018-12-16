@@ -27,7 +27,7 @@ var execCmd = &cobra.Command{
 		}
 
 		clout_, err := ReadClout(path)
-		common.ValidateError(err)
+		common.FailOnError(err)
 
 		// Try loading JavaScript from Clout
 		sourceCode, err := js.GetScriptSourceCode(name, clout_)
@@ -35,17 +35,17 @@ var execCmd = &cobra.Command{
 		if err != nil {
 			// Try loading JavaScript from path or URL
 			url_, err := url.NewValidURL(name, nil)
-			common.ValidateError(err)
+			common.FailOnError(err)
 
 			sourceCode, err = url.Read(url_)
-			common.ValidateError(err)
+			common.FailOnError(err)
 
 			err = js.SetScriptSourceCode(name, js.Cleanup(sourceCode), clout_)
-			common.ValidateError(err)
+			common.FailOnError(err)
 		}
 
 		err = Exec(name, sourceCode, clout_)
-		common.ValidateError(err)
+		common.FailOnError(err)
 	},
 }
 

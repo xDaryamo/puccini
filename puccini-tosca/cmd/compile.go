@@ -42,7 +42,7 @@ func Compile(urlString string) {
 
 	// Compile
 	clout, err := compiler.Compile(s)
-	common.ValidateError(err)
+	common.FailOnError(err)
 
 	// Resolve
 	if resolve {
@@ -68,6 +68,6 @@ func Compile(urlString string) {
 
 	if !common.Quiet || (output != "") {
 		err = format.WriteOrPrint(clout, ardFormat, true, output)
-		common.ValidateError(err)
+		common.FailOnError(err)
 	}
 }

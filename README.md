@@ -39,9 +39,9 @@ What's special to Puccini is the inclusion of JavaScript code to provide orchest
 How do TOSCA, Clout, JavaScript, and cloud infrastructures all fit together in Puccini? Consider
 this: with a single command line you can take a TOSCA service template, compile it with
 **puccini-tosca**, pipe the Clout through the **puccini-js** processor, which will run JavaScript to
-generate Kubernetes specs, then pipe those to
+generate Kubernetes specifications, then pipe those to
 [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/),
-which will finally upload the specs to a running Kubernetes cluster. Like so:
+which will finally upload the specifications to a running Kubernetes cluster. Like so:
 
      puccini-tosca compile my-app.yaml | puccini-js exec kubernetes.generate | kubectl apply -f -
 
@@ -89,7 +89,7 @@ puccini-js
 ----------
 
 Clout processor for JavaScript. Executes existing JavaScript in a Clout file. For example, it can
-execute the Kubernetes spec generation code inserted by **puccini-tosca**, as well as TOSCA
+execute the Kubernetes specification generation code inserted by **puccini-tosca**, as well as TOSCA
 functions and value constraints.
 
 Also supported are implementation-specific JavaScript "plugins" that allow you to extend existing
@@ -111,7 +111,8 @@ replaces the call stubs with the returned values:
 
 A useful side benefit of this implementation is we allow you to easily extend TOSCA by
 [adding your own functions/constraints](examples/javascript/functions.yaml). Obviously, such custom
-functions are not part of the TOSCA spec and may be incompatible with other TOSCA implementations.
+functions are not part of the TOSCA specification and may be incompatible with other TOSCA
+implementations.
 
 ### TOSCA Attributes
 
@@ -198,9 +199,9 @@ metadata, annotations, source code, documentation, and even text-encoded binarie
 possible exception might be that you would want to store security certificates and keys
 elsewhere.)
 
-In itself Clout is an unremarkable format. Think of it as a way to gather various deployment specs
-for disparate technologies in one place while allowing for the *relationships* (edges) between
-entities to be specified and annotated. That's the topology.
+In itself Clout is an unremarkable format. Think of it as a way to gather various deployment
+specifications for disparate technologies in one place while allowing for the *relationships*
+(edges) between entities to be specified and annotated. That's the topology.
 
 Clout is not supposed to be human-readable or human-manageable. The idea is to use tools (Clout
 frontends and processors) to deal with its complexity. We have some great ones for you here. For
@@ -289,10 +290,10 @@ your orchestration tool chain. See our examples
 [here](examples/grammar/substitution-mapping.yaml) and
 [here](examples/grammar/substitution-mapping-client.yaml).
 
-### TOSCA is so complicated! Help?
+### TOSCA is so complicated! Help!
 
 I know, right? Now imagine writing a parser for it... Not only is it a complex language, but the
-[spec itself](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html)
+[specification itself](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html)
 (as of version 1.1) has many contradictions, errors, and gaps.
 
 To help you out we've included [examples](examples/grammar/) of TOSCA core grammatical features,
@@ -301,12 +302,12 @@ grab some snacks, get comfortable, and watch this free online course for TOSCA 1
 [part 1](https://www.youtube.com/watch?v=aMkqLI6o-58),
 [part 2](https://www.youtube.com/watch?v=6xGmpi--7-A).
 
-(Author's note: This is actually my second take at writing a TOSCA parser, after learning a great
-deal from my previous efforts in [AriaTosca](https://github.com/apache/incubator-ariatosca), an
+(Author's note: This is my second take at writing a TOSCA parser, after learning a great deal from
+my previous efforts in [AriaTosca](https://github.com/apache/incubator-ariatosca), an
 incubation project under the Apache Software Foundation. I am grateful to
-[Cloudify](https://cloudify.co/) for funding much of the AriaTosca effort. Note, however, that
-Puccini is a fresh start initiated by myself with no commercial backing. It does not use any of the
-AriaTosca code and has a radically different architecture as well as very different goals.)
+[Cloudify](https://cloudify.co/) for funding much of the AriaTosca project. Note, however, that
+Puccini is a fresh start initiated by myself with no commercial backing. It does not use AriaTosca
+code and has a radically different architecture as well as very different goals.)
 
 ### Why doesn't the TOSCA parser tell me which line number in the relevant file a problem occurred?
 

@@ -58,7 +58,7 @@ func (self *PucciniApi) Write(data interface{}, path string, dontOverwrite bool)
 		output = filepath.Join(output, path)
 		var err error
 		output, err = filepath.Abs(output)
-		self.context.ValidateError(err)
+		self.context.FailOnError(err)
 	}
 
 	if output == "" {
@@ -88,5 +88,5 @@ func (self *PucciniApi) Write(data interface{}, path string, dontOverwrite bool)
 	}
 
 	err := format.WriteOrPrint(data, self.context.ArdFormat, true, output)
-	self.context.ValidateError(err)
+	self.context.FailOnError(err)
 }

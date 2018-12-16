@@ -26,14 +26,14 @@ var getCmd = &cobra.Command{
 		}
 
 		clout, err := ReadClout(path)
-		common.ValidateError(err)
+		common.FailOnError(err)
 
 		sourceCode, err := js.GetScriptSourceCode(name, clout)
-		common.ValidateError(err)
+		common.FailOnError(err)
 
 		if !common.Quiet {
 			err = format.WriteOrPrint(sourceCode, ardFormat, false, output)
-			common.ValidateError(err)
+			common.FailOnError(err)
 		}
 	},
 }

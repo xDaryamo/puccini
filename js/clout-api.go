@@ -97,40 +97,50 @@ func (self *CloutApi) NewCoercible(value goja.Value, site interface{}, source in
 	if goja.IsUndefined(value) {
 		return nil, fmt.Errorf("undefined")
 	}
-	coercible, err := self.context.NewCoercible(value.Export(), site, source, target)
-	if err != nil {
+
+	if coercible, err := self.context.NewCoercible(value.Export(), site, source, target); err == nil {
+		return coercible, nil
+	} else {
 		return nil, err
 	}
-	return coercible, nil
 }
 
 func (self *CloutApi) NewConstraints(value goja.Value, site interface{}, source interface{}, target interface{}) (Constraints, error) {
 	if goja.IsUndefined(value) {
 		return nil, fmt.Errorf("undefined")
 	}
+
 	exported := value.Export()
-	list_, ok := exported.(ard.List)
-	if !ok {
-		return nil, fmt.Errorf("not an array")
+	if list_, ok := exported.(ard.List); ok {
+		if constraints, err := self.context.NewConstraints(list_, site, source, target); err == nil {
+			return constraints, nil
+		} else {
+			return nil, err
+		}
 	}
-	constraints, err := self.context.NewConstraints(list_, site, source, target)
-	if err != nil {
-		return nil, err
-	}
-	return constraints, nil
+
+	return nil, fmt.Errorf("not an array")
 }
 
 func (self *CloutApi) Coerce(value interface{}) (interface{}, error) {
-	coercible, ok := value.(Coercible)
-	if !ok {
-		return value, nil
+	if coercible, ok := value.(Coercible); ok {
+		return coercible.Coerce()
 	}
-	return coercible.Coerce()
+
+	return value, nil
+}
+
+func (self *CloutApi) Unwrap(value interface{}) interface{} {
+	if coercible, ok := value.(Coercible); ok {
+		return coercible.Unwrap()
+	}
+
+	return value
 }
 
 func (self *CloutApi) GetPlugins(name string) []goja.Value {
 	plugins, err := GetPlugins(name, self.context)
-	self.context.Context.ValidateError(err)
+	self.context.Context.FailOnError(err)
 	return plugins
 }
 

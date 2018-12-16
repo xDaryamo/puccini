@@ -66,7 +66,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		log.Infof("parsing %s", urlString)
 		url_, err = url.NewValidURL(urlString, nil)
 	}
-	common.ValidateError(err)
+	common.FailOnError(err)
 
 	context := parser.NewContext(quirks)
 
@@ -144,7 +144,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 			for _, entityPtr := range entityPtrs {
 				fmt.Fprintf(format.Stdout, "%s:\n", format.ColorPath(tosca.GetContext(entityPtr).Path))
 				err = format.Print(entityPtr, ardFormat, true)
-				common.ValidateError(err)
+				common.FailOnError(err)
 			}
 		}
 	}
@@ -165,14 +165,14 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	if examine != "" {
 		entityPtrs := context.Gather(examine)
 		if len(entityPtrs) == 0 {
-			common.Errorf("Examine path not found: \"%s\"\n", examine)
+			common.Failf("Examine path not found: \"%s\"\n", examine)
 		} else if !common.Quiet {
 			for _, entityPtr := range entityPtrs {
 				if len(entityPtrs) > 0 {
 					fmt.Fprintf(format.Stdout, "%s\n", format.ColorPath(tosca.GetContext(entityPtr).Path))
 				}
 				err = format.Print(entityPtr, ardFormat, true)
-				common.ValidateError(err)
+				common.FailOnError(err)
 			}
 		}
 	}
@@ -188,7 +188,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	// Normalize
 	s, ok := parser.Normalize(context.ServiceTemplate.EntityPtr)
 	if !ok {
-		common.Error("grammar does not support normalization")
+		common.Fail("grammar does not support normalization")
 	}
 
 	return context, s
@@ -207,10 +207,10 @@ func ParseInputs() {
 	for _, input := range inputs {
 		s := strings.SplitN(input, "=", 2)
 		if len(s) != 2 {
-			common.Errorf("malformed input: %s", input)
+			common.Failf("malformed input: %s", input)
 		}
 		value, err := format.Decode(s[1], "yaml")
-		common.ValidateError(err)
+		common.FailOnError(err)
 		inputValues[s[0]] = value
 	}
 }
