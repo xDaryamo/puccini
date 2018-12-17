@@ -14,10 +14,10 @@ type Coercible interface {
 }
 
 func (self *CloutContext) NewCoercible(data interface{}, site interface{}, source interface{}, target interface{}) (Coercible, error) {
-	function, err := self.NewFunction(data, site, source, target)
-	if err == nil {
+	if function, err := self.NewFunction(data, site, source, target); err == nil {
 		return function, nil
 	}
+
 	return self.NewValue(data, site, source, target)
 }
 
@@ -29,25 +29,27 @@ type CoercibleList []Coercible
 
 func (self *CloutContext) NewCoercibleList(list ard.List, site interface{}, source interface{}, target interface{}) (CoercibleList, error) {
 	c := make(CoercibleList, len(list))
+
 	for index, data := range list {
 		var err error
-		c[index], err = self.NewCoercible(data, site, source, target)
-		if err != nil {
+		if c[index], err = self.NewCoercible(data, site, source, target); err != nil {
 			return nil, err
 		}
 	}
+
 	return c, nil
 }
 
 func (self CoercibleList) Coerce() (interface{}, error) {
 	value := make(ard.List, len(self))
+
 	for index, coercible := range self {
 		var err error
-		value[index], err = coercible.Coerce()
-		if err != nil {
+		if value[index], err = coercible.Coerce(); err != nil {
 			return nil, err
 		}
 	}
+
 	return value, nil
 }
 
@@ -59,24 +61,26 @@ type CoercibleMap map[string]Coercible
 
 func (self *CloutContext) NewCoercibleMap(map_ ard.Map, site interface{}, source interface{}, target interface{}) (CoercibleMap, error) {
 	c := make(CoercibleMap)
+
 	for key, data := range map_ {
 		var err error
-		c[key], err = self.NewCoercible(data, site, source, target)
-		if err != nil {
+		if c[key], err = self.NewCoercible(data, site, source, target); err != nil {
 			return nil, err
 		}
 	}
+
 	return c, nil
 }
 
 func (self CoercibleMap) Coerce() (interface{}, error) {
 	value := make(ard.Map)
+
 	for key, coercible := range self {
 		var err error
-		value[key], err = coercible.Coerce()
-		if err != nil {
+		if value[key], err = coercible.Coerce(); err != nil {
 			return nil, err
 		}
 	}
+
 	return value, nil
 }

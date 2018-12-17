@@ -1,6 +1,7 @@
 package v1_1
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -146,7 +147,7 @@ func (self *Timestamp) Compare(data interface{}) (int, error) {
 	if timestamp, ok := data.(*Timestamp); ok {
 		return CompareInt64(self.Number, timestamp.Number), nil
 	}
-	return 0, fmt.Errorf("incompatible comparison")
+	return 0, errors.New("incompatible comparison")
 }
 
 // Convert timezone to Go time.Location

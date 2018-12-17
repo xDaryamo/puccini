@@ -1,6 +1,7 @@
 package v1_1
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -106,7 +107,7 @@ func (self *Version) Compare(data interface{}) (int, error) {
 		}
 		return CompareUint32(self.Build, version.Build), nil
 	}
-	return 0, fmt.Errorf("incompatible comparison")
+	return 0, errors.New("incompatible comparison")
 }
 
 func parseVersionUint(value string) uint32 {

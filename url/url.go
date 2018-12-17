@@ -1,6 +1,7 @@
 package url
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	gourl "net/url"
@@ -81,7 +82,7 @@ func newRelativeURL(path_ string, origins []URL, avoidNet bool) (URL, error) {
 		// Try relative to origins
 		for _, origin := range origins {
 			var url_ URL
-			var err error = fmt.Errorf("")
+			var err = errors.New("")
 
 			switch o := origin.(type) {
 			case *FileURL:

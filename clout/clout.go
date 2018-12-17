@@ -1,6 +1,7 @@
 package clout
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -32,7 +33,7 @@ func NewClout() *Clout {
 
 func (self *Clout) Resolve() error {
 	if self.Version == "" {
-		return fmt.Errorf("no Clout \"Version\"")
+		return errors.New("no Clout \"Version\"")
 	}
 	if self.Version != Version {
 		return fmt.Errorf("unsupported Clout version: \"%s\"", self.Version)

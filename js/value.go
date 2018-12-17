@@ -20,34 +20,27 @@ func (self *CloutContext) NewValue(data interface{}, site interface{}, source in
 		Value:   data,
 	}
 
-	var err error
 	if map_, ok := data.(ard.Map); ok {
+		var err error
 		if v, ok := map_["value"]; ok {
 			c.Value = v
 		} else if v, ok := map_["list"]; ok {
 			if l, ok := v.(ard.List); ok {
-				c.Value, err = self.NewCoercibleList(l, site, source, target)
-				if err != nil {
+				// Embedded CoercibleList
+				if c.Value, err = self.NewCoercibleList(l, site, source, target); err != nil {
 					return nil, err
 				}
-			} else {
-				return &c, nil
 			}
 		} else if v, ok := map_["map"]; ok {
 			if m, ok := v.(ard.Map); ok {
-				c.Value, err = self.NewCoercibleMap(m, site, source, target)
-				if err != nil {
+				// Embedded CoercibleMap
+				if c.Value, err = self.NewCoercibleMap(m, site, source, target); err != nil {
 					return nil, err
 				}
-			} else {
-				return &c, nil
 			}
-		} else {
-			return &c, nil
 		}
 
-		c.Constraints, err = self.NewConstraintsForValue(map_, site, source, target)
-		if err != nil {
+		if c.Constraints, err = self.NewConstraintsForValue(map_, site, source, target); err != nil {
 			return nil, err
 		}
 	}
@@ -59,18 +52,15 @@ func (self *CloutContext) NewValue(data interface{}, site interface{}, source in
 func (self *Value) Coerce() (interface{}, error) {
 	r := self.Value
 
+	var err error
 	if coercibleList, ok := r.(CoercibleList); ok {
 		// Embedded CoercibleList
-		var err error
-		r, err = coercibleList.Coerce()
-		if err != nil {
+		if r, err = coercibleList.Coerce(); err != nil {
 			return nil, err
 		}
 	} else if coercibleMap, ok := r.(CoercibleMap); ok {
 		// Embedded CoercibleMap
-		var err error
-		r, err = coercibleMap.Coerce()
-		if err != nil {
+		if r, err = coercibleMap.Coerce(); err != nil {
 			return nil, err
 		}
 	}

@@ -1,7 +1,7 @@
 package js
 
 import (
-	"fmt"
+	"errors"
 	"strings"
 
 	"github.com/op/go-logging"
@@ -13,16 +13,16 @@ var log = logging.MustGetLogger("js")
 func SetMapNested(map_ ard.Map, key string, value string) error {
 	path := strings.Split(key, ".")
 	last := len(path) - 1
+
 	if last == -1 {
-		return fmt.Errorf("empty key")
+		return errors.New("empty key")
 	}
+
 	if last > 0 {
 		for _, p := range path[:last] {
-			o, ok := map_[p]
-			if ok {
-				map_, ok = o.(ard.Map)
-				if !ok {
-					return fmt.Errorf("bad nested map structure")
+			if o, ok := map_[p]; ok {
+				if map_, ok = o.(ard.Map); !ok {
+					return errors.New("bad nested map structure")
 				}
 			} else {
 				m := make(ard.Map)
@@ -31,6 +31,8 @@ func SetMapNested(map_ ard.Map, key string, value string) error {
 			}
 		}
 	}
+
 	map_[path[last]] = value
+
 	return nil
 }

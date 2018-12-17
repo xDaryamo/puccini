@@ -1,6 +1,7 @@
 package v1_1
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -99,7 +100,7 @@ func (self *ScalarUnitSize) Compare(data interface{}) (int, error) {
 	if scalarUnit, ok := data.(*ScalarUnitSize); ok {
 		return CompareUint64(self.Number, scalarUnit.Number), nil
 	}
-	return 0, fmt.Errorf("incompatible comparison")
+	return 0, errors.New("incompatible comparison")
 }
 
 //
@@ -147,7 +148,7 @@ func (self *ScalarUnitTime) Compare(data interface{}) (int, error) {
 	if scalarUnit, ok := data.(*ScalarUnitTime); ok {
 		return CompareFloat64(self.Number, scalarUnit.Number), nil
 	}
-	return 0, fmt.Errorf("incompatible comparison")
+	return 0, errors.New("incompatible comparison")
 }
 
 //
@@ -192,7 +193,7 @@ func (self *ScalarUnitFrequency) Compare(data interface{}) (int, error) {
 	if scalarUnit, ok := data.(*ScalarUnitFrequency); ok {
 		return CompareFloat64(self.Number, scalarUnit.Number), nil
 	}
-	return 0, fmt.Errorf("incompatible comparison")
+	return 0, errors.New("incompatible comparison")
 }
 
 func parseScalarUnit(context *tosca.Context, re *regexp.Regexp, typeName string) (float64, string, bool) {

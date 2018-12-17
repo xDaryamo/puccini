@@ -1,6 +1,7 @@
 package js
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -27,12 +28,12 @@ type Function struct {
 func (self *CloutContext) NewFunction(data interface{}, site interface{}, source interface{}, target interface{}) (*Function, error) {
 	map_, ok := data.(ard.Map)
 	if !ok {
-		return nil, fmt.Errorf("not a function")
+		return nil, errors.New("not a function")
 	}
 
 	function, ok := map_["function"]
 	if !ok {
-		return nil, fmt.Errorf("not a function")
+		return nil, errors.New("not a function")
 	}
 
 	c := Function{
@@ -45,34 +46,34 @@ func (self *CloutContext) NewFunction(data interface{}, site interface{}, source
 
 	f, ok := function.(ard.Map)
 	if !ok {
-		return nil, fmt.Errorf("malformed function: not a map")
+		return nil, errors.New("malformed function: not a map")
 	}
 
 	v, ok := f["name"]
 	if !ok {
-		return nil, fmt.Errorf("malformed function: no \"name\"")
+		return nil, errors.New("malformed function: no \"name\"")
 	}
 	c.Name, ok = v.(string)
 	if !ok {
-		return nil, fmt.Errorf("malformed function: \"name\" not a string")
+		return nil, errors.New("malformed function: \"name\" not a string")
 	}
 
 	v, ok = f["path"]
 	if !ok {
-		return nil, fmt.Errorf("malformed function: no \"path\"")
+		return nil, errors.New("malformed function: no \"path\"")
 	}
 	c.Path, ok = v.(string)
 	if !ok {
-		return nil, fmt.Errorf("malformed function: \"path\" not a string")
+		return nil, errors.New("malformed function: \"path\" not a string")
 	}
 
 	v, ok = f["arguments"]
 	if !ok {
-		return nil, fmt.Errorf("malformed function: no \"arguments\"")
+		return nil, errors.New("malformed function: no \"arguments\"")
 	}
 	originalArguments, ok := v.(ard.List)
 	if !ok {
-		return nil, fmt.Errorf("malformed function: \"arguments\" not a list")
+		return nil, errors.New("malformed function: \"arguments\" not a list")
 	}
 
 	c.Arguments = make([]Coercible, len(originalArguments))
@@ -129,8 +130,7 @@ func (self *Function) CoerceArguments() ([]interface{}, error) {
 	arguments := make([]interface{}, len(self.Arguments))
 	for index, argument := range self.Arguments {
 		var err error
-		arguments[index], err = argument.Coerce()
-		if err != nil {
+		if arguments[index], err = argument.Coerce(); err != nil {
 			return nil, err
 		}
 	}

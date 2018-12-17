@@ -2,7 +2,7 @@ package js
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 
 	"github.com/dop251/goja"
 	"github.com/tliron/puccini/ard"
@@ -95,7 +95,7 @@ func (self *CloutApi) Exec(name string) error {
 
 func (self *CloutApi) NewCoercible(value goja.Value, site interface{}, source interface{}, target interface{}) (Coercible, error) {
 	if goja.IsUndefined(value) {
-		return nil, fmt.Errorf("undefined")
+		return nil, errors.New("undefined")
 	}
 
 	if coercible, err := self.context.NewCoercible(value.Export(), site, source, target); err == nil {
@@ -107,7 +107,7 @@ func (self *CloutApi) NewCoercible(value goja.Value, site interface{}, source in
 
 func (self *CloutApi) NewConstraints(value goja.Value, site interface{}, source interface{}, target interface{}) (Constraints, error) {
 	if goja.IsUndefined(value) {
-		return nil, fmt.Errorf("undefined")
+		return nil, errors.New("undefined")
 	}
 
 	exported := value.Export()
@@ -119,7 +119,7 @@ func (self *CloutApi) NewConstraints(value goja.Value, site interface{}, source 
 		}
 	}
 
-	return nil, fmt.Errorf("not an array")
+	return nil, errors.New("not an array")
 }
 
 func (self *CloutApi) Coerce(value interface{}) (interface{}, error) {

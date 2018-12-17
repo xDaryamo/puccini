@@ -41,12 +41,11 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 
 	switch toscaContext.URL.Format() {
 	case "csar", "zip":
-		url_, err := csar.GetServiceTemplateURL(toscaContext.URL)
-		if err != nil {
+		var err error
+		if toscaContext.URL, err = csar.GetServiceTemplateURL(toscaContext.URL); err != nil {
 			toscaContext.ReportError(err)
 			return nil, false
 		}
-		toscaContext.URL = url_
 	}
 
 	// Read ARD
@@ -85,12 +84,12 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 
 // From Importer interface
 func (self *Context) readImports(container *Import) {
-	hasImportSpecs, ok := container.EntityPtr.(tosca.Importer)
+	importer, ok := container.EntityPtr.(tosca.Importer)
 	if !ok {
 		return
 	}
 
-	for _, importSpec := range hasImportSpecs.GetImportSpecs() {
+	for _, importSpec := range importer.GetImportSpecs() {
 		key := importSpec.URL.Key()
 
 		// Check for import loop

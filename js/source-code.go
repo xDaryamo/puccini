@@ -1,6 +1,7 @@
 package js
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"unicode"
@@ -38,11 +39,11 @@ func GetFunctionSoureCode(name string, c *clout.Clout) (string, error) {
 
 	functions, ok := metadata["functions"]
 	if !ok {
-		return "", fmt.Errorf("functions not found")
+		return "", errors.New("functions not found")
 	}
 	m, ok := functions.(ard.Map)
 	if !ok {
-		return "", fmt.Errorf("malformed functions section")
+		return "", errors.New("malformed functions section")
 	}
 
 	function, ok := m[name]
@@ -92,8 +93,6 @@ func GetScripts(name string, c *clout.Clout) (ard.List, error) {
 		return nil, fmt.Errorf("source code found but not a string: %s", name)
 	}
 
-	// TODO: sort
-
 	list := make(ard.List, 0, len(sourceCodes))
 	for _, sourceCode := range sourceCodes {
 		list = append(list, sourceCode)
@@ -134,12 +133,12 @@ func GetScriptSection(name string, c *clout.Clout) (interface{}, error) {
 func GetMetadata(c *clout.Clout) (ard.Map, error) {
 	metadata, ok := c.Metadata["puccini-js"]
 	if !ok {
-		return nil, fmt.Errorf("no scripts in Clout")
+		return nil, errors.New("no scripts in Clout")
 	}
 
 	m, ok := metadata.(ard.Map)
 	if !ok {
-		return nil, fmt.Errorf("malformed \"puccini-js\" metadata in Clout")
+		return nil, errors.New("malformed \"puccini-js\" metadata in Clout")
 	}
 
 	return m, nil
