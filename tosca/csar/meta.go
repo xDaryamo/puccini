@@ -74,13 +74,11 @@ func ReadMeta(reader io.Reader) (*Meta, error) {
 	for name, value := range data {
 		switch name {
 		case "TOSCA-Meta-File-Version":
-			self.MetaVersion, err = ParseVersion(value)
-			if err != nil {
+			if self.MetaVersion, err = ParseVersion(value); err != nil {
 				return nil, err
 			}
 		case "CSAR-Version":
-			self.CsarVersion, err = ParseVersion(value)
-			if err != nil {
+			if self.CsarVersion, err = ParseVersion(value); err != nil {
 				return nil, err
 			}
 		case "Created-By":
@@ -107,8 +105,7 @@ func ReadMeta(reader io.Reader) (*Meta, error) {
 
 func require(data map[string]string, names ...string) error {
 	for _, name := range names {
-		_, ok := data[name]
-		if !ok {
+		if _, ok := data[name]; !ok {
 			return fmt.Errorf("TOSCA.meta does not contain required \"%s\"", name)
 		}
 	}
