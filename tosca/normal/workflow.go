@@ -45,6 +45,8 @@ type WorkflowPrecondition struct {
 // WorkflowStep
 //
 
+// TODO: JSON/YAML marshalling
+
 type WorkflowStep struct {
 	Workflow           *Workflow     `json:"-" yaml:"-"`
 	Name               string        `json:"-" yaml:"-"`

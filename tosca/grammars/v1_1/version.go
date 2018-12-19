@@ -21,7 +21,7 @@ var VersionRE = regexp.MustCompile(
 //
 
 type Version struct {
-	String_ string `json:"$str" yaml:"$str"`
+	String_ string `json:"$string" yaml:"$string"`
 
 	Major     uint32 `json:"major" yaml:"major"`
 	Minor     uint32 `json:"minor" yaml:"minor"`
@@ -111,9 +111,8 @@ func (self *Version) Compare(data interface{}) (int, error) {
 }
 
 func parseVersionUint(value string) uint32 {
-	u, err := strconv.ParseUint(value, 10, 32)
-	if err != nil {
-		panic("as long as the regexp does it's job we should never get here")
+	if u, err := strconv.ParseUint(value, 10, 32); err == nil {
+		return uint32(u)
 	}
-	return uint32(u)
+	panic("as long as the regexp does its job we should never get here")
 }

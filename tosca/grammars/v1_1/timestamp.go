@@ -177,17 +177,15 @@ func (self *Timestamp) Time() time.Time {
 }
 
 func parseTimestampUint(value string) uint32 {
-	u, err := strconv.ParseUint(value, 10, 32)
-	if err != nil {
-		panic("as long as the regexp does it's job we should never get here")
+	if u, err := strconv.ParseUint(value, 10, 32); err == nil {
+		return uint32(u)
 	}
-	return uint32(u)
+	panic("as long as the regexp does its job we should never get here")
 }
 
 func parseTimestampFloat(value string) float64 {
-	u, err := strconv.ParseFloat(value, 64)
-	if err != nil {
-		panic("as long as the regexp does it's job we should never get here")
+	if u, err := strconv.ParseFloat(value, 64); err == nil {
+		return u
 	}
-	return u
+	panic("as long as the regexp does its job we should never get here")
 }
