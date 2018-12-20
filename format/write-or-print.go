@@ -23,8 +23,7 @@ const DIRECTORY_WRITE_PERMISSIONS = 0700
 const FILE_WRITE_PERMISSIONS = 0600
 
 func OpenFileForWrite(path string) (*os.File, error) {
-	err := os.MkdirAll(filepath.Dir(path), DIRECTORY_WRITE_PERMISSIONS)
-	if err != nil {
+	if err := os.MkdirAll(filepath.Dir(path), DIRECTORY_WRITE_PERMISSIONS); err != nil {
 		return nil, err
 	}
 	return os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, FILE_WRITE_PERMISSIONS)

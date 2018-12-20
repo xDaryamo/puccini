@@ -50,8 +50,7 @@ func (self *Clout) Resolve() error {
 
 		for _, e := range v.EdgesOut {
 			var ok bool
-			e.Target, ok = self.Vertexes[e.TargetID]
-			if !ok {
+			if e.Target, ok = self.Vertexes[e.TargetID]; !ok {
 				return fmt.Errorf("could not resolve Clout, bad TargetID: \"%s\"", e.TargetID)
 			}
 
@@ -66,9 +65,9 @@ func (self *Clout) Resolve() error {
 }
 
 func (self *Clout) Normalize() (*Clout, error) {
-	s, err := format.EncodeYaml(self)
-	if err != nil {
+	if s, err := format.EncodeYaml(self); err == nil {
+		return DecodeYaml(strings.NewReader(s))
+	} else {
 		return nil, err
 	}
-	return DecodeYaml(strings.NewReader(s))
 }

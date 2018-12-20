@@ -33,7 +33,7 @@ func ConfigureLogging(verbosity int, file *string) {
 			fmt.Fprintln(color.Error, color.RedString(message))
 			os.Exit(1)
 		}
-		//defer f.Close()
+		// defer f.Close() ???
 		backend = logging.NewLogBackend(f, "", 0)
 		logging.SetFormatter(plainFormatter)
 	} else {

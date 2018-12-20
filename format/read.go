@@ -27,8 +27,7 @@ func ReadYaml(reader io.Reader) (interface{}, error) {
 	var data interface{}
 	decoder := yaml.NewDecoder(reader)
 	decoder.SetStrict(true)
-	err := decoder.Decode(&data)
-	if err != nil {
+	if err := decoder.Decode(&data); err != nil {
 		return nil, err
 	}
 	data, _ = ard.EnsureValue(data)
@@ -38,19 +37,17 @@ func ReadYaml(reader io.Reader) (interface{}, error) {
 func ReadJson(reader io.Reader) (interface{}, error) {
 	var data interface{}
 	decoder := json.NewDecoder(reader)
-	err := decoder.Decode(&data)
-	if err != nil {
+	if err := decoder.Decode(&data); err != nil {
 		return nil, err
 	}
-	return data, err
+	return data, nil
 }
 
 func ReadXml(reader io.Reader) (interface{}, error) {
 	var data interface{}
 	decoder := xml.NewDecoder(reader)
-	err := decoder.Decode(&data)
-	if err != nil {
+	if err := decoder.Decode(&data); err != nil {
 		return nil, err
 	}
-	return data, err
+	return data, nil
 }

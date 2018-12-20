@@ -113,11 +113,10 @@ func GetScriptSection(name string, c *clout.Clout) (interface{}, error) {
 	}
 
 	m := metadata
-	var ok bool
 	for _, s := range segments {
 		o := m[s]
-		m, ok = o.(ard.Map)
-		if !ok {
+		var ok bool
+		if m, ok = o.(ard.Map); !ok {
 			return nil, fmt.Errorf("script not found: %s", name)
 		}
 	}

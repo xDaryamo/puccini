@@ -10,17 +10,16 @@ import (
 
 func DecodeJson(reader io.Reader) (*Clout, error) {
 	var c Clout
+	var err error
 
 	decoder := json.NewDecoder(reader)
 	decoder.DisallowUnknownFields()
 
-	err := decoder.Decode(&c)
-	if err != nil {
+	if err = decoder.Decode(&c); err != nil {
 		return nil, err
 	}
 
-	err = c.Resolve()
-	if err != nil {
+	if err = c.Resolve(); err != nil {
 		return nil, err
 	}
 
@@ -29,17 +28,16 @@ func DecodeJson(reader io.Reader) (*Clout, error) {
 
 func DecodeYaml(reader io.Reader) (*Clout, error) {
 	var c Clout
+	var err error
 
 	decoder := yaml.NewDecoder(reader)
 	decoder.SetStrict(true)
 
-	err := decoder.Decode(&c)
-	if err != nil {
+	if err = decoder.Decode(&c); err != nil {
 		return nil, err
 	}
 
-	err = c.Resolve()
-	if err != nil {
+	if err = c.Resolve(); err != nil {
 		return nil, err
 	}
 
@@ -48,16 +46,15 @@ func DecodeYaml(reader io.Reader) (*Clout, error) {
 
 func DecodeXml(reader io.Reader) (*Clout, error) {
 	var c Clout
+	var err error
 
 	decoder := xml.NewDecoder(reader)
 
-	err := decoder.Decode(&c)
-	if err != nil {
+	if err = decoder.Decode(&c); err != nil {
 		return nil, err
 	}
 
-	err = c.Resolve()
-	if err != nil {
+	if err = c.Resolve(); err != nil {
 		return nil, err
 	}
 

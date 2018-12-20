@@ -40,8 +40,7 @@ func WriteYaml(data interface{}, writer io.Writer) error {
 		// YAML separates each entry with "---"
 		// (In JSON the slice would be written as an array)
 		for _, d := range slice {
-			err := encoder.Encode(d)
-			if err != nil {
+			if err := encoder.Encode(d); err != nil {
 				return err
 			}
 		}
@@ -65,8 +64,7 @@ func WriteXml(data interface{}, writer io.Writer, indent string) error {
 
 	data = EnsureXml(data)
 
-	_, err = io.WriteString(writer, xml.Header)
-	if err != nil {
+	if _, err := io.WriteString(writer, xml.Header); err != nil {
 		return err
 	}
 	encoder := xml.NewEncoder(writer)

@@ -20,8 +20,7 @@ func Encode(data interface{}, format string) (string, error) {
 
 func EncodeYaml(data interface{}) (string, error) {
 	var writer strings.Builder
-	err := WriteYaml(data, &writer)
-	if err != nil {
+	if err := WriteYaml(data, &writer); err != nil {
 		return "", err
 	}
 	return writer.String(), nil
@@ -29,8 +28,7 @@ func EncodeYaml(data interface{}) (string, error) {
 
 func EncodeJson(data interface{}, indent string) (string, error) {
 	var writer strings.Builder
-	err := WriteJson(data, &writer, indent)
-	if err != nil {
+	if err := WriteJson(data, &writer, indent); err != nil {
 		return "", err
 	}
 	s := writer.String()
@@ -43,8 +41,7 @@ func EncodeJson(data interface{}, indent string) (string, error) {
 
 func EncodeXml(data interface{}, indent string) (string, error) {
 	var writer strings.Builder
-	err := WriteXml(data, &writer, indent)
-	if err != nil {
+	if err := WriteXml(data, &writer, indent); err != nil {
 		return "", err
 	}
 	return writer.String(), nil

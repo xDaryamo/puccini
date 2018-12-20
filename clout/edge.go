@@ -66,8 +66,7 @@ func (self *Edge) Marshalable() interface{} {
 
 func (self *Edge) Unmarshal(f func(m *MarshalableEdge) error) error {
 	var m MarshalableEdge
-	err := f(&m)
-	if err != nil {
+	if err := f(&m); err != nil {
 		return err
 	}
 	self.Metadata = m.Metadata

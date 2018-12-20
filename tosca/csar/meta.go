@@ -64,14 +64,14 @@ func ReadMeta(reader io.Reader) (*Meta, error) {
 		}
 	}
 
-	err := scanner.Err()
-	if err != nil {
+	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
 
 	self := &Meta{}
 
 	for name, value := range data {
+		var err error
 		switch name {
 		case "TOSCA-Meta-File-Version":
 			if self.MetaVersion, err = ParseVersion(value); err != nil {
@@ -88,8 +88,7 @@ func ReadMeta(reader io.Reader) (*Meta, error) {
 		}
 	}
 
-	err = require(data, "TOSCA-Meta-File-Version", "CSAR-Version", "Created-By")
-	if err != nil {
+	if err := require(data, "TOSCA-Meta-File-Version", "CSAR-Version", "Created-By"); err != nil {
 		return nil, err
 	}
 

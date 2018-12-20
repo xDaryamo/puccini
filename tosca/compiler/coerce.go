@@ -8,8 +8,7 @@ import (
 
 func Coerce(clout_ *clout.Clout, problems_ *problems.Problems) *clout.Clout {
 	context := js.NewContext("tosca.coerce", log, true, "yaml", "")
-	err := context.Exec(clout_, "tosca.coerce", map[string]interface{}{"problems": problems_})
-	if err != nil {
+	if err := context.Exec(clout_, "tosca.coerce", map[string]interface{}{"problems": problems_}); err != nil {
 		problems_.ReportError(err)
 	}
 

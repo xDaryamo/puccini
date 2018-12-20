@@ -46,12 +46,11 @@ var XmlMapStartElement = xml.StartElement{Name: xml.Name{Local: "map"}}
 
 // xml.Marshaler interface
 func (self XmlMap) MarshalXML(encoder *xml.Encoder, start xml.StartElement) error {
-	err := encoder.EncodeToken(XmlMapStartElement)
-	if err != nil {
+	var err error
+	if err = encoder.EncodeToken(XmlMapStartElement); err != nil {
 		return err
 	}
-	err = encoder.Encode(self.Entries)
-	if err != nil {
+	if err = encoder.Encode(self.Entries); err != nil {
 		return err
 	}
 	return encoder.EncodeToken(XmlMapStartElement.End())
@@ -72,24 +71,20 @@ var XmlValueStart = xml.StartElement{Name: xml.Name{Local: "value"}}
 
 // xml.Marshaler interface
 func (self XmlMapEntry) MarshalXML(encoder *xml.Encoder, start xml.StartElement) error {
-	err := encoder.EncodeToken(XmlMapEntryStart)
-	if err != nil {
+	var err error
+	if err := encoder.EncodeToken(XmlMapEntryStart); err != nil {
 		return err
 	}
-	err = encoder.EncodeElement(self.Key, XmlKeyStart)
-	if err != nil {
+	if err := encoder.EncodeElement(self.Key, XmlKeyStart); err != nil {
 		return err
 	}
-	err = encoder.EncodeToken(XmlValueStart)
-	if err != nil {
+	if err := encoder.EncodeToken(XmlValueStart); err != nil {
 		return err
 	}
-	err = encoder.Encode(self.Value)
-	if err != nil {
+	if err = encoder.Encode(self.Value); err != nil {
 		return err
 	}
-	err = encoder.EncodeToken(XmlValueStart.End())
-	if err != nil {
+	if err = encoder.EncodeToken(XmlValueStart.End()); err != nil {
 		return err
 	}
 	return encoder.EncodeToken(XmlMapEntryStart.End())

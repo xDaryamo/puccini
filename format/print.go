@@ -62,8 +62,7 @@ func PrintXml(data interface{}, pretty bool) error {
 	if pretty {
 		indent = Indent
 	}
-	err := WriteXml(data, Stdout, indent)
-	if err != nil {
+	if err := WriteXml(data, Stdout, indent); err != nil {
 		return err
 	}
 	if pretty {

@@ -79,15 +79,13 @@ func (self *CloutContext) NewFunction(data interface{}, site interface{}, source
 	c.Arguments = make([]Coercible, len(originalArguments))
 	for index, argument := range originalArguments {
 		var err error
-		c.Arguments[index], err = self.NewCoercible(argument, site, source, target)
-		if err != nil {
+		if c.Arguments[index], err = self.NewCoercible(argument, site, source, target); err != nil {
 			return nil, err
 		}
 	}
 
 	var err error
-	c.Constraints, err = self.NewConstraintsForValue(map_, site, source, target)
-	if err != nil {
+	if c.Constraints, err = self.NewConstraintsForValue(map_, site, source, target); err != nil {
 		return nil, err
 	}
 
@@ -153,17 +151,16 @@ func (self *Function) Validate(value interface{}, errorWhenInvalid bool) (bool, 
 		return false, self.WrapError(arguments, err)
 	}
 
-	valid, ok := r.(bool)
-	if !ok {
-		return false, self.NewError(arguments, "\"validate\" did not return a bool")
-	}
-
-	if !valid {
-		if errorWhenInvalid {
-			return false, self.NewError(arguments, "")
-		} else {
-			return false, nil
+	if valid, ok := r.(bool); ok {
+		if !valid {
+			if errorWhenInvalid {
+				return false, self.NewError(arguments, "")
+			} else {
+				return false, nil
+			}
 		}
+	} else {
+		return false, self.NewError(arguments, "\"validate\" did not return a bool")
 	}
 
 	return true, nil

@@ -13,19 +13,17 @@ import (
 func DecodeJson(reader io.Reader) (Map, error) {
 	data := make(Map)
 	decoder := json.NewDecoder(reader)
-	err := decoder.Decode(&data)
-	if err != nil {
+	if err := decoder.Decode(&data); err != nil {
 		return nil, err
 	}
-	return data, err
+	return data, nil
 }
 
 func DecodeYaml(reader io.Reader) (Map, error) {
 	data := make(map[string]interface{}) // *not* Map
 	decoder := yaml.NewDecoder(reader)
 	decoder.SetStrict(true)
-	err := decoder.Decode(&data)
-	if err != nil {
+	if err := decoder.Decode(&data); err != nil {
 		return nil, err
 	}
 	return EnsureMap(data), nil
@@ -34,9 +32,8 @@ func DecodeYaml(reader io.Reader) (Map, error) {
 func DecodeXml(reader io.Reader) (Map, error) {
 	data := make(Map)
 	decoder := xml.NewDecoder(reader)
-	err := decoder.Decode(&data)
-	if err != nil {
+	if err := decoder.Decode(&data); err != nil {
 		return nil, err
 	}
-	return data, err
+	return data, nil
 }
