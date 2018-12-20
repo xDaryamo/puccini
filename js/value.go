@@ -10,6 +10,7 @@ import (
 
 type Value struct {
 	Context     *CloutContext `json:"-" yaml:"-"`
+	Data        interface{}   `json:"-" yaml:"-"`
 	Value       interface{}   `json:"value" yaml:"value"`
 	Constraints Constraints   `json:"constraints" yaml:"constraints"`
 }
@@ -17,6 +18,7 @@ type Value struct {
 func (self *CloutContext) NewValue(data interface{}, site interface{}, source interface{}, target interface{}) (*Value, error) {
 	c := Value{
 		Context: self,
+		Data:    data,
 		Value:   data,
 	}
 
@@ -70,5 +72,5 @@ func (self *Value) Coerce() (interface{}, error) {
 
 // Coercible interface
 func (self *Value) Unwrap() interface{} {
-	return self.Value
+	return self.Data
 }
