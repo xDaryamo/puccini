@@ -149,19 +149,6 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		}
 	}
 
-	// TODO: moved to compilation
-	// Phase 6: Topology
-	// if stopAtPhase >= 6 {
-	// 	var ok bool
-	// 	if s, ok = parser.Normalize(context.ServiceTemplate.EntityPtr); ok {
-	// 		// Only print if there are no problems
-	// 		if !common.Quiet && ToPrintPhase(6) && context.Problems.Empty() {
-	// 			fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Topology"))
-	// 			s.PrintRelationships(1)
-	// 		}
-	// 	}
-	// }
-
 	if examine != "" {
 		entityPtrs := context.Gather(examine)
 		if len(entityPtrs) == 0 {

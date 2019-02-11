@@ -2,12 +2,12 @@
 
 
 [[projects]]
-  digest = "1:f25dfe4538112147d22e4c8437efbc2e216112bec37277534ffe146935064ea8"
+  digest = "1:bd8bc15ce3a9929e2777651cbc271fca5561c0d5f42187edb4720e638d24662d"
   name = "github.com/beevik/etree"
   packages = ["."]
   pruneopts = "UT"
-  revision = "9d7e8feddccb4ed1b8afb54e368bd323d2ff652c"
-  version = "v1.0.1"
+  revision = "8aee6516be3b1163bb6450c35c50e4969e3a3aa8"
+  version = "v1.1.0"
 
 [[projects]]
   digest = "1:72dc2b6056e7097f829260e4a2ff08d32fec6017df1982a66e110ab4128486f8"
@@ -22,7 +22,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:46790e712d8cd1af3f724882d7dcda83044cdcd049e2b230cdd6dba8d2f48801"
+  digest = "1:70671a6b35e4f052740ac0ad500621ba43230b9133945de1afc87977de7101f4"
   name = "github.com/dop251/goja"
   packages = [
     ".",
@@ -32,7 +32,7 @@
     "token",
   ]
   pruneopts = "UT"
-  revision = "2dd08a5fc66566421076e9f70c5946989fb3ba76"
+  revision = "6d5bf35058fa6d8d81be15498c42c11a6a75c391"
 
 [[projects]]
   digest = "1:865079840386857c809b72ce300be7580cb50d3d3129ce11bf9aa6ca2bc1934a"
@@ -119,11 +119,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:eadf44cffe7fd1f587d8a9bd36fa3eb959b9b8e51840bfba34754db00cdf7e6b"
+  digest = "1:8b466798e96432c23185ca32826702885299f94eb644c9a8dedb79771dff383a"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "ad97f365e15054527b467150f898ec66d7f81e14"
+  revision = "3b5209105503162ded1863c307ac66fec31120dd"
 
 [[projects]]
   digest = "1:0f60a87d38e0f08d784e6a11a700314475970acfd7f5a14929e55facaba54ac8"

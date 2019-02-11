@@ -104,18 +104,25 @@ func (self *Context) FieldChild(name string, data interface{}) *Context {
 	}
 }
 
-func (self *Context) RequiredFieldChild(name string) (*Context, bool) {
+func (self *Context) GetFieldChild(name string) (*Context, bool) {
 	if !self.ValidateType("map") {
 		return nil, false
 	}
 
-	data, ok := self.Data.(ard.Map)[name]
-	if !ok {
+	if data, ok := self.Data.(ard.Map)[name]; ok {
+		return self.FieldChild(name, data), true
+	} else {
+		return nil, false
+	}
+}
+
+func (self *Context) GetRequiredFieldChild(name string) (*Context, bool) {
+	if context, ok := self.GetFieldChild(name); ok {
+		return context, true
+	} else {
 		self.FieldChild(name, nil).ReportFieldMissing()
 		return nil, false
 	}
-
-	return self.FieldChild(name, data), true
 }
 
 func (self *Context) FieldChildren() []*Context {

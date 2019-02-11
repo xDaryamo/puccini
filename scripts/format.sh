@@ -11,6 +11,9 @@ gofmt -w -s -e \
 	"$ROOT/clout" \
 	"$ROOT/common" \
 	"$ROOT/format" \
+	"$ROOT/hot" \
+	"$ROOT/hot/grammars/v2018_08_31" \
+	"$ROOT/hot/profiles/v2018_08_31" \
 	"$ROOT/js" \
 	"$ROOT/puccini-js" \
 	"$ROOT/puccini-js/cmd" \

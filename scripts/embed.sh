@@ -18,13 +18,15 @@ EOT
 
 
 profile () {
-	local GROUP=$1
-	local VERSION=$2
+	local DIR_PREFIX=$1
+	local NAME_PREFIX=$2
+	local VERSION=$3
 
-	local PACKAGE="v${VERSION/./_}"
-	local SOURCE_DIR="$ROOT/assets/tosca/profiles/$GROUP/$VERSION"
-	local DEST_DIR="$ROOT/tosca/profiles/$GROUP/$PACKAGE"
-	local LOCATION="internal:/tosca/$GROUP/$VERSION/profile.yaml"
+	local PACKAGE="v${VERSION//./_}"
+	PACKAGE="${PACKAGE//-/_}"
+	local SOURCE_DIR="$ROOT/assets/$DIR_PREFIX/$VERSION"
+	local DEST_DIR="$ROOT/$DIR_PREFIX/$PACKAGE"
+	local LOCATION="internal:/$NAME_PREFIX/$VERSION/profile.yaml"
 	local SOURCE_NAME
 	local SOURCE
 	local DEST
@@ -68,7 +70,7 @@ EOT
 		header "$DEST" "$PACKAGE"
 		cat << EOT >> "$DEST"
 func init() {
-	Profile["/tosca/$GROUP/$VERSION/$SOURCE_NAME"] = \`
+	Profile["/$NAME_PREFIX/$VERSION/$SOURCE_NAME"] = \`
 EOT
 		cat "$SOURCE" | sed 's/`/` + "`" + `/g' >> "$DEST"
 		cat << EOT >> "$DEST"
@@ -81,8 +83,9 @@ EOT
 }
 
 
-profile simple 1.1
-profile simple-for-nfv 1.0
-profile kubernetes 1.0
-profile openstack 1.0
-profile bpmn 1.0
+profile tosca/profiles/simple tosca/simple 1.1
+profile tosca/profiles/simple-for-nfv tosca/simple-for-nfv 1.0
+profile tosca/profiles/kubernetes tosca/kubernetes 1.0
+profile tosca/profiles/openstack tosca/openstack 1.0
+profile tosca/profiles/bpmn tosca/bpmn 1.0
+profile hot/profiles hot 2018-08-31

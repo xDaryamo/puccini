@@ -22,8 +22,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 		if err != nil {
 			return nil, err
 		}
-		err = js.SetMapNested(metadata, name, sourceCode)
-		if err != nil {
+		if err = js.SetMapNested(metadata, name, sourceCode); err != nil {
 			return nil, err
 		}
 	}
