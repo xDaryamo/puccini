@@ -13,7 +13,7 @@ import (
 )
 
 func (self *Context) ReadServiceTemplate(url_ url.URL) bool {
-	return self.readRootEntity(url_, ServiceTemplateGrammars)
+	return self.readRootEntity(url_, RootEntityGrammars)
 }
 
 func (self *Context) readRootEntity(url_ url.URL, readers Grammars) bool {
@@ -120,7 +120,7 @@ func (self *Context) readImports(container *Import) {
 
 			// Read (concurrently)
 			self.WG.Add(1)
-			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, UnitGrammars)
+			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, ImportedEntityGrammars)
 		}
 	}
 }

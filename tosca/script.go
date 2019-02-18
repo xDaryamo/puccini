@@ -55,8 +55,11 @@ type Script struct {
 }
 
 func (self *Script) GetSourceCode() (string, error) {
-	if self.Origin != nil {
-		origins := []url.URL{self.Origin}
+	if self.Path != "" {
+		var origins []url.URL
+		if self.Origin != nil {
+			origins = []url.URL{self.Origin}
+		}
 
 		url_, err := url.NewValidURL(self.Path, origins)
 		if err != nil {

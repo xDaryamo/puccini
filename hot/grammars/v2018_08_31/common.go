@@ -13,8 +13,13 @@ var Readers = make(map[string]tosca.Reader)
 var DefaultScriptNamespace = make(tosca.ScriptNamespace)
 
 func init() {
-	Readers["Template"] = ReadTemplate
+	Readers["Condition"] = ReadCondition
+	Readers["Output"] = ReadOutput
+	Readers["Parameter"] = ReadParameter
 	Readers["ParameterGroup"] = ReadParameterGroup
+	Readers["Resource"] = ReadResource
+	Readers["Template"] = ReadTemplate
+	Readers["Value"] = ReadValue
 
 	for name, sourceCode := range FunctionSourceCode {
 		DefaultScriptNamespace[name] = &tosca.Script{

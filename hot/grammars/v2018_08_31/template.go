@@ -16,7 +16,11 @@ type Template struct {
 
 	HeatTemplateVersion *string           `read:"heat_template_version" require:"heat_template_version"`
 	Description         *string           `read:"description"`
-	ParameterGroups     []*ParameterGroup `read:"parameter_groups,ParameterGroup"`
+	ParameterGroups     []*ParameterGroup `read:"parameter_groups,[]ParameterGroup"`
+	Parameters          []*Parameter      `read:"parameters,Parameter"`
+	Resources           []*Resource       `read:"resources,Resource"`
+	Outputs             []*Output         `read:"outputs,Output"`
+	Conditions          []*Condition      `read:"conditions,Condition"`
 }
 
 func NewTemplate(context *tosca.Context) *Template {
@@ -26,9 +30,16 @@ func NewTemplate(context *tosca.Context) *Template {
 // tosca.Reader signature
 func ReadTemplate(context *tosca.Context) interface{} {
 	self := NewTemplate(context)
+	context.ImportScript("tosca.resolve", "internal:/hot/2018-08-31/js/resolve.js")
 	context.ScriptNamespace.Merge(DefaultScriptNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self, Readers)))
 	return self
+}
+
+// parser.Importer interface
+func (self *Template) GetImportSpecs() []*tosca.ImportSpec {
+	var importSpecs []*tosca.ImportSpec
+	return importSpecs
 }
 
 // tosca.Normalizable interface

@@ -37,6 +37,7 @@ func TestParse(t *testing.T) {
 	testParse(t, "kubernetes/bookinfo/bookinfo-simple.yaml", nil)
 	testParse(t, "openstack/hello-world.yaml", nil)
 	testParse(t, "bpmn/open-loop.yaml", nil)
+	testParse(t, "hot/hello-world.yaml", nil)
 }
 
 var ROOT string

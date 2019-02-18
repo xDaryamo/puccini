@@ -1,0 +1,48 @@
+heat_template_version: 2018-08-31
+
+# See: https://docs.openstack.org/heat/rocky/template_guide/hot_guide.html
+
+description: Simple template to deploy a single compute instance
+
+parameters:
+  key_name:
+    type: string
+    label: Key Name
+    description: Name of key-pair to be used for compute instance
+  image_id:
+    type: string
+    label: Image ID
+    description: Image to be used for compute instance
+  instance_type:
+    type: string
+    label: Instance Type
+    description: Type of instance (flavor) to be used
+    default: m1.small
+    constraints:
+    - allowed_values: [ m1.medium, m1.large, m1.xlarge ]
+      description: Value must be one of m1.medium, m1.large or m1.xlarge.
+  database_password:
+    type: string
+    label: Database Password
+    description: Password to be used for database
+    hidden: true
+    constraints:
+    - length: { min: 6, max: 8 }
+      description: Password length must be between 6 and 8 characters.
+    - allowed_pattern: "[a-zA-Z0-9]+"
+      description: Password must consist of characters and numbers only.
+    - allowed_pattern: "[A-Z]+[a-zA-Z0-9]*"
+      description: Password must start with an uppercase character.
+
+resources:
+  my_instance:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      image: { get_param: image_id }
+      flavor: { get_param: instance_type }
+
+outputs:
+  instance_ip:
+    description: The IP address of the deployed instance
+    value: { get_attr: [my_instance, first_address] }
