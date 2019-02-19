@@ -4,7 +4,7 @@ Field Tags
 ### name:"name"
 
 Gives the whole type a human-readable name for reporting problems. Go doesn't support tags for the
-type as a whole, so just put it on any field. (And anonymous field could make sense.)
+type as a whole, so just put it on any field, even an anonymous field could make sense.
 
 ### read:"key", read:"key,reader"
 

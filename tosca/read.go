@@ -272,6 +272,15 @@ func (self *Context) ReadStringList() *[]string {
 	return nil
 }
 
+func (self *Context) ReadStringOrStringList() *[]string {
+	if self.Is("list") {
+		return self.ReadStringList()
+	} else if self.ValidateType("list", "string") {
+		return &[]string{*self.ReadString()}
+	}
+	return nil
+}
+
 func (self *Context) ReadStringListFixed(length int) *[]string {
 	strings := self.ReadStringList()
 	if (strings != nil) && (len(*strings) != length) {

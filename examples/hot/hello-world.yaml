@@ -37,6 +37,7 @@ parameters:
 resources:
   my_instance:
     type: OS::Nova::Server
+    #deletion_policy: delete
     properties:
       key_name: { get_param: key_name }
       image: { get_param: image_id }
@@ -45,4 +46,4 @@ resources:
 outputs:
   instance_ip:
     description: The IP address of the deployed instance
-    value: { get_attr: [my_instance, first_address] }
+    value: { get_attr: [ my_instance, first_address ] }

@@ -38,6 +38,7 @@ func TestParse(t *testing.T) {
 	testParse(t, "openstack/hello-world.yaml", nil)
 	testParse(t, "bpmn/open-loop.yaml", nil)
 	testParse(t, "hot/hello-world.yaml", nil)
+	testParse(t, "hot/single-server-with-existing-floating-ip.yaml", nil)
 }
 
 var ROOT string

@@ -1,8 +1,8 @@
 package parser
 
 import (
-	hot "github.com/tliron/puccini/hot/profiles/v2018_08_31"
 	bpmn_v1_0 "github.com/tliron/puccini/tosca/profiles/bpmn/v1_0"
+	hot "github.com/tliron/puccini/tosca/profiles/hot/v2018_08_31"
 	kubernetes_v1_0 "github.com/tliron/puccini/tosca/profiles/kubernetes/v1_0"
 	openstack_v1_0 "github.com/tliron/puccini/tosca/profiles/openstack/v1_0"
 	simpleForNFV_v1_0 "github.com/tliron/puccini/tosca/profiles/simple-for-nfv/v1_0"
