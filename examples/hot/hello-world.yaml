@@ -17,7 +17,7 @@ parameters:
     type: string
     label: Instance Type
     description: Type of instance (flavor) to be used
-    default: m1.small
+    default: m1.large
     constraints:
     - allowed_values: [ m1.medium, m1.large, m1.xlarge ]
       description: Value must be one of m1.medium, m1.large or m1.xlarge.
@@ -37,7 +37,6 @@ parameters:
 resources:
   my_instance:
     type: OS::Nova::Server
-    #deletion_policy: delete
     properties:
       key_name: { get_param: key_name }
       image: { get_param: image_id }

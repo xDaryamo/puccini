@@ -54,16 +54,16 @@ func (self *Error) Signature() string {
 // error interface
 func (self Error) Error() string {
 	if self.Message == "" {
-		return fmt.Sprintf("%s: \"%s\" failed", self.Function.Path, self.Signature())
+		return fmt.Sprintf("%s: call to \"%s\" failed", self.Function.Path, self.Signature())
 	} else {
-		return fmt.Sprintf("%s: \"%s\" failed: %s", self.Function.Path, self.Signature(), self.Message)
+		return fmt.Sprintf("%s: call to \"%s\" failed: %s", self.Function.Path, self.Signature(), self.Message)
 	}
 }
 
 func (self Error) ColorError() string {
 	if self.Message == "" {
-		return fmt.Sprintf("%s: \"%s\" failed", format.ColorPath(self.Function.Path), format.ColorName(self.Signature()))
+		return fmt.Sprintf("%s: call to \"%s\" failed", format.ColorPath(self.Function.Path), format.ColorName(self.Signature()))
 	} else {
-		return fmt.Sprintf("%s: \"%s\" failed: %s", format.ColorPath(self.Function.Path), format.ColorName(self.Signature()), self.Message)
+		return fmt.Sprintf("%s: call to \"%s\" failed: %s", format.ColorPath(self.Function.Path), format.ColorName(self.Signature()), self.Message)
 	}
 }

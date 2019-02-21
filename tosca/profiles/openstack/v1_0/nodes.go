@@ -8,11 +8,14 @@ tosca_definitions_version: tosca_simple_yaml_1_1
 
 imports:
 - data.yaml
+- capabilities.yaml
+- relationships.yaml
 
 node_types:
 
   openstack.Nova.Server:
-    derived_from: Root
+    metadata:
+      internal_name: OS::Nova::Server
     properties:
       admin_pass:
         description: >-
@@ -238,5 +241,15 @@ node_types:
           Tags from the server.
         type: list
         entry_schema: string
+
+    capabilities:
+      resource:
+        type: openstack.Resource
+
+    requirements:
+    - dependency:
+        capability: openstack.Resource
+        relationship: openstack.DependsOn
+        occurrences: [ 0, UNBOUNDED ]
 `
 }

@@ -2,12 +2,12 @@
 // [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#list_join]
 
 function evaluate() {
-	length = arguments.length;
+	var length = arguments.length;
 	if (length < 1)
 		throw 'must have at least 1 arguments';
-	a = [];
+	var a = [];
 	for (var i = 1; i < length; i++) {
-		argument = arguments[i];
+		var argument = arguments[i];
 		if (argument.$string !== undefined)
 			argument = argument.$string;
 		a.push(argument);

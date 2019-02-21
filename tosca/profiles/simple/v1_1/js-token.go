@@ -12,7 +12,7 @@ function evaluate(v, separators, index) {
 		throw 'must have 3 arguments';
 	if (v.$string !== undefined)
 		v = v.$string;
-	s = v.split(new RegExp('[' + escape(separators) + ']'));
+	var s = v.split(new RegExp('[' + escape(separators) + ']'));
 	return s[index];
 }
 

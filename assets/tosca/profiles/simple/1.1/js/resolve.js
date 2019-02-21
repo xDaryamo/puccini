@@ -2,9 +2,9 @@
 clout.exec('tosca.utils');
 
 // Remove existing relationships
-nodeTemplateVertexes = [];
+var nodeTemplateVertexes = [];
 for (var vertexId in clout.vertexes) {
-	vertex = clout.vertexes[vertexId];
+	var vertex = clout.vertexes[vertexId];
 	if (tosca.isNodeTemplate(vertex)) {
 		nodeTemplateVertexes.push(vertex);
 		for (var e = 0; e < vertex.edgesOut.length; e++) {
@@ -24,24 +24,24 @@ tosca.toCoercibles();
 
 // Resolve all requirements
 for (var v = 0; v < nodeTemplateVertexes.length; v++) {
-	vertex = nodeTemplateVertexes[v];
-	nodeTemplate = vertex.properties;
-	requirements = nodeTemplate.requirements;
+	var vertex = nodeTemplateVertexes[v];
+	var nodeTemplate = vertex.properties;
+	var requirements = nodeTemplate.requirements;
 	for (var r = 0; r < requirements.length; r++) {
-		requirement = requirements[r];
+		var requirement = requirements[r];
 		resolve(vertex, nodeTemplate, requirement);
 	}
 }
 
 // Check that all capabilities have their minimum relationship count
 for (var v = 0; v < nodeTemplateVertexes.length; v++) {
-	vertex = nodeTemplateVertexes[v];
-	nodeTemplate = vertex.properties;
-	capabilities = nodeTemplate.capabilities;
+	var vertex = nodeTemplateVertexes[v];
+	var nodeTemplate = vertex.properties;
+	var capabilities = nodeTemplate.capabilities;
 	for (var capabilityName in capabilities) {
-		capability = capabilities[capabilityName];
-		relationshipCount = countRelationships(vertex, capabilityName);
-		minRelationshipCount = capability.minRelationshipCount;
+		var capability = capabilities[capabilityName];
+		var relationshipCount = countRelationships(vertex, capabilityName);
+		var minRelationshipCount = capability.minRelationshipCount;
 		if (relationshipCount < minRelationshipCount)
 			notEnoughRelationships(nodeTemplate.name, capabilityName, relationshipCount, minRelationshipCount)
 	}
@@ -52,15 +52,15 @@ tosca.unwrapCoercibles();
 puccini.write(clout)
 
 function resolve(sourceVertex, sourceNodeTemplate, requirement) {
-	path = requirement.path;
-	name = requirement.name;
+	var path = requirement.path;
+	var name = requirement.name;
 
 	if (isSubstituted(sourceNodeTemplate.name, name)) {
 		puccini.log.infof('{resolve} %s: skipping because in substitution mappings', path)
 		return;
 	}
 
-	candidates = gatherCandidateNodeTemplates(sourceVertex, requirement);
+	var candidates = gatherCandidateNodeTemplates(sourceVertex, requirement);
 	if (candidates.length === 0) {
 		unsatisfied(path, name, 'there are no candidate node templates');
 		return;
@@ -73,20 +73,20 @@ function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 	}
 
 	// Gather priority candidates: those that have not yet fulfilled their minimum relationship count
-	priorityCandidates = [];
+	var priorityCandidates = [];
 	for (var c = 0; c < candidates.length; c++) {
-		candidate = candidates[c];
+		var candidate = candidates[c];
 		if ((candidate.capability.minRelationshipCount !== 0) && (countRelationships(candidate.vertex, candidate.capabilityName) < candidate.capability.minRelationshipCount))
 			priorityCandidates.push(candidate);
 	}
 
-	chosen = null;
+	var chosen = null;
 
 	if (priorityCandidates.length !== 0)
 		// Of the priority candidates, pick the one with the highest minimum relationship count
 		// (needs to be fulfilled soonest)
 		for (var c = 0; c < priorityCandidates.length; c++) {
-			candidate = priorityCandidates[c];
+			var candidate = priorityCandidates[c];
 			if ((chosen === null) || (candidate.capability.minRelationshipCount > chosen.capability.minRelationshipCount))
 				chosen = candidate;
 		}
@@ -104,17 +104,17 @@ function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 }
 
 function gatherCandidateNodeTemplates(sourceVertex, requirement) {
-	path = requirement.path;
-	nodeTemplateName = requirement.nodeTemplateName;
-	nodeTypeName = requirement.nodeTypeName;
-	nodeTemplatePropertyConstraints = requirement.nodeTemplatePropertyConstraints;
-	capabilityPropertyConstraintsMap = requirement.capabilityPropertyConstraints;
+	var path = requirement.path;
+	var nodeTemplateName = requirement.nodeTemplateName;
+	var nodeTypeName = requirement.nodeTypeName;
+	var nodeTemplatePropertyConstraints = requirement.nodeTemplatePropertyConstraints;
+	var capabilityPropertyConstraintsMap = requirement.capabilityPropertyConstraints;
 
-	candidates = [];
+	var candidates = [];
 	for (var v = 0; v < nodeTemplateVertexes.length; v++) {
-		vertex = nodeTemplateVertexes[v];
-		candidateNodeTemplate = vertex.properties;
-		candidateNodeTemplateName = candidateNodeTemplate.name;
+		var vertex = nodeTemplateVertexes[v];
+		var candidateNodeTemplate = vertex.properties;
+		var candidateNodeTemplateName = candidateNodeTemplate.name;
 
 		if ((nodeTemplateName !== '') && (nodeTemplateName !== candidateNodeTemplateName)) {
 			puccini.log.debugf('{resolve} %s: node template "%s" is not named "%s"', path, candidateNodeTemplateName, nodeTemplateName);
@@ -132,14 +132,14 @@ function gatherCandidateNodeTemplates(sourceVertex, requirement) {
 			continue;
 		}
 
-		candidateCapabilities = candidateNodeTemplate.capabilities;
+		var candidateCapabilities = candidateNodeTemplate.capabilities;
 
 		// Capability filter
 		if (capabilityPropertyConstraintsMap.length !== 0) {
-			valid = true;
+			var valid = true;
 			for (var candidateCapabilityName in candidateCapabilities) {
-				candidateCapability = candidateCapabilities[candidateCapabilityName];
-				capabilityPropertyConstraints = capabilityPropertyConstraintsMap[candidateCapabilityName];
+				var candidateCapability = candidateCapabilities[candidateCapabilityName];
+				var capabilityPropertyConstraints = capabilityPropertyConstraintsMap[candidateCapabilityName];
 				if ((capabilityPropertyConstraints !== undefined) && (capabilityPropertyConstraints.length !== 0) && !arePropertiesValid(path, sourceVertex, 'capability', candidateCapabilityName, candidateCapability, capabilityPropertyConstraints)) {
 					puccini.log.debugf('{resolve} %s: properties of capability "%s" in node template "%s" do not match constraints', path, candidateCapabilityName, candidateNodeTemplateName);
 					valid = false;
@@ -161,16 +161,17 @@ function gatherCandidateNodeTemplates(sourceVertex, requirement) {
 }
 
 function gatherCandidateCapabilities(requirement, candidateNodeTemplates) {
-	capabilityName = requirement.capabilityName;
-	capabilityTypeName = requirement.capabilityTypeName;
+	var path = requirement.path;
+	var capabilityName = requirement.capabilityName;
+	var capabilityTypeName = requirement.capabilityTypeName;
 
-	candidates = [];
+	var candidates = [];
 	for (var c = 0; c < candidateNodeTemplates.length; c++) {
-		candidate = candidateNodeTemplates[c];
-		candidateVertex = candidate.vertex;
-		candidateNodeTemplateName = candidate.nodeTemplateName;
+		var candidate = candidateNodeTemplates[c];
+		var candidateVertex = candidate.vertex;
+		var candidateNodeTemplateName = candidate.nodeTemplateName;
 
-		candidateCapabilities = [];
+		var candidateCapabilities = [];
 		for (var candidateCapabilityName in candidate.capabilities) {
 			candidateCapabilities.push({
 				name: candidateCapabilityName,
@@ -184,21 +185,21 @@ function gatherCandidateCapabilities(requirement, candidateNodeTemplates) {
 		});
 
 		for (var cc = 0; cc < candidateCapabilities.length; cc++) {
-			candidateCapabilityName = candidateCapabilities[cc].name;
+			var candidateCapabilityName = candidateCapabilities[cc].name;
 
 			if ((capabilityName !== '') && (capabilityName !== candidateCapabilityName)) {
 				puccini.log.debugf('{resolve} %s: capability "%s" in node template "%s" is not named "%s"', path, candidateCapabilityName, candidateNodeTemplateName, capabilityName);
 				continue;
 			}
 
-			candidateCapability = candidateCapabilities[cc].capability;
+			var candidateCapability = candidateCapabilities[cc].capability;
 
 			if ((capabilityTypeName !== '') && !(capabilityTypeName in candidateCapability.types)) {
 				puccini.log.debugf('{resolve} %s: capability "%s" in node template "%s" is not of type "%s"', path, candidateCapabilityName, candidateNodeTemplateName, capabilityTypeName);
 				continue;
 			}
 
-			maxRelationshipCount = candidateCapability.maxRelationshipCount;
+			var maxRelationshipCount = candidateCapability.maxRelationshipCount;
 			if ((maxRelationshipCount !== -1) && (countRelationships(candidateVertex, candidateCapabilityName) === maxRelationshipCount)) {
 				puccini.log.debugf('{resolve} %s: capability "%s" in node template "%s" already has %d relationships, the maximum allowed', path, candidateCapabilityName, candidateNodeTemplateName, maxRelationshipCount);
 				continue;
@@ -217,13 +218,13 @@ function gatherCandidateCapabilities(requirement, candidateNodeTemplates) {
 }
 
 function addRelationship(sourceVertex, requirement, targetVertex, capabilityName) {
-	edge = sourceVertex.newEdgeTo(targetVertex);
+	var edge = sourceVertex.newEdgeTo(targetVertex);
 	edge.metadata['puccini-tosca'] = {
 		version: '1.0',
 		kind: 'relationship'
 	};
 
-	relationship = requirement.relationship;
+	var relationship = requirement.relationship;
 	if (relationship)
 		edge.properties = {
 			name: requirement.name,
@@ -248,9 +249,9 @@ function addRelationship(sourceVertex, requirement, targetVertex, capabilityName
 }
 
 function countRelationships(vertex, capabilityName) {
-	count = 0;
+	var count = 0;
 	for (var e = 0; e < vertex.edgesIn.length; e++) {
-		edge = vertex.edgesIn[e];
+		var edge = vertex.edgesIn[e];
 		if (tosca.isTosca(edge, 'relationship') && (edge.properties.capability === capabilityName))
 			count++;
 	}
@@ -258,20 +259,20 @@ function countRelationships(vertex, capabilityName) {
 }
 
 function arePropertiesValid(path, sourceVertex, kind, name, entity, constraintsMap) {
-	valid = true;
+	var valid = true;
 
-	properties = entity.properties;
+	var properties = entity.properties;
 	for (var propertyName in constraintsMap) {
 		puccini.log.debugf('{resolve} %s: applying constraints to property "%s" of %s "%s"', path, propertyName, kind, name);
 
-		property = properties[propertyName];
+		var property = properties[propertyName];
 		if (property === undefined) {
 			// return false; GOJA: returning from inside for-loop is broken
 			valid = false;
 			break;
 		}
 
-		constraints = constraintsMap[propertyName];
+		var constraints = constraintsMap[propertyName];
 		constraints = clout.newConstraints(constraints, sourceVertex, sourceVertex, entity)
 		if (!constraints.validate(property)) {
 			// return false; GOJA: returning from inside for-loop is broken
@@ -285,10 +286,10 @@ function arePropertiesValid(path, sourceVertex, kind, name, entity, constraintsM
 
 function isSubstituted(nodeTemplateName, requirementName) {
 	for (var vertexId in clout.vertexes) {
-		vertex = clout.vertexes[vertexId];
+		var vertex = clout.vertexes[vertexId];
 		if (tosca.isTosca(vertex, 'substitution')) {
 			for (var e = 0; e < vertex.edgesOut.length; e++) {
-				edge = vertex.edgesOut[e];
+				var edge = vertex.edgesOut[e];
 				if (!tosca.isTosca(edge, 'requirementMapping'))
 					continue;
 

@@ -31,10 +31,8 @@ func init() {
 	}
 
 	for name, sourceCode := range ConstraintSourceCode {
-		nativeArgumentIndexes, _ := ConstraintNativeArgumentIndexes[name]
 		DefaultScriptNamespace[name] = &tosca.Script{
-			SourceCode:            js.Cleanup(sourceCode),
-			NativeArgumentIndexes: nativeArgumentIndexes,
+			SourceCode: js.Cleanup(sourceCode),
 		}
 	}
 }

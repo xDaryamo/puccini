@@ -71,9 +71,9 @@ func ReadResource(context *tosca.Context) interface{} {
 	return self
 }
 
-var capabilityTypeName = "tosca.capabilities.Node"
+var capabilityTypeName = "openstack.Resource"
 var capabilityTypes = normal.NewTypes(capabilityTypeName)
-var relationshipTypes = normal.NewTypes("tosca.relationships.DependsOn")
+var relationshipTypes = normal.NewTypes("openstack.DependsOn")
 
 func (self *Resource) Normalize(s *normal.ServiceTemplate) *normal.NodeTemplate {
 	log.Infof("{normalize} resource: %s", self.Name)
@@ -86,7 +86,7 @@ func (self *Resource) Normalize(s *normal.ServiceTemplate) *normal.NodeTemplate 
 
 	self.Properties.Normalize(n.Properties)
 
-	n.NewCapability("feature").Types = capabilityTypes
+	n.NewCapability("resource").Types = capabilityTypes
 
 	return n
 }

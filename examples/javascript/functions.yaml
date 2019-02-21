@@ -13,8 +13,8 @@ metadata:
   # It can have any number of arguments
   puccini-js.source.in_bed: |-
     function evaluate() {
-      a = [];
-      for (i in arguments) {
+      var a = [];
+      for (var i in arguments) {
         a.push(arguments[i] + ' in bed');
       }
       return a.join('; ');

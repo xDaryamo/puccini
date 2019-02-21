@@ -20,9 +20,8 @@ type PropertyFilter struct {
 
 func NewPropertyFilter(context *tosca.Context) *PropertyFilter {
 	return &PropertyFilter{
-		Entity:            NewEntity(context),
-		Name:              context.Name,
-		ConstraintClauses: make(ConstraintClauses, 0),
+		Entity: NewEntity(context),
+		Name:   context.Name,
 	}
 }
 

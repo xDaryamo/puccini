@@ -1,6 +1,7 @@
 package hot
 
 import (
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
@@ -24,28 +25,42 @@ type Template struct {
 }
 
 func NewTemplate(context *tosca.Context) *Template {
-	return &Template{
+	self := &Template{
 		Entity:     NewEntity(context),
 		Parameters: make(Parameters),
 		Outputs:    make(Outputs),
 	}
+
+	self.Context.ImportScript("tosca.resolve", "internal:/tosca/simple/1.1/js/resolve.js")
+	self.Context.ImportScript("tosca.coerce", "internal:/tosca/simple/1.1/js/coerce.js")
+	self.Context.ImportScript("tosca.visualize", "internal:/tosca/simple/1.1/js/visualize.js")
+	self.Context.ImportScript("tosca.utils", "internal:/tosca/simple/1.1/js/utils.js")
+	self.Context.ImportScript("tosca.helpers", "internal:/tosca/simple/1.1/js/helpers.js")
+
+	self.NewPseudoParameter("OS::stack_name", "stack_name")
+	self.NewPseudoParameter("OS::stack_id", "stack_id")
+	self.NewPseudoParameter("OS::project_id", "project_id")
+
+	return self
 }
 
 // tosca.Reader signature
 func ReadTemplate(context *tosca.Context) interface{} {
 	self := NewTemplate(context)
-
-	context.ImportScript("tosca.resolve", "internal:/tosca/simple/1.1/js/resolve.js")
-	context.ImportScript("tosca.coerce", "internal:/tosca/simple/1.1/js/coerce.js")
-	context.ImportScript("tosca.visualize", "internal:/tosca/simple/1.1/js/visualize.js")
-	context.ImportScript("tosca.utils", "internal:/tosca/simple/1.1/js/utils.js")
-	context.ImportScript("tosca.helpers", "internal:/tosca/simple/1.1/js/helpers.js")
-
 	context.ScriptNamespace.Merge(DefaultScriptNamespace)
-
 	context.ValidateUnsupportedFields(append(context.ReadFields(self, Readers)))
-
 	return self
+}
+
+func (self *Template) NewPseudoParameter(name string, value string) {
+	context := self.Context.FieldChild("parameters", nil).MapChild(name, ard.Map{
+		"type":      "string",
+		"hidden":    true,
+		"immutable": true,
+	})
+	parameter := ReadParameter(context).(*Parameter)
+	parameter.Value = NewValue(context.WithData(value))
+	self.Parameters[name] = parameter
 }
 
 // parser.Importer interface
@@ -72,6 +87,12 @@ func (self *Template) SetInputs(inputs map[string]interface{}) {
 	}
 }
 
+// tosca.Renderable interface
+func (self *Template) Render() {
+	log.Info("{render} template")
+
+}
+
 // tosca.Normalizable interface
 func (self *Template) Normalize() *normal.ServiceTemplate {
 	log.Info("{normalize} template")
@@ -94,6 +115,8 @@ func (self *Template) Normalize() *normal.ServiceTemplate {
 	for _, resource := range self.Resources {
 		resource.NormalizeDependencies(s)
 	}
+
+	// TODO: normalize ParameterGroups
 
 	return s
 }

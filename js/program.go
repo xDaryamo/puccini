@@ -9,7 +9,7 @@ import (
 func GetProgram(name string, script string) (*goja.Program, error) {
 	p, ok := ProgramCache.Load(script)
 	if !ok {
-		program, err := goja.Compile(name, script, false)
+		program, err := goja.Compile(name, script, true)
 		if err != nil {
 			return nil, err
 		}

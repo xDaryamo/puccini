@@ -37,7 +37,7 @@ func TestParse(t *testing.T) {
 	testParse(t, "kubernetes/bookinfo/bookinfo-simple.yaml", nil)
 	testParse(t, "openstack/hello-world.yaml", nil)
 	testParse(t, "bpmn/open-loop.yaml", nil)
-	testParse(t, "hot/hello-world.yaml", nil)
+	testParse(t, "hot/hello-world.yaml", map[string]interface{}{"database_password": "A12345"})
 	testParse(t, "hot/single-server-with-existing-floating-ip.yaml", nil)
 }
 
@@ -68,7 +68,12 @@ func testParse(t *testing.T, url string, inputs map[string]interface{}) {
 			return
 		}
 
-		compiler.Resolve(c, p)
+		c = compiler.Resolve(c, p)
+		if !p.Empty() {
+			t.Errorf("%s", p)
+		}
+
+		c = compiler.Coerce(c, p)
 		if !p.Empty() {
 			t.Errorf("%s", p)
 		}

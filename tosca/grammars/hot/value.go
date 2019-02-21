@@ -61,6 +61,8 @@ func (self *Value) Normalize() normal.Constrainable {
 		constrainable = normal.NewValue(self.Data)
 	}
 
+	self.Constraints.Normalize(self.Context, constrainable)
+
 	if self.Description != nil {
 		constrainable.SetDescription(*self.Description)
 	}

@@ -3,25 +3,25 @@ clout.exec('tosca.utils');
 
 tosca.coerce();
 
-jQueryVersion = '2.2.4';
-jQueryUiVersion = '1.12.1';
-jQueryLayoutVersion = '1.4.3';
-visJsVersion = '4.21.0';
+var jQueryVersion = '2.2.4';
+var jQueryUiVersion = '1.12.1';
+var jQueryLayoutVersion = '1.4.3';
+var visJsVersion = '4.21.0';
 
-colorNode = 'rgb(100,200,255)';
-colorSubstitution = 'rgb(150,200,255)';
-workflowColor = 'rgb(100,255,100)';
+var colorNode = 'rgb(100,200,255)';
+var colorSubstitution = 'rgb(150,200,255)';
+var workflowColor = 'rgb(100,255,100)';
 
-nodes = [];
-edges = [];
+var nodes = [];
+var edges = [];
 
 if (tosca.isTosca(clout)) {
-	templateName = clout.properties.tosca.metadata.template_name;
-	templateAuthor = clout.properties.tosca.metadata.template_author;
-	templateVersion = clout.properties.tosca.metadata.template_version;
-	description = clout.properties.tosca.description;
+	var templateName = clout.properties.tosca.metadata.template_name;
+	var templateAuthor = clout.properties.tosca.metadata.template_author;
+	var templateVersion = clout.properties.tosca.metadata.template_version;
+	var description = clout.properties.tosca.description;
 
-	header = '<h1>Clout from TOSCA Service Template</h1>';
+	var header = '<h1>Clout from TOSCA Service Template</h1>';
 	if (templateName)
 		header += '<h2>' + escapeHtml(templateName) + '</h2>';
 	if (templateVersion)
@@ -35,15 +35,15 @@ if (tosca.isTosca(clout)) {
 }
 
 for (var id in clout.vertexes) {
-	vertex = clout.vertexes[id];
+	var vertex = clout.vertexes[id];
 	addVertex(id, vertex);
 }
 
 function formatDescription(description) {
-	r = '';
-	paragraphs = description.split('\n');
+	var r = '';
+	var paragraphs = description.split('\n');
 	for (var p in paragraphs) {
-		paragraph = paragraphs[p];
+		var paragraph = paragraphs[p];
 		if (paragraph)
 			r += '<p>' + escapeHtml(paragraph) + '</p>';
 	}
@@ -65,7 +65,7 @@ function jsonify(data) {
 }
 
 function addVertex(id, vertex) {
-	node = {
+	var node = {
 		id: id,
 		label: id,
 		data: tosca.isTosca(vertex) ? vertex.properties : vertex
@@ -91,7 +91,7 @@ function addVertex(id, vertex) {
 }
 
 function addEdge(id, e) {
-	edge = {
+	var edge = {
 		from: id,
 		to: e.targetID,
 		arrows: {
@@ -188,7 +188,7 @@ function addWorkflowActivity(node) {
 	node.color = workflowColor;
 }
 
-template = '\
+var template = '\
 <!doctype html>\n\
 <html>\n\
 <head>\n\
@@ -279,7 +279,7 @@ $(document).ready(function () {\n\
 </body>\n\
 </html>';
 
-html = puccini.sprintf(
+var html = puccini.sprintf(
 	template,
 	jQueryVersion,
 	jQueryUiVersion, jQueryUiVersion,

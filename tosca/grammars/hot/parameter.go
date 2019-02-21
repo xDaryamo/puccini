@@ -23,7 +23,7 @@ func IsTypeValid(type_ string) bool {
 	return false
 }
 
-func ValidateValue(context *tosca.Context, type_ string) bool {
+func ValidateValueType(context *tosca.Context, type_ string) bool {
 	switch type_ {
 	case "string":
 		return context.ValidateType("string")
@@ -88,7 +88,9 @@ func ReadParameter(context *tosca.Context) interface{} {
 		if IsTypeValid(type_) {
 			if self.Default != nil {
 				self.Default.Fix(type_)
-				ValidateValue(context.FieldChild("default", self.Default.Data), type_)
+				if ValidateValueType(context.FieldChild("default", self.Default.Data), type_) {
+					self.Default.Constraints = self.Constraints
+				}
 			}
 		} else {
 			context.FieldChild("type", type_).ReportFieldUnsupportedValue()
@@ -114,7 +116,9 @@ func (self *Parameter) Render() {
 	type_ := *self.Type
 
 	if self.Value != nil {
-		ValidateValue(self.Context.WithData(self.Value.Data), type_)
+		if ValidateValueType(self.Context.WithData(self.Value.Data), type_) {
+			self.Value.Constraints = self.Constraints
+		}
 	}
 }
 
@@ -128,6 +132,7 @@ func (self *Parameter) Normalize(context *tosca.Context) normal.Constrainable {
 			value = NewValue(context.MapChild(self.Name, nil))
 		}
 	}
+	// TODO: normalize Hidden, Mutable, etc.
 	return value.Normalize()
 }
 

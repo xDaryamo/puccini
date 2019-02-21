@@ -28,10 +28,9 @@ type Value struct {
 
 func NewValue(context *tosca.Context) *Value {
 	return &Value{
-		Entity:            NewEntity(context),
-		Name:              context.Name,
-		Data:              context.Data,
-		ConstraintClauses: make(ConstraintClauses, 0),
+		Entity: NewEntity(context),
+		Name:   context.Name,
+		Data:   context.Data,
 	}
 }
 

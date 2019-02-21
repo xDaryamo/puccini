@@ -38,7 +38,8 @@ var ConstraintClauseNativeArgumentIndexes = map[string][]uint{
 //
 
 type ConstraintClause struct {
-	*Entity               `name:"constraint clause"`
+	*Entity `name:"constraint clause"`
+
 	Operator              string
 	Arguments             ard.List
 	NativeArgumentIndexes []uint

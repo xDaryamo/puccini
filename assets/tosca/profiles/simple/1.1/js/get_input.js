@@ -8,10 +8,10 @@ function evaluate(input) {
 		throw 'must have 1 argument';
 	if (!tosca.isTosca(clout))
 		throw 'Clout is not TOSCA';
-	inputs = clout.properties.tosca.inputs;
+	var inputs = clout.properties.tosca.inputs;
 	if (!(input in inputs))
 		throw puccini.sprintf('input "%s" not found', input);
-	r = inputs[input];
+	var r = inputs[input];
 	r = clout.coerce(r);
 	return r;
 }

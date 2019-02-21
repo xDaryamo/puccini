@@ -3,6 +3,7 @@ package hot
 import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 	profile "github.com/tliron/puccini/tosca/profiles/hot/v2018_08_31"
 )
 
@@ -16,10 +17,6 @@ var ConstraintSourceCode = map[string]string{
 	"custom_constraint": profile.Profile["/hot/2018-08-31/js/custom_constraint.js"],
 }
 
-var ConstraintNativeArgumentIndexes = map[string][]uint{
-	"range": {0, 1}, // TODO
-}
-
 //
 // Constraint
 //
@@ -29,10 +26,9 @@ var ConstraintNativeArgumentIndexes = map[string][]uint{
 type Constraint struct {
 	*Entity `name:"constraint"`
 
-	Description           *string
-	Operator              string
-	Arguments             ard.List
-	NativeArgumentIndexes []uint
+	Description *string
+	Operator    string
+	Arguments   ard.List
 }
 
 func NewConstraint(context *tosca.Context) *Constraint {
@@ -57,8 +53,7 @@ func ReadConstraint(context *tosca.Context) interface{} {
 				continue
 			}
 
-			script, ok := context.ScriptNamespace[operator]
-			if !ok {
+			if _, ok := context.ScriptNamespace[operator]; !ok {
 				context.WithData(operator).ReportValueMalformed("constraint", "unsupported operator")
 				return self
 			}
@@ -70,12 +65,14 @@ func ReadConstraint(context *tosca.Context) interface{} {
 			} else {
 				self.Arguments = ard.List{value}
 			}
-
-			self.NativeArgumentIndexes = script.NativeArgumentIndexes
 		}
 	}
 
 	return self
+}
+
+func (self *Constraint) NewFunction(context *tosca.Context) *tosca.Function {
+	return tosca.NewFunction(context.Path, self.Operator, self.Arguments)
 }
 
 //
@@ -83,3 +80,12 @@ func ReadConstraint(context *tosca.Context) interface{} {
 //
 
 type Constraints []*Constraint
+
+func (self Constraints) Normalize(context *tosca.Context, constrainable normal.Constrainable) {
+	for _, constraint := range self {
+		function := constraint.NewFunction(context)
+		NormalizeFunctionArguments(function, context)
+		constrainable.AddConstraint(function)
+		// TODO: normalize constraint description somewhere
+	}
+}
