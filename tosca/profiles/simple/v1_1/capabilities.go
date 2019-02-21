@@ -64,8 +64,7 @@ capability_types:
       cpu_frequency:
         description: >-
           Specifies the operating frequency of CPU's core. This property expresses the expected
-          frequency of one (1) CPU as
-          provided by the property "num_cpus".
+          frequency of one (1) CPU as provided by the property "num_cpus".
         type: scalar-unit.frequency
         constraints:
         - greater_or_equal: 0.1 GHz

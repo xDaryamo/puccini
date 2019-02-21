@@ -6,5 +6,8 @@ func init() {
 	Profile["/hot/2018-08-31/js/get_param.js"] = `
 
 // [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#get_param]
-`
+
+function evaluate() {
+	return 'TODO';
+}`
 }

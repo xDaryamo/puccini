@@ -77,3 +77,9 @@ func ReadConstraint(context *tosca.Context) interface{} {
 
 	return self
 }
+
+//
+// Constraints
+//
+
+type Constraints []*Constraint

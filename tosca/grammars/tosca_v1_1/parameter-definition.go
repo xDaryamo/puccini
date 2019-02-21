@@ -47,6 +47,17 @@ func (self *ParameterDefinition) Render(kind string) {
 	}
 }
 
+func (self *ParameterDefinition) Normalize(context *tosca.Context) normal.Constrainable {
+	var value *Value
+	if self.Value != nil {
+		value = self.Value
+	} else {
+		// Parameters should always appear, even if they have no default value
+		value = NewValue(context.MapChild(self.Name, nil))
+	}
+	return value.Normalize()
+}
+
 //
 // ParameterDefinitions
 //
@@ -61,13 +72,6 @@ func (self ParameterDefinitions) Render(kind string, context *tosca.Context) {
 
 func (self ParameterDefinitions) Normalize(c normal.Constrainables, context *tosca.Context) {
 	for key, definition := range self {
-		var value *Value
-		if definition.Value != nil {
-			value = definition.Value
-		} else {
-			// Parameters should always appear, even if they have no default value
-			value = NewValue(context.MapChild(key, nil))
-		}
-		c[key] = value.Normalize()
+		c[key] = definition.Normalize(context)
 	}
 }

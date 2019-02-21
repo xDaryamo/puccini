@@ -22,11 +22,12 @@ type Capability struct {
 
 func (self *NodeTemplate) NewCapability(name string) *Capability {
 	capability := &Capability{
-		NodeTemplate: self,
-		Name:         name,
-		Types:        make(Types),
-		Properties:   make(Constrainables),
-		Attributes:   make(Constrainables),
+		NodeTemplate:         self,
+		Name:                 name,
+		Types:                make(Types),
+		Properties:           make(Constrainables),
+		Attributes:           make(Constrainables),
+		MaxRelationshipCount: math.MaxUint64,
 	}
 	self.Capabilities[name] = capability
 	return capability

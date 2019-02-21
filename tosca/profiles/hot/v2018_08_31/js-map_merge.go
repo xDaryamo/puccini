@@ -6,5 +6,8 @@ func init() {
 	Profile["/hot/2018-08-31/js/map_merge.js"] = `
 
 // [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#map_merge]
-`
+
+function evaluate() {
+	return 'TODO';
+}`
 }

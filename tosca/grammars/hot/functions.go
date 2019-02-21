@@ -3,6 +3,7 @@ package hot
 import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 	profile "github.com/tliron/puccini/tosca/profiles/hot/v2018_08_31"
 )
 
@@ -65,6 +66,20 @@ func GetFunction(context *tosca.Context) (*tosca.Function, bool) {
 			originalArguments = ard.List{data}
 		}
 
+		// The "list_join" function has a nested argument structure that we need to flatten
+		// https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#list-join
+		if key == "list_join" {
+			newArguments := ard.List{originalArguments[0]}
+			for _, argument := range originalArguments[1:] {
+				if nestedArguments, ok := argument.(ard.List); ok {
+					newArguments = append(newArguments, nestedArguments...)
+				} else {
+					newArguments = append(newArguments, argument)
+				}
+			}
+			originalArguments = newArguments
+		}
+
 		// Arguments may be functions
 		arguments := make(ard.List, len(originalArguments))
 		for index, argument := range originalArguments {
@@ -79,4 +94,17 @@ func GetFunction(context *tosca.Context) (*tosca.Function, bool) {
 	}
 
 	return nil, false
+}
+
+func NormalizeFunctionArguments(function *tosca.Function, context *tosca.Context) {
+	for index, argument := range function.Arguments {
+		if _, ok := argument.(normal.Constrainable); ok {
+			// Because the same constraint may be shared among many values, this func might be
+			// called more than once on the same arguments, so we must make sure not to
+			// to normalize more than once
+			return
+		}
+		value := NewValue(context.ListChild(index, argument))
+		function.Arguments[index] = value.Normalize()
+	}
 }

@@ -6,5 +6,8 @@ func init() {
 	Profile["/hot/2018-08-31/js/not.js"] = `
 
 // [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#not]
-`
+
+function evaluate() {
+	return 'TODO';
+}`
 }

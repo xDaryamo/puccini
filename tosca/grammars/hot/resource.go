@@ -39,6 +39,8 @@ type Resource struct {
 	DeletionPolicy *string    `read:"deletion_policy"`
 	ExternalID     *string    `read:"external_id"`
 	Condition      *Condition `read:"condition,Condition"`
+
+	DependsOnResources []*Resource `lookup:"depends_on,DependsOn" json:"-" yaml:"-"`
 }
 
 func NewResource(context *tosca.Context) *Resource {
@@ -69,14 +71,36 @@ func ReadResource(context *tosca.Context) interface{} {
 	return self
 }
 
+var capabilityTypeName = "tosca.capabilities.Node"
+var capabilityTypes = normal.NewTypes(capabilityTypeName)
+var relationshipTypes = normal.NewTypes("tosca.relationships.DependsOn")
+
 func (self *Resource) Normalize(s *normal.ServiceTemplate) *normal.NodeTemplate {
 	log.Infof("{normalize} resource: %s", self.Name)
 
 	n := s.NewNodeTemplate(self.Name)
 
 	if self.Type != nil {
-		n.Types = normal.Types{*self.Type: normal.NewType(*self.Type)}
+		n.Types = normal.NewTypes(*self.Type)
 	}
 
+	self.Properties.Normalize(n.Properties)
+
+	n.NewCapability("feature").Types = capabilityTypes
+
 	return n
+}
+
+func (self *Resource) NormalizeDependencies(s *normal.ServiceTemplate) {
+	n := s.NodeTemplates[self.Name]
+	path := self.Context.FieldChild("depends_on", nil).Path
+
+	for _, resource := range self.DependsOnResources {
+		r := n.NewRequirement("dependency", path)
+		r.NodeTemplate = s.NodeTemplates[resource.Name]
+		r.CapabilityTypeName = &capabilityTypeName
+
+		rr := r.NewRelationship()
+		rr.Types = relationshipTypes
+	}
 }
