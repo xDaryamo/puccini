@@ -121,7 +121,7 @@ data_types:
   LowerCase:
     derived_from: string
     constraints:
-    - pattern: ^[a-z]*$
+    - pattern: '[a-z]*'
 
 topology_template:
 

@@ -12,7 +12,7 @@ function validate(v, re) {
 		throw 'must have 1 argument';
 	if (v.$string !== undefined)
 		v = v.$string;
-	return new RegExp(re).test(v);
+	return new RegExp('^' + re + '$').test(v);
 }
 `
 }

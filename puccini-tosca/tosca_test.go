@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
@@ -19,7 +20,7 @@ func TestParse(t *testing.T) {
 	testParse(t, "grammar/descriptions.yaml", nil)
 	testParse(t, "grammar/dsl-definitions.yaml", nil)
 	testParse(t, "grammar/functions.yaml", nil)
-	testParse(t, "grammar/inputs-and-outputs.yaml", map[string]interface{}{"ram": "1gib"})
+	testParse(t, "grammar/inputs-and-outputs.yaml", ard.Map{"ram": "1gib"})
 	testParse(t, "grammar/interfaces.yaml", nil)
 	testParse(t, "grammar/metadata.yaml", nil)
 	testParse(t, "grammar/namespaces.yaml", nil)
@@ -37,8 +38,8 @@ func TestParse(t *testing.T) {
 	testParse(t, "kubernetes/bookinfo/bookinfo-simple.yaml", nil)
 	testParse(t, "openstack/hello-world.yaml", nil)
 	testParse(t, "bpmn/open-loop.yaml", nil)
-	testParse(t, "hot/hello-world.yaml", map[string]interface{}{"database_password": "A12345"})
-	testParse(t, "hot/single-server-with-existing-floating-ip.yaml", nil)
+	testParse(t, "hot/hello-world.yaml", ard.Map{"database_password": "A12345"})
+	testParse(t, "hot/single-server-with-existing-floating-ip.yaml", ard.Map{"ssh_keys": "first,second"})
 }
 
 var ROOT string
@@ -47,7 +48,7 @@ func init() {
 	ROOT = os.Getenv("ROOT")
 }
 
-func testParse(t *testing.T, url string, inputs map[string]interface{}) {
+func testParse(t *testing.T, url string, inputs ard.Map) {
 	t.Run(url, func(t *testing.T) {
 		// Running the tests in parallel is not for speed;
 		// it actually allowed us to find several concurrency bugs
@@ -68,14 +69,16 @@ func testParse(t *testing.T, url string, inputs map[string]interface{}) {
 			return
 		}
 
-		c = compiler.Resolve(c, p)
+		compiler.Resolve(c, p)
 		if !p.Empty() {
 			t.Errorf("%s", p)
+			return
 		}
 
-		c = compiler.Coerce(c, p)
+		compiler.Coerce(c, p)
 		if !p.Empty() {
 			t.Errorf("%s", p)
+			return
 		}
 	})
 }
