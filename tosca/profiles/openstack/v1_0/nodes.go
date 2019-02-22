@@ -13,9 +13,10 @@ imports:
 
 node_types:
 
+  # https://docs.openstack.org/heat/rocky/template_guide/openstack.html#OS::Nova::Server
   openstack.Nova.Server:
     metadata:
-      internal_name: OS::Nova::Server
+      heat_name: OS::Nova::Server
     properties:
       admin_pass:
         description: >-

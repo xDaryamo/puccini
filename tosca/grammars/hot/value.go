@@ -1,8 +1,6 @@
 package hot
 
 import (
-	"strings"
-
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
@@ -31,9 +29,7 @@ func NewValue(context *tosca.Context) *Value {
 
 // tosca.Reader signature
 func ReadValue(context *tosca.Context) interface{} {
-	if function, ok := GetFunction(context); ok {
-		context.Data = function
-	}
+	ToFunctions(context)
 	return NewValue(context)
 }
 
@@ -54,7 +50,19 @@ func (self *Value) RenderParameter(parameter *Parameter) {
 func (self *Value) Normalize() normal.Constrainable {
 	var constrainable normal.Constrainable
 
-	if function, ok := self.Data.(*tosca.Function); ok {
+	if list, ok := self.Data.(ard.List); ok {
+		l := normal.NewConstrainableList(len(list))
+		for index, value := range list {
+			l.List[index] = NewValue(self.Context.ListChild(index, value)).Normalize()
+		}
+		constrainable = l
+	} else if map_, ok := self.Data.(ard.Map); ok {
+		m := normal.NewConstrainableMap()
+		for key, value := range map_ {
+			m.Map[key] = NewValue(self.Context.MapChild(key, value)).Normalize()
+		}
+		constrainable = m
+	} else if function, ok := self.Data.(*tosca.Function); ok {
 		NormalizeFunctionArguments(function, self.Context)
 		constrainable = normal.NewFunction(function)
 	} else {
@@ -68,37 +76,6 @@ func (self *Value) Normalize() normal.Constrainable {
 	}
 
 	return constrainable
-}
-
-func (self *Value) Fix(type_ string) {
-	switch type_ {
-	case "boolean":
-		switch v := self.Data.(type) {
-		case string:
-			switch v {
-			case "t", "true", "on", "y", "yes", "1":
-				self.Data = true
-			case "f", "false", "off", "n", "no", "0":
-				self.Data = false
-			}
-		case int:
-			switch v {
-			case 1:
-				self.Data = true
-			case 0:
-				self.Data = false
-			}
-		}
-	case "comma_delimited_list":
-		switch v := self.Data.(type) {
-		case string:
-			var list ard.List
-			for _, s := range strings.Split(v, ",") {
-				list = append(list, s)
-			}
-			self.Data = list
-		}
-	}
 }
 
 //

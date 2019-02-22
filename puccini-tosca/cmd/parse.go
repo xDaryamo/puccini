@@ -2,11 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"sort"
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/format"
 	"github.com/tliron/puccini/tosca"
@@ -16,6 +18,7 @@ import (
 )
 
 var inputs []string
+var inputsUrl string
 var stopAtPhase uint32
 var printPhases []uint
 var examine string
@@ -25,6 +28,7 @@ var inputValues = make(map[string]interface{})
 func init() {
 	rootCmd.AddCommand(parseCmd)
 	parseCmd.Flags().StringArrayVarP(&inputs, "input", "i", []string{}, "specify an input (name=YAML)")
+	parseCmd.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
 	parseCmd.Flags().Uint32VarP(&stopAtPhase, "stop", "s", 5, "parser phase at which to stop")
 	parseCmd.Flags().UintSliceVarP(&printPhases, "print", "p", nil, "parser phases to print")
 	parseCmd.Flags().StringVarP(&examine, "examine", "e", "", "examine entities with path, may use '*' for wildcards (disables --print)")
@@ -191,6 +195,26 @@ func ToPrintPhase(phase uint) bool {
 }
 
 func ParseInputs() {
+	if inputsUrl != "" {
+		log.Infof("load inputs from %s", inputsUrl)
+		url_, err := url.NewValidURL(inputsUrl, nil)
+		common.FailOnError(err)
+		reader, err := url_.Open()
+		common.FailOnError(err)
+		if readerCloser, ok := reader.(io.ReadCloser); ok {
+			defer readerCloser.Close()
+		}
+		data, err := format.Read(reader, "yaml")
+		common.FailOnError(err)
+		if map_, ok := data.(ard.Map); ok {
+			for key, value := range map_ {
+				inputValues[key] = value
+			}
+		} else {
+			common.Failf("malformed inputs in %s", inputsUrl)
+		}
+	}
+
 	for _, input := range inputs {
 		s := strings.SplitN(input, "=", 2)
 		if len(s) != 2 {

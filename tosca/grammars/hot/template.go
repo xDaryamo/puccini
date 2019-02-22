@@ -81,16 +81,7 @@ func (self *Template) SetInputs(inputs map[string]interface{}) {
 		}
 
 		parameter.Value = ReadValue(childContext).(*Value)
-		if parameter.Type != nil {
-			parameter.Value.Fix(*parameter.Type)
-		}
 	}
-}
-
-// tosca.Renderable interface
-func (self *Template) Render() {
-	log.Info("{render} template")
-
 }
 
 // tosca.Normalizable interface

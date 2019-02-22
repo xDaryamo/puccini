@@ -40,6 +40,7 @@ type Resource struct {
 	ExternalID     *string    `read:"external_id"`
 	Condition      *Condition `read:"condition,Condition"`
 
+	ToscaType          *string     `json:"-" yaml:"-"`
 	DependsOnResources []*Resource `lookup:"depends_on,DependsOn" json:"-" yaml:"-"`
 }
 
@@ -58,6 +59,14 @@ func ReadResource(context *tosca.Context) interface{} {
 
 	if childContext, ok := context.GetFieldChild("depends_on"); ok {
 		self.DependsOn = childContext.ReadStringOrStringList()
+	}
+
+	if self.Type != nil {
+		if type_, ok := ResourceTypes[*self.Type]; ok {
+			self.ToscaType = &type_
+		} else {
+			context.FieldChild("type", *self.Type).ReportFieldUnsupportedValue()
+		}
 	}
 
 	if self.DeletionPolicy != nil {
@@ -80,8 +89,8 @@ func (self *Resource) Normalize(s *normal.ServiceTemplate) *normal.NodeTemplate 
 
 	n := s.NewNodeTemplate(self.Name)
 
-	if self.Type != nil {
-		n.Types = normal.NewTypes(*self.Type)
+	if self.ToscaType != nil {
+		n.Types = normal.NewTypes(*self.ToscaType)
 	}
 
 	self.Properties.Normalize(n.Properties)

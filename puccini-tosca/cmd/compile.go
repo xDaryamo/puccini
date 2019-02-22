@@ -16,6 +16,7 @@ var coerce bool
 func init() {
 	rootCmd.AddCommand(compileCmd)
 	compileCmd.Flags().StringArrayVarP(&inputs, "input", "i", []string{}, "specify an input (name=YAML)")
+	compileCmd.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL")
 	compileCmd.Flags().StringVarP(&output, "output", "o", "", "output Clout to file (default is stdout)")
 	compileCmd.Flags().BoolVarP(&resolve, "resolve", "r", true, "resolves the topology (attempts to satisfy all requirements with capabilities")
 	compileCmd.Flags().BoolVarP(&coerce, "coerce", "c", false, "coerces all values (calls functions and applies constraints)")

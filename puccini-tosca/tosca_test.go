@@ -38,8 +38,18 @@ func TestParse(t *testing.T) {
 	testParse(t, "kubernetes/bookinfo/bookinfo-simple.yaml", nil)
 	testParse(t, "openstack/hello-world.yaml", nil)
 	testParse(t, "bpmn/open-loop.yaml", nil)
-	testParse(t, "hot/hello-world.yaml", ard.Map{"database_password": "A12345"})
-	testParse(t, "hot/single-server-with-existing-floating-ip.yaml", ard.Map{"ssh_keys": "first,second"})
+	testParse(t, "hot/hello-world.yaml", ard.Map{
+		"key_name":          "my_key",
+		"image_id":          "my_image",
+		"database_password": "A12345",
+	})
+	testParse(t, "hot/single-server-with-existing-floating-ip.yaml", ard.Map{
+		"public_network": "public",
+		"floating_ip":    "1.2.3.4",
+		"image":          "my_image",
+		"flavor":         "my_flavor",
+		"ssh_keys":       "first,second",
+	})
 }
 
 var ROOT string

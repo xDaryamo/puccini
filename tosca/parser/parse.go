@@ -28,7 +28,7 @@ func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*n
 	}
 	context.LookupNames()
 	if !context.Problems.Empty() {
-		return nil, context.Problems, errors.New("phase 2.2: namespaces")
+		return nil, context.Problems, errors.New("phase 2.2: namespaces lookup")
 	}
 
 	// Phase 3: Hieararchies

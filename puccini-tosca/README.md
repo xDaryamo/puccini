@@ -72,6 +72,10 @@ To set a complex data type:
 
     --input 'port={type:tcp,number:8080}'
 
+You can also load all inputs from YAML context located at a path or URL using the `--inputs/-n`
+switch. The `--input/-i` switch is processed after, so it can be used override values in the YAML
+content.
+
 ### Resolution
 
 By default, the compiler will resolve the topology, which attempts to satisfy requirements with

@@ -1,53 +1,9 @@
 package hot
 
 import (
-	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
-
-var Types = []string{
-	"string",
-	"number",
-	"json",
-	"comma_delimited_list",
-	"boolean",
-}
-
-func IsTypeValid(type_ string) bool {
-	for _, t := range Types {
-		if t == type_ {
-			return true
-		}
-	}
-	return false
-}
-
-func ValidateValueType(context *tosca.Context, type_ string) bool {
-	switch type_ {
-	case "string":
-		return context.ValidateType("string")
-	case "number":
-		return context.ValidateType("integer", "float")
-	case "json":
-		return context.ValidateType("map", "list")
-	case "comma_delimited_list":
-		if context.ValidateType("list") {
-			for index, e := range context.Data.(ard.List) {
-				if !context.ListChild(index, e).ValidateType("string") {
-					return false
-				}
-			}
-			return true
-		} else {
-			return false
-		}
-	case "boolean":
-		return context.ValidateType("boolean")
-	default:
-		panic("unsupported parameter type")
-	}
-}
 
 //
 // Parameter
@@ -85,12 +41,11 @@ func ReadParameter(context *tosca.Context) interface{} {
 
 	if self.Type != nil {
 		type_ := *self.Type
-		if IsTypeValid(type_) {
+		if IsParameterTypeValid(type_) {
 			if self.Default != nil {
-				self.Default.Fix(type_)
-				if ValidateValueType(context.FieldChild("default", self.Default.Data), type_) {
-					self.Default.Constraints = self.Constraints
-				}
+				self.Default.CoerceParameterType(type_)
+				self.Default.ValidateParameterType(type_)
+				self.Default.Constraints = self.Constraints
 			}
 		} else {
 			context.FieldChild("type", type_).ReportFieldUnsupportedValue()
@@ -109,16 +64,17 @@ func (self *Parameter) GetKey() string {
 func (self *Parameter) Render() {
 	log.Info("{render} parameter")
 
-	if self.Type == nil {
-		return
-	}
-
-	type_ := *self.Type
-
 	if self.Value != nil {
-		if ValidateValueType(self.Context.WithData(self.Value.Data), type_) {
+		if self.Type != nil {
+			type_ := *self.Type
+			if IsParameterTypeValid(type_) {
+				self.Value.CoerceParameterType(type_)
+				self.Value.ValidateParameterType(type_)
+			}
 			self.Value.Constraints = self.Constraints
 		}
+	} else if self.Default == nil {
+		self.Context.ReportPropertyRequired("parameter")
 	}
 }
 
@@ -129,6 +85,7 @@ func (self *Parameter) Normalize(context *tosca.Context) normal.Constrainable {
 			value = self.Default
 		} else {
 			// Parameters should always appear, even if they have no default value
+			// (Note that in HOT they are *always* required, so it would be abnormal)
 			value = NewValue(context.MapChild(self.Name, nil))
 		}
 	}
