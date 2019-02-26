@@ -12,5 +12,5 @@ PATH="$GOPATH/bin:$PATH"
 
 echo 'testing...'
 
-ROOT="$ROOT" GOCACHE=off \
-go test github.com/tliron/puccini/puccini-tosca
+ROOT="$ROOT" \
+go test -count=1 github.com/tliron/puccini/puccini-tosca

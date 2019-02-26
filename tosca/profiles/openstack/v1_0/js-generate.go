@@ -25,15 +25,13 @@ writeClouds();
 writeCfg();
 
 function writeTopology() {
-	servers = [];
-	
+	var servers = [];
+
 	for (var vertexId in clout.vertexes) {
-		vertex = clout.vertexes[vertexId];
+		var vertex = clout.vertexes[vertexId];
 		if (!tosca.isNodeTemplate(vertex, 'openstack.Nova.Server'))
 			continue;
-		nodeTemplate = vertex.properties;
-		
-		//puccini.log.errorf('%s', JSON.stringify(nodeTemplate, null, '  '));
+		var nodeTemplate = vertex.properties;
 
 		servers.push({
 			name: nodeTemplate.name,
@@ -95,7 +93,7 @@ function writeRoleKeypair() {
 			}
 		}, {
 			file: {
-				mode: 0600, // required by ssh
+				mode: 384, // = octal 0600, required by ssh
 				dest: '{{ playbook_dir }}/keys/{{ keypair.key.name }}'
 			}
 		}, {
@@ -156,7 +154,7 @@ function writeClouds() {
 		clouds: {
 			'default': {
 				auth: {
-					auth_url: 'AUTH_URL'
+					auth_url: 'AUTH_URL',
 					username: 'USERNAME',
 					password: 'PASSWORD'
 				}

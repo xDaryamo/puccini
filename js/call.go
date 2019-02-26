@@ -17,9 +17,9 @@ func CallFunction(runtime *goja.Runtime, functionName string, arguments []interf
 		return nil, fmt.Errorf("script has a \"%s\" variable but it's not a function", functionName)
 	}
 
-	values := make([]goja.Value, 0, len(arguments))
-	for _, argument := range arguments {
-		values = append(values, runtime.ToValue(argument))
+	values := make([]goja.Value, len(arguments))
+	for index, argument := range arguments {
+		values[index] = runtime.ToValue(argument)
 	}
 
 	r, err := function(nil, values...)

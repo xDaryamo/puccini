@@ -6,9 +6,8 @@ TOSCA OpenStack Profile Examples
 If you have [Ansible](https://www.ansible.com/) installed and configured then you can run something
 like this to deploy: 
 
-    mkdir test
+    puccini-tosca compile examples/openstack/hello-world.yaml | puccini-js exec openstack.generate -o test
     cd test
-    puccini-tosca compile ../examples/openstack/hello-world.yaml | puccini-js exec openstack.generate
     ansible-playbook install.yaml
 
 When run for the first time it will provision keys for your deployment. The public and private keys
@@ -35,7 +34,7 @@ in a Python virtual environment. Here's how to do it on Fedora:
     sudo dnf install python3-virtualenv libselinux-python3
     virtualenv --system-site-packages env
     . env/bin/activate
-    pip install ansible==2.7.0rc3 os-client-config==1.31.2
+    pip install ansible==2.7.8 os-client-config==1.31.2
 
 In the above we specify versions that we used for testing, but feel free to omit the versions and
 try the latest and greatest.

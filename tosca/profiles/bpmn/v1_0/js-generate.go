@@ -8,11 +8,11 @@ clout.exec('tosca.utils');
 
 tosca.coerce();
 
-bpmn = puccini.newXmlDocument();
+var bpmn = puccini.newXmlDocument();
 
 bpmn.createProcInst('xml', 'version="1.0" encoding="UTF-8"');
 
-definitions = bpmn.createElement('bpmn:definitions');
+var definitions = bpmn.createElement('bpmn:definitions');
 definitions.createAttr('id', 'definitions');
 definitions.createAttr('xmlns:bpmn', 'http://www.omg.org/spec/BPMN/20100524/MODEL');
 definitions.createAttr('xmlns:bpmndi', 'http://www.omg.org/spec/BPMN/20100524/DI');
@@ -24,7 +24,7 @@ definitions.createAttr('targetNamespace', 'http://bpmn.io/schema/bpmn');
 definitions.createAttr('exporter', 'puccini');
 
 for (var id in clout.vertexes) {
-	vertex = clout.vertexes[id];
+	var vertex = clout.vertexes[id];
 
 	if (tosca.isTosca(vertex, 'policy') && ('bpmn.Process' in vertex.properties.types))
 		createPolicyProcess(id, vertex);
@@ -36,22 +36,22 @@ for (var id in clout.vertexes) {
 puccini.write(bpmn);
 
 function createPolicyProcess(id, vertex) {
-	policy = vertex.properties;
+	var policy = vertex.properties;
 
-	process = createProcess(id, policy.name + ' policy');
+	var process = createProcess(id, policy.name + ' policy');
 
-	tasks = [];
+	var tasks = [];
 	for (var e = 0; e < vertex.edgesOut.length; e++) {
-		edge = vertex.edgesOut[e];
+		var edge = vertex.edgesOut[e];
 		if (!tosca.isTosca(edge, 'nodeTemplateTarget') && !tosca.isTosca(edge, 'groupTarget'))
 			continue;
-		target = edge.target.properties;
+		var target = edge.target.properties;
 
 		// Iterate edges
 		for (var ee = 0; ee < vertex.edgesOut.length; ee++) {
 			edge = vertex.edgesOut[ee];
 			if (tosca.isTosca(edge, 'policyTriggerOperation')) {
-				task = createPolicyTriggerOperationTask(target, edge.target.properties);
+				task = createPolicyTriggerOperationTask(process, target, edge.target.properties);
 				tasks.push(task);
 			} else if (tosca.isTosca(edge, 'policyTriggerWorkflow')) {
 				// TODO
@@ -59,11 +59,12 @@ function createPolicyProcess(id, vertex) {
 		}
 	}
 
-	startGateway = startEvent = createEvent(process);
-	endEvent = createEvent(process, true);
+	var startGateway, startEvent, endGateway, endEvent, endTask;
+	var startGateway = startEvent = createEvent(process);
+	var endEvent = createEvent(process, true);
 
-	code = puccini.sprintf('\nstartProcess("%s");\n', policy.properties.bpmn_process_id);
-	endGateway = endTask = createScriptTask(clout.newKey(), 'startProcess', code);
+	var code = puccini.sprintf('\nstartProcess("%s");\n', policy.properties.bpmn_process_id);
+	endGateway = endTask = createScriptTask(process, clout.newKey(), 'startProcess', code);
 	createSequenceFlow(process, endTask, endEvent);
 
 	if (tasks.length > 1) {
@@ -74,62 +75,63 @@ function createPolicyProcess(id, vertex) {
 	}
 
 	for (var t = 0; t < tasks.length; t++) {
-		task = tasks[t];
+		var task = tasks[t];
 		createSequenceFlow(process, startGateway, task);
 		createSequenceFlow(process, task, endGateway);
 	}
 }
 
-function createPolicyTriggerOperationTask(target, operation) {
+function createPolicyTriggerOperationTask(process, target, operation) {
 	// TODO: handle inputs and dependencies
-	code = puccini.sprintf('\ncallOperation("%s", "%s");\n', target.name, operation.implementation);
-	task = createScriptTask(clout.newKey(), 'operation on ' + target.name, code);
+	var code = puccini.sprintf('\ncallOperation("%s", "%s");\n', target.name, operation.implementation);
+	var task = createScriptTask(process, clout.newKey(), 'operation on ' + target.name, code);
 	return task
 }
 
 function createWorkflowProcess(id, vertex) {
-	workflow = vertex.properties;
+	var workflow = vertex.properties;
 
-	process = createProcess(id, workflow.name + ' workflow');
+	var process = createProcess(id, workflow.name + ' workflow');
 
 	// Iterate steps
-	tasks = {};
+	var tasks = {};
 	for (var e = 0; e < vertex.edgesOut.length; e++) {
-		edge = vertex.edgesOut[e];
+		var edge = vertex.edgesOut[e];
 		if (!tosca.isTosca(edge, 'workflowStep'))
 			continue;
 
-		step = edge.target;
-		stepID = edge.targetID;
+		var step = edge.target;
+		var stepID = edge.targetID;
 
-		createWorkflowTask(step, stepID, tasks);
+		createWorkflowTask(process, step, stepID, tasks);
 	}
 
 	// Link previous tasks in graph
 	for (var name in tasks) {
-		task = tasks[name];
+		var task = tasks[name];
 		for (n in task.next) {
-			nextName = task.next[n];
+			var nextName = task.next[n];
 			tasks[nextName].prev.push(name);
 		}
 	}
 
 	// Count first tasks
-	first = 0;
+	var first = 0;
 	for (var name in tasks) {
-		task = tasks[name];
+		var task = tasks[name];
 		if (task.prev.length === 0)
 			first++;
 	}
 
 	// Count last tasks
-	last = 0;
+	var last = 0;
 	for (var name in tasks) {
-		task = tasks[name];
+		var task = tasks[name];
 		if (task.next.length === 0)
 			last++;
 	}
 
+	var startGateway, startEvent, endGateway, endEvent;
 	startGateway = startEvent = createEvent(process);
 	endGateway = endEvent = createEvent(process, true);
 
@@ -145,7 +147,7 @@ function createWorkflowProcess(id, vertex) {
 
 	// Incoming
 	for (var name in tasks) {
-		task = tasks[name];
+		var task = tasks[name];
 		if (task.prev.length === 0)
 			createSequenceFlow(process, startGateway, task.task);
 		else if (task.prev.length > 1)
@@ -154,7 +156,7 @@ function createWorkflowProcess(id, vertex) {
 
 	// Outgoing
 	for (var name in tasks) {
-		task = tasks[name];
+		var task = tasks[name];
 		if (task.next.length === 0)
 			createSequenceFlow(process, task.task, endGateway);
 		else if (task.next.length > 1)
@@ -163,7 +165,7 @@ function createWorkflowProcess(id, vertex) {
 
 	// Link incoming to outgoing
 	for (var name in tasks) {
-		task = tasks[name];
+		var task = tasks[name];
 
 		if (getAttr(task.task, 'id') != getAttr(task.incoming, 'id'))
 			createSequenceFlow(process, task.incoming, task.task);
@@ -172,30 +174,30 @@ function createWorkflowProcess(id, vertex) {
 			createSequenceFlow(process, task.task, task.outgoing);
 
 		for (var n = 0; n < task.next.length; n++) {
-			next = tasks[task.next[n]];
+			var next = tasks[task.next[n]];
 			createSequenceFlow(process, task.outgoing, next.incoming);
 		}
 	}
 }
 
-function createWorkflowTask(step, stepID, tasks) {
-	name = step.properties.name;
+function createWorkflowTask(process, step, stepID, tasks) {
+	var name = step.properties.name;
 
-	next = [];
+	var next = [];
 
-	code = '\nnodeTemplates = [];\ngroups = [];';
+	var code = '\nvar nodeTemplates = [];\nvar groups = [];';
 
 	// Iterate edges
-	activities = [];
+	var activities = [];
 	for (var ee =- 0; ee < step.edgesOut.length; ee++) {
-		edge = step.edgesOut[ee];
+		var edge = step.edgesOut[ee];
 		if (tosca.isTosca(edge, 'nodeTemplateTarget'))
 			code += puccini.sprintf('\nnodeTemplates.push("%s");', edge.target.properties.name);
 		else if (tosca.isTosca(edge, 'groupTarget'))
 			code += puccini.sprintf('\ngroups.push("%s");', edge.target.properties.name);
 		else if (tosca.isTosca(edge, 'workflowActivity')) {
 			// Put activities in the right sequence
-			sequence = edge.properties.sequence;
+			var sequence = edge.properties.sequence;
 			activities[sequence] = edge.target.properties;
 		} else if (tosca.isTosca(edge, 'onSuccess')) {
 			next.push(edge.target.properties.name);
@@ -206,14 +208,14 @@ function createWorkflowTask(step, stepID, tasks) {
 
 	// Iterate activities
 	for (var a = 0; a < activities.length; a++) {
-		activity = activities[a];
+		var activity = activities[a];
 		if (activity.setNodeState)
 			code += puccini.sprintf('\nsetNodeState(nodeTemplates, groups, "%s");', activity.setNodeState);
 		else if (activity.callOperation)
 			code += puccini.sprintf('\ncallOperation(nodeTemplates, groups, "%s", "%s");', activity.callOperation.interface, activity.callOperation.operation);
 	}
 
-	task = createScriptTask(stepID, name + ' step', code + '\n');
+	var task = createScriptTask(process, stepID, name + ' step', code + '\n');
 
 	tasks[name] = {
 		task: task,
@@ -225,7 +227,7 @@ function createWorkflowTask(step, stepID, tasks) {
 }
 
 function createProcess(id, name) {
-	process = definitions.createElement('bpmn:process');
+	var process = definitions.createElement('bpmn:process');
 	process.createAttr('id', id);
 	process.createAttr('name', name);
 	process.createAttr('isExecutable', 'true');
@@ -233,7 +235,7 @@ function createProcess(id, name) {
 }
 
 function createEvent(process, end) {
-	event = process.createElement(end ? 'bpmn:endEvent' : 'bpmn:startEvent');
+	var event = process.createElement(end ? 'bpmn:endEvent' : 'bpmn:startEvent');
 	event.createAttr('id', clout.newKey());
 	event.createAttr('name', end ? 'end' : 'start');
 	if (end)
@@ -241,18 +243,18 @@ function createEvent(process, end) {
 	return event;
 }
 
-function createScriptTask(id, name, code) {
-	task = process.createElement('bpmn:scriptTask');
+function createScriptTask(process, id, name, code) {
+	var task = process.createElement('bpmn:scriptTask');
 	task.createAttr('id', id);
 	task.createAttr('name', name);
 	task.createAttr('scriptFormat', 'javascript');
-	script = task.createElement('bpmn:script');
+	var script = task.createElement('bpmn:script');
 	script.setText(code);
 	return task;
 }
 
 function createGateway(process, converging) {
-	gw = process.createElement('bpmn:parallelGateway');
+	var gw = process.createElement('bpmn:parallelGateway');
 	gw.createAttr('id', clout.newKey());
 	gw.createAttr('name', converging ? 'converge' : 'diverge');
 	gw.createAttr('gatewayDirection', converging ? 'Converging' : 'Diverging');
@@ -260,7 +262,7 @@ function createGateway(process, converging) {
 }
 
 function createSequenceFlow(process, source, target) {
-	flow = process.createElement('bpmn:sequenceFlow');
+	var flow = process.createElement('bpmn:sequenceFlow');
 	flow.createAttr('id', clout.newKey());
 	flow.createAttr('sourceRef', getAttr(source, 'id'));
 	flow.createAttr('targetRef', getAttr(target, 'id'));
@@ -271,9 +273,9 @@ function getID(element) {
 }
 
 function getAttr(element, key) {
-	r = null;
+	var r = null;
 	for (var a = 0; a < element.attr.length; a++) {
-		attr = element.attr[a];
+		var attr = element.attr[a];
 		if (attr.key === key)
 			r = attr.value;
 	}

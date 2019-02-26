@@ -4,9 +4,9 @@ set -e
 HERE=$(dirname "$(readlink -f "$0")")
 
 if [ -z "$GOPATH" ]; then
-	GOPATH="$HOME/go"
+	GOPATH=$(readlink -f "$HOME/go")
 fi
 
-PROJECT="$GOPATH/src/github.com/tliron/puccini"
+PROJECT=$(readlink -f "$HERE/..")
 
 PATH="$PATH:$GOPATH/bin"

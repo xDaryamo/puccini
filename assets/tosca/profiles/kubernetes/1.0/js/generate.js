@@ -3,18 +3,18 @@ clout.exec('tosca.utils');
 
 tosca.coerce();
 
-specs = [];
+var specs = [];
 
 for (var vertexId in clout.vertexes) {
-	vertex = clout.vertexes[vertexId];
+	var vertex = clout.vertexes[vertexId];
 	if (!tosca.isNodeTemplate(vertex))
 		continue;
-	nodeTemplate = vertex.properties;
+	var nodeTemplate = vertex.properties;
 
 	// Find metadata
-	metadata = {};
+	var metadata = {};
 	for (var capabilityName in nodeTemplate.capabilities) {
-		capability = nodeTemplate.capabilities[capabilityName];
+		var capability = nodeTemplate.capabilities[capabilityName];
 		if ('kubernetes.Metadata' in capability.types) {
 			metadata = capability.properties;
 			break;
@@ -28,7 +28,7 @@ for (var vertexId in clout.vertexes) {
 
 	// Generate specs
 	for (var capabilityName in nodeTemplate.capabilities) {
-		capability = nodeTemplate.capabilities[capabilityName];
+		var capability = nodeTemplate.capabilities[capabilityName];
 		if ('kubernetes.Service' in capability.types)
 			generateService(capability, metadata);
 		else if ('kubernetes.Deployment' in capability.types)
@@ -48,7 +48,7 @@ for (var vertexId in clout.vertexes) {
 puccini.write(specs);
 
 function generateService(capability, metadata) {
-	spec = {
+	var spec = {
 		apiVersion: 'v1',
 		kind: 'Service',
 		metadata: metadata,
@@ -56,7 +56,7 @@ function generateService(capability, metadata) {
 	};
 
 	for (var propertyName in capability.properties) {
-		v = capability.properties[propertyName];
+		var v = capability.properties[propertyName];
 		spec.spec[propertyName] = v;
 	}
 
@@ -68,7 +68,7 @@ function generateService(capability, metadata) {
 }
 
 function generateDeployment(capability, labels) {
-	spec = {
+	var spec = {
 		apiVersion: 'apps/v1',
 		kind: 'Deployment',
 		metadata: metadata,
@@ -76,14 +76,14 @@ function generateDeployment(capability, labels) {
 	};
 
 	for (var propertyName in capability.properties) {
-		v = capability.properties[propertyName];
+		var v = capability.properties[propertyName];
 		switch (propertyName) {
 		case 'minReadySeconds':
 		case 'progressDeadlineSeconds':
 			v = convertScalarUnit(v);
 			break;
 		case 'strategy':
-			s = {
+			var s = {
 				type: v.type
 			};
 			if (v.type === 'RollingUpdate') {
@@ -95,9 +95,9 @@ function generateDeployment(capability, labels) {
 			v = s;
 			break;
 		case 'template':
-			s = {};
+			var s = {};
 			for (var t in v) {
-				vv = v[t];
+				var vv = v[t];
 				switch (t) {
 				case 'activeDeadlineSeconds':
 				case 'terminationGracePeriodSeconds':
