@@ -6,7 +6,7 @@ HERE=$(dirname "$(readlink -f "$0")")
 . "$HERE/env.sh"
 
 build () {
-	cd "$PROJECT/$1"
+	cd "$ROOT/$1"
 	go install
 	echo "built $GOPATH/bin/$1"
 }

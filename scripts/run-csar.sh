@@ -2,13 +2,10 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$0")")
-ROOT=$(realpath "$HERE/..")
-
-. "$HERE/env.sh"
-
-PATH="$ROOT:$GOPATH/bin:$PATH"
 
 "$HERE/build.sh"
+
+. "$HERE/env.sh"
 
 CSAR="$ROOT/examples/csar/bookinfo.csar"
 

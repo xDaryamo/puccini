@@ -2,7 +2,6 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$0")")
-ROOT=$(realpath "$HERE/..")
 
 . "$HERE/env.sh"
 

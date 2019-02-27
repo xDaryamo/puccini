@@ -2,19 +2,16 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$0")")
-ROOT=$(realpath "$HERE/..")
-DOCS="$ROOT/docs/html"
-WORK=/tmp/puccini-docs
-
-PORT=6060
 
 . "$HERE/env.sh"
 
-cd "$GOPATH"
+PORT=6060
+DOCS="$ROOT/docs/html"
+WORK=/tmp/puccini-docs
 
 go get -u golang.org/x/tools/cmd/godoc
 
-cd "$PROJECT"
+cd "$ROOT"
 
 rm --recursive --force "$WORK"
 mkdir --parents "$WORK/src/github.com/tliron/puccini"

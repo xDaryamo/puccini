@@ -2,16 +2,13 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$0")")
-ROOT=$(realpath "$HERE/..")
-
-. "$HERE/env.sh"
-
-cd "$GOPATH"
-
-go get -u github.com/goreleaser/goreleaser
 
 "$HERE/build.sh"
 
+. "$HERE/env.sh"
+
+go get -u github.com/goreleaser/goreleaser
+
 cd "$ROOT"
 
-"$GOPATH/bin/goreleaser" --rm-dist "$@"
+goreleaser --rm-dist "$@"

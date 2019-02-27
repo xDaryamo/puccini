@@ -2,14 +2,14 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$0")")
-ROOT=$(realpath "$HERE/..")
+ROOT=$(readlink -f "$HERE/..")
 
 header () {
 	local DEST=$1
 	local PACKAGE=$2
 
 	cat << EOT > "$DEST"
-// This file was auto-generated from YAML files
+// This file was auto-generated from a YAML file
 
 package $PACKAGE
 

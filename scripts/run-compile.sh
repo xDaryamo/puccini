@@ -2,14 +2,9 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$0")")
-ROOT=$(realpath "$HERE/..")
-
-. "$HERE/env.sh"
-
-PATH="$GOPATH/bin:$PATH"
 
 "$HERE/build.sh"
 
-set +e
+. "$HERE/env.sh"
 
-puccini-tosca compile "$(realpath "$ROOT/examples/kubernetes/bookinfo/bookinfo-simple.yaml")" "$@" 
+puccini-tosca compile "$ROOT/examples/kubernetes/bookinfo/bookinfo-simple.yaml" "$@" 

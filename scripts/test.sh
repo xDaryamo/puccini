@@ -2,13 +2,10 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$0")")
-ROOT=$(realpath "$HERE/..")
-
-. "$HERE/env.sh"
-
-PATH="$GOPATH/bin:$PATH"
 
 "$HERE/build.sh"
+
+. "$HERE/env.sh"
 
 echo 'testing...'
 

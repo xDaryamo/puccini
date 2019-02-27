@@ -2,11 +2,10 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$0")")
+ROOT=$(readlink -f "$HERE/..")
 
 if [ -z "$GOPATH" ]; then
-	GOPATH=$(readlink -f "$HOME/go")
+	GOPATH="$HOME/go"
 fi
 
-PROJECT=$(readlink -f "$HERE/..")
-
-PATH="$PATH:$GOPATH/bin"
+PATH="$GOPATH/bin:$ROOT:$PATH"
