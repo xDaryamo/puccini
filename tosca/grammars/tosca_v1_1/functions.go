@@ -67,8 +67,8 @@ func GetFunction(context *tosca.Context) (*tosca.Function, bool) {
 func NormalizeFunctionArguments(function *tosca.Function, context *tosca.Context) {
 	for index, argument := range function.Arguments {
 		if _, ok := argument.(normal.Constrainable); ok {
-			// Because the same constraint clause may be shared among many values, this func
-			// might be called more than once on the same arguments, so we must make sure not
+			// Because the same constraint instance may be shared among more than one value, this
+			// func might be called more than once on the same arguments, so we must make sure not
 			// to normalize more than once
 			return
 		}

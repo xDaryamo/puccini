@@ -15,15 +15,19 @@ Usage:
 
     $TOOL [CSAR file path] [archive directory ...]
 
-Automatically adds a "TOSCA-Metadata/TOSCA.meta" file for you. 
-
 The current directory will be the root of the CSAR, so make sure to run this
-tool in the right place. Specify "." to archive the current directory.
+tool in the right place.
 
-You may set the "ENTRY_DEFINITIONS" environment variable to specify the path
-to your service template YAML file (relative to the root). Otherwise, any YAML
-file in the root will be used automatically. This will fail if you have more
-than one YAML file in the root, in which case you *must* explicitly set
+Specify "." to archive the current directory. Note that you may specify more
+than one directory to add to your CSAR.
+
+Will automatically create and add a "TOSCA-Metadata/TOSCA.meta" file to the
+archive.
+
+You can set the "ENTRY_DEFINITIONS" environment variable to specify the path
+to your service template YAML file (relative to the root). Otherwise, if
+there's a single YAML file in the root it will be used automatically. If
+there's more than one YAML file in the root then you *must* explicitly set
 "ENTRY_DEFINITIONS".
 
 Other supported environment variables:
@@ -31,8 +35,6 @@ Other supported environment variables:
     TOSCA_META_FILE_VERSION
     CSAR_VERSION
     CREATED_BY
-
-Note that you may specify more than one directory to add to your CSAR.
 
 EOT
 	exit 1
@@ -64,7 +66,7 @@ if [ -z "$ENTRY_DEFINITIONS" ]; then
 			EXT="${F##*.}"
 			if [ "$EXT" == yaml ] || [ "$EXT" == yml ]; then
 				if [ -n "$ENTRY_DEFINITIONS" ]; then
-					echo 'failed: multiple yaml files in root, set ENTRY_DEFINITIONS in environment' > /dev/stderr
+					echo 'failed: multiple yaml files in root, you must set ENTRY_DEFINITIONS in environment to choose one' > /dev/stderr
 					rm "$CSAR"
 					exit 1
 				fi
