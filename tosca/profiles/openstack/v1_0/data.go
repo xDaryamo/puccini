@@ -44,15 +44,15 @@ data_types:
     derived_from:
       string
 
-  openstack.Nova.Flavor:
+  openstack.nova.Flavor:
     derived_from:
       string
 
-  openstack.Nova.Keypair:
+  openstack.nova.Keypair:
     derived_from:
       string
 
-  openstack.Nova.Server.Network:
+  openstack.nova.Server.Network:
     derived_from: Root
     properties:
       allocate_network:
@@ -86,7 +86,7 @@ data_types:
           Dict, which has expand properties for port. Used only if port property is not specified
           for creating port.
         type: map
-        entry_schema: openstack.Nova.Server.Port
+        entry_schema: openstack.nova.Server.Port
       subnet:
         description: >-
           Subnet in which to allocate the IP address for port. Used for creating port, based on
@@ -97,7 +97,7 @@ data_types:
           Port tag. Heat ignores any update on this property as nova does not support it.
         type: string
 
-  openstack.Nova.Server.Port:
+  openstack.nova.Server.Port:
     derived_from: Root
     properties:
       admin_state_up:
@@ -109,7 +109,7 @@ data_types:
         description: >-
           Additional MAC/IP address pairs allowed to pass through the port.
         type: list
-        entry_schema: openstack.Nova.Server.AddressPair
+        entry_schema: openstack.nova.Server.AddressPair
       binding.vnic_type:
         description: >-
           The vnic type to be bound on the neutron port. To support SR-IOV PCI passthrough
@@ -141,7 +141,7 @@ data_types:
         type: map
         entry_schema: string # TODO
 
-  openstack.Nova.Server.AddressPair:
+  openstack.nova.Server.AddressPair:
     derived_from: Root
     properties:
       ip_address:
@@ -153,7 +153,7 @@ data_types:
           MAC address to allow through this port.
         type: openstack.MacAddress
 
-  openstack.Nova.Server.SwiftData:
+  openstack.nova.Server.SwiftData:
     derived_from: Root
     properties:
       container:
@@ -169,7 +169,7 @@ data_types:
         constraints:
         - min_length: 1
 
-  openstack.Nova.Server.BlockDevice:
+  openstack.nova.Server.BlockDevice:
     derived_from: Root
     properties:
       delete_on_termination:
@@ -195,7 +195,7 @@ data_types:
           infer the size.
         type: scalar-unit.size
 
-  openstack.Nova.Server.BlockDevice2:
+  openstack.nova.Server.BlockDevice2:
     derived_from: Root
     properties:
       boot_index:

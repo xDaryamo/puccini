@@ -23,7 +23,7 @@ function writeTopology() {
 
 	for (var vertexId in clout.vertexes) {
 		var vertex = clout.vertexes[vertexId];
-		if (!tosca.isNodeTemplate(vertex, 'openstack.Nova.Server'))
+		if (!tosca.isNodeTemplate(vertex, 'openstack.nova.Server'))
 			continue;
 		var nodeTemplate = vertex.properties;
 
@@ -47,10 +47,10 @@ function writePlaybookInstall() {
 			name: 'Configure OpenStack',
 			os_client_config: null,
 		}, {
-			name: 'Import topology.yaml',
+			name: 'Import topology.' + puccini.format,
 			include_vars: {
 				name: 'topology',
-				file: 'topology.yaml'
+				file: 'topology.' + puccini.format
 			}
 		}, {
 			include_role: {
@@ -161,7 +161,7 @@ function writeCfg() {
 	puccini.write('\
 [defaults]\n\
 ansible_managed=Modified by Ansible on %Y-%m-%d %H:%M:%S %Z\n\
-inventory=./inventory.yaml\n\
+inventory=./inventory.' + puccini.format +'\n\
 transport=ssh\n\
 command_warnings=false\n\
 \n\

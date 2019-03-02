@@ -36,6 +36,7 @@ func NewTemplate(context *tosca.Context) *Template {
 	self.Context.ImportScript("tosca.visualize", "internal:/tosca/simple/1.1/js/visualize.js")
 	self.Context.ImportScript("tosca.utils", "internal:/tosca/simple/1.1/js/utils.js")
 	self.Context.ImportScript("tosca.helpers", "internal:/tosca/simple/1.1/js/helpers.js")
+	self.Context.ImportScript("openstack.generate", "internal:/tosca/openstack/1.0/js/generate.js")
 
 	self.NewPseudoParameter("OS::stack_name", "stack_name")
 	self.NewPseudoParameter("OS::stack_id", "stack_id")

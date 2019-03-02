@@ -14,7 +14,7 @@ imports:
 node_types:
 
   # https://docs.openstack.org/heat/rocky/template_guide/openstack.html#OS::Nova::Server
-  openstack.Nova.Server:
+  openstack.nova.Server:
     metadata:
       heat_name: OS::Nova::Server
     properties:
@@ -32,13 +32,13 @@ node_types:
         description: >-
           Block device mappings for this server.
         type: list
-        entry_schema: openstack.Nova.Server.BlockDevice
+        entry_schema: openstack.nova.Server.BlockDevice
         required: false
       block_device_mapping_v2:
         description: >-
           Block device mappings v2 for this server.
         type: list
-        entry_schema: openstack.Nova.Server.BlockDevice2
+        entry_schema: openstack.nova.Server.BlockDevice2
         required: false
       config_drive:
         description: >-
@@ -54,7 +54,7 @@ node_types:
           is set to POLL_TEMP_URL, a container will be automatically created from the resource name,
           and the object name will be a generated uuid.
         type: map
-        entry_schema: openstack.Nova.Server.SwiftData
+        entry_schema: openstack.nova.Server.SwiftData
         required: false
       diskConfig:
         description: >-
@@ -66,7 +66,7 @@ node_types:
       flavor:
         description: >-
           The ID or name of the flavor to boot onto.
-        type: openstack.Nova.Flavor
+        type: openstack.nova.Flavor
       flavor_update_policy:
         description: >-
           Policy on how to apply a flavor update; either by requesting a server resize or by
@@ -93,7 +93,7 @@ node_types:
       key_name:
         description: >-
           Name of keypair to inject into the server.
-        type: openstack.Nova.Keypair
+        type: openstack.nova.Keypair
         required: false
       metadata:
         description: >-
@@ -113,7 +113,7 @@ node_types:
           An ordered list of nics to be added to this server, with information about connected
           networks, fixed ips, port etc.
         type: list
-        entry_schema: openstack.Nova.Server.Network
+        entry_schema: openstack.nova.Server.Network
         required: false
       personality:
         description: >-
