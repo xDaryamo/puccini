@@ -40,7 +40,7 @@ EOT
 	exit 1
 fi
 
-CSAR=$(realpath "$1")
+CSAR=$(readlink -f "$1")
 
 if [ -f "$CSAR" ]; then
 	echo "CSAR already exists, deleting: $CSAR"
@@ -82,6 +82,19 @@ echo "Entry-Definitions: $ENTRY_DEFINITIONS"
 
 TEMP_ROOT=$(mktemp --directory)
 
+function the_end () {
+	local ERR=$?
+	rm --recursive "$TEMP_ROOT"
+	if [ $ERR == 0 ]; then
+		echo "CSAR created: $CSAR"
+	else
+		echo "failed" > /dev/stderr
+		exit $ERR
+	fi
+}
+
+trap the_end EXIT
+
 cd "$TEMP_ROOT"
 mkdir TOSCA-Metadata
 
@@ -92,7 +105,4 @@ Created-By: $CREATED_BY
 Entry-Definitions: $ENTRY_DEFINITIONS
 EOT
 
-zip --recurse-paths "$CSAR" . > /dev/null
-rm --recursive "$TEMP_ROOT"
-
-echo "CSAR created: $CSAR"
+zip -9 --recurse-paths "$CSAR" . > /dev/null
