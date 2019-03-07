@@ -52,7 +52,7 @@ checksum:
 release:
 
   #disable: true
-  prerelease: true
+  #prerelease: true
 
   github:
     owner: tliron

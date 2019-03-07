@@ -11,6 +11,8 @@ import (
 
 type Reader func(*Context) interface{}
 
+type Grammar map[string]Reader
+
 const (
 	ReadFieldModeDefault       = 0
 	ReadFieldModeList          = 1
@@ -19,21 +21,25 @@ const (
 )
 
 // From "read" tags
-func (self *Context) ReadFields(entityPtr interface{}, readers map[string]Reader) []string {
+func (self *Context) ReadFields(entityPtr interface{}) []string {
 	if !self.ValidateType("map") {
 		return nil
 	}
 
 	var keys []string
 
-	data := self.Data.(ard.Map)
 	entity := reflect.ValueOf(entityPtr).Elem()
 	tags := reflection.GetFieldTagsForValue(entity, "read")
 
 	// Read tag overrides
 	if self.ReadOverrides != nil {
 		for fieldName, tag := range self.ReadOverrides {
-			tags[fieldName] = tag
+			if tag != "" {
+				tags[fieldName] = tag
+			} else {
+				// Empty tag means delete
+				delete(tags, fieldName)
+			}
 		}
 	}
 
@@ -46,7 +52,7 @@ func (self *Context) ReadFields(entityPtr interface{}, readers map[string]Reader
 	// Parse tags
 	var readFields []*ReadField
 	for fieldName, tag := range tags {
-		readField := NewReadField(fieldName, tag, readers)
+		readField := NewReadField(fieldName, tag, self, entity)
 		if readField.Important {
 			// Important fields come first
 			readFields = append([]*ReadField{readField}, readFields...)
@@ -58,7 +64,7 @@ func (self *Context) ReadFields(entityPtr interface{}, readers map[string]Reader
 	for _, readField := range readFields {
 		if readField.Wildcard {
 			// Iterate all keys that aren't tagged
-			for key := range data {
+			for key := range self.Data.(ard.Map) {
 				tagged := false
 				for _, k := range keys {
 					if key == k {
@@ -68,11 +74,11 @@ func (self *Context) ReadFields(entityPtr interface{}, readers map[string]Reader
 				}
 				if !tagged {
 					readField.Key = key
-					readField.Read(entity, data, self)
+					readField.Read()
 				}
 			}
 		} else {
-			readField.Read(entity, data, self)
+			readField.Read()
 		}
 	}
 
@@ -99,18 +105,24 @@ func (self *Context) setMapItem(field reflect.Value, item interface{}) {
 type ReadField struct {
 	FieldName string
 	Key       string
+	Context   *Context
+	Entity    reflect.Value
 	Reader    Reader
 	Mode      int
 	Important bool
 	Wildcard  bool
 }
 
-func NewReadField(fieldName string, tag string, readers map[string]Reader) *ReadField {
+func NewReadField(fieldName string, tag string, context *Context, entity reflect.Value) *ReadField {
+	// TODO: is it worth caching some of this?
+
 	t := strings.Split(tag, ",")
 
 	var self = ReadField{
 		FieldName: fieldName,
 		Key:       t[0],
+		Context:   context,
+		Entity:    entity,
 	}
 
 	if self.Key == "?" {
@@ -141,7 +153,7 @@ func NewReadField(fieldName string, tag string, readers map[string]Reader) *Read
 		}
 
 		var ok bool
-		self.Reader, ok = readers[readerName]
+		self.Reader, ok = context.Grammar[readerName]
 		if !ok {
 			panic(fmt.Sprintf("reader not found: %s", readerName))
 		}
@@ -150,14 +162,14 @@ func NewReadField(fieldName string, tag string, readers map[string]Reader) *Read
 	return &self
 }
 
-func (self *ReadField) Read(entity reflect.Value, data ard.Map, context *Context) {
-	childData, ok := data[self.Key]
+func (self *ReadField) Read() {
+	childData, ok := self.Context.Data.(ard.Map)[self.Key]
 	if !ok {
 		return
 	}
 
-	context = context.FieldChild(self.Key, childData)
-	field := entity.FieldByName(self.FieldName)
+	context := self.Context.FieldChild(self.Key, childData)
+	field := self.Entity.FieldByName(self.FieldName)
 
 	if self.Reader != nil {
 		fieldType := field.Type()
@@ -239,7 +251,7 @@ func (self *ReadField) Read(entity reflect.Value, data ard.Map, context *Context
 				field.Set(reflect.ValueOf(item))
 			}
 		} else {
-			panic(fmt.Sprintf("\"read\" tag's field type \"%T\" is not supported in struct: %T.%s", fieldEntityPtr, entity.Interface(), self.FieldName))
+			panic(fmt.Sprintf("\"read\" tag's field type \"%T\" is not supported in struct: %T.%s", fieldEntityPtr, self.Entity.Interface(), self.FieldName))
 		}
 	}
 }

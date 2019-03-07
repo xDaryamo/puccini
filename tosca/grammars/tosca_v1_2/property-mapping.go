@@ -2,7 +2,6 @@ package tosca_v1_2
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/grammars/tosca_v1_1"
 )
 
 //
@@ -12,16 +11,16 @@ import (
 //
 
 type PropertyMapping struct {
-	*tosca_v1_1.Entity `name:"property mapping"`
+	*Entity `name:"property mapping"`
 
 	NodeTemplateName *string `require:"0"`
 	PropertyName     *string `require:"1"`
 
-	NodeTemplate *tosca_v1_1.NodeTemplate `lookup:"0,NodeTemplateName" json:"-" yaml:"-"`
+	NodeTemplate *NodeTemplate `lookup:"0,NodeTemplateName" json:"-" yaml:"-"`
 }
 
 func NewPropertyMapping(context *tosca.Context) *PropertyMapping {
-	return &PropertyMapping{Entity: tosca_v1_1.NewEntity(context)}
+	return &PropertyMapping{Entity: NewEntity(context)}
 }
 
 // tosca.Reader signature

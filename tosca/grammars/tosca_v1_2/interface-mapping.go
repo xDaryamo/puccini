@@ -2,7 +2,6 @@ package tosca_v1_2
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/grammars/tosca_v1_1"
 )
 
 //
@@ -12,16 +11,16 @@ import (
 //
 
 type InterfaceMapping struct {
-	*tosca_v1_1.Entity `name:"interface mapping"`
+	*Entity `name:"interface mapping"`
 
 	NodeTemplateName *string `require:"0"`
 	InterfaceName    *string `require:"1"`
 
-	NodeTemplate *tosca_v1_1.NodeTemplate `lookup:"0,NodeTemplateName" json:"-" yaml:"-"`
+	NodeTemplate *NodeTemplate `lookup:"0,NodeTemplateName" json:"-" yaml:"-"`
 }
 
 func NewInterfaceMapping(context *tosca.Context) *InterfaceMapping {
-	return &InterfaceMapping{Entity: tosca_v1_1.NewEntity(context)}
+	return &InterfaceMapping{Entity: NewEntity(context)}
 }
 
 // tosca.Reader signature

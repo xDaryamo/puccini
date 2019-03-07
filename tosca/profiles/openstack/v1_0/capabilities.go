@@ -4,7 +4,7 @@ package v1_0
 
 func init() {
 	Profile["/tosca/openstack/1.0/capabilities.yaml"] = `
-tosca_definitions_version: tosca_simple_yaml_1_1
+tosca_definitions_version: tosca_simple_yaml_1_2
 
 capability_types:
 

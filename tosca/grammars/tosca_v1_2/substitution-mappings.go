@@ -2,23 +2,30 @@ package tosca_v1_2
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/grammars/tosca_v1_1"
 	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
 // SubstitutionMappings
 //
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 2.10
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 2.11
+//
 
 type SubstitutionMappings struct {
-	*tosca_v1_1.SubstitutionMappings
+	*Entity `name:"substitution mappings"`
 
-	PropertyMappings  []*PropertyMapping  `read:"properties,PropertyMapping"`
-	InterfaceMappings []*InterfaceMapping `read:"interfaces,InterfaceMapping"`
+	NodeTypeName        *string               `read:"node_type" require:"node_type"`
+	CapabilityMappings  []*CapabilityMapping  `read:"capabilities,CapabilityMapping"`
+	RequirementMappings []*RequirementMapping `read:"requirements,RequirementMapping"`
+	PropertyMappings    []*PropertyMapping    `read:"properties,PropertyMapping"`
+	InterfaceMappings   []*InterfaceMapping   `read:"interfaces,InterfaceMapping"`
+
+	NodeType *NodeType `lookup:"node_type,NodeTypeName" json:"-" yaml:"-"`
 }
 
 func NewSubstitutionMappings(context *tosca.Context) *SubstitutionMappings {
-	return &SubstitutionMappings{SubstitutionMappings: tosca_v1_1.NewSubstitutionMappings(context)}
+	return &SubstitutionMappings{Entity: NewEntity(context)}
 }
 
 // tosca.Reader signature
@@ -31,15 +38,56 @@ func ReadSubstitutionMappings(context *tosca.Context) interface{} {
 	}
 
 	self := NewSubstitutionMappings(context)
-	context.ValidateUnsupportedFields(context.ReadFields(self, Readers))
+	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-func (self *SubstitutionMappings) Normalize(s *normal.ServiceTemplate) {
+func (self *SubstitutionMappings) IsRequirementMapped(nodeTemplate *NodeTemplate, requirementName string) bool {
+	for _, mapping := range self.RequirementMappings {
+		if mapping.NodeTemplate == nodeTemplate {
+			if (mapping.RequirementName != nil) && (*mapping.RequirementName == requirementName) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (self *SubstitutionMappings) Normalize(s *normal.ServiceTemplate) *normal.Substitution {
 	log.Info("{normalize} substitution mappings")
 
-	if s.Substitution == nil {
-		return
+	if self.NodeType == nil {
+		return nil
+	}
+
+	t := s.NewSubstitution()
+
+	t.Type = self.NodeType.Name
+
+	if metadata, ok := self.NodeType.GetMetadata(); ok {
+		t.TypeMetadata = metadata
+	}
+
+	for _, mapping := range self.CapabilityMappings {
+		if (mapping.NodeTemplate == nil) || (mapping.CapabilityName == nil) {
+			continue
+		}
+
+		if n, ok := s.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+			if c, ok := n.Capabilities[*mapping.CapabilityName]; ok {
+				t.CapabilityMappings[n] = c
+			}
+		}
+	}
+
+	for _, mapping := range self.RequirementMappings {
+		if (mapping.NodeTemplate == nil) || (mapping.RequirementName == nil) {
+			continue
+		}
+
+		if n, ok := s.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+			t.RequirementMappings[n] = *mapping.RequirementName
+		}
 	}
 
 	for _, mapping := range self.PropertyMappings {
@@ -61,4 +109,6 @@ func (self *SubstitutionMappings) Normalize(s *normal.ServiceTemplate) {
 			s.Substitution.InterfaceMappings[n] = *mapping.InterfaceName
 		}
 	}
+
+	return t
 }

@@ -80,6 +80,8 @@ func (self *InheritContext) GetDependencies(entityPtr interface{}) map[interface
 	// From field values
 	entity := reflect.ValueOf(entityPtr).Elem()
 	for _, structField := range reflection.GetStructFields(entity.Type()) {
+		// Does this case ever happen?
+		// Would conflict with anonymous pointer fields (Go "inheritance")
 		//		if reflection.IsPtrToStruct(structField.Type) {
 		//			// Compatible with *interface{}
 		//			field := entity.FieldByName(structField.Name)

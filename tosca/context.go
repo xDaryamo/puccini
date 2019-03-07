@@ -41,6 +41,7 @@ type Context struct {
 	Hierarchy       *Hierarchy
 	Problems        *problems.Problems
 	Quirks          []string
+	Grammar         Grammar
 	ReadOverrides   map[string]string
 }
 
@@ -101,6 +102,7 @@ func (self *Context) FieldChild(name string, data interface{}) *Context {
 		Hierarchy:       self.Hierarchy,
 		Problems:        self.Problems,
 		Quirks:          self.Quirks,
+		Grammar:         self.Grammar,
 	}
 }
 
@@ -145,6 +147,7 @@ func (self *Context) MapChild(name string, data interface{}) *Context {
 		Hierarchy:       self.Hierarchy,
 		Problems:        self.Problems,
 		Quirks:          self.Quirks,
+		Grammar:         self.Grammar,
 	}
 }
 
@@ -175,6 +178,7 @@ func (self *Context) SequencedListChild(index int, name string, data interface{}
 		Hierarchy:       self.Hierarchy,
 		Problems:        self.Problems,
 		Quirks:          self.Quirks,
+		Grammar:         self.Grammar,
 	}
 }
 
@@ -188,6 +192,7 @@ func (self *Context) Import(url_ url.URL) *Context {
 		Hierarchy:       &Hierarchy{},
 		Problems:        self.Problems,
 		Quirks:          self.Quirks,
+		Grammar:         self.Grammar,
 	}
 }
 
@@ -203,5 +208,6 @@ func (self *Context) WithData(data interface{}) *Context {
 		Hierarchy:       self.Hierarchy,
 		Problems:        self.Problems,
 		Quirks:          self.Quirks,
+		Grammar:         self.Grammar,
 	}
 }

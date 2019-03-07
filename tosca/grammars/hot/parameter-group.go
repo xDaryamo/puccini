@@ -25,6 +25,6 @@ func NewParameterGroup(context *tosca.Context) *ParameterGroup {
 // tosca.Reader signature
 func ReadParameterGroup(context *tosca.Context) interface{} {
 	self := NewParameterGroup(context)
-	context.ValidateUnsupportedFields(append(context.ReadFields(self, Readers)))
+	context.ValidateUnsupportedFields(append(context.ReadFields(self)))
 	return self
 }

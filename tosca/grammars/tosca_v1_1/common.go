@@ -4,121 +4,91 @@ import (
 	"github.com/op/go-logging"
 	"github.com/tliron/puccini/js"
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v1_2"
 )
 
 var log = logging.MustGetLogger("grammars.tosca_v1_1")
 
-var Readers = make(map[string]tosca.Reader)
+var Grammar = make(tosca.Grammar)
 
 var DefaultScriptNamespace = make(tosca.ScriptNamespace)
 
 func init() {
-	Readers["Artifact"] = ReadArtifact
-	Readers["ArtifactDefinition"] = ReadArtifactDefinition
-	Readers["ArtifactType"] = ReadArtifactType
-	Readers["AttributeDefinition"] = ReadAttributeDefinition
-	Readers["CapabilityAssignment"] = ReadCapabilityAssignment
-	Readers["CapabilityDefinition"] = ReadCapabilityDefinition
-	Readers["CapabilityFilter"] = ReadCapabilityFilter
-	Readers["CapabilityMapping"] = ReadCapabilityMapping
-	Readers["CapabilityType"] = ReadCapabilityType
-	Readers["ConditionClause"] = ReadConditionClause
-	Readers["ConstraintClause"] = ReadConstraintClause
-	Readers["DataType"] = ReadDataType
-	Readers["EntrySchema"] = ReadEntrySchema
-	Readers["EventFilter"] = ReadEventFilter
-	Readers["Group"] = ReadGroup
-	Readers["GroupType"] = ReadGroupType
-	Readers["Import"] = ReadImport
-	Readers["InterfaceAssignment"] = ReadInterfaceAssignment
-	Readers["InterfaceDefinition"] = ReadInterfaceDefinition
-	Readers["InterfaceType"] = ReadInterfaceType
-	Readers["Metadata"] = ReadMetadata
-	Readers["NodeFilter"] = ReadNodeFilter
-	Readers["NodeTemplate"] = ReadNodeTemplate
-	Readers["NodeType"] = ReadNodeType
-	Readers["OperationAssignment"] = ReadOperationAssignment
-	Readers["OperationDefinition"] = ReadOperationDefinition
-	Readers["OperationImplementation"] = ReadOperationImplementation
-	Readers["ParameterDefinition"] = ReadParameterDefinition
-	Readers["Policy"] = ReadPolicy
-	Readers["PolicyType"] = ReadPolicyType
-	Readers["PropertyDefinition"] = ReadPropertyDefinition
-	Readers["PropertyFilter"] = ReadPropertyFilter
-	Readers["range"] = ReadRange
-	Readers["RangeEntity"] = ReadRangeEntity
-	Readers["RelationshipAssignment"] = ReadRelationshipAssignment
-	Readers["RelationshipDefinition"] = ReadRelationshipDefinition
-	Readers["RelationshipTemplate"] = ReadRelationshipTemplate
-	Readers["RelationshipType"] = ReadRelationshipType
-	Readers["Repository"] = ReadRepository
-	Readers["RequirementAssignment"] = ReadRequirementAssignment
-	Readers["RequirementDefinition"] = ReadRequirementDefinition
-	Readers["RequirementMapping"] = ReadRequirementMapping
-	Readers["scalar-unit.size"] = ReadScalarUnitSize
-	Readers["scalar-unit.time"] = ReadScalarUnitTime
-	Readers["scalar-unit.frequency"] = ReadScalarUnitFrequency
-	Readers["ServiceTemplate"] = ReadServiceTemplate
-	Readers["SubstitutionMappings"] = ReadSubstitutionMappings
-	Readers["timestamp"] = ReadTimestamp
-	Readers["TopologyTemplate"] = ReadTopologyTemplate
-	Readers["TriggerDefinition"] = ReadTriggerDefinition
-	Readers["TriggerDefinitionCondition"] = ReadTriggerDefinitionCondition
-	Readers["Unit"] = ReadUnit
-	Readers["Value"] = ReadValue
-	Readers["version"] = ReadVersion
-	Readers["WorkflowActivityDefinition"] = ReadWorkflowActivityDefinition
-	Readers["WorkflowDefinition"] = ReadWorkflowDefinition
-	Readers["WorkflowPreconditionDefinition"] = ReadWorkflowPreconditionDefinition
-	Readers["WorkflowStepDefinition"] = ReadWorkflowStepDefinition
+	Grammar["Artifact"] = tosca_v1_2.ReadArtifact
+	Grammar["ArtifactDefinition"] = tosca_v1_2.ReadArtifactDefinition
+	Grammar["ArtifactType"] = tosca_v1_2.ReadArtifactType
+	Grammar["AttributeDefinition"] = tosca_v1_2.ReadAttributeDefinition
+	Grammar["CapabilityAssignment"] = tosca_v1_2.ReadCapabilityAssignment
+	Grammar["CapabilityDefinition"] = tosca_v1_2.ReadCapabilityDefinition
+	Grammar["CapabilityFilter"] = tosca_v1_2.ReadCapabilityFilter
+	Grammar["CapabilityMapping"] = tosca_v1_2.ReadCapabilityMapping
+	Grammar["CapabilityType"] = tosca_v1_2.ReadCapabilityType
+	Grammar["ConditionClause"] = tosca_v1_2.ReadConditionClause
+	Grammar["ConstraintClause"] = tosca_v1_2.ReadConstraintClause
+	Grammar["DataType"] = tosca_v1_2.ReadDataType
+	Grammar["EntrySchema"] = tosca_v1_2.ReadEntrySchema
+	Grammar["EventFilter"] = tosca_v1_2.ReadEventFilter
+	Grammar["Group"] = tosca_v1_2.ReadGroup
+	Grammar["GroupType"] = tosca_v1_2.ReadGroupType
+	Grammar["Import"] = tosca_v1_2.ReadImport
+	Grammar["InterfaceAssignment"] = tosca_v1_2.ReadInterfaceAssignment
+	Grammar["InterfaceDefinition"] = tosca_v1_2.ReadInterfaceDefinition
+	Grammar["InterfaceType"] = tosca_v1_2.ReadInterfaceType
+	Grammar["Metadata"] = tosca_v1_2.ReadMetadata
+	Grammar["NodeFilter"] = tosca_v1_2.ReadNodeFilter
+	Grammar["NodeTemplate"] = tosca_v1_2.ReadNodeTemplate
+	Grammar["NodeType"] = tosca_v1_2.ReadNodeType
+	Grammar["OperationAssignment"] = tosca_v1_2.ReadOperationAssignment
+	Grammar["OperationDefinition"] = tosca_v1_2.ReadOperationDefinition
+	Grammar["OperationImplementation"] = tosca_v1_2.ReadOperationImplementation
+	Grammar["ParameterDefinition"] = tosca_v1_2.ReadParameterDefinition
+	Grammar["Policy"] = tosca_v1_2.ReadPolicy
+	Grammar["PolicyType"] = tosca_v1_2.ReadPolicyType
+	Grammar["PropertyDefinition"] = tosca_v1_2.ReadPropertyDefinition
+	Grammar["PropertyFilter"] = tosca_v1_2.ReadPropertyFilter
+	Grammar["range"] = tosca_v1_2.ReadRange
+	Grammar["RangeEntity"] = tosca_v1_2.ReadRangeEntity
+	Grammar["RelationshipAssignment"] = tosca_v1_2.ReadRelationshipAssignment
+	Grammar["RelationshipDefinition"] = tosca_v1_2.ReadRelationshipDefinition
+	Grammar["RelationshipTemplate"] = tosca_v1_2.ReadRelationshipTemplate
+	Grammar["RelationshipType"] = tosca_v1_2.ReadRelationshipType
+	Grammar["Repository"] = tosca_v1_2.ReadRepository
+	Grammar["RequirementAssignment"] = tosca_v1_2.ReadRequirementAssignment
+	Grammar["RequirementDefinition"] = tosca_v1_2.ReadRequirementDefinition
+	Grammar["RequirementMapping"] = tosca_v1_2.ReadRequirementMapping
+	Grammar["scalar-unit.size"] = tosca_v1_2.ReadScalarUnitSize
+	Grammar["scalar-unit.time"] = tosca_v1_2.ReadScalarUnitTime
+	Grammar["scalar-unit.frequency"] = tosca_v1_2.ReadScalarUnitFrequency
+	Grammar["ServiceTemplate"] = ReadServiceTemplate           // override
+	Grammar["SubstitutionMappings"] = ReadSubstitutionMappings // override
+	Grammar["timestamp"] = tosca_v1_2.ReadTimestamp
+	Grammar["TopologyTemplate"] = tosca_v1_2.ReadTopologyTemplate
+	Grammar["TriggerDefinition"] = tosca_v1_2.ReadTriggerDefinition
+	Grammar["TriggerDefinitionCondition"] = tosca_v1_2.ReadTriggerDefinitionCondition
+	Grammar["Unit"] = ReadUnit // override
+	Grammar["Value"] = tosca_v1_2.ReadValue
+	Grammar["version"] = tosca_v1_2.ReadVersion
+	Grammar["WorkflowActivityDefinition"] = tosca_v1_2.ReadWorkflowActivityDefinition
+	Grammar["WorkflowDefinition"] = tosca_v1_2.ReadWorkflowDefinition
+	Grammar["WorkflowPreconditionDefinition"] = tosca_v1_2.ReadWorkflowPreconditionDefinition
+	Grammar["WorkflowStepDefinition"] = tosca_v1_2.ReadWorkflowStepDefinition
 
-	for name, sourceCode := range FunctionSourceCode {
+	for name, sourceCode := range tosca_v1_2.FunctionSourceCode {
+		// Unsupported functions
+		if name == "join" {
+			continue
+		}
+
 		DefaultScriptNamespace[name] = &tosca.Script{
 			SourceCode: js.Cleanup(sourceCode),
 		}
 	}
 
-	for name, sourceCode := range ConstraintClauseSourceCode {
-		nativeArgumentIndexes, _ := ConstraintClauseNativeArgumentIndexes[name]
+	for name, sourceCode := range tosca_v1_2.ConstraintClauseSourceCode {
+		nativeArgumentIndexes, _ := tosca_v1_2.ConstraintClauseNativeArgumentIndexes[name]
 		DefaultScriptNamespace[name] = &tosca.Script{
 			SourceCode:            js.Cleanup(sourceCode),
 			NativeArgumentIndexes: nativeArgumentIndexes,
 		}
 	}
-}
-
-func CompareUint32(v1 uint32, v2 uint32) int {
-	if v1 < v2 {
-		return -1
-	} else if v2 > v1 {
-		return 1
-	}
-	return 0
-}
-
-func CompareUint64(v1 uint64, v2 uint64) int {
-	if v1 < v2 {
-		return -1
-	} else if v2 > v1 {
-		return 1
-	}
-	return 0
-}
-
-func CompareInt64(v1 int64, v2 int64) int {
-	if v1 < v2 {
-		return -1
-	} else if v2 > v1 {
-		return 1
-	}
-	return 0
-}
-
-func CompareFloat64(v1 float64, v2 float64) int {
-	if v1 < v2 {
-		return -1
-	} else if v2 > v1 {
-		return 1
-	}
-	return 0
 }

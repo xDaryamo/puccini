@@ -7,32 +7,23 @@ import (
 	openstack_v1_0 "github.com/tliron/puccini/tosca/profiles/openstack/v1_0"
 	simpleForNFV_v1_0 "github.com/tliron/puccini/tosca/profiles/simple-for-nfv/v1_0"
 	simple_v1_1 "github.com/tliron/puccini/tosca/profiles/simple/v1_1"
+	simple_v1_2 "github.com/tliron/puccini/tosca/profiles/simple/v1_2"
 
 	"github.com/tliron/puccini/url"
 )
 
 func init() {
-	for k, v := range simple_v1_1.Profile {
-		url.Internal[k] = v
-	}
+	initProfile(simple_v1_2.Profile)
+	initProfile(simple_v1_1.Profile)
+	initProfile(simpleForNFV_v1_0.Profile)
+	initProfile(kubernetes_v1_0.Profile)
+	initProfile(openstack_v1_0.Profile)
+	initProfile(bpmn_v1_0.Profile)
+	initProfile(hot.Profile)
+}
 
-	for k, v := range simpleForNFV_v1_0.Profile {
-		url.Internal[k] = v
-	}
-
-	for k, v := range kubernetes_v1_0.Profile {
-		url.Internal[k] = v
-	}
-
-	for k, v := range openstack_v1_0.Profile {
-		url.Internal[k] = v
-	}
-
-	for k, v := range bpmn_v1_0.Profile {
-		url.Internal[k] = v
-	}
-
-	for k, v := range hot.Profile {
+func initProfile(profile map[string]string) {
+	for k, v := range profile {
 		url.Internal[k] = v
 	}
 }

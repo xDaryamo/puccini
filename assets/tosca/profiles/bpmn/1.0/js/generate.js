@@ -79,7 +79,7 @@ function createPolicyTriggerOperationTask(process, target, operation) {
 	// TODO: handle inputs and dependencies
 	var code = puccini.sprintf('\ncallOperation("%s", "%s");\n', target.name, operation.implementation);
 	var task = createScriptTask(process, clout.newKey(), 'operation on ' + target.name, code);
-	return task
+	return task;
 }
 
 function createWorkflowProcess(id, vertex) {
@@ -252,7 +252,7 @@ function createGateway(process, converging) {
 	gw.createAttr('id', clout.newKey());
 	gw.createAttr('name', converging ? 'converge' : 'diverge');
 	gw.createAttr('gatewayDirection', converging ? 'Converging' : 'Diverging');
-	return gw
+	return gw;
 }
 
 function createSequenceFlow(process, source, target) {

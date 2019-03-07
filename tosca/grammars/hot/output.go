@@ -30,7 +30,7 @@ func NewOutput(context *tosca.Context) *Output {
 // tosca.Reader signature
 func ReadOutput(context *tosca.Context) interface{} {
 	self := NewOutput(context)
-	context.ValidateUnsupportedFields(append(context.ReadFields(self, Readers)))
+	context.ValidateUnsupportedFields(append(context.ReadFields(self)))
 	return self
 }
 

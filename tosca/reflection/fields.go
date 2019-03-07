@@ -7,6 +7,7 @@ import (
 )
 
 // Includes fields "inherited" from anonymous struct pointer fields
+// The order of field definition is important! Later fields will override previous fields
 func GetStructFields(type_ reflect.Type) []reflect.StructField {
 	if v, ok := structFieldsCache.Load(type_); ok {
 		return v.([]reflect.StructField)

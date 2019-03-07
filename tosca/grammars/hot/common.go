@@ -8,21 +8,23 @@ import (
 
 var log = logging.MustGetLogger("grammars.hot")
 
-var Readers = make(map[string]tosca.Reader)
+var Grammar = make(tosca.Grammar)
 
 var DefaultScriptNamespace = make(tosca.ScriptNamespace)
 
 func init() {
-	Readers["Condition"] = ReadCondition
-	Readers["ConditionDefinition"] = ReadConditionDefinition
-	Readers["Constraint"] = ReadConstraint
-	Readers["Data"] = ReadData
-	Readers["Output"] = ReadOutput
-	Readers["Parameter"] = ReadParameter
-	Readers["ParameterGroup"] = ReadParameterGroup
-	Readers["Resource"] = ReadResource
-	Readers["Template"] = ReadTemplate
-	Readers["Value"] = ReadValue
+	Grammar["ServiceTemplate"] = ReadTemplate
+
+	Grammar["Condition"] = ReadCondition
+	Grammar["ConditionDefinition"] = ReadConditionDefinition
+	Grammar["Constraint"] = ReadConstraint
+	Grammar["Data"] = ReadData
+	Grammar["Output"] = ReadOutput
+	Grammar["Parameter"] = ReadParameter
+	Grammar["ParameterGroup"] = ReadParameterGroup
+	Grammar["Resource"] = ReadResource
+	Grammar["Template"] = ReadTemplate
+	Grammar["Value"] = ReadValue
 
 	for name, sourceCode := range FunctionSourceCode {
 		DefaultScriptNamespace[name] = &tosca.Script{

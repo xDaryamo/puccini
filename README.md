@@ -21,7 +21,12 @@ Clout frontend for TOSCA. Parses a TOSCA service template and compiles it to Clo
 Why TOSCA? It's a high-level language designed for modeling and validating cloud topologies using
 reusable and inheritable objects. It allows architects to focus on application logic and
 requirements without being bogged down by the ever-changing specificities of the infrastructure.
-We support TOSCA 1.1 and as the recent draft of TOSCA 1.2.
+Puccini can compile
+[TOSCA 1.2](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.2/TOSCA-Simple-Profile-YAML-v1.2.html),
+[TOSCA 1.1](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html),
+and [HOT](https://docs.openstack.org/heat/latest/template_guide/hot_guide.html).
+Other TOSCA dialects, such as [Cloudify DSL](https://docs.cloudify.co/latest/developer/blueprints/),
+might be added in the future.
 
 **puccini-tosca** comes with TOSCA profiles for the
 [Kubernetes](assets/tosca/profiles/kubernetes/1.0/) and
@@ -147,24 +152,24 @@ or an individual operation.
 
 Puccini provides three different implementations of these features:
 
-For OpenStack, Puccini can generate [Ansible](https://www.ansible.com/) playbooks that rely on the
-Ansible OpenStack roles. Custom operation artifacts, if included, are deployed to the virtual
-machines and executed. Effectively, the combination of TOSCA + Ansible provides an equivalent set of
-features to
-[HOT](https://docs.openstack.org/heat/latest/template_guide/hot_guide.html) +
+1) For OpenStack, Puccini can generate [Ansible](https://www.ansible.com/) playbooks that rely on
+the
+[Ansible OpenStack roles](https://docs.ansible.com/ansible/latest/modules/list_of_cloud_modules.html#openstack).
+Custom operation artifacts, if included, are deployed to the virtual machines and executed.
+Effectively, the combination of TOSCA + Ansible provides an equivalent set of features to
 [Heat](https://docs.openstack.org/heat/latest/)/[Mistral](https://docs.openstack.org/mistral/latest/).
-Indeed, it's worth pointing out that the HOT language is superficially and historically related to
-TOSCA. Actually, TOSCA + Ansible is more powerful and flexible, because the TOSCA language is much
-richer than HOT, and Ansible is a general-purpose orchestrator that can do a lot more than Heat. The
-generated playbooks comprise roles that can be imported and used in other playbooks.
+However, Ansible is a general-purpose orchestrator that can do a lot more than Heat. The generated
+playbooks comprise roles that can be imported and used in other playbooks, allowing for custom
+orchestration integrations. Also note that although Puccini can compile HOT directly, we recommend
+TOSCA because of its much richer grammar and features.  
 
-Puccini's BPMN profile lets you generate [BPMN2](https://www.omg.org/spec/BPMN/) processes from
+2) Puccini's BPMN profile lets you generate [BPMN2](https://www.omg.org/spec/BPMN/) processes from
 TOSCA workflows and policy triggers. These allow for tight integration with enterprise process
 management (called [OSS/BSS](https://en.wikipedia.org/wiki/OSS/BSS) in the telecommunications
 industry). The generated processes can also be included as sub-processes within larger business
 processes. 
 
-Kubernetes doesn't normally require workflows: its "scheduling" paradigm is a declarative
+3) Kubernetes doesn't normally require workflows: its "scheduling" paradigm is a declarative
 alternative to the classical procedural orchestration paradigm. As it provides a truly
 cloud-native environment, Kubernetes applications are better off orchestrating themselves, for
 example by relying on [operators](https://github.com/operator-framework/operator-sdk) to do the

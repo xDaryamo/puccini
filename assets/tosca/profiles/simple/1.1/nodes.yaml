@@ -445,6 +445,12 @@ node_types:
         type: boolean
         default: true
         required: false
+    attributes:
+      segmentation_id:
+        description: >-
+          The actual segmentation_id that is been assigned to the network by the underlying cloud
+          infrastructure. 
+        type: string
     capabilities:
       link:
         type: tosca.capabilities.network.Linkable

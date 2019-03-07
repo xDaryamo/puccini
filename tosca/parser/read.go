@@ -13,15 +13,11 @@ import (
 )
 
 func (self *Context) ReadServiceTemplate(url_ url.URL) bool {
-	return self.readRootEntity(url_, RootEntityGrammars)
-}
-
-func (self *Context) readRootEntity(url_ url.URL, readers Grammars) bool {
 	toscaContext := tosca.NewContext(self.Problems, self.Quirks)
 	toscaContext.URL = url_
 
 	self.WG.Add(1)
-	serviceTemplate, ok := self.read(nil, &toscaContext, nil, nil, readers)
+	serviceTemplate, ok := self.read(nil, &toscaContext, nil, nil, "ServiceTemplate")
 	self.WG.Wait()
 
 	self.ServiceTemplate = serviceTemplate
@@ -30,7 +26,7 @@ func (self *Context) readRootEntity(url_ url.URL, readers Grammars) bool {
 	return ok
 }
 
-func (self *Context) read(promise Promise, toscaContext *tosca.Context, container *Import, nameTransfomer tosca.NameTransformer, grammars Grammars) (*Import, bool) {
+func (self *Context) read(promise Promise, toscaContext *tosca.Context, container *Import, nameTransfomer tosca.NameTransformer, readerName string) (*Import, bool) {
 	defer self.WG.Done()
 	if promise != nil {
 		// For the goroutines waiting for our cached entityPtr
@@ -57,7 +53,11 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 
 	// Grammar
 	toscaContext.Data = data
-	read, ok := GetGrammar(toscaContext, grammars)
+	if !DetectGrammar(toscaContext) {
+		return nil, false
+	}
+
+	read, ok := toscaContext.Grammar[readerName]
 	if !ok {
 		return nil, false
 	}
@@ -120,7 +120,7 @@ func (self *Context) readImports(container *Import) {
 
 			// Read (concurrently)
 			self.WG.Add(1)
-			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, ImportedEntityGrammars)
+			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, "Unit")
 		}
 	}
 }
