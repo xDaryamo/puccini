@@ -23,7 +23,7 @@ node_types:
   tosca.nodes.nfv.VDU.Compute:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.9.2
     description: >-
       The TOSCA nfv.VDU.Compute node type represents the virtual compute part of a VDU entity which
@@ -118,7 +118,7 @@ node_types:
   tosca.nodes.nfv.VDU.VirtualStorage:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.9.3
     description: >-
       The NFV VirtualStorage node type represents a virtual storage entity which it describes the
@@ -152,7 +152,7 @@ node_types:
   tosca.nodes.nfv.Cpd:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.9.4
     description: >-
       The TOSCA nfv.Cpd node represents network connectivity to a compute resource or a VL as
@@ -194,7 +194,7 @@ node_types:
   tosca.nodes.nfv.VduCpd:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.9.5
     description: >-
       The TOSCA nfv.VduCpd node type represents a type of TOSCA Cpd node and describes network
@@ -230,7 +230,7 @@ node_types:
   tosca.nodes.nfv.VnfVirtualLinkDesc:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.9.6
     description: >-
       The TOSCA nfv.VnfVirtualLinkDesc node type represents a logical internal virtual link as

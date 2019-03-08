@@ -22,7 +22,7 @@ capability_types:
   tosca.capabilities.nfv.VirtualBindable:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.5.1
     description: >-
       A node type that includes the VirtualBindable capability indicates that it can be pointed by
@@ -32,7 +32,7 @@ capability_types:
   tosca.capabilities.nfv.Metric:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.5.2
     description: >-
       A node type that includes the Metric capability indicates that it can be monitored using an
@@ -42,7 +42,7 @@ capability_types:
   tosca.capabilities.nfv.VirtualCompute:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.5.3
     derived_from: tosca.capabilities.Root
     properties:

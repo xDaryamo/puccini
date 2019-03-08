@@ -16,7 +16,7 @@ relationship_types:
   tosca.relationships.nfv.VirtualBindsTo:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.7.1
     description: >-
       This relationship type represents an association relationship between VDU and CP node types.
@@ -28,7 +28,7 @@ relationship_types:
   tosca.relationships.nfv.Monitor:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.7.2
     description: >-
       This relationship type represents an association relationship to the Metric capability of VDU

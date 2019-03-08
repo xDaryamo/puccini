@@ -19,7 +19,7 @@ artifact_types:
   tosca.artifacts.nfv.SwImage:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.4.1
     derived_from: tosca.artifacts.Deployment.Image
     properties:

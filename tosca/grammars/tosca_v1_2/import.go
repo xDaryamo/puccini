@@ -94,21 +94,9 @@ func newImportNameTransformer(prefix *string) tosca.NameTransformer {
 		if hasMetadata, ok := entityPtr.(normal.HasMetadata); ok {
 			if metadata, ok := hasMetadata.GetMetadata(); ok {
 				if normative, ok := metadata["normative"]; ok {
-					if (normative == "true") && strings.HasPrefix(name, "tosca.") {
+					if normative == "true" {
 						// Reserved "tosca." names also get shorthand and prefixed names
-						s := strings.Split(name, ".")
-
-						// Find where the shorthand starts (e.g. "Endpoint.Public")
-						firstShorthandSegment := len(s) - 1
-						for i, segment := range s {
-							if (len(segment) > 0) && unicode.IsUpper([]rune(segment)[0]) {
-								firstShorthandSegment = i
-								break
-							}
-						}
-						shorthand := strings.Join(s[firstShorthandSegment:], ".")
-
-						names = append(names, shorthand, fmt.Sprintf("tosca:%s", shorthand))
+						names = appendShorthandNames(names, name, "tosca")
 					}
 				}
 			}
@@ -124,4 +112,25 @@ func newImportNameTransformer(prefix *string) tosca.NameTransformer {
 
 		return names
 	}
+}
+
+func appendShorthandNames(names []string, name string, prefix string) []string {
+	if !strings.HasPrefix(name, prefix+".") {
+		return names
+	}
+
+	s := strings.Split(name, ".")
+
+	// The shorthand starts at the first camel-cased segment
+	// (e.g. "prefix.blah.blah.Endpoint.Public")
+	firstShorthandSegment := len(s) - 1
+	for i, segment := range s {
+		if (len(segment) > 0) && unicode.IsUpper([]rune(segment)[0]) {
+			firstShorthandSegment = i
+			break
+		}
+	}
+	shorthand := strings.Join(s[firstShorthandSegment:], ".")
+
+	return append(names, shorthand, fmt.Sprintf("%s:%s", prefix, shorthand))
 }

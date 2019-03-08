@@ -20,13 +20,13 @@ data_types:
     # ERRATUM: TBD
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.3.1
 
   tosca.datatypes.nfv.L3AddressData:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.3.2
     description: >-
       The L3AddressData type is a complex TOSCA data type used to describe L3AddressData information
@@ -63,7 +63,7 @@ data_types:
   tosca.datatypes.nfv.AddressData:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.3.3
     description: >-
       The AddressData type is a complex TOSCA data type used to describe AddressData information
@@ -98,7 +98,7 @@ data_types:
   tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.3.4
     description: >-
       The VirtualNetworkInterfaceRequirements type is a complex TOSCA data type used to describe
@@ -133,7 +133,7 @@ data_types:
   tosca.datatypes.nfv.ConnectivityType:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.3.5
     description: >-
       The TOSCA ConnectivityType type is a complex TOSCA data type used to describe ConnectivityType
@@ -157,7 +157,7 @@ data_types:
   tosca.datatypes.nfv.RequestedAdditionalCapability:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.3.6
     description: >-
       RequestAdditionalCapability describes additional capability for a particular VDU.
@@ -195,7 +195,7 @@ data_types:
   tosca.datatypes.nfv.VirtualMemory:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.3.7
     description: >-
       VirtualMemory describes virtual memory for a particular VDU.
@@ -223,7 +223,7 @@ data_types:
   tosca.datatypes.nfv.VirtualCpu:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.3.8
     description: >-
       VirtualMemory describes virtual memory for a particular VDU.
@@ -258,7 +258,7 @@ data_types:
   tosca.datatypes.nfv.VirtualCpuPinning:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.3.9
     description: >-
       VirtualCpuPinning describes CPU pinning configuration for a particular CPU.
@@ -283,7 +283,7 @@ data_types:
   tosca.datatypes.nfv.VnfcConfigurableProperties:
     metadata:
       normative: 'true'
-      citation: '[TOSCA-Simple-Profile-NFV-v1.0]'
+      citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       citation_location: 5.3.10
     # ERRATUM: description is mangled in spec
     description: >-
