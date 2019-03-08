@@ -33,7 +33,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 		defer promise.Release()
 	}
 
-	log.Infof("{read} %s", toscaContext.URL.Key())
+	log.Infof("{read} %s: %s", readerName, toscaContext.URL.Key())
 
 	switch toscaContext.URL.Format() {
 	case "csar", "zip":
@@ -45,26 +45,24 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 	}
 
 	// Read ARD
-	data, err := ard.ReadURL(toscaContext.URL)
-	if err != nil {
+	var err error
+	if toscaContext.Data, err = ard.ReadURL(toscaContext.URL); err != nil {
 		toscaContext.ReportError(err)
 		return nil, false
 	}
 
-	// Grammar
-	toscaContext.Data = data
+	// Detect grammar
 	if !DetectGrammar(toscaContext) {
 		return nil, false
 	}
 
+	// Read entityPtr
 	read, ok := toscaContext.Grammar[readerName]
 	if !ok {
-		return nil, false
+		panic(fmt.Sprintf("grammar does not support reader \"%s\"", readerName))
 	}
-
-	// Read entityPtr
 	entityPtr := read(toscaContext)
-	if !ok {
+	if entityPtr == nil {
 		// Even if there are problems, the reader should return an entityPtr
 		panic(fmt.Sprintf("reader \"%s\" returned a non-entity: %T", reflection.GetFunctionName(read), entityPtr))
 	}
@@ -84,26 +82,38 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 
 // From Importer interface
 func (self *Context) readImports(container *Import) {
-	importer, ok := container.EntityPtr.(tosca.Importer)
-	if !ok {
-		return
+	var importSpecs []*tosca.ImportSpec
+	if importer, ok := container.EntityPtr.(tosca.Importer); ok {
+		importSpecs = importer.GetImportSpecs()
 	}
 
-	for _, importSpec := range importer.GetImportSpecs() {
+	// Implicit import
+	if implicitImportSpec, ok := GetProfileImportSpec(container.GetContext()); ok {
+		importSpecs = append(importSpecs, implicitImportSpec)
+	}
+
+	for _, importSpec := range importSpecs {
 		key := importSpec.URL.Key()
 
-		// Check for import loop
+		// Skip if causes import loop
+		skip := false
 		for c := container; c != nil; c = c.Container {
 			url_ := c.GetContext().URL
 			if url_.Key() == key {
-				container.GetContext().ReportImportLoop(url_)
-				return
+				if !importSpec.Implicit {
+					// Explicit import loops are considered errors
+					container.GetContext().ReportImportLoop(url_)
+				}
+				skip = true
+				break
 			}
+		}
+		if skip {
+			continue
 		}
 
 		promise := NewPromise()
-		cached, inCache := cache.LoadOrStore(key, promise)
-		if inCache {
+		if cached, inCache := cache.LoadOrStore(key, promise); inCache {
 			switch c := cached.(type) {
 			case Promise:
 				// Wait for promise
@@ -129,8 +139,7 @@ func (self *Context) waitForPromise(promise Promise, key string, container *Impo
 	defer self.WG.Done()
 	promise.Wait()
 
-	cached, inCache := cache.Load(key)
-	if inCache {
+	if cached, inCache := cache.Load(key); inCache {
 		switch cached.(type) {
 		case Promise:
 			log.Debugf("{read} cache promise failed: %s", key)

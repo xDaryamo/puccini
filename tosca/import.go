@@ -11,4 +11,5 @@ type Importer interface {
 type ImportSpec struct {
 	URL             url.URL
 	NameTransformer NameTransformer
+	Implicit        bool
 }

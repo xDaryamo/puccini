@@ -1,14 +1,8 @@
 package tosca_v1_2
 
 import (
-	"strings"
-
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
-
-	simpleForNFV_v1_0 "github.com/tliron/puccini/tosca/profiles/simple-for-nfv/v1_0"
-	simple_v1_1 "github.com/tliron/puccini/tosca/profiles/simple/v1_1"
-	simple_v1_2 "github.com/tliron/puccini/tosca/profiles/simple/v1_2"
 )
 
 //
@@ -51,33 +45,14 @@ func ReadUnit(context *tosca.Context) interface{} {
 
 // parser.Importer interface
 func (self *Unit) GetImportSpecs() []*tosca.ImportSpec {
-	var importSpecs []*tosca.ImportSpec
-
 	// TODO: importing should also import repositories
 
-	// TODO: better way to decide when not to import the profile
-	ok := strings.HasPrefix(self.Context.URL.String(), "internal:/tosca/simple/")
-	if !ok {
-		if self.ToscaDefinitionsVersion != nil {
-			switch *self.ToscaDefinitionsVersion {
-			case "tosca_simple_yaml_1_2":
-				importSpecs = append(importSpecs, &tosca.ImportSpec{simple_v1_2.GetURL(), nil})
-			case "tosca_simple_profile_for_nfv_1_0":
-				importSpecs = append(importSpecs, &tosca.ImportSpec{simple_v1_2.GetURL(), nil})
-				importSpecs = append(importSpecs, &tosca.ImportSpec{simpleForNFV_v1_0.GetURL(), nil})
-			case "tosca_simple_yaml_1_1":
-				importSpecs = append(importSpecs, &tosca.ImportSpec{simple_v1_1.GetURL(), nil})
-			}
-		}
-	}
-
-	// Our imports
+	var importSpecs = make([]*tosca.ImportSpec, 0, len(self.Imports))
 	for _, import_ := range self.Imports {
 		if importSpec, ok := import_.NewImportSpec(self); ok {
 			importSpecs = append(importSpecs, importSpec)
 		}
 	}
-
 	return importSpecs
 }
 

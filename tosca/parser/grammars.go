@@ -24,23 +24,21 @@ var Grammars = map[string]tosca.Grammar{
 	"2013-05-23":                       hot.Grammar, // icehouse
 }
 
-func DetectGrammar(self *tosca.Context) bool {
-	if versionContext, ok := self.GetFieldChild("tosca_definitions_version"); ok {
-		if version := versionContext.ReadString(); version != nil {
-			if self.Grammar, ok = Grammars[*version]; ok {
-				return true
-			}
+func DetectGrammar(context *tosca.Context) bool {
+	var versionContext *tosca.Context
+	var ok bool
+	if versionContext, ok = context.GetFieldChild("tosca_definitions_version"); !ok {
+		if versionContext, ok = context.GetFieldChild("heat_template_version"); !ok {
+			return false
 		}
+	}
 
-		versionContext.ReportFieldUnsupportedValue()
-	} else if versionContext, ok := self.GetFieldChild("heat_template_version"); ok {
-		if version := versionContext.ReadString(); version != nil {
-			if self.Grammar, ok = Grammars[*version]; ok {
-				return true
-			}
+	if version := versionContext.ReadString(); version != nil {
+		if context.Grammar, ok = Grammars[*version]; ok {
+			return true
+		} else {
+			versionContext.ReportFieldUnsupportedValue()
 		}
-
-		versionContext.ReportFieldUnsupportedValue()
 	}
 
 	return false

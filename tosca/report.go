@@ -114,7 +114,7 @@ func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) {
 	for _, type_ := range types {
 		entityTypeNames = append(entityTypeNames, GetEntityTypeName(type_))
 	}
-	self.ReportPathf("unknown %s reference: %s", format.Options(entityTypeNames), self.FormatBadData())
+	self.ReportPathf("unknown reference to %s: %s", format.Options(entityTypeNames), self.FormatBadData())
 }
 
 //

@@ -9,8 +9,16 @@ import (
 	simple_v1_1 "github.com/tliron/puccini/tosca/profiles/simple/v1_1"
 	simple_v1_2 "github.com/tliron/puccini/tosca/profiles/simple/v1_2"
 
+	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/url"
 )
+
+var ProfileInternalPaths = map[string]string{
+	"tosca_simple_yaml_1_2":            simple_v1_2.ProfileInternalPath,
+	"tosca_simple_yaml_1_1":            simple_v1_1.ProfileInternalPath,
+	"tosca_simple_yaml_1_0":            simple_v1_1.ProfileInternalPath, // TODO: properly support 1.0
+	"tosca_simple_profile_for_nfv_1_0": simpleForNFV_v1_0.ProfileInternalPath,
+}
 
 func init() {
 	initProfile(simple_v1_2.Profile)
@@ -26,4 +34,26 @@ func initProfile(profile map[string]string) {
 	for k, v := range profile {
 		url.Internal[k] = v
 	}
+}
+
+func GetProfileImportSpec(context *tosca.Context) (*tosca.ImportSpec, bool) {
+	var versionContext *tosca.Context
+	var ok bool
+	if versionContext, ok = context.GetFieldChild("tosca_definitions_version"); !ok {
+		if versionContext, ok = context.GetFieldChild("heat_template_version"); !ok {
+			return nil, false
+		}
+	}
+
+	if version := versionContext.ReadString(); version != nil {
+		if path, ok := ProfileInternalPaths[*version]; ok {
+			if url_, err := url.NewValidInternalURL(path); err == nil {
+				return &tosca.ImportSpec{url_, nil, true}, true
+			} else {
+				context.ReportError(err)
+			}
+		}
+	}
+
+	return nil, false
 }

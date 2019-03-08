@@ -26,7 +26,7 @@ profile () {
 	PACKAGE="${PACKAGE//-/_}"
 	local SOURCE_DIR="$ROOT/assets/$DIR_PREFIX/$VERSION"
 	local DEST_DIR="$ROOT/$DIR_PREFIX/$PACKAGE"
-	local LOCATION="internal:/$NAME_PREFIX/$VERSION/profile.yaml"
+	local PROFILE_PATH="/$NAME_PREFIX/$VERSION/profile.yaml"
 	local SOURCE_NAME
 	local SOURCE
 	local DEST
@@ -36,30 +36,9 @@ profile () {
 	DEST="$DEST_DIR/common.go"
 	header "$DEST" "$PACKAGE"
 	cat << EOT >> "$DEST"
-import (
-	"sync/atomic"
-
-	"github.com/tliron/puccini/url"
-)
-
-const URL = "$LOCATION"
+const ProfileInternalPath = "$PROFILE_PATH"
 
 var Profile = make(map[string]string)
-
-func GetURL() url.URL {
-	url_ := atomicUrl.Load()
-	if url_ == nil {
-		newUrl, err := url.NewValidURL(URL, nil)
-		if err != nil {
-			panic(err.Error())
-		}
-		url_ = newUrl
-		atomicUrl.Store(url_)
-	}
-	return url_.(url.URL)
-}
-
-var atomicUrl atomic.Value
 EOT
 
 	for SOURCE in $(find "$SOURCE_DIR/" -type f); do
