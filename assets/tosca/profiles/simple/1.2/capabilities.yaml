@@ -41,7 +41,7 @@ capability_types:
     description: >-
       The Compute capability, when included on a Node Type or Template definition, indicates that
       the node can provide hosting on a named compute resource.
-    derived_from: tosca.capabilities.Root
+    derived_from: tosca.capabilities.Container
     properties:
       name:
         description: >-
@@ -119,7 +119,7 @@ capability_types:
     description: >-
       The Container capability, when included on a Node Type or Template definition, indicates that
       the node can act as a container for (or a host for) one or more other declared Node Types.
-    derived_from: tosca.capabilities.Compute
+    derived_from: tosca.capabilities.Root
 
   tosca.capabilities.Endpoint:
     metadata:

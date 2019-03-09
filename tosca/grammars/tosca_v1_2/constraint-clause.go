@@ -20,7 +20,7 @@ var ConstraintClauseSourceCode = map[string]string{
 	"min_length":       profile.Profile["/tosca/simple/1.2/js/min_length.js"],
 	"max_length":       profile.Profile["/tosca/simple/1.2/js/max_length.js"],
 	"pattern":          profile.Profile["/tosca/simple/1.2/js/pattern.js"],
-	// TODO: v1.2 "schema":           profile.Profile["/tosca/simple/1.2/js/schema.js"],
+	"schema":           profile.Profile["/tosca/simple/1.2/js/schema.js"],
 }
 
 var ConstraintClauseNativeArgumentIndexes = map[string][]uint{
