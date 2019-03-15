@@ -4,17 +4,17 @@ import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
-	profile "github.com/tliron/puccini/tosca/profiles/hot/v2018_08_31"
+	profile "github.com/tliron/puccini/tosca/profiles/hot/v1_0"
 )
 
 // Built-in constraint functions
 var ConstraintSourceCode = map[string]string{
-	"length":            profile.Profile["/hot/2018-08-31/js/length.js"],
-	"range":             profile.Profile["/hot/2018-08-31/js/range.js"],
-	"modulo":            profile.Profile["/hot/2018-08-31/js/modulo.js"],
-	"allowed_values":    profile.Profile["/hot/2018-08-31/js/allowed_values.js"],
-	"allowed_pattern":   profile.Profile["/hot/2018-08-31/js/allowed_pattern.js"],
-	"custom_constraint": profile.Profile["/hot/2018-08-31/js/custom_constraint.js"],
+	"length":            profile.Profile["/hot/1.0/js/length.js"],
+	"range":             profile.Profile["/hot/1.0/js/range.js"],
+	"modulo":            profile.Profile["/hot/1.0/js/modulo.js"],
+	"allowed_values":    profile.Profile["/hot/1.0/js/allowed_values.js"],
+	"allowed_pattern":   profile.Profile["/hot/1.0/js/allowed_pattern.js"],
+	"custom_constraint": profile.Profile["/hot/1.0/js/custom_constraint.js"],
 }
 
 //

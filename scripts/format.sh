@@ -18,6 +18,7 @@ gofmt -w -s -e \
 	"$ROOT/tosca" \
 	"$ROOT/tosca/compiler" \
 	"$ROOT/tosca/csar" \
+	"$ROOT/tosca/grammars/cloudify_v1_3" \
 	"$ROOT/tosca/grammars/hot" \
 	"$ROOT/tosca/grammars/tosca_v1_1" \
 	"$ROOT/tosca/grammars/tosca_v1_2" \
@@ -25,7 +26,8 @@ gofmt -w -s -e \
 	"$ROOT/tosca/parser" \
 	"$ROOT/tosca/problems" \
 	"$ROOT/tosca/profiles/bpmn/v1_0" \
-	"$ROOT/tosca/profiles/hot/v2018_08_31" \
+	"$ROOT/tosca/profiles/cloudify/v4_5" \
+	"$ROOT/tosca/profiles/hot/v1_0" \
 	"$ROOT/tosca/profiles/kubernetes/v1_0" \
 	"$ROOT/tosca/profiles/openstack/v1_0" \
 	"$ROOT/tosca/profiles/simple/v1_1" \

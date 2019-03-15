@@ -38,15 +38,6 @@ func (self *Value) GetKey() string {
 	return self.Name
 }
 
-func (self *Value) RenderParameter(parameter *Parameter) {
-	if (self.Data == nil) && (parameter.Default != nil) {
-		self.Data = parameter.Default
-	}
-
-	self.Constraints = parameter.Constraints
-	self.Description = parameter.Description
-}
-
 func (self *Value) Normalize() normal.Constrainable {
 	var constrainable normal.Constrainable
 

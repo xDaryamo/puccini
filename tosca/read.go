@@ -232,6 +232,12 @@ func (self *ReadField) Read() {
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
+		} else if reflection.IsPtrToInt64(fieldEntityPtr) {
+			// Field is *int64
+			item := context.ReadInteger()
+			if item != nil {
+				field.Set(reflect.ValueOf(item))
+			}
 		} else if reflection.IsPtrToBool(fieldEntityPtr) {
 			// Field is *bool
 			item := context.ReadBoolean()

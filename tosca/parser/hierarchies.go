@@ -13,7 +13,7 @@ func (self *Context) AddHierarchies() {
 	self.ServiceTemplate.MergeHierarchies(make(tosca.HierarchyContext))
 }
 
-func (self *Import) MergeHierarchies(hierarchyContext tosca.HierarchyContext) {
+func (self *Unit) MergeHierarchies(hierarchyContext tosca.HierarchyContext) {
 	context := self.GetContext()
 
 	if promise, ok := hierarchiesWork.Start(context); ok {
@@ -34,7 +34,7 @@ func (self *Import) MergeHierarchies(hierarchyContext tosca.HierarchyContext) {
 // Print
 
 func (self *Context) PrintHierarchies(indent int) {
-	for _, import_ := range self.Imports {
+	for _, import_ := range self.Units {
 		context := import_.GetContext()
 		if len(context.Hierarchy.Children) > 0 {
 			format.PrintIndent(indent)

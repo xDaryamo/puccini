@@ -128,9 +128,11 @@ type InheritField struct {
 }
 
 func (self *InheritField) Inherit() {
-	// TODO do we really need all of these? some of them aren't used in TOSCA 1.1
+	// TODO do we really need all of these? some of them aren't used in TOSCA
 	fieldEntityPtr := self.Field.Interface()
 	if reflection.IsPtrToString(fieldEntityPtr) {
+		self.InheritEntity()
+	} else if reflection.IsPtrToInt64(fieldEntityPtr) {
 		self.InheritEntity()
 	} else if reflection.IsPtrToBool(fieldEntityPtr) {
 		self.InheritEntity()

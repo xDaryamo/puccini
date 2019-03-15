@@ -21,12 +21,13 @@ Clout frontend for TOSCA. Parses a TOSCA service template and compiles it to Clo
 Why TOSCA? It's a high-level language designed for modeling and validating cloud topologies using
 reusable and inheritable objects. It allows architects to focus on application logic and
 requirements without being bogged down by the ever-changing specificities of the infrastructure.
-Puccini can compile
+
+Puccini can compile several popular TOSCA and TOSCA-like dialects:
 [TOSCA 1.2](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.2/TOSCA-Simple-Profile-YAML-v1.2.html),
 [TOSCA 1.1](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html),
+[Cloudify DSL 1.3](https://docs.cloudify.co/latest/developer/blueprints/),
 and [HOT](https://docs.openstack.org/heat/latest/template_guide/hot_guide.html).
-Other TOSCA dialects, such as [Cloudify DSL](https://docs.cloudify.co/latest/developer/blueprints/),
-might be added in the future.
+Note that Cloudify DSL and HOT are grammatically limited and do not support many TOSCA features.
 
 **puccini-tosca** comes with TOSCA profiles for the
 [Kubernetes](assets/tosca/profiles/kubernetes/1.0/) and

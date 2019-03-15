@@ -13,6 +13,8 @@ import (
 
 // Note: we *must* use the "path" package rather than "filepath" to ensure consistenty with Windows
 
+// This map is *not thread safe*. It is expected to be written to (single-threadedly) during
+// initialization, after which it should be treated as read-only in multi-threaded environments.
 var Internal = make(map[string]string)
 
 //

@@ -21,12 +21,12 @@ func (self *Context) ReadServiceTemplate(url_ url.URL) bool {
 	self.WG.Wait()
 
 	self.ServiceTemplate = serviceTemplate
-	sort.Sort(self.Imports)
+	sort.Sort(self.Units)
 
 	return ok
 }
 
-func (self *Context) read(promise Promise, toscaContext *tosca.Context, container *Import, nameTransfomer tosca.NameTransformer, readerName string) (*Import, bool) {
+func (self *Context) read(promise Promise, toscaContext *tosca.Context, container *Unit, nameTransfomer tosca.NameTransformer, readerName string) (*Unit, bool) {
 	defer self.WG.Done()
 	if promise != nil {
 		// For the goroutines waiting for our cached entityPtr
@@ -72,16 +72,16 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 
 	cache.Store(toscaContext.URL.Key(), entityPtr)
 
-	import_ := NewImport(entityPtr, container, nameTransfomer)
-	self.AddImport(import_)
+	unit := NewUnit(entityPtr, container, nameTransfomer)
+	self.AddUnit(unit)
 
-	self.readImports(import_)
+	self.goReadImports(unit)
 
-	return import_, true
+	return unit, true
 }
 
 // From Importer interface
-func (self *Context) readImports(container *Import) {
+func (self *Context) goReadImports(container *Unit) {
 	var importSpecs []*tosca.ImportSpec
 	if importer, ok := container.EntityPtr.(tosca.Importer); ok {
 		importSpecs = importer.GetImportSpecs()
@@ -123,7 +123,7 @@ func (self *Context) readImports(container *Import) {
 			default: // entityPtr
 				// Cache hit
 				log.Debugf("{read} cache hit: %s", key)
-				self.AddImportFor(cached, container, importSpec.NameTransformer)
+				self.AddUnitFor(cached, container, importSpec.NameTransformer)
 			}
 		} else {
 			importToscaContext := container.GetContext().Import(importSpec.URL)
@@ -135,7 +135,7 @@ func (self *Context) readImports(container *Import) {
 	}
 }
 
-func (self *Context) waitForPromise(promise Promise, key string, container *Import, nameTransformer tosca.NameTransformer) {
+func (self *Context) waitForPromise(promise Promise, key string, container *Unit, nameTransformer tosca.NameTransformer) {
 	defer self.WG.Done()
 	promise.Wait()
 
@@ -146,7 +146,7 @@ func (self *Context) waitForPromise(promise Promise, key string, container *Impo
 		default: // entityPtr
 			// Cache hit
 			log.Debugf("{read} cache promise hit: %s", key)
-			self.AddImportFor(cached, container, nameTransformer)
+			self.AddUnitFor(cached, container, nameTransformer)
 		}
 	} else {
 		log.Debugf("{read} cache promise failed (empty): %s", key)

@@ -68,4 +68,5 @@ profile tosca/profiles/simple-for-nfv tosca/simple-for-nfv 1.0
 profile tosca/profiles/kubernetes tosca/kubernetes 1.0
 profile tosca/profiles/openstack tosca/openstack 1.0
 profile tosca/profiles/bpmn tosca/bpmn 1.0
-profile tosca/profiles/hot hot 2018-08-31
+profile tosca/profiles/cloudify cloudify 4.5
+profile tosca/profiles/hot hot 1.0

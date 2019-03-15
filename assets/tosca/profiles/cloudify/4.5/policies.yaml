@@ -1,0 +1,6 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+policy_types:
+
+  cloudify.policies.scaling:
+    source: ''

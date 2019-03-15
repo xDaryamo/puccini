@@ -11,10 +11,10 @@ import (
 )
 
 type Context struct {
-	ServiceTemplate *Import
+	ServiceTemplate *Unit
 	Problems        *problems.Problems
 	Quirks          []string
-	Imports         Imports
+	Units           Units
 	Parsing         sync.Map
 	WG              sync.WaitGroup
 	Locker          sync.Mutex
@@ -27,18 +27,19 @@ func NewContext(quirks []string) Context {
 	}
 }
 
-func (self *Context) AddImport(import_ *Import) {
+func (self *Context) AddUnit(unit *Unit) {
 	self.Locker.Lock()
-	self.Imports = append(self.Imports, import_)
+	self.Units = append(self.Units, unit)
 	self.Locker.Unlock()
 }
 
-func (self *Context) AddImportFor(entityPtr interface{}, container *Import, nameTransformer tosca.NameTransformer) {
-	import_ := NewImport(entityPtr, container, nameTransformer)
+func (self *Context) AddUnitFor(entityPtr interface{}, container *Unit, nameTransformer tosca.NameTransformer) {
+	unit := NewUnit(entityPtr, container, nameTransformer)
 	if container == nil {
-		self.AddImport(import_)
+		// It's a root unit, so it won't be added later
+		self.AddUnit(unit)
 	}
-	self.readImports(import_)
+	self.goReadImports(unit)
 }
 
 func (self *Context) Traverse(phase string, traverse reflection.Traverser) {

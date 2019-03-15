@@ -140,6 +140,8 @@ func (self *NodeTemplate) Normalize(s *normal.ServiceTemplate) *normal.NodeTempl
 }
 
 func (self *NodeTemplate) NormalizeRequirements(s *normal.ServiceTemplate) {
+	log.Infof("{normalize} node template requirements: %s", self.Name)
+
 	n := s.NodeTemplates[self.Name]
 	for _, requirement := range self.Requirements {
 		requirement.Normalize(self, s, n)

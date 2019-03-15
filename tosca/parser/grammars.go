@@ -2,6 +2,7 @@ package parser
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/grammars/cloudify_v1_3"
 	"github.com/tliron/puccini/tosca/grammars/hot"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_1"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_2"
@@ -12,6 +13,7 @@ var Grammars = map[string]tosca.Grammar{
 	"tosca_simple_yaml_1_1":            tosca_v1_1.Grammar,
 	"tosca_simple_yaml_1_0":            tosca_v1_1.Grammar, // TODO: properly support 1.0
 	"tosca_simple_profile_for_nfv_1_0": tosca_v1_2.Grammar,
+	"cloudify_dsl_1_3":                 cloudify_v1_3.Grammar,
 	"2018-08-31":                       hot.Grammar, // rocky
 	"2018-03-02":                       hot.Grammar, // queens
 	"2017-09-01":                       hot.Grammar, // pike

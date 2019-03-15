@@ -163,6 +163,7 @@ func (self *Context) ListChild(index int, data interface{}) *Context {
 		Hierarchy:       self.Hierarchy,
 		Problems:        self.Problems,
 		Quirks:          self.Quirks,
+		Grammar:         self.Grammar,
 	}
 }
 

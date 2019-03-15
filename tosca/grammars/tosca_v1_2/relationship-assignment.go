@@ -79,7 +79,6 @@ func (self *RelationshipAssignment) Normalize(r *normal.Relationship) {
 		if definition, ok := intr.GetDefinitionForRelationship(self); ok {
 			i := r.NewInterface(key)
 			intr.Normalize(i, definition)
-			r.Interfaces[key] = i
 		}
 	}
 }
