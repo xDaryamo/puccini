@@ -15,8 +15,11 @@ type OperationAssignment struct {
 	*Entity `name:"operation assignment"`
 	Name    string
 
-	Implementation *string `read:"implementation" require:"implementation"`
-	Inputs         Values  `read:"properties,Value"`
+	Implementation *string  `read:"implementation" require:"implementation"`
+	Inputs         Values   `read:"inputs,Value"`
+	Executor       *string  `read:"executor"`
+	MaxRetries     *int64   `read:"max_retries"`
+	RetryInterval  *float64 `read:"retry_interval"`
 }
 
 func NewOperationAssignment(context *tosca.Context) *OperationAssignment {
@@ -39,7 +42,19 @@ func ReadOperationAssignment(context *tosca.Context) interface{} {
 		self.Implementation = context.ReadString()
 	}
 
+	if self.Executor != nil {
+		ValidateOperationExecutor(*self.Executor, self.Context)
+	}
+
 	return self
+}
+
+func ValidateOperationExecutor(executor string, context *tosca.Context) {
+	switch executor {
+	case "central_deployment_agent", "host_agent":
+	default:
+		context.FieldChild("executor", executor).ReportFieldUnsupportedValue()
+	}
 }
 
 // tosca.Mappable interface
@@ -56,7 +71,7 @@ func (self *OperationAssignment) Normalize(i *normal.Interface) *normal.Operatio
 		o.Implementation = *self.Implementation
 	}
 
-	self.Inputs.Normalize(o.Inputs)
+	self.Inputs.Normalize(o.Inputs, "")
 
 	return o
 }
@@ -66,3 +81,22 @@ func (self *OperationAssignment) Normalize(i *normal.Interface) *normal.Operatio
 //
 
 type OperationAssignments map[string]*OperationAssignment
+
+func (self OperationAssignments) Render(definitions OperationDefinitions, context *tosca.Context) {
+	for key, definition := range definitions {
+		assignment, ok := self[key]
+		if !ok {
+			assignment = NewOperationAssignment(context.MapChild(key, nil))
+			self[key] = assignment
+		}
+		assignment.Inputs.RenderParameters(definition.InputDefinitions, "input", assignment.Context.FieldChild("inputs", nil))
+	}
+
+	for key, assignment := range self {
+		_, ok := definitions[key]
+		if !ok {
+			assignment.Context.ReportUndefined("operation")
+			delete(self, key)
+		}
+	}
+}

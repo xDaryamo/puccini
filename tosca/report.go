@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/tliron/puccini/format"
-	"github.com/tliron/puccini/tosca/problems"
 	"github.com/tliron/puccini/url"
 )
 
@@ -14,7 +13,11 @@ import (
 //
 
 func (self *Context) Report(message string) {
-	*self.Problems = append(*self.Problems, problems.Problem{Message: message, URL: self.URL.String()})
+	if self.URL != nil {
+		self.Problems.ReportWithURL(message, self.URL.String())
+	} else {
+		self.Problems.Report(message)
+	}
 }
 
 func (self *Context) Reportf(f string, arg ...interface{}) {
@@ -22,7 +25,11 @@ func (self *Context) Reportf(f string, arg ...interface{}) {
 }
 
 func (self *Context) ReportPath(message string) {
-	self.Report(fmt.Sprintf("%s: %s", format.ColorPath(self.Path), message))
+	if self.Path != "" {
+		self.Reportf("%s: %s", format.ColorPath(self.Path), message)
+	} else {
+		self.Report(message)
+	}
 }
 
 func (self *Context) ReportPathf(f string, arg ...interface{}) {

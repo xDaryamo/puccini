@@ -13,7 +13,7 @@ import (
 )
 
 func (self *Context) ReadServiceTemplate(url_ url.URL) bool {
-	toscaContext := tosca.NewContext(self.Problems, self.Quirks)
+	toscaContext := tosca.NewContext(&self.Problems, self.Quirks)
 	toscaContext.URL = url_
 
 	self.WG.Add(1)

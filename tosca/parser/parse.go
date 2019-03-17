@@ -13,35 +13,35 @@ func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*n
 
 	url_, err := url.NewValidURL(urlString, nil)
 	if err != nil {
-		return nil, context.Problems, err
+		return nil, &context.Problems, err
 	}
 
 	// Phase 1: Read
 	if !context.ReadServiceTemplate(url_) || !context.Problems.Empty() {
-		return nil, context.Problems, errors.New("phase 1: read")
+		return nil, &context.Problems, errors.New("phase 1: read")
 	}
 
 	// Phase 2: Namespaces
 	context.AddNamespaces()
 	if !context.Problems.Empty() {
-		return nil, context.Problems, errors.New("phase 2.1: namespaces")
+		return nil, &context.Problems, errors.New("phase 2.1: namespaces")
 	}
 	context.LookupNames()
 	if !context.Problems.Empty() {
-		return nil, context.Problems, errors.New("phase 2.2: namespaces lookup")
+		return nil, &context.Problems, errors.New("phase 2.2: namespaces lookup")
 	}
 
 	// Phase 3: Hieararchies
 	context.AddHierarchies()
 	if !context.Problems.Empty() {
-		return nil, context.Problems, errors.New("phase 3: hierarchies")
+		return nil, &context.Problems, errors.New("phase 3: hierarchies")
 	}
 
 	// Phase 4: Inheritance
 	tasks := context.GetInheritTasks()
 	tasks.Drain()
 	if !context.Problems.Empty() {
-		return nil, context.Problems, errors.New("phase 4: inheritance")
+		return nil, &context.Problems, errors.New("phase 4: inheritance")
 	}
 
 	SetInputs(context.ServiceTemplate.EntityPtr, inputs)
@@ -49,14 +49,14 @@ func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*n
 	// Phase 5: Rendering
 	context.Render()
 	if !context.Problems.Empty() {
-		return nil, context.Problems, errors.New("phase 5: rendering")
+		return nil, &context.Problems, errors.New("phase 5: rendering")
 	}
 
 	// Normalize
 	s, ok := Normalize(context.ServiceTemplate.EntityPtr)
 	if !ok || !context.Problems.Empty() {
-		return nil, context.Problems, errors.New("normalization")
+		return nil, &context.Problems, errors.New("normalization")
 	}
 
-	return s, context.Problems, nil
+	return s, &context.Problems, nil
 }

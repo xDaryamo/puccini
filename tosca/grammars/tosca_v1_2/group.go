@@ -88,7 +88,6 @@ func (self *Group) Normalize(s *normal.ServiceTemplate) *normal.Group {
 		if definition, ok := intr.GetDefinitionForGroup(self); ok {
 			i := g.NewInterface(key)
 			intr.Normalize(i, definition)
-			g.Interfaces[key] = i
 		}
 	}
 

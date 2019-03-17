@@ -15,7 +15,7 @@ type PolicyTriggerType struct {
 	Name    string `namespace:""`
 
 	Source     *string             `read:"source" require:"source"`
-	Parameters PropertyDefinitions `read:"values,PropertyDefinition"`
+	Parameters PropertyDefinitions `read:"parameters,PropertyDefinition"`
 }
 
 func NewPolicyTriggerType(context *tosca.Context) *PolicyTriggerType {
@@ -31,4 +31,11 @@ func ReadPolicyTriggerType(context *tosca.Context) interface{} {
 	self := NewPolicyTriggerType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
+}
+
+var policyTriggerTypeRoot *PolicyTriggerType
+
+// tosca.Hierarchical interface
+func (self *PolicyTriggerType) GetParent() interface{} {
+	return policyTriggerTypeRoot
 }

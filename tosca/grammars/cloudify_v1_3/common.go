@@ -25,6 +25,7 @@ func init() {
 	Grammar["Input"] = ReadInput
 	Grammar["InterfaceAssignment"] = ReadInterfaceAssignment
 	Grammar["InterfaceDefinition"] = ReadInterfaceDefinition
+	Grammar["Metadata"] = ReadMetadata
 	Grammar["NodeTemplate"] = ReadNodeTemplate
 	Grammar["NodeTemplateCapability"] = ReadNodeTemplateCapability
 	Grammar["NodeTemplateInstances"] = ReadNodeTemplateInstances

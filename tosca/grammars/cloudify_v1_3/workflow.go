@@ -2,6 +2,7 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -14,21 +15,42 @@ type Workflow struct {
 	*Entity `name:"workflow"`
 	Name    string `namespace:""`
 
-	Mapping    *string              `read:"mapping" require:"mapping"`
-	Parameters ParameterDefinitions `read:"parameters,ParameterDefinition"`
+	Mapping              *string              `read:"mapping" require:"mapping"`
+	ParameterDefinitions ParameterDefinitions `read:"parameters,ParameterDefinition"`
 }
 
 func NewWorkflow(context *tosca.Context) *Workflow {
 	return &Workflow{
-		Entity:     NewEntity(context),
-		Name:       context.Name,
-		Parameters: make(ParameterDefinitions),
+		Entity:               NewEntity(context),
+		Name:                 context.Name,
+		ParameterDefinitions: make(ParameterDefinitions),
 	}
 }
 
 // tosca.Reader signature
 func ReadWorkflow(context *tosca.Context) interface{} {
 	self := NewWorkflow(context)
-	context.ValidateUnsupportedFields(context.ReadFields(self))
+
+	if context.Is("map") {
+		// Long notation
+		context.ValidateUnsupportedFields(context.ReadFields(self))
+	} else if context.ValidateType("map", "string") {
+		// Short notation
+		self.Mapping = context.ReadString()
+	}
+
 	return self
+}
+
+func (self *Workflow) Normalize(s *normal.ServiceTemplate) *normal.Workflow {
+	log.Infof("{normalize} workflow: %s", self.Name)
+
+	w := s.NewWorkflow(self.Name)
+
+	// TODO: mapping
+
+	// TODO: support property definitions
+	//self.ParameterDefinitions.Normalize(w.Inputs)
+
+	return w
 }

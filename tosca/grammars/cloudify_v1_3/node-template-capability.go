@@ -30,20 +30,29 @@ func ReadNodeTemplateCapability(context *tosca.Context) interface{} {
 	return self
 }
 
-func (self *NodeTemplateCapability) ValidateScalableProperties() {
+func (self *NodeTemplateCapability) ValidateScalableProperties(instances *NodeTemplateInstances) {
 	for key, value := range self.Properties {
-		childContext := self.Context.MapChild(key, value.Data)
 		switch key {
 		case "default_instances":
-			childContext.ValidateType("integer")
+			value.Context.ValidateType("integer")
 		case "min_instances":
-			childContext.ValidateType("integer")
+			value.Context.ValidateType("integer")
 		case "max_instances":
-			childContext.ValidateType("integer", "string")
+			value.Context.ValidateType("integer", "string")
 		default:
-			childContext.ReportFieldUnsupported()
+			value.Context.ReportFieldUnsupported()
 		}
 	}
+
+	var defaultInstances int64 = 1
+	if (instances != nil) && (instances.Deploy != nil) {
+		defaultInstances = *instances.Deploy
+	}
+
+	propertiesContext := self.Context.FieldChild("properties", nil)
+	self.Properties.SetIfNil(propertiesContext, "default_instances", defaultInstances)
+	self.Properties.SetIfNil(propertiesContext, "min_instances", int64(0))
+	self.Properties.SetIfNil(propertiesContext, "max_instances", "UNBOUNDED")
 }
 
 //
@@ -52,13 +61,19 @@ func (self *NodeTemplateCapability) ValidateScalableProperties() {
 
 type NodeTemplateCapabilities map[string]*NodeTemplateCapability
 
-func (self NodeTemplateCapabilities) Validate() {
+func (self NodeTemplateCapabilities) Validate(context *tosca.Context, instances *NodeTemplateInstances) {
 	for capabilityName, capability := range self {
 		switch capabilityName {
 		case "scalable":
-			capability.ValidateScalableProperties()
+			capability.ValidateScalableProperties(instances)
 		default:
 			capability.Context.ReportFieldUnsupported()
 		}
+	}
+
+	if _, ok := self["scalable"]; !ok {
+		scalable := NewNodeTemplateCapability(context.FieldChild("capabilities", nil).MapChild("scalable", nil))
+		self["scalable"] = scalable
+		scalable.ValidateScalableProperties(instances)
 	}
 }

@@ -33,3 +33,8 @@ func ReadNodeType(context *tosca.Context) interface{} {
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
+
+// tosca.Hierarchical interface
+func (self *NodeType) GetParent() interface{} {
+	return self.Parent
+}

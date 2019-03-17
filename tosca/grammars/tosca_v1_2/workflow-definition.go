@@ -52,7 +52,7 @@ func (self *WorkflowDefinition) Render() {
 }
 
 func (self *WorkflowDefinition) Normalize(s *normal.ServiceTemplate) *normal.Workflow {
-	log.Infof("{normalize} workflow: %s", self.Name)
+	log.Infof("{normalize} workflow definition: %s", self.Name)
 
 	w := s.NewWorkflow(self.Name)
 

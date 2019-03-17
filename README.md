@@ -184,8 +184,8 @@ TOSCA artifacts with `kubectl cp` and executes them with `kubectl exec`.
 Clout
 -----
 
-Introducing the **clou**d **t**opology ("clou" + "t") representation language, which can be
-formatted as YAML/JSON/XML.
+Introducing the **clou**d **t**opology ("clou" + "t") representation language, which represents a
+simple graph database in YAML/JSON/XML.
 
 Clout is an intermediary format for your deployments. As an analogy, consider a program written in
 the C language. First, you must *compile* the C source into machine code for your hardware

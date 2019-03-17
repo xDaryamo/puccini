@@ -14,19 +14,12 @@ import (
 type Blueprint struct {
 	*Unit `name:"blueprint"`
 
-	Groups []*Group `read:"groups,Group"`
+	Description *string  `read:"description"` // not in spec, but in code
+	Groups      []*Group `read:"groups,Group"`
 }
 
 func NewBlueprint(context *tosca.Context) *Blueprint {
-	self := Blueprint{Unit: NewUnit(context)}
-
-	self.Context.ImportScript("tosca.resolve", "internal:/tosca/simple/1.2/js/resolve.js")
-	self.Context.ImportScript("tosca.coerce", "internal:/tosca/simple/1.2/js/coerce.js")
-	self.Context.ImportScript("tosca.visualize", "internal:/tosca/simple/1.2/js/visualize.js")
-	self.Context.ImportScript("tosca.utils", "internal:/tosca/simple/1.2/js/utils.js")
-	self.Context.ImportScript("tosca.helpers", "internal:/tosca/simple/1.2/js/helpers.js")
-
-	return &self
+	return &Blueprint{Unit: NewUnit(context)}
 }
 
 // tosca.Reader signature
@@ -37,16 +30,35 @@ func ReadBlueprint(context *tosca.Context) interface{} {
 	return self
 }
 
+// parser.HasInputs interface
+func (self *Blueprint) SetInputs(inputs map[string]interface{}) {
+	context := self.Context.FieldChild("inputs", nil)
+	for name, data := range inputs {
+		childContext := context.MapChild(name, data)
+		input, ok := self.Inputs[name]
+		if !ok {
+			childContext.ReportUndefined("input")
+			continue
+		}
+
+		input.Value = ReadValue(childContext).(*Value)
+	}
+}
+
 // tosca.Normalizable interface
 func (self *Blueprint) Normalize() *normal.ServiceTemplate {
-	log.Info("{normalize} template")
+	log.Info("{normalize} blueprint")
 
 	s := normal.NewServiceTemplate()
 
+	if self.Description != nil {
+		s.Description = *self.Description
+	}
+
 	s.ScriptNamespace = self.Context.ScriptNamespace
 
-	//self.Inputs.Normalize(s.Inputs, self.Context.FieldChild("inputs", nil))
-	//self.Outputs.Normalize(s.Outputs, self.Context.FieldChild("outputs", nil))
+	self.Inputs.Normalize(s.Inputs, self.Context.FieldChild("inputs", nil))
+	self.Outputs.Normalize(s.Outputs)
 
 	for _, nodeTemplate := range self.NodeTemplates {
 		s.NodeTemplates[nodeTemplate.Name] = nodeTemplate.Normalize(s)
@@ -54,6 +66,14 @@ func (self *Blueprint) Normalize() *normal.ServiceTemplate {
 
 	for _, nodeTemplate := range self.NodeTemplates {
 		nodeTemplate.NormalizeRelationships(s)
+	}
+
+	for _, workflow := range self.Workflows {
+		s.Workflows[workflow.Name] = workflow.Normalize(s)
+	}
+
+	for _, policy := range self.Policies {
+		s.Policies[policy.Name] = policy.Normalize(s)
 	}
 
 	return s

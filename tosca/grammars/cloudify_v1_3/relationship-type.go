@@ -13,19 +13,19 @@ import (
 type RelationshipType struct {
 	*Type `name:"relationship type"`
 
-	SourceInterfaces InterfaceDefinitions `read:"source_interfaces,InterfaceDefinition" inherit:"source_interfaces,Parent"`
-	TargetInterfaces InterfaceDefinitions `read:"target_interfaces,InterfaceDefinition" inherit:"target_interfaces,Parent"`
-	Properties       Values               `read:"properties,Value"`
+	SourceInterfaceDefinitions InterfaceDefinitions `read:"source_interfaces,InterfaceDefinition" inherit:"source_interfaces,Parent"`
+	TargetInterfaceDefinitions InterfaceDefinitions `read:"target_interfaces,InterfaceDefinition" inherit:"target_interfaces,Parent"`
+	PropertyDefinitions        PropertyDefinitions  `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
 
 	Parent *RelationshipType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
 }
 
 func NewRelationshipType(context *tosca.Context) *RelationshipType {
 	return &RelationshipType{
-		Type:             NewType(context),
-		SourceInterfaces: make(InterfaceDefinitions),
-		TargetInterfaces: make(InterfaceDefinitions),
-		Properties:       make(Values),
+		Type:                       NewType(context),
+		SourceInterfaceDefinitions: make(InterfaceDefinitions),
+		TargetInterfaceDefinitions: make(InterfaceDefinitions),
+		PropertyDefinitions:        make(PropertyDefinitions),
 	}
 }
 
@@ -33,6 +33,10 @@ func NewRelationshipType(context *tosca.Context) *RelationshipType {
 func ReadRelationshipType(context *tosca.Context) interface{} {
 	self := NewRelationshipType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
-	ValidateRelationshipProperties(context, self.Properties)
 	return self
+}
+
+// tosca.Hierarchical interface
+func (self *RelationshipType) GetParent() interface{} {
+	return self.Parent
 }

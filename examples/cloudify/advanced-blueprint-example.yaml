@@ -123,11 +123,11 @@ outputs:
 
 groups:
   vm_and_ip:
-    members: [ host, monogd ]
+    members: [ host, mongod ]
 
 policies:
   scaling_policy1:
-    type: cloudify.policies.scaling
+    type: cloudify.policies.types.threshold
     properties:
       default_instances: 2
     targets: [vm_and_ip]

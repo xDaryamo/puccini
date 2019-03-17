@@ -24,8 +24,10 @@ type RelationshipAssignment struct {
 
 func NewRelationshipAssignment(context *tosca.Context) *RelationshipAssignment {
 	return &RelationshipAssignment{
-		Entity:     NewEntity(context),
-		Properties: make(Values),
+		Entity:           NewEntity(context),
+		Properties:       make(Values),
+		SourceInterfaces: make(InterfaceAssignments),
+		TargetInterfaces: make(InterfaceAssignments),
 	}
 }
 
@@ -33,29 +35,35 @@ func NewRelationshipAssignment(context *tosca.Context) *RelationshipAssignment {
 func ReadRelationshipAssignment(context *tosca.Context) interface{} {
 	self := NewRelationshipAssignment(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
-	ValidateRelationshipProperties(context, self.Properties)
 	return self
 }
 
-func ValidateRelationshipProperties(context *tosca.Context, properties Values) {
-	propertiesContext := context.FieldChild("properties", nil)
-	for key, value := range properties {
-		childContext := propertiesContext.MapChild(key, value.Data)
+// tosca.Renderable interface
+func (self *RelationshipAssignment) Render() {
+	log.Info("{render} relationship")
+
+	if self.RelationshipType != nil {
+		self.Properties.RenderProperties(self.RelationshipType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
+		self.SourceInterfaces.Render(self.RelationshipType.SourceInterfaceDefinitions, self.Context.FieldChild("source_interfaces", nil))
+		self.TargetInterfaces.Render(self.RelationshipType.TargetInterfaceDefinitions, self.Context.FieldChild("target_interfaces", nil))
+	}
+
+	for key, value := range self.Properties {
 		switch key {
 		case "connection_type":
-			if connectionType := childContext.ReadString(); connectionType != nil {
+			if connectionType := value.Context.ReadString(); connectionType != nil {
 				switch *connectionType {
 				case "all_to_all", "all_to_one":
 				default:
-					childContext.ReportFieldUnsupportedValue()
+					value.Context.ReportFieldUnsupportedValue()
 				}
 			}
 		default:
-			childContext.ReportFieldUnsupported()
+			value.Context.ReportFieldUnsupported()
 		}
 	}
 
-	properties.SetIfNil(propertiesContext, "connection_type", "all_to_all")
+	self.Properties.SetIfNil(self.Context.FieldChild("properties", nil), "connection_type", "all_to_all")
 }
 
 func (self *RelationshipAssignment) Normalize(nodeTemplate *NodeTemplate, s *normal.ServiceTemplate, n *normal.NodeTemplate) *normal.Requirement {
@@ -72,14 +80,23 @@ func (self *RelationshipAssignment) Normalize(nodeTemplate *NodeTemplate, s *nor
 		rr.Types = types
 	}
 
-	self.Properties.Normalize(rr.Properties)
+	self.Properties.Normalize(rr.Properties, "")
 
-	// for key, intr := range self.SourceInterfaces {
-	// 	if definition, ok := intr.GetDefinitionForRelationship(self); ok {
-	// 		i := rr.NewInterface(key)
-	// 		intr.Normalize(i, definition)
-	// 	}
-	// }
+	for key, intr := range self.SourceInterfaces {
+		if definition, ok := intr.GetDefinitionForRelationshipSource(self); ok {
+			i := rr.NewInterface(key)
+			i.Inputs["edge"] = normal.NewValue("source")
+			intr.Normalize(i, definition)
+		}
+	}
+
+	for key, intr := range self.TargetInterfaces {
+		if definition, ok := intr.GetDefinitionForRelationshipTarget(self); ok {
+			i := rr.NewInterface(key)
+			i.Inputs["edge"] = normal.NewValue("target")
+			intr.Normalize(i, definition)
+		}
+	}
 
 	return r
 }

@@ -20,8 +20,9 @@ type InterfaceAssignment struct {
 
 func NewInterfaceAssignment(context *tosca.Context) *InterfaceAssignment {
 	return &InterfaceAssignment{
-		Entity: NewEntity(context),
-		Name:   context.Name,
+		Entity:     NewEntity(context),
+		Name:       context.Name,
+		Operations: make(OperationAssignments),
 	}
 }
 
@@ -45,6 +46,26 @@ func (self *InterfaceAssignment) GetDefinitionForNodeTemplate(nodeTemplate *Node
 	return definition, ok
 }
 
+func (self *InterfaceAssignment) GetDefinitionForRelationshipSource(relationshipAssignment *RelationshipAssignment) (*InterfaceDefinition, bool) {
+	if relationshipAssignment.RelationshipType == nil {
+		return nil, false
+	}
+	definition, ok := relationshipAssignment.RelationshipType.SourceInterfaceDefinitions[self.Name]
+	return definition, ok
+}
+
+func (self *InterfaceAssignment) GetDefinitionForRelationshipTarget(relationshipAssignment *RelationshipAssignment) (*InterfaceDefinition, bool) {
+	if relationshipAssignment.RelationshipType == nil {
+		return nil, false
+	}
+	definition, ok := relationshipAssignment.RelationshipType.TargetInterfaceDefinitions[self.Name]
+	return definition, ok
+}
+
+func (self *InterfaceAssignment) Render(definition *InterfaceDefinition) {
+	self.Operations.Render(definition.OperationDefinitions, self.Context)
+}
+
 func (self *InterfaceAssignment) Normalize(i *normal.Interface, definition *InterfaceDefinition) {
 	log.Debugf("{normalize} interface: %s", self.Name)
 
@@ -58,3 +79,22 @@ func (self *InterfaceAssignment) Normalize(i *normal.Interface, definition *Inte
 //
 
 type InterfaceAssignments map[string]*InterfaceAssignment
+
+func (self InterfaceAssignments) Render(definitions InterfaceDefinitions, context *tosca.Context) {
+	for key, definition := range definitions {
+		assignment, ok := self[key]
+		if !ok {
+			assignment = NewInterfaceAssignment(context.MapChild(key, nil))
+			self[key] = assignment
+		}
+		assignment.Render(definition)
+	}
+
+	for key, assignment := range self {
+		_, ok := definitions[key]
+		if !ok {
+			assignment.Context.ReportUndefined("interface")
+			delete(self, key)
+		}
+	}
+}

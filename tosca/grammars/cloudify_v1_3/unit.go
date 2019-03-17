@@ -14,25 +14,28 @@ type Unit struct {
 	*Entity `name:"unit"`
 
 	ToscaDefinitionsVersion *string              `read:"tosca_definitions_version" require:"tosca_definitions_version"`
+	Metadata                Metadata             `read:"metadata,!Metadata"` // not in spec, but in code
 	Imports                 []*Import            `read:"imports,[]Import"`
-	Inputs                  []*Input             `read:"inputs,Input"`
+	Inputs                  Inputs               `read:"inputs,Input"`
 	NodeTemplates           []*NodeTemplate      `read:"node_templates,NodeTemplate"`
 	NodeTypes               []*NodeType          `read:"node_types,NodeType" hierarchy:""`
 	Capabilities            []*ValueDefinition   `read:"capability,ValueDefinition"`
-	Outputs                 []*ValueDefinition   `read:"outputs,ValueDefinition"`
+	Outputs                 ValueDefinitions     `read:"outputs,ValueDefinition"`
 	RelationshipTypes       []*RelationshipType  `read:"relationships,RelationshipType" hierarchy:""`
 	Plugins                 []*Plugin            `read:"plugins,Plugin"`
 	Workflows               []*Workflow          `read:"workflows,Workflow"`
 	DataTypes               []*DataType          `read:"data_types,DataType" hierarchy:""`
 	Policies                []*Policy            `read:"policies,Policy"`
-	PolicyTypes             []*PolicyType        `read:"policy_types,PolicyType"`
-	PolicyTriggerTypes      []*PolicyTriggerType `read:"policy_triggers,PolicyTriggerType"`
+	PolicyTypes             []*PolicyType        `read:"policy_types,PolicyType" hierarchy:""`
+	PolicyTriggerTypes      []*PolicyTriggerType `read:"policy_triggers,PolicyTriggerType" hierarchy:""`
 	UploadResources         *UploadResources     `read:"upload_resources,UploadResources"`
 }
 
 func NewUnit(context *tosca.Context) *Unit {
 	return &Unit{
-		Entity: NewEntity(context),
+		Entity:  NewEntity(context),
+		Inputs:  make(Inputs),
+		Outputs: make(ValueDefinitions),
 	}
 }
 

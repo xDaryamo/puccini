@@ -12,7 +12,6 @@ import (
 
 type UploadResources struct {
 	*Entity `name:"upload resources"`
-	Name    string `namespace:""`
 
 	PluginResources *[]string      `read:"plugin_resources"`
 	DSLResources    []*DSLResource `read:"dsl_resources,[]DSLResource"`

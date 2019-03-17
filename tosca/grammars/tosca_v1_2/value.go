@@ -266,20 +266,18 @@ func (self Values) RenderMissingValue(definition *AttributeDefinition, kind stri
 
 func (self Values) RenderProperties(definitions PropertyDefinitions, kind string, context *tosca.Context) {
 	for key, definition := range definitions {
-		value, ok := self[key]
-		if !ok {
+		if value, ok := self[key]; !ok {
 			// PropertyDefinition.Required defaults to true
 			required := (definition.Required == nil) || *definition.Required
 			self.RenderMissingValue(definition.AttributeDefinition, kind, required, context)
-			// (If the above assigns the "default" value -- it has already been coerced elsewhere)
+			// (If the above assigns the "default" value -- it has already been rendered elsewhere)
 		} else if definition.DataType != nil {
 			value.RenderProperty(definition.DataType, definition)
 		}
 	}
 
 	for key, value := range self {
-		_, ok := definitions[key]
-		if !ok {
+		if _, ok := definitions[key]; !ok {
 			value.Context.ReportUndefined(kind)
 			delete(self, key)
 		}
@@ -288,15 +286,13 @@ func (self Values) RenderProperties(definitions PropertyDefinitions, kind string
 
 func (self Values) RenderAttributes(definitions AttributeDefinitions, context *tosca.Context) {
 	for key, definition := range definitions {
-		_, ok := self[key]
-		if !ok {
+		if _, ok := self[key]; !ok {
 			self.RenderMissingValue(definition, "attribute", false, context)
 		}
 	}
 
 	for key, value := range self {
-		definition, ok := definitions[key]
-		if !ok {
+		if definition, ok := definitions[key]; !ok {
 			value.Context.ReportUndefined("attribute")
 			delete(self, key)
 		} else if definition.DataType != nil {

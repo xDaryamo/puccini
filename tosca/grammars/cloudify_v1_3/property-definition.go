@@ -10,7 +10,6 @@ import (
 
 type PropertyDefinition struct {
 	*ParameterDefinition `name:"property definition"`
-	Name                 string
 
 	Required *bool `read:"required"`
 }
@@ -18,7 +17,6 @@ type PropertyDefinition struct {
 func NewPropertyDefinition(context *tosca.Context) *PropertyDefinition {
 	return &PropertyDefinition{
 		ParameterDefinition: NewParameterDefinition(context),
-		Name:                context.Name,
 	}
 }
 

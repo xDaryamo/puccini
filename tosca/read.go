@@ -238,6 +238,12 @@ func (self *ReadField) Read() {
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
+		} else if reflection.IsPtrToFloat64(fieldEntityPtr) {
+			// Field is *float64
+			item := context.ReadFloat()
+			if item != nil {
+				field.Set(reflect.ValueOf(item))
+			}
 		} else if reflection.IsPtrToBool(fieldEntityPtr) {
 			// Field is *bool
 			item := context.ReadBoolean()

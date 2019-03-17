@@ -2,6 +2,7 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -12,7 +13,7 @@ import (
 //
 
 type ValueDefinition struct {
-	*Entity `name:"capability"`
+	*Entity `name:"value definition"`
 	Name    string `namespace:""`
 
 	Description *string `read:"description"`
@@ -36,4 +37,18 @@ func ReadValueDefinition(context *tosca.Context) interface{} {
 // tosca.Mappable interface
 func (self *ValueDefinition) GetKey() string {
 	return self.Name
+}
+
+//
+// ValueDefinitions
+//
+
+type ValueDefinitions map[string]*ValueDefinition
+
+func (self ValueDefinitions) Normalize(c normal.Constrainables) {
+	for key, valueDefinition := range self {
+		if valueDefinition.Value != nil {
+			c[key] = valueDefinition.Value.Normalize()
+		}
+	}
 }

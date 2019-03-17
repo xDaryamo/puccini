@@ -64,6 +64,12 @@ func IsPtrToInt64(value interface{}) bool {
 	return ok
 }
 
+// *float64
+func IsPtrToFloat64(value interface{}) bool {
+	_, ok := value.(*float64)
+	return ok
+}
+
 // *bool
 func IsPtrToBool(value interface{}) bool {
 	_, ok := value.(*bool)

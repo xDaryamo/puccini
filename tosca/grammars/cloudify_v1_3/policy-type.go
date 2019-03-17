@@ -26,6 +26,13 @@ func NewPolicyType(context *tosca.Context) *PolicyType {
 	}
 }
 
+var policyTypeRoot *PolicyType
+
+// tosca.Hierarchical interface
+func (self *PolicyType) GetParent() interface{} {
+	return policyTypeRoot
+}
+
 // tosca.Reader signature
 func ReadPolicyType(context *tosca.Context) interface{} {
 	self := NewPolicyType(context)

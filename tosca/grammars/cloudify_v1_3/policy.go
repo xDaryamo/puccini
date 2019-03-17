@@ -2,6 +2,7 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -35,4 +36,20 @@ func ReadPolicy(context *tosca.Context) interface{} {
 	self := NewPolicy(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
+}
+
+func (self *Policy) Normalize(s *normal.ServiceTemplate) *normal.Policy {
+	log.Infof("{normalize} policy: %s", self.Name)
+
+	p := s.NewPolicy(self.Name)
+
+	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.PolicyType); ok {
+		p.Types = types
+	}
+
+	self.Properties.Normalize(p.Properties, "")
+
+	// TODO: groups
+
+	return p
 }

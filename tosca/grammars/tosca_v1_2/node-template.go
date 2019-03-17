@@ -86,6 +86,7 @@ func (self *NodeTemplate) Render() {
 	log.Infof("{render} node template: %s", self.Name)
 
 	// TODO: copy
+
 	if self.NodeType == nil {
 		return
 	}
@@ -128,7 +129,6 @@ func (self *NodeTemplate) Normalize(s *normal.ServiceTemplate) *normal.NodeTempl
 		if definition, ok := intr.GetDefinitionForNodeTemplate(self); ok {
 			i := n.NewInterface(key)
 			intr.Normalize(i, definition)
-			n.Interfaces[key] = i
 		}
 	}
 

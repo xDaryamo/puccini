@@ -12,7 +12,7 @@ import (
 
 type Context struct {
 	ServiceTemplate *Unit
-	Problems        *problems.Problems
+	Problems        problems.Problems
 	Quirks          []string
 	Units           Units
 	Parsing         sync.Map
@@ -22,8 +22,7 @@ type Context struct {
 
 func NewContext(quirks []string) Context {
 	return Context{
-		Problems: &problems.Problems{},
-		Quirks:   quirks,
+		Quirks: quirks,
 	}
 }
 

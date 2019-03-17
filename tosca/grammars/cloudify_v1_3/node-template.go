@@ -39,8 +39,20 @@ func NewNodeTemplate(context *tosca.Context) *NodeTemplate {
 func ReadNodeTemplate(context *tosca.Context) interface{} {
 	self := NewNodeTemplate(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
-	self.Capabilities.Validate()
+	self.Capabilities.Validate(context, self.Instances)
 	return self
+}
+
+// tosca.Renderable interface
+func (self *NodeTemplate) Render() {
+	log.Infof("{render} node template: %s", self.Name)
+
+	if self.NodeType == nil {
+		return
+	}
+
+	self.Properties.RenderProperties(self.NodeType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
+	self.Interfaces.Render(self.NodeType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
 }
 
 var capabilityTypeName = "cloudify.Node"
@@ -55,7 +67,7 @@ func (self *NodeTemplate) Normalize(s *normal.ServiceTemplate) *normal.NodeTempl
 		n.Types = types
 	}
 
-	self.Properties.Normalize(n.Properties)
+	self.Properties.Normalize(n.Properties, "")
 
 	for key, intr := range self.Interfaces {
 		if definition, ok := intr.GetDefinitionForNodeTemplate(self); ok {
@@ -65,7 +77,11 @@ func (self *NodeTemplate) Normalize(s *normal.ServiceTemplate) *normal.NodeTempl
 		}
 	}
 
-	n.NewCapability("node").Types = capabilityTypes
+	c := n.NewCapability("node")
+	c.Types = capabilityTypes
+	for _, capability := range self.Capabilities {
+		capability.Properties.Normalize(c.Properties, capability.Context.Name+".")
+	}
 
 	return n
 }

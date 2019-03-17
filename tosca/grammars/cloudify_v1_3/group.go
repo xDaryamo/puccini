@@ -17,7 +17,7 @@ type Group struct {
 	MemberNodeTemplateNames *[]string     `read:"members" require:"members"`
 	Policies                GroupPolicies `read:"policies,GroupPolicy"`
 
-	MemberNodeTemplates []*NodeTemplate `members:"type,MemberNodeTemplateNames" json:"-" yaml:"-"`
+	MemberNodeTemplates []*NodeTemplate `lookup:"members,MemberNodeTemplateNames" json:"-" yaml:"-"`
 }
 
 func NewGroup(context *tosca.Context) *Group {

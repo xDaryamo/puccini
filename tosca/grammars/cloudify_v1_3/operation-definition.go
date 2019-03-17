@@ -14,15 +14,18 @@ type OperationDefinition struct {
 	*Entity `name:"operation definition"`
 	Name    string
 
-	Implementation       *string              `read:"implementation" require:"implementation"`
-	ParameterDefinitions ParameterDefinitions `read:"properties,ParameterDefinition"`
+	Implementation   *string              `read:"implementation"`
+	InputDefinitions ParameterDefinitions `read:"inputs,ParameterDefinition"`
+	Executor         *string              `read:"executor"`
+	MaxRetries       *int64               `read:"max_retries"`
+	RetryInterval    *float64             `read:"retry_interval"`
 }
 
 func NewOperationDefinition(context *tosca.Context) *OperationDefinition {
 	return &OperationDefinition{
-		Entity:               NewEntity(context),
-		Name:                 context.Name,
-		ParameterDefinitions: make(ParameterDefinitions),
+		Entity:           NewEntity(context),
+		Name:             context.Name,
+		InputDefinitions: make(ParameterDefinitions),
 	}
 }
 
@@ -36,6 +39,10 @@ func ReadOperationDefinition(context *tosca.Context) interface{} {
 	} else if context.ValidateType("map", "string") {
 		// Short notation
 		self.Implementation = context.ReadString()
+	}
+
+	if self.Executor != nil {
+		ValidateOperationExecutor(*self.Executor, self.Context)
 	}
 
 	return self
