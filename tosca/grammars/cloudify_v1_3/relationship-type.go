@@ -40,3 +40,9 @@ func ReadRelationshipType(context *tosca.Context) interface{} {
 func (self *RelationshipType) GetParent() interface{} {
 	return self.Parent
 }
+
+//
+// RelationshipTypes
+//
+
+type RelationshipTypes []*RelationshipType

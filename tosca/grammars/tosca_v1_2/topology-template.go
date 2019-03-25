@@ -15,15 +15,15 @@ import (
 type TopologyTemplate struct {
 	*Entity `name:"topology template"`
 
-	Description                *string                 `read:"description"`
-	NodeTemplates              []*NodeTemplate         `read:"node_templates,NodeTemplate"`
-	RelationshipTemplates      []*RelationshipTemplate `read:"relationship_templates,RelationshipTemplate"`
-	Groups                     []*Group                `read:"groups,Group"`
-	Policies                   []*Policy               `read:"policies,Policy"`
-	InputParameterDefinitions  ParameterDefinitions    `read:"inputs,ParameterDefinition"`
-	OutputParameterDefinitions ParameterDefinitions    `read:"outputs,ParameterDefinition"`
-	WorkflowDefinitions        WorkflowDefinitions     `read:"workflows,WorkflowDefinition"`
-	SubstitutionMappings       *SubstitutionMappings   `read:"substitution_mappings,SubstitutionMappings"`
+	Description                *string               `read:"description"`
+	NodeTemplates              NodeTemplates         `read:"node_templates,NodeTemplate"`
+	RelationshipTemplates      RelationshipTemplates `read:"relationship_templates,RelationshipTemplate"`
+	Groups                     Groups                `read:"groups,Group"`
+	Policies                   Policies              `read:"policies,Policy"`
+	InputParameterDefinitions  ParameterDefinitions  `read:"inputs,ParameterDefinition"`
+	OutputParameterDefinitions ParameterDefinitions  `read:"outputs,ParameterDefinition"`
+	WorkflowDefinitions        WorkflowDefinitions   `read:"workflows,WorkflowDefinition"`
+	SubstitutionMappings       *SubstitutionMappings `read:"substitution_mappings,SubstitutionMappings"`
 }
 
 func NewTopologyTemplate(context *tosca.Context) *TopologyTemplate {

@@ -17,7 +17,7 @@ type Group struct {
 	MemberNodeTemplateNames *[]string     `read:"members" require:"members"`
 	Policies                GroupPolicies `read:"policies,GroupPolicy"`
 
-	MemberNodeTemplates []*NodeTemplate `lookup:"members,MemberNodeTemplateNames" json:"-" yaml:"-"`
+	MemberNodeTemplates NodeTemplates `lookup:"members,MemberNodeTemplateNames" json:"-" yaml:"-"`
 }
 
 func NewGroup(context *tosca.Context) *Group {
@@ -34,3 +34,9 @@ func ReadGroup(context *tosca.Context) interface{} {
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
+
+//
+// Groups
+//
+
+type Groups []*Group

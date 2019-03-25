@@ -14,8 +14,8 @@ import (
 type Blueprint struct {
 	*Unit `name:"blueprint"`
 
-	Description *string  `read:"description"` // not in spec, but in code
-	Groups      []*Group `read:"groups,Group"`
+	Description *string `read:"description"` // not in spec, but in code
+	Groups      Groups  `read:"groups,Group"`
 }
 
 func NewBlueprint(context *tosca.Context) *Blueprint {

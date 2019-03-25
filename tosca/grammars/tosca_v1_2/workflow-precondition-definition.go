@@ -14,9 +14,9 @@ import (
 type WorkflowPreconditionDefinition struct {
 	*Entity `name:"workflow precondition definition"`
 
-	TargetNodeTemplateOrGroupName *string            `read:"target" require:"target"`
-	TargetNodeRequirementName     *string            `read:"target_relationship"`
-	ConditionClauses              []*ConditionClause `read:"condition,[]ConditionClause"`
+	TargetNodeTemplateOrGroupName *string          `read:"target" require:"target"`
+	TargetNodeRequirementName     *string          `read:"target_relationship"`
+	ConditionClauses              ConditionClauses `read:"condition,[]ConditionClause"`
 
 	TargetNodeTemplate *NodeTemplate `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`
 	TargetGroup        *Group        `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`
@@ -32,3 +32,9 @@ func ReadWorkflowPreconditionDefinition(context *tosca.Context) interface{} {
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
+
+//
+// WorkflowPreconditionDefinitions
+//
+
+type WorkflowPreconditionDefinitions []*WorkflowPreconditionDefinition

@@ -20,7 +20,7 @@ type Policy struct {
 	TargetGroupNames *[]string `read:"targets" require:"targets"`
 
 	PolicyType   *PolicyType `lookup:"type,PolicyTypeName" json:"-" yaml:"-"`
-	TargetGroups []*Group    `lookup:"targets,TargetGroupNames" json:"-" yaml:"-"`
+	TargetGroups Groups      `lookup:"targets,TargetGroupNames" json:"-" yaml:"-"`
 }
 
 func NewPolicy(context *tosca.Context) *Policy {
@@ -53,3 +53,9 @@ func (self *Policy) Normalize(s *normal.ServiceTemplate) *normal.Policy {
 
 	return p
 }
+
+//
+// Policies
+//
+
+type Policies []*Policy

@@ -134,3 +134,9 @@ func appendShorthandNames(names []string, name string, prefix string) []string {
 
 	return append(names, shorthand, fmt.Sprintf("%s:%s", prefix, shorthand))
 }
+
+//
+// Imports
+//
+
+type Imports []*Import

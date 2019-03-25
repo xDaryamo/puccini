@@ -28,3 +28,9 @@ func ReadParameterGroup(context *tosca.Context) interface{} {
 	context.ValidateUnsupportedFields(append(context.ReadFields(self)))
 	return self
 }
+
+//
+// ParameterGroups
+//
+
+type ParameterGroups []*ParameterGroup

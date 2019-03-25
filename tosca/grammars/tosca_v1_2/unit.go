@@ -17,18 +17,18 @@ import (
 type Unit struct {
 	*Entity `name:"unit"`
 
-	ToscaDefinitionsVersion *string             `read:"tosca_definitions_version" require:"tosca_definitions_version"`
-	Metadata                Metadata            `read:"metadata,!Metadata"`
-	Repositories            []*Repository       `read:"repositories,Repository"`
-	Imports                 []*Import           `read:"imports,[]Import"`
-	ArtifactTypes           []*ArtifactType     `read:"artifact_types,ArtifactType" hierarchy:""`
-	CapabilityTypes         []*CapabilityType   `read:"capability_types,CapabilityType" hierarchy:""`
-	DataTypes               []*DataType         `read:"data_types,DataType" hierarchy:""`
-	GroupTypes              []*GroupType        `read:"group_types,GroupType" hierarchy:""`
-	InterfaceTypes          []*InterfaceType    `read:"interface_types,InterfaceType" hierarchy:""`
-	NodeTypes               []*NodeType         `read:"node_types,NodeType" hierarchy:""`
-	PolicyTypes             []*PolicyType       `read:"policy_types,PolicyType" hierarchy:""`
-	RelationshipTypes       []*RelationshipType `read:"relationship_types,RelationshipType" hierarchy:""`
+	ToscaDefinitionsVersion *string           `read:"tosca_definitions_version" require:"tosca_definitions_version"`
+	Metadata                Metadata          `read:"metadata,!Metadata"`
+	Repositories            Repositories      `read:"repositories,Repository"`
+	Imports                 Imports           `read:"imports,[]Import"`
+	ArtifactTypes           ArtifactTypes     `read:"artifact_types,ArtifactType" hierarchy:""`
+	CapabilityTypes         CapabilityTypes   `read:"capability_types,CapabilityType" hierarchy:""`
+	DataTypes               DataTypes         `read:"data_types,DataType" hierarchy:""`
+	GroupTypes              GroupTypes        `read:"group_types,GroupType" hierarchy:""`
+	InterfaceTypes          InterfaceTypes    `read:"interface_types,InterfaceType" hierarchy:""`
+	NodeTypes               NodeTypes         `read:"node_types,NodeType" hierarchy:""`
+	PolicyTypes             PolicyTypes       `read:"policy_types,PolicyType" hierarchy:""`
+	RelationshipTypes       RelationshipTypes `read:"relationship_types,RelationshipType" hierarchy:""`
 }
 
 func NewUnit(context *tosca.Context) *Unit {

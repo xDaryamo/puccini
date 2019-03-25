@@ -27,3 +27,9 @@ func ReadDSLResource(context *tosca.Context) interface{} {
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
+
+//
+// DSLResources
+//
+
+type DSLResources []*DSLResource

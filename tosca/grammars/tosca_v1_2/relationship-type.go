@@ -20,7 +20,7 @@ type RelationshipType struct {
 	ValidTargetCapabilityTypeNames *[]string            `read:"valid_target_types" inherit:"valid_target_types,Parent"`
 
 	Parent                     *RelationshipType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
-	ValidTargetCapabilityTypes []*CapabilityType `lookup:"valid_target_types,ValidTargetCapabilityTypeNames" inherit:"valid_target_types,Parent" json:"-" yaml:"-"`
+	ValidTargetCapabilityTypes CapabilityTypes   `lookup:"valid_target_types,ValidTargetCapabilityTypeNames" inherit:"valid_target_types,Parent" json:"-" yaml:"-"`
 }
 
 func NewRelationshipType(context *tosca.Context) *RelationshipType {
@@ -56,3 +56,9 @@ func (self *RelationshipType) Inherit() {
 	self.AttributeDefinitions.Inherit(self.Parent.AttributeDefinitions)
 	self.InterfaceDefinitions.Inherit(self.Parent.InterfaceDefinitions)
 }
+
+//
+// RelationshipTypes
+//
+
+type RelationshipTypes []*RelationshipType

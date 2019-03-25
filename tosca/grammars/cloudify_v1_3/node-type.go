@@ -38,3 +38,9 @@ func ReadNodeType(context *tosca.Context) interface{} {
 func (self *NodeType) GetParent() interface{} {
 	return self.Parent
 }
+
+//
+// NodeTypes
+//
+
+type NodeTypes []*NodeType

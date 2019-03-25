@@ -16,11 +16,11 @@ type WorkflowDefinition struct {
 	*Entity `name:"workflow definition"`
 	Name    string `namespace:""`
 
-	Metadata                Metadata                          `read:"metadata,Metadata"`
-	Description             *string                           `read:"description"`
-	InputDefinitions        PropertyDefinitions               `read:"inputs,PropertyDefinition"`
-	PreconditionDefinitions []*WorkflowPreconditionDefinition `read:"preconditions,WorkflowPreconditionDefinition"`
-	StepDefinitions         WorkflowStepDefinitions           `read:"steps,WorkflowStepDefinition"`
+	Metadata                Metadata                        `read:"metadata,Metadata"`
+	Description             *string                         `read:"description"`
+	InputDefinitions        PropertyDefinitions             `read:"inputs,PropertyDefinition"`
+	PreconditionDefinitions WorkflowPreconditionDefinitions `read:"preconditions,WorkflowPreconditionDefinition"`
+	StepDefinitions         WorkflowStepDefinitions         `read:"steps,WorkflowStepDefinition"`
 }
 
 func NewWorkflowDefinition(context *tosca.Context) *WorkflowDefinition {

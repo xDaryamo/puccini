@@ -62,3 +62,9 @@ func ReadConditionDefinition(context *tosca.Context) interface{} {
 
 	return self
 }
+
+//
+// ConditionDefinitions
+//
+
+type ConditionDefinitions []*ConditionDefinition

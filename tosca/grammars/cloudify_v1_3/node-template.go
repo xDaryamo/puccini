@@ -94,3 +94,9 @@ func (self *NodeTemplate) NormalizeRelationships(s *normal.ServiceTemplate) {
 		relationship.Normalize(self, s, n)
 	}
 }
+
+//
+// NodeTemplates
+//
+
+type NodeTemplates []*NodeTemplate

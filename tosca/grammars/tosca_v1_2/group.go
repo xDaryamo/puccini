@@ -99,3 +99,9 @@ func (self *Group) Normalize(s *normal.ServiceTemplate) *normal.Group {
 
 	return g
 }
+
+//
+// Groups
+//
+
+type Groups []*Group

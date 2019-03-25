@@ -61,3 +61,9 @@ func (self *Repository) GetURL() url.URL {
 
 	return self.url_
 }
+
+//
+// Repositories
+//
+
+type Repositories []*Repository

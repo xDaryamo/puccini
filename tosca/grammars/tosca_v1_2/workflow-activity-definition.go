@@ -129,3 +129,9 @@ func (self *WorkflowActivityDefinition) Normalize(st *normal.WorkflowStep, s *no
 
 	return a
 }
+
+//
+// WorkflowActivityDefinitions
+//
+
+type WorkflowActivityDefinitions []*WorkflowActivityDefinition

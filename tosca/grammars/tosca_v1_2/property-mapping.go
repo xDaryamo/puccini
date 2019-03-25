@@ -49,3 +49,9 @@ func (self *PropertyMapping) Render() {
 		self.Context.ListChild(1, name).ReportReferenceNotFound("property", self.NodeTemplate)
 	}
 }
+
+//
+// PropertyMappings
+//
+
+type PropertyMappings []*PropertyMapping

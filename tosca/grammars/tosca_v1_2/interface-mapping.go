@@ -49,3 +49,9 @@ func (self *InterfaceMapping) Render() {
 		self.Context.ListChild(1, name).ReportReferenceNotFound("interface", self.NodeTemplate)
 	}
 }
+
+//
+// InterfaceMappings
+//
+
+type InterfaceMappings []*InterfaceMapping

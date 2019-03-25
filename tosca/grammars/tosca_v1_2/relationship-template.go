@@ -56,3 +56,9 @@ func (self *RelationshipTemplate) Render() {
 	self.Attributes.RenderAttributes(self.RelationshipType.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
 	self.Interfaces.Render(self.RelationshipType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
 }
+
+//
+// RelationshipTemplates
+//
+
+type RelationshipTemplates []*RelationshipTemplate

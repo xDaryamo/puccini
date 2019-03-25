@@ -15,13 +15,13 @@ import (
 type Template struct {
 	*Entity `name:"template"`
 
-	HeatTemplateVersion  *string                `read:"heat_template_version" require:"heat_template_version"`
-	Description          *string                `read:"description"`
-	ParameterGroups      []*ParameterGroup      `read:"parameter_groups,[]ParameterGroup"`
-	Parameters           Parameters             `read:"parameters,Parameter"`
-	Resources            []*Resource            `read:"resources,Resource"`
-	Outputs              Outputs                `read:"outputs,Output"`
-	ConditionDefinitions []*ConditionDefinition `read:"conditions,ConditionDefinition"`
+	HeatTemplateVersion  *string              `read:"heat_template_version" require:"heat_template_version"`
+	Description          *string              `read:"description"`
+	ParameterGroups      ParameterGroups      `read:"parameter_groups,[]ParameterGroup"`
+	Parameters           Parameters           `read:"parameters,Parameter"`
+	Resources            Resources            `read:"resources,Resource"`
+	Outputs              Outputs              `read:"outputs,Output"`
+	ConditionDefinitions ConditionDefinitions `read:"conditions,ConditionDefinition"`
 }
 
 func NewTemplate(context *tosca.Context) *Template {

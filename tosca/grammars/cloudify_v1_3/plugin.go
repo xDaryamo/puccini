@@ -52,3 +52,9 @@ func ReadPlugin(context *tosca.Context) interface{} {
 
 	return self
 }
+
+//
+// Plugins
+//
+
+type Plugins []*Plugin

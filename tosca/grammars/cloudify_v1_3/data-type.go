@@ -47,3 +47,9 @@ func (self *DataType) GetInternalTypeName() (string, bool) {
 	}
 	return "", false
 }
+
+//
+// DataTypes
+//
+
+type DataTypes []*DataType

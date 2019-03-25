@@ -19,7 +19,7 @@ type CapabilityType struct {
 	ValidSourceNodeTypeNames *[]string            `read:"valid_source_types" inherit:"valid_source_types,Parent"`
 
 	Parent               *CapabilityType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
-	ValidSourceNodeTypes []*NodeType     `lookup:"valid_source_types,ValidSourceNodeTypeNames" inherit:"valid_source_types,Parent" json:"-" yaml:"-"`
+	ValidSourceNodeTypes NodeTypes       `lookup:"valid_source_types,ValidSourceNodeTypeNames" inherit:"valid_source_types,Parent" json:"-" yaml:"-"`
 }
 
 func NewCapabilityType(context *tosca.Context) *CapabilityType {
@@ -53,3 +53,9 @@ func (self *CapabilityType) Inherit() {
 	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
 	self.AttributeDefinitions.Inherit(self.Parent.AttributeDefinitions)
 }
+
+//
+// CapabilityTypes
+//
+
+type CapabilityTypes []*CapabilityType

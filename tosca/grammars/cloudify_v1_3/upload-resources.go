@@ -13,9 +13,9 @@ import (
 type UploadResources struct {
 	*Entity `name:"upload resources"`
 
-	PluginResources *[]string      `read:"plugin_resources"`
-	DSLResources    []*DSLResource `read:"dsl_resources,[]DSLResource"`
-	Parameters      Values         `read:"parameters,Value"`
+	PluginResources *[]string    `read:"plugin_resources"`
+	DSLResources    DSLResources `read:"dsl_resources,[]DSLResource"`
+	Parameters      Values       `read:"parameters,Value"`
 }
 
 func NewUploadResources(context *tosca.Context) *UploadResources {

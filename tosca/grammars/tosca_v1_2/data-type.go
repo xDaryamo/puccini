@@ -99,3 +99,9 @@ func (self *DataType) Complete(data interface{}, context *tosca.Context) {
 		}
 	}
 }
+
+//
+// DataTypes
+//
+
+type DataTypes []*DataType

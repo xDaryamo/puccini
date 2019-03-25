@@ -63,3 +63,9 @@ func (self *NodeType) Inherit() {
 	self.InterfaceDefinitions.Inherit(self.Parent.InterfaceDefinitions)
 	self.ArtifactDefinitions.Inherit(self.Parent.ArtifactDefinitions)
 }
+
+//
+// NodeTypes
+//
+
+type NodeTypes []*NodeType

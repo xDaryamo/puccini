@@ -54,3 +54,9 @@ func (self *Workflow) Normalize(s *normal.ServiceTemplate) *normal.Workflow {
 
 	return w
 }
+
+//
+// Workflows
+//
+
+type Workflows []*Workflow

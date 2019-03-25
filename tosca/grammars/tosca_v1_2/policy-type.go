@@ -53,3 +53,9 @@ func (self *PolicyType) Inherit() {
 
 	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
 }
+
+//
+// PolicyTypes
+//
+
+type PolicyTypes []*PolicyType

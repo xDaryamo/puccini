@@ -48,3 +48,9 @@ func (self *CapabilityMapping) Render() {
 		self.Context.ListChild(1, name).ReportReferenceNotFound("capability", self.NodeTemplate)
 	}
 }
+
+//
+// CapabilityMappings
+//
+
+type CapabilityMappings []*CapabilityMapping

@@ -22,9 +22,9 @@ type Policy struct {
 	TargetNodeTemplateOrGroupNames *[]string          `read:"targets"`
 	TriggerDefinitions             TriggerDefinitions `read:"triggers,TriggerDefinition" inherit:"triggers,PolicyType"`
 
-	PolicyType          *PolicyType     `lookup:"type,PolicyTypeName" json:"-" yaml:"-"`
-	TargetNodeTemplates []*NodeTemplate `lookup:"targets,TargetNodeTemplateOrGroupNames" json:"-" yaml:"-"`
-	TargetGroups        []*Group        `lookup:"targets,TargetNodeTemplateOrGroupNames" json:"-" yaml:"-"`
+	PolicyType          *PolicyType   `lookup:"type,PolicyTypeName" json:"-" yaml:"-"`
+	TargetNodeTemplates NodeTemplates `lookup:"targets,TargetNodeTemplateOrGroupNames" json:"-" yaml:"-"`
+	TargetGroups        Groups        `lookup:"targets,TargetNodeTemplateOrGroupNames" json:"-" yaml:"-"`
 }
 
 func NewPolicy(context *tosca.Context) *Policy {
@@ -113,3 +113,9 @@ func (self *Policy) Normalize(s *normal.ServiceTemplate) *normal.Policy {
 
 	return p
 }
+
+//
+// Policies
+//
+
+type Policies []*Policy

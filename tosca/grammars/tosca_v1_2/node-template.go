@@ -147,3 +147,9 @@ func (self *NodeTemplate) NormalizeRequirements(s *normal.ServiceTemplate) {
 		requirement.Normalize(self, s, n)
 	}
 }
+
+//
+// NodeTemplates
+//
+
+type NodeTemplates []*NodeTemplate

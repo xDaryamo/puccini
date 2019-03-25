@@ -51,3 +51,9 @@ func (self *InterfaceType) Inherit() {
 	self.InputDefinitions.Inherit(self.Parent.InputDefinitions)
 	self.OperationDefinitions.Inherit(self.Parent.OperationDefinitions)
 }
+
+//
+// InterfaceTypes
+//
+
+type InterfaceTypes []*InterfaceType

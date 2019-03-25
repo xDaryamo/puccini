@@ -16,17 +16,17 @@ type WorkflowStepDefinition struct {
 	*Entity `name:"workflow step definition"`
 	Name    string
 
-	TargetNodeTemplateOrGroupName *string                       `read:"target" require:"target"`
-	TargetNodeRequirementName     *string                       `read:"target_relationship"`
-	FilterConstraintClauses       ConstraintClauses             `read:"filter,[]ConstraintClause"`
-	ActivityDefinitions           []*WorkflowActivityDefinition `read:"activities,[]WorkflowActivityDefinition" require:"activities"`
-	OnSuccessStepNames            *[]string                     `read:"on_success"`
-	OnFailureStepNames            *[]string                     `read:"on_failure"`
+	TargetNodeTemplateOrGroupName *string                     `read:"target" require:"target"`
+	TargetNodeRequirementName     *string                     `read:"target_relationship"`
+	FilterConstraintClauses       ConstraintClauses           `read:"filter,[]ConstraintClause"`
+	ActivityDefinitions           WorkflowActivityDefinitions `read:"activities,[]WorkflowActivityDefinition" require:"activities"`
+	OnSuccessStepNames            *[]string                   `read:"on_success"`
+	OnFailureStepNames            *[]string                   `read:"on_failure"`
 
-	TargetNodeTemplate *NodeTemplate `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`
-	TargetGroup        *Group        `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`
-	OnSuccessSteps     []*WorkflowStepDefinition
-	OnFailureSteps     []*WorkflowStepDefinition
+	TargetNodeTemplate *NodeTemplate             `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`
+	TargetGroup        *Group                    `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`
+	OnSuccessSteps     []*WorkflowStepDefinition // custom lookup
+	OnFailureSteps     []*WorkflowStepDefinition // custom lookup
 }
 
 func NewWorkflowStepDefinition(context *tosca.Context) *WorkflowStepDefinition {

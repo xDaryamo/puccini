@@ -40,8 +40,8 @@ type Resource struct {
 	ExternalID     *string    `read:"external_id"`
 	Condition      *Condition `read:"condition,Condition"`
 
-	ToscaType          *string     `json:"-" yaml:"-"`
-	DependsOnResources []*Resource `lookup:"depends_on,DependsOn" json:"-" yaml:"-"`
+	ToscaType          *string   `json:"-" yaml:"-"`
+	DependsOnResources Resources `lookup:"depends_on,DependsOn" json:"-" yaml:"-"`
 }
 
 func NewResource(context *tosca.Context) *Resource {
@@ -115,3 +115,9 @@ func (self *Resource) NormalizeDependencies(s *normal.ServiceTemplate) {
 		rr.Types = relationshipTypes
 	}
 }
+
+//
+// Resources
+//
+
+type Resources []*Resource

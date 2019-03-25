@@ -39,3 +39,9 @@ func ReadPolicyType(context *tosca.Context) interface{} {
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
+
+//
+// PolicyTypes
+//
+
+type PolicyTypes []*PolicyType

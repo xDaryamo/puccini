@@ -20,8 +20,8 @@ type GroupType struct {
 	InterfaceDefinitions   InterfaceDefinitions   `read:"interfaces,InterfaceDefinition" inherit:"interfaces,Parent"`
 	MemberNodeTypeNames    *[]string              `read:"members" inherit:"members,Parent"`
 
-	Parent          *GroupType  `lookup:"derived_from,ParentName" inherit:"members,Parent" json:"-" yaml:"-"`
-	MemberNodeTypes []*NodeType `lookup:"members,MemberNodeTypeNames" inherit:"members,Parent" json:"-" yaml:"-"`
+	Parent          *GroupType `lookup:"derived_from,ParentName" inherit:"members,Parent" json:"-" yaml:"-"`
+	MemberNodeTypes NodeTypes  `lookup:"members,MemberNodeTypeNames" inherit:"members,Parent" json:"-" yaml:"-"`
 }
 
 func NewGroupType(context *tosca.Context) *GroupType {
@@ -59,3 +59,9 @@ func (self *GroupType) Inherit() {
 	self.RequirementDefinitions.Inherit(self.Parent.RequirementDefinitions)
 	self.InterfaceDefinitions.Inherit(self.Parent.InterfaceDefinitions)
 }
+
+//
+// GroupTypes
+//
+
+type GroupTypes []*GroupType

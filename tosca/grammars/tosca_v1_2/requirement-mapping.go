@@ -60,3 +60,9 @@ func (self *RequirementMapping) Render() {
 		self.Context.ListChild(1, name).ReportReferenceNotFound("requirement", self.NodeTemplate)
 	}
 }
+
+//
+// RequirementMappings
+//
+
+type RequirementMappings []*RequirementMapping

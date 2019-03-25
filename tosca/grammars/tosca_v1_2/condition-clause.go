@@ -44,3 +44,9 @@ func (self *ConditionClause) readField(context *tosca.Context) bool {
 	}
 	return true
 }
+
+//
+// ConditionClauses
+//
+
+type ConditionClauses []*ConditionClause

@@ -50,3 +50,9 @@ func (self *ArtifactType) Inherit() {
 
 	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
 }
+
+//
+// ArtifactTypes
+//
+
+type ArtifactTypes []*ArtifactType

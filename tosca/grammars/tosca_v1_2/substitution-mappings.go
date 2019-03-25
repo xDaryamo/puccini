@@ -15,11 +15,11 @@ import (
 type SubstitutionMappings struct {
 	*Entity `name:"substitution mappings"`
 
-	NodeTypeName        *string               `read:"node_type" require:"node_type"`
-	CapabilityMappings  []*CapabilityMapping  `read:"capabilities,CapabilityMapping"`
-	RequirementMappings []*RequirementMapping `read:"requirements,RequirementMapping"`
-	PropertyMappings    []*PropertyMapping    `read:"properties,PropertyMapping"`
-	InterfaceMappings   []*InterfaceMapping   `read:"interfaces,InterfaceMapping"`
+	NodeTypeName        *string             `read:"node_type" require:"node_type"`
+	CapabilityMappings  CapabilityMappings  `read:"capabilities,CapabilityMapping"`
+	RequirementMappings RequirementMappings `read:"requirements,RequirementMapping"`
+	PropertyMappings    PropertyMappings    `read:"properties,PropertyMapping"`
+	InterfaceMappings   InterfaceMappings   `read:"interfaces,InterfaceMapping"`
 
 	NodeType *NodeType `lookup:"node_type,NodeTypeName" json:"-" yaml:"-"`
 }

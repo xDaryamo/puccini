@@ -39,3 +39,9 @@ var policyTriggerTypeRoot *PolicyTriggerType
 func (self *PolicyTriggerType) GetParent() interface{} {
 	return policyTriggerTypeRoot
 }
+
+//
+// PolicyTriggerTypes
+//
+
+type PolicyTriggerTypes []*PolicyTriggerType
