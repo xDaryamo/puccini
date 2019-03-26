@@ -82,10 +82,7 @@ func (self *InterfaceAssignment) Normalize(i *normal.Interface, definition *Inte
 	}
 
 	self.Inputs.Normalize(i.Inputs)
-
-	for key, operation := range self.Operations {
-		i.Operations[key] = operation.Normalize(i)
-	}
+	self.Operations.Normalize(i)
 }
 
 //
@@ -109,6 +106,30 @@ func (self InterfaceAssignments) Render(definitions InterfaceDefinitions, contex
 		if !ok {
 			assignment.Context.ReportUndefined("interface")
 			delete(self, key)
+		}
+	}
+}
+
+func (self InterfaceAssignments) NormalizeForNodeTemplate(nodeTemplate *NodeTemplate, n *normal.NodeTemplate) {
+	for key, intr := range self {
+		if definition, ok := intr.GetDefinitionForNodeTemplate(nodeTemplate); ok {
+			intr.Normalize(n.NewInterface(key), definition)
+		}
+	}
+}
+
+func (self InterfaceAssignments) NormalizeForGroup(group *Group, g *normal.Group) {
+	for key, intr := range self {
+		if definition, ok := intr.GetDefinitionForGroup(group); ok {
+			intr.Normalize(g.NewInterface(key), definition)
+		}
+	}
+}
+
+func (self InterfaceAssignments) NormalizeForRelationship(relationship *RelationshipAssignment, r *normal.Relationship) {
+	for key, intr := range self {
+		if definition, ok := intr.GetDefinitionForRelationship(relationship); ok {
+			intr.Normalize(r.NewInterface(key), definition)
 		}
 	}
 }

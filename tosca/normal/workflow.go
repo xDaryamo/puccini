@@ -38,7 +38,7 @@ type Workflows map[string]*Workflow
 type WorkflowPrecondition struct {
 	TargetNodeTemplate *NodeTemplate ` json:"-" yaml:"-"`
 	TargetGroup        *Group        ` json:"-" yaml:"-"`
-	// Conditions
+	// TODO: Conditions
 }
 
 //
@@ -52,10 +52,11 @@ type WorkflowStep struct {
 	Name               string        `json:"-" yaml:"-"`
 	TargetNodeTemplate *NodeTemplate `json:"-" yaml:"-"`
 	TargetGroup        *Group        `json:"-" yaml:"-"`
-	// Filters
+	// TODO: Filters
 	OnSuccessSteps []*WorkflowStep     `json:"-" yaml:"-"`
 	OnFailureSteps []*WorkflowStep     `json:"-" yaml:"-"`
 	Activities     []*WorkflowActivity `json:"-" yaml:"-"`
+	Host           string              `json:"-" yaml:"-"`
 }
 
 func (self *Workflow) NewStep(name string) *WorkflowStep {

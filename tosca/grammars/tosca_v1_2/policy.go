@@ -119,3 +119,9 @@ func (self *Policy) Normalize(s *normal.ServiceTemplate) *normal.Policy {
 //
 
 type Policies []*Policy
+
+func (self Policies) Normalize(s *normal.ServiceTemplate) {
+	for _, policy := range self {
+		s.Policies[policy.Name] = policy.Normalize(s)
+	}
+}

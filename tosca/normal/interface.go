@@ -69,6 +69,8 @@ type Operation struct {
 	Implementation string         `json:"implementation" yaml:"implementation"`
 	Dependencies   []string       `json:"dependencies" yaml:"dependencies"`
 	Inputs         Constrainables `json:"inputs" yaml:"inputs"`
+	Timeout        int64          `json:"timeout" yaml:"timeout"`
+	Host           string         `json:"host" yaml:"host"`
 }
 
 func (self *Interface) NewOperation(name string) *Operation {
@@ -77,6 +79,7 @@ func (self *Interface) NewOperation(name string) *Operation {
 		Name:         name,
 		Dependencies: make([]string, 0),
 		Inputs:       make(Constrainables),
+		Timeout:      -1,
 	}
 	self.Operations[name] = operation
 	return operation

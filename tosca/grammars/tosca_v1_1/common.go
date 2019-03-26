@@ -40,7 +40,7 @@ func init() {
 	Grammar["NodeType"] = tosca_v1_2.ReadNodeType
 	Grammar["OperationAssignment"] = tosca_v1_2.ReadOperationAssignment
 	Grammar["OperationDefinition"] = tosca_v1_2.ReadOperationDefinition
-	Grammar["OperationImplementation"] = tosca_v1_2.ReadOperationImplementation
+	Grammar["OperationImplementation"] = ReadOperationImplementation // override
 	Grammar["ParameterDefinition"] = tosca_v1_2.ReadParameterDefinition
 	Grammar["Policy"] = tosca_v1_2.ReadPolicy
 	Grammar["PolicyType"] = tosca_v1_2.ReadPolicyType

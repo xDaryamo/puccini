@@ -44,7 +44,7 @@ func ReadRequirementAssignment(context *tosca.Context) interface{} {
 		context.ValidateUnsupportedFields(context.ReadFields(self))
 	} else if context.ValidateType("map", "string") {
 		// Short notation
-		self.TargetNodeTemplateNameOrTypeName = context.ReadString()
+		self.TargetNodeTemplateNameOrTypeName = context.FieldChild("node", context.Data).ReadString()
 	}
 
 	return self
@@ -175,5 +175,11 @@ func (self *RequirementAssignments) Render(definitions RequirementDefinitions, c
 			// TODO: move to outside of loop?
 			//*self = append((*self)[:index], (*self)[index+1:]...)
 		}
+	}
+}
+
+func (self RequirementAssignments) Normalize(nodeTemplate *NodeTemplate, s *normal.ServiceTemplate, n *normal.NodeTemplate) {
+	for _, requirement := range self {
+		requirement.Normalize(nodeTemplate, s, n)
 	}
 }

@@ -83,13 +83,7 @@ func (self *Group) Normalize(s *normal.ServiceTemplate) *normal.Group {
 	}
 
 	self.Properties.Normalize(g.Properties)
-
-	for key, intr := range self.Interfaces {
-		if definition, ok := intr.GetDefinitionForGroup(self); ok {
-			i := g.NewInterface(key)
-			intr.Normalize(i, definition)
-		}
-	}
+	self.Interfaces.NormalizeForGroup(self, g)
 
 	for _, nodeTemplate := range self.MemberNodeTemplates {
 		if n, ok := s.NodeTemplates[nodeTemplate.Name]; ok {
@@ -105,3 +99,9 @@ func (self *Group) Normalize(s *normal.ServiceTemplate) *normal.Group {
 //
 
 type Groups []*Group
+
+func (self Groups) Normalize(s *normal.ServiceTemplate) {
+	for _, group := range self {
+		s.Groups[group.Name] = group.Normalize(s)
+	}
+}

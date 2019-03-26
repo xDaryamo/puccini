@@ -36,7 +36,7 @@ func ReadWorkflow(context *tosca.Context) interface{} {
 		context.ValidateUnsupportedFields(context.ReadFields(self))
 	} else if context.ValidateType("map", "string") {
 		// Short notation
-		self.Mapping = context.ReadString()
+		self.Mapping = context.FieldChild("mapping", context.Data).ReadString()
 	}
 
 	return self
@@ -60,3 +60,9 @@ func (self *Workflow) Normalize(s *normal.ServiceTemplate) *normal.Workflow {
 //
 
 type Workflows []*Workflow
+
+func (self Workflows) Normalize(s *normal.ServiceTemplate) {
+	for _, workflow := range self {
+		s.Workflows[workflow.Name] = workflow.Normalize(s)
+	}
+}

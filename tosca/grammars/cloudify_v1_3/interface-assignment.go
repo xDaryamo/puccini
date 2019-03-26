@@ -46,19 +46,19 @@ func (self *InterfaceAssignment) GetDefinitionForNodeTemplate(nodeTemplate *Node
 	return definition, ok
 }
 
-func (self *InterfaceAssignment) GetDefinitionForRelationshipSource(relationshipAssignment *RelationshipAssignment) (*InterfaceDefinition, bool) {
-	if relationshipAssignment.RelationshipType == nil {
+func (self *InterfaceAssignment) GetDefinitionForRelationshipSource(relationship *RelationshipAssignment) (*InterfaceDefinition, bool) {
+	if relationship.RelationshipType == nil {
 		return nil, false
 	}
-	definition, ok := relationshipAssignment.RelationshipType.SourceInterfaceDefinitions[self.Name]
+	definition, ok := relationship.RelationshipType.SourceInterfaceDefinitions[self.Name]
 	return definition, ok
 }
 
-func (self *InterfaceAssignment) GetDefinitionForRelationshipTarget(relationshipAssignment *RelationshipAssignment) (*InterfaceDefinition, bool) {
-	if relationshipAssignment.RelationshipType == nil {
+func (self *InterfaceAssignment) GetDefinitionForRelationshipTarget(relationship *RelationshipAssignment) (*InterfaceDefinition, bool) {
+	if relationship.RelationshipType == nil {
 		return nil, false
 	}
-	definition, ok := relationshipAssignment.RelationshipType.TargetInterfaceDefinitions[self.Name]
+	definition, ok := relationship.RelationshipType.TargetInterfaceDefinitions[self.Name]
 	return definition, ok
 }
 
@@ -68,10 +68,7 @@ func (self *InterfaceAssignment) Render(definition *InterfaceDefinition) {
 
 func (self *InterfaceAssignment) Normalize(i *normal.Interface, definition *InterfaceDefinition) {
 	log.Debugf("{normalize} interface: %s", self.Name)
-
-	for key, operation := range self.Operations {
-		i.Operations[key] = operation.Normalize(i)
-	}
+	self.Operations.Normalize(i)
 }
 
 //
@@ -95,6 +92,34 @@ func (self InterfaceAssignments) Render(definitions InterfaceDefinitions, contex
 		if !ok {
 			assignment.Context.ReportUndefined("interface")
 			delete(self, key)
+		}
+	}
+}
+
+func (self InterfaceAssignments) NormalizeForNodeTemplate(nodeTemplate *NodeTemplate, n *normal.NodeTemplate) {
+	for key, intr := range self {
+		if definition, ok := intr.GetDefinitionForNodeTemplate(nodeTemplate); ok {
+			intr.Normalize(n.NewInterface(key), definition)
+		}
+	}
+}
+
+func (self InterfaceAssignments) NormalizeForRelationshipSource(relationship *RelationshipAssignment, r *normal.Relationship) {
+	for key, intr := range self {
+		if definition, ok := intr.GetDefinitionForRelationshipSource(relationship); ok {
+			i := r.NewInterface(key)
+			i.Inputs["edge"] = normal.NewValue("source")
+			intr.Normalize(i, definition)
+		}
+	}
+}
+
+func (self InterfaceAssignments) NormalizeForRelationshipTarget(relationship *RelationshipAssignment, r *normal.Relationship) {
+	for key, intr := range self {
+		if definition, ok := intr.GetDefinitionForRelationshipTarget(relationship); ok {
+			i := r.NewInterface(key)
+			i.Inputs["edge"] = normal.NewValue("target")
+			intr.Normalize(i, definition)
 		}
 	}
 }

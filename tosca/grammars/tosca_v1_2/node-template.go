@@ -118,34 +118,11 @@ func (self *NodeTemplate) Normalize(s *normal.ServiceTemplate) *normal.NodeTempl
 
 	self.Properties.Normalize(n.Properties)
 	self.Attributes.Normalize(n.Attributes)
-
-	for key, capability := range self.Capabilities {
-		if definition, ok := capability.GetDefinition(self); ok {
-			n.Capabilities[key] = capability.Normalize(n, definition)
-		}
-	}
-
-	for key, intr := range self.Interfaces {
-		if definition, ok := intr.GetDefinitionForNodeTemplate(self); ok {
-			i := n.NewInterface(key)
-			intr.Normalize(i, definition)
-		}
-	}
-
-	for key, artifact := range self.Artifacts {
-		n.Artifacts[key] = artifact.Normalize(n)
-	}
+	self.Capabilities.Normalize(self, n)
+	self.Interfaces.NormalizeForNodeTemplate(self, n)
+	self.Artifacts.Normalize(n)
 
 	return n
-}
-
-func (self *NodeTemplate) NormalizeRequirements(s *normal.ServiceTemplate) {
-	log.Infof("{normalize} node template requirements: %s", self.Name)
-
-	n := s.NodeTemplates[self.Name]
-	for _, requirement := range self.Requirements {
-		requirement.Normalize(self, s, n)
-	}
 }
 
 //
@@ -153,3 +130,16 @@ func (self *NodeTemplate) NormalizeRequirements(s *normal.ServiceTemplate) {
 //
 
 type NodeTemplates []*NodeTemplate
+
+func (self NodeTemplates) Normalize(s *normal.ServiceTemplate) {
+	for _, nodeTemplate := range self {
+		s.NodeTemplates[nodeTemplate.Name] = nodeTemplate.Normalize(s)
+	}
+
+	// Requirements must be normalized after node templates
+	// (because they may reference other node templates)
+	for _, nodeTemplate := range self {
+		n := s.NodeTemplates[nodeTemplate.Name]
+		nodeTemplate.Requirements.Normalize(nodeTemplate, s, n)
+	}
+}

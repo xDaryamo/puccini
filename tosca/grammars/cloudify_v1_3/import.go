@@ -72,3 +72,9 @@ func newImportNameTransformer(prefix string) tosca.NameTransformer {
 		return names
 	}
 }
+
+//
+// Imports
+//
+
+type Imports []*Import

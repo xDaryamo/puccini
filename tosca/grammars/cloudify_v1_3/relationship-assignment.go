@@ -81,22 +81,8 @@ func (self *RelationshipAssignment) Normalize(nodeTemplate *NodeTemplate, s *nor
 	}
 
 	self.Properties.Normalize(rr.Properties, "")
-
-	for key, intr := range self.SourceInterfaces {
-		if definition, ok := intr.GetDefinitionForRelationshipSource(self); ok {
-			i := rr.NewInterface(key)
-			i.Inputs["edge"] = normal.NewValue("source")
-			intr.Normalize(i, definition)
-		}
-	}
-
-	for key, intr := range self.TargetInterfaces {
-		if definition, ok := intr.GetDefinitionForRelationshipTarget(self); ok {
-			i := rr.NewInterface(key)
-			i.Inputs["edge"] = normal.NewValue("target")
-			intr.Normalize(i, definition)
-		}
-	}
+	self.SourceInterfaces.NormalizeForRelationshipSource(self, rr)
+	self.TargetInterfaces.NormalizeForRelationshipTarget(self, rr)
 
 	return r
 }

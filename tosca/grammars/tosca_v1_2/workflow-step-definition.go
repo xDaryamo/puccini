@@ -18,6 +18,7 @@ type WorkflowStepDefinition struct {
 
 	TargetNodeTemplateOrGroupName *string                     `read:"target" require:"target"`
 	TargetNodeRequirementName     *string                     `read:"target_relationship"`
+	OperationHost                 *string                     `read:"operation_host"`
 	FilterConstraintClauses       ConstraintClauses           `read:"filter,[]ConstraintClause"`
 	ActivityDefinitions           WorkflowActivityDefinitions `read:"activities,[]WorkflowActivityDefinition" require:"activities"`
 	OnSuccessStepNames            *[]string                   `read:"on_success"`
@@ -39,7 +40,6 @@ func NewWorkflowStepDefinition(context *tosca.Context) *WorkflowStepDefinition {
 // tosca.Reader signature
 func ReadWorkflowStepDefinition(context *tosca.Context) interface{} {
 	self := NewWorkflowStepDefinition(context)
-	// TODO: "operation_host"
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
@@ -73,6 +73,8 @@ func (self *WorkflowStepDefinition) Render(definitions WorkflowStepDefinitions) 
 	for _, activity := range self.ActivityDefinitions {
 		activity.Render(self)
 	}
+
+	// TODO: validate OperationHost
 }
 
 func (self *WorkflowStepDefinition) Normalize(w *normal.Workflow, s *normal.ServiceTemplate) *normal.WorkflowStep {
@@ -105,6 +107,10 @@ func (self *WorkflowStepDefinition) NormalizeNext(st *normal.WorkflowStep, w *no
 	for _, next := range self.OnFailureSteps {
 		st.OnFailureSteps = append(st.OnFailureSteps, w.Steps[next.Name])
 	}
+
+	if self.OperationHost != nil {
+		st.Host = *self.OperationHost
+	}
 }
 
 //
@@ -116,5 +122,15 @@ type WorkflowStepDefinitions map[string]*WorkflowStepDefinition
 func (self WorkflowStepDefinitions) Render() {
 	for _, step := range self {
 		step.Render(self)
+	}
+}
+
+func (self WorkflowStepDefinitions) Normalize(w *normal.Workflow, s *normal.ServiceTemplate) {
+	steps := make(normal.WorkflowSteps)
+	for name, step := range self {
+		steps[name] = step.Normalize(w, s)
+	}
+	for name, step := range self {
+		step.NormalizeNext(steps[name], w)
 	}
 }

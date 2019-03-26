@@ -2,6 +2,7 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -35,8 +36,35 @@ func ReadGroup(context *tosca.Context) interface{} {
 	return self
 }
 
+var groupTypeName = "cloudify.Group"
+var groupTypes = normal.NewTypes(groupTypeName)
+
+func (self *Group) Normalize(s *normal.ServiceTemplate) *normal.Group {
+	log.Infof("{normalize} group: %s", self.Name)
+
+	g := s.NewGroup(self.Name)
+	g.Types = groupTypes
+
+	for _, nodeTemplate := range self.MemberNodeTemplates {
+		if n, ok := s.NodeTemplates[nodeTemplate.Name]; ok {
+			g.Members = append(g.Members, n)
+		}
+	}
+
+	// TODO: policies
+	// TODO: triggers in policies
+
+	return g
+}
+
 //
 // Groups
 //
 
 type Groups []*Group
+
+func (self Groups) Normalize(s *normal.ServiceTemplate) {
+	for _, group := range self {
+		s.Groups[group.Name] = group.Normalize(s)
+	}
+}

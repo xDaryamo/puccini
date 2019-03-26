@@ -15,10 +15,10 @@ import (
 type OperationImplementation struct {
 	*Entity `name:"operation implementation"`
 
-	Primary      *string   `read:"primary" require:"primary"`
-	Dependencies *[]string `read:"dependencies"`
-	// TODO: v1.2: timeout
-	// TODO: v1.2: operation_host
+	Primary       *string   `read:"primary"`
+	Dependencies  *[]string `read:"dependencies"`
+	Timeout       *int64    `read:"timeout"`
+	OperationHost *string   `read:"operation_host"`
 }
 
 func NewOperationImplementation(context *tosca.Context) *OperationImplementation {
@@ -34,10 +34,54 @@ func ReadOperationImplementation(context *tosca.Context) interface{} {
 		context.ValidateUnsupportedFields(context.ReadFields(self))
 	} else if context.ValidateType("map", "string") {
 		// Short notation
-		self.Primary = context.ReadString()
+		self.Primary = context.FieldChild("primary", context.Data).ReadString()
 	}
 
 	return self
+}
+
+func (self *OperationImplementation) Render(definition *OperationImplementation) {
+	if definition != nil {
+		if (self.Primary != nil) && (definition.Primary != nil) {
+			self.Primary = definition.Primary
+		}
+		if (self.Dependencies != nil) && (definition.Dependencies != nil) {
+			self.Dependencies = definition.Dependencies
+		}
+		if (self.Timeout != nil) && (definition.Timeout != nil) {
+			self.Timeout = definition.Timeout
+		}
+		if (self.OperationHost != nil) && (definition.OperationHost != nil) {
+			self.OperationHost = definition.OperationHost
+		}
+	}
+
+	if self.OperationHost != nil {
+		// Find root path
+		var path string
+		ancestor := self.Context.GetParent(5)
+		if ancestor != nil {
+			path = ancestor.Path
+		}
+		supported := false
+		operationHost := *self.OperationHost
+		switch operationHost {
+		case "ORCHESTRATOR":
+			supported = true
+		case "SELF", "HOST":
+			if path == "topology_template.node_templates" {
+				supported = true
+			}
+		case "SOURCE", "TARGET":
+			if path == "topology_template.relationship_templates" {
+				supported = true
+			}
+		}
+
+		if !supported {
+			self.Context.FieldChild("operation_host", operationHost).ReportFieldUnsupportedValue()
+		}
+	}
 }
 
 func (self *OperationImplementation) Normalize(o *normal.Operation) {
@@ -47,5 +91,13 @@ func (self *OperationImplementation) Normalize(o *normal.Operation) {
 
 	if self.Dependencies != nil {
 		o.Dependencies = *self.Dependencies
+	}
+
+	if self.Timeout != nil {
+		o.Timeout = *self.Timeout
+	}
+
+	if self.OperationHost != nil {
+		o.Host = *self.OperationHost
 	}
 }

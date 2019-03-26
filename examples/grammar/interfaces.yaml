@@ -73,13 +73,15 @@ topology_template:
             inputs:
               retries: 3
 
-          # Longest notation also allows adding dependencies to the implementation
+          # Longest notation also allows adding dependencies and other params to the implementation
           configure:
             implementation:
               primary: /opt/scripts/configure.sh
               dependencies:
               - /opt/scripts/utils.sh
               - /opt/scripts/config.yaml
+              timeout: 3
+              operation_host: SELF
 
         Maintenance:
           inputs:

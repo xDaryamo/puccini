@@ -38,6 +38,9 @@ func (self *Context) ReadFields(entityPtr interface{}) []string {
 				tags[fieldName] = tag
 			} else {
 				// Empty tag means delete
+				if _, ok := tags[fieldName]; !ok {
+					panic(fmt.Sprintf("unknown field: \"%s\"", fieldName))
+				}
 				delete(tags, fieldName)
 			}
 		}
@@ -168,7 +171,6 @@ func (self *ReadField) Read() {
 		return
 	}
 
-	context := self.Context.FieldChild(self.Key, childData)
 	field := self.Entity.FieldByName(self.FieldName)
 
 	if self.Reader != nil {
@@ -178,18 +180,18 @@ func (self *ReadField) Read() {
 			slice := field
 			switch self.Mode {
 			case ReadFieldModeList:
-				context.ReadListItems(self.Reader, func(item interface{}) {
+				self.Context.FieldChild(self.Key, childData).ReadListItems(self.Reader, func(item interface{}) {
 					slice = reflect.Append(slice, reflect.ValueOf(item))
 				})
 			case ReadFieldModeSequencedList:
-				context.ReadSequencedListItems(self.Reader, func(item interface{}) {
+				self.Context.FieldChild(self.Key, childData).ReadSequencedListItems(self.Reader, func(item interface{}) {
 					slice = reflect.Append(slice, reflect.ValueOf(item))
 				})
 			case ReadFieldModeItem:
 				length := slice.Len()
-				slice = reflect.Append(slice, reflect.ValueOf(self.Reader(context.ListChild(length, childData))))
+				slice = reflect.Append(slice, reflect.ValueOf(self.Reader(self.Context.ListChild(length, childData))))
 			default:
-				context.ReadMapItems(self.Reader, func(item interface{}) {
+				self.Context.FieldChild(self.Key, childData).ReadMapItems(self.Reader, func(item interface{}) {
 					slice = reflect.Append(slice, reflect.ValueOf(item))
 				})
 			}
@@ -203,23 +205,27 @@ func (self *ReadField) Read() {
 			// Field is compatible with map[string]*interface{}
 			switch self.Mode {
 			case ReadFieldModeList:
+				context := self.Context.FieldChild(self.Key, childData)
 				context.ReadListItems(self.Reader, func(item interface{}) {
 					context.setMapItem(field, item)
 				})
 			case ReadFieldModeSequencedList:
+				context := self.Context.FieldChild(self.Key, childData)
 				context.ReadSequencedListItems(self.Reader, func(item interface{}) {
 					context.setMapItem(field, item)
 				})
 			case ReadFieldModeItem:
-				context.setMapItem(field, self.Reader(context.MapChild(self.Key, childData)))
+				context := self.Context.FieldChild(self.Key, childData)
+				context.setMapItem(field, self.Reader(context))
 			default:
+				context := self.Context.FieldChild(self.Key, childData)
 				context.ReadMapItems(self.Reader, func(item interface{}) {
 					context.setMapItem(field, item)
 				})
 			}
 		} else {
 			// Field is compatible with *interface{}
-			item := self.Reader(context)
+			item := self.Reader(self.Context.FieldChild(self.Key, childData))
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
@@ -228,37 +234,37 @@ func (self *ReadField) Read() {
 		fieldEntityPtr := field.Interface()
 		if reflection.IsPtrToString(fieldEntityPtr) {
 			// Field is *string
-			item := context.ReadString()
+			item := self.Context.FieldChild(self.Key, childData).ReadString()
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
 		} else if reflection.IsPtrToInt64(fieldEntityPtr) {
 			// Field is *int64
-			item := context.ReadInteger()
+			item := self.Context.FieldChild(self.Key, childData).ReadInteger()
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
 		} else if reflection.IsPtrToFloat64(fieldEntityPtr) {
 			// Field is *float64
-			item := context.ReadFloat()
+			item := self.Context.FieldChild(self.Key, childData).ReadFloat()
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
 		} else if reflection.IsPtrToBool(fieldEntityPtr) {
 			// Field is *bool
-			item := context.ReadBoolean()
+			item := self.Context.FieldChild(self.Key, childData).ReadBoolean()
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
 		} else if reflection.IsPtrToSliceOfString(fieldEntityPtr) {
 			// Field is *[]string
-			item := context.ReadStringList()
+			item := self.Context.FieldChild(self.Key, childData).ReadStringList()
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
 		} else if reflection.IsPtrToMapOfStringToString(fieldEntityPtr) {
 			// Field is *map[string]string
-			item := context.ReadStringMap()
+			item := self.Context.FieldChild(self.Key, childData).ReadStringMap()
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}

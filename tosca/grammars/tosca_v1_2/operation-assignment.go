@@ -38,7 +38,7 @@ func ReadOperationAssignment(context *tosca.Context) interface{} {
 		context.ValidateUnsupportedFields(context.ReadFields(self))
 	} else if context.ValidateType("map", "string") {
 		// Short notation
-		self.Implementation = ReadOperationImplementation(context).(*OperationImplementation)
+		self.Implementation = ReadOperationImplementation(context.FieldChild("implementation", context.Data)).(*OperationImplementation)
 	}
 
 	return self
@@ -76,13 +76,25 @@ type OperationAssignments map[string]*OperationAssignment
 func (self OperationAssignments) Render(definitions OperationDefinitions, context *tosca.Context) {
 	for key, definition := range definitions {
 		assignment, ok := self[key]
+
 		if !ok {
-			assignment = NewOperationAssignment(context.MapChild(key, nil))
+			assignment = NewOperationAssignment(context.FieldChild(key, nil))
 			self[key] = assignment
 		}
+
 		if assignment.Description == nil {
 			assignment.Description = definition.Description
 		}
+
+		if (assignment.Implementation == nil) && (definition.Implementation != nil) {
+			// If the definition has an implementation then we must have one, too
+			assignment.Implementation = NewOperationImplementation(assignment.Context.FieldChild("implementation", nil))
+		}
+
+		if assignment.Implementation != nil {
+			assignment.Implementation.Render(definition.Implementation)
+		}
+
 		assignment.Inputs.RenderProperties(definition.InputDefinitions, "input", assignment.Context.FieldChild("inputs", nil))
 	}
 
@@ -92,5 +104,11 @@ func (self OperationAssignments) Render(definitions OperationDefinitions, contex
 			assignment.Context.ReportUndefined("operation")
 			delete(self, key)
 		}
+	}
+}
+
+func (self OperationAssignments) Normalize(i *normal.Interface) {
+	for key, operation := range self {
+		i.Operations[key] = operation.Normalize(i)
 	}
 }

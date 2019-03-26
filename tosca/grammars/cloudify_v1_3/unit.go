@@ -15,7 +15,7 @@ type Unit struct {
 
 	ToscaDefinitionsVersion *string            `read:"tosca_definitions_version" require:"tosca_definitions_version"`
 	Metadata                Metadata           `read:"metadata,!Metadata"` // not in spec, but in code
-	Imports                 []*Import          `read:"imports,[]Import"`
+	Imports                 Imports            `read:"imports,[]Import"`
 	Inputs                  Inputs             `read:"inputs,Input"`
 	NodeTemplates           NodeTemplates      `read:"node_templates,NodeTemplate"`
 	NodeTypes               NodeTypes          `read:"node_types,NodeType" hierarchy:""`

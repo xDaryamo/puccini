@@ -41,7 +41,7 @@ func ReadImport(context *tosca.Context) interface{} {
 		context.ValidateUnsupportedFields(context.ReadFields(self))
 	} else if context.ValidateType("map", "string") {
 		// Short notation
-		self.File = context.ReadString()
+		self.File = context.FieldChild("file", context.Data).ReadString()
 	}
 
 	return self

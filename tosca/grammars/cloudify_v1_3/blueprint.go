@@ -59,22 +59,10 @@ func (self *Blueprint) Normalize() *normal.ServiceTemplate {
 
 	self.Inputs.Normalize(s.Inputs, self.Context.FieldChild("inputs", nil))
 	self.Outputs.Normalize(s.Outputs)
-
-	for _, nodeTemplate := range self.NodeTemplates {
-		s.NodeTemplates[nodeTemplate.Name] = nodeTemplate.Normalize(s)
-	}
-
-	for _, nodeTemplate := range self.NodeTemplates {
-		nodeTemplate.NormalizeRelationships(s)
-	}
-
-	for _, workflow := range self.Workflows {
-		s.Workflows[workflow.Name] = workflow.Normalize(s)
-	}
-
-	for _, policy := range self.Policies {
-		s.Policies[policy.Name] = policy.Normalize(s)
-	}
+	self.NodeTemplates.Normalize(s)
+	self.Groups.Normalize(s)
+	self.Workflows.Normalize(s)
+	self.Policies.Normalize(s)
 
 	return s
 }

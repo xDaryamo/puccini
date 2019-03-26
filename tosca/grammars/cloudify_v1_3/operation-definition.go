@@ -38,7 +38,7 @@ func ReadOperationDefinition(context *tosca.Context) interface{} {
 		context.ValidateUnsupportedFields(context.ReadFields(self))
 	} else if context.ValidateType("map", "string") {
 		// Short notation
-		self.Implementation = context.ReadString()
+		self.Implementation = context.FieldChild("implementation", context.Data).ReadString()
 	}
 
 	if self.Executor != nil {

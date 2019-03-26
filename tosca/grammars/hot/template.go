@@ -99,14 +99,7 @@ func (self *Template) Normalize() *normal.ServiceTemplate {
 
 	self.Parameters.Normalize(s.Inputs, self.Context.FieldChild("parameters", nil))
 	self.Outputs.Normalize(s.Outputs, self.Context.FieldChild("outputs", nil))
-
-	for _, resource := range self.Resources {
-		s.NodeTemplates[resource.Name] = resource.Normalize(s)
-	}
-
-	for _, resource := range self.Resources {
-		resource.NormalizeDependencies(s)
-	}
+	self.Resources.Normalize(s)
 
 	// TODO: normalize ParameterGroups
 

@@ -129,3 +129,9 @@ func (self Artifacts) Render(definitions ArtifactDefinitions, context *tosca.Con
 		}
 	}
 }
+
+func (self Artifacts) Normalize(n *normal.NodeTemplate) {
+	for key, artifact := range self {
+		n.Artifacts[key] = artifact.Normalize(n)
+	}
+}

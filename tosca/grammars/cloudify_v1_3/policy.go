@@ -49,7 +49,11 @@ func (self *Policy) Normalize(s *normal.ServiceTemplate) *normal.Policy {
 
 	self.Properties.Normalize(p.Properties, "")
 
-	// TODO: groups
+	for _, group := range self.TargetGroups {
+		if g, ok := s.Groups[group.Name]; ok {
+			p.GroupTargets = append(p.GroupTargets, g)
+		}
+	}
 
 	return p
 }
@@ -59,3 +63,9 @@ func (self *Policy) Normalize(s *normal.ServiceTemplate) *normal.Policy {
 //
 
 type Policies []*Policy
+
+func (self Policies) Normalize(s *normal.ServiceTemplate) {
+	for _, policy := range self {
+		s.Policies[policy.Name] = policy.Normalize(s)
+	}
+}

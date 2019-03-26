@@ -45,13 +45,25 @@ type Context struct {
 	ReadOverrides   map[string]string
 }
 
-func NewContext(problems *problems.Problems, quirks []string) Context {
-	return Context{
+func NewContext(problems *problems.Problems, quirks []string) *Context {
+	return &Context{
 		Namespace:       make(Namespace),
 		ScriptNamespace: make(ScriptNamespace),
 		Hierarchy:       &Hierarchy{},
 		Problems:        problems,
 		Quirks:          quirks,
+	}
+}
+
+func (self *Context) GetParent(generation int) *Context {
+	if generation == 0 {
+		return self
+	} else if generation == 1 {
+		return self.Parent
+	} else if self.Parent != nil {
+		return self.Parent.GetParent(generation - 1)
+	} else {
+		return nil
 	}
 }
 

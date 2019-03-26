@@ -39,7 +39,7 @@ func ReadOperationAssignment(context *tosca.Context) interface{} {
 		context.ValidateUnsupportedFields(context.ReadFields(self))
 	} else if context.ValidateType("map", "string") {
 		// Short notation
-		self.Implementation = context.ReadString()
+		self.Implementation = context.FieldChild("implementation", context.Data).ReadString()
 	}
 
 	if self.Executor != nil {
@@ -85,10 +85,16 @@ type OperationAssignments map[string]*OperationAssignment
 func (self OperationAssignments) Render(definitions OperationDefinitions, context *tosca.Context) {
 	for key, definition := range definitions {
 		assignment, ok := self[key]
+
 		if !ok {
-			assignment = NewOperationAssignment(context.MapChild(key, nil))
+			assignment = NewOperationAssignment(context.FieldChild(key, nil))
 			self[key] = assignment
 		}
+
+		if (assignment.Implementation == nil) && (definition.Implementation != nil) {
+			assignment.Implementation = definition.Implementation
+		}
+
 		assignment.Inputs.RenderParameters(definition.InputDefinitions, "input", assignment.Context.FieldChild("inputs", nil))
 	}
 
@@ -98,5 +104,11 @@ func (self OperationAssignments) Render(definitions OperationDefinitions, contex
 			assignment.Context.ReportUndefined("operation")
 			delete(self, key)
 		}
+	}
+}
+
+func (self OperationAssignments) Normalize(i *normal.Interface) {
+	for key, operation := range self {
+		i.Operations[key] = operation.Normalize(i)
 	}
 }

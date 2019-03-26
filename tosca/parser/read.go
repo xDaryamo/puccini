@@ -17,7 +17,7 @@ func (self *Context) ReadServiceTemplate(url_ url.URL) bool {
 	toscaContext.URL = url_
 
 	self.WG.Add(1)
-	serviceTemplate, ok := self.read(nil, &toscaContext, nil, nil, "ServiceTemplate")
+	serviceTemplate, ok := self.read(nil, toscaContext, nil, nil, "ServiceTemplate")
 	self.WG.Wait()
 
 	self.ServiceTemplate = serviceTemplate

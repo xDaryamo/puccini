@@ -46,7 +46,7 @@ func ReadCapabilityDefinition(context *tosca.Context) interface{} {
 		context.ValidateUnsupportedFields(context.ReadFields(self))
 	} else if context.ValidateType("map", "string") {
 		// Short notation
-		self.CapabilityTypeName = context.ReadString()
+		self.CapabilityTypeName = context.FieldChild("type", context.Data).ReadString()
 	}
 
 	return self

@@ -68,14 +68,7 @@ func (self *NodeTemplate) Normalize(s *normal.ServiceTemplate) *normal.NodeTempl
 	}
 
 	self.Properties.Normalize(n.Properties, "")
-
-	for key, intr := range self.Interfaces {
-		if definition, ok := intr.GetDefinitionForNodeTemplate(self); ok {
-			i := n.NewInterface(key)
-			intr.Normalize(i, definition)
-			n.Interfaces[key] = i
-		}
-	}
+	self.Interfaces.NormalizeForNodeTemplate(self, n)
 
 	c := n.NewCapability("node")
 	c.Types = capabilityTypes
@@ -100,3 +93,15 @@ func (self *NodeTemplate) NormalizeRelationships(s *normal.ServiceTemplate) {
 //
 
 type NodeTemplates []*NodeTemplate
+
+func (self NodeTemplates) Normalize(s *normal.ServiceTemplate) {
+	for _, nodeTemplate := range self {
+		s.NodeTemplates[nodeTemplate.Name] = nodeTemplate.Normalize(s)
+	}
+
+	// Relationships must be normalized after node templates
+	// (because they may reference other node templates)
+	for _, nodeTemplate := range self {
+		nodeTemplate.NormalizeRelationships(s)
+	}
+}

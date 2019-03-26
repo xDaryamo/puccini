@@ -105,31 +105,16 @@ func (self *TopologyTemplate) Normalize(s *normal.ServiceTemplate) {
 	self.InputParameterDefinitions.Normalize(s.Inputs, self.Context.FieldChild("inputs", nil))
 	self.OutputParameterDefinitions.Normalize(s.Outputs, self.Context.FieldChild("outputs", nil))
 
-	for _, nodeTemplate := range self.NodeTemplates {
-		s.NodeTemplates[nodeTemplate.Name] = nodeTemplate.Normalize(s)
-	}
-
-	// Requirements must be normalized after node templates
-	// (because they may reference other node templates)
-	for _, nodeTemplate := range self.NodeTemplates {
-		nodeTemplate.NormalizeRequirements(s)
-	}
-
-	for _, group := range self.Groups {
-		s.Groups[group.Name] = group.Normalize(s)
-	}
+	self.NodeTemplates.Normalize(s)
+	self.Groups.Normalize(s)
 
 	// Workflows must be normalized after node templates and groups
 	// (because step activities might call operations on them)
-	for _, workflowDefinition := range self.WorkflowDefinitions {
-		s.Workflows[workflowDefinition.Name] = workflowDefinition.Normalize(s)
-	}
+	self.WorkflowDefinitions.Normalize(s)
 
 	// Policies must be normalized after workflows
 	// (because policy triggers might call them)
-	for _, policy := range self.Policies {
-		s.Policies[policy.Name] = policy.Normalize(s)
-	}
+	self.Policies.Normalize(s)
 
 	if self.SubstitutionMappings != nil {
 		self.SubstitutionMappings.Normalize(s)

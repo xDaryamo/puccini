@@ -121,3 +121,15 @@ func (self *Resource) NormalizeDependencies(s *normal.ServiceTemplate) {
 //
 
 type Resources []*Resource
+
+func (self Resources) Normalize(s *normal.ServiceTemplate) {
+	for _, resource := range self {
+		s.NodeTemplates[resource.Name] = resource.Normalize(s)
+	}
+
+	// Dependencies must be normalized after resources
+	// (because they may reference other resources)
+	for _, resource := range self {
+		resource.NormalizeDependencies(s)
+	}
+}

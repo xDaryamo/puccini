@@ -42,7 +42,7 @@ func ReadRelationshipAssignment(context *tosca.Context) interface{} {
 		context.ValidateUnsupportedFields(context.ReadFields(self))
 	} else if context.ValidateType("map", "string") {
 		// Short notation
-		self.RelationshipTemplateNameOrTypeName = context.ReadString()
+		self.RelationshipTemplateNameOrTypeName = context.FieldChild("type", context.Data).ReadString()
 	}
 
 	return self
@@ -74,11 +74,5 @@ func (self *RelationshipAssignment) Normalize(r *normal.Relationship) {
 
 	self.Properties.Normalize(r.Properties)
 	self.Attributes.Normalize(r.Attributes)
-
-	for key, intr := range self.Interfaces {
-		if definition, ok := intr.GetDefinitionForRelationship(self); ok {
-			i := r.NewInterface(key)
-			intr.Normalize(i, definition)
-		}
-	}
+	self.Interfaces.NormalizeForRelationship(self, r)
 }
