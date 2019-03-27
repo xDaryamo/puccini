@@ -15,9 +15,6 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.11
 //
 
-// TODO: see [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.12.2.2
-// TODO: see [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.11.2.2 for example of long format
-
 type Value struct {
 	*Entity `name:"value"`
 	Name    string
@@ -39,10 +36,40 @@ func NewValue(context *tosca.Context) *Value {
 
 // tosca.Reader signature
 func ReadValue(context *tosca.Context) interface{} {
+	self := NewValue(context)
+
 	if function, ok := GetFunction(context); ok {
-		context.Data = function
+		self.Data = function
 	}
-	return NewValue(context)
+
+	return self
+}
+
+// tosca.Reader signature
+// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.12.2.2
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.11.2.2
+func ReadAttributeValue(context *tosca.Context) interface{} {
+	self := NewValue(context)
+
+	// Unpack long notation
+	if context.Is("map") {
+		map_ := self.Data.(ard.Map)
+		if len(map_) == 2 {
+			if description, ok := map_["description"]; ok {
+				if value, ok := map_["value"]; ok {
+					self.Description = context.FieldChild("description", description).ReadString()
+					self.Data = value
+					context.Data = value
+				}
+			}
+		}
+	}
+
+	if function, ok := GetFunction(context); ok {
+		self.Data = function
+	}
+
+	return self
 }
 
 // tosca.Mappable interface
@@ -82,10 +109,12 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 	}
 	self.rendered = true
 
-	if (definition != nil) && (definition.Description != nil) {
-		self.Description = definition.Description
-	} else {
-		self.Description = dataType.Description
+	if self.Description == nil {
+		if (definition != nil) && (definition.Description != nil) {
+			self.Description = definition.Description
+		} else {
+			self.Description = dataType.Description
+		}
 	}
 
 	if allowNil && (self.Data == nil) {

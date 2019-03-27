@@ -21,7 +21,7 @@ type NodeTemplate struct {
 	NodeTypeName                 *string                `read:"type" require:"type"`
 	Description                  *string                `read:"description" inherit:"description,NodeType"`
 	Properties                   Values                 `read:"properties,Value"`
-	Attributes                   Values                 `read:"attributes,Value"`
+	Attributes                   Values                 `read:"attributes,AttributeValue"`
 	Capabilities                 CapabilityAssignments  `read:"capabilities,CapabilityAssignment"`
 	Requirements                 RequirementAssignments `read:"requirements,{}RequirementAssignment"`
 	RequirementTargetsNodeFilter *NodeFilter            `read:"node_filter,NodeFilter"`

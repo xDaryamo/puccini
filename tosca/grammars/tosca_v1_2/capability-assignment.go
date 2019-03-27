@@ -19,7 +19,7 @@ type CapabilityAssignment struct {
 	Name    string
 
 	Properties Values `read:"properties,Value"`
-	Attributes Values `read:"attributes,Value"`
+	Attributes Values `read:"attributes,AttributeValue"`
 }
 
 func NewCapabilityAssignment(context *tosca.Context) *CapabilityAssignment {

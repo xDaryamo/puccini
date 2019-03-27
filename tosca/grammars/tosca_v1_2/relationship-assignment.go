@@ -17,7 +17,7 @@ type RelationshipAssignment struct {
 
 	RelationshipTemplateNameOrTypeName *string              `read:"type"`
 	Properties                         Values               `read:"properties,Value"`
-	Attributes                         Values               `read:"attributes,Value"` // missing in spec
+	Attributes                         Values               `read:"attributes,AttributeValue"` // missing in spec
 	Interfaces                         InterfaceAssignments `read:"interfaces,InterfaceAssignment"`
 
 	RelationshipTemplate *RelationshipTemplate `lookup:"type,RelationshipTemplateNameOrTypeName" json:"-" yaml:"-"`

@@ -17,6 +17,7 @@ func init() {
 	Grammar["ArtifactDefinition"] = ReadArtifactDefinition
 	Grammar["ArtifactType"] = ReadArtifactType
 	Grammar["AttributeDefinition"] = ReadAttributeDefinition
+	Grammar["AttributeValue"] = ReadAttributeValue
 	Grammar["CapabilityAssignment"] = ReadCapabilityAssignment
 	Grammar["CapabilityDefinition"] = ReadCapabilityDefinition
 	Grammar["CapabilityFilter"] = ReadCapabilityFilter

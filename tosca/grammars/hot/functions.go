@@ -96,22 +96,22 @@ func GetFunction(context *tosca.Context) (*tosca.Function, bool) {
 	return nil, false
 }
 
-func ToFunctions(context *tosca.Context) {
+func ToFunctions(context *tosca.Context) interface{} {
+	data := context.Data
 	if function, ok := GetFunction(context); ok {
-		context.Data = function
-	} else if list, ok := context.Data.(ard.List); ok {
+		data = function
+	} else if list, ok := data.(ard.List); ok {
 		for index, value := range list {
 			childContext := context.ListChild(index, value)
-			ToFunctions(childContext)
-			list[index] = childContext.Data
+			list[index] = ToFunctions(childContext)
 		}
-	} else if map_, ok := context.Data.(ard.Map); ok {
+	} else if map_, ok := data.(ard.Map); ok {
 		for key, value := range map_ {
 			childContext := context.MapChild(key, value)
-			ToFunctions(childContext)
-			map_[key] = childContext.Data
+			map_[key] = ToFunctions(childContext)
 		}
 	}
+	return data
 }
 
 func NormalizeFunctionArguments(function *tosca.Function, context *tosca.Context) {

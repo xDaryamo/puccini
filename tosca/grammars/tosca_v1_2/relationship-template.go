@@ -19,7 +19,7 @@ type RelationshipTemplate struct {
 	RelationshipTypeName         *string              `read:"type" require:"type"`
 	Description                  *string              `read:"description" inherit:"description,RelationshipType"`
 	Properties                   Values               `read:"properties,Value"`
-	Attributes                   Values               `read:"attributes,Value"`
+	Attributes                   Values               `read:"attributes,AttributeValue"`
 	Interfaces                   InterfaceAssignments `read:"interfaces,InterfaceAssignment"`
 
 	CopyRelationshipTemplate *RelationshipTemplate `lookup:"copy,CopyRelationshipTemplateName" json:"-" yaml:"-"`

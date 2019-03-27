@@ -30,8 +30,9 @@ func NewValue(context *tosca.Context) *Value {
 
 // tosca.Reader signature
 func ReadValue(context *tosca.Context) interface{} {
-	ToFunctions(context)
-	return NewValue(context)
+	self := NewValue(context)
+	self.Data = ToFunctions(context)
+	return self
 }
 
 // tosca.Mappable interface

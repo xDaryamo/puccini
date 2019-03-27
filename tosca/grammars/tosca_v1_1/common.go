@@ -18,6 +18,7 @@ func init() {
 	Grammar["ArtifactDefinition"] = tosca_v1_2.ReadArtifactDefinition
 	Grammar["ArtifactType"] = tosca_v1_2.ReadArtifactType
 	Grammar["AttributeDefinition"] = tosca_v1_2.ReadAttributeDefinition
+	Grammar["AttributeValue"] = tosca_v1_2.ReadAttributeValue
 	Grammar["CapabilityAssignment"] = tosca_v1_2.ReadCapabilityAssignment
 	Grammar["CapabilityDefinition"] = tosca_v1_2.ReadCapabilityDefinition
 	Grammar["CapabilityFilter"] = tosca_v1_2.ReadCapabilityFilter
