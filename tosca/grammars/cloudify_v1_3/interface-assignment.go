@@ -108,8 +108,10 @@ func (self InterfaceAssignments) NormalizeForRelationshipSource(relationship *Re
 	for key, intr := range self {
 		if definition, ok := intr.GetDefinitionForRelationshipSource(relationship); ok {
 			i := r.NewInterface(key)
-			i.Inputs["edge"] = normal.NewValue("source")
 			intr.Normalize(i, definition)
+			for _, operation := range i.Operations {
+				operation.Host = "SOURCE"
+			}
 		}
 	}
 }
@@ -118,8 +120,10 @@ func (self InterfaceAssignments) NormalizeForRelationshipTarget(relationship *Re
 	for key, intr := range self {
 		if definition, ok := intr.GetDefinitionForRelationshipTarget(relationship); ok {
 			i := r.NewInterface(key)
-			i.Inputs["edge"] = normal.NewValue("target")
 			intr.Normalize(i, definition)
+			for _, operation := range i.Operations {
+				operation.Host = "TARGET"
+			}
 		}
 	}
 }
