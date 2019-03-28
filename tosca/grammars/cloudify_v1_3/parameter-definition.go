@@ -38,24 +38,6 @@ func (self *ParameterDefinition) GetKey() string {
 	return self.Name
 }
 
-// tosca.Renderable interface
-// func (self *ParameterDefinition) Render() {
-// 	log.Info("{render} parameter definition")
-
-// 	if self.Value != nil {
-// 		if self.Type != nil {
-// 			type_ := *self.Type
-// 			if IsParameterTypeValid(type_) {
-// 				self.Value.CoerceParameterType(type_)
-// 				self.Value.ValidateParameterType(type_)
-// 			}
-// 			self.Value.Constraints = self.Constraints
-// 		}
-// 	} else if self.Default == nil {
-// 		self.Context.ReportPropertyRequired("parameter")
-// 	}
-// }
-
 //
 // ParameterDefinitions
 //

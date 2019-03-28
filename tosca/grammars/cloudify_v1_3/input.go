@@ -46,6 +46,19 @@ func (self *Input) Normalize(context *tosca.Context) normal.Constrainable {
 	return value.Normalize()
 }
 
+// tosca.Renderable interface
+func (self *Input) Render() {
+	log.Infof("{render} input", self.Name)
+
+	if (self.Value == nil) && (self.Default != nil) {
+		self.Value = self.Default
+	}
+
+	if self.Value == nil {
+		self.Context.ReportPropertyRequired("input")
+	}
+}
+
 //
 // Inputs
 //

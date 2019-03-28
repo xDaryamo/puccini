@@ -38,7 +38,11 @@ func TestParse(t *testing.T) {
 	testParse(t, "kubernetes/bookinfo/bookinfo-simple.yaml", nil)
 	testParse(t, "openstack/hello-world.yaml", nil)
 	testParse(t, "bpmn/open-loop.yaml", nil)
-	testParse(t, "cloudify/advanced-blueprint-example.yaml", nil)
+	testParse(t, "cloudify/advanced-blueprint-example.yaml", ard.Map{
+		"host_ip":                "1.2.3.4",
+		"agent_user":             "my_user",
+		"agent_private_key_path": "my_key",
+	})
 	testParse(t, "hot/hello-world.yaml", ard.Map{
 		"key_name":          "my_key",
 		"image_id":          "my_image",
