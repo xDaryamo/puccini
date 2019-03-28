@@ -181,8 +181,9 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 			}
 		} else {
 			// Special types
-			read, ok := Grammar[typeName]
-			if !ok {
+			if read, ok := self.Context.Grammar[typeName]; ok {
+				self.Data = read(self.Context)
+			} else {
 				// Avoid reporting more than once
 				if !dataType.typeProblemReported {
 					dataType.Context.ReportUnsupportedType()
@@ -190,8 +191,6 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 				}
 				return
 			}
-
-			self.Data = read(self.Context)
 		}
 
 		return
@@ -207,8 +206,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 
 	// All properties must be defined in type
 	for key := range map_ {
-		_, ok := dataType.PropertyDefinitions[key]
-		if !ok {
+		if _, ok := dataType.PropertyDefinitions[key]; !ok {
 			self.Context.MapChild(key, nil).ReportUndefined("property")
 			delete(map_, key)
 		}
@@ -216,14 +214,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 
 	// Render properties
 	for key, definition := range dataType.PropertyDefinitions {
-		data, ok := map_[key]
-		if !ok {
-			// PropertyDefinition.Required defaults to true
-			required := (definition.Required == nil) || *definition.Required
-			if required {
-				self.Context.MapChild(key, data).ReportPropertyRequired("property")
-			}
-		} else {
+		if data, ok := map_[key]; ok {
 			var value *Value
 			if value, ok = data.(*Value); !ok {
 				// Convert to value
@@ -232,6 +223,12 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 			}
 			if definition.DataType != nil {
 				value.RenderProperty(definition.DataType, definition)
+			}
+		} else {
+			// PropertyDefinition.Required defaults to true
+			required := (definition.Required == nil) || *definition.Required
+			if required {
+				self.Context.MapChild(key, data).ReportPropertyRequired("property")
 			}
 		}
 	}
