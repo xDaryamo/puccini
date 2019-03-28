@@ -45,6 +45,15 @@ func ReadPlugin(context *tosca.Context) interface{} {
 		self.Install = &install
 	}
 
+	if self.Executor != nil {
+		executor := *self.Executor
+		switch executor {
+		case "central_deployment_agent", "host_agent":
+		default:
+			context.FieldChild("executor", executor).ReportFieldUnsupportedValue()
+		}
+	}
+
 	if *self.Install && (self.Source == nil) && (self.PackageName == nil) {
 		context.FieldChild("source", nil).ReportFieldMissing()
 		context.FieldChild("package_name", nil).ReportFieldMissing()

@@ -75,13 +75,11 @@ func (self *Template) SetInputs(inputs map[string]interface{}) {
 	context := self.Context.FieldChild("parameters", nil)
 	for name, data := range inputs {
 		childContext := context.MapChild(name, data)
-		parameter, ok := self.Parameters[name]
-		if !ok {
+		if parameter, ok := self.Parameters[name]; ok {
+			parameter.Value = ReadValue(childContext).(*Value)
+		} else {
 			childContext.ReportUndefined("parameter")
-			continue
 		}
-
-		parameter.Value = ReadValue(childContext).(*Value)
 	}
 }
 

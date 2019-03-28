@@ -51,8 +51,8 @@ func (self *Group) Normalize(s *normal.ServiceTemplate) *normal.Group {
 		}
 	}
 
-	// TODO: policies
-	// TODO: triggers in policies
+	// TODO: normalize policies
+	// TODO: normalize triggers in policies
 
 	return g
 }

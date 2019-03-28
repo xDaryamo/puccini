@@ -43,6 +43,7 @@ func TestParse(t *testing.T) {
 		"agent_user":             "my_user",
 		"agent_private_key_path": "my_key",
 	})
+	testParse(t, "cloudify/example.yaml", nil)
 	testParse(t, "hot/hello-world.yaml", ard.Map{
 		"key_name":          "my_key",
 		"image_id":          "my_image",

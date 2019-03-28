@@ -48,6 +48,7 @@ func (self *RelationshipAssignment) Render() {
 		self.TargetInterfaces.Render(self.RelationshipType.TargetInterfaceDefinitions, self.Context.FieldChild("target_interfaces", nil))
 	}
 
+	// TODO: this should apply only to derivatives of cloudify.relationships.connected_to and cloudify.relationships.depends_on
 	for key, value := range self.Properties {
 		switch key {
 		case "connection_type":

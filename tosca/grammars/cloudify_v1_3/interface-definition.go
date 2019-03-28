@@ -37,8 +37,34 @@ func (self *InterfaceDefinition) GetKey() string {
 	return self.Name
 }
 
+func (self *InterfaceDefinition) Inherit(parentDefinition *InterfaceDefinition) {
+	if parentDefinition != nil {
+		self.OperationDefinitions.Inherit(parentDefinition.OperationDefinitions)
+	} else {
+		self.OperationDefinitions.Inherit(nil)
+	}
+}
+
 //
 // InterfaceDefinitions
 //
 
 type InterfaceDefinitions map[string]*InterfaceDefinition
+
+func (self InterfaceDefinitions) Inherit(parentDefinitions InterfaceDefinitions) {
+	for name, definition := range parentDefinitions {
+		if _, ok := self[name]; !ok {
+			self[name] = definition
+		}
+	}
+
+	for name, definition := range self {
+		if parentDefinition, ok := parentDefinitions[name]; ok {
+			if definition != parentDefinition {
+				definition.Inherit(parentDefinition)
+			}
+		} else {
+			definition.Inherit(nil)
+		}
+	}
+}

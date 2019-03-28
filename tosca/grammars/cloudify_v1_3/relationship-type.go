@@ -41,6 +41,18 @@ func (self *RelationshipType) GetParent() interface{} {
 	return self.Parent
 }
 
+// tosca.Inherits interface
+func (self *RelationshipType) Inherit() {
+	log.Infof("{inherit} relationship type: %s", self.Name)
+
+	if self.Parent == nil {
+		return
+	}
+
+	self.SourceInterfaceDefinitions.Inherit(self.Parent.SourceInterfaceDefinitions)
+	self.TargetInterfaceDefinitions.Inherit(self.Parent.TargetInterfaceDefinitions)
+}
+
 //
 // RelationshipTypes
 //

@@ -53,8 +53,34 @@ func (self *OperationDefinition) GetKey() string {
 	return self.Name
 }
 
+func (self *OperationDefinition) Inherit(parentDefinition *OperationDefinition) {
+	if parentDefinition != nil {
+		self.InputDefinitions.Inherit(parentDefinition.InputDefinitions)
+	} else {
+		self.InputDefinitions.Inherit(nil)
+	}
+}
+
 //
 // OperationDefinitions
 //
 
 type OperationDefinitions map[string]*OperationDefinition
+
+func (self OperationDefinitions) Inherit(parentDefinitions OperationDefinitions) {
+	for name, definition := range parentDefinitions {
+		if _, ok := self[name]; !ok {
+			self[name] = definition
+		}
+	}
+
+	for name, definition := range self {
+		if parentDefinition, ok := parentDefinitions[name]; ok {
+			if definition != parentDefinition {
+				definition.Inherit(parentDefinition)
+			}
+		} else {
+			definition.Inherit(nil)
+		}
+	}
+}

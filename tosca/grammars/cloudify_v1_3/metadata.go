@@ -10,6 +10,8 @@ import (
 //
 // Metadata
 //
+// Note: not in spec
+//
 
 type Metadata ard.Map
 

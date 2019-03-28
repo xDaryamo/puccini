@@ -40,6 +40,24 @@ func (self *DataType) GetParent() interface{} {
 	return self.Parent
 }
 
+// tosca.Inherits interface
+func (self *DataType) Inherit() {
+	log.Infof("{inherit} data type: %s", self.Name)
+
+	if _, ok := self.GetInternalTypeName(); ok && (len(self.PropertyDefinitions) > 0) {
+		// Doesn't make sense to be an internal type (non-complex) and also have properties (complex)
+		self.Context.ReportPrimitiveType()
+		self.PropertyDefinitions = make(PropertyDefinitions)
+		return
+	}
+
+	if self.Parent == nil {
+		return
+	}
+
+	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
+}
+
 func (self *DataType) GetInternalTypeName() (string, bool) {
 	switch self.Name {
 	case "string", "integer", "float", "boolean":

@@ -39,6 +39,18 @@ func (self *NodeType) GetParent() interface{} {
 	return self.Parent
 }
 
+// tosca.Inherits interface
+func (self *NodeType) Inherit() {
+	log.Infof("{inherit} node type: %s", self.Name)
+
+	if self.Parent == nil {
+		return
+	}
+
+	self.InterfaceDefinitions.Inherit(self.Parent.InterfaceDefinitions)
+	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
+}
+
 //
 // NodeTypes
 //
