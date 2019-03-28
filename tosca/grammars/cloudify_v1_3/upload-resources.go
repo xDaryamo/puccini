@@ -33,7 +33,7 @@ func ReadUploadResources(context *tosca.Context) interface{} {
 
 	parametersContext := context.FieldChild("parameters", nil)
 	for key, value := range self.Parameters {
-		childContext := parametersContext.MapChild(key, value.Data)
+		childContext := parametersContext.MapChild(key, value.Context.Data)
 		switch key {
 		case "fetch_timeout":
 			childContext.ValidateType("integer")

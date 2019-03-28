@@ -26,22 +26,22 @@ var FunctionSourceCode = map[string]string{
 	"get_artifact":         profile.Profile["/tosca/simple/1.2/js/get_artifact.js"],
 }
 
-func GetFunction(context *tosca.Context) (*tosca.Function, bool) {
+func ToFunction(context *tosca.Context) bool {
 	if _, ok := context.Data.(*tosca.Function); ok {
 		// It's already a function
-		return nil, false
+		return true
 	}
 
 	map_, ok := context.Data.(ard.Map)
 	if !ok || len(map_) != 1 {
-		return nil, false
+		return false
 	}
 
 	for key, data := range map_ {
 		_, ok := context.ScriptNamespace[key]
 		if !ok {
 			// Not a function, despite having the right data structure
-			return nil, false
+			return false
 		}
 
 		// Some functions accept a list of arguments, some just one argument
@@ -53,17 +53,18 @@ func GetFunction(context *tosca.Context) (*tosca.Function, bool) {
 		// Arguments may be functions
 		arguments := make(ard.List, len(originalArguments))
 		for index, argument := range originalArguments {
-			if f, ok := GetFunction(context.WithData(argument)); ok {
-				argument = f
-			}
-			arguments[index] = argument
+			argumentContext := context.WithData(argument)
+			ToFunction(argumentContext)
+			arguments[index] = argumentContext.Data
 		}
 
+		context.Data = tosca.NewFunction(context.Path, key, arguments)
+
 		// We have only one key
-		return tosca.NewFunction(context.Path, key, arguments), true
+		return true
 	}
 
-	return nil, false
+	return false
 }
 
 func NormalizeFunctionArguments(function *tosca.Function, context *tosca.Context) {

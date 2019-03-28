@@ -95,7 +95,7 @@ func (self *ConstraintClause) NewFunction(context *tosca.Context, strict bool) *
 			if self.DataType != nil {
 				value := ReadValue(context.ListChild(index, argument)).(*Value)
 				value.RenderAttribute(self.DataType, nil, false)
-				argument = value.Data
+				argument = value.Context.Data
 			} else if strict {
 				panic("no data type for native argument")
 			}

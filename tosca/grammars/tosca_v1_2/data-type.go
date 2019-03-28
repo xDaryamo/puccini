@@ -72,8 +72,8 @@ func (self *DataType) GetInternalTypeName() (string, bool) {
 // Note that this may change the data (if it's a map), but that should be fine, because we intend to
 // for the data to be complete. For the same reason, this action is idempotent (subsequent calls to
 // the same data will not have an effect).
-func (self *DataType) Complete(data interface{}, context *tosca.Context) {
-	map_, ok := data.(ard.Map)
+func (self *DataType) Complete(context *tosca.Context) {
+	map_, ok := context.Data.(ard.Map)
 	if !ok {
 		// Only for complex data types
 		return
@@ -87,15 +87,15 @@ func (self *DataType) Complete(data interface{}, context *tosca.Context) {
 			childContext.Data = d
 		} else if definition.Default != nil {
 			// Assign default value
-			d = definition.Default.Data
+			d = definition.Default.Context.Data
 			childContext.Data = d
 			map_[key] = d
 		}
 
-		if function, ok := GetFunction(childContext.WithData(d)); ok {
-			map_[key] = function
+		if ToFunction(childContext) {
+			map_[key] = childContext.Data
 		} else {
-			definition.DataType.Complete(d, childContext)
+			definition.DataType.Complete(childContext)
 		}
 	}
 }

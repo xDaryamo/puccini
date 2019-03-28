@@ -42,22 +42,22 @@ var FunctionSourceCode = map[string]string{
 	"yaql":                profile.Profile["/hot/1.0/js/yaql.js"],
 }
 
-func GetFunction(context *tosca.Context) (*tosca.Function, bool) {
+func ToFunction(context *tosca.Context) bool {
 	if _, ok := context.Data.(*tosca.Function); ok {
 		// It's already a function
-		return nil, false
+		return true
 	}
 
 	map_, ok := context.Data.(ard.Map)
 	if !ok || len(map_) != 1 {
-		return nil, false
+		return false
 	}
 
 	for key, data := range map_ {
 		_, ok := context.ScriptNamespace[key]
 		if !ok {
 			// Not a function, despite having the right data structure
-			return nil, false
+			return false
 		}
 
 		// Some functions accept a list of arguments, some just one argument
@@ -83,35 +83,36 @@ func GetFunction(context *tosca.Context) (*tosca.Function, bool) {
 		// Arguments may be functions
 		arguments := make(ard.List, len(originalArguments))
 		for index, argument := range originalArguments {
-			if f, ok := GetFunction(context.WithData(argument)); ok {
-				argument = f
-			}
-			arguments[index] = argument
+			argumentContext := context.WithData(argument)
+			ToFunction(argumentContext)
+			arguments[index] = argumentContext.Data
 		}
+
+		context.Data = tosca.NewFunction(context.Path, key, arguments)
 
 		// We have only one key
-		return tosca.NewFunction(context.Path, key, arguments), true
+		return true
 	}
 
-	return nil, false
+	return false
 }
 
-func ToFunctions(context *tosca.Context) interface{} {
-	data := context.Data
-	if function, ok := GetFunction(context); ok {
-		data = function
-	} else if list, ok := data.(ard.List); ok {
-		for index, value := range list {
-			childContext := context.ListChild(index, value)
-			list[index] = ToFunctions(childContext)
-		}
-	} else if map_, ok := data.(ard.Map); ok {
-		for key, value := range map_ {
-			childContext := context.MapChild(key, value)
-			map_[key] = ToFunctions(childContext)
+func ToFunctions(context *tosca.Context) {
+	if !ToFunction(context) {
+		if list, ok := context.Data.(ard.List); ok {
+			for index, value := range list {
+				childContext := context.ListChild(index, value)
+				ToFunctions(childContext)
+				list[index] = childContext.Data
+			}
+		} else if map_, ok := context.Data.(ard.Map); ok {
+			for key, value := range map_ {
+				childContext := context.MapChild(key, value)
+				ToFunctions(childContext)
+				map_[key] = childContext.Data
+			}
 		}
 	}
-	return data
 }
 
 func NormalizeFunctionArguments(function *tosca.Function, context *tosca.Context) {

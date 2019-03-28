@@ -14,7 +14,6 @@ type Value struct {
 	*Entity `name:"value"`
 	Name    string
 
-	Data        interface{}
 	Description *string
 
 	rendered bool
@@ -24,15 +23,13 @@ func NewValue(context *tosca.Context) *Value {
 	return &Value{
 		Entity: NewEntity(context),
 		Name:   context.Name,
-		Data:   context.Data,
 	}
 }
 
 // tosca.Reader signature
 func ReadValue(context *tosca.Context) interface{} {
-	self := NewValue(context)
-	self.Data = ToFunctions(context)
-	return self
+	ToFunctions(context)
+	return NewValue(context)
 }
 
 // tosca.Mappable interface
@@ -61,42 +58,40 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 		self.Description = dataType.Description
 	}
 
-	if allowNil && (self.Data == nil) {
+	if allowNil && (self.Context.Data == nil) {
 		return
 	}
 
-	if _, ok := self.Data.(*tosca.Function); ok {
+	if _, ok := self.Context.Data.(*tosca.Function); ok {
 		return
 	}
 
-	//dataType.Complete(self.Data, self.Context)
+	//dataType.Complete(self.Context.Data, self.Context)
 
 	// Internal types
 	if typeName, ok := dataType.GetInternalTypeName(); ok {
 		if validator, ok := tosca.PrimitiveTypeValidators[typeName]; ok {
-			if self.Data == nil {
+			if self.Context.Data == nil {
 				// Nil data only happens when an parameter is added despite not having a
 				// "default" value; we will give it a valid zero value instead
-				self.Data = tosca.PrimitiveTypeZeroes[typeName]
+				self.Context.Data = tosca.PrimitiveTypeZeroes[typeName]
 			}
 
 			// Primitive types
-			if !validator(self.Data) {
+			if !validator(self.Context.Data) {
 				self.Context.ReportValueWrongType(dataType.Name)
 			}
 		} else {
 			// Special types
-			read, ok := Grammar[typeName]
-			if !ok {
+			if read, ok := self.Context.Grammar[typeName]; ok {
+				self.Context.Data = read(self.Context)
+			} else {
 				// Avoid reporting more than once
 				if !dataType.typeProblemReported {
 					dataType.Context.ReportUnsupportedType()
 					dataType.typeProblemReported = true
 				}
-				return
 			}
-
-			self.Data = read(self.Context)
 		}
 
 		return
@@ -108,12 +103,11 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 		return
 	}
 
-	map_ := self.Data.(ard.Map)
+	map_ := self.Context.Data.(ard.Map)
 
 	// All properties must be defined in type
 	for key := range map_ {
-		_, ok := dataType.PropertyDefinitions[key]
-		if !ok {
+		if _, ok := dataType.PropertyDefinitions[key]; !ok {
 			self.Context.MapChild(key, nil).ReportUndefined("property")
 			delete(map_, key)
 		}
@@ -121,14 +115,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 
 	// Render properties
 	for key, definition := range dataType.PropertyDefinitions {
-		data, ok := map_[key]
-		if !ok {
-			// PropertyDefinition.Required defaults to true
-			required := (definition.Required == nil) || *definition.Required
-			if required {
-				self.Context.MapChild(key, data).ReportPropertyRequired("property")
-			}
-		} else {
+		if data, ok := map_[key]; ok {
 			var value *Value
 			if value, ok = data.(*Value); !ok {
 				// Convert to value
@@ -138,6 +125,12 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 			if definition.DataType != nil {
 				value.RenderProperty(definition.DataType, definition)
 			}
+		} else {
+			// PropertyDefinition.Required defaults to true
+			required := (definition.Required == nil) || *definition.Required
+			if required {
+				self.Context.MapChild(key, data).ReportPropertyRequired("property")
+			}
 		}
 	}
 }
@@ -145,23 +138,23 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 func (self *Value) Normalize() normal.Constrainable {
 	var constrainable normal.Constrainable
 
-	if list, ok := self.Data.(ard.List); ok {
+	if list, ok := self.Context.Data.(ard.List); ok {
 		l := normal.NewConstrainableList(len(list))
 		for index, value := range list {
 			l.List[index] = NewValue(self.Context.ListChild(index, value)).Normalize()
 		}
 		constrainable = l
-	} else if map_, ok := self.Data.(ard.Map); ok {
+	} else if map_, ok := self.Context.Data.(ard.Map); ok {
 		m := normal.NewConstrainableMap()
 		for key, value := range map_ {
 			m.Map[key] = NewValue(self.Context.MapChild(key, value)).Normalize()
 		}
 		constrainable = m
-	} else if function, ok := self.Data.(*tosca.Function); ok {
+	} else if function, ok := self.Context.Data.(*tosca.Function); ok {
 		NormalizeFunctionArguments(function, self.Context)
 		constrainable = normal.NewFunction(function)
 	} else {
-		constrainable = normal.NewValue(self.Data)
+		constrainable = normal.NewValue(self.Context.Data)
 	}
 
 	if self.Description != nil {
@@ -209,15 +202,13 @@ func (self Values) RenderProperties(definitions PropertyDefinitions, kind string
 
 func (self Values) RenderParameters(definitions ParameterDefinitions, kind string, context *tosca.Context) {
 	for key, definition := range definitions {
-		_, ok := self[key]
-		if !ok {
+		if _, ok := self[key]; !ok {
 			self.RenderMissingValue(definition, kind, false, context)
 		}
 	}
 
 	for key, value := range self {
-		definition, ok := definitions[key]
-		if !ok {
+		if definition, ok := definitions[key]; !ok {
 			value.Context.ReportUndefined(kind)
 			delete(self, key)
 		} else if definition.DataType != nil {
