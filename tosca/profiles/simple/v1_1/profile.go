@@ -15,11 +15,10 @@ func init() {
 tosca_definitions_version: tosca_simple_yaml_1_1
 
 metadata:
-  puccini-js.import.tosca.resolve: internal:/tosca/simple/1.2/js/resolve.js
-  puccini-js.import.tosca.coerce: internal:/tosca/simple/1.2/js/coerce.js
-  puccini-js.import.tosca.visualize: internal:/tosca/simple/1.2/js/visualize.js
-  puccini-js.import.tosca.utils: internal:/tosca/simple/1.2/js/utils.js
-  puccini-js.import.tosca.helpers: internal:/tosca/simple/1.2/js/helpers.js
+  puccini-js.import.tosca.resolve: internal:/tosca/common/1.0/js/resolve.js
+  puccini-js.import.tosca.coerce: internal:/tosca/common/1.0/js/coerce.js
+  puccini-js.import.tosca.utils: internal:/tosca/common/1.0/js/utils.js
+  puccini-js.import.tosca.helpers: internal:/tosca/common/1.0/js/helpers.js
 
 imports:
 - artifacts.yaml

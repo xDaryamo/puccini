@@ -1,9 +1,9 @@
 // This file was auto-generated from a YAML file
 
-package v1_2
+package v1_0
 
 func init() {
-	Profile["/tosca/simple/1.2/js/utils.js"] = `
+	Profile["/tosca/common/1.0/js/utils.js"] = `
 
 clout.exec('tosca.helpers');
 

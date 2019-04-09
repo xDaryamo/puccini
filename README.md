@@ -82,10 +82,10 @@ JavaScript.
 
 ### Visualization
 
-You can graphically visualize the compiled TOSCA in a dynamic web page via the embedded
-**tosca.visualize** JavaScript. A one-line example:
+You can graphically visualize the compiled TOSCA in a dynamic web page via JavaScript. A one-line
+example:
 
-    puccini-tosca compile my-app.yaml | puccini-js exec tosca.visualize > /tmp/my-app.html && xdg-open /tmp/my-app.html
+    puccini-tosca compile examples/grammar/requirements-and-capabilities.yaml | puccini-js exec assets/tosca/profiles/common/1.0/js/visualize.js > /tmp/puccini.html && xdg-open /tmp/puccini.html
 
 * [**puccini-tosca** documentation](puccini-tosca/README.md)
 * [TOSCA parser documentation](tosca/parser/README.md)

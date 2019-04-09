@@ -31,11 +31,10 @@ func NewTemplate(context *tosca.Context) *Template {
 		Outputs:    make(Outputs),
 	}
 
-	self.Context.ImportScript("tosca.resolve", "internal:/tosca/simple/1.2/js/resolve.js")
-	self.Context.ImportScript("tosca.coerce", "internal:/tosca/simple/1.2/js/coerce.js")
-	self.Context.ImportScript("tosca.visualize", "internal:/tosca/simple/1.2/js/visualize.js")
-	self.Context.ImportScript("tosca.utils", "internal:/tosca/simple/1.2/js/utils.js")
-	self.Context.ImportScript("tosca.helpers", "internal:/tosca/simple/1.2/js/helpers.js")
+	self.Context.ImportScript("tosca.resolve", "internal:/tosca/common/1.0/js/resolve.js")
+	self.Context.ImportScript("tosca.coerce", "internal:/tosca/common/1.0/js/coerce.js")
+	self.Context.ImportScript("tosca.utils", "internal:/tosca/common/1.0/js/utils.js")
+	self.Context.ImportScript("tosca.helpers", "internal:/tosca/common/1.0/js/helpers.js")
 	self.Context.ImportScript("openstack.generate", "internal:/tosca/openstack/1.0/js/generate.js")
 
 	self.NewPseudoParameter("OS::stack_name", "stack_name")

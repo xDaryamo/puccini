@@ -3,6 +3,7 @@ package parser
 import (
 	bpmn_v1_0 "github.com/tliron/puccini/tosca/profiles/bpmn/v1_0"
 	cloudify_v4_5 "github.com/tliron/puccini/tosca/profiles/cloudify/v4_5"
+	common "github.com/tliron/puccini/tosca/profiles/common/v1_0"
 	hot_v1_0 "github.com/tliron/puccini/tosca/profiles/hot/v1_0"
 	kubernetes_v1_0 "github.com/tliron/puccini/tosca/profiles/kubernetes/v1_0"
 	openstack_v1_0 "github.com/tliron/puccini/tosca/profiles/openstack/v1_0"
@@ -23,6 +24,7 @@ var ProfileInternalPaths = map[string]string{
 }
 
 func init() {
+	initProfile(common.Profile)
 	initProfile(simple_v1_2.Profile)
 	initProfile(simple_v1_1.Profile)
 	initProfile(simpleForNFV_v1_0.Profile)
