@@ -14,7 +14,7 @@ import (
 type InterfaceType struct {
 	*Type `name:"interface type"`
 
-	InputDefinitions     PropertyDefinitions  `read:"inputs,PropertyDefinition" inherit:"properties,Parent"`
+	InputDefinitions     PropertyDefinitions  `read:"inputs,PropertyDefinition" inherit:"inputs,Parent"`
 	OperationDefinitions OperationDefinitions `read:"?,OperationDefinition" inherit:"?,Parent"`
 
 	Parent *InterfaceType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`

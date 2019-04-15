@@ -16,7 +16,7 @@ type InterfaceDefinition struct {
 	Name    string
 
 	InterfaceTypeName    *string              `read:"type"` // required only if cannot be inherited
-	InputDefinitions     PropertyDefinitions  `read:"properties,PropertyDefinition" inherit:"?,InterfaceType"`
+	InputDefinitions     PropertyDefinitions  `read:"inputs,PropertyDefinition" inherit:"inputs,InterfaceType"`
 	OperationDefinitions OperationDefinitions `read:"?,OperationDefinition" inherit:"?,InterfaceType"`
 
 	InterfaceType *InterfaceType `lookup:"type,InterfaceTypeName" json:"-" yaml:"-"`
