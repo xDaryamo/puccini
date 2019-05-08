@@ -1,5 +1,5 @@
 
-// [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#not]
+// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#not]
 
 function evaluate() {
 	return 'TODO';

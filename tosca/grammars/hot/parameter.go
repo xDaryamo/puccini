@@ -8,7 +8,7 @@ import (
 //
 // Parameter
 //
-// [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#parameters-section]
+// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#parameters-section]
 //
 
 type Parameter struct {

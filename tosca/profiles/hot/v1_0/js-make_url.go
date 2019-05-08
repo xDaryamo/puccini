@@ -5,7 +5,7 @@ package v1_0
 func init() {
 	Profile["/hot/1.0/js/make_url.js"] = `
 
-// [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#make_url]
+// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#make_url]
 
 function evaluate() {
 	return 'TODO';

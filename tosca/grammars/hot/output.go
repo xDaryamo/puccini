@@ -8,7 +8,7 @@ import (
 //
 // Output
 //
-// [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#outputs-section]
+// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#outputs-section]
 //
 
 type Output struct {

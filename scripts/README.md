@@ -1,5 +1,5 @@
-Development Guide
-=================
+Build Guide
+===========
 
 Puccini tries to follow the conventions of the Go programming community. However, newcomers to Go
 might not know where to start. Here are some scripts to get you up in running, in order:

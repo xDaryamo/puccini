@@ -7,7 +7,7 @@ import (
 //
 // ParameterGroup
 //
-// [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#parameter-groups-section]
+// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#parameter-groups-section]
 //
 
 type ParameterGroup struct {

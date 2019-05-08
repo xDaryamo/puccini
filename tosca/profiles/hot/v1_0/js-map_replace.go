@@ -5,7 +5,7 @@ package v1_0
 func init() {
 	Profile["/hot/1.0/js/map_replace.js"] = `
 
-// [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#map_replace]
+// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#map_replace]
 
 function evaluate() {
 	return 'TODO';

@@ -8,9 +8,16 @@ Puccini
 Deliberately stateless cloud topology management and deployment tools based on
 [TOSCA](https://www.oasis-open.org/committees/tosca/).
 
-Impatient? Check out the [quickstart guide](QUICKSTART.md).
+Each tool is a self-contained executable file, allowing them to be easily distributed and easily
+embedded in tool chains, orchestration, and development environments. They are coded in 100%
+[Go](https://golang.org/) and are very portable, even runnable on
+[WebAssembly](https://webassembly.org/). 
 
-Developer! Please check out the [development guide](scripts/README.md).
+[![Download](assets/media/download.png "Download")](https://github.com/tliron/puccini/releases)
+
+Welcome, newcomers! Check out the [quickstart guide](QUICKSTART.md).
+
+To build Puccini yourself see the [build guide](scripts/README.md).
 
 
 puccini-tosca
@@ -26,7 +33,7 @@ Puccini can compile several popular TOSCA and TOSCA-like dialects:
 [TOSCA 1.2](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.2/TOSCA-Simple-Profile-YAML-v1.2.html),
 [TOSCA 1.1](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html),
 [Cloudify DSL 1.3](https://docs.cloudify.co/latest/developer/blueprints/),
-and [HOT](https://docs.openstack.org/heat/latest/template_guide/hot_guide.html).
+and [HOT](https://docs.openstack.org/heat/stein/template_guide/hot_guide.html).
 Note that Cloudify DSL and HOT are grammatically limited and do not support many TOSCA features.
 
 **puccini-tosca** comes with TOSCA profiles for the
@@ -158,7 +165,7 @@ the
 [Ansible OpenStack roles](https://docs.ansible.com/ansible/latest/modules/list_of_cloud_modules.html#openstack).
 Custom operation artifacts, if included, are deployed to the virtual machines and executed.
 Effectively, the combination of TOSCA + Ansible provides an equivalent set of features to
-[Heat](https://docs.openstack.org/heat/latest/)/[Mistral](https://docs.openstack.org/mistral/latest/).
+[Heat](https://docs.openstack.org/heat/stein/)/[Mistral](https://docs.openstack.org/mistral/rocky/).
 However, Ansible is a general-purpose orchestrator that can do a lot more than Heat. The generated
 playbooks comprise roles that can be imported and used in other playbooks, allowing for custom
 orchestration integrations. Also note that although Puccini can compile HOT directly, we recommend

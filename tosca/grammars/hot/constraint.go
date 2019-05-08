@@ -20,7 +20,7 @@ var ConstraintSourceCode = map[string]string{
 //
 // Constraint
 //
-// [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#parameter-constraints]
+// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#parameter-constraints]
 //
 
 type Constraint struct {

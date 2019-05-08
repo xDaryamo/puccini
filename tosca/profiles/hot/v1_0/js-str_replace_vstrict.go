@@ -5,7 +5,7 @@ package v1_0
 func init() {
 	Profile["/hot/1.0/js/str_replace_vstrict.js"] = `
 
-// [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#str_replace_vstrict]
+// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#str_replace_vstrict]
 
 function evaluate() {
 	return 'TODO';

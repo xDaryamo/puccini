@@ -1,6 +1,6 @@
 heat_template_version: 2018-08-31
 
-# See: https://docs.openstack.org/heat/rocky/template_guide/hot_guide.html
+# See: https://docs.openstack.org/heat/stein/template_guide/hot_guide.html
 
 description: Simple template to deploy a single compute instance
 

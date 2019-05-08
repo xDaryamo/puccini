@@ -89,7 +89,7 @@ func (self *Value) CoerceParameterType(type_ string) {
 //
 // Resource types
 //
-// [https://docs.openstack.org/heat/rocky/template_guide/openstack.html]
+// [https://docs.openstack.org/heat/stein/template_guide/openstack.html]
 //
 
 var ResourceTypes = map[string]string{

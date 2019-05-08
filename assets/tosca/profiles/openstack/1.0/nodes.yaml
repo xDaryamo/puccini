@@ -7,7 +7,7 @@ imports:
 
 node_types:
 
-  # https://docs.openstack.org/heat/rocky/template_guide/openstack.html#OS::Nova::Server
+  # https://docs.openstack.org/heat/stein/template_guide/openstack.html#OS::Nova::Server
   openstack.nova.Server:
     metadata:
       heat_name: OS::Nova::Server

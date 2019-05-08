@@ -1,5 +1,5 @@
 
-// [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#list_join]
+// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#list_join]
 
 function evaluate() {
 	var length = arguments.length;

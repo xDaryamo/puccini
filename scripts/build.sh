@@ -6,9 +6,11 @@ HERE=$(dirname "$(readlink -f "$0")")
 . "$HERE/env.sh"
 
 build () {
-	cd "$ROOT/$1"
+	local TOOL=$1
+	pushd "$ROOT/$TOOL" > /dev/null
 	go install
-	echo "built $GOPATH/bin/$1"
+	popd > /dev/null
+	echo "built $GOPATH/bin/$TOOL"
 }
 
 build puccini-tosca

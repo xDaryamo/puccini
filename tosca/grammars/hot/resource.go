@@ -24,7 +24,7 @@ func GetDeletionPolicy(policy string) (string, bool) {
 //
 // Resource
 //
-// [https://docs.openstack.org/heat/rocky/template_guide/hot_spec.html#resources-section]
+// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#resources-section]
 //
 
 type Resource struct {
