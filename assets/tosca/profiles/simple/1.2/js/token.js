@@ -1,6 +1,6 @@
 
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.3.3
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 4.3.2
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 4.3.2
 
 function evaluate(v, separators, index) {
 	if (arguments.length !== 3)

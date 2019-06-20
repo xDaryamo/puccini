@@ -32,7 +32,7 @@ var getCmd = &cobra.Command{
 		common.FailOnError(err)
 
 		if !common.Quiet {
-			err = format.WriteOrPrint(sourceCode, ardFormat, false, output)
+			err = format.WriteOrPrint(sourceCode, ardFormat, pretty, output)
 			common.FailOnError(err)
 		}
 	},

@@ -53,7 +53,7 @@ var parseCmd = &cobra.Command{
 		_, s := Parse(urlString)
 
 		if (examine == "") && (len(printPhases) == 0) {
-			format.Print(s, ardFormat, true)
+			format.Print(s, ardFormat, pretty)
 		}
 	},
 }
@@ -147,7 +147,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 			}
 			for _, entityPtr := range entityPtrs {
 				fmt.Fprintf(format.Stdout, "%s:\n", format.ColorPath(tosca.GetContext(entityPtr).Path))
-				err = format.Print(entityPtr, ardFormat, true)
+				err = format.Print(entityPtr, ardFormat, pretty)
 				common.FailOnError(err)
 			}
 		}
@@ -162,7 +162,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 				if len(entityPtrs) > 0 {
 					fmt.Fprintf(format.Stdout, "%s\n", format.ColorPath(tosca.GetContext(entityPtr).Path))
 				}
-				err = format.Print(entityPtr, ardFormat, true)
+				err = format.Print(entityPtr, ardFormat, pretty)
 				common.FailOnError(err)
 			}
 		}

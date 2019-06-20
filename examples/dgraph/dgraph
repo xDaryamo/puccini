@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+# See: https://docs.dgraph.io/get-started/#from-installed-binary
+
+ROOT=/Depot/Applications/Dgraph
+
+HERE=$(dirname "$(readlink -f "$0")")
+
+if [ "$1" == start ]; then
+
+	mkdir --parents "$HERE/logs/"
+	"$ROOT/dgraph" zero --log_dir="$HERE/logs/" &
+	"$ROOT/dgraph" alpha --lru_mb=2048 --log_dir="$HERE/logs/" &
+	"$ROOT/dgraph-ratel" &
+	xdg-open "http://localhost:8000/?local"
+
+elif [ "$1" == stop ]; then
+
+	killall dgraph-ratel || true
+	killall dgraph
+
+fi

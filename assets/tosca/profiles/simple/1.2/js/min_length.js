@@ -1,6 +1,6 @@
 
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
 
 function validate(v, length) {
 	if (arguments.length !== 2)

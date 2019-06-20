@@ -21,6 +21,7 @@ type PucciniApi struct {
 	Stderr *os.File
 	Stdin  *os.File
 	Format string
+	Pretty bool
 
 	context *Context
 }
@@ -36,6 +37,7 @@ func (self *Context) NewPucciniApi() *PucciniApi {
 		Stderr:  self.Stderr,
 		Stdin:   self.Stdin,
 		Format:  format,
+		Pretty:  self.Pretty,
 		context: self,
 	}
 }
@@ -87,6 +89,6 @@ func (self *PucciniApi) Write(data interface{}, path string, dontOverwrite bool)
 		}
 	}
 
-	err := format.WriteOrPrint(data, self.context.ArdFormat, true, output)
+	err := format.WriteOrPrint(data, self.Format, self.Pretty, output)
 	self.context.FailOnError(err)
 }

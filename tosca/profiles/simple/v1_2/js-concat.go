@@ -6,7 +6,7 @@ func init() {
 	Profile["/tosca/simple/1.2/js/concat.js"] = `
 
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.3.1
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 4.3.1
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 4.3.1
 
 function evaluate() {
 	var a = [];

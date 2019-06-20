@@ -306,8 +306,8 @@ your orchestration tool chain. See our examples
 ### TOSCA is so complicated! Help!
 
 I know, right? Now imagine writing a parser for it... Not only is it a complex language, but the
-[specification itself](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html)
-(as of version 1.1) has many contradictions, errors, and gaps.
+[specification itself](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.2/TOSCA-Simple-Profile-YAML-v1.2.html)
+(as of version 1.2) has many contradictions, errors, and gaps.
 
 To help you out we've included [examples](examples/tosca/) of TOSCA core grammatical features,
 with some running commentary. Treat them as your playground. Also, if you have 4 hours to spare,

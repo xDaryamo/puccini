@@ -6,7 +6,7 @@ func init() {
 	Profile["/tosca/simple/1.2/js/less_or_equal.js"] = `
 
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
 
 clout.exec('tosca.helpers');
 

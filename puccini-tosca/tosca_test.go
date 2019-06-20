@@ -85,13 +85,13 @@ func testParse(t *testing.T, url string, inputs ard.Map) {
 			return
 		}
 
-		compiler.Resolve(c, p)
+		compiler.Resolve(c, p, "yaml", true)
 		if !p.Empty() {
 			t.Errorf("%s", p)
 			return
 		}
 
-		compiler.Coerce(c, p)
+		compiler.Coerce(c, p, "yaml", true)
 		if !p.Empty() {
 			t.Errorf("%s", p)
 			return

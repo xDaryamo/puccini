@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink -f "$0")")
+
+function c () {
+	curl "localhost:8080/$1" --silent --request POST "${@:2}" | python -m json.tool
+}
+
+mkdir --parents "$HERE/data/"
+
+puccini-tosca compile examples/kubernetes/bookinfo/bookinfo-simple.yaml | \
+puccini-js exec assets/tosca/profiles/common/1.0/js/dgraph.js \
+	> "$HERE/data/bookinfo-simple.json"
+
+c alter --data '{"drop_all": true}'
+c mutate --data-binary @"$HERE/data/bookinfo-simple.json" --header 'X-Dgraph-MutationType: json' --header 'X-Dgraph-CommitNow: true'

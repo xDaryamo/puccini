@@ -1,6 +1,6 @@
 
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.5.1
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 4.5.1
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 4.5.1
 
 clout.exec('tosca.helpers');
 

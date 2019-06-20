@@ -11,6 +11,7 @@ import (
 var logTo string
 var verbose int
 var ardFormat string
+var pretty bool
 
 var bashCompletionTo string
 
@@ -19,6 +20,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&logTo, "log", "l", "", "log to file (defaults to stderr)")
 	rootCmd.PersistentFlags().CountVarP(&verbose, "verbose", "v", "add a log verbosity level (can be used twice)")
 	rootCmd.PersistentFlags().StringVarP(&ardFormat, "format", "f", "", "force format (\"yaml\", \"json\", or \"xml\")")
+	rootCmd.PersistentFlags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
 
 	rootCmd.Flags().StringVarP(&bashCompletionTo, "bash-completion", "b", "", "generate bash completion file")
 }

@@ -6,7 +6,7 @@ func init() {
 	Profile["/tosca/simple/1.2/js/get_property.js"] = `
 
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.4.2
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 4.4.2
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 4.4.2
 
 clout.exec('tosca.helpers');
 

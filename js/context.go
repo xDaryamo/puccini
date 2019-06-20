@@ -16,6 +16,7 @@ import (
 type Context struct {
 	Quiet     bool
 	ArdFormat string
+	Pretty    bool
 	Output    string
 	Log       *format.Log
 	Stdout    *os.File
@@ -23,10 +24,11 @@ type Context struct {
 	Stdin     *os.File
 }
 
-func NewContext(name string, logger *logging.Logger, quiet bool, ardFormat string, output string) *Context {
+func NewContext(name string, logger *logging.Logger, quiet bool, ardFormat string, pretty bool, output string) *Context {
 	return &Context{
 		Quiet:     quiet,
 		ArdFormat: ardFormat,
+		Pretty:    pretty,
 		Output:    output,
 		Log:       format.NewLog(logger, name),
 		Stdout:    os.Stdout,

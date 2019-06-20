@@ -47,7 +47,7 @@ func Compile(urlString string) {
 
 	// Resolve
 	if resolve {
-		compiler.Resolve(clout, &context.Problems)
+		compiler.Resolve(clout, &context.Problems, ardFormat, pretty)
 		if !context.Problems.Empty() {
 			if !common.Quiet {
 				context.Problems.Print()
@@ -58,7 +58,7 @@ func Compile(urlString string) {
 
 	// Coerce
 	if coerce {
-		compiler.Coerce(clout, &context.Problems)
+		compiler.Coerce(clout, &context.Problems, ardFormat, pretty)
 		if !context.Problems.Empty() {
 			if !common.Quiet {
 				context.Problems.Print()
@@ -68,7 +68,7 @@ func Compile(urlString string) {
 	}
 
 	if !common.Quiet || (output != "") {
-		err = format.WriteOrPrint(clout, ardFormat, true, output)
+		err = format.WriteOrPrint(clout, ardFormat, pretty, output)
 		common.FailOnError(err)
 	}
 }

@@ -6,7 +6,7 @@ func init() {
 	Profile["/tosca/simple/1.2/js/valid_values.js"] = `
 
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
 
 function validate(v) {
 	var values = Array.prototype.slice.call(arguments, 1);

@@ -6,7 +6,7 @@ func init() {
 	Profile["/tosca/simple/1.2/js/get_nodes_of_type.js"] = `
 
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.7.1
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 4.7.1
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 4.7.1
 
 clout.exec('tosca.helpers');
 

@@ -55,7 +55,7 @@ func Exec(name string, sourceCode string, c *clout.Clout) error {
 		return err
 	}
 
-	jsContext := js.NewContext(name, log, common.Quiet, ardFormat, output)
+	jsContext := js.NewContext(name, log, common.Quiet, ardFormat, pretty, output)
 	_, runtime := jsContext.NewCloutContext(c)
 	_, err = runtime.RunProgram(program)
 
