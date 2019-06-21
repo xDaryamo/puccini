@@ -224,6 +224,24 @@ that describes a complex Kubernetes service mesh.
 If Clout's file size is an issue, it's good to know that Clout is usually eminently compressible,
 comprising just text with quite a lot of repetition.
 
+### Storage
+
+Orchestrators may choose to store Clout opaquely, as is, in a key-value database or filesystem.
+This could work well because cloud deployments change infrequently: often all that's needed is to
+retrieve a Clout, parse and lookup data, and possibly update a TOSCA attribute and store it again.
+Iterating many Clouts in sequence this way could be done quickly enough even for large
+environments. Simple solutions are often best.
+
+That said, it could also make sense to store Clout data in a graph database. This would allow for
+sophisticated queries, using languages such [GraphQL](https://graphql.org/) and
+[Gremlin](https://tinkerpop.apache.org/gremlin.html), as well as localized transactional updates.
+This approach could be especially useful for highly composable and dynamic environments in which
+Clouts combine together to form larger topologies and even relate to data coming from other systems.
+
+Graph databases are quite diverse in features and Clout is very flexible, so one schema will not
+fit all. Puccini instead comes with examples: see [storing in Neo4j](examples/neo4j/README.md) and
+[storing in Dgraph](examples/dgraph/README.md).
+
 * [Clout documentation](clout/README.md)
 
 
@@ -237,30 +255,31 @@ of TOSCA's
 [Simple Profile](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html)
 or [Simple Profile for NFV](http://docs.oasis-open.org/tosca/tosca-nfv/v1.0/tosca-nfv-v1.0.html)
 types (Compute, BlockStorage, VDU, etc.). Still, if you find these so-called "normative" types
-useful, they are included in Puccini and will be compiled into Clout. You may write your own
-JavaScript to deploy them to your cloud orchestration environment. But, we encourage you to consider
+useful, they are included in Puccini and will be compiled into Clout. You may bring in your
+own orchestration to deploy them to your cloud environments. But, we encourage you to consider
 carefully whether this is a good idea. We think it's a dead end.
 
-Generally speaking, the notion that a single set of normative types could be used for all the
-various cloud and container platforms out there is a pipe dream. The devil is in the details, and
-the amount of detail needed for cloud deployment keeps growing and diversifying. Thus every Clout
-file is vehemently platform-specific. However, by bringing the tiniest implementation details all
-into one place we can at least have a common tool chain for all platforms. That's the gist of
-Puccini.
+The notion that a single set of normative types could be used for all the various cloud and container
+platforms out there is a pipe dream. There may be superficial similarities between them, but the devil
+is in the details and the amount of detail needed for integrated, scalable, cloud-native deployments
+keeps growing and diversifying. Thus every platform needs and deserves its own concepts, models, data
+points, and thus its own profile of interrelated TOSCA types. However, by bringing all these
+tiny-but-important implementation details into one place we can at least have a lingua franca and
+common tool chain for all platforms. That's the value proposition of TOSCA and the gist of Puccini.
 
 ### JavaScript? Really?
 
 The decision to use an interpreted programming language is intentional and important. Unlike some
 Kubernetes tools ([Helm](https://helm.sh/)), we do not treat YAML files as plain text to be
-manipulated by an anemic text templating language, where working around YAML's strict
-indentation is a nightmare.
+manipulated by an anemic text templating language, where just working around YAML's strict indentation
+requirements becomes a cumbersome nightmare.
 
 JavaScript lets you manipulate data structures directly using a full-blown, conventional language.
 It's probably
 [not anyone's favorite language](https://archive.org/details/wat_destroyallsoftware), but it's
 familiar, mature, standardized (as [ECMAScript](https://en.wikipedia.org/wiki/ECMAScript)), and does
-the job. From a certain angle it's essentially Scheme (because it has powerful closures and
-functions are first class citizens), just with a crusty C syntax.
+the job. From a certain angle it's essentially the Scheme language (because it has powerful closures
+and functions are first class citizens) but with a crusty C syntax.
 
 And because JavaScript is self-contained text, it's trivial to store it in a Clout file, which can
 then be interpreted and run almost anywhere.
