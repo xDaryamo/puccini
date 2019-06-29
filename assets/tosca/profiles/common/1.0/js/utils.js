@@ -63,12 +63,12 @@ tosca.traverseValues = function(traverser) {
 	}
 };
 
-tosca.traverseInterfaceValues = function(interfaces, site, source, target) {
+tosca.traverseInterfaceValues = function(traverser, interfaces, site, source, target) {
 	for (var interfaceName in interfaces) {
 		var interface_ = interfaces[interfaceName];
 		tosca.traverseObjectValues(traverser, interface_.inputs, site, source, target);
 		for (var operationName in interface_.operations)
-			tosca.traverseObjectValues(traverser, interface_.operations[operationName].Inputs, site, source, target);
+			tosca.traverseObjectValues(traverser, interface_.operations[operationName].inputs, site, source, target);
 	}
 };
 
