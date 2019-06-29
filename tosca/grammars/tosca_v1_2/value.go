@@ -1,6 +1,8 @@
 package tosca_v1_2
 
 import (
+	"strconv"
+
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
@@ -121,6 +123,17 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 				// Nil data only happens when an attribute is added despite not having a
 				// "default" value; we will give it a valid zero value instead
 				self.Context.Data = tosca.PrimitiveTypeZeroes[typeName]
+			}
+
+			if (typeName == "string") && self.Context.HasQuirk("data_types.string.permissive") {
+				switch self.Context.Data.(type) {
+				case bool:
+					self.Context.Data = strconv.FormatBool(self.Context.Data.(bool))
+				case int:
+					self.Context.Data = strconv.FormatInt(int64(self.Context.Data.(int)), 10)
+				case float64: // YAML parser returns float64
+					self.Context.Data = strconv.FormatFloat(self.Context.Data.(float64), 'f', -1, 64)
+				}
 			}
 
 			// Primitive types
