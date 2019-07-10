@@ -20,8 +20,8 @@ import (
 var inputs []string
 var inputsUrl string
 var stopAtPhase uint32
-var printPhases []uint
-var examine string
+var dumpPhases []uint
+var filter string
 
 var inputValues = make(map[string]interface{})
 
@@ -29,9 +29,9 @@ func init() {
 	rootCmd.AddCommand(parseCmd)
 	parseCmd.Flags().StringArrayVarP(&inputs, "input", "i", []string{}, "specify an input (name=YAML)")
 	parseCmd.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
-	parseCmd.Flags().Uint32VarP(&stopAtPhase, "stop", "s", 5, "parser phase at which to stop")
-	parseCmd.Flags().UintSliceVarP(&printPhases, "print", "p", nil, "parser phases to print")
-	parseCmd.Flags().StringVarP(&examine, "examine", "e", "", "examine entities with path, may use '*' for wildcards (disables --print)")
+	parseCmd.Flags().Uint32VarP(&stopAtPhase, "stop", "s", 5, "parser phase at which to end")
+	parseCmd.Flags().UintSliceVarP(&dumpPhases, "dump", "d", nil, "dump phase internals")
+	parseCmd.Flags().StringVarP(&filter, "filter", "t", "", "filter output by entity path; use '*' for wildcard matching (disables --stop and --dump)")
 }
 
 var parseCmd = &cobra.Command{
@@ -45,14 +45,14 @@ var parseCmd = &cobra.Command{
 			urlString = args[0]
 		}
 
-		if examine != "" {
-			// Examine cancels printing phases
-			printPhases = nil
+		if filter != "" {
+			stopAtPhase = 5
+			dumpPhases = nil
 		}
 
 		_, s := Parse(urlString)
 
-		if (examine == "") && (len(printPhases) == 0) {
+		if (filter == "") && (len(dumpPhases) == 0) {
 			format.Print(s, ardFormat, pretty)
 		}
 	},
@@ -93,7 +93,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		}
 
 		if !common.Quiet && ToPrintPhase(1) {
-			if len(printPhases) > 1 {
+			if len(dumpPhases) > 1 {
 				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Imports"))
 			}
 			context.PrintImports(1)
@@ -105,7 +105,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		context.AddNamespaces()
 		context.LookupNames()
 		if !common.Quiet && ToPrintPhase(2) {
-			if len(printPhases) > 1 {
+			if len(dumpPhases) > 1 {
 				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Namespaces"))
 			}
 			context.PrintNamespaces(1)
@@ -116,7 +116,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	if stopAtPhase >= 3 {
 		context.AddHierarchies()
 		if !common.Quiet && ToPrintPhase(3) {
-			if len(printPhases) > 1 {
+			if len(dumpPhases) > 1 {
 				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Hierarchies"))
 			}
 			context.PrintHierarchies(1)
@@ -127,7 +127,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	if stopAtPhase >= 4 {
 		tasks := context.GetInheritTasks()
 		if !common.Quiet && ToPrintPhase(4) {
-			if len(printPhases) > 1 {
+			if len(dumpPhases) > 1 {
 				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Inheritance Tasks"))
 			}
 			tasks.Print(1)
@@ -142,7 +142,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		entityPtrs := context.Render()
 		if !common.Quiet && ToPrintPhase(5) {
 			sort.Sort(entityPtrs)
-			if len(printPhases) > 1 {
+			if len(dumpPhases) > 1 {
 				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Rendering"))
 			}
 			for _, entityPtr := range entityPtrs {
@@ -153,10 +153,10 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		}
 	}
 
-	if examine != "" {
-		entityPtrs := context.Gather(examine)
+	if filter != "" {
+		entityPtrs := context.Gather(filter)
 		if len(entityPtrs) == 0 {
-			common.Failf("Examine path not found: \"%s\"\n", examine)
+			common.Failf("Examine path not found: \"%s\"\n", filter)
 		} else if !common.Quiet {
 			for _, entityPtr := range entityPtrs {
 				if len(entityPtrs) > 0 {
@@ -186,7 +186,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 }
 
 func ToPrintPhase(phase uint) bool {
-	for _, p := range printPhases {
+	for _, p := range dumpPhases {
 		if p == phase {
 			return true
 		}

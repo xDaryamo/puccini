@@ -66,7 +66,8 @@ topology_template:
         # *Both* of them have to conclude successfully before this one starts 
         restart:
           target: db
-          activities: []
+          activities:
+          - set_state: up
         notify_admins:
           target: web
           activities: []

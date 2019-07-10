@@ -121,8 +121,8 @@ to stop. This could be useful if you're getting too many problems in your report
 minimize them to a more manageable list. (`-s 0` will skip the parser entirely and just check that
 the input is readable.)
 
-`--print/-p` is used to print out the results of each phase. You may specify multiple phases to
-print out using ",", e.g. `-p 2,3,4`. Per phase you will see:
+`--dump/-d` is used to dump the internal data of phases. You may specify multiple phases to dump
+using ",", e.g. `-p 2,3,4`. Per phase you will see:
 
 * Phase 1: Read. The hierarchy of imported units starting at the service template URL.
 * Phase 2: Namespaces. All names per type. Each imported unit has its own namespace.
@@ -130,12 +130,12 @@ print out using ",", e.g. `-p 2,3,4`. Per phase you will see:
   type hierarchy.
 * Phase 4: Inheritance. A tree of all inheritance tasks and their dependencies by path.  
 * Phase 5: Rendering. Dumps the rendered entities.
-  More useful, perhaps, would be the `--examine/-e` switch (see below).
+  More useful, perhaps, would be the `--filter/-t` switch (see below).
 
-The `--examine/-e` switch can be used to dump a specific parsed entity. Each entity is given a
+The `--filter/-t` switch can be used to filter for specific parsed entities. Each entity is given a
 path that more-or-less follows JSON. For example, a path can be:
 
     topology_template.node_templates["store"].properties["name"]
 
-The switch will search for all paths that contains your string, e.g. `-e properties`. You can even
-include one or more wildcards, e.g. `-e 'node*properties*data'`.
+The switch will search for all paths that contains your string, e.g. `-t properties`. You can even
+include one or more wildcards, e.g. `-t 'node*properties*data'`.
