@@ -24,7 +24,7 @@ func (self *Context) Gather(path string) tosca.EntityPtrs {
 	self.Traverse("gather", func(entityPtr interface{}) bool {
 		context := tosca.GetContext(entityPtr)
 
-		if re.MatchString(context.Path) {
+		if re.MatchString(context.Path.String()) {
 			found := false
 			for _, e := range entityPtrs {
 				if e == entityPtr {

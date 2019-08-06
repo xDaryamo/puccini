@@ -46,7 +46,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 
 	// Read ARD
 	var err error
-	if toscaContext.Data, err = ard.ReadURL(toscaContext.URL); err != nil {
+	if toscaContext.Data, toscaContext.Locator, err = ard.ReadURL(toscaContext.URL); err != nil {
 		toscaContext.ReportError(err)
 		return nil, false
 	}

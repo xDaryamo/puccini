@@ -88,7 +88,7 @@ func ToFunction(context *tosca.Context) bool {
 			arguments[index] = argumentContext.Data
 		}
 
-		context.Data = tosca.NewFunction(context.Path, key, arguments)
+		context.Data = tosca.NewFunction(context.Path.String(), key, arguments)
 
 		// We have only one key
 		return true

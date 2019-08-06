@@ -7,7 +7,7 @@ import (
 	"io"
 
 	"github.com/tliron/puccini/ard"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 func Read(reader io.Reader, format string) (interface{}, error) {
@@ -26,7 +26,7 @@ func Read(reader io.Reader, format string) (interface{}, error) {
 func ReadYaml(reader io.Reader) (interface{}, error) {
 	var data interface{}
 	decoder := yaml.NewDecoder(reader)
-	decoder.SetStrict(true)
+	decoder.KnownFields(true)
 	if err := decoder.Decode(&data); err != nil {
 		return nil, err
 	}

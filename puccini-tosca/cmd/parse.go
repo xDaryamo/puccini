@@ -146,7 +146,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Rendering"))
 			}
 			for _, entityPtr := range entityPtrs {
-				fmt.Fprintf(format.Stdout, "%s:\n", format.ColorPath(tosca.GetContext(entityPtr).Path))
+				fmt.Fprintf(format.Stdout, "%s:\n", format.ColorPath(tosca.GetContext(entityPtr).Path.String()))
 				err = format.Print(entityPtr, ardFormat, pretty)
 				common.FailOnError(err)
 			}
@@ -160,7 +160,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		} else if !common.Quiet {
 			for _, entityPtr := range entityPtrs {
 				if len(entityPtrs) > 0 {
-					fmt.Fprintf(format.Stdout, "%s\n", format.ColorPath(tosca.GetContext(entityPtr).Path))
+					fmt.Fprintf(format.Stdout, "%s\n", format.ColorPath(tosca.GetContext(entityPtr).Path.String()))
 				}
 				err = format.Print(entityPtr, ardFormat, pretty)
 				common.FailOnError(err)

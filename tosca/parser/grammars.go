@@ -4,17 +4,20 @@ import (
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/cloudify_v1_3"
 	"github.com/tliron/puccini/tosca/grammars/hot"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v1_0"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_1"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_2"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
 )
 
 var Grammars = map[string]tosca.Grammar{
+	"tosca_simple_yaml_1_3":            tosca_v1_3.Grammar,
 	"tosca_simple_yaml_1_2":            tosca_v1_2.Grammar,
 	"tosca_simple_yaml_1_1":            tosca_v1_1.Grammar,
-	"tosca_simple_yaml_1_0":            tosca_v1_1.Grammar, // TODO: properly support 1.0
-	"tosca_simple_profile_for_nfv_1_0": tosca_v1_2.Grammar,
+	"tosca_simple_yaml_1_0":            tosca_v1_0.Grammar,
+	"tosca_simple_profile_for_nfv_1_0": tosca_v1_3.Grammar,
 	"cloudify_dsl_1_3":                 cloudify_v1_3.Grammar,
-	"2018-08-31":                       hot.Grammar, // rocky
+	"2018-08-31":                       hot.Grammar, // rocky, stein
 	"2018-03-02":                       hot.Grammar, // queens
 	"2017-09-01":                       hot.Grammar, // pike
 	"2017-02-24":                       hot.Grammar, // ocata
@@ -27,15 +30,8 @@ var Grammars = map[string]tosca.Grammar{
 }
 
 func DetectGrammar(context *tosca.Context) bool {
-	var versionContext *tosca.Context
-	var ok bool
-	if versionContext, ok = context.GetFieldChild("tosca_definitions_version"); !ok {
-		if versionContext, ok = context.GetFieldChild("heat_template_version"); !ok {
-			return false
-		}
-	}
-
-	if version := versionContext.ReadString(); version != nil {
+	if version, versionContext := GetVersion(context); version != nil {
+		var ok bool
 		if context.Grammar, ok = Grammars[*version]; ok {
 			return true
 		} else {

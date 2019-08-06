@@ -68,7 +68,7 @@ func (self *RelationshipAssignment) Render() {
 }
 
 func (self *RelationshipAssignment) Normalize(nodeTemplate *NodeTemplate, s *normal.ServiceTemplate, n *normal.NodeTemplate) *normal.Requirement {
-	r := n.NewRequirement("relationship", self.Context.Path)
+	r := n.NewRequirement("relationship", self.Context.Path.String())
 
 	if self.TargetNodeTemplate != nil {
 		r.NodeTemplate = s.NodeTemplates[self.TargetNodeTemplate.Name]

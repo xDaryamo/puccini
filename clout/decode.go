@@ -5,7 +5,7 @@ import (
 	"encoding/xml"
 	"io"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 func DecodeJson(reader io.Reader) (*Clout, error) {
@@ -31,7 +31,7 @@ func DecodeYaml(reader io.Reader) (*Clout, error) {
 	var err error
 
 	decoder := yaml.NewDecoder(reader)
-	decoder.SetStrict(true)
+	decoder.KnownFields(true)
 
 	if err = decoder.Decode(&c); err != nil {
 		return nil, err

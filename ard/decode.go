@@ -1,39 +1,56 @@
 package ard
 
 import (
+	"bytes"
 	"encoding/json"
 	"encoding/xml"
 	"io"
+	"io/ioutil"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
-// TODO: row/column numbers for all parsed objects
-
-func DecodeJson(reader io.Reader) (Map, error) {
+func DecodeJson(reader io.Reader) (Map, Locator, error) {
 	data := make(Map)
 	decoder := json.NewDecoder(reader)
 	if err := decoder.Decode(&data); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return data, nil
+	return data, nil, nil
 }
 
-func DecodeYaml(reader io.Reader) (Map, error) {
+func DecodeYaml(reader io.Reader) (Map, Locator, error) {
 	data := make(map[string]interface{}) // *not* Map
-	decoder := yaml.NewDecoder(reader)
-	decoder.SetStrict(true)
-	if err := decoder.Decode(&data); err != nil {
-		return nil, err
+	var locator Locator
+
+	// We need to read all into a buffer in order to both unmarshal and decode
+	if buffer, err := ioutil.ReadAll(reader); err == nil {
+		// Unmarshal node
+		var node yaml.Node
+		if err := yaml.Unmarshal(buffer, &node); err == nil {
+			locator = NewYamlLocator(&node)
+		} else {
+			return nil, nil, err
+		}
+
+		// Decode
+		decoder := yaml.NewDecoder(bytes.NewReader(buffer))
+		decoder.KnownFields(true)
+		if err := decoder.Decode(&data); err != nil {
+			return nil, nil, err
+		}
+	} else {
+		return nil, nil, err
 	}
-	return EnsureMap(data), nil
+
+	return EnsureMap(data), locator, nil
 }
 
-func DecodeXml(reader io.Reader) (Map, error) {
+func DecodeXml(reader io.Reader) (Map, Locator, error) {
 	data := make(Map)
 	decoder := xml.NewDecoder(reader)
 	if err := decoder.Decode(&data); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return data, nil
+	return data, nil, nil
 }

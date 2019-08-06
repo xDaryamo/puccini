@@ -33,7 +33,7 @@ you to press TAB to complete commands starting with `puccini-tosca`, `puccini-js
 
 You don't need to run this normally. Run it only if you change any of the files in the
 [assets](../assets/) directory. It reads those files and wraps them in Go code so that they can be
-compiled into Puccini's executables. So, after running this you would also have to re-run
+compiled into Puccini's executables. So, after running this you would likely also want to re-run
 `build.sh`.
 
 [test.sh](test.sh)

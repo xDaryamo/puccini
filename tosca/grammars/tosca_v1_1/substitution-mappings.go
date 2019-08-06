@@ -2,7 +2,7 @@ package tosca_v1_1
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/grammars/tosca_v1_2"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
 )
 
 //
@@ -20,5 +20,5 @@ func ReadSubstitutionMappings(context *tosca.Context) interface{} {
 	context.ReadOverrides["PropertyMappings"] = ""
 	context.ReadOverrides["InterfaceMappings"] = ""
 
-	return tosca_v1_2.ReadSubstitutionMappings(context)
+	return tosca_v1_3.ReadSubstitutionMappings(context)
 }

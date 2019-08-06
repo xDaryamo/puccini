@@ -2,7 +2,6 @@ package tosca
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca/problems"
@@ -33,9 +32,10 @@ func GetContext(entityPtr interface{}) *Context {
 type Context struct {
 	Parent          *Context
 	Name            string
-	Path            string
+	Path            ard.Path
 	URL             url.URL
 	Data            interface{}
+	Locator         ard.Locator
 	Namespace       Namespace
 	ScriptNamespace ScriptNamespace
 	Hierarchy       *Hierarchy
@@ -96,19 +96,13 @@ func (self *Context) HasQuirk(quirk string) bool {
 //
 
 func (self *Context) FieldChild(name string, data interface{}) *Context {
-	var path string
-	if self.Path == "" {
-		path = name
-	} else {
-		path = fmt.Sprintf("%s.%s", self.Path, name)
-	}
-
 	return &Context{
 		Parent:          self,
 		Name:            name,
-		Path:            path,
+		Path:            append(self.Path, ard.NewFieldPathElement(name)),
 		URL:             self.URL,
 		Data:            data,
+		Locator:         self.Locator,
 		Namespace:       self.Namespace,
 		ScriptNamespace: self.ScriptNamespace,
 		Hierarchy:       self.Hierarchy,
@@ -151,9 +145,10 @@ func (self *Context) MapChild(name string, data interface{}) *Context {
 	return &Context{
 		Parent:          self,
 		Name:            name,
-		Path:            fmt.Sprintf("%s[\"%s\"]", self.Path, strings.Replace(name, "\"", "\\\"", -1)),
+		Path:            append(self.Path, ard.NewMapPathElement(name)),
 		URL:             self.URL,
 		Data:            data,
+		Locator:         self.Locator,
 		Namespace:       self.Namespace,
 		ScriptNamespace: self.ScriptNamespace,
 		Hierarchy:       self.Hierarchy,
@@ -167,9 +162,10 @@ func (self *Context) ListChild(index int, data interface{}) *Context {
 	return &Context{
 		Parent:          self,
 		Name:            fmt.Sprintf("%d", index),
-		Path:            fmt.Sprintf("%s[%d]", self.Path, index),
+		Path:            append(self.Path, ard.NewListPathElement(index)),
 		URL:             self.URL,
 		Data:            data,
+		Locator:         self.Locator,
 		Namespace:       self.Namespace,
 		ScriptNamespace: self.ScriptNamespace,
 		Hierarchy:       self.Hierarchy,
@@ -183,9 +179,10 @@ func (self *Context) SequencedListChild(index int, name string, data interface{}
 	return &Context{
 		Parent:          self,
 		Name:            name,
-		Path:            fmt.Sprintf("%s[%d]", self.Path, index),
+		Path:            append(self.Path, ard.NewListPathElement(index)),
 		URL:             self.URL,
 		Data:            data,
+		Locator:         self.Locator,
 		Namespace:       self.Namespace,
 		ScriptNamespace: self.ScriptNamespace,
 		Hierarchy:       self.Hierarchy,
@@ -196,6 +193,7 @@ func (self *Context) SequencedListChild(index int, name string, data interface{}
 }
 
 func (self *Context) Import(url_ url.URL) *Context {
+	// TODO: Locator?
 	return &Context{
 		Name:            self.Name,
 		Path:            self.Path,
@@ -216,6 +214,7 @@ func (self *Context) WithData(data interface{}) *Context {
 		Path:            self.Path,
 		URL:             self.URL,
 		Data:            data,
+		Locator:         self.Locator,
 		Namespace:       self.Namespace,
 		ScriptNamespace: self.ScriptNamespace,
 		Hierarchy:       self.Hierarchy,

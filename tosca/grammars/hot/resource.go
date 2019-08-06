@@ -104,7 +104,7 @@ func (self *Resource) NormalizeDependencies(s *normal.ServiceTemplate) {
 	log.Infof("{normalize} resource dependencies: %s", self.Name)
 
 	n := s.NodeTemplates[self.Name]
-	path := self.Context.FieldChild("depends_on", nil).Path
+	path := self.Context.FieldChild("depends_on", nil).Path.String()
 
 	for _, resource := range self.DependsOnResources {
 		r := n.NewRequirement("dependency", path)

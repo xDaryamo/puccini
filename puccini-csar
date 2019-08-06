@@ -54,7 +54,7 @@ for D in "${@:2}"; do
 		echo "failed: not a directory: $D" > /dev/stderr
 		exit 1
 	fi
-	zip --recurse-paths "$CSAR" "$D" > /dev/null
+	zip -9 --recurse-paths "$CSAR" "$D" > /dev/null
 done
 
 if [ -z "$ENTRY_DEFINITIONS" ]; then
@@ -63,14 +63,14 @@ if [ -z "$ENTRY_DEFINITIONS" ]; then
 	IFS=$'\n'
 	for F in $(zipinfo -1 "$CSAR"); do
 		if [ "$(dirname "$F")" == . ]; then
-			EXT="${F##*.}"
+			EXT=${F##*.}
 			if [ "$EXT" == yaml ] || [ "$EXT" == yml ]; then
 				if [ -n "$ENTRY_DEFINITIONS" ]; then
-					echo 'failed: multiple yaml files in root, you must set ENTRY_DEFINITIONS in environment to choose one' > /dev/stderr
+					echo 'failed: multiple YAML files in root, you must set ENTRY_DEFINITIONS in environment to choose one' > /dev/stderr
 					rm "$CSAR"
 					exit 1
 				fi
-				ENTRY_DEFINITIONS="$F"
+				ENTRY_DEFINITIONS=$F
 			fi
 		fi
 	done
@@ -85,7 +85,7 @@ TEMP_ROOT=$(mktemp --directory)
 function the_end () {
 	local ERR=$?
 	rm --recursive "$TEMP_ROOT"
-	if [ $ERR == 0 ]; then
+	if [ "$ERR" == 0 ]; then
 		echo "CSAR created: $CSAR"
 	else
 		echo "failed" > /dev/stderr

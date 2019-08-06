@@ -35,8 +35,8 @@ func (self EntityPtrs) Swap(i, j int) {
 }
 
 func (self EntityPtrs) Less(i, j int) bool {
-	iName := GetContext(self[i]).Path
-	jName := GetContext(self[j]).Path
+	iName := GetContext(self[i]).Path.String()
+	jName := GetContext(self[j]).Path.String()
 	return strings.Compare(iName, jName) < 0
 }
 

@@ -25,11 +25,21 @@ func (self *Context) Reportf(f string, arg ...interface{}) {
 }
 
 func (self *Context) ReportPath(message string) {
-	if self.Path != "" {
-		self.Reportf("%s: %s", format.ColorPath(self.Path), message)
-	} else {
-		self.Report(message)
+	path := self.Path.String()
+	if path != "" {
+		message = fmt.Sprintf("%s: %s", format.ColorPath(path), message)
 	}
+
+	if self.Locator != nil {
+		if r, c, ok := self.Locator.Locate(self.Path...); ok {
+			if message != "" {
+				message += " "
+			}
+			message += format.ColorValue(fmt.Sprintf("@%d,%d", r, c))
+		}
+	}
+
+	self.Report(message)
 }
 
 func (self *Context) ReportPathf(f string, arg ...interface{}) {

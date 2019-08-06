@@ -1,6 +1,8 @@
 package hot
 
 import (
+	"time"
+
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
@@ -15,7 +17,7 @@ import (
 type Template struct {
 	*Entity `name:"template"`
 
-	HeatTemplateVersion  *string              `read:"heat_template_version" require:"heat_template_version"`
+	HeatTemplateVersion  *string
 	Description          *string              `read:"description"`
 	ParameterGroups      ParameterGroups      `read:"parameter_groups,[]ParameterGroup"`
 	Parameters           Parameters           `read:"parameters,Parameter"`
@@ -48,7 +50,23 @@ func NewTemplate(context *tosca.Context) *Template {
 func ReadTemplate(context *tosca.Context) interface{} {
 	self := NewTemplate(context)
 	context.ScriptNamespace.Merge(DefaultScriptNamespace)
-	context.ValidateUnsupportedFields(append(context.ReadFields(self)))
+
+	if heatTemplateVersionContext, ok := context.GetFieldChild("heat_template_version"); ok {
+		switch heatTemplateVersionContext.Data.(type) {
+		case time.Time:
+			heatTemplateVersionContext.Data = heatTemplateVersionContext.Data.(time.Time).Format("2006-01-02")
+		}
+
+		if heatTemplateVersionContext.Is("string") {
+			self.HeatTemplateVersion = heatTemplateVersionContext.ReadString()
+		} else {
+			heatTemplateVersionContext.ReportValueWrongType("string", "timestamp")
+		}
+	} else {
+		context.FieldChild("heat_template_version", nil).ReportFieldMissing()
+	}
+
+	context.ValidateUnsupportedFields(append(context.ReadFields(self), "heat_template_version"))
 	return self
 }
 

@@ -15,13 +15,16 @@ embedded in tool chains, orchestration, and development environments. They are c
 
 [![Download](assets/media/download.png "Download")](https://github.com/tliron/puccini/releases)
 
-Welcome, newcomers! Check out the [quickstart guide](QUICKSTART.md).
+Welcome, first timers! Check out the [quickstart guide](QUICKSTART.md).
 
 To build Puccini yourself see the [build guide](scripts/README.md).
 
 
 puccini-tosca
 -------------
+
+* [**puccini-tosca** documentation](puccini-tosca/README.md)
+* [TOSCA parser documentation](tosca/parser/README.md)
 
 Clout frontend for TOSCA. Parses a TOSCA service template and compiles it to Clout (see below).
 
@@ -94,12 +97,11 @@ example:
 
     puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml | puccini-js exec assets/tosca/profiles/common/1.0/js/visualize.js > /tmp/puccini.html && xdg-open /tmp/puccini.html
 
-* [**puccini-tosca** documentation](puccini-tosca/README.md)
-* [TOSCA parser documentation](tosca/parser/README.md)
-
 
 puccini-js
 ----------
+
+* [**puccini-js** documentation](puccini-js/README.md)
 
 Clout processor for JavaScript. Executes existing JavaScript in a Clout file. For example, it can
 execute the Kubernetes specification generation code inserted by **puccini-tosca**, as well as TOSCA
@@ -143,7 +145,7 @@ Putting it all together, let's refresh a Clout:
 
     puccini-js exec kubernetes.update my-clout.yaml | puccini-js exec tosca.coerce > coerced-clout.yaml
 
-### TOSCA Workflows, Operations, and Policy Triggers
+### TOSCA Interfaces, Operations, Workflows, and Policy Triggers
 
 *WORK IN PROGRESS*
 
@@ -185,11 +187,11 @@ heavy lifting. Still, it could make sense to use workflows for certain externall
 features. Puccini's solution is straightforward: it can generate an Ansible playbook that deploys
 TOSCA artifacts with `kubectl cp` and executes them with `kubectl exec`.
 
-* [**puccini-js** documentation](puccini-js/README.md)
-
 
 Clout
 -----
+
+* [Clout documentation](clout/README.md)
 
 Introducing the **clou**d **t**opology ("clou" + "t") representation language, which represents a
 simple graph database in YAML/JSON/XML.
@@ -241,8 +243,6 @@ Clouts combine together to form larger topologies and even relate to data coming
 Graph databases are quite diverse in features and Clout is very flexible, so one schema will not
 fit all. Puccini instead comes with examples: see [storing in Neo4j](examples/neo4j/README.md) and
 [storing in Dgraph](examples/dgraph/README.md).
-
-* [Clout documentation](clout/README.md)
 
 
 FAQ
@@ -302,7 +302,7 @@ Your TOSCA can then inject expressions into values, such as:
 Just make sure that your templating engine can emit valid YAML where appropriate. For example, it
 should be able to escape quotation marks, like we did above.
 
-A useful convention for you toolchain could be to add a file extension to mark a file for text
+A useful convention for your toolchain could be to add a file extension to mark a file for text
 template processing. For example, `.yaml.j2` could be recognized as requiring Jinja2 template
 processing, after which the `.j2` extension would be stripped.
 
@@ -340,12 +340,6 @@ incubation project under the Apache Software Foundation. I am grateful to
 [Cloudify](https://cloudify.co/) for funding much of the AriaTosca project. Note, however, that
 Puccini is a fresh start initiated by myself with no commercial backing. It does not use AriaTosca
 code and has a radically different architecture as well as very different goals.)
-
-### Why doesn't the TOSCA parser tell me which line number in the relevant file a problem occurred?
-
-Unfortunately, [our YAML parser](https://gopkg.in/yaml.v2) doesn't expose this information. There
-is an [open issue](https://github.com/go-yaml/yaml/issues/108) for it, and if it's resolved we will
-add this important feature in the future.
 
 ### Why is it called "Puccini"?
 

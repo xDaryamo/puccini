@@ -1,4 +1,4 @@
-tosca_definitions_version: tosca_simple_yaml_1_2
+tosca_definitions_version: tosca_simple_yaml_1_3
 
 # Straightforward TOSCA version of the Heat hello world:
 # https://docs.openstack.org/heat/pike/template_guide/hello_world.html

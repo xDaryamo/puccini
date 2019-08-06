@@ -7,7 +7,7 @@ import (
 	"io"
 
 	"github.com/beevik/etree"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 func Write(data interface{}, format string, indent string, writer io.Writer) error {
