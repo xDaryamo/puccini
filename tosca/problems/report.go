@@ -12,8 +12,8 @@ func (self *Problems) Report(message string) {
 	self.Append(Problem{Message: message})
 }
 
-func (self *Problems) ReportWithURL(message string, url string) {
-	self.Append(Problem{Message: message, URL: url})
+func (self *Problems) ReportInSection(message string, section string) {
+	self.Append(Problem{Message: message, Section: section})
 }
 
 func (self *Problems) Reportf(format string, arg ...interface{}) {
@@ -21,5 +21,13 @@ func (self *Problems) Reportf(format string, arg ...interface{}) {
 }
 
 func (self *Problems) ReportError(err error) {
-	self.Reportf("%s", err)
+	if problematic, ok := err.(Problematic); ok {
+		self.ReportProblematic(problematic)
+	} else {
+		self.Reportf("%s", err.Error())
+	}
+}
+
+func (self *Problems) ReportProblematic(problematic Problematic) {
+	self.ReportInSection(problematic.ProblemMessage(), problematic.ProblemSection())
 }

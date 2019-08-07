@@ -91,6 +91,15 @@ func (self *Context) HasQuirk(quirk string) bool {
 	return false
 }
 
+func (self *Context) Location() string {
+	if self.Locator != nil {
+		if r, c, ok := self.Locator.Locate(self.Path...); ok {
+			return fmt.Sprintf("%d,%d", r, c)
+		}
+	}
+	return ""
+}
+
 //
 // Child contexts
 //

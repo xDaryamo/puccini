@@ -59,5 +59,5 @@ func Exec(name string, sourceCode string, c *clout.Clout) error {
 	_, runtime := jsContext.NewCloutContext(c)
 	_, err = runtime.RunProgram(program)
 
-	return js.UnwrapError(err)
+	return js.UnwrapException(err)
 }

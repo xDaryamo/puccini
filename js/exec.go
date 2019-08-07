@@ -21,5 +21,5 @@ func (self *Context) Exec(clout_ *clout.Clout, name string, apis map[string]inte
 	}
 	_, err = runtime.RunProgram(program)
 
-	return UnwrapError(err)
+	return UnwrapException(err)
 }

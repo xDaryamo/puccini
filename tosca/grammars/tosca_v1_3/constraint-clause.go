@@ -102,7 +102,7 @@ func (self *ConstraintClause) NewFunction(context *tosca.Context, strict bool) *
 		}
 		arguments[index] = argument
 	}
-	return tosca.NewFunction(context.Path.String(), self.Operator, arguments)
+	return context.NewFunction(self.Operator, arguments)
 }
 
 func (self *ConstraintClause) IsNativeArgument(index uint) bool {

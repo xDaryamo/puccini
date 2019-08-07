@@ -16,7 +16,9 @@ import (
 type Function struct {
 	Context     *CloutContext `json:"-" yaml:"-"`
 	Name        string        `json:"function" yaml:"function"`
+	URL         string        `json:"url" yaml:"url"`
 	Path        string        `json:"path" yaml:"path"`
+	Location    string        `json:"location" yaml:"location"`
 	Arguments   []Coercible   `json:"arguments" yaml:"arguments"`
 	Constraints Constraints   `json:"constraints" yaml:"constraints"`
 	Site        interface{}   `json:"-" yaml:"-"`
@@ -58,13 +60,25 @@ func (self *CloutContext) NewFunction(data interface{}, site interface{}, source
 		return nil, errors.New("malformed function: \"name\" not a string")
 	}
 
-	v, ok = f["path"]
-	if !ok {
-		return nil, errors.New("malformed function: no \"path\"")
+	if v, ok = f["url"]; ok {
+		c.URL, ok = v.(string)
+		if !ok {
+			return nil, errors.New("malformed function: \"url\" not a string")
+		}
 	}
-	c.Path, ok = v.(string)
-	if !ok {
-		return nil, errors.New("malformed function: \"path\" not a string")
+
+	if v, ok = f["path"]; ok {
+		c.Path, ok = v.(string)
+		if !ok {
+			return nil, errors.New("malformed function: \"path\" not a string")
+		}
+	}
+
+	if v, ok = f["location"]; ok {
+		c.Location, ok = v.(string)
+		if !ok {
+			return nil, errors.New("malformed function: \"location\" not a string")
+		}
 	}
 
 	v, ok = f["arguments"]
@@ -154,13 +168,13 @@ func (self *Function) Validate(value interface{}, errorWhenInvalid bool) (bool, 
 	if valid, ok := r.(bool); ok {
 		if !valid {
 			if errorWhenInvalid {
-				return false, self.NewError(arguments, "")
+				return false, self.NewError(arguments, "", nil)
 			} else {
 				return false, nil
 			}
 		}
 	} else {
-		return false, self.NewError(arguments, "\"validate\" did not return a bool")
+		return false, self.NewError(arguments, "\"validate\" did not return a bool", nil)
 	}
 
 	return true, nil

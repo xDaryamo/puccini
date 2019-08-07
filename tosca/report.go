@@ -14,7 +14,7 @@ import (
 
 func (self *Context) Report(message string) {
 	if self.URL != nil {
-		self.Problems.ReportWithURL(message, self.URL.String())
+		self.Problems.ReportInSection(message, self.URL.String())
 	} else {
 		self.Problems.Report(message)
 	}
@@ -30,13 +30,12 @@ func (self *Context) ReportPath(message string) {
 		message = fmt.Sprintf("%s: %s", format.ColorPath(path), message)
 	}
 
-	if self.Locator != nil {
-		if r, c, ok := self.Locator.Locate(self.Path...); ok {
-			if message != "" {
-				message += " "
-			}
-			message += format.ColorValue(fmt.Sprintf("@%d,%d", r, c))
+	location := self.Location()
+	if location != "" {
+		if message != "" {
+			message += " "
 		}
+		message += format.ColorValue("@" + location)
 	}
 
 	self.Report(message)

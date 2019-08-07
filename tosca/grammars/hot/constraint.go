@@ -72,7 +72,7 @@ func ReadConstraint(context *tosca.Context) interface{} {
 }
 
 func (self *Constraint) NewFunction(context *tosca.Context) *tosca.Function {
-	return tosca.NewFunction(context.Path.String(), self.Operator, self.Arguments)
+	return context.NewFunction(self.Operator, self.Arguments)
 }
 
 //
