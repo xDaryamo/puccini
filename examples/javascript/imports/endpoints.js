@@ -7,19 +7,19 @@ clout.exec('tosca.utils');
 // "tosca.coerce" calls all intrinsic functions and validates all constraints
 tosca.coerce();
 
-endpoints = [];
+var endpoints = [];
 
-for (v in clout.vertexes) {
-	vertex = clout.vertexes[v];
+for (var vertexId in clout.vertexes) {
+	var vertex = clout.vertexes[vertexId];
 
 	// We'll skip vertexes that are not TOSCA node templates
 	if (!tosca.isNodeTemplate(vertex))
 		continue;
 
-	nodeTemplate = vertex.properties;
+	var nodeTemplate = vertex.properties;
 
-	for (c in nodeTemplate.capabilities) {
-		capability = nodeTemplate.capabilities[c];
+	for (var c in nodeTemplate.capabilities) {
+		var capability = nodeTemplate.capabilities[c];
 
 		// We'll skip capabilities that do not inherit from Endpoint
 		if (!('tosca.capabilities.Endpoint' in capability.types))
