@@ -28,6 +28,7 @@ func DecodeYaml(reader io.Reader) (Map, Locator, error) {
 		// Unmarshal node
 		var node yaml.Node
 		if err := yaml.Unmarshal(buffer, &node); err == nil {
+			//PrintYamlNodes(os.Stdout, &node)
 			locator = NewYamlLocator(&node)
 		} else {
 			return nil, nil, err

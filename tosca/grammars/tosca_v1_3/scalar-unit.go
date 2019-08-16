@@ -63,8 +63,9 @@ var ScalarUnitFrequencySizes = ScalarUnitSizes{
 //
 
 type ScalarUnitSize struct {
-	Number  uint64 `json:"$number" yaml:"$number"`
-	String_ string `json:"$string" yaml:"$string"`
+	Number           uint64 `json:"$number" yaml:"$number"`
+	NormalizedString string `json:"$string" yaml:"$string"`
+	OriginalString   string `json:"originalString" yaml:"originalString"`
 
 	Scalar float64 `json:"scalar" yaml:"scalar"`
 	Unit   string  `json:"unit" yaml:"unit"`
@@ -74,17 +75,18 @@ type ScalarUnitSize struct {
 func ReadScalarUnitSize(context *tosca.Context) interface{} {
 	var self ScalarUnitSize
 
-	scalar, unit, ok := parseScalarUnit(context, ScalarUnitSizeRE, "scalar-unit.size")
+	originalString, scalar, unit, ok := parseScalarUnit(context, ScalarUnitSizeRE, "scalar-unit.size")
 	if !ok {
 		return self
 	}
 
 	normalUnit, size := ScalarUnitSizeSizes.Get(unit, context)
 
+	self.OriginalString = originalString
 	self.Scalar = scalar
 	self.Unit = normalUnit
 	self.Number = uint64(scalar * size)
-	self.String_ = fmt.Sprintf("%d B", self.Number)
+	self.NormalizedString = fmt.Sprintf("%d B", self.Number)
 
 	return self
 }
@@ -112,8 +114,9 @@ func (self *ScalarUnitSize) Compare(data interface{}) (int, error) {
 //
 
 type ScalarUnitTime struct {
-	Number  float64 `json:"$number" yaml:"$number"`
-	String_ string  `json:"$string" yaml:"$string"`
+	Number           float64 `json:"$number" yaml:"$number"`
+	NormalizedString string  `json:"$string" yaml:"$string"`
+	OriginalString   string  `json:"originalString" yaml:"originalString"`
 
 	Scalar float64 `json:"scalar" yaml:"scalar"`
 	Unit   string  `json:"unit" yaml:"unit"`
@@ -123,17 +126,18 @@ type ScalarUnitTime struct {
 func ReadScalarUnitTime(context *tosca.Context) interface{} {
 	var self ScalarUnitTime
 
-	scalar, unit, ok := parseScalarUnit(context, ScalarUnitTimeRE, "scalar-unit.time")
+	originalString, scalar, unit, ok := parseScalarUnit(context, ScalarUnitTimeRE, "scalar-unit.time")
 	if !ok {
 		return self
 	}
 
 	normalUnit, size := ScalarUnitTimeSizes.Get(unit, context)
 
+	self.OriginalString = originalString
 	self.Scalar = scalar
 	self.Unit = normalUnit
 	self.Number = scalar * size
-	self.String_ = fmt.Sprintf("%g S", self.Number)
+	self.NormalizedString = fmt.Sprintf("%g S", self.Number)
 
 	return self
 }
@@ -161,8 +165,9 @@ func (self *ScalarUnitTime) Compare(data interface{}) (int, error) {
 //
 
 type ScalarUnitFrequency struct {
-	Number  float64 `json:"$number" yaml:"$number"`
-	String_ string  `json:"$string" yaml:"$string"`
+	Number           float64 `json:"$number" yaml:"$number"`
+	NormalizedString string  `json:"$string" yaml:"$string"`
+	OriginalString   string  `json:"originalString" yaml:"originalString"`
 
 	Scalar float64 `json:"scalar" yaml:"scalar"`
 	Unit   string  `json:"unit" yaml:"unit"`
@@ -172,17 +177,18 @@ type ScalarUnitFrequency struct {
 func ReadScalarUnitFrequency(context *tosca.Context) interface{} {
 	var self ScalarUnitFrequency
 
-	scalar, unit, ok := parseScalarUnit(context, ScalarUnitFrequencyRE, "scalar-unit.frequency")
+	originalString, scalar, unit, ok := parseScalarUnit(context, ScalarUnitFrequencyRE, "scalar-unit.frequency")
 	if !ok {
 		return self
 	}
 
 	normalUnit, size := ScalarUnitFrequencySizes.Get(unit, context)
 
+	self.OriginalString = originalString
 	self.Scalar = scalar
 	self.Unit = normalUnit
 	self.Number = scalar * size
-	self.String_ = fmt.Sprintf("%g Hz", self.Number)
+	self.NormalizedString = fmt.Sprintf("%g Hz", self.Number)
 
 	return self
 }
@@ -199,25 +205,25 @@ func (self *ScalarUnitFrequency) Compare(data interface{}) (int, error) {
 	return 0, errors.New("incompatible comparison")
 }
 
-func parseScalarUnit(context *tosca.Context, re *regexp.Regexp, typeName string) (float64, string, bool) {
+func parseScalarUnit(context *tosca.Context, re *regexp.Regexp, typeName string) (string, float64, string, bool) {
 	if !context.ValidateType("string") {
-		return 0, "", false
+		return "", 0, "", false
 	}
 
-	s := context.ReadString()
-	matches := re.FindStringSubmatch(*s)
+	originalString := context.ReadString()
+	matches := re.FindStringSubmatch(*originalString)
 	if len(matches) != 3 {
 		context.ReportValueMalformed(typeName, "")
-		return 0, "", false
+		return "", 0, "", false
 	}
 
 	scalar, err := strconv.ParseFloat(matches[1], 64)
 	if err != nil {
 		context.ReportValueMalformed(typeName, fmt.Sprintf("%s", err))
-		return 0, "", false
+		return "", 0, "", false
 	}
 
-	return scalar, matches[2], true
+	return *originalString, scalar, matches[2], true
 }
 
 //
