@@ -15,13 +15,15 @@ import (
 	"github.com/tliron/puccini/url"
 )
 
-var ProfileInternalPaths = map[string]string{
-	"tosca_simple_yaml_1_3":            simple_v1_2.ProfileInternalPath, // TODO
-	"tosca_simple_yaml_1_2":            simple_v1_2.ProfileInternalPath,
-	"tosca_simple_yaml_1_1":            simple_v1_1.ProfileInternalPath,
-	"tosca_simple_yaml_1_0":            simple_v1_1.ProfileInternalPath, // TODO: properly support 1.0
-	"tosca_simple_profile_for_nfv_1_0": simpleForNFV_v1_0.ProfileInternalPath,
-	"cloudify_dsl_1_3":                 cloudify_v4_5.ProfileInternalPath,
+var InternalProfilePaths = map[string]map[string]string{
+	"tosca_definitions_version": {
+		"tosca_simple_yaml_1_3":            simple_v1_2.ProfileInternalPath, // TODO
+		"tosca_simple_yaml_1_2":            simple_v1_2.ProfileInternalPath,
+		"tosca_simple_yaml_1_1":            simple_v1_1.ProfileInternalPath,
+		"tosca_simple_yaml_1_0":            simple_v1_1.ProfileInternalPath, // TODO: properly support 1.0
+		"tosca_simple_profile_for_nfv_1_0": simpleForNFV_v1_0.ProfileInternalPath,
+		"cloudify_dsl_1_3":                 cloudify_v4_5.ProfileInternalPath,
+	},
 }
 
 func init() {
@@ -43,12 +45,14 @@ func initProfile(profile map[string]string) {
 }
 
 func GetProfileImportSpec(context *tosca.Context) (*tosca.ImportSpec, bool) {
-	if version, _ := GetVersion(context); version != nil {
-		if path, ok := ProfileInternalPaths[*version]; ok {
-			if url_, err := url.NewValidInternalURL(path); err == nil {
-				return &tosca.ImportSpec{url_, nil, true}, true
-			} else {
-				context.ReportError(err)
+	if versionContext, version := GetVersion(context); version != nil {
+		if paths, ok := InternalProfilePaths[versionContext.Name]; ok {
+			if path, ok := paths[*version]; ok {
+				if url_, err := url.NewValidInternalURL(path); err == nil {
+					return &tosca.ImportSpec{url_, nil, true}, true
+				} else {
+					context.ReportError(err)
+				}
 			}
 		}
 	}

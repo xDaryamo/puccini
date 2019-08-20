@@ -156,12 +156,10 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	if filter != "" {
 		entityPtrs := context.Gather(filter)
 		if len(entityPtrs) == 0 {
-			common.Failf("Examine path not found: \"%s\"\n", filter)
+			common.Failf("No paths found matching filter: \"%s\"\n", filter)
 		} else if !common.Quiet {
 			for _, entityPtr := range entityPtrs {
-				if len(entityPtrs) > 0 {
-					fmt.Fprintf(format.Stdout, "%s\n", format.ColorPath(tosca.GetContext(entityPtr).Path.String()))
-				}
+				fmt.Fprintf(format.Stdout, "%s\n", format.ColorPath(tosca.GetContext(entityPtr).Path.String()))
 				err = format.Print(entityPtr, ardFormat, pretty)
 				common.FailOnError(err)
 			}

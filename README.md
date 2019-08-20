@@ -17,95 +17,99 @@ embedded in tool chains, orchestration, and development environments. They are c
 
 Welcome, first timers! Check out the [quickstart guide](QUICKSTART.md).
 
-To build Puccini yourself see the [build guide](scripts/README.md).
+To build Puccini yourself see the [build guide](scripts/).
 
 
 puccini-tosca
 -------------
 
-* [**puccini-tosca** documentation](puccini-tosca/README.md)
-* [TOSCA parser documentation](tosca/parser/README.md)
+* [**puccini-tosca** documentation](puccini-tosca/)
+* [TOSCA parser documentation](tosca/parser/)
 
 Clout frontend for TOSCA. Parses a TOSCA service template and compiles it to Clout (see below).
 
-Why TOSCA? It's a high-level language designed for modeling and validating cloud topologies using
-reusable and inheritable objects. It allows architects to focus on application logic and
+Why TOSCA? It's a high-level language made for modeling and validating cloud topologies using
+reusable and extensible objects. It allows architects to focus on application design and
 requirements without being bogged down by the ever-changing specificities of the infrastructure.
 
-Puccini can compile several popular TOSCA and TOSCA-like dialects:
+Puccini can ingest several popular TOSCA and TOSCA-like dialects:
+[TOSCA 1.3](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html) (in progress),
 [TOSCA 1.2](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.2/TOSCA-Simple-Profile-YAML-v1.2.html),
 [TOSCA 1.1](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html),
+as well as the more limited grammars of
 [Cloudify DSL 1.3](https://docs.cloudify.co/latest/developer/blueprints/),
-and [HOT](https://docs.openstack.org/heat/stein/template_guide/hot_guide.html).
-Note that Cloudify DSL and HOT are grammatically limited and do not support many TOSCA features.
+and [OpenStack Heat HOT 2018-08-31](https://docs.openstack.org/heat/stein/template_guide/hot_guide.html).
+
+TOSCA is supported as straightforward YAML files, in the file system or hosted on URLs, as well as packaged
+[CSAR files](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/os/TOSCA-Simple-Profile-YAML-v1.1-os.html#_Toc489606742).
+Puccini also includes a simple CSAR creation tool, **puccini-csar**.
 
 **puccini-tosca** comes with TOSCA profiles for the
 [Kubernetes](assets/tosca/profiles/kubernetes/1.0/) and
 [OpenStack](assets/tosca/profiles/openstack/1.0/) cloud infrastructures, as well as
 [BPMN processes](assets/tosca/profiles/bpmn/1.0/).
 Profiles include node, capability, relationship, policy, and other types. Also included are detailed
-[examples](examples/README.md) using these profiles to get you started. These profiles would work
-with any TOSCA-compliant product.
+[examples](examples/) using these profiles to get you started. These profiles would work with any
+TOSCA-compliant product.
 
-TOSCA is supported as pure YAML files, as well as packaged
-[CSAR files](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/os/TOSCA-Simple-Profile-YAML-v1.1-os.html#_Toc489606742).
-We're even including a simple CSAR creation tool, **puccini-csar**.
-
-What's special to Puccini is the inclusion of JavaScript code to provide orchestration integration.
-How do TOSCA, Clout, JavaScript, and cloud infrastructures all fit together in Puccini? Consider
-this: with a single command line you can take a TOSCA service template, compile it with
-**puccini-tosca**, pipe the Clout through the **puccini-js** processor, which will run JavaScript to
-generate Kubernetes specifications, then pipe those to
+What's special to Puccini is the inclusion of JavaScript code as an option for self-contained
+orchestration integration. How do TOSCA, Clout, JavaScript, and cloud infrastructures all fit
+together in Puccini? Consider this: with a single command line you can take a TOSCA service template,
+compile it with **puccini-tosca**, pipe the Clout through the **puccini-js** processor, which will
+run JavaScript to generate Kubernetes specifications, then pipe those to
 [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/),
-which will finally upload the specifications to a running Kubernetes cluster. Like so:
+which will upload the specifications to a running Kubernetes cluster in order to be scheduled.
+Like so:
 
      puccini-tosca compile my-app.yaml | puccini-js exec kubernetes.generate | kubectl apply -f -
 
-Et voilà, your abstract design became a running deployment.
+Et voilà, your abstract architectural design became a running deployment.
 
 ### Standalone Parser
 
-Puccini's [TOSCA parser](tosca/parser/README.md) is available as an independent Go library. Its 5
-phases do normalization, validation, inheritance, and assignment of TOSCA's many types and
-templates, resulting in a [flat, serializable data structure](tosca/normal/README.md) that can
-easily be consumed by your program. Validation error messages are precise and useful. It's a very,
-very fast parser, enough that it can be usefully embedded in editors and IDEs for validating TOSCA
-while typing.
+Puccini's [TOSCA parser](tosca/parser/) is available as an independent Go library. Its 5 phase
+do normalization, validation, inheritance, and assignment of TOSCA's many types and templates,
+resulting in a [flat, serializable data structure](tosca/normal/) that can easily be consumed by
+your program. Validation error messages are precise and useful. It's a very, very fast multi-threaded
+parser, fast enough that it can be usefully embedded in editors and IDEs for validating TOSCA while
+typing.
 
 TOSCA is a complex object-oriented language. We put considerable effort into adhering to every
 aspect of the grammar, especially in regards to value type checking and type inheritance contracts,
 which are key to delivering the object-oriented promise of extensibility while maintaining reliable
-compatibility. Unfortunately, the TOSCA specification is famously inconsistent and imprecise. For
-this reason, the Puccini parser also supports [quirk modes](tosca/parser/QUIRKS.md) that enable
-alternative behaviors based on differing interpretations.
+base type compatibility. Unfortunately, the TOSCA specification is famously inconsistent and imprecise.
+For this reason, the Puccini parser also supports [quirk modes](tosca/parser/QUIRKS.md) that enable
+alternative behaviors based on differing interpretations of the spec.
 
 ### Compiler
 
 The TOSCA-to-Clout compiler's main role is to take the parsed data structure and dump it into
-Clout. It also includes any JavaScript required to process the Clout. Thusly Clout functions as an
+Clout. The Clout includes any JavaScript required to process the data. Thusly Clout functions as an
 "intermediate representation" (IR) for TOSCA.
 
 By default the compiler also performs [topology resolution](tosca/compiler/RESOLUTION.md), which
 attempts to satisfy requirements with capabilities, thus creating the relationships (Clout edges)
-between node templates. Resolution is handled internally via the embedded **tosca.resolve**
-JavaScript.
+between node templates. This feature can be turned off in order to add more processing phases
+before final resolution. Resolution is handled via the embedded **tosca.resolve** JavaScript.
 
 ### Visualization
 
-You can graphically visualize the compiled TOSCA in a dynamic web page via JavaScript. A one-line
-example:
+You can graphically visualize the compiled TOSCA in a dynamic web page. A one-line example:
 
     puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml | puccini-js exec assets/tosca/profiles/common/1.0/js/visualize.js > /tmp/puccini.html && xdg-open /tmp/puccini.html
+
+The visualization JavaScript is not embedded by default into the Clout, but can be manually
+added via `puccini-js put` (see below).
 
 
 puccini-js
 ----------
 
-* [**puccini-js** documentation](puccini-js/README.md)
+* [**puccini-js** documentation](puccini-js/)
 
-Clout processor for JavaScript. Executes existing JavaScript in a Clout file. For example, it can
-execute the Kubernetes specification generation code inserted by **puccini-tosca**, as well as TOSCA
-functions and value constraints.
+Clout processor for JavaScript. Executes existing JavaScript in a Clout file, and can also be
+used to add/remove JavaScript. For example, it can execute the Kubernetes specification generation
+code inserted by **puccini-tosca**, as well as TOSCA functions and value constraints.
 
 Also supported are implementation-specific JavaScript "plugins" that allow you to extend existing
 functionality. For example, you can add a plugin for Kubernetes to handle custom application needs,
@@ -115,19 +119,22 @@ permanently or piping through to add and execute them on-the-fly.
 
 ### TOSCA Functions and Constraints
 
-These are implemented in JavaScript so that they can be put into the Clout and then be executed
-by **puccini-js**, allowing a compiled-from-TOSCA Clout file to be entirely independent of TOSCA.
-The Clout lives on its own.
+These are implemented in JavaScript so that they can be embedded into the Clout and then be
+executed by **puccini-js**, allowing a compiled-from-TOSCA Clout file to be entirely independent
+of its TOSCA source. The Clout lives on its own.
 
 To call these functions we provide the **tosca.coerce** JavaScript, which calls all functions and
-replaces the call stubs with the returned values:
+replaces the call stubs with the evaluated values:
 
     puccini-js exec tosca.coerce my-clout.yaml > coerced-clout.yaml
 
+For convenience, this functionality is included in **puccini-tosca** as the `--coerce` switch:
+
+    puccini-tosca compile --coerce my-clout.yaml
+
 A useful side benefit of this implementation is we allow you to easily extend TOSCA by
-[adding your own functions/constraints](examples/javascript/functions.yaml). Obviously, such custom
-functions are not part of the TOSCA specification and may be incompatible with other TOSCA
-implementations.
+[adding your own functions/constraints](examples/javascript/). Obviously, such custom functions
+are not part of the TOSCA specification and may be incompatible with other TOSCA implementations.
 
 ### TOSCA Attributes
 
@@ -137,15 +144,16 @@ some values in the Clout should change as these attributes change. But also, att
 in TOSCA allow you to define constraints on the value, so we must also make sure that the new data
 complies with them.
 
-Our solution has two steps. First, we have JavaScript (**kubernetes.update**) that extracts these
-attributes from a Kubernetes cluster (by calling **kubectl**) and updates the Clout. Second, we
-run **tosca.coerce**, which not only calls TOSCA functions but also applies the constraints.
+Our solution has two steps. As an example, let's look at Kubernetes. First, we have JavaScript
+(**kubernetes.update**) that extracts these attributes from a Kubernetes cluster (by calling
+**kubectl**) and updates the Clout. Second, we run **tosca.coerce**, which not only calls TOSCA
+functions but also applies the constraints.
 
 Putting it all together, let's refresh a Clout:
 
     puccini-js exec kubernetes.update my-clout.yaml | puccini-js exec tosca.coerce > coerced-clout.yaml
 
-### TOSCA Interfaces, Operations, Workflows, and Policy Triggers
+### TOSCA Interfaces, Operations, Workflows, Notifications, and Policy Triggers
 
 *WORK IN PROGRESS*
 
@@ -154,11 +162,11 @@ represent the "classical" orchestration paradigm, which procedurally (in serial 
 executes individual self-contained operations that when successful achieve a total state for an
 application.
 
-TOSCA Profiles in Puccini may come with built-in domain-specific "normative" workflows. For example,
-OpenStack has workflows to provision and remove its resources. TOSCA 1.1 further introduced custom
-workflows, often used for scaling, healing, upgrading, backing up, and reconfiguration. Policy
-triggers are a related feauture, as they specify an event or condition that could launch a workflow
-or an individual operation.
+TOSCA profiles in Puccini may come with built-in domain-specific "normative" workflows. For example,
+OpenStack has workflows to provision and remove its resources. TOSCA 1.1 introduced custom workflows,
+which can be used for changing the state of existing deployments. Notifications and policy triggers
+are a related feauture, as they specify an event or condition that could launch a workflow or an
+individual operation.
 
 Puccini provides three different implementations of these features:
 
@@ -191,7 +199,7 @@ TOSCA artifacts with `kubectl cp` and executes them with `kubectl exec`.
 Clout
 -----
 
-* [Clout documentation](clout/README.md)
+* [Clout documentation](clout/)
 
 Introducing the **clou**d **t**opology ("clou" + "t") representation language, which represents a
 simple graph database in YAML/JSON/XML.
@@ -241,8 +249,8 @@ This approach could be especially useful for highly composable and dynamic envir
 Clouts combine together to form larger topologies and even relate to data coming from other systems.
 
 Graph databases are quite diverse in features and Clout is very flexible, so one schema will not
-fit all. Puccini instead comes with examples: see [storing in Neo4j](examples/neo4j/README.md) and
-[storing in Dgraph](examples/dgraph/README.md).
+fit all. Puccini instead comes with examples: see [storing in Neo4j](examples/neo4j/) and
+[storing in Dgraph](examples/dgraph/).
 
 
 FAQ

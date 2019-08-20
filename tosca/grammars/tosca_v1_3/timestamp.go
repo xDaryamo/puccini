@@ -26,20 +26,21 @@ var TimestampLongRE = regexp.MustCompile(
 //
 
 type Timestamp struct {
-	Number  int64  `json:"$number" yaml:"$number"`
-	String_ string `json:"$string" yaml:"$string"`
+	CanonicalNumber int64  `json:"$number" yaml:"$number"`
+	CanonicalString string `json:"$string" yaml:"$string"`
 
-	OriginalString string  `json:"originalString" yaml:"originalString"`
-	Year           uint32  `json:"year" yaml:"year"`
-	Month          uint32  `json:"month" yaml:"month"`
-	Day            uint32  `json:"day" yaml:"day"`
-	Hour           uint32  `json:"hour" yaml:"hour"`
-	Minute         uint32  `json:"minute" yaml:"minute"`
-	Second         uint32  `json:"second" yaml:"second"`
-	Fraction       float64 `json:"fraction" yaml:"fraction"`
-	TZSign         string  `json:"tzSign" yaml:"tzSign"`
-	TZHour         uint32  `json:"tzHour" yaml:"tzHour"`
-	TZMinute       uint32  `json:"tzMinute" yaml:"tzMinute"`
+	Year     uint32  `json:"year" yaml:"year"`
+	Month    uint32  `json:"month" yaml:"month"`
+	Day      uint32  `json:"day" yaml:"day"`
+	Hour     uint32  `json:"hour" yaml:"hour"`
+	Minute   uint32  `json:"minute" yaml:"minute"`
+	Second   uint32  `json:"second" yaml:"second"`
+	Fraction float64 `json:"fraction" yaml:"fraction"`
+	TZSign   string  `json:"tzSign" yaml:"tzSign"`
+	TZHour   uint32  `json:"tzHour" yaml:"tzHour"`
+	TZMinute uint32  `json:"tzMinute" yaml:"tzMinute"`
+
+	OriginalString string `json:"originalString" yaml:"originalString"`
 }
 
 // tosca.Reader signature
@@ -122,7 +123,7 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 		}
 	}
 
-	// Canonical text
+	// Canonical string
 	var tz string
 	if (self.TZHour == 0) && (self.TZMinute == 0) {
 		tz = "Z"
@@ -130,22 +131,22 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 		tz = fmt.Sprintf("%s%02d:%02d", self.TZSign, self.TZHour, self.TZMinute)
 	}
 	fraction := fmt.Sprintf("%g", self.Fraction)[1:]
-	self.String_ = fmt.Sprintf("%04d-%02d-%02dT%02d:%02d:%02d%s%s", self.Year, self.Month, self.Day, self.Hour, self.Minute, self.Second, fraction, tz)
+	self.CanonicalString = fmt.Sprintf("%04d-%02d-%02dT%02d:%02d:%02d%s%s", self.Year, self.Month, self.Day, self.Hour, self.Minute, self.Second, fraction, tz)
 
 	// Nanoseconds since Jan 1 1970 UTC
-	self.Number = self.Time().UnixNano()
+	self.CanonicalNumber = self.Time().UnixNano()
 
 	return self
 }
 
 // fmt.Stringify interface
 func (self *Timestamp) String() string {
-	return self.String_
+	return self.CanonicalString
 }
 
 func (self *Timestamp) Compare(data interface{}) (int, error) {
 	if timestamp, ok := data.(*Timestamp); ok {
-		return CompareInt64(self.Number, timestamp.Number), nil
+		return CompareInt64(self.CanonicalNumber, timestamp.CanonicalNumber), nil
 	}
 	return 0, errors.New("incompatible comparison")
 }

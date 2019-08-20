@@ -45,16 +45,7 @@ func TestParse(t *testing.T) {
 	})
 	testCompile(t, "cloudify/example.yaml", nil)
 	testCompile(t, "hot/hello-world.yaml", ard.Map{
-		"key_name":          "my_key",
-		"image_id":          "my_image",
-		"database_password": "A12345",
-	})
-	testCompile(t, "hot/single-server-with-existing-floating-ip.yaml", ard.Map{
-		"public_network": "public",
-		"floating_ip":    "1.2.3.4",
-		"image":          "my_image",
-		"flavor":         "my_flavor",
-		"ssh_keys":       "first,second",
+		"username": "test",
 	})
 }
 

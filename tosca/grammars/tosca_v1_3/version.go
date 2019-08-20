@@ -22,13 +22,15 @@ var VersionRE = regexp.MustCompile(
 //
 
 type Version struct {
-	String_ string `json:"$string" yaml:"$string"`
+	CanonicalString string `json:"$string" yaml:"$string"`
 
 	Major     uint32 `json:"major" yaml:"major"`
 	Minor     uint32 `json:"minor" yaml:"minor"`
 	Fix       uint32 `json:"fix" yaml:"fix"`
 	Qualifier string `json:"qualifier" yaml:"qualifier"`
 	Build     uint32 `json:"build" yaml:"build"`
+
+	OriginalString string `json:"originalString" yaml:"originalString"`
 }
 
 // tosca.Reader signature
@@ -36,24 +38,27 @@ func ReadVersion(context *tosca.Context) interface{} {
 	var self Version
 
 	if context.Is("string") {
-		self.String_ = *context.ReadString()
+		self.OriginalString = *context.ReadString()
+		self.CanonicalString = self.OriginalString
 	} else if context.Is("float") {
 		v := *context.ReadFloat()
-		self.String_ = fmt.Sprintf("%g", v)
-		if strings.Index(self.String_, ".") == -1 {
+		self.OriginalString = fmt.Sprintf("%g", v)
+		self.CanonicalString = self.OriginalString
+		if strings.Index(self.CanonicalString, ".") == -1 {
 			// Assume minor version is 0
-			self.String_ += ".0"
+			self.CanonicalString += ".0"
 		}
 	} else if context.Is("integer") {
 		v := *context.ReadInteger()
 		// Assume minor version is 0
-		self.String_ = fmt.Sprintf("%d.0", v)
+		self.OriginalString = fmt.Sprintf("%d.0", v)
+		self.CanonicalString = self.OriginalString
 	} else {
 		context.ReportValueWrongType("string", "float", "integer")
 		return self
 	}
 
-	matches := VersionRE.FindStringSubmatch(self.String_)
+	matches := VersionRE.FindStringSubmatch(self.CanonicalString)
 	length := len(matches)
 	if length == 0 {
 		context.ReportValueMalformed("version", "")
@@ -85,7 +90,7 @@ func ReadVersion(context *tosca.Context) interface{} {
 
 // fmt.Stringify interface
 func (self *Version) String() string {
-	return self.String_
+	return self.CanonicalString
 }
 
 func (self *Version) Compare(data interface{}) (int, error) {
