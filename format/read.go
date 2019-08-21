@@ -26,7 +26,6 @@ func Read(reader io.Reader, format string) (interface{}, error) {
 func ReadYaml(reader io.Reader) (interface{}, error) {
 	var data interface{}
 	decoder := yaml.NewDecoder(reader)
-	decoder.KnownFields(true)
 	if err := decoder.Decode(&data); err != nil {
 		return nil, err
 	}

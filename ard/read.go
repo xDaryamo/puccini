@@ -7,7 +7,7 @@ import (
 	"github.com/tliron/puccini/url"
 )
 
-func ReadURL(url_ url.URL) (Map, Locator, error) {
+func ReadURL(url_ url.URL, locate bool) (Map, Locator, error) {
 	reader, err := url_.Open()
 	if err != nil {
 		return nil, nil, err
@@ -19,11 +19,11 @@ func ReadURL(url_ url.URL) (Map, Locator, error) {
 	format := url_.Format()
 	switch format {
 	case "yaml":
-		return DecodeYaml(reader)
+		return DecodeYaml(reader, locate)
 	case "json":
-		return DecodeJson(reader)
+		return DecodeJson(reader, locate)
 	case "xml":
-		return DecodeXml(reader)
+		return DecodeXml(reader, locate)
 	default:
 		return nil, nil, fmt.Errorf("unsupported format: \"%s\"", format)
 	}

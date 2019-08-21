@@ -8,7 +8,7 @@ require (
 	github.com/dop251/goja v0.0.0-20190814175915-bb8ee191fdd3
 	github.com/fatih/color v1.7.0
 	github.com/go-sourcemap/sourcemap v2.1.2+incompatible // indirect
-	github.com/hokaccha/go-prettyjson v0.0.0-20180920040306-f579f869bbfe
+	github.com/hokaccha/go-prettyjson v0.0.0-20190818114111-108c894c2c0e
 	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/mattn/go-isatty v0.0.9 // indirect
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7
