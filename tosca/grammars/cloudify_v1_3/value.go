@@ -28,7 +28,7 @@ func NewValue(context *tosca.Context) *Value {
 
 // tosca.Reader signature
 func ReadValue(context *tosca.Context) interface{} {
-	ToFunctions(context)
+	ToFunctionCalls(context)
 	return NewValue(context)
 }
 
@@ -62,7 +62,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 		return
 	}
 
-	if _, ok := self.Context.Data.(*tosca.Function); ok {
+	if _, ok := self.Context.Data.(*tosca.FunctionCall); ok {
 		return
 	}
 
@@ -150,9 +150,9 @@ func (self *Value) Normalize() normal.Constrainable {
 			m.Map[key] = NewValue(self.Context.MapChild(key, value)).Normalize()
 		}
 		constrainable = m
-	} else if function, ok := self.Context.Data.(*tosca.Function); ok {
-		NormalizeFunctionArguments(function, self.Context)
-		constrainable = normal.NewFunction(function)
+	} else if functionCall, ok := self.Context.Data.(*tosca.FunctionCall); ok {
+		NormalizeFunctionCallArguments(functionCall, self.Context)
+		constrainable = normal.NewFunctionCall(functionCall)
 	} else {
 		constrainable = normal.NewValue(self.Context.Data)
 	}

@@ -9,9 +9,9 @@ import (
 //
 
 type Value struct {
-	Value       interface{} `json:"value" yaml:"value"` // can be list or map of Coercibles
-	Constraints Functions   `json:"constraints" yaml:"constraints"`
-	Description string      `json:"description" yaml:"description"`
+	Value       interface{}   `json:"value" yaml:"value"` // can be list or map of Coercibles
+	Constraints FunctionCalls `json:"constraints" yaml:"constraints"`
+	Description string        `json:"description" yaml:"description"`
 }
 
 func NewValue(value interface{}) *Value {
@@ -19,8 +19,8 @@ func NewValue(value interface{}) *Value {
 }
 
 // Constrainable interface
-func (self *Value) AddConstraint(constraint *tosca.Function) {
-	self.Constraints = append(self.Constraints, NewFunction(constraint))
+func (self *Value) AddConstraint(constraint *tosca.FunctionCall) {
+	self.Constraints = append(self.Constraints, NewFunctionCall(constraint))
 }
 
 // Constrainable interface

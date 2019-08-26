@@ -34,36 +34,36 @@ func UnwrapException(err error) error {
 //
 
 type Error struct {
-	Function  *Function
-	Arguments []interface{}
-	Message   string
-	Cause     error
+	FunctionCall *FunctionCall
+	Arguments    []interface{}
+	Message      string
+	Cause        error
 }
 
-func (self *Function) NewError(arguments []interface{}, message string, cause error) *Error {
+func (self *FunctionCall) NewError(arguments []interface{}, message string, cause error) *Error {
 	return &Error{
-		Function:  self,
-		Arguments: arguments,
-		Message:   message,
-		Cause:     cause,
+		FunctionCall: self,
+		Arguments:    arguments,
+		Message:      message,
+		Cause:        cause,
 	}
 }
 
-func (self *Function) NewErrorf(arguments []interface{}, format string, arg ...interface{}) *Error {
+func (self *FunctionCall) NewErrorf(arguments []interface{}, format string, arg ...interface{}) *Error {
 	return self.NewError(arguments, fmt.Sprintf(format, arg...), nil)
 }
 
-func (self *Function) WrapError(arguments []interface{}, err error) *Error {
+func (self *FunctionCall) WrapError(arguments []interface{}, err error) *Error {
 	return self.NewError(arguments, "", UnwrapException(err))
 }
 
 func (self *Error) Signature() string {
-	return self.Function.Signature(self.Arguments)
+	return self.FunctionCall.Signature(self.Arguments)
 }
 
 // error interface
 func (self Error) Error() string {
-	r := fmt.Sprintf("%s: call to %s failed", self.Function.Path, self.Signature())
+	r := fmt.Sprintf("%s: call to %s failed", self.FunctionCall.Path, self.Signature())
 	if self.Message != "" {
 		r += fmt.Sprintf(", %s", self.Message)
 	}
@@ -75,15 +75,15 @@ func (self Error) Error() string {
 
 // tosca.problems.Problematic interface
 func (self Error) ProblemMessage() string {
-	r := fmt.Sprintf("%s: call to %s failed", format.ColorPath(self.Function.Path), format.ColorName(self.Signature()))
+	r := fmt.Sprintf("%s: call to %s failed", format.ColorPath(self.FunctionCall.Path), format.ColorName(self.Signature()))
 	if self.Message != "" {
 		r += fmt.Sprintf(", %s", self.Message)
 	}
-	if self.Function.Location != "" {
+	if self.FunctionCall.Location != "" {
 		if r != "" {
 			r += " "
 		}
-		r += format.ColorValue("@" + self.Function.Location)
+		r += format.ColorValue("@" + self.FunctionCall.Location)
 	}
 	if self.Cause != nil {
 		if jsError, ok := self.Cause.(*Error); ok {
@@ -97,5 +97,5 @@ func (self Error) ProblemMessage() string {
 
 // tosca.problems.Problematic interface
 func (self Error) ProblemSection() string {
-	return self.Function.URL
+	return self.FunctionCall.URL
 }

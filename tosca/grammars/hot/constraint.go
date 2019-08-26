@@ -71,8 +71,8 @@ func ReadConstraint(context *tosca.Context) interface{} {
 	return self
 }
 
-func (self *Constraint) NewFunction(context *tosca.Context) *tosca.Function {
-	return context.NewFunction(self.Operator, self.Arguments)
+func (self *Constraint) NewFunctionCall(context *tosca.Context) *tosca.FunctionCall {
+	return context.NewFunctionCall(self.Operator, self.Arguments)
 }
 
 //
@@ -83,9 +83,9 @@ type Constraints []*Constraint
 
 func (self Constraints) Normalize(context *tosca.Context, constrainable normal.Constrainable) {
 	for _, constraint := range self {
-		function := constraint.NewFunction(context)
-		NormalizeFunctionArguments(function, context)
-		constrainable.AddConstraint(function)
+		functionCall := constraint.NewFunctionCall(context)
+		NormalizeFunctionCallArguments(functionCall, context)
+		constrainable.AddConstraint(functionCall)
 		// TODO: normalize constraint description somewhere
 	}
 }

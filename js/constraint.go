@@ -6,14 +6,14 @@ import (
 	"github.com/tliron/puccini/ard"
 )
 
-type Constraints []*Function
+type Constraints []*FunctionCall
 
 func (self *CloutContext) NewConstraints(list ard.List, site interface{}, source interface{}, target interface{}) (Constraints, error) {
 	constraints := make(Constraints, len(list))
 
 	for index, element := range list {
 		var err error
-		if constraints[index], err = self.NewFunction(element, site, source, target); err != nil {
+		if constraints[index], err = self.NewFunctionCall(element, site, source, target); err != nil {
 			return nil, err
 		}
 	}

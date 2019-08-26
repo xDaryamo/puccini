@@ -88,7 +88,7 @@ func ReadConstraintClause(context *tosca.Context) interface{} {
 	return self
 }
 
-func (self *ConstraintClause) NewFunction(context *tosca.Context, strict bool) *tosca.Function {
+func (self *ConstraintClause) NewFunctionCall(context *tosca.Context, strict bool) *tosca.FunctionCall {
 	arguments := make([]interface{}, len(self.Arguments))
 	for index, argument := range self.Arguments {
 		if self.IsNativeArgument(uint(index)) {
@@ -102,7 +102,7 @@ func (self *ConstraintClause) NewFunction(context *tosca.Context, strict bool) *
 		}
 		arguments[index] = argument
 	}
-	return context.NewFunction(self.Operator, arguments)
+	return context.NewFunctionCall(self.Operator, arguments)
 }
 
 func (self *ConstraintClause) IsNativeArgument(index uint) bool {
@@ -130,20 +130,20 @@ func (self ConstraintClauses) Render(constraints *ConstraintClauses, dataType *D
 	}
 }
 
-func (self ConstraintClauses) Normalize(context *tosca.Context) normal.Functions {
-	var functions normal.Functions
+func (self ConstraintClauses) Normalize(context *tosca.Context) normal.FunctionCalls {
+	var functionCalls normal.FunctionCalls
 	for _, constraintClause := range self {
-		function := constraintClause.NewFunction(context, false)
-		NormalizeFunctionArguments(function, context)
-		functions = append(functions, normal.NewFunction(function))
+		functionCall := constraintClause.NewFunctionCall(context, false)
+		NormalizeFunctionCallArguments(functionCall, context)
+		functionCalls = append(functionCalls, normal.NewFunctionCall(functionCall))
 	}
-	return functions
+	return functionCalls
 }
 
 func (self ConstraintClauses) NormalizeConstrainable(context *tosca.Context, constrainable normal.Constrainable) {
 	for _, constraintClause := range self {
-		function := constraintClause.NewFunction(context, true)
-		NormalizeFunctionArguments(function, context)
-		constrainable.AddConstraint(function)
+		functionCall := constraintClause.NewFunctionCall(context, true)
+		NormalizeFunctionCallArguments(functionCall, context)
+		constrainable.AddConstraint(functionCall)
 	}
 }

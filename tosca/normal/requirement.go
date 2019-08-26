@@ -15,8 +15,8 @@ type Requirement struct {
 	CapabilityName                  *string
 	NodeTypeName                    *string
 	NodeTemplate                    *NodeTemplate
-	NodeTemplatePropertyConstraints FunctionsMap
-	CapabilityPropertyConstraints   FunctionsMapMap
+	NodeTemplatePropertyConstraints FunctionCallMap
+	CapabilityPropertyConstraints   FunctionCallMapMap
 	Relationship                    *Relationship
 	Path                            string
 }
@@ -25,8 +25,8 @@ func (self *NodeTemplate) NewRequirement(name string, path string) *Requirement 
 	requirement := &Requirement{
 		SourceNodeTemplate:              self,
 		Name:                            name,
-		NodeTemplatePropertyConstraints: make(FunctionsMap),
-		CapabilityPropertyConstraints:   make(FunctionsMapMap),
+		NodeTemplatePropertyConstraints: make(FunctionCallMap),
+		CapabilityPropertyConstraints:   make(FunctionCallMapMap),
 		Path:                            path,
 	}
 	self.Requirements = append(self.Requirements, requirement)
@@ -52,15 +52,15 @@ func (self *Requirement) Marshalable() interface{} {
 	}
 
 	return &struct {
-		Name                            string          `json:"name" yaml:"name"`
-		CapabilityTypeName              string          `json:"capabilityTypeName" yaml:"capabilityTypeName"`
-		CapabilityName                  string          `json:"capabilityName" yaml:"capabilityName"`
-		NodeTypeName                    string          `json:"nodeTypeName" yaml:"nodeTypeName" `
-		NodeTemplateName                string          `json:"nodeTemplateName" yaml:"nodeTemplateName"`
-		NodeTemplatePropertyConstraints FunctionsMap    `json:"nodeTemplatePropertyConstraints" yaml:"nodeTemplatePropertyConstraints"`
-		CapabilityPropertyConstraints   FunctionsMapMap `json:"capabilityPropertyConstraints" yaml:"capabilityPropertyConstraints"`
-		Relationship                    *Relationship   `json:"relationship" yaml:"relationship"`
-		Path                            string          `json:"path" yaml:"path"`
+		Name                            string             `json:"name" yaml:"name"`
+		CapabilityTypeName              string             `json:"capabilityTypeName" yaml:"capabilityTypeName"`
+		CapabilityName                  string             `json:"capabilityName" yaml:"capabilityName"`
+		NodeTypeName                    string             `json:"nodeTypeName" yaml:"nodeTypeName" `
+		NodeTemplateName                string             `json:"nodeTemplateName" yaml:"nodeTemplateName"`
+		NodeTemplatePropertyConstraints FunctionCallMap    `json:"nodeTemplatePropertyConstraints" yaml:"nodeTemplatePropertyConstraints"`
+		CapabilityPropertyConstraints   FunctionCallMapMap `json:"capabilityPropertyConstraints" yaml:"capabilityPropertyConstraints"`
+		Relationship                    *Relationship      `json:"relationship" yaml:"relationship"`
+		Path                            string             `json:"path" yaml:"path"`
 	}{
 		Name:                            self.Name,
 		CapabilityTypeName:              capabilityTypeName,

@@ -39,16 +39,16 @@ func (self *CapabilityFilter) GetKey() string {
 	return self.Name
 }
 
-func (self CapabilityFilter) Normalize(r *normal.Requirement) normal.FunctionsMap {
+func (self CapabilityFilter) Normalize(r *normal.Requirement) normal.FunctionCallMap {
 	if len(self.PropertyFilters) == 0 {
 		return nil
 	}
 
-	functionsMap := make(normal.FunctionsMap)
-	r.CapabilityPropertyConstraints[self.Name] = functionsMap
-	self.PropertyFilters.Normalize(functionsMap)
+	functionCallMap := make(normal.FunctionCallMap)
+	r.CapabilityPropertyConstraints[self.Name] = functionCallMap
+	self.PropertyFilters.Normalize(functionCallMap)
 
-	return functionsMap
+	return functionCallMap
 }
 
 //

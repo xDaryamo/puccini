@@ -24,6 +24,7 @@ func NewYamlLocator(rootNode *yaml.Node) *YamlLocator {
 	return &YamlLocator{rootNode}
 }
 
+// Locator interface
 func (self *YamlLocator) Locate(path ...PathElement) (int, int, bool) {
 	if node := FindYamlNode(self.RootNode, path...); node != nil {
 		return node.Line, node.Column, true
@@ -60,13 +61,18 @@ func FindYamlNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 			for i := 0; i < length; i += 2 {
 				keyNode := node.Content[i]
 				if (keyNode.Kind == yaml.ScalarNode) && (keyNode.Tag == "!!str") && (keyNode.Value == v) {
-					valueNode := node.Content[i+1]
-					foundNode := FindYamlNode(valueNode, path[1:]...)
-					if foundNode == valueNode {
-						// We want the location of the key node, not the value node
+					if i+1 < length {
+						valueNode := node.Content[i+1]
+						foundNode := FindYamlNode(valueNode, path[1:]...)
+						if foundNode == valueNode {
+							// We will use the key node for the location instead of the value node
+							return keyNode
+						}
+						return foundNode
+					} else {
+						// Missing value - content is malformed?
 						return keyNode
 					}
-					return foundNode
 				}
 			}
 

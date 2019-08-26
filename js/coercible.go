@@ -14,8 +14,8 @@ type Coercible interface {
 }
 
 func (self *CloutContext) NewCoercible(data interface{}, site interface{}, source interface{}, target interface{}) (Coercible, error) {
-	if function, err := self.NewFunction(data, site, source, target); err == nil {
-		return function, nil
+	if functionCall, err := self.NewFunctionCall(data, site, source, target); err == nil {
+		return functionCall, nil
 	}
 
 	return self.NewValue(data, site, source, target)

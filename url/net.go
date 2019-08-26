@@ -14,8 +14,8 @@ import (
 //
 
 type NetURL struct {
-	URL *gourl.URL
-	Str string
+	URL     *gourl.URL
+	String_ string `json:"string" yaml:"string"`
 }
 
 func NewNetURL(u *gourl.URL) *NetURL {
@@ -60,12 +60,12 @@ func (self *NetURL) Origin() URL {
 
 // URL interface
 func (self *NetURL) Key() string {
-	return "file:" + self.Str
+	return "file:" + self.String_
 }
 
 // URL interface
 func (self *NetURL) Open() (io.Reader, error) {
-	response, err := http.Get(self.Str)
+	response, err := http.Get(self.String_)
 	if err != nil {
 		return nil, err
 	}

@@ -26,9 +26,9 @@ var FunctionSourceCode = map[string]string{
 	"get_artifact":         profile.Profile["/tosca/simple/1.2/js/get_artifact.js"],
 }
 
-func ToFunction(context *tosca.Context) bool {
-	if _, ok := context.Data.(*tosca.Function); ok {
-		// It's already a function
+func ToFunctionCall(context *tosca.Context) bool {
+	if _, ok := context.Data.(*tosca.FunctionCall); ok {
+		// It's already a function call
 		return true
 	}
 
@@ -40,7 +40,7 @@ func ToFunction(context *tosca.Context) bool {
 	for key, data := range map_ {
 		_, ok := context.ScriptNamespace[key]
 		if !ok {
-			// Not a function, despite having the right data structure
+			// Not a function call, despite having the right data structure
 			return false
 		}
 
@@ -50,15 +50,15 @@ func ToFunction(context *tosca.Context) bool {
 			originalArguments = ard.List{data}
 		}
 
-		// Arguments may be functions
+		// Arguments may be function calls
 		arguments := make(ard.List, len(originalArguments))
 		for index, argument := range originalArguments {
 			argumentContext := context.WithData(argument)
-			ToFunction(argumentContext)
+			ToFunctionCall(argumentContext)
 			arguments[index] = argumentContext.Data
 		}
 
-		context.Data = context.NewFunction(key, arguments)
+		context.Data = context.NewFunctionCall(key, arguments)
 
 		// We have only one key
 		return true
@@ -67,8 +67,8 @@ func ToFunction(context *tosca.Context) bool {
 	return false
 }
 
-func NormalizeFunctionArguments(function *tosca.Function, context *tosca.Context) {
-	for index, argument := range function.Arguments {
+func NormalizeFunctionCallArguments(functionCall *tosca.FunctionCall, context *tosca.Context) {
+	for index, argument := range functionCall.Arguments {
 		if _, ok := argument.(normal.Constrainable); ok {
 			// Because the same constraint instance may be shared among more than one value, this
 			// func might be called more than once on the same arguments, so we must make sure not
@@ -76,6 +76,6 @@ func NormalizeFunctionArguments(function *tosca.Function, context *tosca.Context
 			return
 		}
 		value := NewValue(context.ListChild(index, argument))
-		function.Arguments[index] = value.Normalize()
+		functionCall.Arguments[index] = value.Normalize()
 	}
 }

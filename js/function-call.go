@@ -10,12 +10,12 @@ import (
 )
 
 //
-// Function
+// FunctionCall
 //
 
-type Function struct {
+type FunctionCall struct {
 	Context     *CloutContext `json:"-" yaml:"-"`
-	Name        string        `json:"function" yaml:"function"`
+	Name        string        `json:"functionCall" yaml:"functionCall"`
 	URL         string        `json:"url" yaml:"url"`
 	Path        string        `json:"path" yaml:"path"`
 	Location    string        `json:"location" yaml:"location"`
@@ -27,18 +27,18 @@ type Function struct {
 	Notation    ard.Map       `json:"-" yaml:"-"`
 }
 
-func (self *CloutContext) NewFunction(data interface{}, site interface{}, source interface{}, target interface{}) (*Function, error) {
+func (self *CloutContext) NewFunctionCall(data interface{}, site interface{}, source interface{}, target interface{}) (*FunctionCall, error) {
 	map_, ok := data.(ard.Map)
 	if !ok {
-		return nil, errors.New("not a function")
+		return nil, errors.New("not a function call")
 	}
 
-	function, ok := map_["function"]
+	functionCall, ok := map_["functionCall"]
 	if !ok {
-		return nil, errors.New("not a function")
+		return nil, errors.New("not a function call")
 	}
 
-	c := Function{
+	c := FunctionCall{
 		Context:  self,
 		Site:     site,
 		Source:   source,
@@ -46,48 +46,48 @@ func (self *CloutContext) NewFunction(data interface{}, site interface{}, source
 		Notation: map_,
 	}
 
-	f, ok := function.(ard.Map)
+	f, ok := functionCall.(ard.Map)
 	if !ok {
-		return nil, errors.New("malformed function: not a map")
+		return nil, errors.New("malformed function call: not a map")
 	}
 
 	v, ok := f["name"]
 	if !ok {
-		return nil, errors.New("malformed function: no \"name\"")
+		return nil, errors.New("malformed function call: no \"name\"")
 	}
 	c.Name, ok = v.(string)
 	if !ok {
-		return nil, errors.New("malformed function: \"name\" not a string")
+		return nil, errors.New("malformed function call: \"name\" not a string")
 	}
 
 	if v, ok = f["url"]; ok {
 		c.URL, ok = v.(string)
 		if !ok {
-			return nil, errors.New("malformed function: \"url\" not a string")
+			return nil, errors.New("malformed function call: \"url\" not a string")
 		}
 	}
 
 	if v, ok = f["path"]; ok {
 		c.Path, ok = v.(string)
 		if !ok {
-			return nil, errors.New("malformed function: \"path\" not a string")
+			return nil, errors.New("malformed function call: \"path\" not a string")
 		}
 	}
 
 	if v, ok = f["location"]; ok {
 		c.Location, ok = v.(string)
 		if !ok {
-			return nil, errors.New("malformed function: \"location\" not a string")
+			return nil, errors.New("malformed function call: \"location\" not a string")
 		}
 	}
 
 	v, ok = f["arguments"]
 	if !ok {
-		return nil, errors.New("malformed function: no \"arguments\"")
+		return nil, errors.New("malformed function call: no \"arguments\"")
 	}
 	originalArguments, ok := v.(ard.List)
 	if !ok {
-		return nil, errors.New("malformed function: \"arguments\" not a list")
+		return nil, errors.New("malformed function call: \"arguments\" not a list")
 	}
 
 	c.Arguments = make([]Coercible, len(originalArguments))
@@ -106,7 +106,7 @@ func (self *CloutContext) NewFunction(data interface{}, site interface{}, source
 	return &c, nil
 }
 
-func (self *Function) Signature(arguments []interface{}) string {
+func (self *FunctionCall) Signature(arguments []interface{}) string {
 	s := make([]string, len(arguments))
 	for index, argument := range arguments {
 		s[index], _ = format.EncodeJson(argument, "")
@@ -115,7 +115,7 @@ func (self *Function) Signature(arguments []interface{}) string {
 }
 
 // Coercible interface
-func (self *Function) Coerce() (interface{}, error) {
+func (self *FunctionCall) Coerce() (interface{}, error) {
 	arguments, err := self.CoerceArguments()
 	if err != nil {
 		return nil, err
@@ -134,11 +134,11 @@ func (self *Function) Coerce() (interface{}, error) {
 }
 
 // Coercible interface
-func (self *Function) Unwrap() interface{} {
+func (self *FunctionCall) Unwrap() interface{} {
 	return self.Notation
 }
 
-func (self *Function) CoerceArguments() ([]interface{}, error) {
+func (self *FunctionCall) CoerceArguments() ([]interface{}, error) {
 	arguments := make([]interface{}, len(self.Arguments))
 	for index, argument := range self.Arguments {
 		var err error
@@ -149,7 +149,7 @@ func (self *Function) CoerceArguments() ([]interface{}, error) {
 	return arguments, nil
 }
 
-func (self *Function) Validate(value interface{}, errorWhenInvalid bool) (bool, error) {
+func (self *FunctionCall) Validate(value interface{}, errorWhenInvalid bool) (bool, error) {
 	arguments, err := self.CoerceArguments()
 	if err != nil {
 		return false, err

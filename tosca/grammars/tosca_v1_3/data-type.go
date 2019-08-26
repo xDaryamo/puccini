@@ -92,7 +92,7 @@ func (self *DataType) Complete(context *tosca.Context) {
 			map_[key] = d
 		}
 
-		if ToFunction(childContext) {
+		if ToFunctionCall(childContext) {
 			map_[key] = childContext.Data
 		} else {
 			definition.DataType.Complete(childContext)

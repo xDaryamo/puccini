@@ -9,7 +9,7 @@ import (
 //
 
 type Constrainable interface {
-	AddConstraint(*tosca.Function)
+	AddConstraint(*tosca.FunctionCall)
 	SetDescription(string)
 }
 
@@ -25,7 +25,7 @@ type Constrainables map[string]Constrainable
 
 type ConstrainableList struct {
 	List        []Constrainable `json:"list" yaml:"list"`
-	Constraints Functions       `json:"constraints" yaml:"constraints"`
+	Constraints FunctionCalls   `json:"constraints" yaml:"constraints"`
 	Description string          `json:"description" yaml:"description"`
 }
 
@@ -34,8 +34,8 @@ func NewConstrainableList(length int) *ConstrainableList {
 }
 
 // Constrainable interface
-func (self *ConstrainableList) AddConstraint(function *tosca.Function) {
-	self.Constraints = append(self.Constraints, NewFunction(function))
+func (self *ConstrainableList) AddConstraint(functionCall *tosca.FunctionCall) {
+	self.Constraints = append(self.Constraints, NewFunctionCall(functionCall))
 }
 
 // Constrainable interface
@@ -49,7 +49,7 @@ func (self *ConstrainableList) SetDescription(description string) {
 
 type ConstrainableMap struct {
 	Map         Constrainables `json:"map" yaml:"map"`
-	Constraints Functions      `json:"constraints" yaml:"constraints"`
+	Constraints FunctionCalls  `json:"constraints" yaml:"constraints"`
 	Description string         `json:"description" yaml:"description"`
 }
 
@@ -58,8 +58,8 @@ func NewConstrainableMap() *ConstrainableMap {
 }
 
 // Constrainable interface
-func (self *ConstrainableMap) AddConstraint(constraint *tosca.Function) {
-	self.Constraints = append(self.Constraints, NewFunction(constraint))
+func (self *ConstrainableMap) AddConstraint(constraint *tosca.FunctionCall) {
+	self.Constraints = append(self.Constraints, NewFunctionCall(constraint))
 }
 
 // Constrainable interface

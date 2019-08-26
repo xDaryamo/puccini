@@ -48,10 +48,10 @@ func parseScriptName(name string) (string, []uint) {
 //
 
 type Script struct {
-	Origin                url.URL
-	Path                  string
-	SourceCode            string
-	NativeArgumentIndexes []uint
+	Origin                url.URL `json:"origin" yaml:"origin"`
+	Path                  string  `json:"path" yaml:"path"`
+	SourceCode            string  `json:"sourceCode" yaml:"sourceCode"`
+	NativeArgumentIndexes []uint  `json:"nativeArgumentIndexes" yaml:"nativeArgumentIndexes"`
 }
 
 func (self *Script) GetSourceCode() (string, error) {
