@@ -14,23 +14,25 @@ node_types:
       Standard:
         # (You can override the type here, but only if it's a derived type)
         # You can define operations both at the interface type and at the node type 
-        create:
-          # You *must* define inputs in order to assign them at the template
-          inputs:
-            retries:
-              type:
-                integer
+        operations:
+          create:
+            # You *must* define inputs in order to assign them at the template
+            inputs:
+              retries:
+                type:
+                  integer
 
   BetterServer:
     derived_from: Server
     interfaces:
       Standard:
-        create:
-          inputs:
-            # Inputs are inherited (both from interface type and node type)
-            retries:
-              # You can override the type, but only if it's a derived type
-              type: Retries
+        operations:
+          create:
+            inputs:
+              # Inputs are inherited (both from interface type and node type)
+              retries:
+                # You can override the type, but only if it's a derived type
+                type: Retries
 
 data_types:
 
@@ -49,11 +51,19 @@ interface_types:
         type: string
         constraints:
         - valid_values: [ staging, production ]
-    maintenance_on: {}
-    maintenance_off:
-      inputs:
-        priority:
-          type: float
+    operations:
+      maintenance_on:
+        description: Turn maintenance mode on
+      maintenance_off:
+        description: Turn maintenance mode off
+        inputs:
+          priority:
+            type: float
+    notifications:
+      progress:
+        description: Progress on maintenance mode
+        outputs:
+          percentage: [ SELF, progress ]
 
 topology_template:
 
@@ -63,31 +73,35 @@ topology_template:
       type: Server
       interfaces:
         Standard:
-          # Shortest notation has just the implementation
-          start: /opt/scripts/start.sh
-          stop: /opt/scripts/start.sh
-          
-          # Longer notation with inputs
-          create:
-            implementation: scripts/create.sh
-            inputs:
-              retries: 3
+          operations:
+            # Shortest notation has just the implementation
+            start: /opt/scripts/start.sh
+            stop: /opt/scripts/start.sh
 
-          # Longest notation also allows adding dependencies and other params to the implementation
-          configure:
-            implementation:
-              primary: /opt/scripts/configure.sh
-              dependencies:
-              - /opt/scripts/utils.sh
-              - /opt/scripts/config.yaml
-              timeout: 3
-              operation_host: SELF
+            # Longer notation with inputs
+            create:
+              implementation: scripts/create.sh
+              inputs:
+                retries: 3
+
+            # Longest notation also allows adding dependencies and other params to the implementation
+            configure:
+              implementation:
+                primary: /opt/scripts/configure.sh
+                dependencies:
+                - /opt/scripts/utils.sh
+                - /opt/scripts/config.yaml
+                timeout: 3
+                operation_host: SELF
 
         Maintenance:
           inputs:
             mode: production
-          maintenance_on: /opt/scripts/maintenance_on.sh
-          maintenance_off:
-            implementation: /opt/scripts/maintenance_off.sh
-            inputs:
-              priority: .75
+          operations:
+            maintenance_on: /opt/scripts/maintenance_on.sh
+            maintenance_off:
+              implementation: /opt/scripts/maintenance_off.sh
+              inputs:
+                priority: .75
+          notifications:
+            progress: /opt/scripts/progress.sh

@@ -17,6 +17,7 @@ func init() {
 	Grammar["ArtifactDefinition"] = ReadArtifactDefinition
 	Grammar["ArtifactType"] = ReadArtifactType
 	Grammar["AttributeDefinition"] = ReadAttributeDefinition
+	Grammar["AttributeMapping"] = ReadAttributeMapping // introduced in 1.3
 	Grammar["AttributeValue"] = ReadAttributeValue
 	Grammar["CapabilityAssignment"] = ReadCapabilityAssignment
 	Grammar["CapabilityDefinition"] = ReadCapabilityDefinition
@@ -39,9 +40,11 @@ func init() {
 	Grammar["NodeFilter"] = ReadNodeFilter
 	Grammar["NodeTemplate"] = ReadNodeTemplate
 	Grammar["NodeType"] = ReadNodeType
+	Grammar["NotificationAssignment"] = ReadNotificationAssignment // introduced in 1.3
+	Grammar["NotificationDefinition"] = ReadNotificationDefinition // introduced in 1.3
 	Grammar["OperationAssignment"] = ReadOperationAssignment
 	Grammar["OperationDefinition"] = ReadOperationDefinition
-	Grammar["OperationImplementation"] = ReadOperationImplementation
+	Grammar["InterfaceImplementation"] = ReadInterfaceImplementation
 	Grammar["ParameterDefinition"] = ReadParameterDefinition
 	Grammar["Policy"] = ReadPolicy
 	Grammar["PolicyType"] = ReadPolicyType

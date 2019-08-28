@@ -102,7 +102,7 @@ func GetScripts(name string, c *clout.Clout) (ard.List, error) {
 }
 
 func GetScriptSection(name string, c *clout.Clout) (interface{}, error) {
-	segments, final, err := ParseName(name)
+	segments, final, err := ParseScriptName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +143,7 @@ func GetMetadata(c *clout.Clout) (ard.Map, error) {
 	return m, nil
 }
 
-func ParseName(name string) ([]string, string, error) {
+func ParseScriptName(name string) ([]string, string, error) {
 	segments := strings.Split(name, ".")
 	last := len(segments) - 1
 	if last == -1 {

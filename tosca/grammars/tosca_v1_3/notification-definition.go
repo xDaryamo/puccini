@@ -6,32 +6,30 @@ import (
 )
 
 //
-// OperationDefinition
+// NotificationDefinition
 //
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.15
-// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.13
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.19
 //
 
-type OperationDefinition struct {
+type NotificationDefinition struct {
 	*Entity `name:"operation definition"`
 	Name    string
 
-	Description      *string                  `read:"description"`
-	Implementation   *InterfaceImplementation `read:"implementation,InterfaceImplementation"`
-	InputDefinitions PropertyDefinitions      `read:"inputs,PropertyDefinition"`
+	Description       *string                  `read:"description"`
+	Implementation    *InterfaceImplementation `read:"implementation,InterfaceImplementation"`
+	OutputDefinitions AttributeMappings        `read:"outputs,AttributeMapping"`
 }
 
-func NewOperationDefinition(context *tosca.Context) *OperationDefinition {
-	return &OperationDefinition{
-		Entity:           NewEntity(context),
-		Name:             context.Name,
-		InputDefinitions: make(PropertyDefinitions),
+func NewNotificationDefinition(context *tosca.Context) *NotificationDefinition {
+	return &NotificationDefinition{
+		Entity: NewEntity(context),
+		Name:   context.Name,
 	}
 }
 
 // tosca.Reader signature
-func ReadOperationDefinition(context *tosca.Context) interface{} {
-	self := NewOperationDefinition(context)
+func ReadNotificationDefinition(context *tosca.Context) interface{} {
+	self := NewNotificationDefinition(context)
 
 	if context.Is("map") {
 		// Long notation
@@ -45,23 +43,24 @@ func ReadOperationDefinition(context *tosca.Context) interface{} {
 }
 
 // tosca.Mappable interface
-func (self *OperationDefinition) GetKey() string {
+func (self *NotificationDefinition) GetKey() string {
 	return self.Name
 }
 
-func (self *OperationDefinition) Inherit(parentDefinition *OperationDefinition) {
+func (self *NotificationDefinition) Inherit(parentDefinition *NotificationDefinition) {
 	if parentDefinition != nil {
 		if (self.Description == nil) && (parentDefinition.Description != nil) {
 			self.Description = parentDefinition.Description
 		}
 
-		self.InputDefinitions.Inherit(parentDefinition.InputDefinitions)
+		// TODO
+		//self.OutputDefinitions.Inherit(parentDefinition.OutputDefinitions)
 	} else {
-		self.InputDefinitions.Inherit(nil)
+		//self.OutputDefinitions.Inherit(nil)
 	}
 }
 
-func (self *OperationDefinition) Normalize(o *normal.Operation) {
+func (self *NotificationDefinition) Normalize(o *normal.Operation) {
 	if self.Description != nil {
 		o.Description = *self.Description
 	}
@@ -70,17 +69,17 @@ func (self *OperationDefinition) Normalize(o *normal.Operation) {
 		self.Implementation.Normalize(o)
 	}
 
-	// TODO: input definitions
-	//self.InputDefinitions.Normalize(o.Inputs)
+	// TODO: output definitions
+	//self.OutputDefinitions.Normalize(o.Inputs)
 }
 
 //
-// OperationDefinitions
+// NotificationDefinitions
 //
 
-type OperationDefinitions map[string]*OperationDefinition
+type NotificationDefinitions map[string]*NotificationDefinition
 
-func (self OperationDefinitions) Inherit(parentDefinitions OperationDefinitions) {
+func (self NotificationDefinitions) Inherit(parentDefinitions NotificationDefinitions) {
 	for name, definition := range parentDefinitions {
 		if _, ok := self[name]; !ok {
 			self[name] = definition

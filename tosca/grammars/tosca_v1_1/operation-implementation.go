@@ -6,18 +6,18 @@ import (
 )
 
 //
-// OperationImplementation
+// InterfaceImplementation
 //
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.13.2.3
 //
 
 // tosca.Reader signature
-func ReadOperationImplementation(context *tosca.Context) interface{} {
+func ReadInterfaceImplementation(context *tosca.Context) interface{} {
 	if context.ReadOverrides == nil {
 		context.ReadOverrides = make(map[string]string)
 	}
 	context.ReadOverrides["Timeout"] = ""
 	context.ReadOverrides["OperationHost"] = ""
 
-	return tosca_v1_3.ReadOperationImplementation(context)
+	return tosca_v1_3.ReadInterfaceImplementation(context)
 }

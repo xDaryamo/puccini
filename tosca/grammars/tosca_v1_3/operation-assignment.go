@@ -17,7 +17,7 @@ type OperationAssignment struct {
 	Name    string
 
 	Description    *string                  `read:"description"`
-	Implementation *OperationImplementation `read:"implementation,OperationImplementation"`
+	Implementation *InterfaceImplementation `read:"implementation,InterfaceImplementation"`
 	Inputs         Values                   `read:"inputs,Value"`
 }
 
@@ -38,7 +38,7 @@ func ReadOperationAssignment(context *tosca.Context) interface{} {
 		context.ValidateUnsupportedFields(context.ReadFields(self))
 	} else if context.ValidateType("map", "string") {
 		// Short notation
-		self.Implementation = ReadOperationImplementation(context.FieldChild("implementation", context.Data)).(*OperationImplementation)
+		self.Implementation = ReadInterfaceImplementation(context.FieldChild("implementation", context.Data)).(*InterfaceImplementation)
 	}
 
 	return self
@@ -88,7 +88,7 @@ func (self OperationAssignments) Render(definitions OperationDefinitions, contex
 
 		if (assignment.Implementation == nil) && (definition.Implementation != nil) {
 			// If the definition has an implementation then we must have one, too
-			assignment.Implementation = NewOperationImplementation(assignment.Context.FieldChild("implementation", nil))
+			assignment.Implementation = NewInterfaceImplementation(assignment.Context.FieldChild("implementation", nil))
 		}
 
 		if assignment.Implementation != nil {

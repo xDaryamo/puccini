@@ -55,13 +55,13 @@ func NewContext(problems *problems.Problems, quirks []string) *Context {
 	}
 }
 
-func (self *Context) GetParent(generation int) *Context {
+func (self *Context) GetAncestor(generation int) *Context {
 	if generation == 0 {
 		return self
 	} else if generation == 1 {
 		return self.Parent
 	} else if self.Parent != nil {
-		return self.Parent.GetParent(generation - 1)
+		return self.Parent.GetAncestor(generation - 1)
 	} else {
 		return nil
 	}

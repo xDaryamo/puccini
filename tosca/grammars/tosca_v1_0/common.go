@@ -8,6 +8,7 @@ import (
 	"github.com/tliron/puccini/js"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_1"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v1_2"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
 )
 
@@ -36,16 +37,17 @@ func init() {
 	Grammar["Group"] = tosca_v1_3.ReadGroup
 	Grammar["GroupType"] = tosca_v1_3.ReadGroupType
 	Grammar["Import"] = tosca_v1_3.ReadImport
-	Grammar["InterfaceAssignment"] = tosca_v1_3.ReadInterfaceAssignment
-	Grammar["InterfaceDefinition"] = tosca_v1_3.ReadInterfaceDefinition
-	Grammar["InterfaceType"] = tosca_v1_3.ReadInterfaceType
+	Grammar["InterfaceAssignment"] = tosca_v1_2.ReadInterfaceAssignment // 1.2
+	Grammar["InterfaceDefinition"] = tosca_v1_2.ReadInterfaceDefinition // 1.2
+	Grammar["InterfaceType"] = tosca_v1_2.ReadInterfaceType             // 1.2
 	Grammar["Metadata"] = tosca_v1_3.ReadMetadata
 	Grammar["NodeFilter"] = tosca_v1_3.ReadNodeFilter
 	Grammar["NodeTemplate"] = tosca_v1_3.ReadNodeTemplate
 	Grammar["NodeType"] = tosca_v1_3.ReadNodeType
+	Grammar["NotificationDefinition"] = tosca_v1_3.ReadNotificationDefinition // not used
 	Grammar["OperationAssignment"] = tosca_v1_3.ReadOperationAssignment
 	Grammar["OperationDefinition"] = tosca_v1_3.ReadOperationDefinition
-	Grammar["OperationImplementation"] = tosca_v1_1.ReadOperationImplementation // 1.1
+	Grammar["InterfaceImplementation"] = tosca_v1_1.ReadInterfaceImplementation // 1.1
 	Grammar["ParameterDefinition"] = tosca_v1_3.ReadParameterDefinition
 	Grammar["Policy"] = tosca_v1_3.ReadPolicy
 	Grammar["PolicyType"] = tosca_v1_3.ReadPolicyType

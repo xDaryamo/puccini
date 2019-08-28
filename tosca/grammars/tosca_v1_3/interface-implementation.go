@@ -6,13 +6,13 @@ import (
 )
 
 //
-// OperationImplementation
+// InterfaceImplementation
 //
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.14
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.13.2.3
 //
 
-type OperationImplementation struct {
+type InterfaceImplementation struct {
 	*Entity `name:"operation implementation"`
 
 	Primary       *string   `read:"primary"`
@@ -21,13 +21,13 @@ type OperationImplementation struct {
 	OperationHost *string   `read:"operation_host"`
 }
 
-func NewOperationImplementation(context *tosca.Context) *OperationImplementation {
-	return &OperationImplementation{Entity: NewEntity(context)}
+func NewInterfaceImplementation(context *tosca.Context) *InterfaceImplementation {
+	return &InterfaceImplementation{Entity: NewEntity(context)}
 }
 
 // tosca.Reader signature
-func ReadOperationImplementation(context *tosca.Context) interface{} {
-	self := NewOperationImplementation(context)
+func ReadInterfaceImplementation(context *tosca.Context) interface{} {
+	self := NewInterfaceImplementation(context)
 
 	if context.Is("map") {
 		// Long notation
@@ -40,7 +40,7 @@ func ReadOperationImplementation(context *tosca.Context) interface{} {
 	return self
 }
 
-func (self *OperationImplementation) Render(definition *OperationImplementation) {
+func (self *InterfaceImplementation) Render(definition *InterfaceImplementation) {
 	if definition != nil {
 		if (self.Primary != nil) && (definition.Primary != nil) {
 			self.Primary = definition.Primary
@@ -57,12 +57,7 @@ func (self *OperationImplementation) Render(definition *OperationImplementation)
 	}
 
 	if self.OperationHost != nil {
-		// Find root path
-		var path string
-		ancestor := self.Context.GetParent(5)
-		if ancestor != nil {
-			path = ancestor.Path.String()
-		}
+		path := self.Context.Path[:2].String()
 		supported := false
 		operationHost := *self.OperationHost
 		switch operationHost {
@@ -84,7 +79,7 @@ func (self *OperationImplementation) Render(definition *OperationImplementation)
 	}
 }
 
-func (self *OperationImplementation) Normalize(o *normal.Operation) {
+func (self *InterfaceImplementation) Normalize(o *normal.Operation) {
 	if self.Primary != nil {
 		o.Implementation = *self.Primary
 	}

@@ -6,7 +6,8 @@ imports:
 interface_types:
 
   Backup:
-    start_backup: {}
+    operations:
+      start_backup: {}
 
 node_types:
 

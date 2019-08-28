@@ -7,6 +7,7 @@ import (
 //
 // InterfaceType
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.7.5
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.7.5
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.5
 //
@@ -14,24 +15,26 @@ import (
 type InterfaceType struct {
 	*Type `name:"interface type"`
 
-	InputDefinitions     PropertyDefinitions  `read:"inputs,PropertyDefinition" inherit:"inputs,Parent"`
-	OperationDefinitions OperationDefinitions `read:"?,OperationDefinition" inherit:"?,Parent"`
+	InputDefinitions        PropertyDefinitions     `read:"inputs,PropertyDefinition" inherit:"inputs,Parent"`
+	OperationDefinitions    OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,Parent"`
+	NotificationDefinitions NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,Parent"`
 
 	Parent *InterfaceType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
 }
 
 func NewInterfaceType(context *tosca.Context) *InterfaceType {
 	return &InterfaceType{
-		Type:                 NewType(context),
-		InputDefinitions:     make(PropertyDefinitions),
-		OperationDefinitions: make(OperationDefinitions),
+		Type:                    NewType(context),
+		InputDefinitions:        make(PropertyDefinitions),
+		OperationDefinitions:    make(OperationDefinitions),
+		NotificationDefinitions: make(NotificationDefinitions),
 	}
 }
 
 // tosca.Reader signature
 func ReadInterfaceType(context *tosca.Context) interface{} {
 	self := NewInterfaceType(context)
-	context.ReadFields(self)
+	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 

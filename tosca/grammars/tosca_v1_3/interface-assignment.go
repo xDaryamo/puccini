@@ -16,23 +16,25 @@ type InterfaceAssignment struct {
 	*Entity `name:"interface" json:"-" yaml:"-"`
 	Name    string
 
-	Inputs     Values               `read:"inputs,Value"`
-	Operations OperationAssignments `read:"?,OperationAssignment"`
+	Inputs        Values                  `read:"inputs,Value"`
+	Operations    OperationAssignments    `read:"operations,OperationAssignment"`
+	Notifications NotificationAssignments `read:"notifications,NotificationAssignment"`
 }
 
 func NewInterfaceAssignment(context *tosca.Context) *InterfaceAssignment {
 	return &InterfaceAssignment{
-		Entity:     NewEntity(context),
-		Name:       context.Name,
-		Inputs:     make(Values),
-		Operations: make(OperationAssignments),
+		Entity:        NewEntity(context),
+		Name:          context.Name,
+		Inputs:        make(Values),
+		Operations:    make(OperationAssignments),
+		Notifications: make(NotificationAssignments),
 	}
 }
 
 // tosca.Reader signature
 func ReadInterfaceAssignment(context *tosca.Context) interface{} {
 	self := NewInterfaceAssignment(context)
-	context.ReadFields(self)
+	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
@@ -108,6 +110,8 @@ func (self InterfaceAssignments) Render(definitions InterfaceDefinitions, contex
 			delete(self, key)
 		}
 	}
+
+	// TODO: notifications
 }
 
 func (self InterfaceAssignments) NormalizeForNodeTemplate(nodeTemplate *NodeTemplate, n *normal.NodeTemplate) {

@@ -7,6 +7,7 @@ import (
 //
 // InterfaceDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.20
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.16
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.14
 //
@@ -15,9 +16,10 @@ type InterfaceDefinition struct {
 	*Entity `name:"interface definition" json:"-" yaml:"-"`
 	Name    string
 
-	InterfaceTypeName    *string              `read:"type"` // required only if cannot be inherited
-	InputDefinitions     PropertyDefinitions  `read:"inputs,PropertyDefinition" inherit:"inputs,InterfaceType"`
-	OperationDefinitions OperationDefinitions `read:"?,OperationDefinition" inherit:"?,InterfaceType"`
+	InterfaceTypeName       *string                 `read:"type"` // required only if cannot be inherited
+	InputDefinitions        PropertyDefinitions     `read:"inputs,PropertyDefinition" inherit:"inputs,InterfaceType"`
+	OperationDefinitions    OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,InterfaceType"`
+	NotificationDefinitions NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,InterfaceType"`
 
 	InterfaceType *InterfaceType `lookup:"type,InterfaceTypeName" json:"-" yaml:"-"`
 
@@ -26,17 +28,18 @@ type InterfaceDefinition struct {
 
 func NewInterfaceDefinition(context *tosca.Context) *InterfaceDefinition {
 	return &InterfaceDefinition{
-		Entity:               NewEntity(context),
-		Name:                 context.Name,
-		InputDefinitions:     make(PropertyDefinitions),
-		OperationDefinitions: make(OperationDefinitions),
+		Entity:                  NewEntity(context),
+		Name:                    context.Name,
+		InputDefinitions:        make(PropertyDefinitions),
+		OperationDefinitions:    make(OperationDefinitions),
+		NotificationDefinitions: make(NotificationDefinitions),
 	}
 }
 
 // tosca.Reader signature
 func ReadInterfaceDefinition(context *tosca.Context) interface{} {
 	self := NewInterfaceDefinition(context)
-	context.ReadFields(self)
+	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
