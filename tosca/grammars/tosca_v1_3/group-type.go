@@ -7,6 +7,7 @@ import (
 //
 // GroupType
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.7.11
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.7.11
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.11
 //
@@ -17,7 +18,7 @@ type GroupType struct {
 	PropertyDefinitions    PropertyDefinitions    `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
 	CapabilityDefinitions  CapabilityDefinitions  `read:"capabilities,CapabilityDefinition" inherit:"capabilities,Parent"`
 	RequirementDefinitions RequirementDefinitions `read:"requirements,{}RequirementDefinition" inherit:"requirements,Parent"` // sequenced list, but we read it into map
-	InterfaceDefinitions   InterfaceDefinitions   `read:"interfaces,InterfaceDefinition" inherit:"interfaces,Parent"`
+	InterfaceDefinitions   InterfaceDefinitions   `inherit:"interfaces,Parent"`                                               // removed in TOSCA 1.3
 	MemberNodeTypeNames    *[]string              `read:"members" inherit:"members,Parent"`
 
 	Parent          *GroupType `lookup:"derived_from,ParentName" inherit:"members,Parent" json:"-" yaml:"-"`

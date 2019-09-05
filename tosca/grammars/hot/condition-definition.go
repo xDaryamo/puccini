@@ -41,7 +41,7 @@ func ReadConditionDefinition(context *tosca.Context) interface{} {
 		for operator, value := range map_ {
 			script, ok := context.ScriptNamespace[operator]
 			if !ok {
-				context.WithData(operator).ReportValueMalformed("condition definition", "unsupported operator")
+				context.Clone(operator).ReportValueMalformed("condition definition", "unsupported operator")
 				return self
 			}
 

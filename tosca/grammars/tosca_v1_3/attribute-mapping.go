@@ -2,6 +2,7 @@ package tosca_v1_3
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -11,14 +12,18 @@ import (
 //
 
 type AttributeMapping struct {
-	*Entity `name:"requirement mapping"`
+	*Entity `name:"attribute mapping"`
+	Name    string
 
 	NodeTemplateName *string `require:"0"`
 	AttributeName    *string `require:"1"`
 }
 
 func NewAttributeMapping(context *tosca.Context) *AttributeMapping {
-	return &AttributeMapping{Entity: NewEntity(context)}
+	return &AttributeMapping{
+		Entity: NewEntity(context),
+		Name:   context.Name,
+	}
 }
 
 // tosca.Reader signature
@@ -33,8 +38,35 @@ func ReadAttributeMapping(context *tosca.Context) interface{} {
 	return self
 }
 
+// tosca.Mappable interface
+func (self *AttributeMapping) GetKey() string {
+	return self.Name
+}
+
 //
 // AttributeMappings
 //
 
-type AttributeMappings []*AttributeMapping
+type AttributeMappings map[string]*AttributeMapping
+
+func (self AttributeMappings) Inherit(parent AttributeMappings) {
+	for name, attributeMapping := range parent {
+		if _, ok := self[name]; !ok {
+			self[name] = attributeMapping
+		}
+	}
+}
+
+func (self AttributeMappings) Normalize(n *normal.NodeTemplate, m normal.AttributeMappings) {
+	for name, attributeMapping := range self {
+		nodeTemplateName := *attributeMapping.NodeTemplateName
+
+		if nodeTemplateName == "SELF" {
+			m[name] = &normal.AttributeMapping{n, *attributeMapping.AttributeName}
+		} else {
+			if nn, ok := n.ServiceTemplate.NodeTemplates[nodeTemplateName]; ok {
+				m[name] = &normal.AttributeMapping{nn, *attributeMapping.AttributeName}
+			}
+		}
+	}
+}

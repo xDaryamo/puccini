@@ -69,7 +69,8 @@ func (self *InterfaceAssignment) GetDefinitionForRelationship(relationship *Rela
 
 func (self *InterfaceAssignment) Render(definition *InterfaceDefinition) {
 	self.Inputs.RenderProperties(definition.InputDefinitions, "input", self.Context.FieldChild("inputs", nil))
-	self.Operations.Render(definition.OperationDefinitions, self.Context)
+	self.Operations.Render(definition.OperationDefinitions, self.Context.FieldChild("operations", nil))
+	self.Notifications.Render(definition.NotificationDefinitions, self.Context.FieldChild("notifications", nil))
 }
 
 func (self *InterfaceAssignment) Normalize(i *normal.Interface, definition *InterfaceDefinition) {
@@ -85,6 +86,7 @@ func (self *InterfaceAssignment) Normalize(i *normal.Interface, definition *Inte
 
 	self.Inputs.Normalize(i.Inputs)
 	self.Operations.Normalize(i)
+	self.Notifications.Normalize(i)
 }
 
 //
@@ -106,7 +108,7 @@ func (self InterfaceAssignments) Render(definitions InterfaceDefinitions, contex
 	for key, assignment := range self {
 		_, ok := definitions[key]
 		if !ok {
-			assignment.Context.ReportUndefined("interface")
+			assignment.Context.ReportUndeclared("interface")
 			delete(self, key)
 		}
 	}

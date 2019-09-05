@@ -90,7 +90,7 @@ func (self InterfaceAssignments) Render(definitions InterfaceDefinitions, contex
 	for key, assignment := range self {
 		_, ok := definitions[key]
 		if !ok {
-			assignment.Context.ReportUndefined("interface")
+			assignment.Context.ReportUndeclared("interface")
 			delete(self, key)
 		}
 	}

@@ -9,7 +9,8 @@ import (
 //
 
 type Requirement struct {
-	SourceNodeTemplate              *NodeTemplate
+	SourceNodeTemplate *NodeTemplate
+
 	Name                            string
 	CapabilityTypeName              *string
 	CapabilityName                  *string

@@ -54,7 +54,7 @@ func ReadConstraint(context *tosca.Context) interface{} {
 			}
 
 			if _, ok := context.ScriptNamespace[operator]; !ok {
-				context.WithData(operator).ReportValueMalformed("constraint", "unsupported operator")
+				context.Clone(operator).ReportValueMalformed("constraint", "unsupported operator")
 				return self
 			}
 

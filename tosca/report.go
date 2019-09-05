@@ -149,8 +149,8 @@ func (self *Context) ReportTypeIncomplete(parent interface{}) {
 // Render
 //
 
-func (self *Context) ReportUndefined(kind string) {
-	self.ReportPathf("undefined %s", kind)
+func (self *Context) ReportUndeclared(kind string) {
+	self.ReportPathf("undeclared %s", kind)
 }
 
 func (self *Context) ReportUnknown(kind string) {

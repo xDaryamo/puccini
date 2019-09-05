@@ -7,12 +7,14 @@ package normal
 type Group struct {
 	ServiceTemplate *ServiceTemplate `json:"-" yaml:"-"`
 	Name            string           `json:"-" yaml:"-"`
-	Description     string           `json:"description" yaml:"description"`
-	Types           Types            `json:"types" yaml:"types"`
-	Properties      Constrainables   `json:"properties" yaml:"properties"`
-	Interfaces      Interfaces       `json:"interfaces" yaml:"interfaces"`
-	Members         []*NodeTemplate  `json:"-" yaml:"-"`
-	Policies        []*Policy        `json:"-" yaml:"-"`
+
+	Description string         `json:"description" yaml:"description"`
+	Types       Types          `json:"types" yaml:"types"`
+	Properties  Constrainables `json:"properties" yaml:"properties"`
+	Interfaces  Interfaces     `json:"interfaces" yaml:"interfaces"`
+
+	Members  []*NodeTemplate `json:"-" yaml:"-"`
+	Policies []*Policy       `json:"-" yaml:"-"`
 }
 
 func (self *ServiceTemplate) NewGroup(name string) *Group {

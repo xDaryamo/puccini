@@ -76,7 +76,7 @@ func (self *TopologyTemplate) SetInputs(inputs map[string]interface{}) {
 
 			definition.Value = ReadValue(childContext).(*Value)
 		} else {
-			childContext.ReportUndefined("input")
+			childContext.ReportUndeclared("input")
 		}
 	}
 }

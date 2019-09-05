@@ -12,4 +12,5 @@ These are activated via the `--quirk/-x` switch for
 
 * **data_types.string.permissive**: By default Puccini is strict about "string"-typed values
   and will consider integers, floats, and boolean values to be errors. This quirk will accept
-  such values and convert them to strings.
+  such values and convert them sensibly to strings. This includes handling the TOSCA "version"
+  primitive type.

@@ -67,7 +67,7 @@ func (self *OperationDefinition) Normalize(o *normal.Operation) {
 	}
 
 	if self.Implementation != nil {
-		self.Implementation.Normalize(o)
+		self.Implementation.NormalizeOperation(o)
 	}
 
 	// TODO: input definitions

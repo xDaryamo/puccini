@@ -66,7 +66,7 @@ func ReadConstraintClause(context *tosca.Context) interface{} {
 		for operator, value := range map_ {
 			script, ok := context.ScriptNamespace[operator]
 			if !ok {
-				context.WithData(operator).ReportValueMalformed("constraint clause", "unsupported operator")
+				context.Clone(operator).ReportValueMalformed("constraint clause", "unsupported operator")
 				return self
 			}
 

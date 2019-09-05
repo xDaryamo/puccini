@@ -21,6 +21,9 @@ node_types:
               retries:
                 type:
                   integer
+    attributes:
+      progress:
+        type: string
 
   BetterServer:
     derived_from: Server
@@ -63,6 +66,8 @@ interface_types:
       progress:
         description: Progress on maintenance mode
         outputs:
+          # Notification outputs map to *attributes*
+          # The attribute must be declared at the type
           percentage: [ SELF, progress ]
 
 topology_template:

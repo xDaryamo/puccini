@@ -7,17 +7,19 @@ package normal
 type NodeTemplate struct {
 	ServiceTemplate *ServiceTemplate `json:"-" yaml:"-"`
 	Name            string           `json:"-" yaml:"-"`
-	Description     string           `json:"description" yaml:"description"`
-	Types           Types            `json:"types" yaml:"types"`
-	Directives      []string         `json:"directives" yaml:"directives"`
-	Properties      Constrainables   `json:"properties" yaml:"properties"`
-	Attributes      Constrainables   `json:"attributes" yaml:"attributes"`
-	Requirements    Requirements     `json:"requirements" yaml:"requirements"`
-	Capabilities    Capabilities     `json:"capabilities" yaml:"capabilities"`
-	Interfaces      Interfaces       `json:"interfaces" yaml:"interfaces"`
-	Artifacts       Artifacts        `json:"artifacts" yaml:"artifacts"`
-	Policies        []*Policy        `json:"-" yaml:"-"`
-	Groups          []*Group         `json:"-" yaml:"-"`
+
+	Description  string         `json:"description" yaml:"description"`
+	Types        Types          `json:"types" yaml:"types"`
+	Directives   []string       `json:"directives" yaml:"directives"`
+	Properties   Constrainables `json:"properties" yaml:"properties"`
+	Attributes   Constrainables `json:"attributes" yaml:"attributes"`
+	Requirements Requirements   `json:"requirements" yaml:"requirements"`
+	Capabilities Capabilities   `json:"capabilities" yaml:"capabilities"`
+	Interfaces   Interfaces     `json:"interfaces" yaml:"interfaces"`
+	Artifacts    Artifacts      `json:"artifacts" yaml:"artifacts"`
+
+	Policies []*Policy `json:"-" yaml:"-"`
+	Groups   []*Group  `json:"-" yaml:"-"`
 }
 
 func (self *ServiceTemplate) NewNodeTemplate(name string) *NodeTemplate {

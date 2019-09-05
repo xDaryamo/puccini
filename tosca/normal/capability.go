@@ -10,8 +10,9 @@ import (
 //
 
 type Capability struct {
-	NodeTemplate         *NodeTemplate
-	Name                 string
+	NodeTemplate *NodeTemplate
+	Name         string
+
 	Description          string
 	Types                Types
 	Properties           Constrainables

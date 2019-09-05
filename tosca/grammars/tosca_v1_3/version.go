@@ -17,6 +17,7 @@ var VersionRE = regexp.MustCompile(
 //
 // Version
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.3.2
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.3.2
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.2.2
 //
@@ -40,21 +41,26 @@ func ReadVersion(context *tosca.Context) interface{} {
 	if context.Is("string") {
 		self.OriginalString = *context.ReadString()
 		self.CanonicalString = self.OriginalString
-	} else if context.Is("float") {
-		v := *context.ReadFloat()
-		self.OriginalString = fmt.Sprintf("%g", v)
-		self.CanonicalString = self.OriginalString
-		if strings.Index(self.CanonicalString, ".") == -1 {
+	} else if context.HasQuirk("data_types.string.permissive") {
+		if context.Is("float") {
+			v := *context.ReadFloat()
+			self.OriginalString = fmt.Sprintf("%g", v)
+			self.CanonicalString = self.OriginalString
+			if strings.Index(self.CanonicalString, ".") == -1 {
+				// Assume minor version is 0
+				self.CanonicalString += ".0"
+			}
+		} else if context.Is("integer") {
+			v := *context.ReadInteger()
 			// Assume minor version is 0
-			self.CanonicalString += ".0"
+			self.OriginalString = fmt.Sprintf("%d.0", v)
+			self.CanonicalString = self.OriginalString
+		} else {
+			context.ReportValueWrongType("string", "float", "integer")
+			return self
 		}
-	} else if context.Is("integer") {
-		v := *context.ReadInteger()
-		// Assume minor version is 0
-		self.OriginalString = fmt.Sprintf("%d.0", v)
-		self.CanonicalString = self.OriginalString
 	} else {
-		context.ReportValueWrongType("string", "float", "integer")
+		context.ReportValueWrongType("string")
 		return self
 	}
 

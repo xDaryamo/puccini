@@ -5,11 +5,13 @@ package normal
 //
 
 type Policy struct {
-	ServiceTemplate     *ServiceTemplate `json:"-" yaml:"-"`
-	Name                string           `json:"-" yaml:"-"`
-	Description         string           `json:"description" yaml:"description"`
-	Types               Types            `json:"types" yaml:"types"`
-	Properties          Constrainables   `json:"properties" yaml:"properties"`
+	ServiceTemplate *ServiceTemplate `json:"-" yaml:"-"`
+	Name            string           `json:"-" yaml:"-"`
+
+	Description string         `json:"description" yaml:"description"`
+	Types       Types          `json:"types" yaml:"types"`
+	Properties  Constrainables `json:"properties" yaml:"properties"`
+
 	GroupTargets        []*Group         `json:"-" yaml:"-"`
 	NodeTemplateTargets []*NodeTemplate  `json:"-" yaml:"-"`
 	Triggers            []*PolicyTrigger `json:"-" yaml:"-"`
@@ -39,7 +41,8 @@ type Policies map[string]*Policy
 //
 
 type PolicyTrigger struct {
-	Policy    *Policy    `json:"-" yaml:"-"`
+	Policy *Policy `json:"-" yaml:"-"`
+
 	EventType string     `json:"eventType" yaml:"eventType"`
 	Operation *Operation `json:"operation" yaml:"operation"`
 	Workflow  *Workflow  `json:"workflow" yaml:"workflow"`

@@ -8,6 +8,7 @@ import (
 //
 // Group
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.8.5
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.8.5
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.7.5
 //
@@ -19,7 +20,7 @@ type Group struct {
 	GroupTypeName           *string              `read:"type" require:"type"`
 	Description             *string              `read:"description" inherit:"description,GroupType"`
 	Properties              Values               `read:"properties,Value"`
-	Interfaces              InterfaceAssignments `read:"interfaces,InterfaceAssignment"`
+	Interfaces              InterfaceAssignments // removed in TOSCA 1.3
 	MemberNodeTemplateNames *[]string            `read:"members"`
 
 	GroupType           *GroupType      `lookup:"type,GroupTypeName" json:"-" yaml:"-"`

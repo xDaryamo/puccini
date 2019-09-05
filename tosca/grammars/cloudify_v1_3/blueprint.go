@@ -40,7 +40,7 @@ func (self *Blueprint) SetInputs(inputs map[string]interface{}) {
 		if input, ok := self.Inputs[name]; ok {
 			input.Value = ReadValue(childContext).(*Value)
 		} else {
-			childContext.ReportUndefined("input")
+			childContext.ReportUndeclared("input")
 		}
 	}
 }

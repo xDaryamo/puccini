@@ -208,7 +208,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 	// All properties must be defined in type
 	for key := range map_ {
 		if _, ok := dataType.PropertyDefinitions[key]; !ok {
-			self.Context.MapChild(key, nil).ReportUndefined("property")
+			self.Context.MapChild(key, nil).ReportUndeclared("property")
 			delete(map_, key)
 		}
 	}
@@ -305,7 +305,7 @@ func (self Values) RenderProperties(definitions PropertyDefinitions, kind string
 
 	for key, value := range self {
 		if _, ok := definitions[key]; !ok {
-			value.Context.ReportUndefined(kind)
+			value.Context.ReportUndeclared(kind)
 			delete(self, key)
 		}
 	}
@@ -320,7 +320,7 @@ func (self Values) RenderAttributes(definitions AttributeDefinitions, context *t
 
 	for key, value := range self {
 		if definition, ok := definitions[key]; !ok {
-			value.Context.ReportUndefined("attribute")
+			value.Context.ReportUndeclared("attribute")
 			delete(self, key)
 		} else if definition.DataType != nil {
 			value.RenderAttribute(definition.DataType, definition, true)

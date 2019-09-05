@@ -5,8 +5,9 @@ package normal
 //
 
 type Relationship struct {
-	Requirement *Requirement   `json:"-" yaml:"-"`
-	Name        string         `json:"-" yaml:"-"`
+	Requirement *Requirement `json:"-" yaml:"-"`
+	Name        string       `json:"-" yaml:"-"`
+
 	Description string         `json:"description" yaml:"description"`
 	Types       Types          `json:"types" yaml:"types"`
 	Properties  Constrainables `json:"properties" yaml:"properties"`

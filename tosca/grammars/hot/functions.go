@@ -83,7 +83,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 		// Arguments may be function calls
 		arguments := make(ard.List, len(originalArguments))
 		for index, argument := range originalArguments {
-			argumentContext := context.WithData(argument)
+			argumentContext := context.Clone(argument)
 			ToFunctionCall(argumentContext)
 			arguments[index] = argumentContext.Data
 		}

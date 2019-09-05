@@ -13,6 +13,7 @@ import (
 //
 // (See Artifact for a variation that attaches to NodeTemplate)
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.7
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.7
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.6
 //
@@ -21,12 +22,15 @@ type ArtifactDefinition struct {
 	*Entity `name:"artifact"`
 	Name    string
 
-	ArtifactTypeName *string `read:"type"` // required only if cannot be inherited
-	Description      *string `read:"description" inherit:"description,ArtifactType"`
-	Properties       Values  `read:"properties,Value"`
-	RepositoryName   *string `read:"repository"`
-	File             *string `read:"file"` // required only if cannot be inherited
-	DeployPath       *string `read:"deploy_path"`
+	ArtifactTypeName  *string `read:"type"` // required only if cannot be inherited
+	Description       *string `read:"description" inherit:"description,ArtifactType"`
+	ArtifactVersion   *string `read:"artifact_version"`
+	Properties        Values  `read:"properties,Value"` // ERRATUM: ommited in 1.2
+	RepositoryName    *string `read:"repository"`
+	File              *string `read:"file"` // required only if cannot be inherited
+	DeployPath        *string `read:"deploy_path"`
+	ChecksumAlgorithm *string `read:"checksum_algorithm"`
+	Checksum          *string `read:"checksum"`
 
 	ArtifactType *ArtifactType `lookup:"type,ArtifactTypeName" json:"-" yaml:"-"`
 	Repository   *Repository   `lookup:"repository,RepositoryName" json:"-" yaml:"-"`

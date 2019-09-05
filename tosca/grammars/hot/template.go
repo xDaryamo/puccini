@@ -77,7 +77,7 @@ func (self *Template) NewPseudoParameter(name string, value string) {
 		"immutable": true,
 	})
 	parameter := ReadParameter(context).(*Parameter)
-	parameter.Value = NewValue(context.WithData(value))
+	parameter.Value = NewValue(context.Clone(value))
 	self.Parameters[name] = parameter
 }
 
@@ -95,7 +95,7 @@ func (self *Template) SetInputs(inputs map[string]interface{}) {
 		if parameter, ok := self.Parameters[name]; ok {
 			parameter.Value = ReadValue(childContext).(*Value)
 		} else {
-			childContext.ReportUndefined("parameter")
+			childContext.ReportUndeclared("parameter")
 		}
 	}
 }

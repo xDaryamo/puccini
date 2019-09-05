@@ -79,7 +79,7 @@ func (self *InterfaceImplementation) Render(definition *InterfaceImplementation)
 	}
 }
 
-func (self *InterfaceImplementation) Normalize(o *normal.Operation) {
+func (self *InterfaceImplementation) NormalizeOperation(o *normal.Operation) {
 	if self.Primary != nil {
 		o.Implementation = *self.Primary
 	}
@@ -94,5 +94,23 @@ func (self *InterfaceImplementation) Normalize(o *normal.Operation) {
 
 	if self.OperationHost != nil {
 		o.Host = *self.OperationHost
+	}
+}
+
+func (self *InterfaceImplementation) NormalizeNotification(n *normal.Notification) {
+	if self.Primary != nil {
+		n.Implementation = *self.Primary
+	}
+
+	if self.Dependencies != nil {
+		n.Dependencies = *self.Dependencies
+	}
+
+	if self.Timeout != nil {
+		n.Timeout = *self.Timeout
+	}
+
+	if self.OperationHost != nil {
+		n.Host = *self.OperationHost
 	}
 }

@@ -5,12 +5,13 @@ package normal
 //
 
 type Workflow struct {
-	ServiceTemplate *ServiceTemplate        `json:"-" yaml:"-"`
-	Name            string                  `json:"-" yaml:"-"`
-	Description     string                  `json:"description" yaml:"description"`
-	Preconditions   []*WorkflowPrecondition `json:"preconditions" yaml:"preconditions"`
-	Steps           WorkflowSteps           `json:"steps" yaml:"steps"`
-	Inputs          Constrainables          `json:"inputs" yaml:"inputs"`
+	ServiceTemplate *ServiceTemplate `json:"-" yaml:"-"`
+	Name            string           `json:"-" yaml:"-"`
+
+	Description   string                  `json:"description" yaml:"description"`
+	Preconditions []*WorkflowPrecondition `json:"preconditions" yaml:"preconditions"`
+	Steps         WorkflowSteps           `json:"steps" yaml:"steps"`
+	Inputs        Constrainables          `json:"inputs" yaml:"inputs"`
 }
 
 func (self *ServiceTemplate) NewWorkflow(name string) *Workflow {

@@ -2,7 +2,6 @@ package tosca_v1_3
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -15,15 +14,16 @@ type NotificationDefinition struct {
 	*Entity `name:"operation definition"`
 	Name    string
 
-	Description       *string                  `read:"description"`
-	Implementation    *InterfaceImplementation `read:"implementation,InterfaceImplementation"`
-	OutputDefinitions AttributeMappings        `read:"outputs,AttributeMapping"`
+	Description    *string                  `read:"description"`
+	Implementation *InterfaceImplementation `read:"implementation,InterfaceImplementation"`
+	Outputs        AttributeMappings        `read:"outputs,AttributeMapping"`
 }
 
 func NewNotificationDefinition(context *tosca.Context) *NotificationDefinition {
 	return &NotificationDefinition{
-		Entity: NewEntity(context),
-		Name:   context.Name,
+		Entity:  NewEntity(context),
+		Name:    context.Name,
+		Outputs: make(AttributeMappings),
 	}
 }
 
@@ -53,24 +53,8 @@ func (self *NotificationDefinition) Inherit(parentDefinition *NotificationDefini
 			self.Description = parentDefinition.Description
 		}
 
-		// TODO
-		//self.OutputDefinitions.Inherit(parentDefinition.OutputDefinitions)
-	} else {
-		//self.OutputDefinitions.Inherit(nil)
+		self.Outputs.Inherit(parentDefinition.Outputs)
 	}
-}
-
-func (self *NotificationDefinition) Normalize(o *normal.Operation) {
-	if self.Description != nil {
-		o.Description = *self.Description
-	}
-
-	if self.Implementation != nil {
-		self.Implementation.Normalize(o)
-	}
-
-	// TODO: output definitions
-	//self.OutputDefinitions.Normalize(o.Inputs)
 }
 
 //

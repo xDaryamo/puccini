@@ -139,7 +139,8 @@ func (self NodeTemplates) Normalize(s *normal.ServiceTemplate) {
 	// Requirements must be normalized after node templates
 	// (because they may reference other node templates)
 	for _, nodeTemplate := range self {
-		n := s.NodeTemplates[nodeTemplate.Name]
-		nodeTemplate.Requirements.Normalize(nodeTemplate, s, n)
+		if n, ok := s.NodeTemplates[nodeTemplate.Name]; ok {
+			nodeTemplate.Requirements.Normalize(nodeTemplate, s, n)
+		}
 	}
 }

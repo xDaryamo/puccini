@@ -15,8 +15,8 @@ var Grammar = make(tosca.Grammar)
 var DefaultScriptNamespace = make(tosca.ScriptNamespace)
 
 func init() {
-	Grammar["Artifact"] = tosca_v1_3.ReadArtifact
-	Grammar["ArtifactDefinition"] = tosca_v1_3.ReadArtifactDefinition
+	Grammar["Artifact"] = tosca_v1_2.ReadArtifact                     // 1.2
+	Grammar["ArtifactDefinition"] = tosca_v1_2.ReadArtifactDefinition // 1.2
 	Grammar["ArtifactType"] = tosca_v1_3.ReadArtifactType
 	Grammar["AttributeDefinition"] = tosca_v1_3.ReadAttributeDefinition
 	Grammar["AttributeValue"] = tosca_v1_3.ReadAttributeValue
@@ -30,8 +30,8 @@ func init() {
 	Grammar["DataType"] = tosca_v1_3.ReadDataType
 	Grammar["EntrySchema"] = tosca_v1_3.ReadEntrySchema
 	Grammar["EventFilter"] = tosca_v1_3.ReadEventFilter
-	Grammar["Group"] = tosca_v1_3.ReadGroup
-	Grammar["GroupType"] = tosca_v1_3.ReadGroupType
+	Grammar["Group"] = tosca_v1_2.ReadGroup         // 1.2
+	Grammar["GroupType"] = tosca_v1_2.ReadGroupType // 1.2
 	Grammar["Import"] = tosca_v1_3.ReadImport
 	Grammar["InterfaceAssignment"] = tosca_v1_2.ReadInterfaceAssignment // 1.2
 	Grammar["InterfaceDefinition"] = tosca_v1_2.ReadInterfaceDefinition // 1.2

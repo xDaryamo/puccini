@@ -34,7 +34,7 @@ type Context struct {
 	Name            string
 	Path            ard.Path
 	URL             url.URL
-	Data            interface{}
+	Data            interface{} // ARD
 	Locator         ard.Locator
 	Namespace       Namespace
 	ScriptNamespace ScriptNamespace
@@ -52,6 +52,37 @@ func NewContext(problems *problems.Problems, quirks []string) *Context {
 		Hierarchy:       &Hierarchy{},
 		Problems:        problems,
 		Quirks:          quirks,
+	}
+}
+
+func (self *Context) NewImportContext(url_ url.URL) *Context {
+	return &Context{
+		Name:            self.Name,
+		Path:            self.Path,
+		URL:             url_,
+		Namespace:       make(Namespace),
+		ScriptNamespace: make(ScriptNamespace),
+		Hierarchy:       &Hierarchy{},
+		Problems:        self.Problems,
+		Quirks:          self.Quirks,
+		Grammar:         self.Grammar,
+	}
+}
+
+func (self *Context) Clone(data interface{}) *Context {
+	return &Context{
+		Parent:          self.Parent,
+		Name:            self.Name,
+		Path:            self.Path,
+		URL:             self.URL,
+		Data:            data,
+		Locator:         self.Locator,
+		Namespace:       self.Namespace,
+		ScriptNamespace: self.ScriptNamespace,
+		Hierarchy:       self.Hierarchy,
+		Problems:        self.Problems,
+		Quirks:          self.Quirks,
+		Grammar:         self.Grammar,
 	}
 }
 
@@ -189,38 +220,6 @@ func (self *Context) SequencedListChild(index int, name string, data interface{}
 		Parent:          self,
 		Name:            name,
 		Path:            append(self.Path, ard.NewListPathElement(index)),
-		URL:             self.URL,
-		Data:            data,
-		Locator:         self.Locator,
-		Namespace:       self.Namespace,
-		ScriptNamespace: self.ScriptNamespace,
-		Hierarchy:       self.Hierarchy,
-		Problems:        self.Problems,
-		Quirks:          self.Quirks,
-		Grammar:         self.Grammar,
-	}
-}
-
-func (self *Context) Import(url_ url.URL) *Context {
-	// TODO: Locator?
-	return &Context{
-		Name:            self.Name,
-		Path:            self.Path,
-		URL:             url_,
-		Namespace:       make(Namespace),
-		ScriptNamespace: make(ScriptNamespace),
-		Hierarchy:       &Hierarchy{},
-		Problems:        self.Problems,
-		Quirks:          self.Quirks,
-		Grammar:         self.Grammar,
-	}
-}
-
-func (self *Context) WithData(data interface{}) *Context {
-	return &Context{
-		Parent:          self.Parent,
-		Name:            self.Name,
-		Path:            self.Path,
 		URL:             self.URL,
 		Data:            data,
 		Locator:         self.Locator,

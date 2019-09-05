@@ -9,7 +9,8 @@ import (
 //
 
 type Type struct {
-	Name     string            `json:"-" yaml:"-"`
+	Name string `json:"-" yaml:"-"`
+
 	Metadata map[string]string `json:"metadata" yaml:"metadata"`
 }
 

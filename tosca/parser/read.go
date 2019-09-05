@@ -126,7 +126,7 @@ func (self *Context) goReadImports(container *Unit) {
 				self.AddUnitFor(cached, container, importSpec.NameTransformer)
 			}
 		} else {
-			importToscaContext := container.GetContext().Import(importSpec.URL)
+			importToscaContext := container.GetContext().NewImportContext(importSpec.URL)
 
 			// Read (concurrently)
 			self.WG.Add(1)

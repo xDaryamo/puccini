@@ -59,7 +59,7 @@ func (self *OperationAssignment) Normalize(i *normal.Interface) *normal.Operatio
 	}
 
 	if self.Implementation != nil {
-		self.Implementation.Normalize(o)
+		self.Implementation.NormalizeOperation(o)
 	}
 
 	self.Inputs.Normalize(o.Inputs)
@@ -101,7 +101,7 @@ func (self OperationAssignments) Render(definitions OperationDefinitions, contex
 	for key, assignment := range self {
 		_, ok := definitions[key]
 		if !ok {
-			assignment.Context.ReportUndefined("operation")
+			assignment.Context.ReportUndeclared("operation")
 			delete(self, key)
 		}
 	}

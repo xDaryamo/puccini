@@ -108,7 +108,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 	// All properties must be defined in type
 	for key := range map_ {
 		if _, ok := dataType.PropertyDefinitions[key]; !ok {
-			self.Context.MapChild(key, nil).ReportUndefined("property")
+			self.Context.MapChild(key, nil).ReportUndeclared("property")
 			delete(map_, key)
 		}
 	}
@@ -209,7 +209,7 @@ func (self Values) RenderParameters(definitions ParameterDefinitions, kind strin
 
 	for key, value := range self {
 		if definition, ok := definitions[key]; !ok {
-			value.Context.ReportUndefined(kind)
+			value.Context.ReportUndeclared(kind)
 			delete(self, key)
 		} else if definition.DataType != nil {
 			value.RenderParameter(definition.DataType, definition, true)

@@ -10,4 +10,4 @@ HERE=$(dirname "$(readlink -f "$0")")
 echo 'testing...'
 
 ROOT="$ROOT" \
-go test -count=1 github.com/tliron/puccini/puccini-tosca
+go test -count=1 github.com/tliron/puccini/puccini-tosca "$@"

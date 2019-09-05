@@ -81,7 +81,7 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, s *norm
 	if self.TargetNodeType != nil {
 		r.NodeTypeName = &self.TargetNodeType.Name
 	} else if self.TargetNodeTemplate != nil {
-		r.NodeTemplate = s.NodeTemplates[self.TargetNodeTemplate.Name]
+		r.NodeTemplate, _ = s.NodeTemplates[self.TargetNodeTemplate.Name]
 	}
 
 	if nodeTemplate.RequirementTargetsNodeFilter != nil {
@@ -171,7 +171,7 @@ func (self *RequirementAssignments) Render(definitions RequirementDefinitions, c
 				assignment.Relationship.Render(definition.RelationshipDefinition)
 			}
 		} else {
-			assignment.Context.ReportUndefined("requirement")
+			assignment.Context.ReportUndeclared("requirement")
 			// TODO: move to outside of loop?
 			//*self = append((*self)[:index], (*self)[index+1:]...)
 		}

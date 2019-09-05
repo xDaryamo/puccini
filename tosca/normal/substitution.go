@@ -9,7 +9,8 @@ import (
 //
 
 type Substitution struct {
-	ServiceTemplate     *ServiceTemplate
+	ServiceTemplate *ServiceTemplate
+
 	Type                string
 	TypeMetadata        map[string]string
 	CapabilityMappings  map[*NodeTemplate]*Capability
