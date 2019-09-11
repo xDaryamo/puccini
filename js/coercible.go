@@ -64,7 +64,7 @@ func (self *CloutContext) NewCoercibleMap(map_ ard.Map, site interface{}, source
 
 	for key, data := range map_ {
 		var err error
-		if c[key], err = self.NewCoercible(data, site, source, target); err != nil {
+		if c[ard.KeyString(key)], err = self.NewCoercible(data, site, source, target); err != nil {
 			return nil, err
 		}
 	}

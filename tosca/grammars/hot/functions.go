@@ -54,7 +54,9 @@ func ToFunctionCall(context *tosca.Context) bool {
 	}
 
 	for key, data := range map_ {
-		_, ok := context.ScriptNamespace[key]
+		name := ard.KeyString(key)
+
+		_, ok := context.ScriptNamespace[name]
 		if !ok {
 			// Not a function call, despite having the right data structure
 			return false
@@ -68,7 +70,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 
 		// The "list_join" function has a nested argument structure that we need to flatten
 		// https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#list-join
-		if key == "list_join" {
+		if name == "list_join" {
 			newArguments := ard.List{originalArguments[0]}
 			for _, argument := range originalArguments[1:] {
 				if nestedArguments, ok := argument.(ard.List); ok {
@@ -88,7 +90,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 			arguments[index] = argumentContext.Data
 		}
 
-		context.Data = context.NewFunctionCall(key, arguments)
+		context.Data = context.NewFunctionCall(name, arguments)
 
 		// We have only one key
 		return true
@@ -107,7 +109,7 @@ func ToFunctionCalls(context *tosca.Context) {
 			}
 		} else if map_, ok := context.Data.(ard.Map); ok {
 			for key, value := range map_ {
-				childContext := context.MapChild(key, value)
+				childContext := context.MapChild(ard.KeyString(key), value)
 				ToFunctionCalls(childContext)
 				map_[key] = childContext.Data
 			}

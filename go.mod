@@ -1,6 +1,6 @@
 module github.com/tliron/puccini
 
-go 1.12
+go 1.13
 
 require (
 	github.com/beevik/etree v1.1.0
@@ -14,5 +14,5 @@ require (
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7
 	github.com/segmentio/ksuid v1.0.2
 	github.com/spf13/cobra v0.0.5
-	gopkg.in/yaml.v3 v3.0.0-20190709130402-674ba3eaed22
+	gopkg.in/yaml.v3 v3.0.0-20190905181640-827449938966
 )

@@ -24,7 +24,7 @@ type TriggerDefinition struct {
 	Schedule        *Value                      `read:"schedule,Value"` // tosca.datatypes.TimeInterval
 	TargetFilter    *EventFilter                `read:"target_filter,EventFilter"`
 	Condition       *TriggerDefinitionCondition `read:"condition,TriggerDefinitionCondition"`
-	Period          *ScalarUnitTime             `read:"period,scalar-unit.time"`
+	Period          *ScalarUnit                 `read:"period,scalar-unit.time"`
 	Evaluations     *int                        `read:"evaluations"`
 	Method          *string                     `read:"method"`
 	OperationAction *OperationDefinition

@@ -65,7 +65,7 @@ func (self *Clout) Resolve() error {
 }
 
 func (self *Clout) Normalize() (*Clout, error) {
-	if s, err := format.EncodeYaml(self); err == nil {
+	if s, err := format.EncodeYaml(self, " "); err == nil {
 		return DecodeYaml(strings.NewReader(s))
 	} else {
 		return nil, err

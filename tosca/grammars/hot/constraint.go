@@ -47,7 +47,9 @@ func ReadConstraint(context *tosca.Context) interface{} {
 			return self
 		}
 
-		for operator, value := range map_ {
+		for key, value := range map_ {
+			operator := ard.KeyString(key)
+
 			if operator == "description" {
 				self.Description = context.FieldChild(operator, value).ReadString()
 				continue

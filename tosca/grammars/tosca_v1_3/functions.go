@@ -4,26 +4,28 @@ import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
-	profile "github.com/tliron/puccini/tosca/profiles/simple/v1_2"
+	profile "github.com/tliron/puccini/tosca/profiles/simple/v1_3"
 )
 
 //
-// Built-in functions
+// Built-in functions and constraints
 //
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 4
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 4
 //
+// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+//
 
 var FunctionSourceCode = map[string]string{
-	"concat":               profile.Profile["/tosca/simple/1.2/js/concat.js"],
-	"join":                 profile.Profile["/tosca/simple/1.2/js/join.js"], // introduced in 1.2
-	"token":                profile.Profile["/tosca/simple/1.2/js/token.js"],
-	"get_input":            profile.Profile["/tosca/simple/1.2/js/get_input.js"],
-	"get_property":         profile.Profile["/tosca/simple/1.2/js/get_property.js"],
-	"get_attribute":        profile.Profile["/tosca/simple/1.2/js/get_attribute.js"],
-	"get_operation_output": profile.Profile["/tosca/simple/1.2/js/get_operation_output.js"],
-	"get_nodes_of_type":    profile.Profile["/tosca/simple/1.2/js/get_nodes_of_type.js"],
-	"get_artifact":         profile.Profile["/tosca/simple/1.2/js/get_artifact.js"],
+	"concat":               profile.Profile["/tosca/simple/1.3/js/concat.js"],
+	"join":                 profile.Profile["/tosca/simple/1.3/js/join.js"], // introduced in TOSCA 1.2
+	"token":                profile.Profile["/tosca/simple/1.3/js/token.js"],
+	"get_input":            profile.Profile["/tosca/simple/1.3/js/get_input.js"],
+	"get_property":         profile.Profile["/tosca/simple/1.3/js/get_property.js"],
+	"get_attribute":        profile.Profile["/tosca/simple/1.3/js/get_attribute.js"],
+	"get_operation_output": profile.Profile["/tosca/simple/1.3/js/get_operation_output.js"],
+	"get_nodes_of_type":    profile.Profile["/tosca/simple/1.3/js/get_nodes_of_type.js"],
+	"get_artifact":         profile.Profile["/tosca/simple/1.3/js/get_artifact.js"],
 }
 
 func ToFunctionCall(context *tosca.Context) bool {
@@ -38,7 +40,9 @@ func ToFunctionCall(context *tosca.Context) bool {
 	}
 
 	for key, data := range map_ {
-		_, ok := context.ScriptNamespace[key]
+		name := ard.KeyString(key)
+
+		_, ok := context.ScriptNamespace[name]
 		if !ok {
 			// Not a function call, despite having the right data structure
 			return false
@@ -58,7 +62,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 			arguments[index] = argumentContext.Data
 		}
 
-		context.Data = context.NewFunctionCall(key, arguments)
+		context.Data = context.NewFunctionCall(name, arguments)
 
 		// We have only one key
 		return true

@@ -7,6 +7,7 @@ import (
 //
 // AttributeDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.12
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.11
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.10
 //
@@ -15,11 +16,13 @@ type AttributeDefinition struct {
 	*Entity `name:"attribute definition"`
 	Name    string
 
-	Description  *string      `read:"description" inherit:"description,DataType"`
-	DataTypeName *string      `read:"type"` // required only if cannot be inherited or discovered
-	EntrySchema  *EntrySchema `read:"entry_schema,EntrySchema"`
-	Default      *Value       `read:"default,Value"`
-	Status       *string      `read:"status"`
+	Metadata     Metadata `read:"metadata,Metadata"` // introduced in TOSCA 1.3
+	Description  *string  `read:"description" inherit:"description,DataType"`
+	DataTypeName *string  `read:"type"`              // required only if cannot be inherited or discovered
+	KeySchema    *Schema  `read:"key_schema,Schema"` // introduced in TOSCA 1.3
+	EntrySchema  *Schema  `read:"entry_schema,Schema"`
+	Default      *Value   `read:"default,Value"`
+	Status       *string  `read:"status"`
 
 	DataType *DataType `lookup:"type,DataTypeName" json:"-" yaml:"-"`
 

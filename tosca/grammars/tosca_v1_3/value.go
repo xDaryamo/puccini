@@ -168,7 +168,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 					case "map":
 						map_ := self.Context.Data.(ard.Map)
 						for key, data := range map_ {
-							value := ReadValue(self.Context.MapChild(key, data)).(*Value)
+							value := ReadValue(self.Context.MapChild(ard.KeyString(key), data)).(*Value)
 							value.RenderAttribute(entryDataType, nil, false)
 							constraints.Render(&value.ConstraintClauses, entryDataType)
 							if description != nil {
@@ -207,8 +207,9 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 
 	// All properties must be defined in type
 	for key := range map_ {
-		if _, ok := dataType.PropertyDefinitions[key]; !ok {
-			self.Context.MapChild(key, nil).ReportUndeclared("property")
+		name := ard.KeyString(key)
+		if _, ok := dataType.PropertyDefinitions[name]; !ok {
+			self.Context.MapChild(name, nil).ReportUndeclared("property")
 			delete(map_, key)
 		}
 	}
@@ -252,9 +253,9 @@ func (self *Value) Normalize() normal.Constrainable {
 		m := normal.NewConstrainableMap()
 		for key, value := range map_ {
 			if v, ok := value.(*Value); ok {
-				m.Map[key] = v.Normalize()
+				m.Map[ard.KeyString(key)] = v.Normalize()
 			} else {
-				m.Map[key] = normal.NewValue(value)
+				m.Map[ard.KeyString(key)] = normal.NewValue(value)
 			}
 		}
 		constrainable = m

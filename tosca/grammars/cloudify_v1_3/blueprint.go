@@ -3,6 +3,7 @@ package cloudify_v1_3
 import (
 	"fmt"
 
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
@@ -52,9 +53,9 @@ func (self *Blueprint) Normalize() *normal.ServiceTemplate {
 	s := normal.NewServiceTemplate()
 
 	if self.Metadata != nil {
-		for k, v := range self.Metadata {
+		for key, value := range self.Metadata {
 			// TODO: does Cloudify DSL really allow for any kind of value?
-			s.Metadata[k] = fmt.Sprintf("%s", v)
+			s.Metadata[ard.KeyString(key)] = fmt.Sprintf("%s", value)
 		}
 	}
 

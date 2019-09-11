@@ -39,7 +39,7 @@ func (self *Context) ReadFields(entityPtr interface{}) []string {
 			} else {
 				// Empty tag means delete
 				if _, ok := tags[fieldName]; !ok {
-					panic(fmt.Sprintf("unknown field: \"%s\"", fieldName))
+					panic(fmt.Sprintf("unknown read field: \"%s\"", fieldName))
 				}
 				delete(tags, fieldName)
 			}
@@ -76,7 +76,7 @@ func (self *Context) ReadFields(entityPtr interface{}) []string {
 					}
 				}
 				if !tagged {
-					readField.Key = key
+					readField.Key = ard.KeyString(key)
 					readField.Read()
 				}
 			}
@@ -264,7 +264,7 @@ func (self *ReadField) Read() {
 			}
 		} else if reflection.IsPtrToMapOfStringToString(fieldEntityPtr) {
 			// Field is *map[string]string
-			item := self.Context.FieldChild(self.Key, childData).ReadStringMap()
+			item := self.Context.FieldChild(self.Key, childData).ReadStringStringMap()
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
@@ -320,16 +320,27 @@ func (self *Context) ReadStringListFixed(length int) *[]string {
 	return strings
 }
 
-func (self *Context) ReadStringMap() *map[string]string {
+func (self *Context) ReadStringMap() *map[string]interface{} {
+	if self.ValidateType("map") {
+		strings := make(map[string]interface{})
+		for key, data := range self.Data.(ard.Map) {
+			strings[ard.KeyString(key)] = data
+		}
+		return &strings
+	}
+	return nil
+}
+
+func (self *Context) ReadStringStringMap() *map[string]string {
 	if self.ValidateType("map") {
 		strings := make(map[string]string)
 		for key, data := range self.Data.(ard.Map) {
-			string, ok := data.(string)
-			if !ok {
-				self.MapChild(key, data).ReportValueWrongType("string")
+			if string, ok := data.(string); ok {
+				strings[ard.KeyString(key)] = string
+			} else {
+				self.MapChild(ard.KeyString(key), data).ReportValueWrongType("string")
 				continue
 			}
-			strings[key] = string
 		}
 		return &strings
 	}
@@ -379,7 +390,7 @@ type Processor func(interface{})
 func (self *Context) ReadMapItems(read Reader, process Processor) bool {
 	if self.ValidateType("map") {
 		for itemName, data := range self.Data.(ard.Map) {
-			process(read(self.MapChild(itemName, data)))
+			process(read(self.MapChild(ard.KeyString(itemName), data)))
 		}
 		return true
 	}
@@ -409,7 +420,7 @@ func (self *Context) ReadSequencedListItems(read Reader, process Processor) bool
 				return false
 			}
 			for itemName, data := range item {
-				process(read(self.SequencedListChild(index, itemName, data)))
+				process(read(self.SequencedListChild(index, ard.KeyString(itemName), data)))
 			}
 		}
 		return true

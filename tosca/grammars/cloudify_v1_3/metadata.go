@@ -13,26 +13,30 @@ import (
 // Note: not in spec
 //
 
-type Metadata ard.Map
+type Metadata map[string]interface{}
 
 // tosca.Reader signature
 func ReadMetadata(context *tosca.Context) interface{} {
 	var self map[string]interface{}
 
 	if context.ValidateType("map") {
-		self = context.Data.(ard.Map)
+		metadata := context.ReadStringMap()
+		if metadata != nil {
+			self = *metadata
+		}
 	}
 
 	if self != nil {
-		for k, v := range self {
-			if strings.HasPrefix(k, "puccini-js.import.") {
-				name := k[18:]
-				context.ImportScript(name, v.(string))
-				delete(self, k)
-			} else if strings.HasPrefix(k, "puccini-js.source.") {
-				name := k[18:]
-				context.SourceScript(name, v.(string))
-				delete(self, k)
+		for key, value := range self {
+			name := ard.KeyString(key)
+			if strings.HasPrefix(name, "puccini-js.import.") {
+				name := name[18:]
+				context.ImportScript(name, value.(string))
+				delete(self, key)
+			} else if strings.HasPrefix(key, "puccini-js.source.") {
+				name := name[18:]
+				context.SourceScript(name, value.(string))
+				delete(self, key)
 			}
 		}
 	}

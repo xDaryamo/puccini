@@ -19,7 +19,7 @@ type InterfaceDefinition struct {
 	InterfaceTypeName       *string                 `read:"type"` // required only if cannot be inherited
 	InputDefinitions        PropertyDefinitions     `read:"inputs,PropertyDefinition" inherit:"inputs,InterfaceType"`
 	OperationDefinitions    OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,InterfaceType"`
-	NotificationDefinitions NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,InterfaceType"`
+	NotificationDefinitions NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,InterfaceType"` // introduced in TOSCA 1.3
 
 	InterfaceType *InterfaceType `lookup:"type,InterfaceTypeName" json:"-" yaml:"-"`
 

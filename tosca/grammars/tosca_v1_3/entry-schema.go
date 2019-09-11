@@ -5,10 +5,10 @@ import (
 )
 
 //
-// EntrySchema
+// Schema
 //
 
-type EntrySchema struct {
+type Schema struct {
 	*Entity `name:"entry schema"`
 
 	DataTypeName      *string           `read:"type" require:"type"`
@@ -18,13 +18,13 @@ type EntrySchema struct {
 	DataType *DataType `lookup:"type,DataTypeName" json:"-" yaml:"-"`
 }
 
-func NewEntrySchema(context *tosca.Context) *EntrySchema {
-	return &EntrySchema{Entity: NewEntity(context)}
+func NewSchema(context *tosca.Context) *Schema {
+	return &Schema{Entity: NewEntity(context)}
 }
 
 // tosca.Reader signature
-func ReadEntrySchema(context *tosca.Context) interface{} {
-	self := NewEntrySchema(context)
+func ReadSchema(context *tosca.Context) interface{} {
+	self := NewSchema(context)
 
 	if context.Is("map") {
 		// Long notation

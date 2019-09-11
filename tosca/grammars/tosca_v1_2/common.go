@@ -17,7 +17,7 @@ func init() {
 	Grammar["Artifact"] = ReadArtifact                     // override
 	Grammar["ArtifactDefinition"] = ReadArtifactDefinition // override
 	Grammar["ArtifactType"] = tosca_v1_3.ReadArtifactType
-	Grammar["AttributeDefinition"] = tosca_v1_3.ReadAttributeDefinition
+	Grammar["AttributeDefinition"] = ReadAttributeDefinition // override
 	Grammar["AttributeValue"] = tosca_v1_3.ReadAttributeValue
 	Grammar["CapabilityAssignment"] = tosca_v1_3.ReadCapabilityAssignment
 	Grammar["CapabilityDefinition"] = tosca_v1_3.ReadCapabilityDefinition
@@ -27,14 +27,13 @@ func init() {
 	Grammar["ConditionClause"] = tosca_v1_3.ReadConditionClause
 	Grammar["ConstraintClause"] = tosca_v1_3.ReadConstraintClause
 	Grammar["DataType"] = tosca_v1_3.ReadDataType
-	Grammar["EntrySchema"] = tosca_v1_3.ReadEntrySchema
 	Grammar["EventFilter"] = tosca_v1_3.ReadEventFilter
 	Grammar["Group"] = ReadGroup         // override
 	Grammar["GroupType"] = ReadGroupType // override
 	Grammar["Import"] = tosca_v1_3.ReadImport
 	Grammar["InterfaceAssignment"] = ReadInterfaceAssignment      // override
 	Grammar["InterfaceDefinition"] = ReadInterfaceDefinition      // override
-	Grammar["InterfaceMapping"] = tosca_v1_3.ReadInterfaceMapping // introduced in 1.2
+	Grammar["InterfaceMapping"] = tosca_v1_3.ReadInterfaceMapping // introduced in TOSCA 1.2
 	Grammar["InterfaceType"] = ReadInterfaceType                  // override
 	Grammar["Metadata"] = tosca_v1_3.ReadMetadata
 	Grammar["NodeFilter"] = tosca_v1_3.ReadNodeFilter
@@ -47,9 +46,9 @@ func init() {
 	Grammar["ParameterDefinition"] = tosca_v1_3.ReadParameterDefinition
 	Grammar["Policy"] = tosca_v1_3.ReadPolicy
 	Grammar["PolicyType"] = tosca_v1_3.ReadPolicyType
-	Grammar["PropertyDefinition"] = tosca_v1_3.ReadPropertyDefinition
+	Grammar["PropertyDefinition"] = ReadPropertyDefinition // override
 	Grammar["PropertyFilter"] = tosca_v1_3.ReadPropertyFilter
-	Grammar["PropertyMapping"] = tosca_v1_3.ReadPropertyMapping // introduced in 1.2
+	Grammar["PropertyMapping"] = tosca_v1_3.ReadPropertyMapping // introduced in TOSCA 1.2
 	Grammar["range"] = tosca_v1_3.ReadRange
 	Grammar["RangeEntity"] = tosca_v1_3.ReadRangeEntity
 	Grammar["RelationshipAssignment"] = tosca_v1_3.ReadRelationshipAssignment
@@ -60,9 +59,10 @@ func init() {
 	Grammar["RequirementAssignment"] = tosca_v1_3.ReadRequirementAssignment
 	Grammar["RequirementDefinition"] = tosca_v1_3.ReadRequirementDefinition
 	Grammar["RequirementMapping"] = tosca_v1_3.ReadRequirementMapping
+	Grammar["scalar-unit.frequency"] = tosca_v1_3.ReadScalarUnitFrequency
 	Grammar["scalar-unit.size"] = tosca_v1_3.ReadScalarUnitSize
 	Grammar["scalar-unit.time"] = tosca_v1_3.ReadScalarUnitTime
-	Grammar["scalar-unit.frequency"] = tosca_v1_3.ReadScalarUnitFrequency
+	Grammar["Schema"] = tosca_v1_3.ReadSchema
 	Grammar["ServiceTemplate"] = tosca_v1_3.ReadServiceTemplate
 	Grammar["SubstitutionMappings"] = tosca_v1_3.ReadSubstitutionMappings
 	Grammar["timestamp"] = tosca_v1_3.ReadTimestamp
@@ -89,6 +89,11 @@ func init() {
 	}
 
 	for name, sourceCode := range tosca_v1_3.ConstraintClauseSourceCode {
+		// Unsupported constraints
+		if name == "schema" {
+			continue
+		}
+
 		nativeArgumentIndexes, _ := tosca_v1_3.ConstraintClauseNativeArgumentIndexes[name]
 		DefaultScriptNamespace[name] = &tosca.Script{
 			SourceCode:            js.Cleanup(sourceCode),

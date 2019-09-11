@@ -7,6 +7,7 @@ import (
 //
 // PropertyDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.10
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.9
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.8
 //

@@ -153,15 +153,12 @@ func (self *Context) FieldChild(name string, data interface{}) *Context {
 }
 
 func (self *Context) GetFieldChild(name string) (*Context, bool) {
-	if !self.ValidateType("map") {
-		return nil, false
+	if self.ValidateType("map") {
+		if data, ok := self.Data.(ard.Map)[name]; ok {
+			return self.FieldChild(name, data), true
+		}
 	}
-
-	if data, ok := self.Data.(ard.Map)[name]; ok {
-		return self.FieldChild(name, data), true
-	} else {
-		return nil, false
-	}
+	return nil, false
 }
 
 func (self *Context) GetRequiredFieldChild(name string) (*Context, bool) {
@@ -176,7 +173,7 @@ func (self *Context) GetRequiredFieldChild(name string) (*Context, bool) {
 func (self *Context) FieldChildren() []*Context {
 	var children []*Context
 	for name, data := range self.Data.(ard.Map) {
-		children = append(children, self.FieldChild(name, data))
+		children = append(children, self.FieldChild(ard.KeyString(name), data))
 	}
 	return children
 }

@@ -49,7 +49,7 @@ func ListValue(value interface{}, path []string) {
 		}
 	case ard.Map:
 		for key, vv := range v {
-			ListValue(vv, append(path, key))
+			ListValue(vv, append(path, ard.KeyString(key)))
 		}
 	}
 }

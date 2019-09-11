@@ -24,13 +24,13 @@ type ArtifactDefinition struct {
 
 	ArtifactTypeName  *string `read:"type"` // required only if cannot be inherited
 	Description       *string `read:"description" inherit:"description,ArtifactType"`
-	ArtifactVersion   *string `read:"artifact_version"`
-	Properties        Values  `read:"properties,Value"` // ERRATUM: ommited in 1.2
+	ArtifactVersion   *string `read:"artifact_version"` // introduced in TOSCA 1.3
+	Properties        Values  `read:"properties,Value"` // ERRATUM: ommited in TOSCA 1.2
 	RepositoryName    *string `read:"repository"`
 	File              *string `read:"file"` // required only if cannot be inherited
 	DeployPath        *string `read:"deploy_path"`
-	ChecksumAlgorithm *string `read:"checksum_algorithm"`
-	Checksum          *string `read:"checksum"`
+	ChecksumAlgorithm *string `read:"checksum_algorithm"` // introduced in TOSCA 1.3
+	Checksum          *string `read:"checksum"`           // introduced in TOSCA 1.3
 
 	ArtifactType *ArtifactType `lookup:"type,ArtifactTypeName" json:"-" yaml:"-"`
 	Repository   *Repository   `lookup:"repository,RepositoryName" json:"-" yaml:"-"`

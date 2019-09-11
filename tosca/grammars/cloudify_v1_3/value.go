@@ -107,8 +107,9 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 
 	// All properties must be defined in type
 	for key := range map_ {
-		if _, ok := dataType.PropertyDefinitions[key]; !ok {
-			self.Context.MapChild(key, nil).ReportUndeclared("property")
+		name := ard.KeyString(key)
+		if _, ok := dataType.PropertyDefinitions[name]; !ok {
+			self.Context.MapChild(ard.KeyString(name), nil).ReportUndeclared("property")
 			delete(map_, key)
 		}
 	}
@@ -147,7 +148,8 @@ func (self *Value) Normalize() normal.Constrainable {
 	} else if map_, ok := self.Context.Data.(ard.Map); ok {
 		m := normal.NewConstrainableMap()
 		for key, value := range map_ {
-			m.Map[key] = NewValue(self.Context.MapChild(key, value)).Normalize()
+			name := ard.KeyString(key)
+			m.Map[name] = NewValue(self.Context.MapChild(name, value)).Normalize()
 		}
 		constrainable = m
 	} else if functionCall, ok := self.Context.Data.(*tosca.FunctionCall); ok {

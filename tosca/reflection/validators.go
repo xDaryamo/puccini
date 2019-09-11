@@ -40,7 +40,7 @@ func IsString(value interface{}) bool {
 	return ok
 }
 
-// ard.Map = map[string]interface{}
+// ard.Map = map[interface{}]interface{}
 func IsMap(value interface{}) bool {
 	_, ok := value.(ard.Map)
 	return ok

@@ -8,6 +8,7 @@ node_types:
   DataNode:
     derived_from: Root
     properties:
+
       # Primitive types
       string:
         type: string
@@ -26,6 +27,7 @@ node_types:
         entry_schema: integer
       string_map:
         type: map
+        key_schema: string
         entry_schema: string
 
       # Complex types are defined in "data_types"
@@ -37,6 +39,12 @@ node_types:
         type: list
         entry_schema: Complex
 
+      # The "key_schema" for maps can be a complex type
+      complex_map_keys:
+        type: map
+        key_schema: Complex
+        entry_schema: string
+
       # The following are "special" types
       # Puccini will insert an object that has a rich API, accessible in JavaScript
       scalar_unit_size:
@@ -45,6 +53,8 @@ node_types:
         type: scalar-unit.time
       scalar_unit_frequency:
         type: scalar-unit.frequency
+      scalar_unit_bitrate:
+        type: scalar-unit.bitrate
       timestamp:
         type: timestamp
       version:
@@ -130,38 +140,58 @@ topology_template:
     data:
       type: DataNode
       properties:
+
         string: Hello, Puccini
         integer: 123
         float: 12.3
         boolean: true
+
         integer_list: [ 1, 2, 3 ]
+
         string_map:
           greeting: Hello
           recipient: Puccini
+
         complex:
           string: Hello, Puccini
           integer: 123
           nested:
             nested_float: 12.3
+
         complex_list:
         - integer: 123
           nested:
             nested_float: 45.6
-        - integer: 456
+        - integer: 789
           nested:
             nested_float: 1.0
 
-        # Size is normalized to number of bytes (unsigned integer)
-        # (GiB, MiB, etc. are also supported for multiples of 1024)
-        scalar_unit_size: 1.23 gb 
+        complex_map_keys: {}
+        # Note that there are two notations for complex keys in YAML
+        # You can use a single row:
+        #{integer: 123, float: 4.56}: value1
+        # Or use the "?", ":" notation to specify key and value separately:
+        #? integer: 123
+        #  float: 4.56
+        #: value2
 
-        # Normalized to seconds (float)
-        # For all scalars the case of the unit doesn't matter (gB = Gb)
+        # Size is normalized to number of bytes (unsigned integer)
+        # GiB, MiB, etc. are also supported for multiples of 1024
+        # For most scalars the case of the unit doesn't matter ("gB" = "Gb")
+        scalar_unit_size: 1.23 gb
+
+        # Time is normalized to seconds (float)
         # Also, you don't need a space between the scalar and the unit
         scalar_unit_time: 1.23ms
 
-        # Normalized to Hz (float)
+        # Frequency is normalized to Hz (float)
         scalar_unit_frequency: 123e3 kHz
+
+        # Bitrate is normalized to bits-per-second (float)
+        # This is the only scalar in which the case *does* matter:
+        # Use "b" for bits and "B" for bytes
+        # Gibps, Mibps, etc. are also supported for multiples of 1024
+        scalar_unit_bitrate: 1.23 KiBps
 
         # Timestamp follows YAML 1.1's format, which is a subset of ISO8601:
         # http://yaml.org/type/timestamp.html 
@@ -172,7 +202,7 @@ topology_template:
         # (You need *at least* major.minor)
         # With "--quirk=data_types.string.permissive" enabled Puccini will also accept
         # literal integers such as "5" and literal floats such as "5.2"
-        # Also note that for simplicity comparison constraints will treat the value as a string, so
+        # Also note that currently comparison constraints will treat the value as a string, so
         # "equals" is fine, but "less_than" etc. will not work as expected
         # (This might be improved in the future) 
         version: 1.2.3.beta-4
@@ -180,9 +210,8 @@ topology_template:
         # Range is actually limited in use:
         # * Unsigned integers only        
         # * Upper must be >= than lower
-        # (The TOSCA spec actually says > than lower, but we think that must be a mistake or oversight
-        # because it contradicts other uses of range in the spec)
-        # You can use "UNBOUNDED" string for the upper bound, which will be converted to the maximum uint value
+        # You can also use "UNBOUNDED" string for the upper bound, which will be converted to
+        # the maximum uint value
         range: [ 1, UNBOUNDED ]
 
         # Constraints: min length = 2 and max length = 5

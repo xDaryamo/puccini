@@ -36,7 +36,9 @@ func ReadCondition(context *tosca.Context) interface{} {
 			return self
 		}
 
-		for operator, value := range map_ {
+		for key, value := range map_ {
+			operator := ard.KeyString(key)
+
 			script, ok := context.ScriptNamespace[operator]
 			if !ok {
 				context.Clone(operator).ReportValueMalformed("condition", "unsupported operator")

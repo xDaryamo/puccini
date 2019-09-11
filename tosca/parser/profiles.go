@@ -10,6 +10,7 @@ import (
 	simpleForNFV_v1_0 "github.com/tliron/puccini/tosca/profiles/simple-for-nfv/v1_0"
 	simple_v1_1 "github.com/tliron/puccini/tosca/profiles/simple/v1_1"
 	simple_v1_2 "github.com/tliron/puccini/tosca/profiles/simple/v1_2"
+	simple_v1_3 "github.com/tliron/puccini/tosca/profiles/simple/v1_3"
 
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/url"
@@ -17,10 +18,10 @@ import (
 
 var InternalProfilePaths = map[string]map[string]string{
 	"tosca_definitions_version": {
-		"tosca_simple_yaml_1_3":            simple_v1_2.ProfileInternalPath, // TODO
-		"tosca_simple_yaml_1_2":            simple_v1_2.ProfileInternalPath,
-		"tosca_simple_yaml_1_1":            simple_v1_1.ProfileInternalPath,
 		"tosca_simple_yaml_1_0":            simple_v1_1.ProfileInternalPath, // TODO: properly support 1.0
+		"tosca_simple_yaml_1_1":            simple_v1_1.ProfileInternalPath,
+		"tosca_simple_yaml_1_2":            simple_v1_2.ProfileInternalPath,
+		"tosca_simple_yaml_1_3":            simple_v1_3.ProfileInternalPath, // TODO
 		"tosca_simple_profile_for_nfv_1_0": simpleForNFV_v1_0.ProfileInternalPath,
 		"cloudify_dsl_1_3":                 cloudify_v4_5.ProfileInternalPath,
 	},
@@ -28,8 +29,9 @@ var InternalProfilePaths = map[string]map[string]string{
 
 func init() {
 	initProfile(common.Profile)
-	initProfile(simple_v1_2.Profile)
 	initProfile(simple_v1_1.Profile)
+	initProfile(simple_v1_2.Profile)
+	initProfile(simple_v1_3.Profile)
 	initProfile(simpleForNFV_v1_0.Profile)
 	initProfile(kubernetes_v1_0.Profile)
 	initProfile(openstack_v1_0.Profile)

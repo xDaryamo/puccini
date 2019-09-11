@@ -206,7 +206,7 @@ func ParseInputs() {
 		common.FailOnError(err)
 		if map_, ok := data.(ard.Map); ok {
 			for key, value := range map_ {
-				inputValues[key] = value
+				inputValues[ard.KeyString(key)] = value
 			}
 		} else {
 			common.Failf("malformed inputs in %s", inputsUrl)

@@ -24,14 +24,13 @@ var VersionRE = regexp.MustCompile(
 
 type Version struct {
 	CanonicalString string `json:"$string" yaml:"$string"`
+	OriginalString  string `json:"$originalString" yaml:"$originalString"`
 
 	Major     uint32 `json:"major" yaml:"major"`
 	Minor     uint32 `json:"minor" yaml:"minor"`
 	Fix       uint32 `json:"fix" yaml:"fix"`
 	Qualifier string `json:"qualifier" yaml:"qualifier"`
 	Build     uint32 `json:"build" yaml:"build"`
-
-	OriginalString string `json:"originalString" yaml:"originalString"`
 }
 
 // tosca.Reader signature
@@ -46,6 +45,9 @@ func ReadVersion(context *tosca.Context) interface{} {
 			v := *context.ReadFloat()
 			self.OriginalString = fmt.Sprintf("%g", v)
 			self.CanonicalString = self.OriginalString
+			if strings.Index(self.CanonicalString, "e") == -1 {
+				context.ReportValueMalformed("version", "too many floating point digits")
+			}
 			if strings.Index(self.CanonicalString, ".") == -1 {
 				// Assume minor version is 0
 				self.CanonicalString += ".0"
@@ -91,7 +93,7 @@ func ReadVersion(context *tosca.Context) interface{} {
 		}
 	}
 
-	return self
+	return &self
 }
 
 // fmt.Stringify interface

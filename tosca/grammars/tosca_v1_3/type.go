@@ -17,7 +17,7 @@ type Type struct {
 
 	ParentName  *string  `read:"derived_from"`
 	Version     *Version `read:"version,version"`
-	Metadata    Metadata `read:"metadata,Metadata"`
+	Metadata    Metadata `read:"metadata,!Metadata"`
 	Description *string  `read:"description" inherit:"description,Parent"`
 }
 
@@ -32,8 +32,8 @@ func NewType(context *tosca.Context) *Type {
 func (self *Type) GetMetadata() (map[string]string, bool) {
 	metadata := make(map[string]string)
 	if self.Metadata != nil {
-		for k, v := range self.Metadata {
-			metadata[k] = v
+		for key, value := range self.Metadata {
+			metadata[key] = value
 		}
 	}
 	return metadata, true

@@ -28,6 +28,7 @@ var TimestampLongRE = regexp.MustCompile(
 type Timestamp struct {
 	CanonicalNumber int64  `json:"$number" yaml:"$number"`
 	CanonicalString string `json:"$string" yaml:"$string"`
+	OriginalString  string `json:"$originalString" yaml:"$originalString"`
 
 	Year     uint32  `json:"year" yaml:"year"`
 	Month    uint32  `json:"month" yaml:"month"`
@@ -39,8 +40,6 @@ type Timestamp struct {
 	TZSign   string  `json:"tzSign" yaml:"tzSign"`
 	TZHour   uint32  `json:"tzHour" yaml:"tzHour"`
 	TZMinute uint32  `json:"tzMinute" yaml:"tzMinute"`
-
-	OriginalString string `json:"originalString" yaml:"originalString"`
 }
 
 // tosca.Reader signature
@@ -133,10 +132,10 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 	fraction := fmt.Sprintf("%g", self.Fraction)[1:]
 	self.CanonicalString = fmt.Sprintf("%04d-%02d-%02dT%02d:%02d:%02d%s%s", self.Year, self.Month, self.Day, self.Hour, self.Minute, self.Second, fraction, tz)
 
-	// Nanoseconds since Jan 1 1970 UTC
+	// Canonical number is nanoseconds since Jan 1 1970 UTC
 	self.CanonicalNumber = self.Time().UnixNano()
 
-	return self
+	return &self
 }
 
 // fmt.Stringify interface
@@ -176,6 +175,8 @@ func (self *Timestamp) Time() time.Time {
 		self.Location(),
 	)
 }
+
+// Utils
 
 func parseTimestampUint(value string) uint32 {
 	if u, err := strconv.ParseUint(value, 10, 32); err == nil {

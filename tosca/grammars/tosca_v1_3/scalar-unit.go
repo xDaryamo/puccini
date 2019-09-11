@@ -10,21 +10,137 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-// Regexp
+//
+// ScalarUnit
+//
+
+type ScalarUnit struct {
+	CanonicalString string      `json:"$string" yaml:"$string"`
+	CanonicalNumber interface{} `json:"$number" yaml:"$number"` // float64 or uint64
+	OriginalString  string      `json:"$originalString" yaml:"$originalString"`
+
+	Scalar float64 `json:"scalar" yaml:"scalar"`
+	Unit   string  `json:"unit" yaml:"unit"`
+
+	integer               bool // if true, CanonicalNumber is uint64
+	canonicalUnitSingular string
+	canonicalUnitPlural   string
+}
+
+func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, canonicalUnitSingular string, canonicalUnitPlural string, re *regexp.Regexp, sizes ScalarUnitSizes, integer bool, caseSensitive bool) *ScalarUnit {
+	self := ScalarUnit{
+		integer:               integer,
+		canonicalUnitSingular: canonicalUnitSingular,
+		canonicalUnitPlural:   canonicalUnitPlural,
+	}
+
+	if !context.ValidateType("string") {
+		return &self
+	}
+
+	// Original
+	self.OriginalString = *context.ReadString()
+
+	// Regular expression
+	matches := re.FindStringSubmatch(self.OriginalString)
+	if len(matches) != 3 {
+		context.ReportValueMalformed(name, "")
+		return &self
+	}
+
+	// Scalar
+	var err error
+	if self.Scalar, err = strconv.ParseFloat(matches[1], 64); err != nil {
+		context.ReportValueMalformed(name, fmt.Sprintf("%s", err))
+		return &self
+	}
+
+	// Unit
+	var size float64
+	self.Unit, size = sizes.Get(matches[2], caseSensitive)
+
+	// Canonical
+	if integer {
+		self.CanonicalNumber = uint64(self.Scalar * size)
+		self.CanonicalString = fmt.Sprintf("%d %s", self.CanonicalNumber, canonicalUnit)
+	} else {
+		self.CanonicalNumber = self.Scalar * size
+		self.CanonicalString = fmt.Sprintf("%g %s", self.CanonicalNumber, canonicalUnit)
+	}
+
+	return &self
+}
+
+// fmt.Stringify interface
+func (self *ScalarUnit) String() string {
+	var singular bool
+
+	if self.canonicalUnitSingular == self.canonicalUnitPlural {
+		singular = false
+	} else {
+		if self.integer {
+			singular = self.CanonicalNumber.(uint64) == 1
+		} else {
+			singular = self.CanonicalNumber.(float64) == 1
+		}
+	}
+
+	if singular {
+		return fmt.Sprintf("1 %s", self.canonicalUnitSingular)
+	} else {
+		if self.integer {
+			return fmt.Sprintf("%d %s", self.CanonicalNumber.(uint64), self.canonicalUnitPlural)
+		} else {
+			return fmt.Sprintf("%g %s", self.CanonicalNumber.(float64), self.canonicalUnitPlural)
+		}
+	}
+}
+
+func (self *ScalarUnit) Compare(data interface{}) (int, error) {
+	if scalarUnit, ok := data.(*ScalarUnit); ok {
+		if self.integer {
+			return CompareUint64(self.CanonicalNumber.(uint64), scalarUnit.CanonicalNumber.(uint64)), nil
+		} else {
+			return CompareFloat64(self.CanonicalNumber.(float64), scalarUnit.CanonicalNumber.(float64)), nil
+		}
+	} else {
+		return 0, errors.New("incompatible comparison")
+	}
+}
+
+//
+// ScalarUnitSizes
+//
+
+type ScalarUnitSizes map[string]float64
+
+func (self ScalarUnitSizes) Get(unit string, caseSensitive bool) (string, float64) {
+	if caseSensitive {
+		if size, ok := self[unit]; ok {
+			return unit, size
+		}
+	} else {
+		for u, size := range self {
+			if strings.EqualFold(u, unit) {
+				return u, size
+			}
+		}
+	}
+
+	panic("as long as the regexp does its job we should never get here")
+}
+
+//
+// ScalarUnitSize
+//
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.3.6.4
+// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.3.6.4
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.2.6.4
+//
 
 var ScalarUnitSizeRE = regexp.MustCompile(
 	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*(?i)` +
 		`(?P<unit>B|kB|KiB|MB|MiB|GB|GiB|TB|TiB)$`)
-
-var ScalarUnitTimeRE = regexp.MustCompile(
-	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*(?i)` +
-		`(?P<unit>ns|us|ms|s|m|h|d)$`)
-
-var ScalarUnitFrequencyRE = regexp.MustCompile(
-	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*(?i)` +
-		`(?P<unit>Hz|kHz|MHz|GHz)$`)
-
-// Units
 
 var ScalarUnitSizeSizes = ScalarUnitSizes{
 	"B":   1,
@@ -38,6 +154,23 @@ var ScalarUnitSizeSizes = ScalarUnitSizes{
 	"TiB": 1099511627776,
 }
 
+// tosca.Reader signature
+func ReadScalarUnitSize(context *tosca.Context) interface{} {
+	return ReadScalarUnit(context, "scalar-unit.size", "B", "byte", "bytes", ScalarUnitSizeRE, ScalarUnitSizeSizes, true, false)
+}
+
+//
+// ScalarUnitTime
+//
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.3.6.5
+// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.3.6.5
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.2.6.5
+//
+
+var ScalarUnitTimeRE = regexp.MustCompile(
+	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*(?i)` +
+		`(?P<unit>ns|us|ms|s|m|h|d)$`)
+
 var ScalarUnitTimeSizes = ScalarUnitSizes{
 	"ns": 0.000000001,
 	"us": 0.000001,
@@ -48,6 +181,23 @@ var ScalarUnitTimeSizes = ScalarUnitSizes{
 	"d":  86400,
 }
 
+// tosca.Reader signature
+func ReadScalarUnitTime(context *tosca.Context) interface{} {
+	return ReadScalarUnit(context, "scalar-unit.time", "s", "second", "seconds", ScalarUnitTimeRE, ScalarUnitTimeSizes, false, false)
+}
+
+//
+// ScalarUnitFrequency
+//
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.3.6.6
+// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.3.6.6
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.2.6.6
+//
+
+var ScalarUnitFrequencyRE = regexp.MustCompile(
+	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*(?i)` +
+		`(?P<unit>Hz|kHz|MHz|GHz)$`)
+
 var ScalarUnitFrequencySizes = ScalarUnitSizes{
 	"Hz":  1,
 	"kHz": 1000,
@@ -55,191 +205,44 @@ var ScalarUnitFrequencySizes = ScalarUnitSizes{
 	"GHz": 1000000000,
 }
 
-//
-// ScalarUnitSize
-//
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.3.6.4
-// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.2.6.4
-//
-
-type ScalarUnitSize struct {
-	CanonicalNumber uint64 `json:"$number" yaml:"$number"`
-	CanonicalString string `json:"$string" yaml:"$string"`
-
-	Scalar float64 `json:"scalar" yaml:"scalar"`
-	Unit   string  `json:"unit" yaml:"unit"`
-
-	OriginalString string `json:"originalString" yaml:"originalString"`
-}
-
-// tosca.Reader signature
-func ReadScalarUnitSize(context *tosca.Context) interface{} {
-	var self ScalarUnitSize
-
-	originalString, scalar, unit, ok := parseScalarUnit(context, ScalarUnitSizeRE, "scalar-unit.size")
-	if !ok {
-		return self
-	}
-
-	normalUnit, size := ScalarUnitSizeSizes.Get(unit, context)
-
-	self.OriginalString = originalString
-	self.Scalar = scalar
-	self.Unit = normalUnit
-	self.CanonicalNumber = uint64(scalar * size)
-	self.CanonicalString = fmt.Sprintf("%d B", self.CanonicalNumber)
-
-	return self
-}
-
-// fmt.Stringify interface
-func (self *ScalarUnitSize) String() string {
-	if self.CanonicalNumber == 1 {
-		return "1 byte"
-	}
-	return fmt.Sprintf("%d bytes", self.CanonicalNumber)
-}
-
-func (self *ScalarUnitSize) Compare(data interface{}) (int, error) {
-	if scalarUnit, ok := data.(*ScalarUnitSize); ok {
-		return CompareUint64(self.CanonicalNumber, scalarUnit.CanonicalNumber), nil
-	}
-	return 0, errors.New("incompatible comparison")
-}
-
-//
-// ScalarUnitTime
-//
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.3.6.5
-// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.2.6.5
-//
-
-type ScalarUnitTime struct {
-	CanonicalNumber float64 `json:"$number" yaml:"$number"`
-	CanonicalString string  `json:"$string" yaml:"$string"`
-
-	Scalar float64 `json:"scalar" yaml:"scalar"`
-	Unit   string  `json:"unit" yaml:"unit"`
-
-	OriginalString string `json:"originalString" yaml:"originalString"`
-}
-
-// tosca.Reader signature
-func ReadScalarUnitTime(context *tosca.Context) interface{} {
-	var self ScalarUnitTime
-
-	originalString, scalar, unit, ok := parseScalarUnit(context, ScalarUnitTimeRE, "scalar-unit.time")
-	if !ok {
-		return self
-	}
-
-	normalUnit, size := ScalarUnitTimeSizes.Get(unit, context)
-
-	self.OriginalString = originalString
-	self.Scalar = scalar
-	self.Unit = normalUnit
-	self.CanonicalNumber = scalar * size
-	self.CanonicalString = fmt.Sprintf("%g S", self.CanonicalNumber)
-
-	return self
-}
-
-// fmt.Stringify interface
-func (self *ScalarUnitTime) String() string {
-	if self.CanonicalNumber == 1.0 {
-		return "1 second"
-	}
-	return fmt.Sprintf("%g seconds", self.CanonicalNumber)
-}
-
-func (self *ScalarUnitTime) Compare(data interface{}) (int, error) {
-	if scalarUnit, ok := data.(*ScalarUnitTime); ok {
-		return CompareFloat64(self.CanonicalNumber, scalarUnit.CanonicalNumber), nil
-	}
-	return 0, errors.New("incompatible comparison")
-}
-
-//
-// ScalarUnitFrequency
-//
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.3.6.6
-// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.2.6.6
-//
-
-type ScalarUnitFrequency struct {
-	CanonicalNumber float64 `json:"$number" yaml:"$number"`
-	CanonicalString string  `json:"$string" yaml:"$string"`
-
-	Scalar float64 `json:"scalar" yaml:"scalar"`
-	Unit   string  `json:"unit" yaml:"unit"`
-
-	OriginalString string `json:"originalString" yaml:"originalString"`
-}
-
 // tosca.Reader signature
 func ReadScalarUnitFrequency(context *tosca.Context) interface{} {
-	var self ScalarUnitFrequency
-
-	originalString, scalar, unit, ok := parseScalarUnit(context, ScalarUnitFrequencyRE, "scalar-unit.frequency")
-	if !ok {
-		return self
-	}
-
-	normalUnit, size := ScalarUnitFrequencySizes.Get(unit, context)
-
-	self.OriginalString = originalString
-	self.Scalar = scalar
-	self.Unit = normalUnit
-	self.CanonicalNumber = scalar * size
-	self.CanonicalString = fmt.Sprintf("%g Hz", self.CanonicalNumber)
-
-	return self
-}
-
-// fmt.Stringify interface
-func (self *ScalarUnitFrequency) String() string {
-	return fmt.Sprintf("%g Hz", self.CanonicalNumber)
-}
-
-func (self *ScalarUnitFrequency) Compare(data interface{}) (int, error) {
-	if scalarUnit, ok := data.(*ScalarUnitFrequency); ok {
-		return CompareFloat64(self.CanonicalNumber, scalarUnit.CanonicalNumber), nil
-	}
-	return 0, errors.New("incompatible comparison")
-}
-
-func parseScalarUnit(context *tosca.Context, re *regexp.Regexp, typeName string) (string, float64, string, bool) {
-	if !context.ValidateType("string") {
-		return "", 0, "", false
-	}
-
-	originalString := context.ReadString()
-	matches := re.FindStringSubmatch(*originalString)
-	if len(matches) != 3 {
-		context.ReportValueMalformed(typeName, "")
-		return "", 0, "", false
-	}
-
-	scalar, err := strconv.ParseFloat(matches[1], 64)
-	if err != nil {
-		context.ReportValueMalformed(typeName, fmt.Sprintf("%s", err))
-		return "", 0, "", false
-	}
-
-	return *originalString, scalar, matches[2], true
+	return ReadScalarUnit(context, "scalar-unit.frequency", "Hz", "Hz", "Hz", ScalarUnitFrequencyRE, ScalarUnitFrequencySizes, false, false)
 }
 
 //
-// ScalarUnitSizes
+// ScalarUnitBitrate
+//
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.3.6.7
 //
 
-type ScalarUnitSizes map[string]float64
+var ScalarUnitBitrateRE = regexp.MustCompile(
+	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*(?i)` +
+		`(?P<unit>bps|Kbps|Kibps|Mbps|Mibps|Gbps|Gibps|Tbps|Tibps|Bps|KBps|KiBps|MBps|MiBps|GBps|GiBps|TBps|TiBps)$`)
 
-func (self ScalarUnitSizes) Get(unit string, context *tosca.Context) (string, float64) {
-	for u, size := range self {
-		if strings.EqualFold(u, unit) {
-			return u, size
-		}
-	}
-	panic("as long as the regexp does its job we should never get here")
+// Case-sensitive!
+var ScalarUnitBitrateSizes = ScalarUnitSizes{
+	"bps":   1,
+	"Kbps":  1000,
+	"Kibps": 1024,
+	"Mbps":  1000000,
+	"Mibps": 1048576,
+	"Gbps":  1000000000,
+	"Gibps": 1073741824,
+	"Tbps":  1000000000000,
+	"Tibps": 1099511627776,
+	"Bps":   8,
+	"KBps":  8000,
+	"KiBps": 8192,
+	"MBps":  8000000,
+	"MiBps": 8388608,
+	"GBps":  8000000000,
+	"GiBps": 8589934592,
+	"TBps":  8000000000000,
+	"TiBps": 8796093022208,
+}
+
+// tosca.Reader signature
+func ReadScalarUnitBitrate(context *tosca.Context) interface{} {
+	return ReadScalarUnit(context, "scalar-unit.bitrate", "bps", "bps", "bps", ScalarUnitBitrateRE, ScalarUnitBitrateSizes, false, true)
 }

@@ -3,6 +3,7 @@ package tosca
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/tliron/puccini/format"
 	"github.com/tliron/puccini/url"
@@ -13,6 +14,9 @@ import (
 //
 
 func (self *Context) Report(message string) {
+	// We want our reports to fit in one line
+	message = strings.ReplaceAll(message, "\n", "¶")
+
 	if self.URL != nil {
 		self.Problems.ReportInSection(message, self.URL.String())
 	} else {
@@ -26,16 +30,17 @@ func (self *Context) Reportf(f string, arg ...interface{}) {
 
 func (self *Context) ReportPath(message string) {
 	path := self.Path.String()
-	if path != "" {
-		message = fmt.Sprintf("%s: %s", format.ColorPath(path), message)
-	}
 
 	location := self.Location()
 	if location != "" {
-		if message != "" {
-			message += " "
+		if path != "" {
+			path += " "
 		}
-		message += format.ColorValue("@" + location)
+		path += "@" + location
+	}
+
+	if path != "" {
+		message = fmt.Sprintf("%s: %s", format.ColorPath(path), message)
 	}
 
 	self.Report(message)

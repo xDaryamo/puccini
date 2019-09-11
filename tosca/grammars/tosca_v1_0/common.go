@@ -22,7 +22,7 @@ func init() {
 	Grammar["Artifact"] = tosca_v1_2.ReadArtifact                     // 1.2
 	Grammar["ArtifactDefinition"] = tosca_v1_2.ReadArtifactDefinition // 1.2
 	Grammar["ArtifactType"] = tosca_v1_3.ReadArtifactType
-	Grammar["AttributeDefinition"] = tosca_v1_3.ReadAttributeDefinition
+	Grammar["AttributeDefinition"] = tosca_v1_2.ReadAttributeDefinition // 1.2
 	Grammar["AttributeValue"] = tosca_v1_3.ReadAttributeValue
 	Grammar["CapabilityAssignment"] = tosca_v1_3.ReadCapabilityAssignment
 	Grammar["CapabilityDefinition"] = tosca_v1_3.ReadCapabilityDefinition
@@ -32,7 +32,6 @@ func init() {
 	Grammar["ConditionClause"] = tosca_v1_3.ReadConditionClause
 	Grammar["ConstraintClause"] = tosca_v1_3.ReadConstraintClause
 	Grammar["DataType"] = tosca_v1_3.ReadDataType
-	Grammar["EntrySchema"] = tosca_v1_3.ReadEntrySchema
 	Grammar["EventFilter"] = tosca_v1_3.ReadEventFilter
 	Grammar["Group"] = tosca_v1_2.ReadGroup         // 1.2
 	Grammar["GroupType"] = tosca_v1_2.ReadGroupType // 1.2
@@ -44,14 +43,14 @@ func init() {
 	Grammar["NodeFilter"] = tosca_v1_3.ReadNodeFilter
 	Grammar["NodeTemplate"] = tosca_v1_3.ReadNodeTemplate
 	Grammar["NodeType"] = tosca_v1_3.ReadNodeType
-	Grammar["NotificationDefinition"] = tosca_v1_3.ReadNotificationDefinition // not used
+	Grammar["NotificationDefinition"] = tosca_v1_3.ReadNotificationDefinition // unused
 	Grammar["OperationAssignment"] = tosca_v1_3.ReadOperationAssignment
 	Grammar["OperationDefinition"] = tosca_v1_3.ReadOperationDefinition
 	Grammar["InterfaceImplementation"] = tosca_v1_1.ReadInterfaceImplementation // 1.1
 	Grammar["ParameterDefinition"] = tosca_v1_3.ReadParameterDefinition
 	Grammar["Policy"] = tosca_v1_3.ReadPolicy
 	Grammar["PolicyType"] = tosca_v1_3.ReadPolicyType
-	Grammar["PropertyDefinition"] = tosca_v1_3.ReadPropertyDefinition
+	Grammar["PropertyDefinition"] = tosca_v1_2.ReadPropertyDefinition // 1.2
 	Grammar["PropertyFilter"] = tosca_v1_3.ReadPropertyFilter
 	Grammar["range"] = tosca_v1_3.ReadRange
 	Grammar["RangeEntity"] = tosca_v1_3.ReadRangeEntity
@@ -63,9 +62,10 @@ func init() {
 	Grammar["RequirementAssignment"] = tosca_v1_3.ReadRequirementAssignment
 	Grammar["RequirementDefinition"] = tosca_v1_3.ReadRequirementDefinition
 	Grammar["RequirementMapping"] = tosca_v1_3.ReadRequirementMapping
+	Grammar["scalar-unit.frequency"] = tosca_v1_3.ReadScalarUnitFrequency
 	Grammar["scalar-unit.size"] = tosca_v1_3.ReadScalarUnitSize
 	Grammar["scalar-unit.time"] = tosca_v1_3.ReadScalarUnitTime
-	Grammar["scalar-unit.frequency"] = tosca_v1_3.ReadScalarUnitFrequency
+	Grammar["Schema"] = tosca_v1_3.ReadSchema
 	Grammar["ServiceTemplate"] = tosca_v1_1.ReadServiceTemplate           // 1.1
 	Grammar["SubstitutionMappings"] = tosca_v1_1.ReadSubstitutionMappings // 1.1
 	Grammar["timestamp"] = tosca_v1_3.ReadTimestamp
@@ -92,6 +92,11 @@ func init() {
 	}
 
 	for name, sourceCode := range tosca_v1_3.ConstraintClauseSourceCode {
+		// Unsupported constraints
+		if name == "schema" {
+			continue
+		}
+
 		nativeArgumentIndexes, _ := tosca_v1_3.ConstraintClauseNativeArgumentIndexes[name]
 		DefaultScriptNamespace[name] = &tosca.Script{
 			SourceCode:            js.Cleanup(sourceCode),

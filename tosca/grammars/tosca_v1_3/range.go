@@ -64,14 +64,15 @@ func ReadRange(context *tosca.Context) interface{} {
 		}
 	}
 
-	// The TOSCA spec says that the upper bound *must* be greater than the lower bound
-	// but that makes no sense to us (it would mean than ranges must include at least two
+	// The TOSCA spec in 1.0 to 1.2 says that the upper bound *must* be greater than the lower
+	// bound but that makes no sense to us (it would mean than ranges must include at least two
 	// numbers) so we are ignoring that and assuming that upper must be >= lower
+	// (The spec was fixed in 1.3)
 	if upperOk && lowerOk && (self.Upper < self.Lower) {
 		context.ReportValueMalformed("range", "upper bound lower than lower bound")
 	}
 
-	return self
+	return &self
 }
 
 func (self *Range) InRange(number uint64) bool {
@@ -84,7 +85,7 @@ func (self *Range) InRange(number uint64) bool {
 
 type RangeEntity struct {
 	*Entity `name:"range"`
-	Range   Range
+	Range   *Range `traverse:"ignore"`
 }
 
 func NewRangeEntity(context *tosca.Context) *RangeEntity {
@@ -94,6 +95,6 @@ func NewRangeEntity(context *tosca.Context) *RangeEntity {
 // tosca.Reader signature
 func ReadRangeEntity(context *tosca.Context) interface{} {
 	self := NewRangeEntity(context)
-	self.Range = ReadRange(context).(Range)
+	self.Range = ReadRange(context).(*Range)
 	return self
 }

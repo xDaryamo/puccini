@@ -14,25 +14,25 @@ type Metadata map[string]string
 
 // tosca.Reader signature
 func ReadMetadata(context *tosca.Context) interface{} {
-	var self map[string]string
+	var self Metadata
 
-	if context.ValidateType("map") {
-		metadata := context.ReadStringMap()
+	if context.Is("map") {
+		metadata := context.ReadStringStringMap()
 		if metadata != nil {
 			self = *metadata
 		}
 	}
 
 	if self != nil {
-		for k, v := range self {
-			if strings.HasPrefix(k, "puccini-js.import.") {
-				name := k[18:]
-				context.ImportScript(name, v)
-				delete(self, k)
-			} else if strings.HasPrefix(k, "puccini-js.source.") {
-				name := k[18:]
-				context.SourceScript(name, v)
-				delete(self, k)
+		for key, value := range self {
+			if strings.HasPrefix(key, "puccini-js.import.") {
+				name := key[18:]
+				context.ImportScript(name, value)
+				delete(self, key)
+			} else if strings.HasPrefix(key, "puccini-js.source.") {
+				name := key[18:]
+				context.SourceScript(name, value)
+				delete(self, key)
 			}
 		}
 	}

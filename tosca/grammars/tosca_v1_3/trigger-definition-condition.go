@@ -12,7 +12,7 @@ type TriggerDefinitionCondition struct {
 	*Entity `name:"trigger definition condition" json:"-" yaml:"-"`
 
 	ConstraintClauses ConstraintClauses `read:"constraint,[]ConstraintClause"` // this should be "constraints"...
-	Period            *ScalarUnitTime   `read:"period,scalar-unit.time"`
+	Period            *ScalarUnit       `read:"period,scalar-unit.time"`
 	Evaluations       *int              `read:"evaluations"`
 	Method            *string           `read:"method"`
 }

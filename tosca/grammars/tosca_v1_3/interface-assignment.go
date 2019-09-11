@@ -18,7 +18,7 @@ type InterfaceAssignment struct {
 
 	Inputs        Values                  `read:"inputs,Value"`
 	Operations    OperationAssignments    `read:"operations,OperationAssignment"`
-	Notifications NotificationAssignments `read:"notifications,NotificationAssignment"`
+	Notifications NotificationAssignments `read:"notifications,NotificationAssignment"` // introduced in TOSCA 1.3
 }
 
 func NewInterfaceAssignment(context *tosca.Context) *InterfaceAssignment {

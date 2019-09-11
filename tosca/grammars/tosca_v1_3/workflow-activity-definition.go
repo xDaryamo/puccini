@@ -44,7 +44,8 @@ func ReadWorkflowActivityDefinition(context *tosca.Context) interface{} {
 			return self
 		}
 
-		for operator, value := range map_ {
+		for key, value := range map_ {
+			operator := ard.KeyString(key)
 			childContext := context.FieldChild(operator, value)
 
 			switch operator {

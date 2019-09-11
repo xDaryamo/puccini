@@ -12,6 +12,7 @@ func ReadURL(url_ url.URL, locate bool) (Map, Locator, error) {
 	if err != nil {
 		return nil, nil, err
 	}
+
 	if readerCloser, ok := reader.(io.ReadCloser); ok {
 		defer readerCloser.Close()
 	}

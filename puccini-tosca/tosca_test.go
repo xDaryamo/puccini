@@ -5,7 +5,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
@@ -20,7 +19,7 @@ func TestParse(t *testing.T) {
 	testCompile(t, "tosca/descriptions.yaml", nil)
 	testCompile(t, "tosca/dsl-definitions.yaml", nil)
 	testCompile(t, "tosca/functions.yaml", nil)
-	testCompile(t, "tosca/inputs-and-outputs.yaml", ard.Map{"ram": "1gib"})
+	testCompile(t, "tosca/inputs-and-outputs.yaml", map[string]interface{}{"ram": "1gib"})
 	testCompile(t, "tosca/interfaces.yaml", nil)
 	testCompile(t, "tosca/metadata.yaml", nil)
 	testCompile(t, "tosca/namespaces.yaml", nil)
@@ -38,13 +37,13 @@ func TestParse(t *testing.T) {
 	testCompile(t, "kubernetes/bookinfo/bookinfo-simple.yaml", nil)
 	testCompile(t, "openstack/hello-world.yaml", nil)
 	testCompile(t, "bpmn/open-loop.yaml", nil)
-	testCompile(t, "cloudify/advanced-blueprint-example.yaml", ard.Map{
+	testCompile(t, "cloudify/advanced-blueprint-example.yaml", map[string]interface{}{
 		"host_ip":                "1.2.3.4",
 		"agent_user":             "my_user",
 		"agent_private_key_path": "my_key",
 	})
 	testCompile(t, "cloudify/example.yaml", nil)
-	testCompile(t, "hot/hello-world.yaml", ard.Map{
+	testCompile(t, "hot/hello-world.yaml", map[string]interface{}{
 		"username": "test",
 	})
 }
@@ -55,7 +54,7 @@ func init() {
 	ROOT = os.Getenv("ROOT")
 }
 
-func testCompile(t *testing.T, url string, inputs ard.Map) {
+func testCompile(t *testing.T, url string, inputs map[string]interface{}) {
 	t.Run(url, func(t *testing.T) {
 		// Running the tests in parallel is not for speed;
 		// it actually allows us to find concurrency bugs
