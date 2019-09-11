@@ -7,9 +7,17 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+func KeyData(data interface{}) interface{} {
+	if key, ok := data.(Key); ok {
+		return key.GetKeyData()
+	} else {
+		return data
+	}
+}
+
 func KeyString(data interface{}) string {
-	if s, ok := data.(string); ok {
-		return s
+	if string_, ok := data.(string); ok {
+		return string_
 	} else {
 		return fmt.Sprintf("%s", data)
 	}
@@ -35,11 +43,11 @@ type YamlKey struct {
 func NewYamlKey(data interface{}) (*YamlKey, error) {
 	var writer strings.Builder
 	encoder := yaml.NewEncoder(&writer)
+	encoder.SetIndent(1)
 	if err := encoder.Encode(data); err == nil {
-		text := writer.String()
 		return &YamlKey{
 			Data: data,
-			Text: text,
+			Text: writer.String(),
 		}, nil
 	} else {
 		return nil, err

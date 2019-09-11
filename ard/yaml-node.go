@@ -59,15 +59,36 @@ func DecodeYamlNode(node *yaml.Node) (interface{}, error) {
 
 			if value, err := DecodeYamlNode(valueNode); err == nil {
 				if (keyNode.Kind == yaml.ScalarNode) && (keyNode.Tag == "!!merge") {
-					if m, ok := value.(Map); ok {
-						for k, v := range m {
-							map_[k] = v
+					// See: https://yaml.org/type/merge.html
+					switch value.(type) {
+					case Map:
+						MapMerge(map_, value.(Map), false)
+
+					case List:
+						for _, v := range value.(List) {
+							if m, ok := v.(Map); ok {
+								MapMerge(map_, m, false)
+							} else {
+								PanicMalformedMerge(keyNode)
+							}
 						}
-					} else {
-						panic("malformed YAML merge")
+
+					default:
+						PanicMalformedMerge(keyNode)
 					}
 				} else {
-					if key, err := DecodeYamlKeyNode(keyNode); err == nil {
+					if key, keyData, err := DecodeYamlKeyNode(keyNode); err == nil {
+						if keyData == nil {
+							if _, ok := map_[key]; ok {
+								return nil, ErrorDuplicateKey(keyNode, key)
+							}
+						} else {
+							for k, _ := range map_ {
+								if Equals(keyData, KeyData(k)) {
+									return nil, ErrorDuplicateKey(keyNode, key)
+								}
+							}
+						}
 						map_[key] = value
 					} else {
 						return nil, err
@@ -105,20 +126,21 @@ func DecodeYamlNode(node *yaml.Node) (interface{}, error) {
 	panic("malformed YAML node")
 }
 
-func DecodeYamlKeyNode(node *yaml.Node) (interface{}, error) {
+func DecodeYamlKeyNode(node *yaml.Node) (interface{}, interface{}, error) {
 	// Workaround for gopkg.in/yaml.v3 not supporting the decoding of complex keys
 	// See: https://github.com/go-yaml/yaml/issues/502
 
 	if data, err := DecodeYamlNode(node); err == nil {
 		if IsBasicType(data) {
-			return data, nil
+			return data, nil, nil
 		} else {
 			// A pointer is hashable but its *contents* are not compared, so we will be losing
 			// the ability to test for uniqueness at this stage
-			return NewYamlKey(data)
+			key, err := NewYamlKey(data)
+			return key, data, err
 		}
 	} else {
-		return nil, err
+		return nil, nil, err
 	}
 }
 
@@ -188,11 +210,13 @@ func FindYamlNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 	return node
 }
 
-func PrintYamlNodes(writer io.Writer, node *yaml.Node) {
-	PrintYamlNode(writer, node, 0)
+// Write
+
+func WriteYamlNodes(writer io.Writer, node *yaml.Node) {
+	WriteYamlNode(writer, node, 0)
 }
 
-func PrintYamlNode(writer io.Writer, node *yaml.Node, indent int) {
+func WriteYamlNode(writer io.Writer, node *yaml.Node, indent int) {
 	s := ""
 
 	s += strings.Repeat(" ", indent)
@@ -218,9 +242,11 @@ func PrintYamlNode(writer io.Writer, node *yaml.Node, indent int) {
 
 	indent += 1
 	for _, child := range node.Content {
-		PrintYamlNode(writer, child, indent)
+		WriteYamlNode(writer, child, indent)
 	}
 }
+
+// Utils
 
 func IsBasicType(data interface{}) bool {
 	switch data.(type) {
@@ -228,4 +254,12 @@ func IsBasicType(data interface{}) bool {
 		return true
 	}
 	return false
+}
+
+func ErrorDuplicateKey(node *yaml.Node, key interface{}) error {
+	return fmt.Errorf("malformed YAML @%d,%d: duplicate map key: %s", node.Line, node.Column, key)
+}
+
+func PanicMalformedMerge(node *yaml.Node) {
+	panic(fmt.Sprintf("malformed YAML @%d,%d: merge", node.Line, node.Column))
 }

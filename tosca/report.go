@@ -3,7 +3,6 @@ package tosca
 import (
 	"fmt"
 	"reflect"
-	"strings"
 
 	"github.com/tliron/puccini/format"
 	"github.com/tliron/puccini/url"
@@ -14,9 +13,6 @@ import (
 //
 
 func (self *Context) Report(message string) {
-	// We want our reports to fit in one line
-	message = strings.ReplaceAll(message, "\n", "¶")
-
 	if self.URL != nil {
 		self.Problems.ReportInSection(message, self.URL.String())
 	} else {

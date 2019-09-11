@@ -11,6 +11,34 @@ package ard
 
 type Map = map[interface{}]interface{}
 
+func MapValue(map_ Map, key interface{}) (interface{}, bool) {
+	if key_, ok := key.(Key); ok {
+		key = key_.GetKeyData()
+		for k, value := range map_ {
+			if Equals(key, KeyData(k)) {
+				return value, true
+			}
+		}
+	} else {
+		value, ok := map_[key]
+		return value, ok
+	}
+
+	return nil, false
+}
+
+func MapMerge(to Map, from Map, override bool) {
+	for k, v := range from {
+		if !override {
+			if _, ok := MapValue(to, KeyData(k)); ok {
+				continue
+			}
+		}
+
+		to[k] = v
+	}
+}
+
 func EnsureMap(map_ Map) Map {
 	value, _ := EnsureValue(map_)
 	if map_, ok := value.(Map); ok {
@@ -23,17 +51,23 @@ func EnsureMap(map_ Map) Map {
 func EnsureValue(value interface{}) (interface{}, bool) {
 	changed := false
 
-	if stringMap, ok := value.(map[string]interface{}); ok {
+	switch value.(type) {
+	case map[string]interface{}:
+		stringMap := value.(map[string]interface{})
 		value = ToMap(stringMap)
 		changed = true
-	} else if map_, ok := value.(Map); ok {
+
+	case Map:
+		map_ := value.(Map)
 		for key, element := range map_ {
 			if value, c := EnsureValue(element); c {
 				map_[key] = value
 				changed = true
 			}
 		}
-	} else if list, ok := value.(List); ok {
+
+	case List:
+		list := value.(List)
 		for index, element := range list {
 			if value, c := EnsureValue(element); c {
 				list[index] = value

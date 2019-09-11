@@ -166,14 +166,14 @@ topology_template:
           nested:
             nested_float: 1.0
 
-        complex_map_keys: {}
-        # Note that there are two notations for complex keys in YAML
-        # You can use a single row:
-        #{integer: 123, float: 4.56}: value1
-        # Or use the "?", ":" notation to specify key and value separately:
-        #? integer: 123
-        #  float: 4.56
-        #: value2
+        complex_map_keys:
+          # Note that there are two notations for complex keys in YAML
+          # You can use a single row:
+          { integer: 123, float: 4.56 }: value1
+          # Or use the "?", ":" notation to specify key and value separately:
+          ? integer: 123
+            float: 7.89
+          : value2
 
         # Size is normalized to number of bytes (unsigned integer)
         # GiB, MiB, etc. are also supported for multiples of 1024
