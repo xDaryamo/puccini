@@ -1,6 +1,8 @@
 package clout
 
 import (
+	"encoding/json"
+
 	"github.com/tliron/puccini/ard"
 )
 
@@ -9,12 +11,12 @@ import (
 //
 
 type Vertex struct {
-	Clout      *Clout  `json:"-" yaml:"-"`
-	ID         string  `json:"-" yaml:"-"`
-	Metadata   ard.Map `json:"metadata" yaml:"metadata"`
-	Properties ard.Map `json:"properties" yaml:"properties"`
-	EdgesOut   Edges   `json:"edgesOut" yaml:"edgesOut"`
-	EdgesIn    Edges   `json:"-" yaml:"-"`
+	Clout      *Clout  `yaml:"-"`
+	ID         string  `yaml:"-"`
+	Metadata   ard.Map `yaml:"metadata"`
+	Properties ard.Map `yaml:"properties"`
+	EdgesOut   Edges   `yaml:"edgesOut"`
+	EdgesIn    Edges   `yaml:"-"`
 }
 
 func (self *Clout) NewVertex(id string) *Vertex {
@@ -42,6 +44,25 @@ func (self *Vertex) GetMetadata() ard.Map {
 // Entity interface
 func (self *Vertex) GetProperties() ard.Map {
 	return self.Properties
+}
+
+type MarshalableVertexStringMaps struct {
+	Metadata   ard.StringMap `json:"metadata"`
+	Properties ard.StringMap `json:"properties"`
+	EdgesOut   Edges         `json:"edgesOut"`
+}
+
+func (self *Vertex) MarshalableStringMaps() interface{} {
+	return &MarshalableVertexStringMaps{
+		Metadata:   ard.EnsureStringMaps(self.Metadata),
+		Properties: ard.EnsureStringMaps(self.Properties),
+		EdgesOut:   self.EdgesOut,
+	}
+}
+
+// json.Marshaler interface
+func (self *Vertex) MarshalJSON() ([]byte, error) {
+	return json.Marshal(self.MarshalableStringMaps())
 }
 
 //

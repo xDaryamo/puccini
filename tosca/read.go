@@ -338,7 +338,7 @@ func (self *Context) ReadStringStringMap() *map[string]string {
 			if string, ok := data.(string); ok {
 				strings[ard.KeyString(key)] = string
 			} else {
-				self.MapChild(ard.KeyString(key), data).ReportValueWrongType("string")
+				self.MapChild(key, data).ReportValueWrongType("string")
 				continue
 			}
 		}
@@ -390,7 +390,7 @@ type Processor func(interface{})
 func (self *Context) ReadMapItems(read Reader, process Processor) bool {
 	if self.ValidateType("map") {
 		for itemName, data := range self.Data.(ard.Map) {
-			process(read(self.MapChild(ard.KeyString(itemName), data)))
+			process(read(self.MapChild(itemName, data)))
 		}
 		return true
 	}

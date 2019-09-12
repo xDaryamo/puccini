@@ -3,6 +3,8 @@ package format
 import (
 	"encoding/xml"
 	"reflect"
+
+	"github.com/tliron/puccini/ard"
 )
 
 func EnsureXml(data interface{}) interface{} {
@@ -25,8 +27,9 @@ func EnsureXml(data interface{}) interface{} {
 		// Convert to slice of XmlMapEntry
 		slice := make([]XmlMapEntry, value.Len())
 		for index, key := range value.MapKeys() {
+			k := ard.KeyData(key.Interface())
 			v := value.MapIndex(key).Interface()
-			slice[index] = XmlMapEntry{key.String(), EnsureXml(v)}
+			slice[index] = XmlMapEntry{EnsureXml(k), EnsureXml(v)}
 		}
 		return XmlMap{slice}
 	}
@@ -61,7 +64,7 @@ func (self XmlMap) MarshalXML(encoder *xml.Encoder, start xml.StartElement) erro
 //
 
 type XmlMapEntry struct {
-	Key   string
+	Key   interface{}
 	Value interface{}
 }
 

@@ -20,7 +20,7 @@ func (self *Context) ValidateUnsupportedFields(keys []string) {
 			}
 		}
 		if !found {
-			self.FieldChild(ard.KeyString(key), nil).ReportFieldUnsupported()
+			self.FieldChild(key, nil).ReportFieldUnsupported()
 		}
 	}
 }

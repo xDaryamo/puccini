@@ -109,7 +109,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 	for key := range map_ {
 		name := ard.KeyString(key)
 		if _, ok := dataType.PropertyDefinitions[name]; !ok {
-			self.Context.MapChild(ard.KeyString(name), nil).ReportUndeclared("property")
+			self.Context.MapChild(name, nil).ReportUndeclared("property")
 			delete(map_, key)
 		}
 	}

@@ -9,7 +9,7 @@ import (
 //
 
 type Value struct {
-	Value       interface{}   `json:"value" yaml:"value"` // can be list or map of Coercibles
+	Value       interface{}   `json:"value" yaml:"value"` // can be ConstrainableList or ConstrainableMap
 	Constraints FunctionCalls `json:"constraints" yaml:"constraints"`
 	Description string        `json:"description" yaml:"description"`
 }

@@ -130,10 +130,16 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 				switch self.Context.Data.(type) {
 				case bool:
 					self.Context.Data = strconv.FormatBool(self.Context.Data.(bool))
+
 				case int:
 					self.Context.Data = strconv.FormatInt(int64(self.Context.Data.(int)), 10)
+
+				case int64:
+					self.Context.Data = strconv.FormatInt(self.Context.Data.(int64), 10)
+
 				case float64: // YAML parser returns float64
 					self.Context.Data = strconv.FormatFloat(self.Context.Data.(float64), 'f', -1, 64)
+
 				case time.Time:
 					self.Context.Data = self.Context.Data.(time.Time).String()
 				}
@@ -153,6 +159,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 					entryDataType := definition.EntrySchema.DataType
 					constraints := definition.EntrySchema.ConstraintClauses
 					description := definition.EntrySchema.Description
+
 					switch typeName {
 					case "list":
 						slice := self.Context.Data.(ard.List)
@@ -165,16 +172,20 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 							}
 							slice[index] = value
 						}
+
 					case "map":
+						// TODO: key_schema
+
 						map_ := self.Context.Data.(ard.Map)
 						for key, data := range map_ {
-							value := ReadValue(self.Context.MapChild(ard.KeyString(key), data)).(*Value)
+							// Note: complex keys would be stringified for the purpose of the context
+							value := ReadValue(self.Context.MapChild(key, data)).(*Value)
 							value.RenderAttribute(entryDataType, nil, false)
 							constraints.Render(&value.ConstraintClauses, entryDataType)
 							if description != nil {
 								value.Description = description
 							}
-							map_[key] = value
+							ard.MapPut(map_, key, value) // support complex keys
 						}
 					}
 				}
@@ -253,9 +264,9 @@ func (self *Value) Normalize() normal.Constrainable {
 		m := normal.NewConstrainableMap()
 		for key, value := range map_ {
 			if v, ok := value.(*Value); ok {
-				m.Map[ard.KeyString(key)] = v.Normalize()
+				m.Map[key] = v.Normalize()
 			} else {
-				m.Map[ard.KeyString(key)] = normal.NewValue(value)
+				m.Map[key] = normal.NewValue(value)
 			}
 		}
 		constrainable = m

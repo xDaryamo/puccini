@@ -59,6 +59,8 @@ func WriteJson(data interface{}, writer io.Writer, indent string) error {
 }
 
 func WriteXml(data interface{}, writer io.Writer, indent string) error {
+	// Because we don't provide explicit marshalling for XML in the codebase (as we do for
+	// JSON and YAML) then we must normalize the data before encoding it
 	data, err := Normalize(data)
 	if err != nil {
 		return err

@@ -63,3 +63,8 @@ func (self *YamlKey) GetKeyData() interface{} {
 func (self *YamlKey) String() string {
 	return self.Text
 }
+
+// yaml.Marshaler interface
+func (self *YamlKey) MarshalYAML() (interface{}, error) {
+	return self.Data, nil
+}

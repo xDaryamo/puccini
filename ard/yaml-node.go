@@ -50,7 +50,7 @@ func DecodeYamlNode(node *yaml.Node) (interface{}, error) {
 		// Content is a slice of pairs of key followed by value
 		length := len(node.Content)
 		if length%2 != 0 {
-			panic("malformed YAML map")
+			panic("malformed YAML map: not a list of key-value pairs")
 		}
 
 		for i := 0; i < length; i += 2 {
@@ -83,7 +83,7 @@ func DecodeYamlNode(node *yaml.Node) (interface{}, error) {
 								return nil, ErrorDuplicateKey(keyNode, key)
 							}
 						} else {
-							for k, _ := range map_ {
+							for k := range map_ {
 								if Equals(keyData, KeyData(k)) {
 									return nil, ErrorDuplicateKey(keyNode, key)
 								}

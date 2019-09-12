@@ -135,11 +135,12 @@ func (self *Context) Location() string {
 // Child contexts
 //
 
-func (self *Context) FieldChild(name string, data interface{}) *Context {
+func (self *Context) FieldChild(name interface{}, data interface{}) *Context {
+	nameString := ard.KeyString(name) // complex keys would be stringified
 	return &Context{
 		Parent:          self,
-		Name:            name,
-		Path:            append(self.Path, ard.NewFieldPathElement(name)),
+		Name:            nameString,
+		Path:            append(self.Path, ard.NewFieldPathElement(nameString)),
 		URL:             self.URL,
 		Data:            data,
 		Locator:         self.Locator,
@@ -173,16 +174,17 @@ func (self *Context) GetRequiredFieldChild(name string) (*Context, bool) {
 func (self *Context) FieldChildren() []*Context {
 	var children []*Context
 	for name, data := range self.Data.(ard.Map) {
-		children = append(children, self.FieldChild(ard.KeyString(name), data))
+		children = append(children, self.FieldChild(name, data))
 	}
 	return children
 }
 
-func (self *Context) MapChild(name string, data interface{}) *Context {
+func (self *Context) MapChild(name interface{}, data interface{}) *Context {
+	nameString := ard.KeyString(name) // complex keys would be stringified
 	return &Context{
 		Parent:          self,
-		Name:            name,
-		Path:            append(self.Path, ard.NewMapPathElement(name)),
+		Name:            nameString,
+		Path:            append(self.Path, ard.NewMapPathElement(nameString)),
 		URL:             self.URL,
 		Data:            data,
 		Locator:         self.Locator,

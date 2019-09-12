@@ -24,29 +24,37 @@ func Read(reader io.Reader, format string) (interface{}, error) {
 }
 
 func ReadYaml(reader io.Reader) (interface{}, error) {
-	var data interface{}
+	var node yaml.Node
 	decoder := yaml.NewDecoder(reader)
-	if err := decoder.Decode(&data); err != nil {
+	if err := decoder.Decode(&node); err == nil {
+		if data, err := ard.DecodeYamlNode(&node); err == nil {
+			return data, nil
+		} else {
+			return nil, err
+		}
+	} else {
 		return nil, err
 	}
-	data, _ = ard.EnsureValue(data)
-	return data, nil
 }
 
 func ReadJson(reader io.Reader) (interface{}, error) {
 	var data interface{}
 	decoder := json.NewDecoder(reader)
-	if err := decoder.Decode(&data); err != nil {
+	if err := decoder.Decode(&data); err == nil {
+		data, _ = ard.ToMaps(data)
+		return data, nil
+	} else {
 		return nil, err
 	}
-	return data, nil
 }
 
 func ReadXml(reader io.Reader) (interface{}, error) {
 	var data interface{}
 	decoder := xml.NewDecoder(reader)
-	if err := decoder.Decode(&data); err != nil {
+	if err := decoder.Decode(&data); err == nil {
+		data, _ = ard.ToMaps(data)
+		return data, nil
+	} else {
 		return nil, err
 	}
-	return data, nil
 }

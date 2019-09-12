@@ -75,7 +75,7 @@ func ToFunctionCalls(context *tosca.Context) {
 			}
 		} else if map_, ok := context.Data.(ard.Map); ok {
 			for key, value := range map_ {
-				childContext := context.MapChild(ard.KeyString(key), value)
+				childContext := context.MapChild(key, value)
 				ToFunctionCalls(childContext)
 				map_[key] = childContext.Data
 			}

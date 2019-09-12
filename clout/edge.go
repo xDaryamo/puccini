@@ -46,21 +46,35 @@ func (self *Edge) GetProperties() ard.Map {
 }
 
 type MarshalableEdge struct {
-	Metadata   ard.Map `json:"metadata" yaml:"metadata"`
-	Properties ard.Map `json:"properties" yaml:"properties"`
-	TargetID   string  `json:"targetID" yaml:"targetID"`
+	Metadata   ard.Map `yaml:"metadata"`
+	Properties ard.Map `yaml:"properties"`
+	TargetID   string  `yaml:"targetID"`
 }
 
-func (self *Edge) Marshalable() interface{} {
+type MarshalableEdgeStringMaps struct {
+	Metadata   ard.StringMap `json:"metadata"`
+	Properties ard.StringMap `json:"properties"`
+	TargetID   string        `json:"targetID"`
+}
+
+func (self *Edge) Marshalable(stringMaps bool) interface{} {
 	var targetID string
 	if self.Target != nil {
 		targetID = self.Target.ID
 	}
 
-	return &MarshalableEdge{
-		Metadata:   self.Metadata,
-		Properties: self.Properties,
-		TargetID:   targetID,
+	if stringMaps {
+		return &MarshalableEdgeStringMaps{
+			Metadata:   ard.EnsureStringMaps(self.Metadata),
+			Properties: ard.EnsureStringMaps(self.Properties),
+			TargetID:   targetID,
+		}
+	} else {
+		return &MarshalableEdge{
+			Metadata:   self.Metadata,
+			Properties: self.Properties,
+			TargetID:   targetID,
+		}
 	}
 }
 
@@ -77,12 +91,12 @@ func (self *Edge) Unmarshal(f func(m *MarshalableEdge) error) error {
 
 // json.Marshaler interface
 func (self *Edge) MarshalJSON() ([]byte, error) {
-	return json.Marshal(self.Marshalable())
+	return json.Marshal(self.Marshalable(true))
 }
 
 // yaml.Marshaler interface
 func (self *Edge) MarshalYAML() (interface{}, error) {
-	return self.Marshalable(), nil
+	return self.Marshalable(false), nil
 }
 
 // json.Unmarshaler interface
