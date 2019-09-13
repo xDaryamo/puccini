@@ -148,6 +148,10 @@ func (self *Value) Normalize() normal.Constrainable {
 	} else if map_, ok := self.Context.Data.(ard.Map); ok {
 		m := normal.NewConstrainableMap()
 		for key, value := range map_ {
+			if _, ok := key.(string); !ok {
+				// Cloudify DSL does not support complex keys
+				self.Context.MapChild(key, ard.KeyData(key)).ReportValueWrongType("string")
+			}
 			name := ard.KeyString(key)
 			m.Map[name] = NewValue(self.Context.MapChild(name, value)).Normalize()
 		}

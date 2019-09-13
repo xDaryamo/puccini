@@ -91,6 +91,7 @@ func (self *Edge) Unmarshal(f func(m *MarshalableEdge) error) error {
 
 // json.Marshaler interface
 func (self *Edge) MarshalJSON() ([]byte, error) {
+	// JavaScript requires keys to be strings, so we would lose complex keys
 	return json.Marshal(self.Marshalable(true))
 }
 

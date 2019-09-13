@@ -62,10 +62,10 @@ func (self AttributeMappings) Normalize(n *normal.NodeTemplate, m normal.Attribu
 		nodeTemplateName := *attributeMapping.NodeTemplateName
 
 		if nodeTemplateName == "SELF" {
-			m[name] = &normal.AttributeMapping{n, *attributeMapping.AttributeName}
+			m[name] = n.NewAttributeMapping(*attributeMapping.AttributeName)
 		} else {
 			if nn, ok := n.ServiceTemplate.NodeTemplates[nodeTemplateName]; ok {
-				m[name] = &normal.AttributeMapping{nn, *attributeMapping.AttributeName}
+				m[name] = nn.NewAttributeMapping(*attributeMapping.AttributeName)
 			}
 		}
 	}

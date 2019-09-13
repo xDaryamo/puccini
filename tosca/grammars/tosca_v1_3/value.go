@@ -174,17 +174,33 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 						}
 
 					case "map":
-						// TODO: key_schema
+						var keyDataType *DataType
+						if definition.KeySchema != nil {
+							keyDataType = definition.KeySchema.DataType
+						}
 
 						map_ := self.Context.Data.(ard.Map)
 						for key, data := range map_ {
-							// Note: complex keys would be stringified for the purpose of the context
-							value := ReadValue(self.Context.MapChild(key, data)).(*Value)
+							// Complex keys would be stringified for the purpose of the contexts
+							context := self.Context.MapChild(key, data)
+
+							// Validate key schema
+							if keyDataType != nil {
+								// Clone to avoid changing the original key
+								key := ReadValue(context.Clone(ard.Clone(ard.KeyData(key)))).(*Value)
+								key.RenderAttribute(keyDataType, nil, false)
+							} else if _, ok := key.(string); !ok {
+								// If there's no key schema we require string
+								self.Context.MapChild(key, ard.KeyData(key)).ReportValueWrongType("string")
+							}
+
+							value := ReadValue(context).(*Value)
 							value.RenderAttribute(entryDataType, nil, false)
 							constraints.Render(&value.ConstraintClauses, entryDataType)
 							if description != nil {
 								value.Description = description
 							}
+
 							ard.MapPut(map_, key, value) // support complex keys
 						}
 					}
@@ -231,7 +247,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 			var value *Value
 			if value, ok = data.(*Value); !ok {
 				// Convert to value
-				value = NewValue(self.Context.MapChild(key, data))
+				value = ReadValue(self.Context.MapChild(key, data)).(*Value)
 				map_[key] = value
 			}
 			if definition.DataType != nil {

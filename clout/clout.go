@@ -19,8 +19,8 @@ const Version = "1.0"
 
 type Clout struct {
 	Version    string   `yaml:"version"`
-	Metadata   ard.Map  ` yaml:"metadata"`
-	Properties ard.Map  ` yaml:"properties"`
+	Metadata   ard.Map  `yaml:"metadata"`
+	Properties ard.Map  `yaml:"properties"`
 	Vertexes   Vertexes `yaml:"vertexes"`
 }
 
@@ -51,6 +51,7 @@ func (self *Clout) MarshalableStringMaps() interface{} {
 
 // json.Marshaler interface
 func (self *Clout) MarshalJSON() ([]byte, error) {
+	// JavaScript requires keys to be strings, so we would lose complex keys
 	return json.Marshal(self.MarshalableStringMaps())
 }
 

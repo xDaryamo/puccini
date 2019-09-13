@@ -24,6 +24,7 @@ type Constrainables map[interface{}]Constrainable
 
 // json.Marshaler interface
 func (self Constrainables) MarshalJSON() ([]byte, error) {
+	// JavaScript requires keys to be strings, so we would lose complex keys
 	map_ := make(ard.StringMap)
 	for key, constrainable := range self {
 		map_[ard.KeyString(key)] = constrainable
@@ -81,7 +82,7 @@ func (self *ConstrainableMap) SetDescription(description string) {
 
 // For access in JavaScript
 func (self ConstrainableMap) Object(name string) map[string]interface{} {
-	// Note: JavaScript requires keys to be strings, so we would lose complex keys
+	// JavaScript requires keys to be strings, so we would lose complex keys
 	o := make(ard.StringMap)
 	for key, constrainable := range self.Map {
 		o[ard.KeyString(key)] = constrainable

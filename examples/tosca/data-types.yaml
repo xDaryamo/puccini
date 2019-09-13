@@ -27,7 +27,12 @@ node_types:
         entry_schema: integer
       string_map:
         type: map
-        key_schema: string
+        entry_schema: string
+
+      # We can also specify a "key_schema" for maps (the default is "string")
+      float_map:
+        type: map
+        key_schema: float
         entry_schema: string
 
       # Complex types are defined in "data_types"
@@ -40,7 +45,7 @@ node_types:
         entry_schema: Complex
 
       # The "key_schema" for maps can be a complex type
-      complex_map_keys:
+      complex_map:
         type: map
         key_schema: Complex
         entry_schema: string
@@ -152,6 +157,10 @@ topology_template:
           greeting: Hello
           recipient: Puccini
 
+        float_map:
+          1.0: Hello
+          1.1: Puccini
+
         complex:
           string: Hello, Puccini
           integer: 123
@@ -166,13 +175,15 @@ topology_template:
           nested:
             nested_float: 1.0
 
-        complex_map_keys:
+        complex_map:
           # Note that there are two notations for complex keys in YAML
           # You can use a single row:
-          { integer: 123, float: 4.56 }: value1
+          { integer: 123, float: 4.56, nested: { nested_float: 7.89 } }: value1
           # Or use the "?", ":" notation to specify key and value separately:
           ? integer: 123
-            float: 7.89
+            float: 4.56
+            nested:
+              nested_float: -7.89
           : value2
 
         # Size is normalized to number of bytes (unsigned integer)

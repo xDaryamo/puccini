@@ -56,3 +56,26 @@ func Equals(a interface{}, b interface{}) bool {
 		return a == b
 	}
 }
+
+func Clone(o interface{}) interface{} {
+	switch o.(type) {
+	case Map:
+		c := make(Map)
+		for key, value := range o.(Map) {
+			key = KeyData(key)
+			c[Clone(key)] = Clone(value)
+		}
+		return c
+
+	case List:
+		list := o.(List)
+		c := make(List, len(list))
+		for index, value := range list {
+			c[index] = Clone(value)
+		}
+		return c
+
+	default:
+		return o
+	}
+}

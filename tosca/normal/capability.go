@@ -34,6 +34,15 @@ func (self *NodeTemplate) NewCapability(name string) *Capability {
 	return capability
 }
 
+type MarshalableCapability struct {
+	Description          string         `json:"description" yaml:"description"`
+	Types                Types          `json:"types" yaml:"types"`
+	Properties           Constrainables `json:"properties" yaml:"properties"`
+	Attributes           Constrainables `json:"attributes" yaml:"attributes"`
+	MinRelationshipCount int64          `json:"minRelationshipCount" yaml:"minRelationshipCount"`
+	MaxRelationshipCount int64          `json:"maxRelationshipCount" yaml:"maxRelationshipCount"`
+}
+
 func (self *Capability) Marshalable() interface{} {
 	var minRelationshipCount int64
 	var maxRelationshipCount int64
@@ -44,14 +53,7 @@ func (self *Capability) Marshalable() interface{} {
 		maxRelationshipCount = int64(self.MaxRelationshipCount)
 	}
 
-	return &struct {
-		Description          string         `json:"description" yaml:"description"`
-		Types                Types          `json:"types" yaml:"types"`
-		Properties           Constrainables `json:"properties" yaml:"properties"`
-		Attributes           Constrainables `json:"attributes" yaml:"attributes"`
-		MinRelationshipCount int64          `json:"minRelationshipCount" yaml:"minRelationshipCount"`
-		MaxRelationshipCount int64          `json:"maxRelationshipCount" yaml:"maxRelationshipCount"`
-	}{
+	return &MarshalableCapability{
 		Description:          self.Description,
 		Types:                self.Types,
 		Properties:           self.Properties,

@@ -19,7 +19,7 @@ func KeyString(data interface{}) string {
 	if string_, ok := data.(string); ok {
 		return string_
 	} else {
-		return fmt.Sprintf("%s", data)
+		return fmt.Sprintf("%v", data)
 	}
 }
 

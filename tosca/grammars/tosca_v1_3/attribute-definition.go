@@ -18,9 +18,9 @@ type AttributeDefinition struct {
 
 	Metadata     Metadata `read:"metadata,Metadata"` // introduced in TOSCA 1.3
 	Description  *string  `read:"description" inherit:"description,DataType"`
-	DataTypeName *string  `read:"type"`              // required only if cannot be inherited or discovered
-	KeySchema    *Schema  `read:"key_schema,Schema"` // introduced in TOSCA 1.3
-	EntrySchema  *Schema  `read:"entry_schema,Schema"`
+	DataTypeName *string  `read:"type"`                // required only if cannot be inherited or discovered
+	KeySchema    *Schema  `read:"key_schema,Schema"`   // introduced in TOSCA 1.3
+	EntrySchema  *Schema  `read:"entry_schema,Schema"` // required if list or map
 	Default      *Value   `read:"default,Value"`
 	Status       *string  `read:"status"`
 

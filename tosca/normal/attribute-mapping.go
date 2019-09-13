@@ -13,11 +13,20 @@ type AttributeMapping struct {
 	AttributeName string
 }
 
+func (self *NodeTemplate) NewAttributeMapping(attributeName string) *AttributeMapping {
+	return &AttributeMapping{
+		NodeTemplate:  self,
+		AttributeName: attributeName,
+	}
+}
+
+type MarshalableAttributeMapping struct {
+	NodeTemplateName string `json:"nodeTemplateName" yaml:"nodeTemplateName"`
+	AttributeName    string `json:"attributeName" yaml:"attributeName"`
+}
+
 func (self *AttributeMapping) Marshalable() interface{} {
-	return &struct {
-		NodeTemplateName string `json:"nodeTemplateName" yaml:"nodeTemplateName"`
-		AttributeName    string `json:"attributeName" yaml:"attributeName"`
-	}{
+	return &MarshalableAttributeMapping{
 		NodeTemplateName: self.NodeTemplate.Name,
 		AttributeName:    self.AttributeName,
 	}

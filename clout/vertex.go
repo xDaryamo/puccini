@@ -62,6 +62,7 @@ func (self *Vertex) MarshalableStringMaps() interface{} {
 
 // json.Marshaler interface
 func (self *Vertex) MarshalJSON() ([]byte, error) {
+	// JavaScript requires keys to be strings, so we would lose complex keys
 	return json.Marshal(self.MarshalableStringMaps())
 }
 
