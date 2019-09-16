@@ -10,7 +10,7 @@ import (
 
 var log = logging.MustGetLogger("js")
 
-func SetMapNested(map_ ard.Map, key string, value string) error {
+func SetMapNested(map_ ard.StringMap, key string, value string) error {
 	path := strings.Split(key, ".")
 	last := len(path) - 1
 
@@ -21,11 +21,11 @@ func SetMapNested(map_ ard.Map, key string, value string) error {
 	if last > 0 {
 		for _, p := range path[:last] {
 			if o, ok := map_[p]; ok {
-				if map_, ok = o.(ard.Map); !ok {
+				if map_, ok = o.(ard.StringMap); !ok {
 					return errors.New("bad nested map structure")
 				}
 			} else {
-				m := make(ard.Map)
+				m := make(ard.StringMap)
 				map_[p] = m
 				map_ = m
 			}

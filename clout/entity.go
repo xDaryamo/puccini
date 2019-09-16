@@ -9,6 +9,6 @@ import (
 //
 
 type Entity interface {
-	GetMetadata() ard.Map
-	GetProperties() ard.Map
+	GetMetadata() ard.StringMap
+	GetProperties() ard.StringMap
 }

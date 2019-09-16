@@ -18,17 +18,17 @@ const Version = "1.0"
 //
 
 type Clout struct {
-	Version    string   `yaml:"version"`
-	Metadata   ard.Map  `yaml:"metadata"`
-	Properties ard.Map  `yaml:"properties"`
-	Vertexes   Vertexes `yaml:"vertexes"`
+	Version    string        `yaml:"version"`
+	Metadata   ard.StringMap `yaml:"metadata"`
+	Properties ard.StringMap `yaml:"properties"`
+	Vertexes   Vertexes      `yaml:"vertexes"`
 }
 
 func NewClout() *Clout {
 	return &Clout{
 		Version:    Version,
-		Metadata:   make(ard.Map),
-		Properties: make(ard.Map),
+		Metadata:   make(ard.StringMap),
+		Properties: make(ard.StringMap),
 		Vertexes:   make(Vertexes),
 	}
 }
@@ -63,16 +63,9 @@ func (self *Clout) Resolve() error {
 		return fmt.Errorf("unsupported Clout version: \"%s\"", self.Version)
 	}
 
-	// TODO: do we need these?
-	self.Metadata = ard.EnsureMaps(self.Metadata)
-	self.Properties = ard.EnsureMaps(self.Properties)
-
 	for key, v := range self.Vertexes {
 		v.Clout = self
 		v.ID = key
-		// TODO: do we need these?
-		v.Metadata = ard.EnsureMaps(v.Metadata)
-		v.Properties = ard.EnsureMaps(v.Properties)
 
 		for _, e := range v.EdgesOut {
 			var ok bool
@@ -81,10 +74,6 @@ func (self *Clout) Resolve() error {
 			}
 
 			e.Source = v
-			// TODO: do we need these?
-			e.Metadata = ard.EnsureMaps(e.Metadata)
-			e.Properties = ard.EnsureMaps(e.Properties)
-
 			e.Target.EdgesIn = append(e.Target.EdgesIn, e)
 		}
 	}
@@ -92,10 +81,23 @@ func (self *Clout) Resolve() error {
 }
 
 func (self *Clout) Normalize() (*Clout, error) {
-	return self, nil
+	// TODO: there must be a more efficient way to do this
 	if s, err := format.EncodeYaml(self, " "); err == nil {
 		return DecodeYaml(strings.NewReader(s))
 	} else {
 		return nil, err
+	}
+}
+
+func (self *Clout) ToStringMaps() {
+	self.Metadata = ard.EnsureStringMaps(self.Metadata)
+	self.Properties = ard.EnsureStringMaps(self.Properties)
+	for _, v := range self.Vertexes {
+		v.Metadata = ard.EnsureStringMaps(v.Metadata)
+		v.Properties = ard.EnsureStringMaps(v.Properties)
+		for _, e := range v.EdgesOut {
+			e.Metadata = ard.EnsureStringMaps(e.Metadata)
+			e.Properties = ard.EnsureStringMaps(e.Properties)
+		}
 	}
 }

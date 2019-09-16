@@ -21,7 +21,7 @@ func (self *CloutContext) NewConstraints(list ard.List, site interface{}, source
 	return constraints, nil
 }
 
-func (self *CloutContext) NewConstraintsForValue(map_ ard.Map, site interface{}, source interface{}, target interface{}) (Constraints, error) {
+func (self *CloutContext) NewConstraintsForValue(map_ ard.StringMap, site interface{}, source interface{}, target interface{}) (Constraints, error) {
 	v, ok := map_["constraints"]
 	if !ok {
 		return nil, nil

@@ -20,7 +20,7 @@ type StringMap = map[string]interface{}
 // Ensure data adheres to the ARD map type
 // E.g. JSON decoding uses map[string]interface{} instead of map[interface{}]interface{}
 
-func EnsureMaps(map_ Map) Map {
+func EnsureMaps(map_ interface{}) Map {
 	value, _ := ToMaps(map_)
 	if map_, ok := value.(Map); ok {
 		return map_
@@ -70,7 +70,7 @@ func ToMap(stringMap StringMap) Map {
 // Ensure data adheres to map[string]interface{}
 // E.g. JSON encoding does not support map[interface{}]interface{}
 
-func EnsureStringMaps(map_ Map) StringMap {
+func EnsureStringMaps(map_ interface{}) StringMap {
 	value, _ := ToStringMaps(map_)
 	if stringMap, ok := value.(StringMap); ok {
 		return stringMap

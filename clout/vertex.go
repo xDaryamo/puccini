@@ -11,20 +11,20 @@ import (
 //
 
 type Vertex struct {
-	Clout      *Clout  `yaml:"-"`
-	ID         string  `yaml:"-"`
-	Metadata   ard.Map `yaml:"metadata"`
-	Properties ard.Map `yaml:"properties"`
-	EdgesOut   Edges   `yaml:"edgesOut"`
-	EdgesIn    Edges   `yaml:"-"`
+	Clout      *Clout        `yaml:"-"`
+	ID         string        `yaml:"-"`
+	Metadata   ard.StringMap `yaml:"metadata"`
+	Properties ard.StringMap `yaml:"properties"`
+	EdgesOut   Edges         `yaml:"edgesOut"`
+	EdgesIn    Edges         `yaml:"-"`
 }
 
 func (self *Clout) NewVertex(id string) *Vertex {
 	vertex := &Vertex{
 		Clout:      self,
 		ID:         id,
-		Metadata:   make(ard.Map),
-		Properties: make(ard.Map),
+		Metadata:   make(ard.StringMap),
+		Properties: make(ard.StringMap),
 		EdgesOut:   make(Edges, 0),
 		EdgesIn:    make(Edges, 0),
 	}
@@ -37,12 +37,12 @@ func (self *Vertex) Remove() {
 }
 
 // Entity interface
-func (self *Vertex) GetMetadata() ard.Map {
+func (self *Vertex) GetMetadata() ard.StringMap {
 	return self.Metadata
 }
 
 // Entity interface
-func (self *Vertex) GetProperties() ard.Map {
+func (self *Vertex) GetProperties() ard.StringMap {
 	return self.Properties
 }
 

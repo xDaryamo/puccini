@@ -141,13 +141,13 @@ func (self *Value) Normalize() normal.Constrainable {
 	var constrainable normal.Constrainable
 
 	if list, ok := self.Context.Data.(ard.List); ok {
-		l := normal.NewConstrainableList(len(list))
+		l := normal.NewList(len(list))
 		for index, value := range list {
 			l.List[index] = NewValue(self.Context.ListChild(index, value)).Normalize()
 		}
 		constrainable = l
 	} else if map_, ok := self.Context.Data.(ard.Map); ok {
-		m := normal.NewConstrainableMap()
+		m := normal.NewMap()
 		for key, value := range map_ {
 			if _, ok := key.(string); !ok {
 				// Cloudify DSL does not support complex keys

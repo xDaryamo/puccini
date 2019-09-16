@@ -9,9 +9,11 @@ import (
 //
 
 type FunctionCall struct {
+	Key         interface{}   `json:"key,omitempty" yaml:"key,omitempty"`
+	Description string        `json:"description" yaml:"description"`
+	Constraints FunctionCalls `json:"constraints" yaml:"constraints"`
+
 	FunctionCall *tosca.FunctionCall `json:"functionCall" yaml:"functionCall"`
-	Constraints  FunctionCalls       `json:"constraints" yaml:"constraints"`
-	Description  string              `json:"description" yaml:"description"`
 }
 
 func NewFunctionCall(functionCall *tosca.FunctionCall) *FunctionCall {
@@ -19,13 +21,18 @@ func NewFunctionCall(functionCall *tosca.FunctionCall) *FunctionCall {
 }
 
 // Constrainable interface
-func (self *FunctionCall) AddConstraint(constraint *tosca.FunctionCall) {
-	self.Constraints = append(self.Constraints, NewFunctionCall(constraint))
+func (self *FunctionCall) SetKey(key interface{}) {
+	self.Key = key
 }
 
 // Constrainable interface
 func (self *FunctionCall) SetDescription(description string) {
 	self.Description = description
+}
+
+// Constrainable interface
+func (self *FunctionCall) AddConstraint(constraint *tosca.FunctionCall) {
+	self.Constraints = append(self.Constraints, NewFunctionCall(constraint))
 }
 
 //

@@ -24,11 +24,11 @@ type FunctionCall struct {
 	Site        interface{}   `json:"-" yaml:"-"`
 	Source      interface{}   `json:"-" yaml:"-"`
 	Target      interface{}   `json:"-" yaml:"-"`
-	Notation    ard.Map       `json:"-" yaml:"-"`
+	Notation    ard.StringMap `json:"-" yaml:"-"`
 }
 
 func (self *CloutContext) NewFunctionCall(data interface{}, site interface{}, source interface{}, target interface{}) (*FunctionCall, error) {
-	map_, ok := data.(ard.Map)
+	map_, ok := data.(ard.StringMap)
 	if !ok {
 		return nil, errors.New("not a function call")
 	}
@@ -46,7 +46,7 @@ func (self *CloutContext) NewFunctionCall(data interface{}, site interface{}, so
 		Notation: map_,
 	}
 
-	f, ok := functionCall.(ard.Map)
+	f, ok := functionCall.(ard.StringMap)
 	if !ok {
 		return nil, errors.New("malformed function call: not a map")
 	}

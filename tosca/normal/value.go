@@ -9,9 +9,11 @@ import (
 //
 
 type Value struct {
-	Value       interface{}   `json:"value" yaml:"value"` // can be ConstrainableList or ConstrainableMap
+	Key         interface{}   `json:"key,omitempty" yaml:"key,omitempty"`
 	Constraints FunctionCalls `json:"constraints" yaml:"constraints"`
 	Description string        `json:"description" yaml:"description"`
+
+	Value interface{} `json:"value" yaml:"value"` // can be ConstrainableList or ConstrainableMap
 }
 
 func NewValue(value interface{}) *Value {
@@ -19,11 +21,16 @@ func NewValue(value interface{}) *Value {
 }
 
 // Constrainable interface
-func (self *Value) AddConstraint(constraint *tosca.FunctionCall) {
-	self.Constraints = append(self.Constraints, NewFunctionCall(constraint))
+func (self *Value) SetKey(key interface{}) {
+	self.Key = key
 }
 
 // Constrainable interface
 func (self *Value) SetDescription(description string) {
 	self.Description = description
+}
+
+// Constrainable interface
+func (self *Value) AddConstraint(constraint *tosca.FunctionCall) {
+	self.Constraints = append(self.Constraints, NewFunctionCall(constraint))
 }

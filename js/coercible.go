@@ -1,6 +1,8 @@
 package js
 
 import (
+	"fmt"
+
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/yamlkeys"
 )
@@ -29,16 +31,16 @@ func (self *CloutContext) NewCoercible(data interface{}, site interface{}, sourc
 type CoercibleList []Coercible
 
 func (self *CloutContext) NewCoercibleList(list ard.List, site interface{}, source interface{}, target interface{}) (CoercibleList, error) {
-	c := make(CoercibleList, len(list))
+	coercible := make(CoercibleList, len(list))
 
 	for index, data := range list {
 		var err error
-		if c[index], err = self.NewCoercible(data, site, source, target); err != nil {
+		if coercible[index], err = self.NewCoercible(data, site, source, target); err != nil {
 			return nil, err
 		}
 	}
 
-	return c, nil
+	return coercible, nil
 }
 
 func (self CoercibleList) Coerce() (interface{}, error) {
@@ -58,27 +60,42 @@ func (self CoercibleList) Coerce() (interface{}, error) {
 // CoercibleMap
 //
 
-type CoercibleMap map[string]Coercible
+type CoercibleMap []CoercibleMapEntry
 
-func (self *CloutContext) NewCoercibleMap(map_ ard.Map, site interface{}, source interface{}, target interface{}) (CoercibleMap, error) {
-	c := make(CoercibleMap)
+type CoercibleMapEntry struct {
+	Key       interface{}
+	Coercible Coercible
+}
 
-	for key, data := range map_ {
-		var err error
-		if c[yamlkeys.KeyString(key)], err = self.NewCoercible(data, site, source, target); err != nil {
-			return nil, err
+func (self *CloutContext) NewCoercibleMap(list ard.List, site interface{}, source interface{}, target interface{}) (CoercibleMap, error) {
+	var coercible CoercibleMap
+
+	for _, data := range list {
+		if map_, ok := data.(ard.StringMap); ok {
+			if key, ok := map_["key"]; ok {
+				if c, err := self.NewCoercible(data, site, source, target); err == nil {
+					coercible = append(coercible, CoercibleMapEntry{key, c})
+				} else {
+					return nil, err
+				}
+			} else {
+				return nil, fmt.Errorf("map entry does not have \"key\": %v", data)
+			}
+		} else {
+			return nil, fmt.Errorf("map entry is not a map: %v", data)
 		}
 	}
 
-	return c, nil
+	return coercible, nil
 }
 
 func (self CoercibleMap) Coerce() (interface{}, error) {
-	value := make(ard.Map)
+	value := make(ard.StringMap)
 
-	for key, coercible := range self {
+	for _, entry := range self {
 		var err error
-		if value[key], err = coercible.Coerce(); err != nil {
+		// TODO: support complex keys?
+		if value[yamlkeys.KeyString(entry.Key)], err = entry.Coercible.Coerce(); err != nil {
 			return nil, err
 		}
 	}

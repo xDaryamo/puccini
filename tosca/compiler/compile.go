@@ -16,7 +16,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 		return nil, err
 	}
 
-	metadata := make(ard.Map)
+	metadata := make(ard.StringMap)
 	for name, jsEntry := range s.ScriptNamespace {
 		sourceCode, err := jsEntry.GetSourceCode()
 		if err != nil {
@@ -28,12 +28,12 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 	}
 	clout_.Metadata["puccini-js"] = metadata
 
-	metadata = make(ard.Map)
+	metadata = make(ard.StringMap)
 	metadata["version"] = VERSION
 	metadata["history"] = []string{timestamp}
 	clout_.Metadata["puccini-tosca"] = metadata
 
-	tosca := make(ard.Map)
+	tosca := make(ard.StringMap)
 	tosca["description"] = s.Description
 	tosca["metadata"] = s.Metadata
 	tosca["inputs"] = s.Inputs
@@ -147,7 +147,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 				} else if activity.SetNodeState != "" {
 					av.Properties["setNodeState"] = activity.SetNodeState
 				} else if activity.CallOperation != nil {
-					m := make(ard.Map)
+					m := make(ard.StringMap)
 					m["interface"] = activity.CallOperation.Interface.Name
 					m["operation"] = activity.CallOperation.Name
 					av.Properties["callOperation"] = m
@@ -270,7 +270,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 }
 
 func SetMetadata(entity clout.Entity, kind string) {
-	metadata := make(ard.Map)
+	metadata := make(ard.StringMap)
 	metadata["version"] = VERSION
 	metadata["kind"] = kind
 	entity.GetMetadata()["puccini-tosca"] = metadata

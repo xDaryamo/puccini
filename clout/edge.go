@@ -11,8 +11,8 @@ import (
 //
 
 type Edge struct {
-	Metadata   ard.Map
-	Properties ard.Map
+	Metadata   ard.StringMap
+	Properties ard.StringMap
 	Source     *Vertex
 	TargetID   string
 	Target     *Vertex
@@ -20,13 +20,24 @@ type Edge struct {
 
 func (self *Vertex) NewEdgeTo(target *Vertex) *Edge {
 	edge := &Edge{
-		Metadata:   make(ard.Map),
-		Properties: make(ard.Map),
+		Metadata:   make(ard.StringMap),
+		Properties: make(ard.StringMap),
 		Source:     self,
 		Target:     target,
 	}
 	self.EdgesOut = append(self.EdgesOut, edge)
 	target.EdgesIn = append(target.EdgesIn, edge)
+	return edge
+}
+
+func (self *Vertex) NewEdgeToID(targetId string) *Edge {
+	edge := &Edge{
+		Metadata:   make(ard.StringMap),
+		Properties: make(ard.StringMap),
+		Source:     self,
+		TargetID:   targetId,
+	}
+	self.EdgesOut = append(self.EdgesOut, edge)
 	return edge
 }
 
@@ -36,19 +47,19 @@ func (self *Edge) Remove() {
 }
 
 // Entity interface
-func (self *Edge) GetMetadata() ard.Map {
+func (self *Edge) GetMetadata() ard.StringMap {
 	return self.Metadata
 }
 
 // Entity interface
-func (self *Edge) GetProperties() ard.Map {
+func (self *Edge) GetProperties() ard.StringMap {
 	return self.Properties
 }
 
 type MarshalableEdge struct {
-	Metadata   ard.Map `yaml:"metadata"`
-	Properties ard.Map `yaml:"properties"`
-	TargetID   string  `yaml:"targetID"`
+	Metadata   ard.StringMap `yaml:"metadata"`
+	Properties ard.StringMap `yaml:"properties"`
+	TargetID   string        `yaml:"targetID"`
 }
 
 type MarshalableEdgeStringMaps struct {

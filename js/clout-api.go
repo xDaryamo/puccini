@@ -20,10 +20,10 @@ type CloutContext struct {
 	Runtime *goja.Runtime
 }
 
-func (self *Context) NewCloutContext(c *clout.Clout) (*CloutContext, *goja.Runtime) {
+func (self *Context) NewCloutContext(clout_ *clout.Clout) (*CloutContext, *goja.Runtime) {
 	runtime := self.NewRuntime()
 	context := &CloutContext{
-		Clout:   c,
+		Clout:   clout_,
 		Context: self,
 		Runtime: runtime,
 	}

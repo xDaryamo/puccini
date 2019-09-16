@@ -268,7 +268,7 @@ func (self *Value) Normalize() normal.Constrainable {
 	var constrainable normal.Constrainable
 
 	if list, ok := self.Context.Data.(ard.List); ok {
-		l := normal.NewConstrainableList(len(list))
+		l := normal.NewList(len(list))
 		for index, value := range list {
 			if v, ok := value.(*Value); ok {
 				l.List[index] = v.Normalize()
@@ -278,7 +278,7 @@ func (self *Value) Normalize() normal.Constrainable {
 		}
 		constrainable = l
 	} else if map_, ok := self.Context.Data.(ard.Map); ok {
-		m := normal.NewConstrainableMap()
+		m := normal.NewMap()
 		for key, value := range map_ {
 			if v, ok := value.(*Value); ok {
 				m.Map[key] = v.Normalize()

@@ -31,8 +31,8 @@ func ToJavaScriptStyle(name string) string {
 	return name
 }
 
-func GetFunctionSoureCode(name string, c *clout.Clout) (string, error) {
-	metadata, err := GetMetadata(c)
+func GetFunctionSoureCode(name string, clout_ *clout.Clout) (string, error) {
+	metadata, err := GetMetadata(clout_)
 	if err != nil {
 		return "", err
 	}
@@ -41,7 +41,7 @@ func GetFunctionSoureCode(name string, c *clout.Clout) (string, error) {
 	if !ok {
 		return "", errors.New("functions not found")
 	}
-	m, ok := functions.(ard.Map)
+	m, ok := functions.(ard.StringMap)
 	if !ok {
 		return "", errors.New("malformed functions section")
 	}
@@ -59,8 +59,8 @@ func GetFunctionSoureCode(name string, c *clout.Clout) (string, error) {
 	return script, nil
 }
 
-func GetScriptSourceCode(name string, c *clout.Clout) (string, error) {
-	section, err := GetScriptSection(name, c)
+func GetScriptSourceCode(name string, clout_ *clout.Clout) (string, error) {
+	section, err := GetScriptSection(name, clout_)
 	if err != nil {
 		return "", err
 	}
@@ -73,8 +73,8 @@ func GetScriptSourceCode(name string, c *clout.Clout) (string, error) {
 	return sourceCode, nil
 }
 
-func SetScriptSourceCode(name string, sourceCode string, c *clout.Clout) error {
-	metadata, err := GetMetadata(c)
+func SetScriptSourceCode(name string, sourceCode string, clout_ *clout.Clout) error {
+	metadata, err := GetMetadata(clout_)
 	if err != nil {
 		return err
 	}
@@ -82,13 +82,13 @@ func SetScriptSourceCode(name string, sourceCode string, c *clout.Clout) error {
 	return SetMapNested(metadata, name, sourceCode)
 }
 
-func GetScripts(name string, c *clout.Clout) (ard.List, error) {
-	section, err := GetScriptSection(name, c)
+func GetScripts(name string, clout_ *clout.Clout) (ard.List, error) {
+	section, err := GetScriptSection(name, clout_)
 	if err != nil {
 		return nil, err
 	}
 
-	sourceCodes, ok := section.(ard.Map)
+	sourceCodes, ok := section.(ard.StringMap)
 	if !ok {
 		return nil, fmt.Errorf("source code found but not a string: %s", name)
 	}
@@ -101,13 +101,13 @@ func GetScripts(name string, c *clout.Clout) (ard.List, error) {
 	return list, nil
 }
 
-func GetScriptSection(name string, c *clout.Clout) (interface{}, error) {
+func GetScriptSection(name string, clout_ *clout.Clout) (interface{}, error) {
 	segments, final, err := ParseScriptName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	metadata, err := GetMetadata(c)
+	metadata, err := GetMetadata(clout_)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func GetScriptSection(name string, c *clout.Clout) (interface{}, error) {
 	for _, s := range segments {
 		o := m[s]
 		var ok bool
-		if m, ok = o.(ard.Map); !ok {
+		if m, ok = o.(ard.StringMap); !ok {
 			return nil, fmt.Errorf("script not found: %s", name)
 		}
 	}
@@ -129,13 +129,13 @@ func GetScriptSection(name string, c *clout.Clout) (interface{}, error) {
 	return o, nil
 }
 
-func GetMetadata(c *clout.Clout) (ard.Map, error) {
-	metadata, ok := c.Metadata["puccini-js"]
+func GetMetadata(clout_ *clout.Clout) (ard.StringMap, error) {
+	metadata, ok := clout_.Metadata["puccini-js"]
 	if !ok {
 		return nil, errors.New("no scripts in Clout")
 	}
 
-	m, ok := metadata.(ard.Map)
+	m, ok := metadata.(ard.StringMap)
 	if !ok {
 		return nil, errors.New("malformed \"puccini-js\" metadata in Clout")
 	}

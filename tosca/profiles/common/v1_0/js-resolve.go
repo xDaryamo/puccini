@@ -33,6 +33,10 @@ for (var v = 0; v < nodeTemplateVertexes.length; v++) {
 	var vertex = nodeTemplateVertexes[v];
 	var nodeTemplate = vertex.properties;
 	var requirements = nodeTemplate.requirements;
+    puccini.stdout.write(puccini.sprintf('%T\n',nodeTemplate));
+	for (var k in nodeTemplate)
+		puccini.stdout.write(puccini.sprintf('%v %T\n',k,nodeTemplate[k]));
+    puccini.stdout.write(puccini.sprintf('%T\n',nodeTemplate.artifacts));
 	for (var r = 0; r < requirements.length; r++) {
 		var requirement = requirements[r];
 		resolve(vertex, nodeTemplate, requirement);

@@ -22,7 +22,7 @@ func (self *CloutContext) NewValue(data interface{}, site interface{}, source in
 		Value:   data,
 	}
 
-	if map_, ok := data.(ard.Map); ok {
+	if map_, ok := data.(ard.StringMap); ok {
 		var err error
 		if v, ok := map_["value"]; ok {
 			c.Value = v
@@ -34,9 +34,9 @@ func (self *CloutContext) NewValue(data interface{}, site interface{}, source in
 				}
 			}
 		} else if v, ok := map_["map"]; ok {
-			if m, ok := v.(ard.Map); ok {
+			if l, ok := v.(ard.List); ok {
 				// Embedded CoercibleMap
-				if c.Value, err = self.NewCoercibleMap(m, site, source, target); err != nil {
+				if c.Value, err = self.NewCoercibleMap(l, site, source, target); err != nil {
 					return nil, err
 				}
 			}
