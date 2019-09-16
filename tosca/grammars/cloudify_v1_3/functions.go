@@ -5,6 +5,7 @@ import (
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	profile "github.com/tliron/puccini/tosca/profiles/cloudify/v4_5"
+	"github.com/tliron/yamlkeys"
 )
 
 //
@@ -34,7 +35,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 	}
 
 	for key, data := range map_ {
-		name := ard.KeyString(key)
+		name := yamlkeys.KeyString(key)
 
 		_, ok := context.ScriptNamespace[name]
 		if !ok {

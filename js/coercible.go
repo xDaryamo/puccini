@@ -2,6 +2,7 @@ package js
 
 import (
 	"github.com/tliron/puccini/ard"
+	"github.com/tliron/yamlkeys"
 )
 
 //
@@ -64,7 +65,7 @@ func (self *CloutContext) NewCoercibleMap(map_ ard.Map, site interface{}, source
 
 	for key, data := range map_ {
 		var err error
-		if c[ard.KeyString(key)], err = self.NewCoercible(data, site, source, target); err != nil {
+		if c[yamlkeys.KeyString(key)], err = self.NewCoercible(data, site, source, target); err != nil {
 			return nil, err
 		}
 	}

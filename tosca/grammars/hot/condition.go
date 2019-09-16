@@ -3,6 +3,7 @@ package hot
 import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/yamlkeys"
 )
 
 //
@@ -37,7 +38,7 @@ func ReadCondition(context *tosca.Context) interface{} {
 		}
 
 		for key, value := range map_ {
-			operator := ard.KeyString(key)
+			operator := yamlkeys.KeyString(key)
 
 			script, ok := context.ScriptNamespace[operator]
 			if !ok {

@@ -3,8 +3,8 @@ package cloudify_v1_3
 import (
 	"strings"
 
-	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/yamlkeys"
 )
 
 //
@@ -28,7 +28,7 @@ func ReadMetadata(context *tosca.Context) interface{} {
 
 	if self != nil {
 		for key, value := range self {
-			name := ard.KeyString(key)
+			name := yamlkeys.KeyString(key)
 			if strings.HasPrefix(name, "puccini-js.import.") {
 				name := name[18:]
 				context.ImportScript(name, value.(string))

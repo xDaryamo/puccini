@@ -6,6 +6,7 @@ import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/yamlkeys"
 )
 
 //
@@ -45,7 +46,7 @@ func ReadWorkflowActivityDefinition(context *tosca.Context) interface{} {
 		}
 
 		for key, value := range map_ {
-			operator := ard.KeyString(key)
+			operator := yamlkeys.KeyString(key)
 			childContext := context.FieldChild(operator, value)
 
 			switch operator {

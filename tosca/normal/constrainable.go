@@ -5,6 +5,7 @@ import (
 
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/yamlkeys"
 )
 
 //
@@ -27,7 +28,7 @@ func (self Constrainables) MarshalJSON() ([]byte, error) {
 	// JavaScript requires keys to be strings, so we would lose complex keys
 	map_ := make(ard.StringMap)
 	for key, constrainable := range self {
-		map_[ard.KeyString(key)] = constrainable
+		map_[yamlkeys.KeyString(key)] = constrainable
 	}
 	return json.Marshal(map_)
 }
@@ -85,7 +86,7 @@ func (self ConstrainableMap) Object(name string) map[string]interface{} {
 	// JavaScript requires keys to be strings, so we would lose complex keys
 	o := make(ard.StringMap)
 	for key, constrainable := range self.Map {
-		o[ard.KeyString(key)] = constrainable
+		o[yamlkeys.KeyString(key)] = constrainable
 	}
 	return o
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/yamlkeys"
 )
 
 //
@@ -107,7 +108,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 
 	// All properties must be defined in type
 	for key := range map_ {
-		name := ard.KeyString(key)
+		name := yamlkeys.KeyString(key)
 		if _, ok := dataType.PropertyDefinitions[name]; !ok {
 			self.Context.MapChild(name, nil).ReportUndeclared("property")
 			delete(map_, key)
@@ -150,9 +151,9 @@ func (self *Value) Normalize() normal.Constrainable {
 		for key, value := range map_ {
 			if _, ok := key.(string); !ok {
 				// Cloudify DSL does not support complex keys
-				self.Context.MapChild(key, ard.KeyData(key)).ReportValueWrongType("string")
+				self.Context.MapChild(key, yamlkeys.KeyData(key)).ReportValueWrongType("string")
 			}
-			name := ard.KeyString(key)
+			name := yamlkeys.KeyString(key)
 			m.Map[name] = NewValue(self.Context.MapChild(name, value)).Normalize()
 		}
 		constrainable = m

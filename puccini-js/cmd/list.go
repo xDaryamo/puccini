@@ -10,6 +10,7 @@ import (
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/format"
 	"github.com/tliron/puccini/js"
+	"github.com/tliron/yamlkeys"
 )
 
 func init() {
@@ -49,7 +50,7 @@ func ListValue(value interface{}, path []string) {
 		}
 	case ard.Map:
 		for key, vv := range v {
-			ListValue(vv, append(path, ard.KeyString(key)))
+			ListValue(vv, append(path, yamlkeys.KeyString(key)))
 		}
 	}
 }

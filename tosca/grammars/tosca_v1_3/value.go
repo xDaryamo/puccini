@@ -7,6 +7,7 @@ import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/yamlkeys"
 )
 
 //
@@ -187,11 +188,11 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 							// Validate key schema
 							if keyDataType != nil {
 								// Clone to avoid changing the original key
-								key := ReadValue(context.Clone(ard.Clone(ard.KeyData(key)))).(*Value)
+								key := ReadValue(context.Clone(yamlkeys.Clone(yamlkeys.KeyData(key)))).(*Value)
 								key.RenderAttribute(keyDataType, nil, false)
 							} else if _, ok := key.(string); !ok {
 								// If there's no key schema we require string
-								self.Context.MapChild(key, ard.KeyData(key)).ReportValueWrongType("string")
+								self.Context.MapChild(key, yamlkeys.KeyData(key)).ReportValueWrongType("string")
 							}
 
 							value := ReadValue(context).(*Value)
@@ -201,7 +202,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 								value.Description = description
 							}
 
-							ard.MapPut(map_, key, value) // support complex keys
+							yamlkeys.MapPut(map_, key, value) // support complex keys
 						}
 					}
 				}
@@ -234,7 +235,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 
 	// All properties must be defined in type
 	for key := range map_ {
-		name := ard.KeyString(key)
+		name := yamlkeys.KeyString(key)
 		if _, ok := dataType.PropertyDefinitions[name]; !ok {
 			self.Context.MapChild(name, nil).ReportUndeclared("property")
 			delete(map_, key)

@@ -15,6 +15,7 @@ import (
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
 	"github.com/tliron/puccini/url"
+	"github.com/tliron/yamlkeys"
 )
 
 var inputs []string
@@ -206,7 +207,7 @@ func ParseInputs() {
 		common.FailOnError(err)
 		if map_, ok := data.(ard.Map); ok {
 			for key, value := range map_ {
-				inputValues[ard.KeyString(key)] = value
+				inputValues[yamlkeys.KeyString(key)] = value
 			}
 		} else {
 			common.Failf("malformed inputs in %s", inputsUrl)

@@ -7,6 +7,7 @@ import (
 
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca/reflection"
+	"github.com/tliron/yamlkeys"
 )
 
 type Reader func(*Context) interface{}
@@ -76,7 +77,7 @@ func (self *Context) ReadFields(entityPtr interface{}) []string {
 					}
 				}
 				if !tagged {
-					readField.Key = ard.KeyString(key)
+					readField.Key = yamlkeys.KeyString(key)
 					readField.Read()
 				}
 			}
@@ -324,7 +325,7 @@ func (self *Context) ReadStringMap() *map[string]interface{} {
 	if self.ValidateType("map") {
 		strings := make(map[string]interface{})
 		for key, data := range self.Data.(ard.Map) {
-			strings[ard.KeyString(key)] = data
+			strings[yamlkeys.KeyString(key)] = data
 		}
 		return &strings
 	}
@@ -336,7 +337,7 @@ func (self *Context) ReadStringStringMap() *map[string]string {
 		strings := make(map[string]string)
 		for key, data := range self.Data.(ard.Map) {
 			if string, ok := data.(string); ok {
-				strings[ard.KeyString(key)] = string
+				strings[yamlkeys.KeyString(key)] = string
 			} else {
 				self.MapChild(key, data).ReportValueWrongType("string")
 				continue
@@ -420,7 +421,7 @@ func (self *Context) ReadSequencedListItems(read Reader, process Processor) bool
 				return false
 			}
 			for itemName, data := range item {
-				process(read(self.SequencedListChild(index, ard.KeyString(itemName), data)))
+				process(read(self.SequencedListChild(index, yamlkeys.KeyString(itemName), data)))
 			}
 		}
 		return true

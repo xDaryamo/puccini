@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/tliron/yamlkeys"
 	"gopkg.in/yaml.v3"
 )
 
@@ -26,7 +27,7 @@ func DecodeYaml(reader io.Reader, locate bool) (Map, Locator, error) {
 
 	decoder := yaml.NewDecoder(reader)
 	if err := decoder.Decode(&node); err == nil {
-		if decoded, err := DecodeYamlNode(&node); err == nil {
+		if decoded, err := yamlkeys.DecodeNode(&node); err == nil {
 			var ok bool
 			if data, ok = decoded.(Map); ok {
 				if locate {
@@ -42,7 +43,7 @@ func DecodeYaml(reader io.Reader, locate bool) (Map, Locator, error) {
 		return nil, nil, err
 	}
 
-	// We do not need to call EnsureMaps because DecodeYamlNode takes care of it
+	// We do not need to call EnsureMaps because yamlkeys takes care of it
 	return data, locator, nil
 }
 

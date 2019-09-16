@@ -6,6 +6,7 @@ import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca/problems"
 	"github.com/tliron/puccini/url"
+	"github.com/tliron/yamlkeys"
 )
 
 //
@@ -136,7 +137,7 @@ func (self *Context) Location() string {
 //
 
 func (self *Context) FieldChild(name interface{}, data interface{}) *Context {
-	nameString := ard.KeyString(name) // complex keys would be stringified
+	nameString := yamlkeys.KeyString(name) // complex keys would be stringified
 	return &Context{
 		Parent:          self,
 		Name:            nameString,
@@ -180,7 +181,7 @@ func (self *Context) FieldChildren() []*Context {
 }
 
 func (self *Context) MapChild(name interface{}, data interface{}) *Context {
-	nameString := ard.KeyString(name) // complex keys would be stringified
+	nameString := yamlkeys.KeyString(name) // complex keys would be stringified
 	return &Context{
 		Parent:          self,
 		Name:            nameString,

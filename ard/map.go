@@ -1,5 +1,9 @@
 package ard
 
+import (
+	"github.com/tliron/yamlkeys"
+)
+
 //
 // Map
 //
@@ -12,94 +16,6 @@ package ard
 type Map = map[interface{}]interface{}
 
 type StringMap = map[string]interface{}
-
-// Support for maps with complex keys
-
-func MapGet(map_ Map, key interface{}) (interface{}, bool) {
-	if key_, ok := key.(Key); ok {
-		keyData := key_.GetKeyData()
-		for k, value := range map_ {
-			if Equals(keyData, KeyData(k)) {
-				return value, true
-			}
-		}
-	} else {
-		value, ok := map_[key]
-		return value, ok
-	}
-
-	return nil, false
-}
-
-func MapPut(map_ Map, key interface{}, value interface{}) (interface{}, bool) {
-	if key_, ok := key.(Key); ok {
-		keyData := key_.GetKeyData()
-		for k, existing := range map_ {
-			if Equals(keyData, KeyData(k)) {
-				map_[k] = value
-				return existing, true
-			}
-		}
-		map_[key] = value
-		return nil, false
-	} else {
-		if existing, ok := map_[key]; ok {
-			map_[key] = value
-			return existing, true
-		}
-		map_[key] = value
-		return nil, false
-	}
-}
-
-func MapDelete(map_ Map, key interface{}) (interface{}, bool) {
-	if key_, ok := key.(Key); ok {
-		keyData := key_.GetKeyData()
-		for k, existing := range map_ {
-			if Equals(keyData, KeyData(k)) {
-				delete(map_, k)
-				return existing, true
-			}
-		}
-	} else {
-		if existing, ok := map_[key]; ok {
-			delete(map_, key)
-			return existing, true
-		}
-	}
-
-	return nil, false
-}
-
-func MapMerge(to Map, from Map, override bool) {
-	if override {
-		for key, value := range from {
-			MapPut(to, key, value)
-		}
-	} else {
-		for key, value := range from {
-			if key_, ok := key.(Key); ok {
-				keyData := key_.GetKeyData()
-				exists := false
-				for k := range to {
-					if Equals(keyData, KeyData(k)) {
-						exists = true
-						break
-					}
-				}
-				if exists {
-					continue
-				}
-				to[key] = value
-			} else {
-				if _, ok := to[key]; ok {
-					continue
-				}
-				to[key] = value
-			}
-		}
-	}
-}
 
 // Ensure data adheres to the ARD map type
 // E.g. JSON decoding uses map[string]interface{} instead of map[interface{}]interface{}
@@ -196,7 +112,7 @@ func ToStringMaps(value interface{}) (interface{}, bool) {
 func ToStringMap(map_ Map) StringMap {
 	stringMap := make(StringMap)
 	for key, value := range map_ {
-		stringMap[KeyString(key)], _ = ToStringMaps(value)
+		stringMap[yamlkeys.KeyString(key)], _ = ToStringMaps(value)
 	}
 	return stringMap
 }

@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/tliron/puccini/ard"
+	"github.com/tliron/yamlkeys"
 	"gopkg.in/yaml.v3"
 )
 
@@ -27,7 +28,7 @@ func ReadYaml(reader io.Reader) (interface{}, error) {
 	var node yaml.Node
 	decoder := yaml.NewDecoder(reader)
 	if err := decoder.Decode(&node); err == nil {
-		if data, err := ard.DecodeYamlNode(&node); err == nil {
+		if data, err := yamlkeys.DecodeNode(&node); err == nil {
 			return data, nil
 		} else {
 			return nil, err

@@ -4,6 +4,7 @@ import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/yamlkeys"
 )
 
 //
@@ -50,9 +51,9 @@ func (self *Value) Normalize() normal.Constrainable {
 		for key, value := range map_ {
 			if _, ok := key.(string); !ok {
 				// HOT does not support complex keys
-				self.Context.MapChild(key, ard.KeyData(key)).ReportValueWrongType("string")
+				self.Context.MapChild(key, yamlkeys.KeyData(key)).ReportValueWrongType("string")
 			}
-			name := ard.KeyString(key)
+			name := yamlkeys.KeyString(key)
 			m.Map[name] = NewValue(self.Context.MapChild(name, value)).Normalize()
 		}
 		constrainable = m

@@ -5,6 +5,7 @@ import (
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	profile "github.com/tliron/puccini/tosca/profiles/simple/v1_3"
+	"github.com/tliron/yamlkeys"
 )
 
 // Built-in constraint functions
@@ -64,7 +65,7 @@ func ReadConstraintClause(context *tosca.Context) interface{} {
 		}
 
 		for key, value := range map_ {
-			operator := ard.KeyString(key)
+			operator := yamlkeys.KeyString(key)
 
 			script, ok := context.ScriptNamespace[operator]
 			if !ok {

@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"reflect"
 
-	"github.com/tliron/puccini/ard"
+	"github.com/tliron/yamlkeys"
 )
 
 func EnsureXml(data interface{}) interface{} {
@@ -27,7 +27,7 @@ func EnsureXml(data interface{}) interface{} {
 		// Convert to slice of XmlMapEntry
 		slice := make([]XmlMapEntry, value.Len())
 		for index, key := range value.MapKeys() {
-			k := ard.KeyData(key.Interface())
+			k := yamlkeys.KeyData(key.Interface())
 			v := value.MapIndex(key).Interface()
 			slice[index] = XmlMapEntry{EnsureXml(k), EnsureXml(v)}
 		}

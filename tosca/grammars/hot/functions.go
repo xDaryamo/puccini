@@ -5,6 +5,7 @@ import (
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	profile "github.com/tliron/puccini/tosca/profiles/hot/v1_0"
+	"github.com/tliron/yamlkeys"
 )
 
 //
@@ -54,7 +55,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 	}
 
 	for key, data := range map_ {
-		name := ard.KeyString(key)
+		name := yamlkeys.KeyString(key)
 
 		_, ok := context.ScriptNamespace[name]
 		if !ok {
@@ -111,7 +112,7 @@ func ToFunctionCalls(context *tosca.Context) {
 			for key, value := range map_ {
 				childContext := context.MapChild(key, value)
 				ToFunctionCalls(childContext)
-				ard.MapPut(map_, key, childContext.Data) // support complex keys
+				yamlkeys.MapPut(map_, key, childContext.Data) // support complex keys
 			}
 		}
 	}
