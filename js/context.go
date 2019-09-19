@@ -37,10 +37,10 @@ func NewContext(name string, logger *logging.Logger, quiet bool, ardFormat strin
 	}
 }
 
-func (self *Context) NewRuntime() *goja.Runtime {
+func (entry *Context) NewRuntime() *goja.Runtime {
 	runtime := goja.New()
 	runtime.SetFieldNameMapper(mapper)
-	runtime.Set("puccini", self.NewPucciniApi())
+	runtime.Set("puccini", entry.NewPucciniApi())
 	return runtime
 }
 

@@ -42,7 +42,7 @@ func (self *Context) NewPucciniApi() *PucciniApi {
 	}
 }
 
-func (self *PucciniApi) Sprintf(f string, a ...interface{}) string {
+func (entry *PucciniApi) Sprintf(f string, a ...interface{}) string {
 	return fmt.Sprintf(f, a...)
 }
 

@@ -2,7 +2,6 @@ package tosca_v1_3
 
 import (
 	"errors"
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -42,35 +41,35 @@ func ReadVersion(context *tosca.Context) interface{} {
 		self.CanonicalString = self.OriginalString
 	} else if context.HasQuirk("data_types.string.permissive") {
 		if context.Is("float") {
-			v := *context.ReadFloat()
-			self.OriginalString = fmt.Sprintf("%g", v)
-			self.CanonicalString = self.OriginalString
+			value := *context.ReadFloat()
+			self.OriginalString = strconv.FormatFloat(value, 'g', -1, 64)
 			if strings.Index(self.CanonicalString, "e") == -1 {
 				context.ReportValueMalformed("version", "too many floating point digits")
+				return &self
 			}
 			if strings.Index(self.CanonicalString, ".") == -1 {
 				// Assume minor version is 0
 				self.CanonicalString += ".0"
 			}
 		} else if context.Is("integer") {
-			v := *context.ReadInteger()
+			value := *context.ReadInteger()
 			// Assume minor version is 0
-			self.OriginalString = fmt.Sprintf("%d.0", v)
+			self.OriginalString = strconv.FormatInt(value, 10) + ".0"
 			self.CanonicalString = self.OriginalString
 		} else {
 			context.ReportValueWrongType("string", "float", "integer")
-			return self
+			return &self
 		}
 	} else {
 		context.ReportValueWrongType("string")
-		return self
+		return &self
 	}
 
 	matches := VersionRE.FindStringSubmatch(self.CanonicalString)
 	length := len(matches)
 	if length == 0 {
 		context.ReportValueMalformed("version", "")
-		return self
+		return &self
 	}
 
 	if length > 1 {
@@ -115,6 +114,7 @@ func (self *Version) Compare(data interface{}) (int, error) {
 		if d != 0 {
 			return d, nil
 		}
+		// Note: the qualifier is compared alphabetically, *not* semantically
 		d = strings.Compare(self.Qualifier, version.Qualifier)
 		if d != 0 {
 			return d, nil

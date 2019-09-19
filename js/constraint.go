@@ -1,7 +1,7 @@
 package js
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/tliron/puccini/ard"
 )
@@ -12,8 +12,12 @@ func (self *CloutContext) NewConstraints(list ard.List, site interface{}, source
 	constraints := make(Constraints, len(list))
 
 	for index, element := range list {
-		var err error
-		if constraints[index], err = self.NewFunctionCall(element, site, source, target); err != nil {
+		if coercible, err := self.NewCoercible(element, site, source, target); err == nil {
+			var ok bool
+			if constraints[index], ok = coercible.(*FunctionCall); !ok {
+				return nil, fmt.Errorf("malformed constraint, not a function call: %v", element)
+			}
+		} else {
 			return nil, err
 		}
 	}
@@ -21,18 +25,16 @@ func (self *CloutContext) NewConstraints(list ard.List, site interface{}, source
 	return constraints, nil
 }
 
-func (self *CloutContext) NewConstraintsForValue(map_ ard.StringMap, site interface{}, source interface{}, target interface{}) (Constraints, error) {
-	v, ok := map_["constraints"]
-	if !ok {
+func (self *CloutContext) NewConstraintsForValue(map_ ard.StringMap, name string, site interface{}, source interface{}, target interface{}) (Constraints, error) {
+	if v, ok := map_[name]; ok {
+		if list, ok := v.(ard.List); ok {
+			return self.NewConstraints(list, site, source, target)
+		} else {
+			return nil, fmt.Errorf("malformed \"%s\", not a list: %T", name, v)
+		}
+	} else {
 		return nil, nil
 	}
-
-	list, ok := v.(ard.List)
-	if !ok {
-		return nil, errors.New("malformed \"constraints\"")
-	}
-
-	return self.NewConstraints(list, site, source, target)
 }
 
 func (self Constraints) Validate(value interface{}) (bool, error) {

@@ -97,7 +97,7 @@ func (self *ConstraintClause) NewFunctionCall(context *tosca.Context, strict boo
 		if self.IsNativeArgument(uint(index)) {
 			if self.DataType != nil {
 				value := ReadValue(context.ListChild(index, argument)).(*Value)
-				value.RenderAttribute(self.DataType, nil, false)
+				value.RenderAttribute(self.DataType, nil, false, false)
 				argument = value.Context.Data
 			} else if strict {
 				panic("no data type for native argument")
@@ -123,10 +123,10 @@ func (self *ConstraintClause) IsNativeArgument(index uint) bool {
 
 type ConstraintClauses []*ConstraintClause
 
-func (self ConstraintClauses) Render(constraints *ConstraintClauses, dataType *DataType) {
+func (self ConstraintClauses) RenderAndAppend(constraints *ConstraintClauses, dataType *DataType) {
 	for _, constraintClause := range self {
 		if (constraintClause.DataType != nil) && (constraintClause.DataType != dataType) {
-			panic("constraint clause cannot be used with multiple data types")
+			panic("constraint clause cannot be used with different data type")
 		}
 		constraintClause.DataType = dataType
 		*constraints = append(*constraints, constraintClause)
@@ -148,5 +148,29 @@ func (self ConstraintClauses) NormalizeConstrainable(context *tosca.Context, con
 		functionCall := constraintClause.NewFunctionCall(context, true)
 		NormalizeFunctionCallArguments(functionCall, context)
 		constrainable.AddConstraint(functionCall)
+	}
+}
+
+func (self ConstraintClauses) NormalizeListEntries(context *tosca.Context, l *normal.List) {
+	for _, constraintClause := range self {
+		functionCall := constraintClause.NewFunctionCall(context, true)
+		NormalizeFunctionCallArguments(functionCall, context)
+		l.AddEntryConstraint(functionCall)
+	}
+}
+
+func (self ConstraintClauses) NormalizeMapKeys(context *tosca.Context, m *normal.Map) {
+	for _, constraintClause := range self {
+		functionCall := constraintClause.NewFunctionCall(context, true)
+		NormalizeFunctionCallArguments(functionCall, context)
+		m.AddKeyConstraint(functionCall)
+	}
+}
+
+func (self ConstraintClauses) NormalizeMapValues(context *tosca.Context, m *normal.Map) {
+	for _, constraintClause := range self {
+		functionCall := constraintClause.NewFunctionCall(context, true)
+		NormalizeFunctionCallArguments(functionCall, context)
+		m.AddValueConstraint(functionCall)
 	}
 }

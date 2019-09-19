@@ -1,7 +1,6 @@
 package js
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -14,96 +13,73 @@ import (
 //
 
 type FunctionCall struct {
-	Context     *CloutContext `json:"-" yaml:"-"`
-	Name        string        `json:"functionCall" yaml:"functionCall"`
-	URL         string        `json:"url" yaml:"url"`
-	Path        string        `json:"path" yaml:"path"`
-	Location    string        `json:"location" yaml:"location"`
-	Arguments   []Coercible   `json:"arguments" yaml:"arguments"`
-	Constraints Constraints   `json:"constraints" yaml:"constraints"`
-	Site        interface{}   `json:"-" yaml:"-"`
-	Source      interface{}   `json:"-" yaml:"-"`
-	Target      interface{}   `json:"-" yaml:"-"`
-	Notation    ard.StringMap `json:"-" yaml:"-"`
+	Context *CloutContext `json:"-" yaml:"-"`
+
+	Name        string      `json:"functionCall" yaml:"functionCall"`
+	Arguments   []Coercible `json:"arguments" yaml:"arguments"`
+	URL         string      `json:"url" yaml:"url"`
+	Path        string      `json:"path" yaml:"path"`
+	Location    string      `json:"location" yaml:"location"`
+	Constraints Constraints `json:"constraints" yaml:"constraints"`
+
+	Site   interface{} `json:"-" yaml:"-"`
+	Source interface{} `json:"-" yaml:"-"`
+	Target interface{} `json:"-" yaml:"-"`
+
+	Notation ard.StringMap `json:"-" yaml:"-"`
 }
 
-func (self *CloutContext) NewFunctionCall(data interface{}, site interface{}, source interface{}, target interface{}) (*FunctionCall, error) {
-	map_, ok := data.(ard.StringMap)
-	if !ok {
-		return nil, errors.New("not a function call")
+func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, site interface{}, source interface{}, target interface{}) (*FunctionCall, error) {
+	coercible := FunctionCall{
+		Context: self,
+		Site:    site,
+		Source:  source,
+		Target:  target,
 	}
 
-	functionCall, ok := map_["functionCall"]
-	if !ok {
-		return nil, errors.New("not a function call")
+	if data, ok := map_["name"]; ok {
+		if coercible.Name, ok = data.(string); !ok {
+			return nil, fmt.Errorf("malformed function call, \"name\" not a string: %T", data)
+		}
+	} else {
+		return nil, fmt.Errorf("malformed function call, no \"name\": %v", map_)
 	}
 
-	c := FunctionCall{
-		Context:  self,
-		Site:     site,
-		Source:   source,
-		Target:   target,
-		Notation: map_,
+	if data, ok := map_["arguments"]; ok {
+		if originalArguments, ok := data.(ard.List); ok {
+			coercible.Arguments = make([]Coercible, len(originalArguments))
+			for index, argument := range originalArguments {
+				var err error
+				if coercible.Arguments[index], err = self.NewCoercible(argument, site, source, target); err != nil {
+					return nil, err
+				}
+			}
+		} else {
+			return nil, fmt.Errorf("malformed function call, \"arguments\" not a list: %T", data)
+		}
+	} else {
+		return nil, fmt.Errorf("malformed function call, no \"arguments\": %v", map_)
 	}
 
-	f, ok := functionCall.(ard.StringMap)
-	if !ok {
-		return nil, errors.New("malformed function call: not a map")
-	}
-
-	v, ok := f["name"]
-	if !ok {
-		return nil, errors.New("malformed function call: no \"name\"")
-	}
-	c.Name, ok = v.(string)
-	if !ok {
-		return nil, errors.New("malformed function call: \"name\" not a string")
-	}
-
-	if v, ok = f["url"]; ok {
-		c.URL, ok = v.(string)
-		if !ok {
-			return nil, errors.New("malformed function call: \"url\" not a string")
+	if data, ok := map_["url"]; ok {
+		if coercible.URL, ok = data.(string); !ok {
+			return nil, fmt.Errorf("malformed function call, \"url\" not a string: %T", data)
 		}
 	}
 
-	if v, ok = f["path"]; ok {
-		c.Path, ok = v.(string)
-		if !ok {
-			return nil, errors.New("malformed function call: \"path\" not a string")
+	if data, ok := map_["path"]; ok {
+		if coercible.Path, ok = data.(string); !ok {
+			return nil, fmt.Errorf("malformed function call, \"path\" not a string: %T", data)
 		}
 	}
 
-	if v, ok = f["location"]; ok {
-		c.Location, ok = v.(string)
-		if !ok {
-			return nil, errors.New("malformed function call: \"location\" not a string")
+	if data, ok := map_["location"]; ok {
+		if coercible.Location, ok = data.(string); !ok {
+			return nil, fmt.Errorf("malformed function call, \"location\" not a string: %T", data)
 		}
 	}
 
-	v, ok = f["arguments"]
-	if !ok {
-		return nil, errors.New("malformed function call: no \"arguments\"")
-	}
-	originalArguments, ok := v.(ard.List)
-	if !ok {
-		return nil, errors.New("malformed function call: \"arguments\" not a list")
-	}
-
-	c.Arguments = make([]Coercible, len(originalArguments))
-	for index, argument := range originalArguments {
-		var err error
-		if c.Arguments[index], err = self.NewCoercible(argument, site, source, target); err != nil {
-			return nil, err
-		}
-	}
-
-	var err error
-	if c.Constraints, err = self.NewConstraintsForValue(map_, site, source, target); err != nil {
-		return nil, err
-	}
-
-	return &c, nil
+	return &coercible, nil
 }
 
 func (self *FunctionCall) Signature(arguments []interface{}) string {
@@ -134,6 +110,11 @@ func (self *FunctionCall) Coerce() (interface{}, error) {
 }
 
 // Coercible interface
+func (self *FunctionCall) SetConstraints(constraints Constraints) {
+	self.Constraints = constraints
+}
+
+// Coercible interface
 func (self *FunctionCall) Unwrap() interface{} {
 	return self.Notation
 }
@@ -155,7 +136,7 @@ func (self *FunctionCall) Validate(value interface{}, errorWhenInvalid bool) (bo
 		return false, err
 	}
 
-	// Prepend value
+	// Prepend value to be first argument
 	arguments = append([]interface{}{value}, arguments...)
 
 	log.Infof("{validate} %s %s", self.Path, self.Signature(arguments))

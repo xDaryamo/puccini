@@ -27,7 +27,7 @@ type ScalarUnit struct {
 	canonicalUnitPlural   string
 }
 
-func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, canonicalUnitSingular string, canonicalUnitPlural string, re *regexp.Regexp, sizes ScalarUnitSizes, integer bool, caseSensitive bool) *ScalarUnit {
+func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, canonicalUnitSingular string, canonicalUnitPlural string, re *regexp.Regexp, measures ScalarUnitMeasures, integer bool, caseSensitive bool) *ScalarUnit {
 	self := ScalarUnit{
 		integer:               integer,
 		canonicalUnitSingular: canonicalUnitSingular,
@@ -56,15 +56,15 @@ func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, c
 	}
 
 	// Unit
-	var size float64
-	self.Unit, size = sizes.Get(matches[2], caseSensitive)
+	var measure float64
+	self.Unit, measure = measures.Get(matches[2], caseSensitive)
 
 	// Canonical
 	if integer {
-		self.CanonicalNumber = uint64(self.Scalar * size)
+		self.CanonicalNumber = uint64(self.Scalar * measure)
 		self.CanonicalString = fmt.Sprintf("%d %s", self.CanonicalNumber, canonicalUnit)
 	} else {
-		self.CanonicalNumber = self.Scalar * size
+		self.CanonicalNumber = self.Scalar * measure
 		self.CanonicalString = fmt.Sprintf("%g %s", self.CanonicalNumber, canonicalUnit)
 	}
 
@@ -109,20 +109,20 @@ func (self *ScalarUnit) Compare(data interface{}) (int, error) {
 }
 
 //
-// ScalarUnitSizes
+// ScalarUnitMeasures
 //
 
-type ScalarUnitSizes map[string]float64
+type ScalarUnitMeasures map[string]float64
 
-func (self ScalarUnitSizes) Get(unit string, caseSensitive bool) (string, float64) {
+func (self ScalarUnitMeasures) Get(unit string, caseSensitive bool) (string, float64) {
 	if caseSensitive {
-		if size, ok := self[unit]; ok {
-			return unit, size
+		if measure, ok := self[unit]; ok {
+			return unit, measure
 		}
 	} else {
-		for u, size := range self {
+		for u, measure := range self {
 			if strings.EqualFold(u, unit) {
-				return u, size
+				return u, measure
 			}
 		}
 	}
@@ -139,10 +139,10 @@ func (self ScalarUnitSizes) Get(unit string, caseSensitive bool) (string, float6
 //
 
 var ScalarUnitSizeRE = regexp.MustCompile(
-	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*(?i)` +
-		`(?P<unit>B|kB|KiB|MB|MiB|GB|GiB|TB|TiB)$`)
+	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*` +
+		`(?i)(?P<unit>B|kB|KiB|MB|MiB|GB|GiB|TB|TiB)$`)
 
-var ScalarUnitSizeSizes = ScalarUnitSizes{
+var ScalarUnitSizeMeasures = ScalarUnitMeasures{
 	"B":   1,
 	"kB":  1000,
 	"KiB": 1024,
@@ -156,7 +156,7 @@ var ScalarUnitSizeSizes = ScalarUnitSizes{
 
 // tosca.Reader signature
 func ReadScalarUnitSize(context *tosca.Context) interface{} {
-	return ReadScalarUnit(context, "scalar-unit.size", "B", "byte", "bytes", ScalarUnitSizeRE, ScalarUnitSizeSizes, true, false)
+	return ReadScalarUnit(context, "scalar-unit.size", "B", "byte", "bytes", ScalarUnitSizeRE, ScalarUnitSizeMeasures, true, false)
 }
 
 //
@@ -168,10 +168,10 @@ func ReadScalarUnitSize(context *tosca.Context) interface{} {
 //
 
 var ScalarUnitTimeRE = regexp.MustCompile(
-	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*(?i)` +
-		`(?P<unit>ns|us|ms|s|m|h|d)$`)
+	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*` +
+		`(?i)(?P<unit>ns|us|ms|s|m|h|d)$`)
 
-var ScalarUnitTimeSizes = ScalarUnitSizes{
+var ScalarUnitTimeMeasures = ScalarUnitMeasures{
 	"ns": 0.000000001,
 	"us": 0.000001,
 	"ms": 0.001,
@@ -183,7 +183,7 @@ var ScalarUnitTimeSizes = ScalarUnitSizes{
 
 // tosca.Reader signature
 func ReadScalarUnitTime(context *tosca.Context) interface{} {
-	return ReadScalarUnit(context, "scalar-unit.time", "s", "second", "seconds", ScalarUnitTimeRE, ScalarUnitTimeSizes, false, false)
+	return ReadScalarUnit(context, "scalar-unit.time", "s", "second", "seconds", ScalarUnitTimeRE, ScalarUnitTimeMeasures, false, false)
 }
 
 //
@@ -195,10 +195,10 @@ func ReadScalarUnitTime(context *tosca.Context) interface{} {
 //
 
 var ScalarUnitFrequencyRE = regexp.MustCompile(
-	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*(?i)` +
-		`(?P<unit>Hz|kHz|MHz|GHz)$`)
+	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*` +
+		`(?i)(?P<unit>Hz|kHz|MHz|GHz)$`)
 
-var ScalarUnitFrequencySizes = ScalarUnitSizes{
+var ScalarUnitFrequencyMeasures = ScalarUnitMeasures{
 	"Hz":  1,
 	"kHz": 1000,
 	"MHz": 1000000,
@@ -207,7 +207,7 @@ var ScalarUnitFrequencySizes = ScalarUnitSizes{
 
 // tosca.Reader signature
 func ReadScalarUnitFrequency(context *tosca.Context) interface{} {
-	return ReadScalarUnit(context, "scalar-unit.frequency", "Hz", "Hz", "Hz", ScalarUnitFrequencyRE, ScalarUnitFrequencySizes, false, false)
+	return ReadScalarUnit(context, "scalar-unit.frequency", "Hz", "Hz", "Hz", ScalarUnitFrequencyRE, ScalarUnitFrequencyMeasures, false, false)
 }
 
 //
@@ -217,11 +217,11 @@ func ReadScalarUnitFrequency(context *tosca.Context) interface{} {
 //
 
 var ScalarUnitBitrateRE = regexp.MustCompile(
-	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*(?i)` +
+	`^(?P<scalar>[0-9]*\.?[0-9]+(?:e[-+]?[0-9]+)?)\s*` +
 		`(?P<unit>bps|Kbps|Kibps|Mbps|Mibps|Gbps|Gibps|Tbps|Tibps|Bps|KBps|KiBps|MBps|MiBps|GBps|GiBps|TBps|TiBps)$`)
 
 // Case-sensitive!
-var ScalarUnitBitrateSizes = ScalarUnitSizes{
+var ScalarUnitBitrateMeasures = ScalarUnitMeasures{
 	"bps":   1,
 	"Kbps":  1000,
 	"Kibps": 1024,
@@ -244,5 +244,5 @@ var ScalarUnitBitrateSizes = ScalarUnitSizes{
 
 // tosca.Reader signature
 func ReadScalarUnitBitrate(context *tosca.Context) interface{} {
-	return ReadScalarUnit(context, "scalar-unit.bitrate", "bps", "bps", "bps", ScalarUnitBitrateRE, ScalarUnitBitrateSizes, false, true)
+	return ReadScalarUnit(context, "scalar-unit.bitrate", "bps", "bps", "bps", ScalarUnitBitrateRE, ScalarUnitBitrateMeasures, false, true)
 }

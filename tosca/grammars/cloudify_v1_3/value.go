@@ -140,27 +140,33 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 func (self *Value) Normalize() normal.Constrainable {
 	var constrainable normal.Constrainable
 
-	if list, ok := self.Context.Data.(ard.List); ok {
+	switch self.Context.Data.(type) {
+	case ard.List:
+		list := self.Context.Data.(ard.List)
 		l := normal.NewList(len(list))
 		for index, value := range list {
-			l.List[index] = NewValue(self.Context.ListChild(index, value)).Normalize()
+			l.Set(index, NewValue(self.Context.ListChild(index, value)).Normalize())
 		}
 		constrainable = l
-	} else if map_, ok := self.Context.Data.(ard.Map); ok {
+
+	case ard.Map:
 		m := normal.NewMap()
-		for key, value := range map_ {
+		for key, value := range self.Context.Data.(ard.Map) {
 			if _, ok := key.(string); !ok {
 				// Cloudify DSL does not support complex keys
 				self.Context.MapChild(key, yamlkeys.KeyData(key)).ReportValueWrongType("string")
 			}
 			name := yamlkeys.KeyString(key)
-			m.Map[name] = NewValue(self.Context.MapChild(name, value)).Normalize()
+			m.Put(name, NewValue(self.Context.MapChild(name, value)).Normalize())
 		}
 		constrainable = m
-	} else if functionCall, ok := self.Context.Data.(*tosca.FunctionCall); ok {
+
+	case *tosca.FunctionCall:
+		functionCall := self.Context.Data.(*tosca.FunctionCall)
 		NormalizeFunctionCallArguments(functionCall, self.Context)
 		constrainable = normal.NewFunctionCall(functionCall)
-	} else {
+
+	default:
 		constrainable = normal.NewValue(self.Context.Data)
 	}
 

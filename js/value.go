@@ -9,68 +9,40 @@ import (
 //
 
 type Value struct {
-	Context     *CloutContext `json:"-" yaml:"-"`
-	Data        interface{}   `json:"-" yaml:"-"`
-	Value       interface{}   `json:"value" yaml:"value"`
-	Constraints Constraints   `json:"constraints" yaml:"constraints"`
-}
+	Context *CloutContext `json:"-" yaml:"-"`
 
-func (self *CloutContext) NewValue(data interface{}, site interface{}, source interface{}, target interface{}) (*Value, error) {
-	c := Value{
-		Context: self,
-		Data:    data,
-		Value:   data,
-	}
+	Value       interface{} `json:"value" yaml:"value"`
+	Constraints Constraints `json:"constraints" yaml:"constraints"`
 
-	if map_, ok := data.(ard.StringMap); ok {
-		var err error
-		if v, ok := map_["value"]; ok {
-			c.Value = v
-		} else if v, ok := map_["list"]; ok {
-			if l, ok := v.(ard.List); ok {
-				// Embedded CoercibleList
-				if c.Value, err = self.NewCoercibleList(l, site, source, target); err != nil {
-					return nil, err
-				}
-			}
-		} else if v, ok := map_["map"]; ok {
-			if l, ok := v.(ard.List); ok {
-				// Embedded CoercibleMap
-				if c.Value, err = self.NewCoercibleMap(l, site, source, target); err != nil {
-					return nil, err
-				}
-			}
-		}
-
-		if c.Constraints, err = self.NewConstraintsForValue(map_, site, source, target); err != nil {
-			return nil, err
-		}
-	}
-
-	return &c, nil
+	Notation ard.StringMap `json:"-" yaml:"-"`
 }
 
 // Coercible interface
 func (self *Value) Coerce() (interface{}, error) {
-	r := self.Value
+	value := self.Value
 
 	var err error
-	if coercibleList, ok := r.(CoercibleList); ok {
-		// Embedded CoercibleList
-		if r, err = coercibleList.Coerce(); err != nil {
+	switch value.(type) {
+	case List:
+		if value, err = value.(List).Coerce(); err != nil {
 			return nil, err
 		}
-	} else if coercibleMap, ok := r.(CoercibleMap); ok {
-		// Embedded CoercibleMap
-		if r, err = coercibleMap.Coerce(); err != nil {
+
+	case Map:
+		if value, err = value.(Map).Coerce(); err != nil {
 			return nil, err
 		}
 	}
 
-	return self.Constraints.Apply(r)
+	return self.Constraints.Apply(value)
+}
+
+// Coercible interface
+func (self *Value) SetConstraints(constraints Constraints) {
+	self.Constraints = constraints
 }
 
 // Coercible interface
 func (self *Value) Unwrap() interface{} {
-	return self.Data
+	return self.Notation
 }

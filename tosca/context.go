@@ -2,6 +2,7 @@ package tosca
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca/problems"
@@ -181,7 +182,8 @@ func (self *Context) FieldChildren() []*Context {
 }
 
 func (self *Context) MapChild(name interface{}, data interface{}) *Context {
-	nameString := yamlkeys.KeyString(name) // complex keys would be stringified
+	nameString := strings.ReplaceAll(yamlkeys.KeyString(name), "\n", "¶") // complex keys would be stringified
+
 	return &Context{
 		Parent:          self,
 		Name:            nameString,

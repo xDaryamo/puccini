@@ -3,6 +3,8 @@ package tosca_v1_3
 import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
+
+	"reflect"
 )
 
 //
@@ -97,6 +99,15 @@ func (self *DataType) Complete(context *tosca.Context) {
 		} else {
 			definition.DataType.Complete(childContext)
 		}
+	}
+}
+
+func GetDataType(context *tosca.Context, name string) (*DataType, bool) {
+	var dataType *DataType
+	if entityPtr, ok := context.Namespace.LookupForType(name, reflect.TypeOf(dataType)); ok {
+		return entityPtr.(*DataType), true
+	} else {
+		return nil, false
 	}
 }
 

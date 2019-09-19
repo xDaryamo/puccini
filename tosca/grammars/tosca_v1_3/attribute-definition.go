@@ -94,12 +94,21 @@ func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) 
 		// Make sure we have an entry schema
 		if (self.EntrySchema == nil) || (self.EntrySchema.DataType == nil) {
 			self.Context.ReportMissingEntrySchema(self.DataType.Name)
+			return
+		}
+
+		if (self.DataType.Name == "map") && (self.KeySchema == nil) {
+			// Default to "string" for key schema
+			self.KeySchema = ReadSchema(self.Context.FieldChild("key_schema", "string")).(*Schema)
+			if !self.KeySchema.LookupDataType() {
+				return
+			}
 		}
 	}
 
 	if self.Default != nil {
 		// The "default" value must be a valid value of the type
-		self.Default.RenderAttribute(self.DataType, self, false)
+		self.Default.RenderAttribute(self.DataType, self, false, false)
 	}
 }
 

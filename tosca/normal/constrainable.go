@@ -1,8 +1,6 @@
 package normal
 
 import (
-	"encoding/json"
-
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -11,7 +9,7 @@ import (
 //
 
 type Constrainable interface {
-	SetKey(interface{})
+	SetKey(Constrainable)
 	SetDescription(string)
 	AddConstraint(*tosca.FunctionCall)
 }
@@ -23,26 +21,20 @@ type Constrainable interface {
 type Constrainables map[interface{}]Constrainable
 
 //
-// MarshalableConstrainableMap
+// ConstrainableList
 //
 
-type MarshalableConstrainableMap map[interface{}]Constrainable
+type ConstrainableList []Constrainable
 
-func (self MarshalableConstrainableMap) Marshalable() interface{} {
-	var slice []Constrainable
-	for key, constrainable := range self {
-		constrainable.SetKey(key)
-		slice = append(slice, constrainable)
+func (self ConstrainableList) AppendWithKey(key interface{}, value Constrainable) ConstrainableList {
+	var constrainableKey Constrainable
+
+	var ok bool
+	if constrainableKey, ok = key.(Constrainable); !ok {
+		constrainableKey = NewValue(key)
 	}
-	return slice
-}
 
-// json.Marshaler interface
-func (self MarshalableConstrainableMap) MarshalJSON() ([]byte, error) {
-	return json.Marshal(self.Marshalable())
-}
+	value.SetKey(constrainableKey)
 
-// yaml.Marshaler interface
-func (self MarshalableConstrainableMap) MarshalYAML() (interface{}, error) {
-	return self.Marshalable(), nil
+	return append(self, value)
 }

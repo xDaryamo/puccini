@@ -275,12 +275,20 @@ points, and thus its own profile of interrelated TOSCA types. However, by bringi
 tiny-but-important implementation details into one place we can at least have a lingua franca and
 common tool chain for all platforms. That's the value proposition of TOSCA and the gist of Puccini.
 
-### JavaScript? Really?
+### Why Go?
 
-The decision to use an interpreted programming language is intentional and important. Unlike some
-Kubernetes tools ([Helm](https://helm.sh/)), we do not treat YAML files as plain text to be
-manipulated by an anemic text templating language, where just working around YAML's strict indentation
-requirements becomes a cumbersome nightmare.
+[Go](https://golang.org/) is fast becoming the language of choice for cloud-native solutions.
+It has the advantage of producing very deployable executables that make it easy to containerize
+and integrate. Go features garbage collection and easy multi-threading (via lightweight
+goroutines), but unlike Python, Ruby, and Perl it is a strictly typed language, which
+encourages good programming practices and reduces the chance for bugs.
+
+### Why JavaScript?
+
+The decision to use an embedded interpreted programming language is intentional and important.
+Unlike some Kubernetes tools ([Helm](https://helm.sh/)), we do not treat YAML files as plain text
+to be manipulated by an anemic text templating language, where just working around YAML's strict
+indentation requirements becomes a cumbersome nightmare.
 
 JavaScript lets you manipulate data structures directly using a full-blown, conventional language.
 It's probably
@@ -295,7 +303,7 @@ then be interpreted and run almost anywhere.
 Our chosen ECMAScript engine is [goja](https://github.com/dop251/goja), which is 100% Go and does
 not require any external dependencies.
 
-### Can't I use simple text templating instead of TOSCA functions and JavaScript?
+### Can I use simple text templating instead of TOSCA functions and JavaScript?
 
 Nothing is stopping you. You can pipe the input and output to and from the text translator of your
 choice at any point in the tool chain. Here's an example using
@@ -316,19 +324,19 @@ processing, after which the `.j2` extension would be stripped.
 
 ### Can I compose a single service from several interrelated Clout files?
 
-Clout intentionally does *not* support service composition. Each Clout file is its own universe. If
-you need to create edges between vertexes in one Clout file and vertexes in other Clout files, then
-it's up to you and your tools to design and implement that integration. The solution could be very
-elaborate indeed: the two Clouts might represent services with very different lifecycles, that run
-in different clouds, that are handled by different orchestrators. And the connection might require
-complex networking to achieve. There's simply no one-size-fits-all way Puccini could do
-it—namespaces? proxies? catalogs? repositories?—so it insists on not having an opinion.
-
 TOSCA has a feature called "substitution mapping", which is useful for modeling service composition.
-However, it's a design feature. The implementation, which would likely be very complex, is up to
-your orchestration tool chain. See our examples
+It is, however, a *design* feature. The implementation is up to your orchestration tool chain. See our
+examples
 [here](examples/tosca/substitution-mapping.yaml) and
 [here](examples/tosca/substitution-mapping-client.yaml).
+
+Puccini intentionally does *not* support service composition. Each Clout file is its own universe.
+If you need to create edges between vertexes in one Clout file and vertexes in other Clout files,
+then it's up to you and your tools to design and implement that integration. The solution could be
+very elaborate indeed: the two Clouts might represent services with very different lifecycles, that
+run in different clouds, that are handled by different orchestrators. And the connection might
+require complex networking to achieve. There's simply no one-size-fits-all way Puccini could do
+it—namespaces? proxies? catalogs? repositories?—so it insists on not having an opinion.
 
 ### TOSCA is so complicated! Help!
 
@@ -336,18 +344,21 @@ I know, right? Now imagine writing a parser for it... Not only is it a complex l
 [specification itself](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.2/TOSCA-Simple-Profile-YAML-v1.2.html)
 (as of version 1.2) has many contradictions, errors, and gaps.
 
-To help you out we've included [examples](examples/tosca/) of TOSCA core grammatical features,
+Please join [OASIS's TOSCA community](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=tosca)
+to help improve the language!
+
+Meanwhile, we've included [examples](examples/tosca/) of TOSCA core grammatical features,
 with some running commentary. Treat them as your playground. Also, if you have 4 hours to spare,
-grab some snacks, get comfortable, and watch this free online course for TOSCA 1.0:
+grab some snacks, get comfortable, and watch the author's free online course for TOSCA 1.0:
 [part 1](https://www.youtube.com/watch?v=aMkqLI6o-58),
 [part 2](https://www.youtube.com/watch?v=6xGmpi--7-A).
 
-(Author's note: This is my second take at writing a TOSCA parser, after learning a great deal from
-my previous efforts in [AriaTosca](https://github.com/apache/incubator-ariatosca), an
+(Author's note: This is my second take at writing a TOSCA parser. The first was
+[AriaTosca](https://github.com/apache/incubator-ariatosca), an
 incubation project under the Apache Software Foundation. I am grateful to
 [Cloudify](https://cloudify.co/) for funding much of the AriaTosca project. Note, however, that
-Puccini is a fresh start initiated by myself with no commercial backing. It does not use AriaTosca
-code and has a radically different architecture as well as very different goals.)
+Puccini is a fresh start initiated by myself with no commercial backing. It does not use
+AriaTosca code and has a radically different architecture as well as very different goals.)
 
 ### Why is it called "Puccini"?
 

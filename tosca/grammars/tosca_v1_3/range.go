@@ -24,13 +24,13 @@ func ReadRange(context *tosca.Context) interface{} {
 	var self Range
 
 	if !context.ValidateType("list") {
-		return self
+		return &self
 	}
 
 	list := context.Data.(ard.List)
 	if len(list) != 2 {
 		context.ReportValueMalformed("range", "list length not 2")
-		return self
+		return &self
 	}
 
 	lowerContext := context.ListChild(0, list[0])
@@ -85,7 +85,8 @@ func (self *Range) InRange(number uint64) bool {
 
 type RangeEntity struct {
 	*Entity `name:"range"`
-	Range   *Range `traverse:"ignore"`
+
+	Range *Range `traverse:"ignore"`
 }
 
 func NewRangeEntity(context *tosca.Context) *RangeEntity {

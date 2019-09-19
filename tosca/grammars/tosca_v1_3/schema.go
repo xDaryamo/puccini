@@ -9,7 +9,7 @@ import (
 //
 
 type Schema struct {
-	*Entity `name:"entry schema"`
+	*Entity `name:"schema"`
 
 	DataTypeName      *string           `read:"type" require:"type"`
 	Description       *string           `read:"description" inherit:"description,DataType"`
@@ -35,4 +35,27 @@ func ReadSchema(context *tosca.Context) interface{} {
 	}
 
 	return self
+}
+
+func (self *Schema) LookupDataType() bool {
+	if self.DataTypeName != nil {
+		dataTypeName := *self.DataTypeName
+		var ok bool
+		if self.DataType, ok = GetDataType(self.Context, dataTypeName); ok {
+			return true
+		} else {
+			self.Context.ReportMissingEntrySchema(dataTypeName)
+		}
+	}
+
+	return false
+}
+
+func (self *Schema) RenderConstraints() ConstraintClauses {
+	var constraints ConstraintClauses
+	if self.DataType != nil {
+		constraints = append(constraints, self.DataType.ConstraintClauses...)
+		self.ConstraintClauses.RenderAndAppend(&constraints, self.DataType)
+	}
+	return constraints
 }

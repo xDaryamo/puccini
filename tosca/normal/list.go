@@ -9,19 +9,21 @@ import (
 //
 
 type List struct {
-	Key         interface{}   `json:"key,omitempty" yaml:"key,omitempty"`
-	Description string        `json:"description" yaml:"description"`
-	Constraints FunctionCalls `json:"constraints" yaml:"constraints"`
+	Key              Constrainable `json:"key,omitempty" yaml:"key,omitempty"`
+	Description      string        `json:"description,omitempty" yaml:"description,omitempty"`
+	Constraints      FunctionCalls `json:"constraints,omitempty" yaml:"constraints,omitempty"`
+	EntryDescription string        `json:"entryDescription,omitempty" yaml:"entryDescription,omitempty"`
+	EntryConstraints FunctionCalls `json:"entryConstraints,omitempty" yaml:"entryConstraints,omitempty"`
 
-	List []Constrainable `json:"list" yaml:"list"`
+	Entries ConstrainableList `json:"list" yaml:"list"`
 }
 
 func NewList(length int) *List {
-	return &List{List: make([]Constrainable, length)}
+	return &List{Entries: make(ConstrainableList, length)}
 }
 
 // Constrainable interface
-func (self *List) SetKey(key interface{}) {
+func (self *List) SetKey(key Constrainable) {
 	self.Key = key
 }
 
@@ -33,4 +35,12 @@ func (self *List) SetDescription(description string) {
 // Constrainable interface
 func (self *List) AddConstraint(functionCall *tosca.FunctionCall) {
 	self.Constraints = append(self.Constraints, NewFunctionCall(functionCall))
+}
+
+func (self *List) AddEntryConstraint(constraint *tosca.FunctionCall) {
+	self.EntryConstraints = append(self.EntryConstraints, NewFunctionCall(constraint))
+}
+
+func (self *List) Set(index int, value Constrainable) {
+	self.Entries[index] = value
 }

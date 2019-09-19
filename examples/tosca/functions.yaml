@@ -27,20 +27,20 @@ topology_template:
       properties:
         user_port:
           addresses:
-          # You can use functions in any property, attribute, input, or output assignment
+          # You can call functions in any property, attribute, input, or output assignment
           # (and *only* there)
           - { concat: [ local, host ] }
           - { token: [ ip=10.0.0.2, =, 1 ] }
-          # Functions can be nested
-          - { concat: [ 127, ., 0, ., { concat: [ 0, ., 1 ] } ] }
           - { join: [ [ 192, 168, 1, 1 ], . ] }
+          # Function calls can be nested
+          - { concat: [ 127, ., 0, ., { concat: [ 0, ., 1 ] } ] }
         admin_port:
           addresses:
           - ::1
         # Some functions support special "modelable entity names", such as "SELF"
         management_port: { get_property: [ SELF, admin_port ] }
 
-        # In Puccini you can also create your own custom functions
+        # Puccini also lets you create your own custom functions
         # See: examples/javascript/functions.yaml
 
     ports2:

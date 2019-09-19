@@ -47,7 +47,7 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 	var self Timestamp
 
 	if !context.ValidateType("string") {
-		return self
+		return &self
 	}
 
 	self.OriginalString = *context.ReadString()
@@ -59,7 +59,7 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 	}
 	if length == 0 {
 		context.ReportValueMalformed("timestamp", "")
-		return self
+		return &self
 	}
 
 	if length > 1 {
@@ -69,35 +69,35 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 		self.Month = parseTimestampUint(matches[2])
 		if (self.Month == 0) || (self.Month > 12) {
 			context.ReportValueMalformed("timestamp", "invalid month")
-			return self
+			return &self
 		}
 	}
 	if length > 3 {
 		self.Day = parseTimestampUint(matches[3])
 		if self.Day > 31 {
 			context.ReportValueMalformed("timestamp", "invalid day")
-			return self
+			return &self
 		}
 	}
 	if length > 4 {
 		self.Hour = parseTimestampUint(matches[4])
 		if self.Hour > 23 {
 			context.ReportValueMalformed("timestamp", "invalid hour")
-			return self
+			return &self
 		}
 	}
 	if length > 5 {
 		self.Minute = parseTimestampUint(matches[5])
 		if self.Minute > 59 {
 			context.ReportValueMalformed("timestamp", "invalid minute")
-			return self
+			return &self
 		}
 	}
 	if length > 6 {
 		self.Second = parseTimestampUint(matches[6])
 		if self.Second > 59 {
 			context.ReportValueMalformed("timestamp", "invalid second")
-			return self
+			return &self
 		}
 	}
 	if (length > 7) && (matches[7] != "") {
@@ -118,7 +118,7 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 		self.TZMinute = parseTimestampUint(matches[9])
 		if self.TZMinute > 59 {
 			context.ReportValueMalformed("timestamp", "invalid TZ minute")
-			return self
+			return &self
 		}
 	}
 

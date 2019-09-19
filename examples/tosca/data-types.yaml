@@ -29,12 +29,6 @@ node_types:
         type: map
         entry_schema: string
 
-      # We can also specify a "key_schema" for maps (the default is "string")
-      float_map:
-        type: map
-        key_schema: float
-        entry_schema: string
-
       # Complex types are defined in "data_types"
       complex:
         type: Complex
@@ -43,12 +37,6 @@ node_types:
       complex_list:
         type: list
         entry_schema: Complex
-
-      # The "key_schema" for maps can be a complex type
-      complex_map:
-        type: map
-        key_schema: Complex
-        entry_schema: string
 
       # The following are "special" types
       # Puccini will insert an object that has a rich API, accessible in JavaScript
@@ -77,9 +65,16 @@ node_types:
         - max_length: 5
 
       # This property is also constrained, but not here: see the data type
-      # (You can add *additional* constraints here if needed; logical "and")
+      # (You can also add *additional* constraints here if needed; it's logical "and")
       lowercase:
         type: LowerCase
+
+      # We can constrain map keys via the "key_schema"
+      # The key_schema must be string (the default) or a derivative
+      lowercase_string_map:
+        type: map
+        key_schema: LowerCase
+        entry_schema: string
 
       # Using a longer notation you can also set constraints for the entry schema
       # (Remember: logical "and")
@@ -135,6 +130,7 @@ data_types:
   # Note that if you derive from a primitive you *cannot* also define properties
   LowerCase:
     derived_from: string
+    description: Lowercase string
     constraints:
     - pattern: '[a-z]*'
 
@@ -154,12 +150,13 @@ topology_template:
         integer_list: [ 1, 2, 3 ]
 
         string_map:
-          greeting: Hello
-          recipient: Puccini
+          Greeting: Hello
+          # Note that map keys could be function calls
+          { concat: [ Recip, ient ] }: Puccini
 
-        float_map:
-          1.0: Hello
-          1.1: Puccini
+        lowercase_string_map:
+          greeting: Hello
+          { concat: [ recip, ient ] }: Puccini
 
         complex:
           string: Hello, Puccini
@@ -174,17 +171,6 @@ topology_template:
         - integer: 789
           nested:
             nested_float: 1.0
-
-        complex_map:
-          # Note that there are two notations for complex keys in YAML
-          # You can use a single row:
-          { integer: 123, float: 4.56, nested: { nested_float: 7.89 } }: value1
-          # Or use the "?", ":" notation to specify key and value separately:
-          ? integer: 123
-            float: 4.56
-            nested:
-              nested_float: -7.89
-          : value2
 
         # Size is normalized to number of bytes (unsigned integer)
         # GiB, MiB, etc. are also supported for multiples of 1024

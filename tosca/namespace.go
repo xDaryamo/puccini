@@ -45,12 +45,12 @@ func (self Namespace) Lookup(name string) (interface{}, bool) {
 }
 
 func (self Namespace) LookupForType(name string, type_ reflect.Type) (interface{}, bool) {
-	forType, ok := self[type_]
-	if !ok {
+	if forType, ok := self[type_]; ok {
+		entityPtr, ok := forType[name]
+		return entityPtr, ok
+	} else {
 		return nil, false
 	}
-	entityPtr, ok := forType[name]
-	return entityPtr, ok
 }
 
 // If the name has already been set returns existing entityPtr, true
