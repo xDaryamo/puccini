@@ -30,7 +30,7 @@ func IsInt(value interface{}) bool {
 // float64, float32
 func IsFloat(value interface{}) bool {
 	switch value.(type) {
-	case float32, float64:
+	case float64, float32:
 		return true
 	}
 	return false

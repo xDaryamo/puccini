@@ -21,12 +21,16 @@ var TimestampLongRE = regexp.MustCompile(
 		`(?P<hour>[0-9][0-9]?):(?P<minute>[0-9][0-9]):(?P<second>[0-9][0-9])(?:(?P<fraction>\.[0-9]*))?` +
 		`(?:(?:[ \t]*)(?:Z|(?P<tzhour>[-+][0-9][0-9]?)(?::(?P<tzminute>[0-9][0-9]))?))?$`)
 
+const TimestampFormat = "%04d-%02d-%02dT%02d:%02d:%02d%s%s"
+
+const TimestampTimezoneFormat = "%s%02d:%02d"
+
 //
 // Timestamp
 //
 
 type Timestamp struct {
-	CanonicalNumber int64  `json:"$number" yaml:"$number"`
+	CanonicalNumber uint64 `json:"$number" yaml:"$number"`
 	CanonicalString string `json:"$string" yaml:"$string"`
 	OriginalString  string `json:"$originalString" yaml:"$originalString"`
 
@@ -52,7 +56,7 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 
 	if context.Is("time") {
 		// Note: OriginalString will be empty because it is not preserved by our parsing methods
-		// (In the YAML parser we could keep it if we decode to yaml.Node)
+		// (In the YAML parser we could keep it if we
 
 		time := context.Data.(time.Time)
 		_, tzSeconds := time.Zone()
@@ -151,13 +155,13 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 	if (self.TZHour == 0) && (self.TZMinute == 0) {
 		tz = "Z"
 	} else {
-		tz = fmt.Sprintf("%s%02d:%02d", self.TZSign, self.TZHour, self.TZMinute)
+		tz = fmt.Sprintf(TimestampTimezoneFormat, self.TZSign, self.TZHour, self.TZMinute)
 	}
 	fraction := fmt.Sprintf("%g", self.Fraction)[1:]
-	self.CanonicalString = fmt.Sprintf("%04d-%02d-%02dT%02d:%02d:%02d%s%s", self.Year, self.Month, self.Day, self.Hour, self.Minute, self.Second, fraction, tz)
+	self.CanonicalString = fmt.Sprintf(TimestampFormat, self.Year, self.Month, self.Day, self.Hour, self.Minute, self.Second, fraction, tz)
 
 	// Canonical number is nanoseconds since Jan 1 1970 UTC
-	self.CanonicalNumber = self.Time().UnixNano()
+	self.CanonicalNumber = uint64(self.Time().UnixNano())
 
 	return &self
 }
@@ -169,7 +173,7 @@ func (self *Timestamp) String() string {
 
 func (self *Timestamp) Compare(data interface{}) (int, error) {
 	if timestamp, ok := data.(*Timestamp); ok {
-		return CompareInt64(self.CanonicalNumber, timestamp.CanonicalNumber), nil
+		return CompareUint64(self.CanonicalNumber, timestamp.CanonicalNumber), nil
 	}
 	return 0, errors.New("incompatible comparison")
 }

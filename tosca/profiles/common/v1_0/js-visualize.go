@@ -15,8 +15,9 @@ var jQueryLayoutVersion = '1.4.3';
 var visJsVersion = '4.21.0';
 
 var colorNode = 'rgb(100,200,255)';
+var colorPolicy = 'rgb(255,165,0)';
 var colorSubstitution = 'rgb(150,200,255)';
-var workflowColor = 'rgb(100,255,100)';
+var colorWorkflow = 'rgb(100,255,100)';
 
 var nodes = [];
 var edges = [];
@@ -79,6 +80,10 @@ function addVertex(id, vertex) {
 
 	if (tosca.isTosca(vertex, 'nodeTemplate'))
 		addNodeTemplate(node);
+	else if (tosca.isTosca(vertex, 'group'))
+		addGroup(node);
+	else if (tosca.isTosca(vertex, 'policy'))
+		addPolicy(node);
 	else if (tosca.isTosca(vertex, 'substitution'))
 		addSubstitution(node);
 	else if (tosca.isTosca(vertex, 'workflow'))
@@ -135,6 +140,18 @@ function addNodeTemplate(node) {
 	node.color = colorNode;
 }
 
+function addGroup(node) {
+	node.label = node.data.name;
+	node.shape = 'circle';
+	node.color = colorNode;
+}
+
+function addPolicy(node) {
+	node.label = node.data.name;
+	node.shape = 'circle';
+	node.color = colorPolicy;
+}
+
 function addRelationship(edge) {
 	edge.label = edge.data.name;
 	edge.color = {color: colorNode};
@@ -174,13 +191,13 @@ function addInterfaceMapping(edge) {
 function addWorkflow(node) {
 	node.label = node.data.name;
 	node.shape = 'diamond';
-	node.color = workflowColor;
+	node.color = colorWorkflow;
 }
 
 function addWorkflowStep(node) {
 	node.label = node.data.name;
 	node.shape ='diamond';
-	node.color = workflowColor;
+	node.color = colorWorkflow;
 }
 
 function addOnFailure(edge) {
@@ -191,7 +208,7 @@ function addOnFailure(edge) {
 function addWorkflowActivity(node) {
 	node.label = node.data.name;
 	node.shape = 'triangle';
-	node.color = workflowColor;
+	node.color = colorWorkflow;
 }
 
 var template = '\

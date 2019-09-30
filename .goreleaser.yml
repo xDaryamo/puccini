@@ -1,7 +1,8 @@
 
 builds:
 
-- main: ./puccini-tosca
+- id: puccini-tosca
+  main: ./puccini-tosca
   binary: puccini-tosca
   goarch:
   - amd64
@@ -10,7 +11,8 @@ builds:
   - darwin
   - windows
 
-- main: ./puccini-js
+- id: puccini-js
+  main: ./puccini-js
   binary: puccini-js
   goarch:
   - amd64
