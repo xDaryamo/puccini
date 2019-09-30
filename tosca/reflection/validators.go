@@ -1,6 +1,8 @@
 package reflection
 
 import (
+	"time"
+
 	"github.com/tliron/puccini/ard"
 )
 
@@ -28,7 +30,7 @@ func IsInt(value interface{}) bool {
 // float64, float32
 func IsFloat(value interface{}) bool {
 	switch value.(type) {
-	case float64, float32:
+	case float32, float64:
 		return true
 	}
 	return false
@@ -40,15 +42,21 @@ func IsString(value interface{}) bool {
 	return ok
 }
 
-// ard.Map = map[interface{}]interface{}
-func IsMap(value interface{}) bool {
-	_, ok := value.(ard.Map)
+// time.Time
+func IsTime(value interface{}) bool {
+	_, ok := value.(time.Time)
 	return ok
 }
 
 // ard.List = []interface{}
 func IsSliceOfStruct(value interface{}) bool {
 	_, ok := value.(ard.List)
+	return ok
+}
+
+// ard.Map = map[interface{}]interface{}
+func IsMap(value interface{}) bool {
+	_, ok := value.(ard.Map)
 	return ok
 }
 

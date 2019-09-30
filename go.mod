@@ -14,6 +14,6 @@ require (
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7
 	github.com/segmentio/ksuid v1.0.2
 	github.com/spf13/cobra v0.0.5
-	github.com/tliron/yamlkeys v0.0.0-20190916163930-80b39186de1d
-	gopkg.in/yaml.v3 v3.0.0-20190905181640-827449938966
+	github.com/tliron/yamlkeys v1.0.0
+	gopkg.in/yaml.v3 v3.0.0-20190924164351-c8b7dadae555
 )

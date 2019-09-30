@@ -48,7 +48,9 @@ node_types:
         type: scalar-unit.frequency
       scalar_unit_bitrate:
         type: scalar-unit.bitrate
-      timestamp:
+      timestamp1:
+        type: timestamp
+      timestamp2:
         type: timestamp
       version:
         type: version
@@ -191,8 +193,11 @@ topology_template:
         scalar_unit_bitrate: 1.23 KiBps
 
         # Timestamp follows YAML 1.1's format, which is a subset of ISO8601:
-        # http://yaml.org/type/timestamp.html 
-        timestamp: 1975-09-15 12:34:56.7 +2
+        # http://yaml.org/type/timestamp.html
+        timestamp1: 1975-09-15 12:34:56.7 +2
+
+        # Note that you can also use the YAML timespace type directly:
+        timestamp2: !!timestamp 1975-09-15t12:34:56.7+02:00
 
         # The version structure in TOSCA is very specific and might not fit your needs
         # This example has all fields: major.minor.fix.qualifier-build

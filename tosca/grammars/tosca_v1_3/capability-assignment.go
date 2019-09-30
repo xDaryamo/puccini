@@ -101,8 +101,7 @@ func (self CapabilityAssignments) Render(definitions CapabilityDefinitions, cont
 	}
 
 	for key, assignment := range self {
-		_, ok := definitions[key]
-		if !ok {
+		if _, ok := definitions[key]; !ok {
 			assignment.Context.ReportUndeclared("capability")
 			delete(self, key)
 		}

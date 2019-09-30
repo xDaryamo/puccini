@@ -106,14 +106,11 @@ func (self InterfaceAssignments) Render(definitions InterfaceDefinitions, contex
 	}
 
 	for key, assignment := range self {
-		_, ok := definitions[key]
-		if !ok {
+		if _, ok := definitions[key]; !ok {
 			assignment.Context.ReportUndeclared("interface")
 			delete(self, key)
 		}
 	}
-
-	// TODO: notifications
 }
 
 func (self InterfaceAssignments) NormalizeForNodeTemplate(nodeTemplate *NodeTemplate, n *normal.NodeTemplate) {

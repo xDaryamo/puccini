@@ -2,6 +2,7 @@ package tosca
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca/reflection"
@@ -12,8 +13,9 @@ var PrimitiveTypeValidators = map[string]reflection.TypeValidator{
 	"integer": reflection.IsInt,
 	"float":   reflection.IsFloat,
 	"string":  reflection.IsString,
-	"map":     reflection.IsMap,
+	"time":    reflection.IsTime, // must not conflict with TOSCA "timestamp" name
 	"list":    reflection.IsSliceOfStruct,
+	"map":     reflection.IsMap,
 }
 
 var PrimitiveTypeZeroes = map[string]interface{}{
@@ -21,18 +23,21 @@ var PrimitiveTypeZeroes = map[string]interface{}{
 	"integer": 0,
 	"float":   0.0,
 	"string":  "",
-	"map":     make(ard.Map),
+	"time":    time.Time{},
 	"list":    ard.List{},
+	"map":     make(ard.Map),
 }
 
 func PrimitiveTypeName(value interface{}) string {
 	switch value.(type) {
 	case bool:
 		return "boolean"
-	case int:
+	case int: // YAML parser returns int
 		return "integer"
 	case float64: // YAML parser returns float64
 		return "float"
+	case time.Time: // YAML parser returns time.Time
+		return "time"
 	case ard.List:
 		return "list"
 	case ard.Map:
