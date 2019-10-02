@@ -6,20 +6,24 @@ builds:
   binary: puccini-tosca
   goarch:
   - amd64
+  - wasm
   goos:
   - linux
   - darwin
   - windows
+  - js
 
 - id: puccini-js
   main: ./puccini-js
   binary: puccini-js
   goarch:
   - amd64
+  - wasm
   goos:
   - linux
   - darwin
   - windows
+  - js
 
 nfpm:
 

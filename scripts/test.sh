@@ -7,6 +7,8 @@ HERE=$(dirname "$(readlink -f "$0")")
 
 . "$HERE/env.sh"
 
+# -count=1 is the idiomatic way to disable test caching
+
 echo 'testing...'
 
 ROOT="$ROOT" \

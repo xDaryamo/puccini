@@ -3,6 +3,7 @@ package tosca_v1_3
 import (
 	"errors"
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -22,14 +23,14 @@ type ScalarUnit struct {
 	Scalar float64 `json:"scalar" yaml:"scalar"`
 	Unit   string  `json:"unit" yaml:"unit"`
 
-	integer               bool // if true, CanonicalNumber is uint64
+	count                 bool // if true, CanonicalNumber is uint64
 	canonicalUnitSingular string
 	canonicalUnitPlural   string
 }
 
-func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, canonicalUnitSingular string, canonicalUnitPlural string, re *regexp.Regexp, measures ScalarUnitMeasures, integer bool, caseSensitive bool) *ScalarUnit {
+func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, canonicalUnitSingular string, canonicalUnitPlural string, re *regexp.Regexp, measures ScalarUnitMeasures, count bool, caseSensitive bool) *ScalarUnit {
 	self := ScalarUnit{
-		integer:               integer,
+		count:                 count,
 		canonicalUnitSingular: canonicalUnitSingular,
 		canonicalUnitPlural:   canonicalUnitPlural,
 	}
@@ -60,8 +61,8 @@ func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, c
 	self.Unit, measure = measures.Get(matches[2], caseSensitive)
 
 	// Canonical
-	if integer {
-		self.CanonicalNumber = uint64(self.Scalar * measure)
+	if count {
+		self.CanonicalNumber = uint64(math.Round(self.Scalar * measure))
 		self.CanonicalString = fmt.Sprintf("%d %s", self.CanonicalNumber, canonicalUnit)
 	} else {
 		self.CanonicalNumber = self.Scalar * measure
@@ -77,18 +78,16 @@ func (self *ScalarUnit) String() string {
 
 	if self.canonicalUnitSingular == self.canonicalUnitPlural {
 		singular = false
+	} else if self.count {
+		singular = self.CanonicalNumber.(uint64) == 1
 	} else {
-		if self.integer {
-			singular = self.CanonicalNumber.(uint64) == 1
-		} else {
-			singular = self.CanonicalNumber.(float64) == 1
-		}
+		singular = self.CanonicalNumber.(float64) == 1.0
 	}
 
 	if singular {
 		return fmt.Sprintf("1 %s", self.canonicalUnitSingular)
 	} else {
-		if self.integer {
+		if self.count {
 			return fmt.Sprintf("%d %s", self.CanonicalNumber.(uint64), self.canonicalUnitPlural)
 		} else {
 			return fmt.Sprintf("%g %s", self.CanonicalNumber.(float64), self.canonicalUnitPlural)
@@ -98,7 +97,7 @@ func (self *ScalarUnit) String() string {
 
 func (self *ScalarUnit) Compare(data interface{}) (int, error) {
 	if scalarUnit, ok := data.(*ScalarUnit); ok {
-		if self.integer {
+		if self.count {
 			return CompareUint64(self.CanonicalNumber.(uint64), scalarUnit.CanonicalNumber.(uint64)), nil
 		} else {
 			return CompareFloat64(self.CanonicalNumber.(float64), scalarUnit.CanonicalNumber.(float64)), nil
@@ -120,9 +119,9 @@ func (self ScalarUnitMeasures) Get(unit string, caseSensitive bool) (string, flo
 			return unit, measure
 		}
 	} else {
-		for u, measure := range self {
-			if strings.EqualFold(u, unit) {
-				return u, measure
+		for canonicalUnit, measure := range self {
+			if strings.EqualFold(canonicalUnit, unit) {
+				return canonicalUnit, measure
 			}
 		}
 	}

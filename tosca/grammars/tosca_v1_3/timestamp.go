@@ -30,7 +30,7 @@ const TimestampTimezoneFormat = "%s%02d:%02d"
 //
 
 type Timestamp struct {
-	CanonicalNumber uint64 `json:"$number" yaml:"$number"`
+	CanonicalNumber int64  `json:"$number" yaml:"$number"`
 	CanonicalString string `json:"$string" yaml:"$string"`
 	OriginalString  string `json:"$originalString" yaml:"$originalString"`
 
@@ -50,33 +50,7 @@ type Timestamp struct {
 func ReadTimestamp(context *tosca.Context) interface{} {
 	var self Timestamp
 
-	if !context.ValidateType("string", "time") {
-		return &self
-	}
-
-	if context.Is("time") {
-		// Note: OriginalString will be empty because it is not preserved by our parsing methods
-		// (In the YAML parser we could keep it if we
-
-		time := context.Data.(time.Time)
-		_, tzSeconds := time.Zone()
-
-		self.Year = uint32(time.Year())
-		self.Month = uint32(time.Month())
-		self.Day = uint32(time.Day())
-		self.Hour = uint32(time.Hour())
-		self.Minute = uint32(time.Minute())
-		self.Second = uint32(time.Second())
-		self.Fraction = float64(time.Nanosecond()) / 1000000000.0
-		if tzSeconds >= 0 {
-			self.TZSign = "+"
-		} else {
-			self.TZSign = "-"
-			tzSeconds = -tzSeconds
-		}
-		self.TZHour = uint32(tzSeconds / 3600)
-		self.TZMinute = uint32((tzSeconds % 3600) / 60)
-	} else {
+	if context.Is("string") {
 		self.OriginalString = *context.ReadString()
 		matches := TimestampShortRE.FindStringSubmatch(self.OriginalString)
 		length := len(matches)
@@ -148,6 +122,31 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 				return &self
 			}
 		}
+	} else if context.Is("time") {
+		// Note: OriginalString will be empty because it is not preserved by our parsing methods
+		// (In the YAML parser we could keep it if we
+
+		time := context.Data.(time.Time)
+		_, tzSeconds := time.Zone()
+
+		self.Year = uint32(time.Year())
+		self.Month = uint32(time.Month())
+		self.Day = uint32(time.Day())
+		self.Hour = uint32(time.Hour())
+		self.Minute = uint32(time.Minute())
+		self.Second = uint32(time.Second())
+		self.Fraction = float64(time.Nanosecond()) / 1000000000.0
+		if tzSeconds >= 0 {
+			self.TZSign = "+"
+		} else {
+			self.TZSign = "-"
+			tzSeconds = -tzSeconds
+		}
+		self.TZHour = uint32(tzSeconds / 3600)
+		self.TZMinute = uint32((tzSeconds % 3600) / 60)
+	} else {
+		context.ReportValueWrongType("string", "timestamp")
+		return &self
 	}
 
 	// Canonical string
@@ -160,8 +159,8 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 	fraction := fmt.Sprintf("%g", self.Fraction)[1:]
 	self.CanonicalString = fmt.Sprintf(TimestampFormat, self.Year, self.Month, self.Day, self.Hour, self.Minute, self.Second, fraction, tz)
 
-	// Canonical number is nanoseconds since Jan 1 1970 UTC
-	self.CanonicalNumber = uint64(self.Time().UnixNano())
+	// Canonical number is nanoseconds since (or before if negative) Jan 1 1970 UTC
+	self.CanonicalNumber = int64(self.Time().UnixNano())
 
 	return &self
 }
@@ -173,21 +172,18 @@ func (self *Timestamp) String() string {
 
 func (self *Timestamp) Compare(data interface{}) (int, error) {
 	if timestamp, ok := data.(*Timestamp); ok {
-		return CompareUint64(self.CanonicalNumber, timestamp.CanonicalNumber), nil
+		return CompareInt64(self.CanonicalNumber, timestamp.CanonicalNumber), nil
 	}
 	return 0, errors.New("incompatible comparison")
 }
 
 // Convert timezone to Go time.Location
 func (self *Timestamp) Location() *time.Location {
-	var factor int
-	switch self.TZSign {
-	case "-":
-		factor = -1
-	case "+":
-		factor = 1
+	seconds := int(self.TZHour*3600 + self.TZMinute*60)
+	if self.TZSign == "-" {
+		seconds = -seconds
 	}
-	return time.FixedZone("", factor*int(self.TZHour)*3600+int(self.TZMinute)*60)
+	return time.FixedZone("", seconds)
 }
 
 // Convert to Go time.Time
@@ -199,7 +195,7 @@ func (self *Timestamp) Time() time.Time {
 		int(self.Hour),
 		int(self.Minute),
 		int(self.Second),
-		int(self.Fraction*1000000000),
+		int(self.Fraction*1000000000.0),
 		self.Location(),
 	)
 }
