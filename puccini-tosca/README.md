@@ -10,14 +10,14 @@ and a float).
 ### TOSCA Quirks
 
 **pucini-tosca** supports "quirks", via the `--quirk/-x` switch, which are variations on the default
-grammar rules. The reason this is required is unfortunate: the low quality of the TOSCA
-spec, riddled as it is with gaps, inconsistencies, and errors, means that there's too much room for
+grammar rules. The reason this is required is unfortunate: the low quality of the TOSCA spec,
+riddled as it is with gaps, inconsistencies, and errors, means that there's too much room for
 varying interpretations of the spec as well as missing functionality. Puccini aims to adhere as
 closely as possible to the spec, literally and in spirit, but also must be pragmatic. Quirks allow
 Puccini to smooth incompatibilities with other tools and work around a few TOSCA pain points.
 Example of use:
 
-    puccini-tosca compile weird.yaml -x substitution_mappings.requirements.list
+    puccini-tosca compile weird.yaml -x data_types.string.permissive
 
 The list of supported quirks is maintained [here](../tosca/parser/QUIRKS.md).
 
@@ -93,10 +93,10 @@ Read more about resolution [here](../tosca/compiler/RESOLUTION.md).
 
 ### Coercion
 
-TOSCA functions are embedded in the Clout and are intended to be executed when necessary. Thus they
-not called during compilation, unless they are needed for topology resolution. If you want to call
-all of them and see the evaluated results, pipe the Clout through **puccini-js** and execute the
-embedded **tosca.coerce** JavaScript: 
+TOSCA functions and constraints are embedded in the Clout (as stubs) and are intended to be executed
+when necessary. Thus they not called during compilation, unless they are needed for topology
+resolution. If you want to call all of them and see the evaluated results, pipe the Clout through
+**puccini-js** and execute the embedded **tosca.coerce** JavaScript: 
 
     cat clout.yaml | puccini-js exec tosca.coerce
 
@@ -116,13 +116,13 @@ If you need more diagnostics for TOSCA parsing use the `parse` command. It works
 `compile` but does not emit Clout. Instead, it provides you various switches for examining the
 internal workings of Puccini's TOSCA parser.
 
-Use `--stop/-s` to specify a [phase](../tosca/parser/README.md) (1-5) at which you wish the parser
-to stop. This could be useful if you're getting too many problems in your report and wish to
-minimize them to a more manageable list. (`-s 0` will skip the parser entirely and just check that
-the input is readable.)
+Use `--stop/-s` to specify a [phase](../tosca/parser/) (1-5) at which you wish the parser to stop.
+This could be useful if you're getting too many problems in your report and wish to minimize them to
+a more manageable list. Note that `-s 0` will skip the TOSCA parser entirely and just check that the
+YAML input is readable.
 
 `--dump/-d` is used to dump the internal data of phases. You may specify multiple phases to dump
-using ",", e.g. `-p 2,3,4`. Per phase you will see:
+using ",", e.g. `-d 2,3,4`. Per phase you will see:
 
 * Phase 1: Read. The hierarchy of imported units starting at the service template URL.
 * Phase 2: Namespaces. All names per type. Each imported unit has its own namespace.
@@ -138,4 +138,4 @@ path that more-or-less follows JSON. For example, a path can be:
     topology_template.node_templates["store"].properties["name"]
 
 The switch will search for all paths that contains your string, e.g. `-t properties`. You can even
-include one or more wildcards, e.g. `-t 'node*properties*data'`.
+include one or more "*" wildcards, e.g. `-t 'node*properties*data'`.

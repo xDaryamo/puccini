@@ -14,7 +14,7 @@ import (
 // tosca.Reader signature
 func ReadServiceTemplate(context *tosca.Context) interface{} {
 	self := tosca_v1_3.NewServiceTemplate(context)
-	context.ScriptNamespace.Merge(DefaultScriptNamespace)
+	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
 	return self
 }

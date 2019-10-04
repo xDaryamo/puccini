@@ -27,11 +27,11 @@ func ReadMetadata(context *tosca.Context) interface{} {
 		for key, value := range self {
 			if strings.HasPrefix(key, "puccini-js.import.") {
 				name := key[18:]
-				context.ImportScript(name, value)
+				context.ImportScriptlet(name, value)
 				delete(self, key)
-			} else if strings.HasPrefix(key, "puccini-js.source.") {
-				name := key[18:]
-				context.SourceScript(name, value)
+			} else if strings.HasPrefix(key, "puccini-js.embed.") {
+				name := key[17:]
+				context.EmbedScriptlet(name, value)
 				delete(self, key)
 			}
 		}

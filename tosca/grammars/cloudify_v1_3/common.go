@@ -10,7 +10,7 @@ var log = logging.MustGetLogger("grammars.cloudify_v1_3")
 
 var Grammar = make(tosca.Grammar)
 
-var DefaultScriptNamespace = make(tosca.ScriptNamespace)
+var DefaultScriptletNamespace = make(tosca.ScriptletNamespace)
 
 func init() {
 	Grammar["ServiceTemplate"] = ReadBlueprint
@@ -46,9 +46,9 @@ func init() {
 	Grammar["ValueDefinition"] = ReadValueDefinition
 	Grammar["Workflow"] = ReadWorkflow
 
-	for name, sourceCode := range FunctionSourceCode {
-		DefaultScriptNamespace[name] = &tosca.Script{
-			SourceCode: js.Cleanup(sourceCode),
+	for name, scriptlet := range FunctionScriptlets {
+		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
+			Scriptlet: js.Cleanup(scriptlet),
 		}
 	}
 }

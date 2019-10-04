@@ -17,7 +17,7 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
 //
 
-var FunctionSourceCode = map[string]string{
+var FunctionScriptlets = map[string]string{
 	"concat":               profile.Profile["/tosca/simple/1.3/js/concat.js"],
 	"join":                 profile.Profile["/tosca/simple/1.3/js/join.js"], // introduced in TOSCA 1.2
 	"token":                profile.Profile["/tosca/simple/1.3/js/token.js"],
@@ -43,7 +43,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 	for key, data := range map_ {
 		name := yamlkeys.KeyString(key)
 
-		_, ok := context.ScriptNamespace[name]
+		_, ok := context.ScriptletNamespace[name]
 		if !ok {
 			// Not a function call, despite having the right data structure
 			return false

@@ -10,7 +10,7 @@ var log = logging.MustGetLogger("grammars.hot")
 
 var Grammar = make(tosca.Grammar)
 
-var DefaultScriptNamespace = make(tosca.ScriptNamespace)
+var DefaultScriptletNamespace = make(tosca.ScriptletNamespace)
 
 func init() {
 	Grammar["ServiceTemplate"] = ReadTemplate
@@ -26,15 +26,15 @@ func init() {
 	Grammar["Template"] = ReadTemplate
 	Grammar["Value"] = ReadValue
 
-	for name, sourceCode := range FunctionSourceCode {
-		DefaultScriptNamespace[name] = &tosca.Script{
-			SourceCode: js.Cleanup(sourceCode),
+	for name, scriptlet := range FunctionSourceCode {
+		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
+			Scriptlet: js.Cleanup(scriptlet),
 		}
 	}
 
-	for name, sourceCode := range ConstraintSourceCode {
-		DefaultScriptNamespace[name] = &tosca.Script{
-			SourceCode: js.Cleanup(sourceCode),
+	for name, scriptlet := range ConstraintSourceCode {
+		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
+			Scriptlet: js.Cleanup(scriptlet),
 		}
 	}
 }

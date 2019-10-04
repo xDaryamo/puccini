@@ -9,12 +9,12 @@ import (
 
 func init() {
 	rootCmd.AddCommand(getCmd)
-	getCmd.Flags().StringVarP(&output, "output", "o", "", "output to file (instead of stdout)")
+	getCmd.Flags().StringVarP(&output, "output", "o", "", "output to file (default is stdout)")
 }
 
 var getCmd = &cobra.Command{
 	Use:   "get [COMMAND] [[Clout PATH or URL]]",
-	Short: "Get JavaScript from Clout",
+	Short: "Get JavaScript scriptlet from Clout",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 2),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -28,11 +28,11 @@ var getCmd = &cobra.Command{
 		clout, err := ReadClout(path)
 		common.FailOnError(err)
 
-		sourceCode, err := js.GetScriptSourceCode(name, clout)
+		scriptlet, err := js.GetScriptlet(name, clout)
 		common.FailOnError(err)
 
 		if !common.Quiet {
-			err = format.WriteOrPrint(sourceCode, ardFormat, pretty, output)
+			err = format.WriteOrPrint(scriptlet, ardFormat, pretty, output)
 			common.FailOnError(err)
 		}
 	},

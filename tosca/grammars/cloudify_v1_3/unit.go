@@ -42,7 +42,7 @@ func NewUnit(context *tosca.Context) *Unit {
 // tosca.Reader signature
 func ReadUnit(context *tosca.Context) interface{} {
 	self := NewUnit(context)
-	context.ScriptNamespace.Merge(DefaultScriptNamespace)
+	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
 	return self
 }

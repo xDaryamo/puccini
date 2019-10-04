@@ -9,7 +9,7 @@ import (
 )
 
 // Built-in constraint functions
-var ConstraintClauseSourceCode = map[string]string{
+var ConstraintClauseScriptlets = map[string]string{
 	"equal":            profile.Profile["/tosca/simple/1.3/js/equal.js"],
 	"greater_than":     profile.Profile["/tosca/simple/1.3/js/greater_than.js"],
 	"greater_or_equal": profile.Profile["/tosca/simple/1.3/js/greater_or_equal.js"],
@@ -67,7 +67,7 @@ func ReadConstraintClause(context *tosca.Context) interface{} {
 		for key, value := range map_ {
 			operator := yamlkeys.KeyString(key)
 
-			script, ok := context.ScriptNamespace[operator]
+			script, ok := context.ScriptletNamespace[operator]
 			if !ok {
 				context.Clone(operator).ReportValueMalformed("constraint clause", "unsupported operator")
 				return self

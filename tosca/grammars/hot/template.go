@@ -33,11 +33,11 @@ func NewTemplate(context *tosca.Context) *Template {
 		Outputs:    make(Outputs),
 	}
 
-	self.Context.ImportScript("tosca.resolve", "internal:/tosca/common/1.0/js/resolve.js")
-	self.Context.ImportScript("tosca.coerce", "internal:/tosca/common/1.0/js/coerce.js")
-	self.Context.ImportScript("tosca.utils", "internal:/tosca/common/1.0/js/utils.js")
-	self.Context.ImportScript("tosca.helpers", "internal:/tosca/common/1.0/js/helpers.js")
-	self.Context.ImportScript("openstack.generate", "internal:/tosca/openstack/1.0/js/generate.js")
+	self.Context.ImportScriptlet("tosca.resolve", "internal:/tosca/common/1.0/js/resolve.js")
+	self.Context.ImportScriptlet("tosca.coerce", "internal:/tosca/common/1.0/js/coerce.js")
+	self.Context.ImportScriptlet("tosca.utils", "internal:/tosca/common/1.0/js/utils.js")
+	self.Context.ImportScriptlet("tosca.helpers", "internal:/tosca/common/1.0/js/helpers.js")
+	self.Context.ImportScriptlet("openstack.generate", "internal:/tosca/openstack/1.0/js/generate.js")
 
 	self.NewPseudoParameter("OS::stack_name", "stack_name")
 	self.NewPseudoParameter("OS::stack_id", "stack_id")
@@ -49,7 +49,7 @@ func NewTemplate(context *tosca.Context) *Template {
 // tosca.Reader signature
 func ReadTemplate(context *tosca.Context) interface{} {
 	self := NewTemplate(context)
-	context.ScriptNamespace.Merge(DefaultScriptNamespace)
+	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 
 	if heatTemplateVersionContext, ok := context.GetFieldChild("heat_template_version"); ok {
 		switch heatTemplateVersionContext.Data.(type) {
@@ -110,7 +110,7 @@ func (self *Template) Normalize() *normal.ServiceTemplate {
 		s.Description = *self.Description
 	}
 
-	s.ScriptNamespace = self.Context.ScriptNamespace
+	s.ScriptletNamespace = self.Context.ScriptletNamespace
 
 	self.Parameters.Normalize(s.Inputs, self.Context.FieldChild("parameters", nil))
 	self.Outputs.Normalize(s.Outputs, self.Context.FieldChild("outputs", nil))

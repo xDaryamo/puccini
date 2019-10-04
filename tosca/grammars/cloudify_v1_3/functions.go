@@ -14,7 +14,7 @@ import (
 // [https://docs.cloudify.co/4.5.5/developer/blueprints/spec-intrinsic-functions/]
 //
 
-var FunctionSourceCode = map[string]string{
+var FunctionScriptlets = map[string]string{
 	"concat":         profile.Profile["/cloudify/4.5/js/get_secret.js"],
 	"get_attribute":  profile.Profile["/cloudify/4.5/js/get_attribute.js"],
 	"get_capability": profile.Profile["/cloudify/4.5/js/get_capability.js"],
@@ -37,7 +37,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 	for key, data := range map_ {
 		name := yamlkeys.KeyString(key)
 
-		_, ok := context.ScriptNamespace[name]
+		_, ok := context.ScriptletNamespace[name]
 		if !ok {
 			// Not a function call, despite having the right data structure
 			return false

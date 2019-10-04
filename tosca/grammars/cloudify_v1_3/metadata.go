@@ -31,11 +31,11 @@ func ReadMetadata(context *tosca.Context) interface{} {
 			name := yamlkeys.KeyString(key)
 			if strings.HasPrefix(name, "puccini-js.import.") {
 				name := name[18:]
-				context.ImportScript(name, value.(string))
+				context.ImportScriptlet(name, value.(string))
 				delete(self, key)
-			} else if strings.HasPrefix(key, "puccini-js.source.") {
-				name := name[18:]
-				context.SourceScript(name, value.(string))
+			} else if strings.HasPrefix(key, "puccini-js.embed.") {
+				name := name[17:]
+				context.EmbedScriptlet(name, value.(string))
 				delete(self, key)
 			}
 		}

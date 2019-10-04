@@ -7,11 +7,11 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 metadata:
 
-  # Use metadata prefixed with "puccini-js.source." to embed JavaScript source code
+  # Use metadata prefixed with "puccini-js.embed." to embed a JavaScript scriptlet
   # The postfix is the function name
-  # Your code must provide a global function named "evaluate"
+  # Your scriptlet must provide a global function named "evaluate"
   # It can have any number of arguments
-  puccini-js.source.in_bed: |-
+  puccini-js.embed.in_bed: |-
     function evaluate() {
       var a = [];
       for (var i in arguments) {
@@ -20,7 +20,7 @@ metadata:
       return a.join('; ');
     }
 
-  # You can also use "puccini-js.import." if you prefer to import source code from a separate file
+  # You can also use "puccini-js.import." if you prefer to import the scriptlet from a separate file
   puccini-js.import.double: imports/double.js
 
 node_types:

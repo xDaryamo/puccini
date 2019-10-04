@@ -15,7 +15,7 @@ func init() {
 
 var execCmd = &cobra.Command{
 	Use:   "exec [COMMAND or JavaScript PATH or URL] [[Clout PATH or URL]]",
-	Short: "Execute JavaScript in Clout",
+	Short: "Execute JavaScript scriptlet in Clout",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 2),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -30,21 +30,21 @@ var execCmd = &cobra.Command{
 		common.FailOnError(err)
 
 		// Try loading JavaScript from Clout
-		sourceCode, err := js.GetScriptSourceCode(name, clout_)
+		scriptlet, err := js.GetScriptlet(name, clout_)
 
 		if err != nil {
 			// Try loading JavaScript from path or URL
 			url_, err := url.NewValidURL(name, nil)
 			common.FailOnError(err)
 
-			sourceCode, err = url.Read(url_)
+			scriptlet, err = url.Read(url_)
 			common.FailOnError(err)
 
-			err = js.SetScriptSourceCode(name, js.Cleanup(sourceCode), clout_)
+			err = js.SetScriptlet(name, js.Cleanup(scriptlet), clout_)
 			common.FailOnError(err)
 		}
 
-		err = Exec(name, sourceCode, clout_)
+		err = Exec(name, scriptlet, clout_)
 		common.FailOnError(err)
 	},
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func GetPlugins(name string, clout *CloutContext) ([]goja.Value, error) {
-	scripts, err := GetScripts(name, clout.Clout)
+	scripts, err := GetScriptlets(name, clout.Clout)
 	if err != nil {
 		return nil, nil
 	}
@@ -27,9 +27,9 @@ func GetPlugins(name string, clout *CloutContext) ([]goja.Value, error) {
 	})
 
 	for _, value := range scripts {
-		sourceCode := value.(string)
+		scriptlet := value.(string)
 
-		program, err := GetProgram("<plugin>", sourceCode)
+		program, err := GetProgram("<plugin>", scriptlet)
 		if err != nil {
 			return nil, err
 		}

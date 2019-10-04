@@ -86,6 +86,9 @@ func (self *ArtifactDefinition) Inherit(parentDefinition *ArtifactDefinition) {
 		if (self.Description == nil) && (parentDefinition.Description != nil) {
 			self.Description = parentDefinition.Description
 		}
+		if (self.ArtifactVersion == nil) && (parentDefinition.ArtifactVersion != nil) {
+			self.ArtifactVersion = parentDefinition.ArtifactVersion
+		}
 		if (self.Properties == nil) && (parentDefinition.Properties != nil) {
 			self.Properties = parentDefinition.Properties
 		}
@@ -97,6 +100,12 @@ func (self *ArtifactDefinition) Inherit(parentDefinition *ArtifactDefinition) {
 		}
 		if (self.DeployPath == nil) && (parentDefinition.DeployPath != nil) {
 			self.DeployPath = parentDefinition.DeployPath
+		}
+		if (self.ChecksumAlgorithm == nil) && (parentDefinition.ChecksumAlgorithm != nil) {
+			self.ChecksumAlgorithm = parentDefinition.ChecksumAlgorithm
+		}
+		if (self.Checksum == nil) && (parentDefinition.Checksum != nil) {
+			self.Checksum = parentDefinition.Checksum
 		}
 		if (self.ArtifactType == nil) && (parentDefinition.ArtifactType != nil) {
 			self.ArtifactType = parentDefinition.ArtifactType

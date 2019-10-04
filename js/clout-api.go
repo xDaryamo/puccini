@@ -32,12 +32,12 @@ func (self *Context) NewCloutContext(clout_ *clout.Clout) (*CloutContext, *goja.
 }
 
 func (self *CloutContext) CallFunction(site interface{}, source interface{}, target interface{}, name string, functionName string, arguments []interface{}) (interface{}, error) {
-	sourceCode, err := GetScriptSourceCode(name, self.Clout)
+	scriptlet, err := GetScriptlet(name, self.Clout)
 	if err != nil {
 		return nil, err
 	}
 
-	program, err := GetProgram(name, sourceCode)
+	program, err := GetProgram(name, scriptlet)
 	if err != nil {
 		return nil, err
 	}
@@ -79,12 +79,12 @@ func (self *CloutApi) NewKey() string {
 }
 
 func (self *CloutApi) Exec(name string) error {
-	sourceCode, err := GetScriptSourceCode(name, self.context.Clout)
+	scriptlet, err := GetScriptlet(name, self.context.Clout)
 	if err != nil {
 		return err
 	}
 
-	program, err := GetProgram(name, sourceCode)
+	program, err := GetProgram(name, scriptlet)
 	if err != nil {
 		return err
 	}

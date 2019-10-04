@@ -8,26 +8,26 @@ import (
 	"github.com/tliron/puccini/url"
 )
 
-func (self *Context) ImportScript(name string, path string) {
+func (self *Context) ImportScriptlet(name string, path string) {
 	var nativeArgumentIndexes []uint
-	name, nativeArgumentIndexes = parseScriptName(name)
-	self.ScriptNamespace[name] = &Script{
+	name, nativeArgumentIndexes = parseScriptletName(name)
+	self.ScriptletNamespace[name] = &Scriptlet{
 		Origin:                self.URL.Origin(),
 		Path:                  path,
 		NativeArgumentIndexes: nativeArgumentIndexes,
 	}
 }
 
-func (self *Context) SourceScript(name string, sourceCode string) {
+func (self *Context) EmbedScriptlet(name string, scriptlet string) {
 	var nativeArgumentIndexes []uint
-	name, nativeArgumentIndexes = parseScriptName(name)
-	self.ScriptNamespace[name] = &Script{
-		SourceCode:            js.Cleanup(sourceCode),
+	name, nativeArgumentIndexes = parseScriptletName(name)
+	self.ScriptletNamespace[name] = &Scriptlet{
+		Scriptlet:             js.Cleanup(scriptlet),
 		NativeArgumentIndexes: nativeArgumentIndexes,
 	}
 }
 
-func parseScriptName(name string) (string, []uint) {
+func parseScriptletName(name string) (string, []uint) {
 	// Parse optional native argument indexes
 	// e.g.: my_constraint(0,1)
 	var nativeArgumentIndexes []uint
@@ -44,17 +44,17 @@ func parseScriptName(name string) (string, []uint) {
 }
 
 //
-// Script
+// Scriptlet
 //
 
-type Script struct {
+type Scriptlet struct {
 	Origin                url.URL `json:"origin" yaml:"origin"`
 	Path                  string  `json:"path" yaml:"path"`
-	SourceCode            string  `json:"sourceCode" yaml:"sourceCode"`
+	Scriptlet             string  `json:"sourceCode" yaml:"sourceCode"`
 	NativeArgumentIndexes []uint  `json:"nativeArgumentIndexes" yaml:"nativeArgumentIndexes"`
 }
 
-func (self *Script) GetSourceCode() (string, error) {
+func (self *Scriptlet) GetScriptlet() (string, error) {
 	if self.Path != "" {
 		var origins []url.URL
 		if self.Origin != nil {
@@ -74,17 +74,17 @@ func (self *Script) GetSourceCode() (string, error) {
 		return js.Cleanup(sourceCode), nil
 	}
 
-	return self.SourceCode, nil
+	return self.Scriptlet, nil
 }
 
 //
-// ScriptNamespace
+// ScriptletNamespace
 //
 
-type ScriptNamespace map[string]*Script
+type ScriptletNamespace map[string]*Scriptlet
 
-func (self ScriptNamespace) Merge(namespace ScriptNamespace) {
-	for name, script := range namespace {
-		self[name] = script
+func (self ScriptletNamespace) Merge(namespace ScriptletNamespace) {
+	for name, scriptlet := range namespace {
+		self[name] = scriptlet
 	}
 }

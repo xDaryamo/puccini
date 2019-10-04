@@ -136,6 +136,10 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		tasks.Drain()
 	}
 
+	if context.ServiceTemplate == nil {
+		return context, nil
+	}
+
 	parser.SetInputs(context.ServiceTemplate.EntityPtr, inputValues)
 
 	// Phase 5: Rendering

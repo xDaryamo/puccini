@@ -4,10 +4,10 @@ puccini-js
 `exec`
 ------
 
-Execute JavaScript embedded in a Clout. The optional input is a filesystem path or URL to a Clout
-file. If no input is provided will attempt to read YAML from stdin. By default the output (assuming
-the JavaScript generates output) will be output to stdout, but you can use the `--output/-o` switch
-to specify a file (or direct to a file in the shell via `>`).
+Execute a JavaScript scriptlet embedded in a Clout. The optional input is a filesystem path or URL
+to a Clout file. If no input is provided will attempt to read YAML from stdin. By default the output
+(assuming the scriptlet generates output) will be output to stdout, but you can use the `--output/-o`
+switch to specify a file (or direct to a file in the shell via `>`).
 
 `exec` creates a specialized JavaScript environment in which to run the code, providing  access to
 the parsed Clout structure as well as a few helper functions.
@@ -19,15 +19,15 @@ and a float).
 `list`
 ------
 
-Lists all available JavaScript in the Clout.
+Lists all available JavaScript scriptlets in the Clout.
 
 `get`
 -----
 
-Prints out JavaScript source code extracted from the Clout.
+Prints out JavaScript scriptlet source code extracted from the Clout.
 
 `put`
 -----
 
-Embeds/replaces JavaScript in the Clout and outputs a new Clout. This can be used to add JavaScript
-"on the fly" via piping (e.g. to add a plugin).
+Embeds/replaces JavaScript scriptlets in the Clout and outputs a new Clout. This can be used to add
+scriptlets "on the fly" via piping (e.g. to add a plugin).

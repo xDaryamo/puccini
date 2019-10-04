@@ -32,59 +32,59 @@ func GetContext(entityPtr interface{}) *Context {
 //
 
 type Context struct {
-	Parent          *Context
-	Name            string
-	Path            ard.Path
-	URL             url.URL
-	Data            interface{} // ARD
-	Locator         ard.Locator
-	Namespace       Namespace
-	ScriptNamespace ScriptNamespace
-	Hierarchy       *Hierarchy
-	Problems        *problems.Problems
-	Quirks          []string
-	Grammar         Grammar
-	ReadOverrides   map[string]string
+	Parent             *Context
+	Name               string
+	Path               ard.Path
+	URL                url.URL
+	Data               interface{} // ARD
+	Locator            ard.Locator
+	Namespace          Namespace
+	ScriptletNamespace ScriptletNamespace
+	Hierarchy          *Hierarchy
+	Problems           *problems.Problems
+	Quirks             []string
+	Grammar            Grammar
+	ReadOverrides      map[string]string
 }
 
 func NewContext(problems *problems.Problems, quirks []string) *Context {
 	return &Context{
-		Namespace:       make(Namespace),
-		ScriptNamespace: make(ScriptNamespace),
-		Hierarchy:       &Hierarchy{},
-		Problems:        problems,
-		Quirks:          quirks,
+		Namespace:          make(Namespace),
+		ScriptletNamespace: make(ScriptletNamespace),
+		Hierarchy:          &Hierarchy{},
+		Problems:           problems,
+		Quirks:             quirks,
 	}
 }
 
 func (self *Context) NewImportContext(url_ url.URL) *Context {
 	return &Context{
-		Name:            self.Name,
-		Path:            self.Path,
-		URL:             url_,
-		Namespace:       make(Namespace),
-		ScriptNamespace: make(ScriptNamespace),
-		Hierarchy:       &Hierarchy{},
-		Problems:        self.Problems,
-		Quirks:          self.Quirks,
-		Grammar:         self.Grammar,
+		Name:               self.Name,
+		Path:               self.Path,
+		URL:                url_,
+		Namespace:          make(Namespace),
+		ScriptletNamespace: make(ScriptletNamespace),
+		Hierarchy:          &Hierarchy{},
+		Problems:           self.Problems,
+		Quirks:             self.Quirks,
+		Grammar:            self.Grammar,
 	}
 }
 
 func (self *Context) Clone(data interface{}) *Context {
 	return &Context{
-		Parent:          self.Parent,
-		Name:            self.Name,
-		Path:            self.Path,
-		URL:             self.URL,
-		Data:            data,
-		Locator:         self.Locator,
-		Namespace:       self.Namespace,
-		ScriptNamespace: self.ScriptNamespace,
-		Hierarchy:       self.Hierarchy,
-		Problems:        self.Problems,
-		Quirks:          self.Quirks,
-		Grammar:         self.Grammar,
+		Parent:             self.Parent,
+		Name:               self.Name,
+		Path:               self.Path,
+		URL:                self.URL,
+		Data:               data,
+		Locator:            self.Locator,
+		Namespace:          self.Namespace,
+		ScriptletNamespace: self.ScriptletNamespace,
+		Hierarchy:          self.Hierarchy,
+		Problems:           self.Problems,
+		Quirks:             self.Quirks,
+		Grammar:            self.Grammar,
 	}
 }
 
@@ -140,18 +140,18 @@ func (self *Context) Location() string {
 func (self *Context) FieldChild(name interface{}, data interface{}) *Context {
 	nameString := yamlkeys.KeyString(name) // complex keys would be stringified
 	return &Context{
-		Parent:          self,
-		Name:            nameString,
-		Path:            append(self.Path, ard.NewFieldPathElement(nameString)),
-		URL:             self.URL,
-		Data:            data,
-		Locator:         self.Locator,
-		Namespace:       self.Namespace,
-		ScriptNamespace: self.ScriptNamespace,
-		Hierarchy:       self.Hierarchy,
-		Problems:        self.Problems,
-		Quirks:          self.Quirks,
-		Grammar:         self.Grammar,
+		Parent:             self,
+		Name:               nameString,
+		Path:               append(self.Path, ard.NewFieldPathElement(nameString)),
+		URL:                self.URL,
+		Data:               data,
+		Locator:            self.Locator,
+		Namespace:          self.Namespace,
+		ScriptletNamespace: self.ScriptletNamespace,
+		Hierarchy:          self.Hierarchy,
+		Problems:           self.Problems,
+		Quirks:             self.Quirks,
+		Grammar:            self.Grammar,
 	}
 }
 
@@ -185,51 +185,51 @@ func (self *Context) MapChild(name interface{}, data interface{}) *Context {
 	nameString := strings.ReplaceAll(yamlkeys.KeyString(name), "\n", "¶") // complex keys would be stringified
 
 	return &Context{
-		Parent:          self,
-		Name:            nameString,
-		Path:            append(self.Path, ard.NewMapPathElement(nameString)),
-		URL:             self.URL,
-		Data:            data,
-		Locator:         self.Locator,
-		Namespace:       self.Namespace,
-		ScriptNamespace: self.ScriptNamespace,
-		Hierarchy:       self.Hierarchy,
-		Problems:        self.Problems,
-		Quirks:          self.Quirks,
-		Grammar:         self.Grammar,
+		Parent:             self,
+		Name:               nameString,
+		Path:               append(self.Path, ard.NewMapPathElement(nameString)),
+		URL:                self.URL,
+		Data:               data,
+		Locator:            self.Locator,
+		Namespace:          self.Namespace,
+		ScriptletNamespace: self.ScriptletNamespace,
+		Hierarchy:          self.Hierarchy,
+		Problems:           self.Problems,
+		Quirks:             self.Quirks,
+		Grammar:            self.Grammar,
 	}
 }
 
 func (self *Context) ListChild(index int, data interface{}) *Context {
 	return &Context{
-		Parent:          self,
-		Name:            fmt.Sprintf("%d", index),
-		Path:            append(self.Path, ard.NewListPathElement(index)),
-		URL:             self.URL,
-		Data:            data,
-		Locator:         self.Locator,
-		Namespace:       self.Namespace,
-		ScriptNamespace: self.ScriptNamespace,
-		Hierarchy:       self.Hierarchy,
-		Problems:        self.Problems,
-		Quirks:          self.Quirks,
-		Grammar:         self.Grammar,
+		Parent:             self,
+		Name:               fmt.Sprintf("%d", index),
+		Path:               append(self.Path, ard.NewListPathElement(index)),
+		URL:                self.URL,
+		Data:               data,
+		Locator:            self.Locator,
+		Namespace:          self.Namespace,
+		ScriptletNamespace: self.ScriptletNamespace,
+		Hierarchy:          self.Hierarchy,
+		Problems:           self.Problems,
+		Quirks:             self.Quirks,
+		Grammar:            self.Grammar,
 	}
 }
 
 func (self *Context) SequencedListChild(index int, name string, data interface{}) *Context {
 	return &Context{
-		Parent:          self,
-		Name:            name,
-		Path:            append(self.Path, ard.NewListPathElement(index)),
-		URL:             self.URL,
-		Data:            data,
-		Locator:         self.Locator,
-		Namespace:       self.Namespace,
-		ScriptNamespace: self.ScriptNamespace,
-		Hierarchy:       self.Hierarchy,
-		Problems:        self.Problems,
-		Quirks:          self.Quirks,
-		Grammar:         self.Grammar,
+		Parent:             self,
+		Name:               name,
+		Path:               append(self.Path, ard.NewListPathElement(index)),
+		URL:                self.URL,
+		Data:               data,
+		Locator:            self.Locator,
+		Namespace:          self.Namespace,
+		ScriptletNamespace: self.ScriptletNamespace,
+		Hierarchy:          self.Hierarchy,
+		Problems:           self.Problems,
+		Quirks:             self.Quirks,
+		Grammar:            self.Grammar,
 	}
 }

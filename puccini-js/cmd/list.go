@@ -10,7 +10,6 @@ import (
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/format"
 	"github.com/tliron/puccini/js"
-	"github.com/tliron/yamlkeys"
 )
 
 func init() {
@@ -19,7 +18,7 @@ func init() {
 
 var listCmd = &cobra.Command{
 	Use:   "list [[Clout PATH or URL]]",
-	Short: "List JavaScript in Clout",
+	Short: "List JavaScript scriptlets in Clout",
 	Long:  ``,
 	Args:  cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -36,7 +35,7 @@ var listCmd = &cobra.Command{
 }
 
 func List(clout_ *clout.Clout) {
-	metadata, err := js.GetMetadata(clout_)
+	metadata, err := js.GetJavaScriptMetadata(clout_)
 	common.FailOnError(err)
 
 	ListValue(metadata, nil)
@@ -48,9 +47,9 @@ func ListValue(value interface{}, path []string) {
 		if !common.Quiet {
 			fmt.Fprintf(format.Stdout, "%s\n", strings.Join(path, "."))
 		}
-	case ard.Map:
+	case ard.StringMap:
 		for key, vv := range v {
-			ListValue(vv, append(path, yamlkeys.KeyString(key)))
+			ListValue(vv, append(path, key))
 		}
 	}
 }

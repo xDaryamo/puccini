@@ -57,7 +57,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 	for key, data := range map_ {
 		name := yamlkeys.KeyString(key)
 
-		_, ok := context.ScriptNamespace[name]
+		_, ok := context.ScriptletNamespace[name]
 		if !ok {
 			// Not a function call, despite having the right data structure
 			return false

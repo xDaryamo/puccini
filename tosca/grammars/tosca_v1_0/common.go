@@ -16,7 +16,7 @@ var log = logging.MustGetLogger("grammars.tosca_v1_0")
 
 var Grammar = make(tosca.Grammar)
 
-var DefaultScriptNamespace = make(tosca.ScriptNamespace)
+var DefaultScriptletNamespace = make(tosca.ScriptletNamespace)
 
 func init() {
 	Grammar["Artifact"] = tosca_v1_2.ReadArtifact                     // 1.2
@@ -80,26 +80,26 @@ func init() {
 	Grammar["WorkflowPreconditionDefinition"] = tosca_v1_3.ReadWorkflowPreconditionDefinition
 	Grammar["WorkflowStepDefinition"] = tosca_v1_3.ReadWorkflowStepDefinition
 
-	for name, sourceCode := range tosca_v1_3.FunctionSourceCode {
+	for name, scriptlet := range tosca_v1_3.FunctionScriptlets {
 		// Unsupported functions
 		if name == "join" {
 			continue
 		}
 
-		DefaultScriptNamespace[name] = &tosca.Script{
-			SourceCode: js.Cleanup(sourceCode),
+		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
+			Scriptlet: js.Cleanup(scriptlet),
 		}
 	}
 
-	for name, sourceCode := range tosca_v1_3.ConstraintClauseSourceCode {
+	for name, scriptlet := range tosca_v1_3.ConstraintClauseScriptlets {
 		// Unsupported constraints
 		if name == "schema" {
 			continue
 		}
 
 		nativeArgumentIndexes, _ := tosca_v1_3.ConstraintClauseNativeArgumentIndexes[name]
-		DefaultScriptNamespace[name] = &tosca.Script{
-			SourceCode:            js.Cleanup(sourceCode),
+		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
+			Scriptlet:             js.Cleanup(scriptlet),
 			NativeArgumentIndexes: nativeArgumentIndexes,
 		}
 	}

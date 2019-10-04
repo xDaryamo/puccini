@@ -28,7 +28,7 @@ func NewBlueprint(context *tosca.Context) *Blueprint {
 // tosca.Reader signature
 func ReadBlueprint(context *tosca.Context) interface{} {
 	self := NewBlueprint(context)
-	context.ScriptNamespace.Merge(DefaultScriptNamespace)
+	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
 	return self
 }
@@ -63,7 +63,7 @@ func (self *Blueprint) Normalize() *normal.ServiceTemplate {
 		s.Description = *self.Description
 	}
 
-	s.ScriptNamespace = self.Context.ScriptNamespace
+	s.ScriptletNamespace = self.Context.ScriptletNamespace
 
 	self.Inputs.Normalize(s.Inputs, self.Context.FieldChild("inputs", nil))
 	self.Outputs.Normalize(s.Outputs)

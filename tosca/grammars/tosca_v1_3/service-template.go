@@ -28,7 +28,7 @@ func NewServiceTemplate(context *tosca.Context) *ServiceTemplate {
 // tosca.Reader signature
 func ReadServiceTemplate(context *tosca.Context) interface{} {
 	self := NewServiceTemplate(context)
-	context.ScriptNamespace.Merge(DefaultScriptNamespace)
+	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
 	return self
 }
@@ -43,7 +43,7 @@ func (self *ServiceTemplate) Normalize() *normal.ServiceTemplate {
 		s.Description = *self.Description
 	}
 
-	s.ScriptNamespace = self.Context.ScriptNamespace
+	s.ScriptletNamespace = self.Context.ScriptletNamespace
 
 	self.Unit.Normalize(s)
 	if self.TopologyTemplate != nil {

@@ -8,11 +8,14 @@ type Artifact struct {
 	NodeTemplate *NodeTemplate `json:"-" yaml:"-"`
 	Name         string        `json:"-" yaml:"-"`
 
-	Description string         `json:"description" yaml:"description"`
-	Types       Types          `json:"types" yaml:"types"`
-	Properties  Constrainables `json:"properties" yaml:"properties"`
-	SourcePath  string         `json:"sourcePath" yaml:"sourcePath"`
-	TargetPath  string         `json:"targetPath" yaml:"targetPath"`
+	Description       string         `json:"description" yaml:"description"`
+	Types             Types          `json:"types" yaml:"types"`
+	Properties        Constrainables `json:"properties" yaml:"properties"`
+	SourcePath        string         `json:"sourcePath" yaml:"sourcePath"`
+	TargetPath        string         `json:"targetPath" yaml:"targetPath"`
+	Version           string         `json:"version" yaml:"version"`
+	ChecksumAlgorithm string         `json:"checksumAlgorithm" yaml:"checksumAlgorithm"`
+	Checksum          string         `json:"checksum" yaml:"checksum"`
 }
 
 func (self *NodeTemplate) NewArtifact(name string) *Artifact {

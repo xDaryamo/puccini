@@ -5,12 +5,12 @@ import (
 )
 
 func (self *Context) Exec(clout_ *clout.Clout, name string, apis map[string]interface{}) error {
-	sourceCode, err := GetScriptSourceCode(name, clout_)
+	scriptlet, err := GetScriptlet(name, clout_)
 	if err != nil {
 		return err
 	}
 
-	program, err := GetProgram(name, sourceCode)
+	program, err := GetProgram(name, scriptlet)
 	if err != nil {
 		return err
 	}

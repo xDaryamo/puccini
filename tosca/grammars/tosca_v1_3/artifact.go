@@ -101,6 +101,15 @@ func (self *Artifact) Normalize(n *normal.NodeTemplate) *normal.Artifact {
 	if self.DeployPath != nil {
 		a.TargetPath = *self.DeployPath
 	}
+	if self.ArtifactVersion != nil {
+		a.Version = *self.ArtifactVersion
+	}
+	if self.ChecksumAlgorithm != nil {
+		a.ChecksumAlgorithm = *self.ChecksumAlgorithm
+	}
+	if self.Checksum != nil {
+		a.Checksum = *self.Checksum
+	}
 
 	return a
 }

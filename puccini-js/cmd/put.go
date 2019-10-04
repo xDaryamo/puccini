@@ -10,12 +10,12 @@ import (
 
 func init() {
 	rootCmd.AddCommand(putCmd)
-	putCmd.Flags().StringVarP(&output, "output", "o", "", "output Clout to file (instead of stdout)")
+	putCmd.Flags().StringVarP(&output, "output", "o", "", "output Clout to file (default is stdout)")
 }
 
 var putCmd = &cobra.Command{
 	Use:   "put [COMMAND] [JavaScript PATH or URL] [[Clout PATH or URL]]",
-	Short: "Put JavaScript in Clout",
+	Short: "Put JavaScript scriptlet in Clout",
 	Long:  ``,
 	Args:  cobra.RangeArgs(2, 3),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -33,10 +33,10 @@ var putCmd = &cobra.Command{
 		url_, err := url.NewValidURL(jsUrl, nil)
 		common.FailOnError(err)
 
-		sourceCode, err := url.Read(url_)
+		scriptlet, err := url.Read(url_)
 		common.FailOnError(err)
 
-		err = js.SetScriptSourceCode(name, js.Cleanup(sourceCode), clout)
+		err = js.SetScriptlet(name, js.Cleanup(scriptlet), clout)
 		common.FailOnError(err)
 
 		err = format.WriteOrPrint(clout, ardFormat, pretty, output)

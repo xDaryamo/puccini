@@ -11,7 +11,7 @@ node_types:
   Server:
     derived_from: Compute
     # It's good practice to use YAML's ">-" for multiline strings
-    # (It will collapse them and remove the trailing newline)
+    # (It will collapse paragraphs into lines and remove the final trailing newline)
     description: >-
       A really good server for our application.
 

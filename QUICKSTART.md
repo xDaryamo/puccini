@@ -38,5 +38,5 @@ When you're done, you can stop the port forwarding and destroy the Minikube:
     killall kubectl
     minikube delete
 
-The next step would to be look at the [examples](examples/README.md) and learn more about what
+The next step would to be look at the [examples](examples/) and learn more about what
 Puccini can do.

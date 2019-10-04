@@ -22,7 +22,7 @@ func (self *Unit) MergeNamespaces() {
 		for _, import_ := range self.Imports {
 			import_.MergeNamespaces()
 			context.Namespace.Merge(import_.GetContext().Namespace, import_.NameTransformer)
-			context.ScriptNamespace.Merge(import_.GetContext().ScriptNamespace)
+			context.ScriptletNamespace.Merge(import_.GetContext().ScriptletNamespace)
 		}
 
 		log.Infof("{namespaces} create: %s", context.URL.String())

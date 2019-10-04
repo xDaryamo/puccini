@@ -17,12 +17,12 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 	}
 
 	metadata := make(ard.StringMap)
-	for name, jsEntry := range s.ScriptNamespace {
-		sourceCode, err := jsEntry.GetSourceCode()
+	for name, jsEntry := range s.ScriptletNamespace {
+		scriptlet, err := jsEntry.GetScriptlet()
 		if err != nil {
 			return nil, err
 		}
-		if err = js.SetMapNested(metadata, name, sourceCode); err != nil {
+		if err = js.SetMapNested(metadata, name, scriptlet); err != nil {
 			return nil, err
 		}
 	}
