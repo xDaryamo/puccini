@@ -28,9 +28,14 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 	}
 	clout_.Metadata["puccini-js"] = metadata
 
+	history := ard.List{ard.StringMap{
+		"timestamp":   timestamp,
+		"description": "compile",
+	}}
+
 	metadata = make(ard.StringMap)
 	metadata["version"] = VERSION
-	metadata["history"] = []string{timestamp}
+	metadata["history"] = history
 	clout_.Metadata["puccini-tosca"] = metadata
 
 	tosca := make(ard.StringMap)

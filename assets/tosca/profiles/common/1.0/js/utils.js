@@ -14,6 +14,23 @@ tosca.coerce = function() {
 	tosca.traverseValues(clout.coerce);
 };
 
+tosca.addHistory = function(description) {
+	var history;
+	if (clout.metadata === undefined)
+		clout.metadata = {};
+	if (clout.metadata['puccini-tosca'] === undefined)
+		clout.metadata['puccini-tosca'] = {};
+	if (clout.metadata['puccini-tosca'].history === undefined)
+		history = [];
+	else
+		history = clout.metadata['puccini-tosca'].history.slice(0);
+	history.push({
+		timestamp: puccini.timestamp(),
+		description: description
+	});
+	clout.metadata['puccini-tosca'].history = history;
+};
+
 tosca.traverseValues = function(traverser) {
 	if (tosca.isTosca(clout)) {
 		tosca.traverseObjectValues(traverser, clout.properties.tosca.inputs);
