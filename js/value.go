@@ -9,8 +9,6 @@ import (
 //
 
 type Value struct {
-	Context *CloutContext `json:"-" yaml:"-"`
-
 	Value       interface{} `json:"value" yaml:"value"`
 	Constraints Constraints `json:"constraints" yaml:"constraints"`
 

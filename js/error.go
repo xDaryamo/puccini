@@ -68,7 +68,7 @@ func (self Error) Error() string {
 		r += fmt.Sprintf(", %s", self.Message)
 	}
 	if self.Cause != nil {
-		r += fmt.Sprintf(" due to %s", self.Cause.Error())
+		r += fmt.Sprintf(" because %s", self.Cause.Error())
 	}
 	return r
 }
@@ -87,9 +87,9 @@ func (self Error) ProblemMessage() string {
 	}
 	if self.Cause != nil {
 		if jsError, ok := self.Cause.(*Error); ok {
-			r += fmt.Sprintf(" due to %s", jsError.ProblemMessage())
+			r += fmt.Sprintf(" because %s", jsError.ProblemMessage())
 		} else {
-			r += fmt.Sprintf(" due to %s", self.Cause.Error())
+			r += fmt.Sprintf(" because %s", self.Cause.Error())
 		}
 	}
 	return r

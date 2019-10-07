@@ -14,12 +14,12 @@ func init() {
 }
 
 var execCmd = &cobra.Command{
-	Use:   "exec [COMMAND or JavaScript PATH or URL] [[Clout PATH or URL]]",
+	Use:   "exec [NAME or JavaScript PATH or URL] [[Clout PATH or URL]]",
 	Short: "Execute JavaScript scriptlet in Clout",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 2),
 	Run: func(cmd *cobra.Command, args []string) {
-		name := args[0]
+		scriptletName := args[0]
 
 		var path string
 		if len(args) == 2 {
@@ -30,33 +30,35 @@ var execCmd = &cobra.Command{
 		common.FailOnError(err)
 
 		// Try loading JavaScript from Clout
-		scriptlet, err := js.GetScriptlet(name, clout_)
+		scriptlet, err := js.GetScriptlet(scriptletName, clout_)
 
 		if err != nil {
 			// Try loading JavaScript from path or URL
-			url_, err := url.NewValidURL(name, nil)
+			url_, err := url.NewValidURL(scriptletName, nil)
 			common.FailOnError(err)
 
 			scriptlet, err = url.Read(url_)
 			common.FailOnError(err)
 
-			err = js.SetScriptlet(name, js.Cleanup(scriptlet), clout_)
+			err = js.SetScriptlet(scriptletName, js.Cleanup(scriptlet), clout_)
 			common.FailOnError(err)
 		}
 
-		err = Exec(name, scriptlet, clout_)
+		err = Exec(scriptletName, scriptlet, clout_)
 		common.FailOnError(err)
 	},
 }
 
-func Exec(name string, sourceCode string, c *clout.Clout) error {
-	program, err := js.GetProgram(name, sourceCode)
+func Exec(scriptletName string, scriptlet string, clout_ *clout.Clout) error {
+	jsContext := js.NewContext(scriptletName, log, common.Quiet, ardFormat, pretty, output)
+
+	program, err := jsContext.GetProgram(scriptletName, scriptlet)
 	if err != nil {
 		return err
 	}
 
-	jsContext := js.NewContext(name, log, common.Quiet, ardFormat, pretty, output)
-	_, runtime := jsContext.NewCloutContext(c)
+	runtime := jsContext.NewRuntime(clout_, nil)
+
 	_, err = runtime.RunProgram(program)
 
 	return js.UnwrapException(err)

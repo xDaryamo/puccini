@@ -8,11 +8,11 @@ import (
 
 type Constraints []*FunctionCall
 
-func (self *CloutContext) NewConstraints(list ard.List, site interface{}, source interface{}, target interface{}) (Constraints, error) {
+func (self *RuntimeContext) NewConstraints(list ard.List, functionCallContext FunctionCallContext) (Constraints, error) {
 	constraints := make(Constraints, len(list))
 
 	for index, element := range list {
-		if coercible, err := self.NewCoercible(element, site, source, target); err == nil {
+		if coercible, err := self.NewCoercible(element, functionCallContext); err == nil {
 			var ok bool
 			if constraints[index], ok = coercible.(*FunctionCall); !ok {
 				return nil, fmt.Errorf("malformed constraint, not a function call: %v", element)
@@ -25,10 +25,10 @@ func (self *CloutContext) NewConstraints(list ard.List, site interface{}, source
 	return constraints, nil
 }
 
-func (self *CloutContext) NewConstraintsForValue(map_ ard.StringMap, name string, site interface{}, source interface{}, target interface{}) (Constraints, error) {
+func (self *RuntimeContext) NewConstraintsForValue(map_ ard.StringMap, name string, functionCallContext FunctionCallContext) (Constraints, error) {
 	if v, ok := map_[name]; ok {
 		if list, ok := v.(ard.List); ok {
-			return self.NewConstraints(list, site, source, target)
+			return self.NewConstraints(list, functionCallContext)
 		} else {
 			return nil, fmt.Errorf("malformed \"%s\", not a list: %T", name, v)
 		}

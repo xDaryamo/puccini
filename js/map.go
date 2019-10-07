@@ -12,11 +12,11 @@ import (
 
 type Map []MapEntry
 
-func (self *CloutContext) NewMap(list ard.List, keyConstraints Constraints, valueConstraints Constraints, site interface{}, source interface{}, target interface{}) (Map, error) {
+func (self *RuntimeContext) NewMap(list ard.List, keyConstraints Constraints, valueConstraints Constraints, functionCallContext FunctionCallContext) (Map, error) {
 	var map_ Map
 
 	for _, data := range list {
-		if entry, err := self.NewMapEntry(data, keyConstraints, valueConstraints, site, source, target); err == nil {
+		if entry, err := self.NewMapEntry(data, keyConstraints, valueConstraints, functionCallContext); err == nil {
 			map_ = append(map_, entry)
 		} else {
 			return nil, err
@@ -49,14 +49,14 @@ type MapEntry struct {
 	Value Coercible `json:"value" yaml:"value"`
 }
 
-func (self *CloutContext) NewMapEntry(data interface{}, keyConstraints Constraints, valueConstraints Constraints, site interface{}, source interface{}, target interface{}) (MapEntry, error) {
+func (self *RuntimeContext) NewMapEntry(data interface{}, keyConstraints Constraints, valueConstraints Constraints, functionCallContext FunctionCallContext) (MapEntry, error) {
 	var entry MapEntry
 
 	if map_, ok := data.(ard.StringMap); ok {
 		if key, ok := map_["key"]; ok {
 			var err error
-			if entry.Key, err = self.NewCoercible(key, site, source, target); err == nil {
-				if entry.Value, err = self.NewCoercible(map_, site, source, target); err == nil {
+			if entry.Key, err = self.NewCoercible(key, functionCallContext); err == nil {
+				if entry.Value, err = self.NewCoercible(map_, functionCallContext); err == nil {
 					entry.Key.SetConstraints(keyConstraints)
 					entry.Value.SetConstraints(valueConstraints)
 					return entry, nil

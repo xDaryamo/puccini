@@ -13,12 +13,12 @@ func init() {
 }
 
 var getCmd = &cobra.Command{
-	Use:   "get [COMMAND] [[Clout PATH or URL]]",
+	Use:   "get [NAME] [[Clout PATH or URL]]",
 	Short: "Get JavaScript scriptlet from Clout",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 2),
 	Run: func(cmd *cobra.Command, args []string) {
-		name := args[0]
+		scriptletName := args[0]
 
 		var path string
 		if len(args) == 2 {
@@ -28,7 +28,7 @@ var getCmd = &cobra.Command{
 		clout, err := ReadClout(path)
 		common.FailOnError(err)
 
-		scriptlet, err := js.GetScriptlet(name, clout)
+		scriptlet, err := js.GetScriptlet(scriptletName, clout)
 		common.FailOnError(err)
 
 		if !common.Quiet {

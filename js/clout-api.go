@@ -10,87 +10,28 @@ import (
 )
 
 //
-// CloutContext
-//
-
-type CloutContext struct {
-	*clout.Clout
-
-	Context *Context
-	Runtime *goja.Runtime
-}
-
-func (self *Context) NewCloutContext(clout_ *clout.Clout) (*CloutContext, *goja.Runtime) {
-	runtime := self.NewRuntime()
-	context := &CloutContext{
-		Clout:   clout_,
-		Context: self,
-		Runtime: runtime,
-	}
-	runtime.Set("clout", NewCloutApi(context))
-	return context, runtime
-}
-
-func (self *CloutContext) CallFunction(site interface{}, source interface{}, target interface{}, name string, functionName string, arguments []interface{}) (interface{}, error) {
-	scriptlet, err := GetScriptlet(name, self.Clout)
-	if err != nil {
-		return nil, err
-	}
-
-	program, err := GetProgram(name, scriptlet)
-	if err != nil {
-		return nil, err
-	}
-
-	runtime := self.NewRuntime()
-	runtime.Set("site", site)
-	runtime.Set("source", source)
-	runtime.Set("target", target)
-
-	_, err = runtime.RunProgram(program)
-	if err != nil {
-		return nil, err
-	}
-
-	return CallFunction(runtime, functionName, arguments)
-}
-
-func (self *CloutContext) NewRuntime() *goja.Runtime {
-	_, runtime := self.Context.NewCloutContext(self.Clout)
-	return runtime
-}
-
-//
 // CloutApi
 //
 
 type CloutApi struct {
 	*clout.Clout
 
-	context *CloutContext
+	runtimeContext *RuntimeContext
 }
 
-func NewCloutApi(context *CloutContext) *CloutApi {
-	return &CloutApi{context.Clout, context}
+func (self *Context) NewCloutApi(clout_ *clout.Clout, runtime *goja.Runtime) *CloutApi {
+	return &CloutApi{
+		clout_,
+		self.NewRuntimeContext(clout_, runtime),
+	}
 }
 
 func (self *CloutApi) NewKey() string {
 	return clout.NewKey()
 }
 
-func (self *CloutApi) Exec(name string) error {
-	scriptlet, err := GetScriptlet(name, self.context.Clout)
-	if err != nil {
-		return err
-	}
-
-	program, err := GetProgram(name, scriptlet)
-	if err != nil {
-		return err
-	}
-
-	_, err = self.context.Runtime.RunProgram(program)
-	return err
+func (self *CloutApi) Exec(scriptletName string) error {
+	return self.runtimeContext.Exec(scriptletName)
 }
 
 func (self *CloutApi) NewCoercible(value goja.Value, site interface{}, source interface{}, target interface{}) (Coercible, error) {
@@ -98,7 +39,7 @@ func (self *CloutApi) NewCoercible(value goja.Value, site interface{}, source in
 		return nil, errors.New("undefined")
 	}
 
-	if coercible, err := self.context.NewCoercible(value.Export(), site, source, target); err == nil {
+	if coercible, err := self.runtimeContext.NewCoercible(value.Export(), FunctionCallContext{site, source, target}); err == nil {
 		return coercible, nil
 	} else {
 		return nil, err
@@ -112,7 +53,7 @@ func (self *CloutApi) NewConstraints(value goja.Value, site interface{}, source 
 
 	exported := value.Export()
 	if list_, ok := exported.(ard.List); ok {
-		if constraints, err := self.context.NewConstraints(list_, site, source, target); err == nil {
+		if constraints, err := self.runtimeContext.NewConstraints(list_, FunctionCallContext{site, source, target}); err == nil {
 			return constraints, nil
 		} else {
 			return nil, err
@@ -139,8 +80,8 @@ func (self *CloutApi) Unwrap(value interface{}) interface{} {
 }
 
 func (self *CloutApi) GetPlugins(name string) []goja.Value {
-	plugins, err := GetPlugins(name, self.context)
-	self.context.Context.FailOnError(err)
+	plugins, err := GetPlugins(name, self.runtimeContext)
+	self.runtimeContext.Context.FailOnError(err)
 	return plugins
 }
 

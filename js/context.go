@@ -3,9 +3,11 @@ package js
 import (
 	"fmt"
 	"os"
+	"sync"
 
 	"github.com/dop251/goja"
 	"github.com/op/go-logging"
+	"github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/format"
 )
 
@@ -22,6 +24,8 @@ type Context struct {
 	Stdout    *os.File
 	Stderr    *os.File
 	Stdin     *os.File
+
+	programCache sync.Map
 }
 
 func NewContext(name string, logger *logging.Logger, quiet bool, ardFormat string, pretty bool, output string) *Context {
@@ -37,11 +41,49 @@ func NewContext(name string, logger *logging.Logger, quiet bool, ardFormat strin
 	}
 }
 
-func (entry *Context) NewRuntime() *goja.Runtime {
+func (self *Context) NewRuntime(clout_ *clout.Clout, apis map[string]interface{}) *goja.Runtime {
 	runtime := goja.New()
 	runtime.SetFieldNameMapper(mapper)
-	runtime.Set("puccini", entry.NewPucciniApi())
+
+	runtime.Set("puccini", self.NewPucciniApi())
+
+	runtime.Set("clout", self.NewCloutApi(clout_, runtime))
+
+	for name, api := range apis {
+		runtime.Set(name, api)
+	}
+
 	return runtime
+}
+
+func (self *Context) GetProgram(name string, scriptlet string) (*goja.Program, error) {
+	p, ok := self.programCache.Load(scriptlet)
+	if !ok {
+		program, err := goja.Compile(name, scriptlet, true)
+		if err != nil {
+			return nil, err
+		}
+		p, _ = self.programCache.LoadOrStore(scriptlet, program)
+	}
+
+	return p.(*goja.Program), nil
+}
+
+func (self *Context) Exec(clout_ *clout.Clout, scriptletName string, apis map[string]interface{}) error {
+	scriptlet, err := GetScriptlet(scriptletName, clout_)
+	if err != nil {
+		return err
+	}
+
+	program, err := self.GetProgram(scriptletName, scriptlet)
+	if err != nil {
+		return err
+	}
+
+	runtime := self.NewRuntime(clout_, apis)
+
+	_, err = runtime.RunProgram(program)
+	return UnwrapException(err)
 }
 
 func (self *Context) Failf(f string, args ...interface{}) {
@@ -55,4 +97,63 @@ func (self *Context) FailOnError(err error) {
 	if err != nil {
 		self.Failf("%s", err)
 	}
+}
+
+//
+// RuntimeContext
+//
+
+type RuntimeContext struct {
+	Context *Context
+	Clout   *clout.Clout
+	Runtime *goja.Runtime
+}
+
+func (self *Context) NewRuntimeContext(clout_ *clout.Clout, runtime *goja.Runtime) *RuntimeContext {
+	return &RuntimeContext{
+		Context: self,
+		Clout:   clout_,
+		Runtime: runtime,
+	}
+}
+
+func (self *RuntimeContext) Exec(scriptletName string) error {
+	scriptlet, err := GetScriptlet(scriptletName, self.Clout)
+	if err != nil {
+		return err
+	}
+
+	program, err := self.Context.GetProgram(scriptletName, scriptlet)
+	if err != nil {
+		return err
+	}
+
+	_, err = self.Runtime.RunProgram(program)
+
+	return UnwrapException(err)
+}
+
+func (self *RuntimeContext) NewRuntime(apis map[string]interface{}) *goja.Runtime {
+	return self.Context.NewRuntime(self.Clout, apis)
+}
+
+func (self *RuntimeContext) CallFunction(scriptletName string, functionName string, arguments []interface{}, functionCallContext FunctionCallContext) (interface{}, error) {
+	scriptlet, err := GetScriptlet(scriptletName, self.Clout)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := self.Context.GetProgram(scriptletName, scriptlet)
+	if err != nil {
+		return nil, err
+	}
+
+	runtime := self.NewRuntime(functionCallContext.Map())
+
+	_, err = runtime.RunProgram(program)
+	if err != nil {
+		return nil, UnwrapException(err)
+	}
+
+	return CallFunction(runtime, functionName, arguments)
 }

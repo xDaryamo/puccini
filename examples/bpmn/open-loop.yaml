@@ -100,5 +100,3 @@ topology_template:
         notify_admins:
           target: agent
           activities: []
-
- 

@@ -8,23 +8,23 @@ package tosca
 //
 
 type FunctionCall struct {
-	URL       string        `json:"url" yaml:"url"`
-	Path      string        `json:"path" yaml:"path"`
-	Location  string        `json:"location" yaml:"location"`
 	Name      string        `json:"name" yaml:"name"`
 	Arguments []interface{} `json:"arguments" yaml:"arguments"`
+	URL       string        `json:"url" yaml:"url"`
+	Location  string        `json:"location" yaml:"location"`
+	Path      string        `json:"path" yaml:"path"`
 }
 
-func NewFunctionCall(url string, path string, location string, name string, arguments []interface{}) *FunctionCall {
+func NewFunctionCall(name string, arguments []interface{}, url string, location string, path string) *FunctionCall {
 	return &FunctionCall{
-		URL:       url,
-		Path:      path,
-		Location:  location,
 		Name:      name,
 		Arguments: arguments,
+		URL:       url,
+		Location:  location,
+		Path:      path,
 	}
 }
 
 func (self *Context) NewFunctionCall(name string, arguments []interface{}) *FunctionCall {
-	return NewFunctionCall(self.URL.String(), self.Path.String(), self.Location(), name, arguments)
+	return NewFunctionCall(name, arguments, self.URL.String(), self.Location(), self.Path.String())
 }

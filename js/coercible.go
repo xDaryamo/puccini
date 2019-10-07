@@ -16,14 +16,14 @@ type Coercible interface {
 	Unwrap() interface{}
 }
 
-func (self *CloutContext) NewCoercible(data interface{}, site interface{}, source interface{}, target interface{}) (Coercible, error) {
+func (self *RuntimeContext) NewCoercible(data interface{}, functionCallContext FunctionCallContext) (Coercible, error) {
 	var coercible Coercible
 
 	if notation, ok := data.(ard.StringMap); ok {
 		var err error
 		if data, ok := notation["functionCall"]; ok {
 			if map_, ok := data.(ard.StringMap); ok {
-				if functionCall, err := self.NewFunctionCall(map_, site, source, target); err == nil {
+				if functionCall, err := self.NewFunctionCall(map_, functionCallContext); err == nil {
 					functionCall.Notation = notation
 					coercible = functionCall
 				} else {
@@ -33,21 +33,18 @@ func (self *CloutContext) NewCoercible(data interface{}, site interface{}, sourc
 				return nil, fmt.Errorf("malformed \"functionCall\", not a map: %T", data)
 			}
 		} else {
-			value := Value{
-				Context:  self,
-				Notation: notation,
-			}
+			value := Value{Notation: notation}
 
 			if data, ok := notation["value"]; ok {
 				value.Value = data
 			} else if data, ok := notation["list"]; ok {
 				if list, ok := data.(ard.List); ok {
 					var entryConstraints Constraints
-					if entryConstraints, err = self.NewConstraintsForValue(notation, "entryConstraints", site, source, target); err != nil {
+					if entryConstraints, err = self.NewConstraintsForValue(notation, "entryConstraints", functionCallContext); err != nil {
 						return nil, err
 					}
 
-					if value.Value, err = self.NewList(list, entryConstraints, site, source, target); err != nil {
+					if value.Value, err = self.NewList(list, entryConstraints, functionCallContext); err != nil {
 						return nil, err
 					}
 				} else {
@@ -56,16 +53,16 @@ func (self *CloutContext) NewCoercible(data interface{}, site interface{}, sourc
 			} else if data, ok := notation["map"]; ok {
 				if list, ok := data.(ard.List); ok {
 					var keyConstraints Constraints
-					if keyConstraints, err = self.NewConstraintsForValue(notation, "keyConstraints", site, source, target); err != nil {
+					if keyConstraints, err = self.NewConstraintsForValue(notation, "keyConstraints", functionCallContext); err != nil {
 						return nil, err
 					}
 
 					var valueConstraints Constraints
-					if valueConstraints, err = self.NewConstraintsForValue(notation, "valueConstraints", site, source, target); err != nil {
+					if valueConstraints, err = self.NewConstraintsForValue(notation, "valueConstraints", functionCallContext); err != nil {
 						return nil, err
 					}
 
-					if value.Value, err = self.NewMap(list, keyConstraints, valueConstraints, site, source, target); err != nil {
+					if value.Value, err = self.NewMap(list, keyConstraints, valueConstraints, functionCallContext); err != nil {
 						return nil, err
 					}
 				} else {
@@ -78,7 +75,7 @@ func (self *CloutContext) NewCoercible(data interface{}, site interface{}, sourc
 			coercible = &value
 		}
 
-		if constraints, err := self.NewConstraintsForValue(notation, "constraints", site, source, target); err == nil {
+		if constraints, err := self.NewConstraintsForValue(notation, "constraints", functionCallContext); err == nil {
 			coercible.SetConstraints(constraints)
 			return coercible, nil
 		} else {

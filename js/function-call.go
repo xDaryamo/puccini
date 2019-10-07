@@ -9,11 +9,30 @@ import (
 )
 
 //
+// FunctionCallContext
+//
+
+type FunctionCallContext struct {
+	Site   interface{}
+	Source interface{}
+	Target interface{}
+}
+
+func (self FunctionCallContext) Map() map[string]interface{} {
+	return map[string]interface{}{
+		"site":   self.Site,
+		"source": self.Source,
+		"target": self.Target,
+	}
+}
+
+//
 // FunctionCall
 //
 
 type FunctionCall struct {
-	Context *CloutContext `json:"-" yaml:"-"`
+	RuntimeContext      *RuntimeContext     `json:"-" yaml:"-"`
+	FunctionCallContext FunctionCallContext `json:"-" yaml:"-"`
 
 	Name        string      `json:"functionCall" yaml:"functionCall"`
 	Arguments   []Coercible `json:"arguments" yaml:"arguments"`
@@ -22,19 +41,13 @@ type FunctionCall struct {
 	Location    string      `json:"location" yaml:"location"`
 	Constraints Constraints `json:"constraints" yaml:"constraints"`
 
-	Site   interface{} `json:"-" yaml:"-"`
-	Source interface{} `json:"-" yaml:"-"`
-	Target interface{} `json:"-" yaml:"-"`
-
 	Notation ard.StringMap `json:"-" yaml:"-"`
 }
 
-func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, site interface{}, source interface{}, target interface{}) (*FunctionCall, error) {
+func (self *RuntimeContext) NewFunctionCall(map_ ard.StringMap, functionCallContext FunctionCallContext) (*FunctionCall, error) {
 	coercible := FunctionCall{
-		Context: self,
-		Site:    site,
-		Source:  source,
-		Target:  target,
+		RuntimeContext:      self,
+		FunctionCallContext: functionCallContext,
 	}
 
 	if data, ok := map_["name"]; ok {
@@ -50,7 +63,7 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, site interface{}, 
 			coercible.Arguments = make([]Coercible, len(originalArguments))
 			for index, argument := range originalArguments {
 				var err error
-				if coercible.Arguments[index], err = self.NewCoercible(argument, site, source, target); err != nil {
+				if coercible.Arguments[index], err = self.NewCoercible(argument, functionCallContext); err != nil {
 					return nil, err
 				}
 			}
@@ -99,7 +112,7 @@ func (self *FunctionCall) Coerce() (interface{}, error) {
 
 	log.Infof("{evaluate} %s %s", self.Path, self.Signature(arguments))
 
-	r, err := self.Context.CallFunction(self.Site, self.Source, self.Target, self.Name, "evaluate", arguments)
+	r, err := self.RuntimeContext.CallFunction(self.Name, "evaluate", arguments, self.FunctionCallContext)
 	if err != nil {
 		return nil, self.WrapError(arguments, err)
 	}
@@ -141,7 +154,7 @@ func (self *FunctionCall) Validate(value interface{}, errorWhenInvalid bool) (bo
 
 	log.Infof("{validate} %s %s", self.Path, self.Signature(arguments))
 
-	r, err := self.Context.CallFunction(self.Site, self.Source, self.Target, self.Name, "validate", arguments)
+	r, err := self.RuntimeContext.CallFunction(self.Name, "validate", arguments, self.FunctionCallContext)
 	if err != nil {
 		return false, self.WrapError(arguments, err)
 	}

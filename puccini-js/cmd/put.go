@@ -14,12 +14,12 @@ func init() {
 }
 
 var putCmd = &cobra.Command{
-	Use:   "put [COMMAND] [JavaScript PATH or URL] [[Clout PATH or URL]]",
+	Use:   "put [NAME] [JavaScript PATH or URL] [[Clout PATH or URL]]",
 	Short: "Put JavaScript scriptlet in Clout",
 	Long:  ``,
 	Args:  cobra.RangeArgs(2, 3),
 	Run: func(cmd *cobra.Command, args []string) {
-		name := args[0]
+		scriptletName := args[0]
 		jsUrl := args[1]
 
 		var cloutPath string
@@ -36,7 +36,7 @@ var putCmd = &cobra.Command{
 		scriptlet, err := url.Read(url_)
 		common.FailOnError(err)
 
-		err = js.SetScriptlet(name, js.Cleanup(scriptlet), clout)
+		err = js.SetScriptlet(scriptletName, js.Cleanup(scriptlet), clout)
 		common.FailOnError(err)
 
 		err = format.WriteOrPrint(clout, ardFormat, pretty, output)

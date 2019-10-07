@@ -8,8 +8,8 @@ import (
 	"github.com/dop251/goja"
 )
 
-func GetPlugins(name string, clout *CloutContext) ([]goja.Value, error) {
-	scripts, err := GetScriptlets(name, clout.Clout)
+func GetPlugins(name string, cloutContext *RuntimeContext) ([]goja.Value, error) {
+	scripts, err := GetScriptlets(name, cloutContext.Clout)
 	if err != nil {
 		return nil, nil
 	}
@@ -29,12 +29,12 @@ func GetPlugins(name string, clout *CloutContext) ([]goja.Value, error) {
 	for _, value := range scripts {
 		scriptlet := value.(string)
 
-		program, err := GetProgram("<plugin>", scriptlet)
+		program, err := cloutContext.Context.GetProgram("<plugin>", scriptlet)
 		if err != nil {
 			return nil, err
 		}
 
-		runtime := clout.NewRuntime()
+		runtime := cloutContext.NewRuntime(nil)
 		_, err = runtime.RunProgram(program)
 		if err != nil {
 			return nil, err
