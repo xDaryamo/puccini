@@ -8,15 +8,16 @@ func init() {
 var tosca = {};
 
 tosca.isTosca = function(o, kind) {
-	if (o.metadata['puccini-tosca'] !== undefined) {
-		o = o.metadata['puccini-tosca'];
-		if (o.version === '1.0') {
-			if (kind !== undefined)
-				return kind === o.kind;
-			return true;
-		}
-	}
-	return false;
+	if (o.metadata === undefined)
+		return false;
+	o = o.metadata['puccini-tosca'];
+	if (o === undefined)
+		return false;
+	if (o.version !== '1.0')
+		return false;
+	if (kind !== undefined)
+		return kind === o.kind;
+	return true;
 };
 
 tosca.isNodeTemplate = function(vertex, typeName) {
@@ -73,10 +74,12 @@ tosca.getHost = function(vertex) {
 tosca.getComparable = function(v) {
 	if ((v === undefined) || (v === null))
 		return null;
-	if (v.$number !== undefined)
-		return v.$number;
-	if (v.$string !== undefined)
-		return v.$string;
+	var c = v.$number;
+	if (c !== undefined)
+		return c;
+	c = v.$string;
+	if (c !== undefined)
+		return c;
 	return v;
 };
 `

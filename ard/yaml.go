@@ -71,6 +71,7 @@ func FindYamlNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 		}
 	}
 
+	// case yaml.ScalarNode:
 	return node
 }
 

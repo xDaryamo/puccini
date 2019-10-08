@@ -35,7 +35,7 @@ var listCmd = &cobra.Command{
 }
 
 func List(clout_ *clout.Clout) {
-	metadata, err := js.GetJavaScriptMetadata(clout_)
+	metadata, err := js.GetMetadata(clout_)
 	common.FailOnError(err)
 
 	ListValue(metadata, nil)

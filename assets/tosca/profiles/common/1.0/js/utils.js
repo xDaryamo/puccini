@@ -15,20 +15,22 @@ tosca.coerce = function() {
 };
 
 tosca.addHistory = function(description) {
-	var history;
-	if (clout.metadata === undefined)
-		clout.metadata = {};
-	if (clout.metadata['puccini-tosca'] === undefined)
-		clout.metadata['puccini-tosca'] = {};
-	if (clout.metadata['puccini-tosca'].history === undefined)
+	var metadata = clout.metadata;
+	if (metadata === undefined)
+		metadata = clout.metadata = {};
+	var pucciniTosca = metadata['puccini-tosca'];
+	if (pucciniTosca === undefined)
+		pucciniTosca = metadata['puccini-tosca'] = {};
+	var history = pucciniTosca.history;
+	if (history === undefined)
 		history = [];
 	else
-		history = clout.metadata['puccini-tosca'].history.slice(0);
+		history = history.slice(0);
 	history.push({
 		timestamp: puccini.timestamp(),
 		description: description
 	});
-	clout.metadata['puccini-tosca'].history = history;
+	pucciniTosca.history = history;
 };
 
 tosca.traverseValues = function(traverser) {

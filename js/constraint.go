@@ -6,9 +6,13 @@ import (
 	"github.com/tliron/puccini/ard"
 )
 
+//
+// Constraints
+//
+
 type Constraints []*FunctionCall
 
-func (self *RuntimeContext) NewConstraints(list ard.List, functionCallContext FunctionCallContext) (Constraints, error) {
+func (self *CloutContext) NewConstraints(list ard.List, functionCallContext FunctionCallContext) (Constraints, error) {
 	constraints := make(Constraints, len(list))
 
 	for index, element := range list {
@@ -25,12 +29,12 @@ func (self *RuntimeContext) NewConstraints(list ard.List, functionCallContext Fu
 	return constraints, nil
 }
 
-func (self *RuntimeContext) NewConstraintsForValue(map_ ard.StringMap, name string, functionCallContext FunctionCallContext) (Constraints, error) {
-	if v, ok := map_[name]; ok {
-		if list, ok := v.(ard.List); ok {
+func (self *CloutContext) NewConstraintsFromNotation(notation ard.StringMap, name string, functionCallContext FunctionCallContext) (Constraints, error) {
+	if data, ok := notation[name]; ok {
+		if list, ok := data.(ard.List); ok {
 			return self.NewConstraints(list, functionCallContext)
 		} else {
-			return nil, fmt.Errorf("malformed \"%s\", not a list: %T", name, v)
+			return nil, fmt.Errorf("malformed \"%s\", not a list: %T", name, data)
 		}
 	} else {
 		return nil, nil

@@ -12,7 +12,7 @@ import (
 
 type Map []MapEntry
 
-func (self *RuntimeContext) NewMap(list ard.List, keyConstraints Constraints, valueConstraints Constraints, functionCallContext FunctionCallContext) (Map, error) {
+func (self *CloutContext) NewMap(list ard.List, keyConstraints Constraints, valueConstraints Constraints, functionCallContext FunctionCallContext) (Map, error) {
 	var map_ Map
 
 	for _, data := range list {
@@ -49,7 +49,7 @@ type MapEntry struct {
 	Value Coercible `json:"value" yaml:"value"`
 }
 
-func (self *RuntimeContext) NewMapEntry(data interface{}, keyConstraints Constraints, valueConstraints Constraints, functionCallContext FunctionCallContext) (MapEntry, error) {
+func (self *CloutContext) NewMapEntry(data interface{}, keyConstraints Constraints, valueConstraints Constraints, functionCallContext FunctionCallContext) (MapEntry, error) {
 	var entry MapEntry
 
 	if map_, ok := data.(ard.StringMap); ok {

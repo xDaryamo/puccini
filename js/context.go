@@ -41,7 +41,7 @@ func NewContext(name string, logger *logging.Logger, quiet bool, ardFormat strin
 	}
 }
 
-func (self *Context) NewRuntime(clout_ *clout.Clout, apis map[string]interface{}) *goja.Runtime {
+func (self *Context) NewCloutRuntime(clout_ *clout.Clout, apis map[string]interface{}) *goja.Runtime {
 	runtime := goja.New()
 	runtime.SetFieldNameMapper(mapper)
 
@@ -80,7 +80,7 @@ func (self *Context) Exec(clout_ *clout.Clout, scriptletName string, apis map[st
 		return err
 	}
 
-	runtime := self.NewRuntime(clout_, apis)
+	runtime := self.NewCloutRuntime(clout_, apis)
 
 	_, err = runtime.RunProgram(program)
 	return UnwrapException(err)
@@ -97,63 +97,4 @@ func (self *Context) FailOnError(err error) {
 	if err != nil {
 		self.Failf("%s", err)
 	}
-}
-
-//
-// RuntimeContext
-//
-
-type RuntimeContext struct {
-	Context *Context
-	Clout   *clout.Clout
-	Runtime *goja.Runtime
-}
-
-func (self *Context) NewRuntimeContext(clout_ *clout.Clout, runtime *goja.Runtime) *RuntimeContext {
-	return &RuntimeContext{
-		Context: self,
-		Clout:   clout_,
-		Runtime: runtime,
-	}
-}
-
-func (self *RuntimeContext) Exec(scriptletName string) error {
-	scriptlet, err := GetScriptlet(scriptletName, self.Clout)
-	if err != nil {
-		return err
-	}
-
-	program, err := self.Context.GetProgram(scriptletName, scriptlet)
-	if err != nil {
-		return err
-	}
-
-	_, err = self.Runtime.RunProgram(program)
-
-	return UnwrapException(err)
-}
-
-func (self *RuntimeContext) NewRuntime(apis map[string]interface{}) *goja.Runtime {
-	return self.Context.NewRuntime(self.Clout, apis)
-}
-
-func (self *RuntimeContext) CallFunction(scriptletName string, functionName string, arguments []interface{}, functionCallContext FunctionCallContext) (interface{}, error) {
-	scriptlet, err := GetScriptlet(scriptletName, self.Clout)
-	if err != nil {
-		return nil, err
-	}
-
-	program, err := self.Context.GetProgram(scriptletName, scriptlet)
-	if err != nil {
-		return nil, err
-	}
-
-	runtime := self.NewRuntime(functionCallContext.Map())
-
-	_, err = runtime.RunProgram(program)
-	if err != nil {
-		return nil, UnwrapException(err)
-	}
-
-	return CallFunction(runtime, functionName, arguments)
 }

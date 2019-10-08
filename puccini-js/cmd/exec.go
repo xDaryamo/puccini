@@ -40,7 +40,7 @@ var execCmd = &cobra.Command{
 			scriptlet, err = url.Read(url_)
 			common.FailOnError(err)
 
-			err = js.SetScriptlet(scriptletName, js.Cleanup(scriptlet), clout_)
+			err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout_)
 			common.FailOnError(err)
 		}
 
@@ -57,7 +57,7 @@ func Exec(scriptletName string, scriptlet string, clout_ *clout.Clout) error {
 		return err
 	}
 
-	runtime := jsContext.NewRuntime(clout_, nil)
+	runtime := jsContext.NewCloutRuntime(clout_, nil)
 
 	_, err = runtime.RunProgram(program)
 

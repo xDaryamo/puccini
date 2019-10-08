@@ -16,13 +16,13 @@ import (
 type CloutApi struct {
 	*clout.Clout
 
-	runtimeContext *RuntimeContext
+	cloutContext *CloutContext
 }
 
 func (self *Context) NewCloutApi(clout_ *clout.Clout, runtime *goja.Runtime) *CloutApi {
 	return &CloutApi{
 		clout_,
-		self.NewRuntimeContext(clout_, runtime),
+		self.NewCloutContext(clout_, runtime),
 	}
 }
 
@@ -31,7 +31,7 @@ func (self *CloutApi) NewKey() string {
 }
 
 func (self *CloutApi) Exec(scriptletName string) error {
-	return self.runtimeContext.Exec(scriptletName)
+	return self.cloutContext.Exec(scriptletName)
 }
 
 func (self *CloutApi) NewCoercible(value goja.Value, site interface{}, source interface{}, target interface{}) (Coercible, error) {
@@ -39,7 +39,7 @@ func (self *CloutApi) NewCoercible(value goja.Value, site interface{}, source in
 		return nil, errors.New("undefined")
 	}
 
-	if coercible, err := self.runtimeContext.NewCoercible(value.Export(), FunctionCallContext{site, source, target}); err == nil {
+	if coercible, err := self.cloutContext.NewCoercible(value.Export(), FunctionCallContext{site, source, target}); err == nil {
 		return coercible, nil
 	} else {
 		return nil, err
@@ -53,7 +53,7 @@ func (self *CloutApi) NewConstraints(value goja.Value, site interface{}, source 
 
 	exported := value.Export()
 	if list_, ok := exported.(ard.List); ok {
-		if constraints, err := self.runtimeContext.NewConstraints(list_, FunctionCallContext{site, source, target}); err == nil {
+		if constraints, err := self.cloutContext.NewConstraints(list_, FunctionCallContext{site, source, target}); err == nil {
 			return constraints, nil
 		} else {
 			return nil, err
@@ -80,8 +80,8 @@ func (self *CloutApi) Unwrap(value interface{}) interface{} {
 }
 
 func (self *CloutApi) GetPlugins(name string) []goja.Value {
-	plugins, err := GetPlugins(name, self.runtimeContext)
-	self.runtimeContext.Context.FailOnError(err)
+	plugins, err := GetPlugins(name, self.cloutContext)
+	self.cloutContext.Context.FailOnError(err)
 	return plugins
 }
 

@@ -1,6 +1,9 @@
 package ard
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/tliron/yamlkeys"
 )
 
@@ -115,4 +118,31 @@ func ToStringMap(map_ Map) StringMap {
 		stringMap[yamlkeys.KeyString(key)], _ = ToStringMaps(value)
 	}
 	return stringMap
+}
+
+func StringMapPutNested(map_ StringMap, key string, value string) error {
+	path := strings.Split(key, ".")
+	last := len(path) - 1
+
+	if last == -1 {
+		return errors.New("empty key")
+	}
+
+	if last > 0 {
+		for _, p := range path[:last] {
+			if o, ok := map_[p]; ok {
+				if map_, ok = o.(StringMap); !ok {
+					return errors.New("bad nested map structure")
+				}
+			} else {
+				m := make(StringMap)
+				map_[p] = m
+				map_ = m
+			}
+		}
+	}
+
+	map_[path[last]] = value
+
+	return nil
 }

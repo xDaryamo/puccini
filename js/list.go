@@ -10,8 +10,8 @@ import (
 
 type List []Coercible
 
-func (self *RuntimeContext) NewList(list ard.List, entryConstraints Constraints, functionCallContext FunctionCallContext) (List, error) {
-	list_ := make([]Coercible, len(list))
+func (self *CloutContext) NewList(list ard.List, entryConstraints Constraints, functionCallContext FunctionCallContext) (List, error) {
+	list_ := make(List, len(list))
 
 	for index, data := range list {
 		if entry, err := self.NewCoercible(data, functionCallContext); err == nil {

@@ -82,14 +82,14 @@ func init() {
 
 	for name, scriptlet := range FunctionScriptlets {
 		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
-			Scriptlet: js.Cleanup(scriptlet),
+			Scriptlet: js.CleanupScriptlet(scriptlet),
 		}
 	}
 
 	for name, scriptlet := range ConstraintClauseScriptlets {
 		nativeArgumentIndexes, _ := ConstraintClauseNativeArgumentIndexes[name]
 		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
-			Scriptlet:             js.Cleanup(scriptlet),
+			Scriptlet:             js.CleanupScriptlet(scriptlet),
 			NativeArgumentIndexes: nativeArgumentIndexes,
 		}
 	}

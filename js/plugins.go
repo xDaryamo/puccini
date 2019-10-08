@@ -8,7 +8,7 @@ import (
 	"github.com/dop251/goja"
 )
 
-func GetPlugins(name string, cloutContext *RuntimeContext) ([]goja.Value, error) {
+func GetPlugins(name string, cloutContext *CloutContext) ([]goja.Value, error) {
 	scripts, err := GetScriptlets(name, cloutContext.Clout)
 	if err != nil {
 		return nil, nil

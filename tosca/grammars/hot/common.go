@@ -28,13 +28,13 @@ func init() {
 
 	for name, scriptlet := range FunctionSourceCode {
 		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
-			Scriptlet: js.Cleanup(scriptlet),
+			Scriptlet: js.CleanupScriptlet(scriptlet),
 		}
 	}
 
 	for name, scriptlet := range ConstraintSourceCode {
 		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
-			Scriptlet: js.Cleanup(scriptlet),
+			Scriptlet: js.CleanupScriptlet(scriptlet),
 		}
 	}
 }

@@ -83,7 +83,7 @@ func init() {
 		}
 
 		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
-			Scriptlet: js.Cleanup(scriptlet),
+			Scriptlet: js.CleanupScriptlet(scriptlet),
 		}
 	}
 
@@ -95,7 +95,7 @@ func init() {
 
 		nativeArgumentIndexes, _ := tosca_v1_3.ConstraintClauseNativeArgumentIndexes[name]
 		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
-			Scriptlet:             js.Cleanup(scriptlet),
+			Scriptlet:             js.CleanupScriptlet(scriptlet),
 			NativeArgumentIndexes: nativeArgumentIndexes,
 		}
 	}

@@ -4,7 +4,6 @@ import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/js"
 	"github.com/tliron/puccini/tosca/normal"
 )
 
@@ -17,12 +16,12 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 	}
 
 	metadata := make(ard.StringMap)
-	for name, jsEntry := range s.ScriptletNamespace {
-		scriptlet, err := jsEntry.GetScriptlet()
+	for name, scriptlet := range s.ScriptletNamespace {
+		scriptlet, err := scriptlet.Read()
 		if err != nil {
 			return nil, err
 		}
-		if err = js.SetMapNested(metadata, name, scriptlet); err != nil {
+		if err = ard.StringMapPutNested(metadata, name, scriptlet); err != nil {
 			return nil, err
 		}
 	}

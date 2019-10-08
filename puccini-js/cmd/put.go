@@ -36,7 +36,7 @@ var putCmd = &cobra.Command{
 		scriptlet, err := url.Read(url_)
 		common.FailOnError(err)
 
-		err = js.SetScriptlet(scriptletName, js.Cleanup(scriptlet), clout)
+		err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)
 		common.FailOnError(err)
 
 		err = format.WriteOrPrint(clout, ardFormat, pretty, output)

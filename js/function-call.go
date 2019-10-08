@@ -18,7 +18,7 @@ type FunctionCallContext struct {
 	Target interface{}
 }
 
-func (self FunctionCallContext) Map() map[string]interface{} {
+func (self FunctionCallContext) API() map[string]interface{} {
 	return map[string]interface{}{
 		"site":   self.Site,
 		"source": self.Source,
@@ -31,27 +31,27 @@ func (self FunctionCallContext) Map() map[string]interface{} {
 //
 
 type FunctionCall struct {
-	RuntimeContext      *RuntimeContext     `json:"-" yaml:"-"`
+	CloutContext        *CloutContext       `json:"-" yaml:"-"`
 	FunctionCallContext FunctionCallContext `json:"-" yaml:"-"`
+	Notation            ard.StringMap       `json:"-" yaml:"-"`
 
-	Name        string      `json:"functionCall" yaml:"functionCall"`
+	Name        string      `json:"name" yaml:"name"`
 	Arguments   []Coercible `json:"arguments" yaml:"arguments"`
 	URL         string      `json:"url" yaml:"url"`
 	Path        string      `json:"path" yaml:"path"`
 	Location    string      `json:"location" yaml:"location"`
 	Constraints Constraints `json:"constraints" yaml:"constraints"`
-
-	Notation ard.StringMap `json:"-" yaml:"-"`
 }
 
-func (self *RuntimeContext) NewFunctionCall(map_ ard.StringMap, functionCallContext FunctionCallContext) (*FunctionCall, error) {
-	coercible := FunctionCall{
-		RuntimeContext:      self,
+func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.StringMap, functionCallContext FunctionCallContext) (*FunctionCall, error) {
+	functionCall := FunctionCall{
+		CloutContext:        self,
+		Notation:            notation,
 		FunctionCallContext: functionCallContext,
 	}
 
 	if data, ok := map_["name"]; ok {
-		if coercible.Name, ok = data.(string); !ok {
+		if functionCall.Name, ok = data.(string); !ok {
 			return nil, fmt.Errorf("malformed function call, \"name\" not a string: %T", data)
 		}
 	} else {
@@ -60,10 +60,10 @@ func (self *RuntimeContext) NewFunctionCall(map_ ard.StringMap, functionCallCont
 
 	if data, ok := map_["arguments"]; ok {
 		if originalArguments, ok := data.(ard.List); ok {
-			coercible.Arguments = make([]Coercible, len(originalArguments))
+			functionCall.Arguments = make([]Coercible, len(originalArguments))
 			for index, argument := range originalArguments {
 				var err error
-				if coercible.Arguments[index], err = self.NewCoercible(argument, functionCallContext); err != nil {
+				if functionCall.Arguments[index], err = self.NewCoercible(argument, functionCallContext); err != nil {
 					return nil, err
 				}
 			}
@@ -75,24 +75,29 @@ func (self *RuntimeContext) NewFunctionCall(map_ ard.StringMap, functionCallCont
 	}
 
 	if data, ok := map_["url"]; ok {
-		if coercible.URL, ok = data.(string); !ok {
+		if functionCall.URL, ok = data.(string); !ok {
 			return nil, fmt.Errorf("malformed function call, \"url\" not a string: %T", data)
 		}
 	}
 
 	if data, ok := map_["path"]; ok {
-		if coercible.Path, ok = data.(string); !ok {
+		if functionCall.Path, ok = data.(string); !ok {
 			return nil, fmt.Errorf("malformed function call, \"path\" not a string: %T", data)
 		}
 	}
 
 	if data, ok := map_["location"]; ok {
-		if coercible.Location, ok = data.(string); !ok {
+		if functionCall.Location, ok = data.(string); !ok {
 			return nil, fmt.Errorf("malformed function call, \"location\" not a string: %T", data)
 		}
 	}
 
-	return &coercible, nil
+	var err error
+	if functionCall.Constraints, err = self.NewConstraintsFromNotation(notation, "constraints", functionCallContext); err != nil {
+		return nil, err
+	}
+
+	return &functionCall, nil
 }
 
 func (self *FunctionCall) Signature(arguments []interface{}) string {
@@ -112,7 +117,7 @@ func (self *FunctionCall) Coerce() (interface{}, error) {
 
 	log.Infof("{evaluate} %s %s", self.Path, self.Signature(arguments))
 
-	r, err := self.RuntimeContext.CallFunction(self.Name, "evaluate", arguments, self.FunctionCallContext)
+	r, err := self.CloutContext.CallFunction(self.Name, "evaluate", arguments, self.FunctionCallContext)
 	if err != nil {
 		return nil, self.WrapError(arguments, err)
 	}
@@ -154,7 +159,7 @@ func (self *FunctionCall) Validate(value interface{}, errorWhenInvalid bool) (bo
 
 	log.Infof("{validate} %s %s", self.Path, self.Signature(arguments))
 
-	r, err := self.RuntimeContext.CallFunction(self.Name, "validate", arguments, self.FunctionCallContext)
+	r, err := self.CloutContext.CallFunction(self.Name, "validate", arguments, self.FunctionCallContext)
 	if err != nil {
 		return false, self.WrapError(arguments, err)
 	}

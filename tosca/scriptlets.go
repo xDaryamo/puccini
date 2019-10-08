@@ -22,18 +22,19 @@ func (self *Context) EmbedScriptlet(name string, scriptlet string) {
 	var nativeArgumentIndexes []uint
 	name, nativeArgumentIndexes = parseScriptletName(name)
 	self.ScriptletNamespace[name] = &Scriptlet{
-		Scriptlet:             js.Cleanup(scriptlet),
+		Scriptlet:             js.CleanupScriptlet(scriptlet),
 		NativeArgumentIndexes: nativeArgumentIndexes,
 	}
 }
 
 func parseScriptletName(name string) (string, []uint) {
-	// Parse optional native argument indexes
-	// e.g.: my_constraint(0,1)
+	// Parse optional native argument indexes specified in name
+	// Notation example: my_constraint(0,1)
 	var nativeArgumentIndexes []uint
-	if parentheses := strings.Index(name, "("); parentheses != -1 {
-		split := strings.Split(name[parentheses+1:len(name)-1], ",")
-		name = name[:parentheses]
+	if parenthesis := strings.Index(name, "("); parenthesis != -1 {
+		// We actually just assume an open paranthesis
+		split := strings.Split(name[parenthesis+1:len(name)-1], ",")
+		name = name[:parenthesis]
 		for _, s := range split {
 			if index, err := strconv.ParseUint(s, 10, 32); err != nil {
 				nativeArgumentIndexes = append(nativeArgumentIndexes, uint(index))
@@ -50,11 +51,11 @@ func parseScriptletName(name string) (string, []uint) {
 type Scriptlet struct {
 	Origin                url.URL `json:"origin" yaml:"origin"`
 	Path                  string  `json:"path" yaml:"path"`
-	Scriptlet             string  `json:"sourceCode" yaml:"sourceCode"`
+	Scriptlet             string  `json:"scriptlet" yaml:"scriptlet"`
 	NativeArgumentIndexes []uint  `json:"nativeArgumentIndexes" yaml:"nativeArgumentIndexes"`
 }
 
-func (self *Scriptlet) GetScriptlet() (string, error) {
+func (self *Scriptlet) Read() (string, error) {
 	if self.Path != "" {
 		var origins []url.URL
 		if self.Origin != nil {
@@ -66,12 +67,12 @@ func (self *Scriptlet) GetScriptlet() (string, error) {
 			return "", err
 		}
 
-		sourceCode, err := url.Read(url_)
+		scriptlet, err := url.Read(url_)
 		if err != nil {
 			return "", err
 		}
 
-		return js.Cleanup(sourceCode), nil
+		return js.CleanupScriptlet(scriptlet), nil
 	}
 
 	return self.Scriptlet, nil
@@ -83,8 +84,8 @@ func (self *Scriptlet) GetScriptlet() (string, error) {
 
 type ScriptletNamespace map[string]*Scriptlet
 
-func (self ScriptletNamespace) Merge(namespace ScriptletNamespace) {
-	for name, scriptlet := range namespace {
+func (self ScriptletNamespace) Merge(from ScriptletNamespace) {
+	for name, scriptlet := range from {
 		self[name] = scriptlet
 	}
 }
