@@ -4,9 +4,13 @@ set -e
 # Requirements (Fedora)
 # sudo dnf install python3-virtualenv python3-libselinux
 
-virtualenv --system-site-packages env
-. env/bin/activate
+HERE=$(dirname "$(readlink -f "$0")")
+
+. "$HERE/env.sh"
+
+virtualenv --system-site-packages "$ROOT/env"
+. "$ROOT/env/bin/activate"
 pip install \
-	ansible==2.7.8 \
-	os-client-config==1.31.2 \
+	ansible==2.8.5 \
+	os-client-config==1.33.0 \
 	rackspaceauth==0.8.1

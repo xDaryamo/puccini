@@ -11,7 +11,10 @@ Deliberately stateless cloud topology management and deployment tools based on
 Each tool is a self-contained executable file, allowing them to be easily distributed and easily
 embedded in toolchains, orchestration, and development environments. They are coded in 100%
 [Go](https://golang.org/) and are very portable, even runnable on
-[WebAssembly](https://webassembly.org/). 
+[WebAssembly](https://webassembly.org/).
+
+Puccini is also available as self-contained shared C libraries that can be called directly from many
+other languages. See [this example of calling Puccini from Python](examples/python/).
 
 [![Download](assets/media/download.png "Download")](https://github.com/tliron/puccini/releases)
 
