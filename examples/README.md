@@ -4,24 +4,29 @@ Examples
 Grammars
 --------
 
-* [TOSCA](tosca/README.md)
+* [TOSCA](tosca/)
 * [HOT](hot/)
 * [Cloudify DSL](cloudify/)
 
 Profiles
 --------
 
-* [Kubernetes Profile](kubernetes/README.md)
-* [OpenStack Profile](openstack/README.md)
-* [BPMN Profile](bpmn/README.md)
+* [Kubernetes Profile](kubernetes/)
+* [OpenStack Profile](openstack/)
+* [BPMN Profile](bpmn/)
 
 Features
 --------
 
-* [JavaScript](javascript/README.md)
+* [JavaScript](javascript/)
+
+Integrations
+------------
+
+* [Python](python/)
 
 Storage
 -------
 
-* [Neo4j](neo4j/README.md)
-* [Dgraph](dgraph/README.md)
+* [Neo4j](neo4j/)
+* [Dgraph](dgraph/)

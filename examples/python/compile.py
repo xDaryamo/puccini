@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 
-import sys, puccini_tosca
+# Note that installing `puccini` will also install `ruamel.yaml` 
+
+import sys, puccini.tosca
 from ruamel.yaml import YAML
 
 yaml = YAML()
 
 url = sys.argv[1]
-clout = puccini_tosca.compile(url)
+
+clout = puccini.tosca.compile(url)
+
 yaml.dump(clout, sys.stdout)

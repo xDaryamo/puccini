@@ -3,4 +3,5 @@ dist/
 docs/html/
 examples/csar/
 examples/ansible/
-__pycache__
+
+__pycache__/
