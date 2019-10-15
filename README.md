@@ -14,7 +14,7 @@ embedded in toolchains, orchestration, and development environments. They are co
 [WebAssembly](https://webassembly.org/).
 
 Puccini is also available as self-contained shared C libraries that can be called directly from many
-other languages. See [this example of calling Puccini from Python](examples/python/).
+other languages. See examples for [Python](wrappers/python/) and [Java](wrappers/java/).
 
 [![Download](assets/media/download.png "Download")](https://github.com/tliron/puccini/releases)
 

@@ -19,7 +19,7 @@ git clone --depth 1 https://github.com/tliron/puccini "$REPO"
 # Build library
 "$REPO/scripts/build-library.sh"
 mv "$REPO/dist/libpuccini.so" "$ROOT/puccini/" 
-'''.format(os.path.dirname(__file__).replace('"', '\\"'))
+'''.format(os.path.abspath(os.path.dirname(__file__)).replace('"', '\\"'))
 
 t = tempfile.mkdtemp()
 try:

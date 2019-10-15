@@ -20,10 +20,11 @@ Features
 
 * [JavaScript](javascript/)
 
-Integrations
-------------
+Wrappers
+--------
 
 * [Python](python/)
+* [Java](java/)
 
 Storage
 -------
