@@ -6,14 +6,17 @@ HERE=$(dirname "$(readlink -f "$0")")
 
 git_version
 
+mkdir --parents "$ROOT/dist"
+
 function build () {
 	local TOOL=$1
+	local WASM="$ROOT/dist/$TOOL.wasm"
 	pushd "$ROOT/$TOOL" > /dev/null
-	go build \
-		-buildmode=c-shared \
-		-o="$ROOT/dist/libpuccini.so" \
+	GOOS=js GOARCH=wasm go build \
+		-o "$WASM" \
 		-ldflags="-X github.com/tliron/puccini/version.GitVersion=$VERSION -X github.com/tliron/puccini/version.GitRevision=$REVISION"
 	popd > /dev/null
+	echo "built $WASM"
 }
 
 build puccini-tosca

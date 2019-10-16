@@ -23,8 +23,9 @@ Features
 Wrappers
 --------
 
-* [Python](python/)
 * [Java](java/)
+* [Python](python/)
+* [Ruby](ruby/)
 
 Storage
 -------

@@ -2,10 +2,9 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$0")")
+. "$HERE/env.sh"
 
 "$HERE/build.sh"
-
-. "$HERE/env.sh"
 
 # -count=1 is the idiomatic way to disable test caching
 

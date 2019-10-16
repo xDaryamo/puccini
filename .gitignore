@@ -4,7 +4,5 @@
 vendor/
 dist/
 docs/html/
-examples/csar/
-examples/ansible/
 
 __pycache__/

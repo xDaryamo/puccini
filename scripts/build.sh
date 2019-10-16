@@ -2,7 +2,6 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$0")")
-
 . "$HERE/env.sh"
 
 git_version

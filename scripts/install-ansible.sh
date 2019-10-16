@@ -5,7 +5,6 @@ set -e
 # sudo dnf install python3-virtualenv python3-libselinux
 
 HERE=$(dirname "$(readlink -f "$0")")
-
 . "$HERE/env.sh"
 
 virtualenv --system-site-packages "$ROOT/env"

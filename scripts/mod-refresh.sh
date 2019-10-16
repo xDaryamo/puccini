@@ -2,7 +2,6 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$0")")
-
 . "$HERE/env.sh"
 
 rm "$ROOT/go.mod" "$ROOT/go.sum"

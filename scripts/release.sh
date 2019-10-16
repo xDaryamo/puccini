@@ -2,10 +2,9 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$0")")
+. "$HERE/env.sh"
 
 "$HERE/build.sh"
-
-. "$HERE/env.sh"
 
 go get -u github.com/goreleaser/goreleaser
 
