@@ -9,3 +9,8 @@ if [ -z "$GOPATH" ]; then
 fi
 
 PATH="$GOPATH/bin:$ROOT:$PATH"
+
+function git_version () {
+	VERSION=$(git -C "$ROOT" describe)
+	REVISION=$(git -C "$ROOT" rev-parse HEAD)
+}

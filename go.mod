@@ -15,5 +15,5 @@ require (
 	github.com/segmentio/ksuid v1.0.2
 	github.com/spf13/cobra v0.0.5
 	github.com/tliron/yamlkeys v1.0.0
-	gopkg.in/yaml.v3 v3.0.0-20190924164351-c8b7dadae555
+	gopkg.in/yaml.v3 v3.0.0-20191010095647-fc94e3f71652
 )

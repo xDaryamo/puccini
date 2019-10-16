@@ -25,7 +25,7 @@ for ARG in "$@"; do
 	esac
 done
 
-fetch () {
+function fetch () {
 	local NAME=$1
 	local VERSION=$2
 	local URL=$3

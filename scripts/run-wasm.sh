@@ -9,7 +9,7 @@ OUTPUT_DIR=/tmp
 # Requires Node.js to be installed
 WASM_EXEC="$(go env GOROOT)/misc/wasm/go_js_wasm_exec"
 
-build () {
+function build () {
 	local TOOL=$1
 	local WASM="$OUTPUT_DIR/$TOOL.wasm"
 	pushd "$ROOT/$TOOL" > /dev/null
@@ -18,7 +18,7 @@ build () {
 	echo "built $WASM"
 }
 
-run () {
+function run () {
 	local TOOL=$1
 	local WASM="$OUTPUT_DIR/$TOOL.wasm"
 	"$WASM_EXEC" "$WASM" "${@:2}"

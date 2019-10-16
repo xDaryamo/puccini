@@ -4,7 +4,7 @@ set -e
 HERE=$(dirname "$(readlink -f "$0")")
 ROOT=$(readlink -f "$HERE/..")
 
-header () {
+function header () {
 	local DEST=$1
 	local PACKAGE=$2
 
@@ -17,7 +17,7 @@ EOT
 }
 
 
-profile () {
+function profile () {
 	local DIR_PREFIX=$1
 	local NAME_PREFIX=$2
 	local VERSION=$3
