@@ -4,6 +4,8 @@ import (
 	"unsafe"
 )
 
+// This casting *does not* copy data. Note that casting via "string(bytes)" *does* copy data.
+//
 // See:
 // https://github.com/golang/go/issues/25484
 // https://github.com/golang/go/issues/19367

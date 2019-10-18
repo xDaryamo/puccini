@@ -10,11 +10,6 @@ import (
 func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 	clout_ := clout.NewClout()
 
-	timestamp, err := common.Timestamp()
-	if err != nil {
-		return nil, err
-	}
-
 	metadata := make(ard.StringMap)
 	for name, scriptlet := range s.ScriptletNamespace {
 		scriptlet, err := scriptlet.Read()
@@ -28,7 +23,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 	clout_.Metadata["puccini-js"] = metadata
 
 	history := ard.List{ard.StringMap{
-		"timestamp":   timestamp,
+		"timestamp":   common.Timestamp(),
 		"description": "compile",
 	}}
 
@@ -263,6 +258,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 	}
 
 	// Normalize
+	var err error
 	clout_, err = clout_.Normalize()
 	if err != nil {
 		return clout_, err

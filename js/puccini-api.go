@@ -46,7 +46,7 @@ func (entry *PucciniApi) Sprintf(f string, a ...interface{}) string {
 	return fmt.Sprintf(f, a...)
 }
 
-func (self *PucciniApi) Timestamp() (string, error) {
+func (self *PucciniApi) Timestamp() string {
 	return common.Timestamp()
 }
 

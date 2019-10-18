@@ -6,12 +6,8 @@ import (
 )
 
 // RFC 3339 format
-func Timestamp() (string, error) {
-	timestamp, err := time.Now().MarshalText()
-	if err != nil {
-		return "", err
-	}
-	return BytesToString(timestamp), nil
+func Timestamp() string {
+	return time.Now().Format(time.RFC3339)
 }
 
 func Delay() {
