@@ -8,8 +8,8 @@ if [ "$EUID" -ne 0 ]; then
 	exit 1
 fi
 
-KUBECTL_VERSION=v1.16.1
-MINIKUBE_VERSION=v1.4.0
+KUBECTL_VERSION=v1.16.2
+MINIKUBE_VERSION=v1.5.0
 OVERWRITE=false
 
 for ARG in "$@"; do
@@ -29,7 +29,7 @@ function fetch () {
 	local NAME=$1
 	local VERSION=$2
 	local URL=$3
-	local EXEC="/usr/bin/$NAME"
+	local EXEC=/usr/bin/$NAME
 	if [ -f "$EXEC" ]; then
 		if [ "$OVERWRITE" == true ]; then
 			echo "overriding existing \"$EXEC\"..."

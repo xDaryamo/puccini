@@ -20,7 +20,7 @@ type Repository struct {
 	URL         *string `read:"url" required:"url"`
 	Credential  *Value  `read:"credential,Value"` // tosca.datatypes.Credential
 
-	url_               url.URL
+	url                url.URL
 	urlProblemReported bool
 }
 
@@ -47,9 +47,9 @@ func (self *Repository) Render() {
 }
 
 func (self *Repository) GetURL() url.URL {
-	if (self.url_ == nil) && (self.URL != nil) {
+	if (self.url == nil) && (self.URL != nil) {
 		var err error
-		self.url_, err = url.NewURL(*self.URL)
+		self.url, err = url.NewURL(*self.URL)
 		if err != nil {
 			// Avoid reporting more than once
 			if !self.urlProblemReported {
@@ -59,7 +59,7 @@ func (self *Repository) GetURL() url.URL {
 		}
 	}
 
-	return self.url_
+	return self.url
 }
 
 //

@@ -7,7 +7,7 @@ HERE=$(dirname "$(readlink -f "$0")")
 "$HERE/build-wasm.sh"
 
 # Requires Node.js to be installed
-WASM_EXEC="$(go env GOROOT)/misc/wasm/go_js_wasm_exec"
+WASM_EXEC=$(go env GOROOT)/misc/wasm/go_js_wasm_exec
 
 function run () {
 	local TOOL=$1

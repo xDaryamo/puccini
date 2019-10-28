@@ -5,18 +5,16 @@ import (
 	"unicode"
 )
 
-//
-// goja.FieldNameMapper interface
-//
-
 var mapper Mapper
 
 type Mapper struct{}
 
+// goja.FieldNameMapper interface
 func (self Mapper) FieldName(t reflect.Type, f reflect.StructField) string {
 	return ToJavaScriptStyle(f.Name)
 }
 
+// goja.FieldNameMapper interface
 func (self Mapper) MethodName(t reflect.Type, m reflect.Method) string {
 	return ToJavaScriptStyle(m.Name)
 }

@@ -8,7 +8,7 @@ HERE=$(dirname "$(readlink -f "$0")")
 
 mkdir --parents "$ROOT/dist"
 
-CSAR="$ROOT/dist/bookinfo.csar"
+CSAR=$ROOT/dist/bookinfo.csar
 
 cd "$ROOT/examples/kubernetes/bookinfo"
 

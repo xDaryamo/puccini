@@ -22,18 +22,18 @@ function profile () {
 	local NAME_PREFIX=$2
 	local VERSION=$3
 
-	local PACKAGE="v${VERSION//./_}"
-	PACKAGE="${PACKAGE//-/_}"
-	local SOURCE_DIR="$ROOT/assets/$DIR_PREFIX/$VERSION"
-	local DEST_DIR="$ROOT/$DIR_PREFIX/$PACKAGE"
-	local PROFILE_PATH="/$NAME_PREFIX/$VERSION/profile.yaml"
+	local PACKAGE=v${VERSION//./_}
+	PACKAGE=${PACKAGE//-/_}
+	local SOURCE_DIR=$ROOT/assets/$DIR_PREFIX/$VERSION
+	local DEST_DIR=$ROOT/$DIR_PREFIX/$PACKAGE
+	local PROFILE_PATH=/$NAME_PREFIX/$VERSION/profile.yaml
 	local SOURCE_NAME
 	local SOURCE
 	local DEST
 
 	mkdir --parents "$DEST_DIR"
 
-	DEST="$DEST_DIR/common.go"
+	DEST=$DEST_DIR/common.go
 	header "$DEST" "$PACKAGE"
 	cat << EOT >> "$DEST"
 const ProfileInternalPath = "$PROFILE_PATH"
@@ -44,7 +44,7 @@ EOT
 	for SOURCE in $(find "$SOURCE_DIR/" -type f); do
 		SOURCE_NAME=$(realpath --relative-to="$SOURCE_DIR/" "$SOURCE")
 		DEST=${SOURCE_NAME//\//-}
-		DEST="$DEST_DIR/${DEST%.*}.go"
+		DEST=$DEST_DIR/${DEST%.*}.go
 
 		header "$DEST" "$PACKAGE"
 		cat << EOT >> "$DEST"

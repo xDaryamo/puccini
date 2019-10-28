@@ -5,10 +5,10 @@ HERE=$(dirname "$(readlink -f "$0")")
 ROOT=$(readlink -f "$HERE/..")
 
 if [ -z "$GOPATH" ]; then
-	GOPATH="$HOME/go"
+	GOPATH=$HOME/go
 fi
 
-PATH="$GOPATH/bin:$ROOT:$PATH"
+PATH=$GOPATH/bin:$ROOT:$PATH
 
 function git_version () {
 	VERSION=$(git -C "$ROOT" describe)

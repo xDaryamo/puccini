@@ -3,14 +3,14 @@ set -e
 
 # See: https://github.com/scop/bash-completion/blob/master/README.md
 
-USER_DIR="$BASH_COMPLETION_USER_DIR"
+USER_DIR=$BASH_COMPLETION_USER_DIR
 
 if [ -z "$USER_DIR" ]; then
-	DATA_HOME="$XDG_DATA_HOME"
+	DATA_HOME=$XDG_DATA_HOME
 	if [ -z "$DATA_HOME" ]; then
 		DATA_HOME=~/.local/share
 	fi 
-	USER_DIR="$DATA_HOME/bash-completion"
+	USER_DIR=$DATA_HOME/bash-completion
 fi
 
 mkdir --parents "$USER_DIR/completions"

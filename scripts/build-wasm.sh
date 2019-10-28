@@ -10,7 +10,7 @@ mkdir --parents "$ROOT/dist"
 
 function build () {
 	local TOOL=$1
-	local WASM="$ROOT/dist/$TOOL.wasm"
+	local WASM=$ROOT/dist/$TOOL.wasm
 	pushd "$ROOT/$TOOL" > /dev/null
 	GOOS=js GOARCH=wasm go build \
 		-o "$WASM" \

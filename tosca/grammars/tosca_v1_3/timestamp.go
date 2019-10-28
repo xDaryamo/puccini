@@ -63,51 +63,83 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 			return &self
 		}
 
+		valid := true
+		var err error
+
 		if length > 1 {
-			self.Year = parseTimestampUint(matches[1])
+			if self.Year, err = parseTimestampUint(matches[1]); err != nil {
+				context.ReportValueMalformed("timestamp", "cannot parse year")
+				valid = false
+			}
 		}
+
 		if length > 2 {
-			self.Month = parseTimestampUint(matches[2])
-			if (self.Month == 0) || (self.Month > 12) {
+			if self.Month, err = parseTimestampUint(matches[2]); err != nil {
+				context.ReportValueMalformed("timestamp", "cannot parse month")
+				valid = false
+			} else if (self.Month == 0) || (self.Month > 12) {
 				context.ReportValueMalformed("timestamp", "invalid month")
-				return &self
+				valid = false
 			}
 		}
+
 		if length > 3 {
-			self.Day = parseTimestampUint(matches[3])
-			if self.Day > 31 {
+			if self.Day, err = parseTimestampUint(matches[3]); err != nil {
+				context.ReportValueMalformed("timestamp", "cannot parse day")
+				valid = false
+			} else if self.Day > 31 {
 				context.ReportValueMalformed("timestamp", "invalid day")
-				return &self
+				valid = false
 			}
 		}
+
 		if length > 4 {
-			self.Hour = parseTimestampUint(matches[4])
-			if self.Hour > 23 {
+			if self.Hour, err = parseTimestampUint(matches[4]); err != nil {
+				context.ReportValueMalformed("timestamp", "cannot parse hour")
+				valid = false
+			} else if self.Hour > 23 {
 				context.ReportValueMalformed("timestamp", "invalid hour")
-				return &self
+				valid = false
 			}
 		}
+
 		if length > 5 {
-			self.Minute = parseTimestampUint(matches[5])
-			if self.Minute > 59 {
+			if self.Minute, err = parseTimestampUint(matches[5]); err != nil {
+				context.ReportValueMalformed("timestamp", "cannot parse minute")
+				valid = false
+			} else if self.Minute > 59 {
 				context.ReportValueMalformed("timestamp", "invalid minute")
-				return &self
+				valid = false
 			}
 		}
+
 		if length > 6 {
-			self.Second = parseTimestampUint(matches[6])
-			if self.Second > 59 {
+			if self.Second, err = parseTimestampUint(matches[6]); err != nil {
+				context.ReportValueMalformed("timestamp", "cannot parse second")
+				valid = false
+			} else if self.Second > 59 {
 				context.ReportValueMalformed("timestamp", "invalid second")
-				return &self
+				valid = false
 			}
 		}
+
 		if (length > 7) && (matches[7] != "") {
-			self.Fraction = parseTimestampFloat(matches[7])
+			if self.Fraction, err = parseTimestampFloat(matches[7]); err != nil {
+				context.ReportValueMalformed("timestamp", "cannot parse fraction")
+				valid = false
+			} else if (self.Fraction < 0.0) || (self.Fraction >= 1.0) {
+				context.ReportValueMalformed("timestamp", "invalid fraction")
+				valid = false
+			}
 		}
+
 		if (length > 8) && (matches[8] != "") {
 			v := matches[8]
 			self.TZSign = v[:1]
-			self.TZHour = parseTimestampUint(v[1:])
+			if self.TZHour, err = parseTimestampUint(v[1:]); err != nil {
+				context.ReportValueMalformed("timestamp", "cannot parse timezone year")
+				valid = false
+			}
 
 			// Real-world timezones go from -12 to +14:
 			// https://en.wikipedia.org/wiki/List_of_UTC_time_offsets
@@ -115,12 +147,19 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 			// translation would "just work" even if the specified timezone doesn't exist in the real
 			// world
 		}
+
 		if (length > 9) && (matches[9] != "") {
-			self.TZMinute = parseTimestampUint(matches[9])
-			if self.TZMinute > 59 {
-				context.ReportValueMalformed("timestamp", "invalid TZ minute")
-				return &self
+			if self.TZMinute, err = parseTimestampUint(matches[9]); err != nil {
+				context.ReportValueMalformed("timestamp", "cannot parse timezone minute")
+				valid = false
+			} else if self.TZMinute > 59 {
+				context.ReportValueMalformed("timestamp", "invalid timezone minute")
+				valid = false
 			}
+		}
+
+		if !valid {
+			return &self
 		}
 	} else if context.Is("time") {
 		// Note: OriginalString will be empty because it is not preserved by our parsing methods
@@ -202,16 +241,18 @@ func (self *Timestamp) Time() time.Time {
 
 // Utils
 
-func parseTimestampUint(value string) uint32 {
+func parseTimestampUint(value string) (uint32, error) {
 	if u, err := strconv.ParseUint(value, 10, 32); err == nil {
-		return uint32(u)
+		return uint32(u), nil
+	} else {
+		return 0, err
 	}
-	panic("as long as the regexp does its job we should never get here")
 }
 
-func parseTimestampFloat(value string) float64 {
+func parseTimestampFloat(value string) (float64, error) {
 	if u, err := strconv.ParseFloat(value, 64); err == nil {
-		return u
+		return u, nil
+	} else {
+		return 0.0, err
 	}
-	panic("as long as the regexp does its job we should never get here")
 }
