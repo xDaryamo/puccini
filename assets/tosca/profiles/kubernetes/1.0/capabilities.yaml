@@ -369,7 +369,7 @@ capability_types:
 
   istio.VirtualService:
     metadata:
-      puccini-js.kubernetes.plugins.1: js/plugins/istio.js
+      puccini.kubernetes.plugins.1: js/plugins/istio.js
     description: >-
       Creates a DestinationRule subset with the name of the node template
       Adds to VirtualService (with HttpRoute) for that subset

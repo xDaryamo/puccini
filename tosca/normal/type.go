@@ -12,6 +12,7 @@ type Type struct {
 	Name string `json:"-" yaml:"-"`
 
 	Metadata map[string]string `json:"metadata" yaml:"metadata"`
+	Parent   string            `json:"parent,omitempty" yaml:"parent,omitempty"`
 }
 
 func NewType(name string) *Type {
@@ -37,15 +38,18 @@ func NewTypes(names ...string) Types {
 
 func GetHierarchyTypes(hierarchy *tosca.Hierarchy) Types {
 	types := make(Types)
-	n := hierarchy
-	for (n != nil) && (n.EntityPtr != nil) {
-		name := n.GetContext().Name
+	h := hierarchy
+	for (h != nil) && (h.EntityPtr != nil) {
+		name := h.GetContext().Name
 		type_ := NewType(name)
-		if metadata, ok := GetMetadata(n.EntityPtr); ok {
+		if (h.Parent != nil) && (h.Parent.EntityPtr != nil) {
+			type_.Parent = h.Parent.GetContext().Name
+		}
+		if metadata, ok := GetMetadata(h.EntityPtr); ok {
 			type_.Metadata = metadata
 		}
 		types[name] = type_
-		n = n.Parent
+		h = h.Parent
 	}
 	return types
 }

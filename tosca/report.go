@@ -187,7 +187,7 @@ func (self *Context) ReportMissingEntrySchema(kind string) {
 }
 
 func (self *Context) ReportUnsupportedType() {
-	self.ReportPathf("unsupported puccini-tosca.type \"%s\"", format.ColorError(self.Name))
+	self.ReportPathf("unsupported puccini.type \"%s\"", format.ColorError(self.Name))
 }
 
 func (self *Context) ReportIncompatibleType(typeName string, parentTypeName string) {

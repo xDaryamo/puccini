@@ -53,7 +53,7 @@ func (self *CloutContext) NewMapEntry(data interface{}, keyConstraints Constrain
 	var entry MapEntry
 
 	if map_, ok := data.(ard.StringMap); ok {
-		if key, ok := map_["key"]; ok {
+		if key, ok := map_["$key"]; ok {
 			var err error
 			if entry.Key, err = self.NewCoercible(key, functionCallContext); err == nil {
 				if entry.Value, err = self.NewCoercible(map_, functionCallContext); err == nil {
@@ -67,7 +67,7 @@ func (self *CloutContext) NewMapEntry(data interface{}, keyConstraints Constrain
 				return entry, err
 			}
 		} else {
-			return entry, fmt.Errorf("malformed map entry, no \"key\": %v", map_)
+			return entry, fmt.Errorf("malformed map entry, no \"$key\": %v", map_)
 		}
 	} else {
 		return entry, fmt.Errorf("malformed map entry, not a map: %T", data)

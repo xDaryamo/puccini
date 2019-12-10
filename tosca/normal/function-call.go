@@ -9,11 +9,11 @@ import (
 //
 
 type FunctionCall struct {
-	Key         Constrainable `json:"key,omitempty" yaml:"key,omitempty"`
-	Description string        `json:"description,omitempty" yaml:"description,omitempty"`
-	Constraints FunctionCalls `json:"constraints,omitempty" yaml:"constraints,omitempty"`
+	Key         Constrainable `json:"$key,omitempty" yaml:"$key,omitempty"`
+	Description string        `json:"$description,omitempty" yaml:"$description,omitempty"`
+	Constraints FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
 
-	FunctionCall *tosca.FunctionCall `json:"functionCall" yaml:"functionCall"`
+	FunctionCall *tosca.FunctionCall `json:"$functionCall" yaml:"$functionCall"`
 }
 
 func NewFunctionCall(functionCall *tosca.FunctionCall) *FunctionCall {

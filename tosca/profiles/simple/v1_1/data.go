@@ -22,23 +22,23 @@ data_types:
 
   string:
     metadata:
-      puccini-tosca.type: string
+      puccini.type: string
 
   integer:
     metadata:
-      puccini-tosca.type: integer
+      puccini.type: integer
 
   float:
     metadata:
-      puccini-tosca.type: float
+      puccini.type: float
 
   boolean:
     metadata:
-      puccini-tosca.type: boolean
+      puccini.type: boolean
 
   timestamp:
     metadata:
-      puccini-tosca.type: timestamp
+      puccini.type: timestamp
 
   #
   # Special
@@ -46,13 +46,13 @@ data_types:
 
   version:
     metadata:
-      puccini-tosca.type: version
+      puccini.type: version
       citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       citation_location: 3.2.2
 
   range:
     metadata:
-      puccini-tosca.type: range
+      puccini.type: range
       citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       citation_location: 3.2.3
 
@@ -62,13 +62,13 @@ data_types:
 
   list:
     metadata:
-      puccini-tosca.type: list
+      puccini.type: list
       citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       citation_location: 3.2.4
 
   map:
     metadata:
-      puccini-tosca.type: map
+      puccini.type: map
       citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       citation_location: 3.2.5
 
@@ -78,19 +78,19 @@ data_types:
 
   scalar-unit.size:
     metadata:
-      puccini-tosca.type: scalar-unit.size
+      puccini.type: scalar-unit.size
       citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       citation_location: 3.2.6.4
 
   scalar-unit.time:
     metadata:
-      puccini-tosca.type: scalar-unit.time
+      puccini.type: scalar-unit.time
       citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       citation_location: 3.2.6.5
 
   scalar-unit.frequency:
     metadata:
-      puccini-tosca.type: scalar-unit.frequency
+      puccini.type: scalar-unit.frequency
       citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       citation_location: 3.2.6.6
 

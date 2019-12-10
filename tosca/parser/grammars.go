@@ -20,6 +20,7 @@ var Grammars = map[string]map[string]tosca.Grammar{
 		"cloudify_dsl_1_3":                 cloudify_v1_3.Grammar,
 	},
 	"heat_template_version": {
+		"train":      hot.Grammar, // train (not mentioned in spec, but probably supported)
 		"stein":      hot.Grammar, // stein (not mentioned in spec, but probably supported)
 		"rocky":      hot.Grammar, // rocky
 		"queens":     hot.Grammar, // queens

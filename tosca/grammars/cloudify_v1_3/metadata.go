@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/yamlkeys"
 )
 
 //
@@ -28,15 +27,20 @@ func ReadMetadata(context *tosca.Context) interface{} {
 
 	if self != nil {
 		for key, value := range self {
-			name := yamlkeys.KeyString(key)
-			if strings.HasPrefix(name, "puccini-js.import.") {
-				name := name[18:]
-				context.ImportScriptlet(name, value.(string))
-				delete(self, key)
-			} else if strings.HasPrefix(key, "puccini-js.embed.") {
-				name := name[17:]
-				context.EmbedScriptlet(name, value.(string))
-				delete(self, key)
+			if strings.HasPrefix(key, "puccini.scriptlet.import.") {
+				if v, ok := value.(string); ok {
+					context.ImportScriptlet(key[25:], v)
+					delete(self, key)
+				} else {
+					context.MapChild(key, value).ReportValueWrongType("string")
+				}
+			} else if strings.HasPrefix(key, "puccini.scriptlet.") {
+				if v, ok := value.(string); ok {
+					context.EmbedScriptlet(key[18:], v)
+					delete(self, key)
+				} else {
+					context.MapChild(key, value).ReportValueWrongType("string")
+				}
 			}
 		}
 	}

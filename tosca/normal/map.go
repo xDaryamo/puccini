@@ -9,15 +9,15 @@ import (
 //
 
 type Map struct {
-	Key              Constrainable `json:"key,omitempty" yaml:"key,omitempty"`
-	Description      string        `json:"description,omitempty" yaml:"description,omitempty"`
-	Constraints      FunctionCalls `json:"constraints,omitempty" yaml:"constraints,omitempty"`
-	KeyDescription   string        `json:"keyDescription,omitempty" yaml:"keyDescription,omitempty"`
-	KeyConstraints   FunctionCalls `json:"keyConstraints,omitempty" yaml:"keyConstraints,omitempty"`
-	ValueDescription string        `json:"valueDescription,omitempty" yaml:"valueDescription,omitempty"`
-	ValueConstraints FunctionCalls `json:"valueConstraints,omitempty" yaml:"valueConstraints,omitempty"`
+	Key              Constrainable `json:"$key,omitempty" yaml:"$key,omitempty"`
+	Description      string        `json:"$description,omitempty" yaml:"$description,omitempty"`
+	Constraints      FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
+	KeyDescription   string        `json:"$keyDescription,omitempty" yaml:"$keyDescription,omitempty"`
+	KeyConstraints   FunctionCalls `json:"$keyConstraints,omitempty" yaml:"$keyConstraints,omitempty"`
+	ValueDescription string        `json:"$valueDescription,omitempty" yaml:"$valueDescription,omitempty"`
+	ValueConstraints FunctionCalls `json:"$valueConstraints,omitempty" yaml:"$valueConstraints,omitempty"`
 
-	Entries ConstrainableList `json:"map" yaml:"map"`
+	Entries ConstrainableList `json:"$map" yaml:"$map"`
 }
 
 func NewMap() *Map {

@@ -9,11 +9,11 @@ import (
 //
 
 type Value struct {
-	Key         Constrainable `json:"key,omitempty" yaml:"key,omitempty"`
-	Description string        `json:"description,omitempty" yaml:"description,omitempty"`
-	Constraints FunctionCalls `json:"constraints,omitempty" yaml:"constraints,omitempty"`
+	Key         Constrainable `json:"$key,omitempty" yaml:"$key,omitempty"`
+	Description string        `json:"$description,omitempty" yaml:"$description,omitempty"`
+	Constraints FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
 
-	Value interface{} `json:"value" yaml:"value"`
+	Value interface{} `json:"$value" yaml:"$value"`
 }
 
 func NewValue(value interface{}) *Value {

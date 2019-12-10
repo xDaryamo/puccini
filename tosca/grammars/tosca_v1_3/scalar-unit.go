@@ -23,14 +23,14 @@ type ScalarUnit struct {
 	Scalar float64 `json:"scalar" yaml:"scalar"`
 	Unit   string  `json:"unit" yaml:"unit"`
 
-	count                 bool // if true, CanonicalNumber is uint64
+	countable             bool // if true, CanonicalNumber is uint64
 	canonicalUnitSingular string
 	canonicalUnitPlural   string
 }
 
-func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, canonicalUnitSingular string, canonicalUnitPlural string, re *regexp.Regexp, measures ScalarUnitMeasures, count bool, caseSensitive bool) *ScalarUnit {
+func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, canonicalUnitSingular string, canonicalUnitPlural string, re *regexp.Regexp, measures ScalarUnitMeasures, countable bool, caseSensitive bool) *ScalarUnit {
 	self := ScalarUnit{
-		count:                 count,
+		countable:             countable,
 		canonicalUnitSingular: canonicalUnitSingular,
 		canonicalUnitPlural:   canonicalUnitPlural,
 	}
@@ -61,7 +61,7 @@ func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, c
 	self.Unit, measure = measures.Get(matches[2], caseSensitive)
 
 	// Canonical
-	if count {
+	if countable {
 		self.CanonicalNumber = uint64(math.Round(self.Scalar * measure))
 		self.CanonicalString = fmt.Sprintf("%d %s", self.CanonicalNumber, canonicalUnit)
 	} else {
@@ -78,7 +78,7 @@ func (self *ScalarUnit) String() string {
 
 	if self.canonicalUnitSingular == self.canonicalUnitPlural {
 		singular = false
-	} else if self.count {
+	} else if self.countable {
 		singular = self.CanonicalNumber.(uint64) == 1
 	} else {
 		singular = self.CanonicalNumber.(float64) == 1.0
@@ -87,7 +87,7 @@ func (self *ScalarUnit) String() string {
 	if singular {
 		return fmt.Sprintf("1 %s", self.canonicalUnitSingular)
 	} else {
-		if self.count {
+		if self.countable {
 			return fmt.Sprintf("%d %s", self.CanonicalNumber.(uint64), self.canonicalUnitPlural)
 		} else {
 			return fmt.Sprintf("%g %s", self.CanonicalNumber.(float64), self.canonicalUnitPlural)
@@ -97,7 +97,7 @@ func (self *ScalarUnit) String() string {
 
 func (self *ScalarUnit) Compare(data interface{}) (int, error) {
 	if scalarUnit, ok := data.(*ScalarUnit); ok {
-		if self.count {
+		if self.countable {
 			return CompareUint64(self.CanonicalNumber.(uint64), scalarUnit.CanonicalNumber.(uint64)), nil
 		} else {
 			return CompareFloat64(self.CanonicalNumber.(float64), scalarUnit.CanonicalNumber.(float64)), nil

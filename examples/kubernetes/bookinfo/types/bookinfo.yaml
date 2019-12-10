@@ -37,7 +37,7 @@ node_types:
 
   Productpage:
 #    metadata:
-#      puccini-js.kubernetes.plugins.2: internal:/tosca/kubernetes/1.0/js/plugins/dummy.js
+#      puccini.kubernetes.plugins.2: internal:/tosca/kubernetes/1.0/js/plugins/dummy.js
     derived_from: Bookinfo
     properties:
       name:

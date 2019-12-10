@@ -9,13 +9,13 @@ import (
 //
 
 type List struct {
-	Key              Constrainable `json:"key,omitempty" yaml:"key,omitempty"`
-	Description      string        `json:"description,omitempty" yaml:"description,omitempty"`
-	Constraints      FunctionCalls `json:"constraints,omitempty" yaml:"constraints,omitempty"`
-	EntryDescription string        `json:"entryDescription,omitempty" yaml:"entryDescription,omitempty"`
-	EntryConstraints FunctionCalls `json:"entryConstraints,omitempty" yaml:"entryConstraints,omitempty"`
+	Key              Constrainable `json:"$key,omitempty" yaml:"$key,omitempty"`
+	Description      string        `json:"$description,omitempty" yaml:"$description,omitempty"`
+	Constraints      FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
+	EntryDescription string        `json:"$entryDescription,omitempty" yaml:"$entryDescription,omitempty"`
+	EntryConstraints FunctionCalls `json:"$entryConstraints,omitempty" yaml:"$entryConstraints,omitempty"`
 
-	Entries ConstrainableList `json:"list" yaml:"list"`
+	Entries ConstrainableList `json:"$list" yaml:"$list"`
 }
 
 func NewList(length int) *List {

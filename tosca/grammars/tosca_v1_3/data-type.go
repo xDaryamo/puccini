@@ -63,7 +63,7 @@ func (self *DataType) Inherit() {
 }
 
 func (self *DataType) GetInternalTypeName() (string, bool) {
-	typeName, ok := self.GetMetadataValue("puccini-tosca.type")
+	typeName, ok := self.GetMetadataValue("puccini.type")
 	if !ok && (self.Parent != nil) {
 		// The internal type metadata is inherited
 		return self.Parent.GetInternalTypeName()

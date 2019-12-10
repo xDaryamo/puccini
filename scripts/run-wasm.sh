@@ -6,7 +6,11 @@ HERE=$(dirname "$(readlink -f "$0")")
 
 "$HERE/build-wasm.sh"
 
-# Requires Node.js to be installed
+if ! command -v node > /dev/null 2>&1; then
+	echo 'Node.js must be installed'
+	exit 1
+fi
+
 WASM_EXEC=$(go env GOROOT)/misc/wasm/go_js_wasm_exec
 
 function run () {
