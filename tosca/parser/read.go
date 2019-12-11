@@ -12,15 +12,17 @@ import (
 	"github.com/tliron/puccini/url"
 )
 
-func (self *Context) ReadServiceTemplate(url_ url.URL) bool {
+func (self *Context) ReadRoot(url_ url.URL) bool {
 	toscaContext := tosca.NewContext(&self.Problems, self.Quirks)
+
 	toscaContext.URL = url_
 
+	var ok bool
+
 	self.WG.Add(1)
-	serviceTemplate, ok := self.read(nil, toscaContext, nil, nil, "ServiceTemplate")
+	self.Root, ok = self.read(nil, toscaContext, nil, nil, "$Root")
 	self.WG.Wait()
 
-	self.ServiceTemplate = serviceTemplate
 	sort.Sort(self.Units)
 
 	return ok
@@ -57,7 +59,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 	}
 
 	// Read entityPtr
-	read, ok := toscaContext.Grammar[readerName]
+	read, ok := toscaContext.Grammar.Readers[readerName]
 	if !ok {
 		panic(fmt.Sprintf("grammar does not support reader \"%s\"", readerName))
 	}
@@ -130,7 +132,7 @@ func (self *Context) goReadImports(container *Unit) {
 
 			// Read (concurrently)
 			self.WG.Add(1)
-			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, "Unit")
+			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, "$Unit")
 		}
 	}
 }

@@ -77,7 +77,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 
 	// Phase 1: Read
 	if stopAtPhase >= 1 {
-		if !context.ReadServiceTemplate(url_) {
+		if !context.ReadRoot(url_) {
 			// Stop here if there are errors
 			if !common.Quiet {
 				context.Problems.Print()
@@ -136,11 +136,11 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		tasks.Drain()
 	}
 
-	if context.ServiceTemplate == nil {
+	if context.Root == nil {
 		return context, nil
 	}
 
-	parser.SetInputs(context.ServiceTemplate.EntityPtr, inputValues)
+	parser.SetInputs(context.Root.EntityPtr, inputValues)
 
 	// Phase 5: Rendering
 	if stopAtPhase >= 5 {
@@ -180,7 +180,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	}
 
 	// Normalize
-	s, ok := parser.Normalize(context.ServiceTemplate.EntityPtr)
+	s, ok := parser.Normalize(context.Root.EntityPtr)
 	if !ok {
 		common.Fail("grammar does not support normalization")
 	}

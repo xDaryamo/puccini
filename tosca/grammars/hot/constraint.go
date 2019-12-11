@@ -9,7 +9,7 @@ import (
 )
 
 // Built-in constraint functions
-var ConstraintSourceCode = map[string]string{
+var ConstraintScriptlets = map[string]string{
 	"length":            profile.Profile["/hot/1.0/js/length.js"],
 	"range":             profile.Profile["/hot/1.0/js/range.js"],
 	"modulo":            profile.Profile["/hot/1.0/js/modulo.js"],
@@ -17,6 +17,8 @@ var ConstraintSourceCode = map[string]string{
 	"allowed_pattern":   profile.Profile["/hot/1.0/js/allowed_pattern.js"],
 	"custom_constraint": profile.Profile["/hot/1.0/js/custom_constraint.js"],
 }
+
+var ConstraintNativeArgumentIndexes = map[string][]uint{}
 
 //
 // Constraint

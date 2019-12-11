@@ -2,97 +2,89 @@ package tosca_v1_3
 
 import (
 	"github.com/op/go-logging"
-	"github.com/tliron/puccini/js"
 	"github.com/tliron/puccini/tosca"
 )
 
 var log = logging.MustGetLogger("grammars.tosca_v1_3")
 
-var Grammar = make(tosca.Grammar)
+var Grammar = tosca.NewGrammar()
 
 var DefaultScriptletNamespace = make(tosca.ScriptletNamespace)
 
 func init() {
-	Grammar["Artifact"] = ReadArtifact
-	Grammar["ArtifactDefinition"] = ReadArtifactDefinition
-	Grammar["ArtifactType"] = ReadArtifactType
-	Grammar["AttributeDefinition"] = ReadAttributeDefinition
-	Grammar["AttributeMapping"] = ReadAttributeMapping // introduced in TOSCA 1.3
-	Grammar["AttributeValue"] = ReadAttributeValue
-	Grammar["CapabilityAssignment"] = ReadCapabilityAssignment
-	Grammar["CapabilityDefinition"] = ReadCapabilityDefinition
-	Grammar["CapabilityFilter"] = ReadCapabilityFilter
-	Grammar["CapabilityMapping"] = ReadCapabilityMapping
-	Grammar["CapabilityType"] = ReadCapabilityType
-	Grammar["ConditionClause"] = ReadConditionClause
-	Grammar["ConstraintClause"] = ReadConstraintClause
-	Grammar["DataType"] = ReadDataType
-	Grammar["EventFilter"] = ReadEventFilter
-	Grammar["Group"] = ReadGroup
-	Grammar["GroupType"] = ReadGroupType
-	Grammar["Import"] = ReadImport
-	Grammar["InterfaceAssignment"] = ReadInterfaceAssignment
-	Grammar["InterfaceDefinition"] = ReadInterfaceDefinition
-	Grammar["InterfaceMapping"] = ReadInterfaceMapping // introduced in TOSCA 1.2
-	Grammar["InterfaceType"] = ReadInterfaceType
-	Grammar["Metadata"] = ReadMetadata
-	Grammar["NodeFilter"] = ReadNodeFilter
-	Grammar["NodeTemplate"] = ReadNodeTemplate
-	Grammar["NodeType"] = ReadNodeType
-	Grammar["NotificationAssignment"] = ReadNotificationAssignment // introduced in TOSCA 1.3
-	Grammar["NotificationDefinition"] = ReadNotificationDefinition // introduced in TOSCA 1.3
-	Grammar["OperationAssignment"] = ReadOperationAssignment
-	Grammar["OperationDefinition"] = ReadOperationDefinition
-	Grammar["InterfaceImplementation"] = ReadInterfaceImplementation
-	Grammar["ParameterDefinition"] = ReadParameterDefinition
-	Grammar["Policy"] = ReadPolicy
-	Grammar["PolicyType"] = ReadPolicyType
-	Grammar["PropertyDefinition"] = ReadPropertyDefinition
-	Grammar["PropertyFilter"] = ReadPropertyFilter
-	Grammar["PropertyMapping"] = ReadPropertyMapping // introduced in TOSCA 1.2
-	Grammar["range"] = ReadRange
-	Grammar["RangeEntity"] = ReadRangeEntity
-	Grammar["RelationshipAssignment"] = ReadRelationshipAssignment
-	Grammar["RelationshipDefinition"] = ReadRelationshipDefinition
-	Grammar["RelationshipTemplate"] = ReadRelationshipTemplate
-	Grammar["RelationshipType"] = ReadRelationshipType
-	Grammar["Repository"] = ReadRepository
-	Grammar["RequirementAssignment"] = ReadRequirementAssignment
-	Grammar["RequirementDefinition"] = ReadRequirementDefinition
-	Grammar["RequirementMapping"] = ReadRequirementMapping
-	Grammar["scalar-unit.bitrate"] = ReadScalarUnitBitrate // introduced in TOSCA 1.3
-	Grammar["scalar-unit.frequency"] = ReadScalarUnitFrequency
-	Grammar["scalar-unit.size"] = ReadScalarUnitSize
-	Grammar["scalar-unit.time"] = ReadScalarUnitTime
-	Grammar["Schema"] = ReadSchema
-	Grammar["ServiceTemplate"] = ReadServiceTemplate
-	Grammar["SubstitutionMappings"] = ReadSubstitutionMappings
-	Grammar["timestamp"] = ReadTimestamp
-	Grammar["TopologyTemplate"] = ReadTopologyTemplate
-	Grammar["TriggerDefinition"] = ReadTriggerDefinition
-	Grammar["TriggerDefinitionCondition"] = ReadTriggerDefinitionCondition
-	Grammar["Unit"] = ReadUnit
-	Grammar["Value"] = ReadValue
-	Grammar["version"] = ReadVersion
-	Grammar["WorkflowActivityCallOperation"] = ReadWorkflowActivityCallOperation // introduced in TOSCA 1.3
-	Grammar["WorkflowActivityDefinition"] = ReadWorkflowActivityDefinition
-	Grammar["WorkflowDefinition"] = ReadWorkflowDefinition
-	Grammar["WorkflowPreconditionDefinition"] = ReadWorkflowPreconditionDefinition
-	Grammar["WorkflowStepDefinition"] = ReadWorkflowStepDefinition
+	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_yaml_1_3", "/tosca/simple/1.3/profile.yaml")
+	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_profile_for_nfv_1_0", "/tosca/simple-for-nfv/1.0/profile.yaml")
 
-	for name, scriptlet := range FunctionScriptlets {
-		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
-			Scriptlet: js.CleanupScriptlet(scriptlet),
-		}
-	}
+	Grammar.RegisterReader("$Root", ReadServiceTemplate)
+	Grammar.RegisterReader("$Unit", ReadUnit)
 
-	for name, scriptlet := range ConstraintClauseScriptlets {
-		nativeArgumentIndexes, _ := ConstraintClauseNativeArgumentIndexes[name]
-		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
-			Scriptlet:             js.CleanupScriptlet(scriptlet),
-			NativeArgumentIndexes: nativeArgumentIndexes,
-		}
-	}
+	Grammar.RegisterReader("Artifact", ReadArtifact)
+	Grammar.RegisterReader("ArtifactDefinition", ReadArtifactDefinition)
+	Grammar.RegisterReader("ArtifactType", ReadArtifactType)
+	Grammar.RegisterReader("AttributeDefinition", ReadAttributeDefinition)
+	Grammar.RegisterReader("AttributeMapping", ReadAttributeMapping) // introduced in TOSCA 1.3
+	Grammar.RegisterReader("AttributeValue", ReadAttributeValue)
+	Grammar.RegisterReader("CapabilityAssignment", ReadCapabilityAssignment)
+	Grammar.RegisterReader("CapabilityDefinition", ReadCapabilityDefinition)
+	Grammar.RegisterReader("CapabilityFilter", ReadCapabilityFilter)
+	Grammar.RegisterReader("CapabilityMapping", ReadCapabilityMapping)
+	Grammar.RegisterReader("CapabilityType", ReadCapabilityType)
+	Grammar.RegisterReader("ConditionClause", ReadConditionClause)
+	Grammar.RegisterReader("ConstraintClause", ReadConstraintClause)
+	Grammar.RegisterReader("DataType", ReadDataType)
+	Grammar.RegisterReader("EventFilter", ReadEventFilter)
+	Grammar.RegisterReader("Group", ReadGroup)
+	Grammar.RegisterReader("GroupType", ReadGroupType)
+	Grammar.RegisterReader("Import", ReadImport)
+	Grammar.RegisterReader("InterfaceAssignment", ReadInterfaceAssignment)
+	Grammar.RegisterReader("InterfaceDefinition", ReadInterfaceDefinition)
+	Grammar.RegisterReader("InterfaceMapping", ReadInterfaceMapping) // introduced in TOSCA 1.2
+	Grammar.RegisterReader("InterfaceType", ReadInterfaceType)
+	Grammar.RegisterReader("Metadata", ReadMetadata)
+	Grammar.RegisterReader("NodeFilter", ReadNodeFilter)
+	Grammar.RegisterReader("NodeTemplate", ReadNodeTemplate)
+	Grammar.RegisterReader("NodeType", ReadNodeType)
+	Grammar.RegisterReader("NotificationAssignment", ReadNotificationAssignment) // introduced in TOSCA 1.3
+	Grammar.RegisterReader("NotificationDefinition", ReadNotificationDefinition) // introduced in TOSCA 1.3
+	Grammar.RegisterReader("OperationAssignment", ReadOperationAssignment)
+	Grammar.RegisterReader("OperationDefinition", ReadOperationDefinition)
+	Grammar.RegisterReader("InterfaceImplementation", ReadInterfaceImplementation)
+	Grammar.RegisterReader("ParameterDefinition", ReadParameterDefinition)
+	Grammar.RegisterReader("Policy", ReadPolicy)
+	Grammar.RegisterReader("PolicyType", ReadPolicyType)
+	Grammar.RegisterReader("PropertyDefinition", ReadPropertyDefinition)
+	Grammar.RegisterReader("PropertyFilter", ReadPropertyFilter)
+	Grammar.RegisterReader("PropertyMapping", ReadPropertyMapping) // introduced in TOSCA 1.2
+	Grammar.RegisterReader("range", ReadRange)
+	Grammar.RegisterReader("RangeEntity", ReadRangeEntity)
+	Grammar.RegisterReader("RelationshipAssignment", ReadRelationshipAssignment)
+	Grammar.RegisterReader("RelationshipDefinition", ReadRelationshipDefinition)
+	Grammar.RegisterReader("RelationshipTemplate", ReadRelationshipTemplate)
+	Grammar.RegisterReader("RelationshipType", ReadRelationshipType)
+	Grammar.RegisterReader("Repository", ReadRepository)
+	Grammar.RegisterReader("RequirementAssignment", ReadRequirementAssignment)
+	Grammar.RegisterReader("RequirementDefinition", ReadRequirementDefinition)
+	Grammar.RegisterReader("RequirementMapping", ReadRequirementMapping)
+	Grammar.RegisterReader("scalar-unit.bitrate", ReadScalarUnitBitrate) // introduced in TOSCA 1.3
+	Grammar.RegisterReader("scalar-unit.frequency", ReadScalarUnitFrequency)
+	Grammar.RegisterReader("scalar-unit.size", ReadScalarUnitSize)
+	Grammar.RegisterReader("scalar-unit.time", ReadScalarUnitTime)
+	Grammar.RegisterReader("Schema", ReadSchema)
+	Grammar.RegisterReader("SubstitutionMappings", ReadSubstitutionMappings)
+	Grammar.RegisterReader("timestamp", ReadTimestamp)
+	Grammar.RegisterReader("TopologyTemplate", ReadTopologyTemplate)
+	Grammar.RegisterReader("TriggerDefinition", ReadTriggerDefinition)
+	Grammar.RegisterReader("TriggerDefinitionCondition", ReadTriggerDefinitionCondition)
+	Grammar.RegisterReader("Value", ReadValue)
+	Grammar.RegisterReader("version", ReadVersion)
+	Grammar.RegisterReader("WorkflowActivityCallOperation", ReadWorkflowActivityCallOperation) // introduced in TOSCA 1.3
+	Grammar.RegisterReader("WorkflowActivityDefinition", ReadWorkflowActivityDefinition)
+	Grammar.RegisterReader("WorkflowDefinition", ReadWorkflowDefinition)
+	Grammar.RegisterReader("WorkflowPreconditionDefinition", ReadWorkflowPreconditionDefinition)
+	Grammar.RegisterReader("WorkflowStepDefinition", ReadWorkflowStepDefinition)
+
+	DefaultScriptletNamespace.RegisterScriptlets(FunctionScriptlets, nil)
+	DefaultScriptletNamespace.RegisterScriptlets(ConstraintClauseScriptlets, ConstraintClauseNativeArgumentIndexes)
 }
 
 func CompareUint32(v1 uint32, v2 uint32) int {

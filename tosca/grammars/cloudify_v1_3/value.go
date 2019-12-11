@@ -84,7 +84,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 			}
 		} else {
 			// Special types
-			if read, ok := self.Context.Grammar[typeName]; ok {
+			if read, ok := self.Context.Grammar.Readers[typeName]; ok {
 				self.Context.Data = read(self.Context)
 			} else {
 				// Avoid reporting more than once

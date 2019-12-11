@@ -6,7 +6,7 @@ import (
 )
 
 func (self *Context) Render() tosca.EntityPtrs {
-	return Render(self.ServiceTemplate.EntityPtr)
+	return Render(self.Root.EntityPtr)
 }
 
 //

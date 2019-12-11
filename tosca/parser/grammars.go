@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/cloudify_v1_3"
 	"github.com/tliron/puccini/tosca/grammars/hot"
@@ -10,34 +12,42 @@ import (
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
 )
 
-var Grammars = map[string]map[string]tosca.Grammar{
-	"tosca_definitions_version": {
-		"tosca_simple_yaml_1_3":            tosca_v1_3.Grammar,
-		"tosca_simple_yaml_1_2":            tosca_v1_2.Grammar,
-		"tosca_simple_yaml_1_1":            tosca_v1_1.Grammar,
-		"tosca_simple_yaml_1_0":            tosca_v1_0.Grammar,
-		"tosca_simple_profile_for_nfv_1_0": tosca_v1_3.Grammar,
-		"cloudify_dsl_1_3":                 cloudify_v1_3.Grammar,
-	},
-	"heat_template_version": {
-		"train":      hot.Grammar, // train (not mentioned in spec, but probably supported)
-		"stein":      hot.Grammar, // stein (not mentioned in spec, but probably supported)
-		"rocky":      hot.Grammar, // rocky
-		"queens":     hot.Grammar, // queens
-		"pike":       hot.Grammar, // pike
-		"newton":     hot.Grammar, // newton
-		"ocata":      hot.Grammar, // ocata
-		"2018-08-31": hot.Grammar, // stein, rocky
-		"2018-03-02": hot.Grammar, // queens
-		"2017-09-01": hot.Grammar, // pike
-		"2017-02-24": hot.Grammar, // ocata
-		"2016-10-14": hot.Grammar, // newton
-		"2016-04-08": hot.Grammar, // mitaka
-		"2015-10-15": hot.Grammar, // liberty
-		"2015-04-30": hot.Grammar, // kilo
-		"2014-10-16": hot.Grammar, // juno
-		"2013-05-23": hot.Grammar, // icehouse
-	},
+var Grammars = make(map[string]map[string]*tosca.Grammar)
+
+func init() {
+	initGrammar(&tosca_v1_3.Grammar)
+	initGrammar(&tosca_v1_2.Grammar)
+	initGrammar(&tosca_v1_1.Grammar)
+	initGrammar(&tosca_v1_0.Grammar)
+	initGrammar(&cloudify_v1_3.Grammar)
+	initGrammar(&hot.Grammar)
+}
+
+func initGrammar(grammar *tosca.Grammar) {
+	for keyword, versions := range grammar.Versions {
+		var grammars map[string]*tosca.Grammar
+		var ok bool
+		if grammars, ok = Grammars[keyword]; !ok {
+			grammars = make(map[string]*tosca.Grammar)
+			Grammars[keyword] = grammars
+		}
+
+		for _, version := range versions {
+			if _, ok := grammars[version.Version]; ok {
+				panic(fmt.Sprintf("grammar version conflict: %s = %s", keyword, version.Version))
+			}
+			grammars[version.Version] = grammar
+
+			if version.ProfileInternalPath != "" {
+				var paths map[string]string
+				if paths, ok = ProfileInternalPaths[keyword]; !ok {
+					paths = make(map[string]string)
+					ProfileInternalPaths[keyword] = paths
+				}
+				paths[version.Version] = version.ProfileInternalPath
+			}
+		}
+	}
 }
 
 func DetectGrammar(context *tosca.Context) bool {

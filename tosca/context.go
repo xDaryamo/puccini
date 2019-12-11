@@ -43,7 +43,7 @@ type Context struct {
 	Hierarchy          *Hierarchy
 	Problems           *problems.Problems
 	Quirks             []string
-	Grammar            Grammar
+	Grammar            *Grammar
 	ReadOverrides      map[string]string
 }
 

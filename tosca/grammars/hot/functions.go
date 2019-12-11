@@ -14,7 +14,7 @@ import (
 // [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#intrinsic-functions]
 //
 
-var FunctionSourceCode = map[string]string{
+var FunctionScriptlets = map[string]string{
 	"and":                 profile.Profile["/hot/1.0/js/and.js"],
 	"contains":            profile.Profile["/hot/1.0/js/contains.js"],
 	"digest":              profile.Profile["/hot/1.0/js/digest.js"],

@@ -14,22 +14,28 @@ func GetVersion(context *tosca.Context) (*tosca.Context, *string) {
 	var versionContext *tosca.Context
 	var ok bool
 
-	if versionContext, ok = context.GetFieldChild("tosca_definitions_version"); ok {
-		if versionContext.ValidateType("string") {
-			return versionContext, versionContext.ReadString()
-		}
-	} else if versionContext, ok = context.GetFieldChild("heat_template_version"); ok {
-		if versionContext.Is("string") {
-			return versionContext, versionContext.ReadString()
-		}
+	for keyword := range Grammars {
+		if versionContext, ok = context.GetFieldChild(keyword); ok {
+			if keyword == "heat_template_version" {
+				// Hack to allow HOT to use YAML !!timestamp values
 
-		switch versionContext.Data.(type) {
-		case time.Time:
-			versionContext.Data = versionContext.Data.(time.Time).Format("2006-01-02")
-			return versionContext, versionContext.ReadString()
-		}
+				if versionContext.Is("string") {
+					return versionContext, versionContext.ReadString()
+				}
 
-		versionContext.ReportValueWrongType("string", "timestamp")
+				switch versionContext.Data.(type) {
+				case time.Time:
+					versionContext.Data = versionContext.Data.(time.Time).Format("2006-01-02")
+					return versionContext, versionContext.ReadString()
+				}
+
+				versionContext.ReportValueWrongType("string", "timestamp")
+			} else {
+				if versionContext.ValidateType("string") {
+					return versionContext, versionContext.ReadString()
+				}
+			}
+		}
 	}
 
 	return nil, nil

@@ -24,7 +24,7 @@ func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*n
 	parserLock.Lock()
 
 	// Phase 1: Read
-	if !context.ReadServiceTemplate(url_) || !context.Problems.Empty() {
+	if !context.ReadRoot(url_) || !context.Problems.Empty() {
 		parserLock.Unlock()
 		return nil, &context.Problems, errors.New("phase 1: read")
 	}
@@ -56,7 +56,7 @@ func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*n
 		return nil, &context.Problems, errors.New("phase 4: inheritance")
 	}
 
-	SetInputs(context.ServiceTemplate.EntityPtr, inputs)
+	SetInputs(context.Root.EntityPtr, inputs)
 
 	// Phase 5: Rendering
 	context.Render()
@@ -68,7 +68,7 @@ func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*n
 	parserLock.Unlock()
 
 	// Normalize
-	s, ok := Normalize(context.ServiceTemplate.EntityPtr)
+	s, ok := Normalize(context.Root.EntityPtr)
 	if !ok || !context.Problems.Empty() {
 		return nil, &context.Problems, errors.New("normalization")
 	}

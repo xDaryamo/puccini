@@ -10,7 +10,7 @@ import (
 var hierarchiesWork = ContextsWork{Phase: "hierarchies"}
 
 func (self *Context) AddHierarchies() {
-	self.ServiceTemplate.MergeHierarchies(make(tosca.HierarchyContext))
+	self.Root.MergeHierarchies(make(tosca.HierarchyContext))
 }
 
 func (self *Unit) MergeHierarchies(hierarchyContext tosca.HierarchyContext) {

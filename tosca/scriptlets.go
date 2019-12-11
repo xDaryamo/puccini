@@ -84,6 +84,31 @@ func (self *Scriptlet) Read() (string, error) {
 
 type ScriptletNamespace map[string]*Scriptlet
 
+func (self ScriptletNamespace) RegisterScriptlet(name string, scriptlet string, nativeArgumentIndexes []uint) {
+	self[name] = &Scriptlet{
+		Scriptlet:             js.CleanupScriptlet(scriptlet),
+		NativeArgumentIndexes: nativeArgumentIndexes,
+	}
+}
+
+func (self ScriptletNamespace) RegisterScriptlets(scriptlets map[string]string, nativeArgumentIndexes map[string][]uint, ignore ...string) {
+	for name, scriptlet := range scriptlets {
+		var ignore_ bool
+		for _, ignore__ := range ignore {
+			if name == ignore__ {
+				ignore_ = true
+				break
+			}
+		}
+
+		if ignore_ {
+			continue
+		}
+
+		self.RegisterScriptlet(name, scriptlet, nativeArgumentIndexes[name])
+	}
+}
+
 func (self ScriptletNamespace) Merge(from ScriptletNamespace) {
 	for name, scriptlet := range from {
 		self[name] = scriptlet

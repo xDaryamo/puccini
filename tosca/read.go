@@ -12,7 +12,7 @@ import (
 
 type Reader func(*Context) interface{}
 
-type Grammar map[string]Reader
+type Readers map[string]Reader
 
 const (
 	ReadFieldModeDefault       = 0
@@ -157,7 +157,7 @@ func NewReadField(fieldName string, tag string, context *Context, entity reflect
 		}
 
 		var ok bool
-		self.Reader, ok = context.Grammar[readerName]
+		self.Reader, ok = context.Grammar.Readers[readerName]
 		if !ok {
 			panic(fmt.Sprintf("reader not found: %s", readerName))
 		}

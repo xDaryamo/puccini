@@ -11,7 +11,7 @@ import (
 )
 
 type Context struct {
-	ServiceTemplate *Unit
+	Root *Unit
 	Problems        problems.Problems
 	Quirks          []string
 	Units           Units
@@ -50,9 +50,9 @@ func (self *Context) Traverse(phase string, traverse reflection.Traverser) {
 		return traverse(entityPtr)
 	}
 
-	reflection.Traverse(self.ServiceTemplate.EntityPtr, t)
+	reflection.Traverse(self.Root.EntityPtr, t)
 
-	for _, forType := range self.ServiceTemplate.GetContext().Namespace {
+	for _, forType := range self.Root.GetContext().Namespace {
 		for _, entityPtr := range forType {
 			reflection.Traverse(entityPtr, t)
 		}
@@ -63,6 +63,6 @@ func (self *Context) Traverse(phase string, traverse reflection.Traverser) {
 
 func (self *Context) PrintImports(indent int) {
 	format.PrintIndent(indent)
-	fmt.Fprintf(format.Stdout, "%s\n", format.ColorValue(self.ServiceTemplate.GetContext().URL.String()))
-	self.ServiceTemplate.PrintImports(indent, format.TreePrefix{})
+	fmt.Fprintf(format.Stdout, "%s\n", format.ColorValue(self.Root.GetContext().URL.String()))
+	self.Root.PrintImports(indent, format.TreePrefix{})
 }

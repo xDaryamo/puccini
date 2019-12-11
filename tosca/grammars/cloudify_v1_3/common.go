@@ -2,53 +2,50 @@ package cloudify_v1_3
 
 import (
 	"github.com/op/go-logging"
-	"github.com/tliron/puccini/js"
 	"github.com/tliron/puccini/tosca"
 )
 
 var log = logging.MustGetLogger("grammars.cloudify_v1_3")
 
-var Grammar = make(tosca.Grammar)
+var Grammar = tosca.NewGrammar()
 
 var DefaultScriptletNamespace = make(tosca.ScriptletNamespace)
 
 func init() {
-	Grammar["ServiceTemplate"] = ReadBlueprint
+	Grammar.RegisterVersion("tosca_definitions_version", "cloudify_dsl_1_3", "/cloudify/4.5/profile.yaml")
 
-	Grammar["Blueprint"] = ReadBlueprint
-	Grammar["DataType"] = ReadDataType
-	Grammar["Group"] = ReadGroup
-	Grammar["GroupPolicy"] = ReadGroupPolicy
-	Grammar["GroupPolicyTrigger"] = ReadGroupPolicyTrigger
-	Grammar["DSLResource"] = ReadDSLResource
-	Grammar["Import"] = ReadImport
-	Grammar["Input"] = ReadInput
-	Grammar["InterfaceAssignment"] = ReadInterfaceAssignment
-	Grammar["InterfaceDefinition"] = ReadInterfaceDefinition
-	Grammar["Metadata"] = ReadMetadata
-	Grammar["NodeTemplate"] = ReadNodeTemplate
-	Grammar["NodeTemplateCapability"] = ReadNodeTemplateCapability
-	Grammar["NodeTemplateInstances"] = ReadNodeTemplateInstances
-	Grammar["NodeType"] = ReadNodeType
-	Grammar["OperationDefinition"] = ReadOperationDefinition
-	Grammar["OperationAssignment"] = ReadOperationAssignment
-	Grammar["ParameterDefinition"] = ReadParameterDefinition
-	Grammar["Plugin"] = ReadPlugin
-	Grammar["Policy"] = ReadPolicy
-	Grammar["PolicyTriggerType"] = ReadPolicyTriggerType
-	Grammar["PolicyType"] = ReadPolicyType
-	Grammar["PropertyDefinition"] = ReadPropertyDefinition
-	Grammar["RelationshipType"] = ReadRelationshipType
-	Grammar["RelationshipAssignment"] = ReadRelationshipAssignment
-	Grammar["UploadResources"] = ReadUploadResources
-	Grammar["Unit"] = ReadUnit
-	Grammar["Value"] = ReadValue
-	Grammar["ValueDefinition"] = ReadValueDefinition
-	Grammar["Workflow"] = ReadWorkflow
+	Grammar.RegisterReader("$Root", ReadBlueprint)
+	Grammar.RegisterReader("$Unit", ReadUnit)
 
-	for name, scriptlet := range FunctionScriptlets {
-		DefaultScriptletNamespace[name] = &tosca.Scriptlet{
-			Scriptlet: js.CleanupScriptlet(scriptlet),
-		}
-	}
+	Grammar.RegisterReader("Blueprint", ReadBlueprint)
+	Grammar.RegisterReader("DataType", ReadDataType)
+	Grammar.RegisterReader("Group", ReadGroup)
+	Grammar.RegisterReader("GroupPolicy", ReadGroupPolicy)
+	Grammar.RegisterReader("GroupPolicyTrigger", ReadGroupPolicyTrigger)
+	Grammar.RegisterReader("DSLResource", ReadDSLResource)
+	Grammar.RegisterReader("Import", ReadImport)
+	Grammar.RegisterReader("Input", ReadInput)
+	Grammar.RegisterReader("InterfaceAssignment", ReadInterfaceAssignment)
+	Grammar.RegisterReader("InterfaceDefinition", ReadInterfaceDefinition)
+	Grammar.RegisterReader("Metadata", ReadMetadata)
+	Grammar.RegisterReader("NodeTemplate", ReadNodeTemplate)
+	Grammar.RegisterReader("NodeTemplateCapability", ReadNodeTemplateCapability)
+	Grammar.RegisterReader("NodeTemplateInstances", ReadNodeTemplateInstances)
+	Grammar.RegisterReader("NodeType", ReadNodeType)
+	Grammar.RegisterReader("OperationDefinition", ReadOperationDefinition)
+	Grammar.RegisterReader("OperationAssignment", ReadOperationAssignment)
+	Grammar.RegisterReader("ParameterDefinition", ReadParameterDefinition)
+	Grammar.RegisterReader("Plugin", ReadPlugin)
+	Grammar.RegisterReader("Policy", ReadPolicy)
+	Grammar.RegisterReader("PolicyTriggerType", ReadPolicyTriggerType)
+	Grammar.RegisterReader("PolicyType", ReadPolicyType)
+	Grammar.RegisterReader("PropertyDefinition", ReadPropertyDefinition)
+	Grammar.RegisterReader("RelationshipType", ReadRelationshipType)
+	Grammar.RegisterReader("RelationshipAssignment", ReadRelationshipAssignment)
+	Grammar.RegisterReader("UploadResources", ReadUploadResources)
+	Grammar.RegisterReader("Value", ReadValue)
+	Grammar.RegisterReader("ValueDefinition", ReadValueDefinition)
+	Grammar.RegisterReader("Workflow", ReadWorkflow)
+
+	DefaultScriptletNamespace.RegisterScriptlets(FunctionScriptlets, nil)
 }

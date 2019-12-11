@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	bpmn_v1_0 "github.com/tliron/puccini/tosca/profiles/bpmn/v1_0"
 	cloudify_v4_5 "github.com/tliron/puccini/tosca/profiles/cloudify/v4_5"
 	common "github.com/tliron/puccini/tosca/profiles/common/v1_0"
@@ -16,16 +18,7 @@ import (
 	"github.com/tliron/puccini/url"
 )
 
-var InternalProfilePaths = map[string]map[string]string{
-	"tosca_definitions_version": {
-		"tosca_simple_yaml_1_0":            simple_v1_1.ProfileInternalPath, // TODO: properly support 1.0
-		"tosca_simple_yaml_1_1":            simple_v1_1.ProfileInternalPath,
-		"tosca_simple_yaml_1_2":            simple_v1_2.ProfileInternalPath,
-		"tosca_simple_yaml_1_3":            simple_v1_3.ProfileInternalPath, // TODO
-		"tosca_simple_profile_for_nfv_1_0": simpleForNFV_v1_0.ProfileInternalPath,
-		"cloudify_dsl_1_3":                 cloudify_v4_5.ProfileInternalPath,
-	},
-}
+var ProfileInternalPaths = make(map[string]map[string]string)
 
 func init() {
 	initProfile(common.Profile)
@@ -41,14 +34,17 @@ func init() {
 }
 
 func initProfile(profile map[string]string) {
-	for k, v := range profile {
-		url.Internal[k] = v
+	for internalUrl, content := range profile {
+		if _, ok := url.Internal[internalUrl]; ok {
+			panic(fmt.Sprintf("internal URL conflict: %s", internalUrl))
+		}
+		url.Internal[internalUrl] = content
 	}
 }
 
 func GetProfileImportSpec(context *tosca.Context) (*tosca.ImportSpec, bool) {
 	if versionContext, version := GetVersion(context); version != nil {
-		if paths, ok := InternalProfilePaths[versionContext.Name]; ok {
+		if paths, ok := ProfileInternalPaths[versionContext.Name]; ok {
 			if path, ok := paths[*version]; ok {
 				if url_, err := url.NewValidInternalURL(path); err == nil {
 					return &tosca.ImportSpec{url_, nil, true}, true

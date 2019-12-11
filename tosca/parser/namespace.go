@@ -10,7 +10,7 @@ import (
 var namespacesWork = ContextsWork{Phase: "namespaces"}
 
 func (self *Context) AddNamespaces() {
-	self.ServiceTemplate.MergeNamespaces()
+	self.Root.MergeNamespaces()
 }
 
 func (self *Unit) MergeNamespaces() {
