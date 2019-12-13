@@ -10,7 +10,7 @@ require (
 	github.com/go-sourcemap/sourcemap v2.1.2+incompatible // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20190818114111-108c894c2c0e
 	github.com/mattn/go-colorable v0.1.4 // indirect
-	github.com/mattn/go-isatty v0.0.10 // indirect
+	github.com/mattn/go-isatty v0.0.11 // indirect
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7
 	github.com/segmentio/ksuid v1.0.2
 	github.com/spf13/cobra v0.0.5

@@ -16,6 +16,7 @@ import (
 //
 
 type ScalarUnit struct {
+	Type            string      `json:"$type" yaml:"$type"`
 	CanonicalString string      `json:"$string" yaml:"$string"`
 	CanonicalNumber interface{} `json:"$number" yaml:"$number"` // float64 or uint64
 	OriginalString  string      `json:"$originalString" yaml:"$originalString"`
@@ -30,6 +31,7 @@ type ScalarUnit struct {
 
 func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, canonicalUnitSingular string, canonicalUnitPlural string, re *regexp.Regexp, measures ScalarUnitMeasures, countable bool, caseSensitive bool) *ScalarUnit {
 	self := ScalarUnit{
+		Type:                  name,
 		countable:             countable,
 		canonicalUnitSingular: canonicalUnitSingular,
 		canonicalUnitPlural:   canonicalUnitPlural,

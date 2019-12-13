@@ -22,6 +22,7 @@ var VersionRE = regexp.MustCompile(
 //
 
 type Version struct {
+	Type            string `json:"$type" yaml:"$type"`
 	CanonicalString string `json:"$string" yaml:"$string"`
 	OriginalString  string `json:"$originalString" yaml:"$originalString"`
 
@@ -34,7 +35,7 @@ type Version struct {
 
 // tosca.Reader signature
 func ReadVersion(context *tosca.Context) interface{} {
-	var self Version
+	self := Version{Type: "version"}
 
 	if context.Is("string") {
 		self.OriginalString = *context.ReadString()

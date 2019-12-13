@@ -102,7 +102,7 @@ using JavaScript.
 The convention is recursive and assumes that each value is a map with one (and only one) of
 the following fields:
 
-* `$value`: this is a literal value (boolean, integer, float, string, list, map, etc.)
+* `$value`: this is an ARD literal value (boolean, integer, float, string, list, map, etc.)
 * `$list`: this is a list of coercibles
 * `$map`: this is a list of coercibles whereby each entry *must* also include a `$key` field,
   which itself is also a coercible
@@ -111,6 +111,7 @@ the following fields:
 If the `$value` is a map with custom fields, it may have one or more of the following special fields
 in addition to those custom fields:
 
+* `$type`: type name, which can help with interpreting the value
 * `$string`: textual representation of the value for human-readability, comparison, sorting, etc.
 * `$number`: numeric representation of the value (float or integer) for comparison, sorting, etc.
 * `$originalString`: if the value was parsed from a string then this would be that string
