@@ -14,7 +14,7 @@ clout.exec('tosca.helpers');
 function validate(v1, v2) {
 	if (arguments.length !== 2)
 		throw 'must have 1 argument';
-	return tosca.getComparable(v1) <= tosca.getComparable(v2);
+	return tosca.compare(v1, v2) <= 0;
 }
 `
 }

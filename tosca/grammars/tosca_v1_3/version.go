@@ -25,6 +25,7 @@ type Version struct {
 	Type            string `json:"$type" yaml:"$type"`
 	CanonicalString string `json:"$string" yaml:"$string"`
 	OriginalString  string `json:"$originalString" yaml:"$originalString"`
+	Comparer        string `json:"$comparer" yaml:"$comparer"`
 
 	Major     uint32 `json:"major" yaml:"major"`
 	Minor     uint32 `json:"minor" yaml:"minor"`
@@ -101,6 +102,11 @@ func (self *Version) String() string {
 	return self.CanonicalString
 }
 
+// HasComparer signature
+func (self *Version) SetComparer(comparer string) {
+	self.Comparer = comparer
+}
+
 func (self *Version) Compare(data interface{}) (int, error) {
 	if version, ok := data.(*Version); ok {
 		d := CompareUint32(self.Major, version.Major)
@@ -116,7 +122,7 @@ func (self *Version) Compare(data interface{}) (int, error) {
 			return d, nil
 		}
 		// Note: the qualifier is compared alphabetically, *not* semantically
-		d = strings.Compare(self.Qualifier, version.Qualifier)
+		d = strings.Compare(strings.ToLower(self.Qualifier), strings.ToLower(version.Qualifier))
 		if d != 0 {
 			return d, nil
 		}

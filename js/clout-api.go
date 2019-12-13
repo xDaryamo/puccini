@@ -34,6 +34,10 @@ func (self *CloutApi) Exec(scriptletName string) error {
 	return self.cloutContext.Exec(scriptletName)
 }
 
+func (self *CloutApi) Call(scriptletName string, functionName string, arguments []interface{}) (interface{}, error) {
+	return self.cloutContext.CallFunction(scriptletName, functionName, arguments, FunctionCallContext{})
+}
+
 func (self *CloutApi) NewCoercible(value goja.Value, site interface{}, source interface{}, target interface{}) (Coercible, error) {
 	if goja.IsUndefined(value) {
 		return nil, errors.New("undefined")

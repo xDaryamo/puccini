@@ -7,6 +7,10 @@ import (
 	"reflect"
 )
 
+type HasComparer interface {
+	SetComparer(comparer string)
+}
+
 //
 // DataType
 //

@@ -87,11 +87,18 @@ node_types:
           constraints:
           - in_range: [ -1.0, 1.0 ]
 
-      # Constraints also work on special types
+      # Constraints are type-aware, such that comparisons of special type values
+      # will be done semantically, e.g. a "scalar-unit":
       constrained_time:
         type: scalar-unit.time
         constraints:
         - in_range: [ 1m, 1h ]
+
+      # Another example showing semantic "version" comparison
+      constrained_version:
+        type: version
+        constraints:
+        - in_range: [ 1.2.3.beta-3, 1.2.3.beta-5 ]
 
       # In Puccini you can also create your own custom constraints
       # See: examples/javascript/constraints.yaml
@@ -192,9 +199,9 @@ topology_template:
         # Gibps, Mibps, etc. are also supported for multiples of 1024
         scalar_unit_bitrate: 1.23 KiBps
 
-        # Timestamp follows YAML 1.1's format, which is a subset of ISO8601:
+        # "timestamp" follows YAML 1.1's format, which is a subset of ISO8601:
         # http://yaml.org/type/timestamp.html
-        timestamp1: 1975-09-15 12:34:56.7 +2
+        timestamp1: '1975-09-15 12:34:56.7 +2'
 
         # Note that you can also use the YAML timestamp type directly:
         timestamp2: !!timestamp 1975-09-15t12:34:56.7+02:00
@@ -204,12 +211,9 @@ topology_template:
         # (You need *at least* major.minor)
         # With "--quirk=data_types.string.permissive" enabled Puccini will also accept
         # literal integers such as "5" and literal floats such as "5.2"
-        # Also note that currently comparison constraints will treat the value as a string, so
-        # "equals" is fine, but "less_than" etc. will not work as expected
-        # (This might be improved in the future) 
         version: 1.2.3.beta-4
 
-        # Range is actually limited in use:
+        # Range is actually quite limited in use:
         # * Unsigned integers only        
         # * Upper must be >= than lower
         # You can also use "UNBOUNDED" string for the upper bound, which will be converted to
@@ -231,3 +235,6 @@ topology_template:
 
         # Constraints: 1m <= x <= 1h
         constrained_time: 10.5m
+
+        # Constraints: 1.2.3.beta-3 <= x <= 1.2.3.beta-5
+        constrained_version: 1.2.3.beta-4

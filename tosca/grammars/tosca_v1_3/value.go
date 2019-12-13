@@ -1,6 +1,7 @@
 package tosca_v1_3
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -201,6 +202,14 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 					dataType.Context.ReportUnsupportedType()
 					dataType.typeProblemReported = true
 				}
+			}
+		}
+
+		if comparer, ok := dataType.GetMetadataValue("puccini.comparer"); ok {
+			if hasComparer, ok := self.Context.Data.(HasComparer); ok {
+				hasComparer.SetComparer(comparer)
+			} else {
+				panic(fmt.Sprintf("type has \"puccini.comparer\" metadata but does not support HasComparer interface: %T", self.Context.Data))
 			}
 		}
 

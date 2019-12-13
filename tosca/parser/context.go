@@ -11,13 +11,13 @@ import (
 )
 
 type Context struct {
-	Root *Unit
-	Problems        problems.Problems
-	Quirks          []string
-	Units           Units
-	Parsing         sync.Map
-	WG              sync.WaitGroup
-	Locker          sync.Mutex
+	Root     *Unit
+	Problems problems.Problems
+	Quirks   []string
+	Units    Units
+	Parsing  sync.Map
+	WG       sync.WaitGroup
+	Locker   sync.Mutex
 }
 
 func NewContext(quirks []string) Context {

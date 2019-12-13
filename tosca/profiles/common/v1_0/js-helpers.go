@@ -82,5 +82,20 @@ tosca.getComparable = function(v) {
 		return c;
 	return v;
 };
-`
+
+tosca.compare = function(v1, v2) {
+	var c = v1.$comparer;
+	if (c === undefined)
+		c = v2.$comparer;
+	if (c !== undefined)
+		return clout.call(c, 'compare', [v1, v2]);
+	v1 = tosca.getComparable(v1);
+	v2 = tosca.getComparable(v2);
+	if (v1 == v2)
+		return 0;
+	else if (v1 < v2)
+		return -1;
+	else
+		return 1;
+}`
 }

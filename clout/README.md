@@ -108,6 +108,12 @@ the following fields:
   which itself is also a coercible
 * `$functionCall`: this is a function call (see notation below)
 
+The following additional fields are optional for all coercibles:
+
+* `$description`: a human-readable description of the coercible
+* `$constraints`: a list of coercibles in the `$functionCall` format (see notation below)
+* `$comparer`: name of scriptlet to be used for value comparisons
+
 If the `$value` is a map with custom fields, it may have one or more of the following special fields
 in addition to those custom fields:
 
@@ -115,11 +121,6 @@ in addition to those custom fields:
 * `$string`: textual representation of the value for human-readability, comparison, sorting, etc.
 * `$number`: numeric representation of the value (float or integer) for comparison, sorting, etc.
 * `$originalString`: if the value was parsed from a string then this would be that string
-
-The following additional fields are optional for all coercibles:
-
-* `$description`: a human-readable description of the coercible
-* `$constraints`: a list of coercibles in the `$functionCall` format (see notation below)
 
 The following additional fields are optional for `$list` coercibles:
 

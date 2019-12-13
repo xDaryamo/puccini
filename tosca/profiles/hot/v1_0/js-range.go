@@ -14,10 +14,10 @@ function validate(v, bounds) {
 		throw 'must provide "min" and/or "max"';
 	v = tosca.getComparable(v);
 	if (bounds.min !== undefined)
-		if (v < tosca.getComparable(bounds.min))
+		if (tosca.compare(v, bounds.min) < 0)
 			return false;
 	if (bounds.max !== undefined)
-		if (v > tosca.getComparable(bounds.max))
+		if (tosca.compare(v, bounds.max) > 0)
 			return false;
 	return true;
 }
