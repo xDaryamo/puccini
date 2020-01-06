@@ -52,9 +52,9 @@ func ReadTemplate(context *tosca.Context) interface{} {
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 
 	if heatTemplateVersionContext, ok := context.GetFieldChild("heat_template_version"); ok {
-		switch heatTemplateVersionContext.Data.(type) {
+		switch data := heatTemplateVersionContext.Data.(type) {
 		case time.Time:
-			heatTemplateVersionContext.Data = heatTemplateVersionContext.Data.(time.Time).Format("2006-01-02")
+			heatTemplateVersionContext.Data = data.Format("2006-01-02")
 		}
 
 		if heatTemplateVersionContext.Is("string") {

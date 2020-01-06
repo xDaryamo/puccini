@@ -56,26 +56,28 @@ func (self *Value) ValidateParameterType(type_ string) bool {
 func (self *Value) CoerceParameterType(type_ string) {
 	switch type_ {
 	case "boolean":
-		switch v := self.Context.Data.(type) {
+		switch data := self.Context.Data.(type) {
 		case string:
-			switch v {
+			switch data {
 			case "t", "true", "on", "y", "yes", "1":
 				self.Context.Data = true
 			case "f", "false", "off", "n", "no", "0":
 				self.Context.Data = false
 			}
+
 		case int:
-			switch v {
+			switch data {
 			case 1:
 				self.Context.Data = true
 			case 0:
 				self.Context.Data = false
 			}
 		}
+
 	case "comma_delimited_list":
-		switch v := self.Context.Data.(type) {
+		switch data := self.Context.Data.(type) {
 		case string:
-			split := strings.Split(v, ",")
+			split := strings.Split(data, ",")
 			list := make(ard.List, len(split))
 			for index, s := range split {
 				list[index] = s

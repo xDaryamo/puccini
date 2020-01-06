@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// Note: we *must* use the "path" package rather than "filepath" to ensure consistenty with Windows
+// Note: we *must* use the "path" package rather than "filepath" to ensure consistency with Windows
 
 //
 // ZipURL
@@ -24,7 +24,7 @@ func NewZipURL(path string, archiveUrl *FileURL) *ZipURL {
 }
 
 func NewZipURLFromURL(url string) (*ZipURL, error) {
-	archive, path, err := ParseZipURL(url)
+	archive, path, err := parseZipURL(url)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func NewValidZipURL(path string, archiveURL *FileURL) (*ZipURL, error) {
 }
 
 func NewValidZipURLFromURL(url string) (*ZipURL, error) {
-	archive, path, err := ParseZipURL(url)
+	archive, path, err := parseZipURL(url)
 	if err != nil {
 		return nil, err
 	}
@@ -69,10 +69,20 @@ func NewValidZipURLFromURL(url string) (*ZipURL, error) {
 		return nil, err
 	}
 
-	switch u := archiveUrl.(type) {
+	switch url_ := archiveUrl.(type) {
 	case *FileURL:
-		return NewValidZipURL(path, u)
-		// TODO": download NetURL?
+		return NewValidZipURL(path, url_)
+
+	case *NetworkURL:
+		if file, err := Download(url_, "puccini-*.zip"); err == nil {
+			if fileUrl, err := NewValidFileURL(file.Name()); err == nil {
+				return NewValidZipURL(path, fileUrl)
+			} else {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
 	}
 
 	return nil, fmt.Errorf("unsupported archive URL type in \"zip:\" URL: %s", url)
@@ -129,7 +139,7 @@ func (self *ZipURL) Open() (io.Reader, error) {
 	return nil, fmt.Errorf("path not found in zip: %s", self.Path)
 }
 
-func ParseZipURL(url string) (string, string, error) {
+func parseZipURL(url string) (string, string, error) {
 	if !strings.HasPrefix(url, "zip:") {
 		return "", "", fmt.Errorf("not a \"zip:\" URL: %s", url)
 	}
@@ -158,6 +168,6 @@ func (self ZipFileReadCloser) Read(p []byte) (n int, err error) {
 
 // io.Closer interface
 func (self ZipFileReadCloser) Close() error {
-	self.FileReader.Close()
-	return self.ArchiveReader.Close()
+	self.ArchiveReader.Close()
+	return self.FileReader.Close()
 }

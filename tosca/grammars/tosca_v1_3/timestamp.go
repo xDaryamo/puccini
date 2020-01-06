@@ -162,7 +162,7 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 		if !valid {
 			return &self
 		}
-	} else if context.Is("time") {
+	} else if context.Is("!!timestamp") {
 		// Note: OriginalString will be empty because it is not preserved by our parsing methods
 		// (In the YAML parser we could keep it if we
 
@@ -185,7 +185,7 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 		self.TZHour = uint32(tzSeconds / 3600)
 		self.TZMinute = uint32((tzSeconds % 3600) / 60)
 	} else {
-		context.ReportValueWrongType("string", "timestamp")
+		context.ReportValueWrongType("string", "!!timestamp")
 		return &self
 	}
 

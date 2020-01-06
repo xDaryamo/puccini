@@ -35,25 +35,23 @@ func EnsureMaps(map_ interface{}) Map {
 func ToMaps(value interface{}) (interface{}, bool) {
 	changed := false
 
-	switch value.(type) {
+	switch value_ := value.(type) {
 	case StringMap:
-		value = ToMap(value.(StringMap))
+		value = ToMap(value_)
 		changed = true
 
 	case Map:
-		map_ := value.(Map)
-		for key, element := range map_ {
-			if value, c := ToMaps(element); c {
-				map_[key] = value
+		for key, element := range value_ {
+			if value, changed_ := ToMaps(element); changed_ {
+				value_[key] = value
 				changed = true
 			}
 		}
 
 	case List:
-		list := value.(List)
-		for index, element := range list {
-			if value, c := ToMaps(element); c {
-				list[index] = value
+		for index, element := range value_ {
+			if value, changed_ := ToMaps(element); changed_ {
+				value_[index] = value
 				changed = true
 			}
 		}
@@ -85,25 +83,23 @@ func EnsureStringMaps(map_ interface{}) StringMap {
 func ToStringMaps(value interface{}) (interface{}, bool) {
 	changed := false
 
-	switch value.(type) {
+	switch value_ := value.(type) {
 	case Map:
-		value = ToStringMap(value.(Map))
+		value = ToStringMap(value_)
 		changed = true
 
 	case StringMap:
-		map_ := value.(StringMap)
-		for key, element := range map_ {
-			if value, c := ToStringMaps(element); c {
-				map_[key] = value
+		for key, element := range value_ {
+			if value, changed_ := ToStringMaps(element); changed_ {
+				value_[key] = value
 				changed = true
 			}
 		}
 
 	case List:
-		list := value.(List)
-		for index, element := range list {
-			if value, c := ToStringMaps(element); c {
-				list[index] = value
+		for index, element := range value_ {
+			if value, changed_ := ToStringMaps(element); changed_ {
+				value_[index] = value
 				changed = true
 			}
 		}

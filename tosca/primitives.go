@@ -9,23 +9,23 @@ import (
 )
 
 var PrimitiveTypeValidators = map[string]reflection.TypeValidator{
-	"boolean": reflection.IsBool,
-	"integer": reflection.IsInt,
-	"float":   reflection.IsFloat,
-	"string":  reflection.IsString,
-	"time":    reflection.IsTime, // must not conflict with TOSCA "timestamp" name
-	"list":    reflection.IsSliceOfStruct,
-	"map":     reflection.IsMap,
+	"boolean":     reflection.IsBool,
+	"integer":     reflection.IsInt,
+	"float":       reflection.IsFloat,
+	"string":      reflection.IsString,
+	"!!timestamp": reflection.IsTime, // With the "!!" prefix so it won't conflict with TOSCA "timestamp" type name
+	"list":        reflection.IsSliceOfStruct,
+	"map":         reflection.IsMap,
 }
 
 var PrimitiveTypeZeroes = map[string]interface{}{
-	"boolean": false,
-	"integer": 0,
-	"float":   0.0,
-	"string":  "",
-	"time":    time.Time{},
-	"list":    ard.List{},
-	"map":     make(ard.Map),
+	"boolean":     false,
+	"integer":     0,
+	"float":       0.0,
+	"string":      "",
+	"!!timestamp": time.Time{},
+	"list":        ard.List{},
+	"map":         make(ard.Map),
 }
 
 func PrimitiveTypeName(value interface{}) string {
@@ -37,7 +37,7 @@ func PrimitiveTypeName(value interface{}) string {
 	case float64: // YAML parser returns float64
 		return "float"
 	case time.Time: // YAML parser returns time.Time
-		return "time"
+		return "!!timestamp"
 	case ard.List:
 		return "list"
 	case ard.Map:

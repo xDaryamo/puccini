@@ -66,6 +66,7 @@ profile tosca/profiles/common tosca/common 1.0
 profile tosca/profiles/simple tosca/simple 1.3
 profile tosca/profiles/simple tosca/simple 1.2
 profile tosca/profiles/simple tosca/simple 1.1
+profile tosca/profiles/simple tosca/simple 1.0
 profile tosca/profiles/simple-for-nfv tosca/simple-for-nfv 1.0
 profile tosca/profiles/kubernetes tosca/kubernetes 1.0
 profile tosca/profiles/openstack tosca/openstack 1.0

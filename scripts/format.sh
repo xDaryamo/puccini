@@ -32,9 +32,11 @@ gofmt -w -s -e \
 	"$ROOT/tosca/profiles/hot/v1_0" \
 	"$ROOT/tosca/profiles/kubernetes/v1_0" \
 	"$ROOT/tosca/profiles/openstack/v1_0" \
+	"$ROOT/tosca/profiles/simple/v1_0" \
 	"$ROOT/tosca/profiles/simple/v1_1" \
 	"$ROOT/tosca/profiles/simple/v1_2" \
 	"$ROOT/tosca/profiles/simple/v1_3" \
 	"$ROOT/tosca/profiles/simple-for-nfv/v1_0" \
 	"$ROOT/tosca/reflection" \
-	"$ROOT/url"
+	"$ROOT/url" \
+	"$ROOT/version"

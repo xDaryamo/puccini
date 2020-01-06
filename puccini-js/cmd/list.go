@@ -42,14 +42,15 @@ func List(clout_ *clout.Clout) {
 }
 
 func ListValue(value interface{}, path []string) {
-	switch v := value.(type) {
+	switch value_ := value.(type) {
 	case string:
 		if !common.Quiet {
 			fmt.Fprintf(format.Stdout, "%s\n", strings.Join(path, "."))
 		}
+
 	case ard.StringMap:
-		for key, vv := range v {
-			ListValue(vv, append(path, key))
+		for key, value__ := range value_ {
+			ListValue(value__, append(path, key))
 		}
 	}
 }

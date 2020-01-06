@@ -7,23 +7,53 @@ import (
 	"os"
 	"path"
 	"strings"
+	"sync"
 
+	"github.com/segmentio/ksuid"
 	"github.com/tliron/puccini/common"
 )
 
-// Note: we *must* use the "path" package rather than "filepath" to ensure consistenty with Windows
+// Note: we *must* use the "path" package rather than "filepath" to ensure consistency with Windows
 
-// This map is *not thread safe*. It is expected to be written to (single-threadedly) during
-// initialization, after which it should be treated as read-only in multi-threaded environments.
-var Internal = make(map[string]string)
+var Internal sync.Map
+
+func RegisterInternalURL(path string, content string) error {
+	if _, loaded := Internal.LoadOrStore(path, content); !loaded {
+		return nil
+	} else {
+		return fmt.Errorf("internal URL conflict: %s", path)
+	}
+}
+
+func ReadToInternalURL(path string, reader io.Reader) (*InternalURL, error) {
+	if readerCloser, ok := reader.(io.ReadCloser); ok {
+		defer readerCloser.Close()
+	}
+	if buffer, err := ioutil.ReadAll(reader); err == nil {
+		if err = RegisterInternalURL(path, common.BytesToString(buffer)); err != nil {
+			return nil, err
+		}
+	} else {
+		return nil, err
+	}
+	return NewValidInternalURL(path)
+}
+
+func ReadToInternalURLFromStdin(format string) (*InternalURL, error) {
+	path := fmt.Sprintf("<stdin:%s>", ksuid.New().String())
+	if format != "" {
+		path = fmt.Sprintf("%s.%s", path, format)
+	}
+	return ReadToInternalURL(path, os.Stdin)
+}
 
 //
 // InternalURL
 //
 
 type InternalURL struct {
-	Path string
-	Data string
+	Path    string
+	Content string
 }
 
 func NewInternalURL(path string) *InternalURL {
@@ -31,32 +61,16 @@ func NewInternalURL(path string) *InternalURL {
 }
 
 func NewValidInternalURL(path string) (*InternalURL, error) {
-	data, ok := Internal[path]
-	if !ok {
+	if content, ok := Internal.Load(path); ok {
+		return &InternalURL{path, content.(string)}, nil
+	} else {
 		return nil, fmt.Errorf("internal URL not found: %s", path)
 	}
-	return &InternalURL{path, data}, nil
 }
 
 func NewValidRelativeInternalURL(path_ string, origin *InternalURL) (*InternalURL, error) {
 	path_ = path.Join(origin.Path, path_)
 	return NewValidInternalURL(path_)
-}
-
-func ReadInternalURL(path string, reader io.Reader) (*InternalURL, error) {
-	if readerCloser, ok := reader.(io.ReadCloser); ok {
-		defer readerCloser.Close()
-	}
-	buffer, err := ioutil.ReadAll(reader)
-	if err != nil {
-		return nil, err
-	}
-	Internal[path] = common.BytesToString(buffer)
-	return NewValidInternalURL(path)
-}
-
-func ReadInternalURLFromStdin(format string) (*InternalURL, error) {
-	return ReadInternalURL(fmt.Sprintf("<stdin>.%s", format), os.Stdin)
 }
 
 // URL interface
@@ -81,5 +95,5 @@ func (self *InternalURL) Key() string {
 
 // URL interface
 func (self *InternalURL) Open() (io.Reader, error) {
-	return strings.NewReader(self.Data), nil
+	return strings.NewReader(self.Content), nil
 }

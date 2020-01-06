@@ -124,21 +124,21 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 			}
 
 			if (typeName == "string") && self.Context.HasQuirk("data_types.string.permissive") {
-				switch self.Context.Data.(type) {
+				switch data := self.Context.Data.(type) {
 				case bool:
-					self.Context.Data = strconv.FormatBool(self.Context.Data.(bool))
+					self.Context.Data = strconv.FormatBool(data)
 
 				case int:
-					self.Context.Data = strconv.FormatInt(int64(self.Context.Data.(int)), 10)
+					self.Context.Data = strconv.FormatInt(int64(data), 10)
 
 				case int64:
-					self.Context.Data = strconv.FormatInt(self.Context.Data.(int64), 10)
+					self.Context.Data = strconv.FormatInt(data, 10)
 
 				case float64: // YAML parser returns float64
-					self.Context.Data = strconv.FormatFloat(self.Context.Data.(float64), 'g', -1, 64)
+					self.Context.Data = strconv.FormatFloat(data, 'g', -1, 64)
 
 				case time.Time:
-					self.Context.Data = self.Context.Data.(time.Time).String()
+					self.Context.Data = data.String()
 				}
 			}
 
@@ -273,32 +273,31 @@ func ReadAndRenderBareAttribute(context *tosca.Context, dataType *DataType) *Val
 func (self *Value) Normalize() normal.Constrainable {
 	var constrainable normal.Constrainable
 
-	switch self.Context.Data.(type) {
+	switch data := self.Context.Data.(type) {
 	case ard.Map:
 		// This is for complex types (the "map" type is a ValueMap, below)
-		m := normal.NewMap()
-		for key, value := range self.Context.Data.(ard.Map) {
+		map_ := normal.NewMap()
+		for key, value := range data {
 			if v, ok := value.(*Value); ok {
-				m.Put(key, v.Normalize())
+				map_.Put(key, v.Normalize())
 			} else {
-				m.Put(key, normal.NewValue(value))
+				map_.Put(key, normal.NewValue(value))
 			}
 		}
-		constrainable = m
+		constrainable = map_
 
 	case *ValueList:
-		constrainable = self.Context.Data.(*ValueList).Normalize(self.Context)
+		constrainable = data.Normalize(self.Context)
 
 	case *ValueMap:
-		constrainable = self.Context.Data.(*ValueMap).Normalize(self.Context)
+		constrainable = data.Normalize(self.Context)
 
 	case *tosca.FunctionCall:
-		functionCall := self.Context.Data.(*tosca.FunctionCall)
-		NormalizeFunctionCallArguments(functionCall, self.Context)
-		constrainable = normal.NewFunctionCall(functionCall)
+		NormalizeFunctionCallArguments(data, self.Context)
+		constrainable = normal.NewFunctionCall(data)
 
 	default:
-		constrainable = normal.NewValue(self.Context.Data)
+		constrainable = normal.NewValue(data)
 	}
 
 	self.ConstraintClauses.NormalizeConstrainable(self.Context, constrainable)

@@ -6,6 +6,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/op/go-logging"
+	"github.com/tebeka/atexit"
 )
 
 const FILE_WRITE_PERMISSIONS = 0600
@@ -31,7 +32,7 @@ func ConfigureLogging(verbosity int, file *string) {
 		if err != nil {
 			message := fmt.Sprintf("log file error: %s", err)
 			fmt.Fprintln(color.Error, color.RedString(message))
-			os.Exit(1)
+			atexit.Exit(1)
 		}
 		// defer f.Close() ???
 		backend = logging.NewLogBackend(f, "", 0)

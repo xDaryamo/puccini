@@ -18,8 +18,7 @@ var Grammar = tosca.NewGrammar()
 var DefaultScriptletNamespace = make(tosca.ScriptletNamespace)
 
 func init() {
-	// TODO: Using 1.1 profile, but we should create a proper 1.0 profile
-	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_yaml_1_0", "/tosca/simple/1.1/profile.yaml")
+	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_yaml_1_0", "/tosca/simple/1.0/profile.yaml")
 
 	Grammar.RegisterReader("$Root", tosca_v1_1.ReadServiceTemplate) // 1.1
 	Grammar.RegisterReader("$Unit", tosca_v1_1.ReadUnit)            // 1.1

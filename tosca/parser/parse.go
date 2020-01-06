@@ -13,7 +13,6 @@ import (
 var parserLock sync.Mutex
 
 func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*normal.ServiceTemplate, *problems.Problems, error) {
-
 	context := NewContext(quirks)
 
 	url_, err := url.NewValidURL(urlString, nil)

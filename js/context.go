@@ -7,6 +7,7 @@ import (
 
 	"github.com/dop251/goja"
 	"github.com/op/go-logging"
+	"github.com/tebeka/atexit"
 	"github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/format"
 )
@@ -90,7 +91,7 @@ func (self *Context) Failf(f string, args ...interface{}) {
 	if !self.Quiet {
 		fmt.Fprintln(self.Stderr, format.ColorError(fmt.Sprintf(f, args...)))
 	}
-	os.Exit(1)
+	atexit.Exit(1)
 }
 
 func (self *Context) FailOnError(err error) {

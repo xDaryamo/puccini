@@ -23,9 +23,9 @@ func GetVersion(context *tosca.Context) (*tosca.Context, *string) {
 					return versionContext, versionContext.ReadString()
 				}
 
-				switch versionContext.Data.(type) {
+				switch data := versionContext.Data.(type) {
 				case time.Time:
-					versionContext.Data = versionContext.Data.(time.Time).Format("2006-01-02")
+					versionContext.Data = data.Format("2006-01-02")
 					return versionContext, versionContext.ReadString()
 				}
 

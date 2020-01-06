@@ -24,18 +24,19 @@ func NewValidFileURL(path string) (*FileURL, error) {
 		path = filepath.Clean(path)
 	} else {
 		var err error
-		path, err = filepath.Abs(path)
-		if err != nil {
+		if path, err = filepath.Abs(path); err != nil {
 			return nil, err
 		}
 	}
-	info, err := os.Stat(path)
-	if err != nil {
+
+	if info, err := os.Stat(path); err == nil {
+		if !info.Mode().IsRegular() {
+			return nil, fmt.Errorf("URL path does not point to a file: %s", path)
+		}
+	} else {
 		return nil, err
 	}
-	if !info.Mode().IsRegular() {
-		return nil, fmt.Errorf("URL path does not point to a file: %s", path)
-	}
+
 	return NewFileURL(path), nil
 }
 
@@ -66,17 +67,17 @@ func (self *FileURL) Key() string {
 
 // URL interface
 func (self *FileURL) Open() (io.Reader, error) {
-	reader, err := os.Open(self.Path)
-	if err != nil {
+	if reader, err := os.Open(self.Path); err == nil {
+		return reader, nil
+	} else {
 		return nil, err
 	}
-	return reader, nil
 }
 
 func isValidFile(path string) bool {
-	info, err := os.Stat(path)
-	if err != nil {
+	if info, err := os.Stat(path); err == nil {
+		return info.Mode().IsRegular()
+	} else {
 		return false
 	}
-	return info.Mode().IsRegular()
 }

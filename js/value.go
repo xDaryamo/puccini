@@ -62,14 +62,14 @@ func (self *Value) Coerce() (interface{}, error) {
 	data := self.Data
 
 	var err error
-	switch data.(type) {
+	switch data_ := data.(type) {
 	case List:
-		if data, err = data.(List).Coerce(); err != nil {
+		if data, err = data_.Coerce(); err != nil {
 			return nil, err
 		}
 
 	case Map:
-		if data, err = data.(Map).Coerce(); err != nil {
+		if data, err = data_.Coerce(); err != nil {
 			return nil, err
 		}
 	}

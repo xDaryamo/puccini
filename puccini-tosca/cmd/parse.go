@@ -3,11 +3,11 @@ package cmd
 import (
 	"fmt"
 	"io"
-	"os"
 	"sort"
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/tebeka/atexit"
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/format"
@@ -66,9 +66,9 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	var err error
 	if urlString == "" {
 		log.Infof("parsing stdin", urlString)
-		url_, err = url.ReadInternalURLFromStdin("yaml")
+		url_, err = url.ReadToInternalURLFromStdin(ardFormat)
 	} else {
-		log.Infof("parsing %s", urlString)
+		log.Infof("parsing \"%s\"", urlString)
 		url_, err = url.NewValidURL(urlString, nil)
 	}
 	common.FailOnError(err)
@@ -82,7 +82,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 			if !common.Quiet {
 				context.Problems.Print()
 			}
-			os.Exit(1)
+			atexit.Exit(1)
 		}
 
 		// Stop here if there are problems
@@ -90,7 +90,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 			if !common.Quiet {
 				context.Problems.Print()
 			}
-			os.Exit(1)
+			atexit.Exit(1)
 		}
 
 		if !common.Quiet && ToPrintPhase(1) {
@@ -176,7 +176,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	}
 
 	if !context.Problems.Empty() {
-		os.Exit(1)
+		atexit.Exit(1)
 	}
 
 	// Normalize
@@ -199,7 +199,7 @@ func ToPrintPhase(phase uint) bool {
 
 func ParseInputs() {
 	if inputsUrl != "" {
-		log.Infof("load inputs from %s", inputsUrl)
+		log.Infof("load inputs from \"%s\"", inputsUrl)
 		url_, err := url.NewValidURL(inputsUrl, nil)
 		common.FailOnError(err)
 		reader, err := url_.Open()
@@ -214,7 +214,7 @@ func ParseInputs() {
 				inputValues[yamlkeys.KeyString(key)] = value
 			}
 		} else {
-			common.Failf("malformed inputs in %s", inputsUrl)
+			common.Failf("malformed inputs in \"%s\"", inputsUrl)
 		}
 	}
 

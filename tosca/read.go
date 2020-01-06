@@ -367,11 +367,12 @@ func (self *Context) ReadInteger() *int64 {
 func (self *Context) ReadFloat() *float64 {
 	if self.ValidateType("float") {
 		var value float64
-		switch d := self.Data.(type) {
+		switch data := self.Data.(type) {
 		case float64:
-			value = d
+			value = data
+
 		case float32:
-			value = float64(d)
+			value = float64(data)
 		}
 		return &value
 	}

@@ -40,34 +40,32 @@ func (self *Value) GetKey() string {
 func (self *Value) Normalize() normal.Constrainable {
 	var constrainable normal.Constrainable
 
-	switch self.Context.Data.(type) {
+	switch data := self.Context.Data.(type) {
 	case ard.List:
-		list := self.Context.Data.(ard.List)
-		l := normal.NewList(len(list))
-		for index, value := range list {
-			l.Set(index, NewValue(self.Context.ListChild(index, value)).Normalize())
+		list := normal.NewList(len(data))
+		for index, value := range data {
+			list.Set(index, NewValue(self.Context.ListChild(index, value)).Normalize())
 		}
-		constrainable = l
+		constrainable = list
 
 	case ard.Map:
-		m := normal.NewMap()
-		for key, value := range self.Context.Data.(ard.Map) {
+		map_ := normal.NewMap()
+		for key, value := range data {
 			if _, ok := key.(string); !ok {
 				// HOT does not support complex keys
 				self.Context.MapChild(key, yamlkeys.KeyData(key)).ReportValueWrongType("string")
 			}
 			name := yamlkeys.KeyString(key)
-			m.Put(name, NewValue(self.Context.MapChild(name, value)).Normalize())
+			map_.Put(name, NewValue(self.Context.MapChild(name, value)).Normalize())
 		}
-		constrainable = m
+		constrainable = map_
 
 	case *tosca.FunctionCall:
-		functionCall := self.Context.Data.(*tosca.FunctionCall)
-		NormalizeFunctionCallArguments(functionCall, self.Context)
-		constrainable = normal.NewFunctionCall(functionCall)
+		NormalizeFunctionCallArguments(data, self.Context)
+		constrainable = normal.NewFunctionCall(data)
 
 	default:
-		constrainable = normal.NewValue(self.Context.Data)
+		constrainable = normal.NewValue(data)
 	}
 
 	self.Constraints.Normalize(self.Context, constrainable)

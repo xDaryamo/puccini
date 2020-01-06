@@ -6,13 +6,13 @@ package tosca
 
 type GrammarVersion struct {
 	Version             string
-	ProfileInternalPath string
+	ImplicitProfilePath string
 }
 
 type GrammarVersions map[string][]GrammarVersion
 
-func (self GrammarVersions) Add(keyword string, version string, profileInternalPath string) {
-	grammarVersion := GrammarVersion{version, profileInternalPath}
+func (self GrammarVersions) Add(keyword string, version string, implicitProfilePath string) {
+	grammarVersion := GrammarVersion{version, implicitProfilePath}
 	self[keyword] = append(self[keyword], grammarVersion)
 }
 
@@ -32,8 +32,8 @@ func NewGrammar() Grammar {
 	}
 }
 
-func (self *Grammar) RegisterVersion(keyword string, version string, profileInternalPath string) {
-	self.Versions.Add(keyword, version, profileInternalPath)
+func (self *Grammar) RegisterVersion(keyword string, version string, implicitProfilePath string) {
+	self.Versions.Add(keyword, version, implicitProfilePath)
 }
 
 func (self *Grammar) RegisterReader(name string, reader Reader) {

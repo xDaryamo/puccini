@@ -64,11 +64,12 @@ func (self *TopologyTemplate) SetInputs(inputs map[string]interface{}) {
 						// In JSON, everything is a float
 						// But we want to support inputs coming from JSON
 						// So we'll auto-convert
-						switch v := childContext.Data.(type) {
+						switch data := childContext.Data.(type) {
 						case float64:
-							childContext.Data = int64(v)
+							childContext.Data = int64(data)
+
 						case float32:
-							childContext.Data = int64(v)
+							childContext.Data = int64(data)
 						}
 					}
 				}

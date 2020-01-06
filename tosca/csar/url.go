@@ -10,10 +10,21 @@ import (
 	"github.com/tliron/puccini/url"
 )
 
-func GetServiceTemplateURL(csarUrl url.URL) (url.URL, error) {
-	csarFileUrl, ok := csarUrl.(*url.FileURL)
-	if !ok {
-		return nil, fmt.Errorf("can't process CSAR file: %s", csarUrl.String())
+func GetRootURL(csarUrl url.URL) (url.URL, error) {
+	var csarFileUrl *url.FileURL
+	switch url_ := csarUrl.(type) {
+	case *url.FileURL:
+		csarFileUrl = url_
+	case *url.NetworkURL:
+		if file, err := url.Download(url_, "puccini-*.csar"); err == nil {
+			if csarFileUrl, err = url.NewValidFileURL(file.Name()); err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
+	default:
+		return nil, fmt.Errorf("can't open CSAR URL: %s", csarUrl.String())
 	}
 
 	metaUrl, err := url.NewValidZipURL("/TOSCA-Metadata/TOSCA.meta", csarFileUrl)

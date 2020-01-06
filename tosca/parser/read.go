@@ -40,7 +40,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 	switch toscaContext.URL.Format() {
 	case "csar", "zip":
 		var err error
-		if toscaContext.URL, err = csar.GetServiceTemplateURL(toscaContext.URL); err != nil {
+		if toscaContext.URL, err = csar.GetRootURL(toscaContext.URL); err != nil {
 			toscaContext.ReportError(err)
 			return nil, false
 		}
@@ -90,7 +90,7 @@ func (self *Context) goReadImports(container *Unit) {
 	}
 
 	// Implicit import
-	if implicitImportSpec, ok := GetProfileImportSpec(container.GetContext()); ok {
+	if implicitImportSpec, ok := GetImplicitImportSpec(container.GetContext()); ok {
 		importSpecs = append(importSpecs, implicitImportSpec)
 	}
 
@@ -116,12 +116,13 @@ func (self *Context) goReadImports(container *Unit) {
 
 		promise := NewPromise()
 		if cached, inCache := cache.LoadOrStore(key, promise); inCache {
-			switch c := cached.(type) {
+			switch cached_ := cached.(type) {
 			case Promise:
 				// Wait for promise
 				log.Debugf("{read} cache promise: %s", key)
 				self.WG.Add(1)
-				go self.waitForPromise(c, key, container, importSpec.NameTransformer)
+				go self.waitForPromise(cached_, key, container, importSpec.NameTransformer)
+
 			default: // entityPtr
 				// Cache hit
 				log.Debugf("{read} cache hit: %s", key)
@@ -145,6 +146,7 @@ func (self *Context) waitForPromise(promise Promise, key string, container *Unit
 		switch cached.(type) {
 		case Promise:
 			log.Debugf("{read} cache promise failed: %s", key)
+
 		default: // entityPtr
 			// Cache hit
 			log.Debugf("{read} cache promise hit: %s", key)

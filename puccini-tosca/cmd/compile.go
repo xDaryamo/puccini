@@ -1,9 +1,8 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/spf13/cobra"
+	"github.com/tebeka/atexit"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/format"
 	"github.com/tliron/puccini/tosca/compiler"
@@ -52,7 +51,7 @@ func Compile(urlString string) {
 			if !common.Quiet {
 				context.Problems.Print()
 			}
-			os.Exit(1)
+			atexit.Exit(1)
 		}
 	}
 
@@ -63,7 +62,7 @@ func Compile(urlString string) {
 			if !common.Quiet {
 				context.Problems.Print()
 			}
-			os.Exit(1)
+			atexit.Exit(1)
 		}
 	}
 
