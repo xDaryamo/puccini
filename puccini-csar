@@ -1,25 +1,32 @@
 #!/bin/bash
 set -e
 
+# See:
+#  https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/cos01/TOSCA-Simple-Profile-YAML-v1.3-cos01.html#_Toc26969474
+#  https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.2/os/TOSCA-Simple-Profile-YAML-v1.2-os.html#_Toc528072959
+#  http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/os/TOSCA-Simple-Profile-YAML-v1.1-os.html#_Toc489606742
+#  http://docs.oasis-open.org/tosca/TOSCA/v1.0/os/TOSCA-v1.0-os.html#_Toc356403713
+
 TOOL=$(basename "$0")
 
-TOSCA_META_FILE_VERSION=${TOSCA_META_FILE_VERSION:-1.0}
+TOSCA_META_FILE_VERSION=${TOSCA_META_FILE_VERSION:-1.1}
 CSAR_VERSION=${CSAR_VERSION:-1.1}
 CREATED_BY=${CREATED_BY:-$TOOL}
 
-if [ "$#" -lt 2 ]; then
+if [ "$#" -lt 1 ]; then
 cat << EOT
 Simple TOSCA CSAR creation tool
 
 Usage:
 
-    $TOOL [CSAR file path] [archive directory ...]
+    $TOOL [CSAR file path] [[root directory]]
 
-The current directory will be the root of the CSAR, so make sure to run this
-tool in the right place.
+If "CSAR file path" doesn't have a ".csar" extension, it will be automatically
+appended.
 
-Specify "." to archive the current directory. Note that you may specify more
-than one directory to add to your CSAR.
+If "CSAR file path" already exists, the file will be deleted.
+
+If "root directory" is not specified, the root will be current directory.
 
 Will automatically create and add a "TOSCA-Metadata/TOSCA.meta" file to the
 archive.
@@ -35,45 +42,64 @@ Other supported environment variables:
     TOSCA_META_FILE_VERSION
     CSAR_VERSION
     CREATED_BY
+    OTHER_DEFINITIONS
 
 EOT
 	exit 1
 fi
 
+# CSAR file
+
 CSAR=$(readlink -f "$1")
+
+if [ "${CSAR##*.}" != csar ]; then
+	CSAR=$CSAR.csar
+fi
 
 if [ -f "$CSAR" ]; then
 	echo "CSAR already exists, deleting: $CSAR"
-	rm "$CSAR"
+	rm --force "$CSAR"
 fi
 
-# Add all dirs to CSAR
+# Root directory
 
-for D in "${@:2}"; do
-	if [ ! -d "$D" ]; then
-		echo "failed: not a directory: $D" > /dev/stderr
-		exit 1
-	fi
-	zip -9 --recurse-paths "$CSAR" "$D" > /dev/null
-done
+ROOT=$(readlink -f "${2:-.}")
+
+if [ ! -d "$ROOT" ]; then
+	echo "Failed: root not a directory: $ROOT" > /dev/stderr
+	exit 1
+fi
+
+# Zip
+
+pushd "$ROOT" > /dev/null
+zip -9 --recurse-paths "$CSAR" . > /dev/null
+popd > /dev/null
+
+# Entry-Definitions
 
 if [ -z "$ENTRY_DEFINITIONS" ]; then
-	# Find Entry-Definitions
-
+	# Try to automatically set Entry-Definitions
 	IFS=$'\n'
 	for F in $(zipinfo -1 "$CSAR"); do
 		if [ "$(dirname "$F")" == . ]; then
 			EXT=${F##*.}
 			if [ "$EXT" == yaml ] || [ "$EXT" == yml ]; then
 				if [ -n "$ENTRY_DEFINITIONS" ]; then
-					echo 'failed: multiple YAML files in root, you must set ENTRY_DEFINITIONS in environment to choose one' > /dev/stderr
-					rm "$CSAR"
+					echo 'Failed: multiple YAML files in root, you must set ENTRY_DEFINITIONS environment variable to choose one' > /dev/stderr
+					rm --force "$CSAR"
 					exit 1
 				fi
 				ENTRY_DEFINITIONS=$F
 			fi
 		fi
 	done
+
+	if [ -z "$ENTRY_DEFINITIONS" ]; then
+		echo 'Failed: no YAML files in root, you must set ENTRY_DEFINITIONS environment variable to choose one' > /dev/stderr
+		rm --force "$CSAR"
+		exit 1
+	fi
 fi
 
 echo "Entry-Definitions: $ENTRY_DEFINITIONS"
@@ -88,7 +114,8 @@ function the_end () {
 	if [ "$ERR" == 0 ]; then
 		echo "CSAR created: $CSAR"
 	else
-		echo "failed" > /dev/stderr
+		echo "Failed" > /dev/stderr
+		rm --force "$CSAR"
 		exit $ERR
 	fi
 }
@@ -103,6 +130,7 @@ TOSCA-Meta-File-Version: $TOSCA_META_FILE_VERSION
 CSAR-Version: $CSAR_VERSION
 Created-By: $CREATED_BY
 Entry-Definitions: $ENTRY_DEFINITIONS
+Other-Definitions: $OTHER_DEFINITIONS
 EOT
 
 zip -9 --recurse-paths "$CSAR" . > /dev/null

@@ -11,8 +11,8 @@ import (
 //
 
 type Version struct {
-	V1 uint8
-	V2 uint8
+	Major uint8
+	Minor uint8
 }
 
 func ParseVersion(value string) (*Version, error) {
@@ -21,21 +21,21 @@ func ParseVersion(value string) (*Version, error) {
 		return nil, fmt.Errorf("malformed version in TOSCA.meta: %s", value)
 	}
 
-	v1, err := parseDigit(value, split[0])
+	major, err := parseDigit(value, split[0])
 	if err != nil {
 		return nil, err
 	}
 
-	v2, err := parseDigit(value, split[1])
+	minor, err := parseDigit(value, split[1])
 	if err != nil {
 		return nil, err
 	}
 
-	return &Version{v1, v2}, nil
+	return &Version{major, minor}, nil
 }
 
 func (self *Version) String() string {
-	return fmt.Sprintf("%d.%d", self.V1, self.V2)
+	return fmt.Sprintf("%d.%d", self.Major, self.Minor)
 }
 
 func parseDigit(value string, digit string) (uint8, error) {

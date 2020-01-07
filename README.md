@@ -46,7 +46,7 @@ and
 
 All these dialects are supported as straightforward YAML files, in the file system or hosted on
 URLs, as well as packaged in
-[CSAR files](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/os/TOSCA-Simple-Profile-YAML-v1.1-os.html#_Toc489606742).
+[CSAR files](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/cos01/TOSCA-Simple-Profile-YAML-v1.3-cos01.html#_Toc26969474).
 Puccini also includes a simple CSAR creation tool, **puccini-csar**.
 
 **puccini-tosca** comes with TOSCA profiles for the

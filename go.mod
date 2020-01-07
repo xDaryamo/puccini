@@ -2,6 +2,8 @@ module github.com/tliron/puccini
 
 go 1.13
 
+replace github.com/mattn/go-isatty v0.0.3 => github.com/mattn/go-isatty v0.0.11
+
 require (
 	github.com/beevik/etree v1.1.0
 	github.com/dlclark/regexp2 v1.2.0 // indirect

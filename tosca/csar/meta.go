@@ -7,35 +7,85 @@ import (
 	"strings"
 )
 
-var MetaVersion = Version{1, 0}
-var CsarVersion = Version{1, 1}
+// Version 1.1 adds "Other-Definitions"
+var MetaVersions = []Version{{1, 0}, {1, 1}}
+
+var CsarVersions = []Version{{1, 1}}
 
 //
 // Meta
 //
 
 // See:
+//  https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/cos01/TOSCA-Simple-Profile-YAML-v1.3-cos01.html#_Toc26969474
 //  https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.2/os/TOSCA-Simple-Profile-YAML-v1.2-os.html#_Toc528072959
 //  http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/os/TOSCA-Simple-Profile-YAML-v1.1-os.html#_Toc489606742
 //  http://docs.oasis-open.org/tosca/TOSCA/v1.0/os/TOSCA-v1.0-os.html#_Toc356403713
 
 type Meta struct {
-	MetaVersion      *Version
+	Version          *Version
 	CsarVersion      *Version
-	Creator          string
+	CreatedBy        string
 	EntryDefinitions string
+	OtherDefinitions string
 }
 
 func ReadMeta(reader io.Reader) (*Meta, error) {
+	map_, err := parseMeta(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = requireMeta(map_, "TOSCA-Meta-File-Version", "CSAR-Version", "Created-By"); err != nil {
+		return nil, err
+	}
+
+	self := &Meta{}
+
+	for name, value := range map_ {
+		var err error
+		switch name {
+		case "TOSCA-Meta-File-Version":
+			if self.Version, err = ParseVersion(value); err != nil {
+				return nil, err
+			}
+			if !hasVersionMeta(*self.Version, MetaVersions) {
+				return nil, fmt.Errorf("unsupported \"TOSCA-Meta-File-Version\" in TOSCA.meta: %s", self.Version.String())
+			}
+
+		case "CSAR-Version":
+			if self.CsarVersion, err = ParseVersion(value); err != nil {
+				return nil, err
+			}
+			if !hasVersionMeta(*self.CsarVersion, CsarVersions) {
+				return nil, fmt.Errorf("unsupported \"CSAR-Version\" in TOSCA.meta: %s", self.CsarVersion.String())
+			}
+
+		case "Created-By":
+			self.CreatedBy = value
+
+		case "Entry-Definitions":
+			self.EntryDefinitions = value
+
+		case "Other-Definitions":
+			// Added in TOSCA-Meta-File-Version 1.1
+			self.OtherDefinitions = value
+		}
+	}
+
+	return self, nil
+}
+
+func parseMeta(reader io.Reader) (map[string]string, error) {
+	map_ := make(map[string]string)
+
 	scanner := bufio.NewScanner(reader)
 
-	data := make(map[string]string)
-
-	var l uint
+	var lineNumber uint
 	var current string
 	for scanner.Scan() {
 		line := scanner.Text()
-		l += 1
+		lineNumber += 1
 
 		// Empty lines reset current name
 		if line == "" {
@@ -45,69 +95,43 @@ func ReadMeta(reader io.Reader) (*Meta, error) {
 
 		// Lines beginning with space are appended to current name
 		if strings.HasPrefix(line, " ") && (current != "") {
-			data[current] += line[1:]
+			map_[current] += line[1:]
 			continue
 		}
 
 		split := strings.Split(line, ": ")
 		if len(split) != 2 {
-			return nil, fmt.Errorf("malformed line %d in TOSCA.meta: %s", l, line)
+			return nil, fmt.Errorf("malformed line %d in TOSCA.meta: %s", lineNumber, line)
 		}
 
 		// New current name
 		current = split[0]
 
-		switch current {
-		case "TOSCA-Meta-File-Version", "CSAR-Version", "Created-By", "Entry-Definitions":
-			data[current] += split[1]
-		default:
-			return nil, fmt.Errorf("unsupported name in TOSCA.meta line %d: %s", l, current)
-		}
+		// Append to current
+		map_[current] += split[1]
 	}
 
 	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
 
-	self := &Meta{}
-
-	for name, value := range data {
-		var err error
-		switch name {
-		case "TOSCA-Meta-File-Version":
-			if self.MetaVersion, err = ParseVersion(value); err != nil {
-				return nil, err
-			}
-		case "CSAR-Version":
-			if self.CsarVersion, err = ParseVersion(value); err != nil {
-				return nil, err
-			}
-		case "Created-By":
-			self.Creator = value
-		case "Entry-Definitions":
-			self.EntryDefinitions = value
-		}
-	}
-
-	if err := require(data, "TOSCA-Meta-File-Version", "CSAR-Version", "Created-By"); err != nil {
-		return nil, err
-	}
-
-	if *self.MetaVersion != MetaVersion {
-		return nil, fmt.Errorf("unsupported \"TOSCA-Meta-File-Version\" in TOSCA.meta: %s", self.MetaVersion.String())
-	}
-	if *self.CsarVersion != CsarVersion {
-		return nil, fmt.Errorf("unsupported \"CSAR-Version\" in TOSCA.meta: %s", self.CsarVersion.String())
-	}
-
-	return self, nil
+	return map_, nil
 }
 
-func require(data map[string]string, names ...string) error {
+func requireMeta(data map[string]string, names ...string) error {
 	for _, name := range names {
 		if _, ok := data[name]; !ok {
 			return fmt.Errorf("TOSCA.meta does not contain required \"%s\"", name)
 		}
 	}
 	return nil
+}
+
+func hasVersionMeta(version Version, versions []Version) bool {
+	for _, version_ := range versions {
+		if version == version_ {
+			return true
+		}
+	}
+	return false
 }

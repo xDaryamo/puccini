@@ -8,8 +8,8 @@ if [ "$EUID" -ne 0 ]; then
 	exit 1
 fi
 
-KUBECTL_VERSION=v1.16.2
-MINIKUBE_VERSION=v1.5.0
+KUBECTL_VERSION=v1.17.0
+MINIKUBE_VERSION=v1.6.2
 OVERWRITE=false
 
 for ARG in "$@"; do
