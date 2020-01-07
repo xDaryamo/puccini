@@ -377,12 +377,16 @@ node_types:
         description: >-
           The Floating (IP) client's on the public network can connect to.
         type: tosca.capabilities.Endpoint.Public
-        occurrences: [ 0, UNBOUNDED ] # ERRATUM: this is the implied default
+        occurrences: [ 0, UNBOUNDED ]
     requirements:
     - application:
         capability: tosca.capabilities.Endpoint
         relationship: tosca.relationships.RoutesTo
-        occurrences: [ 0, UNBOUNDED ] # ERRATUM: this is the implied default
+        occurrences: [ 0, UNBOUNDED ]
+
+  #
+  # Network
+  #
 
   tosca.nodes.network.Network:
     metadata:

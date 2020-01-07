@@ -145,7 +145,6 @@ capability_types:
           Layer 4-7 protocols). Examples: http, https, ftp, tcp, udp, etc.
         type: string
         default: tcp
-        required: true
       port:
         description: >-
           The optional port of the endpoint.
@@ -346,6 +345,10 @@ capability_types:
       A node type that includes the Bindable capability indicates that it can be bound to a logical
       network association via a network port.
     derived_from: tosca.capabilities.Node
+
+  #
+  # Network
+  #
 
   tosca.capabilities.network.Linkable:
     metadata:

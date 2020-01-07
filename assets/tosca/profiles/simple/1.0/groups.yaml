@@ -17,7 +17,7 @@ group_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.10.1
+      citation_location: 5.9.1
     description: >-
       This is the default (root) TOSCA Group Type definition that all other TOSCA base Group Types
       derive from.

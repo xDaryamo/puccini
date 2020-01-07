@@ -18,7 +18,7 @@ node_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.9.1
+      citation_location: 5.8.1
     description: >-
       The TOSCA Root Node Type is the default type that all other TOSCA base Node Types derive from.
       This allows for all TOSCA nodes to have a consistent set of features for modeling and
@@ -59,7 +59,7 @@ node_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.9.2
+      citation_location: 5.8.2
     description: >-
       The TOSCA Compute node represents one or more real or virtual processors of software
       applications or services along with other essential local resources. Collectively, the
@@ -113,7 +113,7 @@ node_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.9.3
+      citation_location: 5.8.3
     description: >-
       The TOSCA SoftwareComponent node represents a generic software component that can be managed
       and run by a TOSCA Compute Node Type.
@@ -139,7 +139,7 @@ node_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.9.4
+      citation_location: 5.8.4
     description: >-
       This TOSCA WebServer Node Type represents an abstract software component or service that is
       capable of hosting and providing management operations for one or more WebApplication nodes.
@@ -157,7 +157,7 @@ node_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.9.5
+      citation_location: 5.8.5
     description: >-
       The TOSCA WebApplication node represents a software application that can be managed and run by
       a TOSCA WebServer node. Specific types of web applications such as Java, etc. could be derived
@@ -183,7 +183,7 @@ node_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.9.6
+      citation_location: 5.8.6
     description: >-
       The TOSCA DBMS node represents a typical relational, SQL Database Management System software
       component or service.
@@ -208,7 +208,7 @@ node_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.9.7
+      citation_location: 5.8.7
     description: >-
       The TOSCA Database node represents a logical database that can be managed and hosted by a
       TOSCA DBMS node.
@@ -246,7 +246,7 @@ node_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.9.8
+      citation_location: 5.8.8
     description: >-
       The TOSCA ObjectStorage node represents storage that provides the ability to store data as
       objects (or BLOBs of data) without consideration for the underlying filesystem or devices.
@@ -278,7 +278,7 @@ node_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.9.9
+      citation_location: 5.8.9
     description: >-
     derived_from: tosca.nodes.Root
     properties:
@@ -307,7 +307,7 @@ node_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.9.10
+      citation_location: 5.8.10
     description: >-
       The TOSCA Container Runtime node represents operating system-level virtualization technology
       used to run multiple application services on a single Compute host.
@@ -322,7 +322,7 @@ node_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.9.11
+      citation_location: 5.8.11
     description: >-
       The TOSCA Container Application node represents an application that requires Container-level
       virtualization technology.
@@ -332,16 +332,12 @@ node_types:
         capability: tosca.capabilities.Container
         node: tosca.nodes.Container.Runtime
         relationship: tosca.relationships.HostedOn
-    - storage:
-        capability: tosca.capabilities.Storage
-    - network:
-        capability: tosca.capabilities.Network
 
   tosca.nodes.LoadBalancer:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.9.12
+      citation_location: 5.8.12
     description: >-
       The TOSCA Load Balancer node represents logical function that be used in conjunction with a
       Floating Address to distribute an application's traffic (load) across a number of instances of
@@ -359,18 +355,22 @@ node_types:
         description: >-
           The Floating (IP) client's on the public network can connect to.
         type: tosca.capabilities.Endpoint.Public
-        occurrences: [ 0, UNBOUNDED ] # ERRATUM: this is the implied default
+        occurrences: [ 0, UNBOUNDED ]
     requirements:
     - application:
         capability: tosca.capabilities.Endpoint
         relationship: tosca.relationships.RoutesTo
-        occurrences: [ 0, UNBOUNDED ] # ERRATUM: this is the implied default
+        occurrences: [ 0, UNBOUNDED ]
+
+  #
+  # Network
+  #
 
   tosca.nodes.network.Network:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 8.5.1
+      citation_location: 7.5.1
     description: >-
       The TOSCA Network node represents a simple, logical network service.
     derived_from: tosca.nodes.Root
@@ -459,7 +459,7 @@ node_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 8.5.2
+      citation_location: 7.5.2
     description: >-
       The TOSCA Port node represents a logical entity that associates between Compute and Network
       normative types.

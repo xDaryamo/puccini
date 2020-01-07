@@ -40,9 +40,11 @@ func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*n
 		return nil, &context.Problems, errors.New("phase 2.2: namespaces lookup")
 	}
 
-	// Phase 3: Hieararchies
+	// Phase 3: Hierarchies
 	context.AddHierarchies()
 	if !context.Problems.Empty() {
+		//panic(urlString)
+		//panic(context.Problems.String())
 		parserLock.Unlock()
 		return nil, &context.Problems, errors.New("phase 3: hierarchies")
 	}

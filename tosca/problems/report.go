@@ -5,33 +5,29 @@ import (
 	"strings"
 )
 
-func (self *Problems) Append(problem Problem) {
-	self.Problems = append(self.Problems, problem)
-}
-
-func (self *Problems) ReportInSection(message string, section string) {
+func (self *Problems) ReportInSection(message string, section string) bool {
 	// We want our reports to fit in one line
 	message = strings.ReplaceAll(message, "\n", "¶")
 
-	self.Append(Problem{Message: message, Section: section})
+	return self.Append(Problem{Message: message, Section: section})
 }
 
-func (self *Problems) Report(message string) {
-	self.ReportInSection(message, "")
+func (self *Problems) Report(message string) bool {
+	return self.ReportInSection(message, "")
 }
 
-func (self *Problems) Reportf(format string, arg ...interface{}) {
-	self.Report(fmt.Sprintf(format, arg...))
+func (self *Problems) Reportf(format string, arg ...interface{}) bool {
+	return self.Report(fmt.Sprintf(format, arg...))
 }
 
-func (self *Problems) ReportError(err error) {
+func (self *Problems) ReportError(err error) bool {
 	if problematic, ok := err.(Problematic); ok {
-		self.ReportProblematic(problematic)
+		return self.ReportProblematic(problematic)
 	} else {
-		self.Reportf("%s", err.Error())
+		return self.Reportf("%s", err.Error())
 	}
 }
 
-func (self *Problems) ReportProblematic(problematic Problematic) {
-	self.ReportInSection(problematic.ProblemMessage(), problematic.ProblemSection())
+func (self *Problems) ReportProblematic(problematic Problematic) bool {
+	return self.ReportInSection(problematic.ProblemMessage(), problematic.ProblemSection())
 }

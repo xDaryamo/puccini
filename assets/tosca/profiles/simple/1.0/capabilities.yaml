@@ -17,7 +17,7 @@ capability_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.1
+      citation_location: 5.4.1
     description: >-
       This is the default (root) TOSCA Capability Type definition that all other TOSCA Capability
       Types derive from.
@@ -26,28 +26,23 @@ capability_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.2
+      citation_location: 5.4.2
       role: feature
     description: >-
       The Node capability indicates the base capabilities of a TOSCA Node Type.
     derived_from: tosca.capabilities.Root
 
-  tosca.capabilities.Compute:
+  tosca.capabilities.Container:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.3
+      citation_location: 5.4.3
       role: host
     description: >-
-      The Compute capability, when included on a Node Type or Template definition, indicates that
-      the node can provide hosting on a named compute resource.
+        The Container capability, when included on a Node Type or Template definition, indicates
+        that the node can act as a container for (or a host for) one or more other declared Node Types.
     derived_from: tosca.capabilities.Root
     properties:
-      name:
-        description: >-
-          The optional name (or identifier) of a specific compute resource for hosting.
-        type: string
-        required: false
       num_cpus:
         description: >-
           Number of (actual or virtual) CPUs associated with the Compute node.
@@ -79,53 +74,11 @@ capability_types:
         - greater_or_equal: 0 MB
         required: false
 
-  tosca.capabilities.Network:
-    metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.4
-    description: >-
-      The Network capability, when included on a Node Type or Template definition, indicates that
-      the node can provide addressiblity for the resource a named network with the specified ports.
-    derived_from: tosca.capabilities.Root
-    properties:
-      name:
-        description: >-
-          The otional name (or identifier) of a specific network resource.
-        type: string
-        required: false
-
-  tosca.capabilities.Storage:
-    metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.5
-    description: >-
-      The Storage capability, when included on a Node Type or Template definition, indicates that
-      the node can provide a named storage location with specified size range.
-    derived_from: tosca.capabilities.Root
-    properties:
-      name:
-        description: >-
-          The optional name (or identifier) of a specific storage resource.
-        type: string
-        required: false
-
-  tosca.capabilities.Container:
-    metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.6
-    description: >-
-      The Container capability, when included on a Node Type or Template definition, indicates that
-      the node can act as a container for (or a host for) one or more other declared Node Types.
-    derived_from: tosca.capabilities.Compute
-
   tosca.capabilities.Endpoint:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.7
+      citation_location: 5.4.4
     description: >-
       This is the default TOSCA type that should be used or extended to define a network endpoint
       capability. This includes the information to express a basic endpoint with a single port or a
@@ -139,7 +92,6 @@ capability_types:
           Layer 4-7 protocols). Examples: http, https, ftp, tcp, udp, etc.
         type: string
         default: tcp
-        required: true
       port:
         description: >-
           The optional port of the endpoint.
@@ -197,7 +149,7 @@ capability_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.8
+      citation_location: 5.4.5
     description: >-
       This capability represents a public endpoint which is accessible to the general internet (and
       its public IP address ranges).
@@ -231,7 +183,7 @@ capability_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.9
+      citation_location: 5.4.6
     description: >-
       This is the default TOSCA type that should be used or extended to define a specialized
       administrator endpoint capability.
@@ -250,7 +202,7 @@ capability_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.10
+      citation_location: 5.4.7
     description: >-
       This is the default TOSCA type that should be used or extended to define a specialized
       database endpoint capability.
@@ -260,7 +212,7 @@ capability_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.11
+      citation_location: 5.4.8
     description: >-
       This is the default TOSCA type that should be used or extended to define an attachment
       capability of a (logical) infrastructure device node (e.g., BlockStorage node).
@@ -270,7 +222,7 @@ capability_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.12
+      citation_location: 5.4.9
     description: >-
       This is the default TOSCA type that should be used to express an Operating System capability
       for a node.
@@ -304,7 +256,7 @@ capability_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.13
+      citation_location: 5.4.10
     description: >-
       This is the default TOSCA type that should be used to express a scalability capability for a
       node.
@@ -335,17 +287,21 @@ capability_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.5.14
+      citation_location: 5.4.11
     description: >-
       A node type that includes the Bindable capability indicates that it can be bound to a logical
       network association via a network port.
     derived_from: tosca.capabilities.Node
 
+  #
+  # Network
+  #
+
   tosca.capabilities.network.Linkable:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 8.5.3
+      citation_location: 7.5.3
     description: >-
       A node type that includes the Linkable capability indicates that it can be pointed by
       tosca.relationships.network.LinksTo relationship type.

@@ -114,5 +114,30 @@ artifact_types:
     derived_from: tosca.artifacts.Implementation
     mime_type: application/x-python
     file_ext: [ py ]
+
+  #
+  # Templates
+  #
+
+  tosca.artifacts.template:
+    metadata:
+      normative: 'true'
+      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      citation_location: 5.4.5.1
+    description: >-
+        This artifact type represents the parent type for all template type artifacts in TOSCA. This
+        class of artifacts typically represent template files that are dependent artifacts for
+        implementation of an interface or deployment of a node.
+
+        Like the case of other dependent artifacts, the TOSCA orchestrator copies the dependent
+        artifacts to the same location as the primary artifact for its access during execution.
+        However, the template artifact processor need not be deployed in the environment where the
+        primary artifact executes.  At run time, the Orchestrator can invoke the artifact processor
+        (i.e. template engine) to fill in run time values and provide the “filled template” to the
+        primary artifact processor for further processing. 
+
+        This reduces the requirements on the primary artifact target environment and the processing
+        time of template artifacts.
+    derived_from: tosca.artifacts.Root
 `
 }

@@ -25,6 +25,11 @@ func (self *Context) ReadRoot(url_ url.URL) bool {
 
 	sort.Sort(self.Units)
 
+	if ok {
+		// Merge problems from imports
+		self.Root.MergeProblems(&self.Problems, nil)
+	}
+
 	return ok
 }
 

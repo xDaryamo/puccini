@@ -111,11 +111,31 @@ data_types:
       This is the default (root) TOSCA Root Type definition that all complex TOSCA Data Types derive
       from.
 
-  tosca.datatypes.Credential:
+  tosca.datatypes.json:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       citation_location: 5.3.2
+    description: >-
+      The json type is a TOSCA data Type used to define a string that containst data in the
+      JavaScript Object Notation (JSON) format.
+    derived_from: string
+
+  tosca.datatypes.xml:
+    metadata:
+      normative: 'true'
+      citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
+      citation_location: 5.3.4
+    description: >-
+      The xml type is a TOSCA data Type used to define a string that containst data in the
+      Extensible Markup Language (XML) format.
+    derived_from: string
+
+  tosca.datatypes.Credential:
+    metadata:
+      normative: 'true'
+      citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
+      citation_location: 5.3.6
     description: >-
       The Credential type is a complex TOSCA data Type used when describing authorization
       credentials used to access network accessible resources.
@@ -136,7 +156,6 @@ data_types:
           The required token used as a credential for authorization or access to a networked
           resource.
         type: string
-        required: false
       keys:
         description: >-
           The optional list of protocol-specific keys or assertions.
@@ -154,7 +173,7 @@ data_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
-      citation_location: 5.3.3
+      citation_location: 5.3.7
     description: >-
       The TimeInterval type is a complex TOSCA data Type used when describing a period of time using
       the YAML ISO 8601 format to declare the start and end times.
@@ -169,7 +188,7 @@ data_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
-      citation_location: 5.3.4
+      citation_location: 5.3.8
     description: >-
       The Network type is a complex TOSCA data type used to describe logical network information.
     derived_from: tosca.datatypes.Root
@@ -196,7 +215,7 @@ data_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
-      citation_location: 5.3.5
+      citation_location: 5.3.9
     description: >-
       The PortInfo type is a complex TOSCA data type used to describe network port information.
     derived_from: tosca.datatypes.Root
@@ -233,7 +252,7 @@ data_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
-      citation_location: 5.3.6
+      citation_location: 5.3.10
     description: >-
       The PortDef type is a TOSCA data Type used to define a network port.
     derived_from: integer
@@ -244,7 +263,7 @@ data_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
-      citation_location: 5.3.7
+      citation_location: 5.3.11
     description: >-
       The PortSpec type is a complex TOSCA data Type used when describing port specifications for a
       network connection.

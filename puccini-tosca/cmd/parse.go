@@ -78,7 +78,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	// Phase 1: Read
 	if stopAtPhase >= 1 {
 		if !context.ReadRoot(url_) {
-			// Stop here if there are errors
+			// Stop here if failed to read
 			if !common.Quiet {
 				context.Problems.Print()
 			}

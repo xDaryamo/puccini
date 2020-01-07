@@ -8,6 +8,7 @@ import (
 
 	"github.com/tliron/puccini/format"
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/problems"
 )
 
 type Unit struct {
@@ -38,6 +39,31 @@ func (self *Unit) AddImport(import_ *Unit) {
 
 func (self *Unit) GetContext() *tosca.Context {
 	return tosca.GetContext(self.EntityPtr)
+}
+
+func (self *Unit) MergeProblems(problems_ *problems.Problems, merged []*problems.Problems) {
+	context := self.GetContext()
+
+	if context != nil {
+		selfProblems := context.Problems
+
+		toMerge := true
+		for _, merged_ := range merged {
+			if merged_ == selfProblems {
+				toMerge = false
+				break
+			}
+		}
+
+		if toMerge {
+			problems_.Merge(selfProblems)
+			merged = append(merged, selfProblems)
+		}
+	}
+
+	for _, import_ := range self.Imports {
+		import_.MergeProblems(problems_, merged)
+	}
 }
 
 // Print

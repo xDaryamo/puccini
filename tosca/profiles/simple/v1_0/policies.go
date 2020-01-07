@@ -20,7 +20,7 @@ policy_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.11.1
+      citation_location: 5.10.1
     description: >-
       This is the default (root) TOSCA Policy Type definition that all other TOSCA base Policy Types
       derive from.
@@ -29,7 +29,7 @@ policy_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.11.2
+      citation_location: 5.10.2
     description: >-
       This is the default (root) TOSCA Policy Type definition that is used to govern placement of
       TOSCA nodes or groups of nodes.
@@ -39,7 +39,7 @@ policy_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.11.3
+      citation_location: 5.10.3
     description: >-
       This is the default (root) TOSCA Policy Type definition that is used to govern scaling of
       TOSCA nodes or groups of nodes.
@@ -49,7 +49,7 @@ policy_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.11.4
+      citation_location: 5.10.4
     description: >-
       This is the default (root) TOSCA Policy Type definition that is used to govern update of TOSCA
       nodes or groups of nodes.
@@ -59,7 +59,7 @@ policy_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.11.5
+      citation_location: 5.10.5
     description: >-
       This is the default (root) TOSCA Policy Type definition that is used to declare performance
       requirements for TOSCA nodes or groups of nodes.

@@ -27,8 +27,5 @@ group_types:
     description: >-
       This is the default (root) TOSCA Group Type definition that all other TOSCA base Group Types
       derive from.
-    #interfaces:
-    #  Standard:
-    #    type: tosca.interfaces.node.lifecycle.Standard
 `
 }

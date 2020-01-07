@@ -12,19 +12,19 @@ import (
 // Context
 //
 
-func (self *Context) Report(message string) {
+func (self *Context) Report(message string) bool {
 	if self.URL != nil {
-		self.Problems.ReportInSection(message, self.URL.String())
+		return self.Problems.ReportInSection(message, self.URL.String())
 	} else {
-		self.Problems.Report(message)
+		return self.Problems.Report(message)
 	}
 }
 
-func (self *Context) Reportf(f string, arg ...interface{}) {
-	self.Report(fmt.Sprintf(f, arg...))
+func (self *Context) Reportf(f string, arg ...interface{}) bool {
+	return self.Report(fmt.Sprintf(f, arg...))
 }
 
-func (self *Context) ReportPath(message string) {
+func (self *Context) ReportPath(message string) bool {
 	path := self.Path.String()
 
 	location := self.Location()
@@ -39,15 +39,15 @@ func (self *Context) ReportPath(message string) {
 		message = fmt.Sprintf("%s: %s", format.ColorPath(path), message)
 	}
 
-	self.Report(message)
+	return self.Report(message)
 }
 
-func (self *Context) ReportPathf(f string, arg ...interface{}) {
-	self.ReportPath(fmt.Sprintf(f, arg...))
+func (self *Context) ReportPathf(f string, arg ...interface{}) bool {
+	return self.ReportPath(fmt.Sprintf(f, arg...))
 }
 
-func (self *Context) ReportError(err error) {
-	self.ReportPathf("%s", err)
+func (self *Context) ReportError(err error) bool {
+	return self.ReportPathf("%s", err)
 }
 
 //
@@ -58,23 +58,23 @@ func (self *Context) FormatBadData() string {
 	return format.ColorError(fmt.Sprintf("%+v", self.Data))
 }
 
-func (self *Context) ReportValueWrongType(requiredTypeNames ...string) {
-	self.ReportPathf("\"%s\" instead of %s", format.ColorTypeName(PrimitiveTypeName(self.Data)), format.ColoredOptions(requiredTypeNames, format.ColorTypeName))
+func (self *Context) ReportValueWrongType(requiredTypeNames ...string) bool {
+	return self.ReportPathf("\"%s\" instead of %s", format.ColorTypeName(PrimitiveTypeName(self.Data)), format.ColoredOptions(requiredTypeNames, format.ColorTypeName))
 }
 
-func (self *Context) ReportValueWrongFormat(f string) {
-	self.ReportPathf("wrong format, must be \"%s\": %s", f, self.FormatBadData())
+func (self *Context) ReportValueWrongFormat(f string) bool {
+	return self.ReportPathf("wrong format, must be \"%s\": %s", f, self.FormatBadData())
 }
 
-func (self *Context) ReportValueWrongLength(typeName string, length int) {
-	self.ReportPathf("\"%s\" does not have %d elements", format.ColorTypeName(typeName), length)
+func (self *Context) ReportValueWrongLength(typeName string, length int) bool {
+	return self.ReportPathf("\"%s\" does not have %d elements", format.ColorTypeName(typeName), length)
 }
 
-func (self *Context) ReportValueMalformed(typeName string, reason string) {
+func (self *Context) ReportValueMalformed(typeName string, reason string) bool {
 	if reason == "" {
-		self.ReportPathf("malformed \"%s\": %s", format.ColorTypeName(typeName), self.FormatBadData())
+		return self.ReportPathf("malformed \"%s\": %s", format.ColorTypeName(typeName), self.FormatBadData())
 	} else {
-		self.ReportPathf("malformed \"%s\", %s: %s", format.ColorTypeName(typeName), reason, self.FormatBadData())
+		return self.ReportPathf("malformed \"%s\", %s: %s", format.ColorTypeName(typeName), reason, self.FormatBadData())
 	}
 }
 
@@ -82,126 +82,126 @@ func (self *Context) ReportValueMalformed(typeName string, reason string) {
 // Read
 //
 
-func (self *Context) ReportImportLoop(url_ url.URL) {
-	self.Reportf("endless loop caused by importing \"%s\"", format.ColorValue(url_.String()))
+func (self *Context) ReportImportLoop(url_ url.URL) bool {
+	return self.Reportf("endless loop caused by importing \"%s\"", format.ColorValue(url_.String()))
 }
 
-func (self *Context) ReportRepositoryInaccessible(repositoryName string) {
-	self.ReportPathf("inaccessible repository \"%s\"", format.ColorValue(repositoryName))
+func (self *Context) ReportRepositoryInaccessible(repositoryName string) bool {
+	return self.ReportPathf("inaccessible repository \"%s\"", format.ColorValue(repositoryName))
 }
 
-func (self *Context) ReportFieldMissing() {
-	self.ReportPath("missing required field")
+func (self *Context) ReportFieldMissing() bool {
+	return self.ReportPath("missing required field")
 }
 
-func (self *Context) ReportFieldUnsupported() {
-	self.ReportPath("unsupported field")
+func (self *Context) ReportFieldUnsupported() bool {
+	return self.ReportPath("unsupported field")
 }
 
-func (self *Context) ReportFieldUnsupportedValue() {
-	self.ReportPathf("unsupported value for field: %s", self.FormatBadData())
+func (self *Context) ReportFieldUnsupportedValue() bool {
+	return self.ReportPathf("unsupported value for field: %s", self.FormatBadData())
 }
 
-func (self *Context) ReportFieldMalformedSequencedList() {
-	self.ReportPathf("field must be a \"%s\" of single-key \"%s\" elements", format.ColorTypeName("sequenced list"), format.ColorTypeName("map"))
+func (self *Context) ReportFieldMalformedSequencedList() bool {
+	return self.ReportPathf("field must be a \"%s\" of single-key \"%s\" elements", format.ColorTypeName("sequenced list"), format.ColorTypeName("map"))
 }
 
-func (self *Context) ReportPrimitiveType() {
-	self.ReportPath("primitive type cannot have properties")
+func (self *Context) ReportPrimitiveType() bool {
+	return self.ReportPath("primitive type cannot have properties")
 }
 
-func (self *Context) ReportMapKeyReused(key string) {
-	self.ReportPathf("reused map key: %s", format.ColorValue(key))
+func (self *Context) ReportMapKeyReused(key string) bool {
+	return self.ReportPathf("reused map key: %s", format.ColorValue(key))
 }
 
 //
 // Namespaces
 //
 
-func (self *Context) ReportNameAmbiguous(type_ reflect.Type, name string, entityPtrs ...interface{}) {
+func (self *Context) ReportNameAmbiguous(type_ reflect.Type, name string, entityPtrs ...interface{}) bool {
 	url := make([]string, len(entityPtrs))
 	for i, entityPtr := range entityPtrs {
 		url[i] = GetContext(entityPtr).URL.String()
 	}
-	self.Reportf("ambiguous %s name \"%s\", can be in %s", GetEntityTypeName(type_), format.ColorName(name), format.ColoredOptions(url, format.ColorValue))
+	return self.Reportf("ambiguous %s name \"%s\", can be in %s", GetEntityTypeName(type_), format.ColorName(name), format.ColoredOptions(url, format.ColorValue))
 }
 
-func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) {
+func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) bool {
 	var entityTypeNames []string
 	for _, type_ := range types {
 		entityTypeNames = append(entityTypeNames, GetEntityTypeName(type_))
 	}
-	self.ReportPathf("reference to unknown %s: %s", format.Options(entityTypeNames), self.FormatBadData())
+	return self.ReportPathf("reference to unknown %s: %s", format.Options(entityTypeNames), self.FormatBadData())
 }
 
 //
 // Inheritance
 //
 
-func (self *Context) ReportInheritanceLoop(parent interface{}) {
-	self.ReportPathf("inheritance loop by deriving from \"%s\"", format.ColorTypeName(GetContext(parent).Name))
+func (self *Context) ReportInheritanceLoop(parent interface{}) bool {
+	return self.ReportPathf("inheritance loop by deriving from \"%s\"", format.ColorTypeName(GetContext(parent).Name))
 }
 
-func (self *Context) ReportTypeIncomplete(parent interface{}) {
-	self.ReportPathf("deriving from incomplete type \"%s\"", format.ColorTypeName(GetContext(parent).Name))
+func (self *Context) ReportTypeIncomplete(parent interface{}) bool {
+	return self.ReportPathf("deriving from incomplete type \"%s\"", format.ColorTypeName(GetContext(parent).Name))
 }
 
 //
 // Render
 //
 
-func (self *Context) ReportUndeclared(kind string) {
-	self.ReportPathf("undeclared %s", kind)
+func (self *Context) ReportUndeclared(kind string) bool {
+	return self.ReportPathf("undeclared %s", kind)
 }
 
-func (self *Context) ReportUnknown(kind string) {
-	self.ReportPathf("unknown %s: %s", kind, self.FormatBadData())
+func (self *Context) ReportUnknown(kind string) bool {
+	return self.ReportPathf("unknown %s: %s", kind, self.FormatBadData())
 }
 
-func (self *Context) ReportReferenceNotFound(kind string, entityPtr interface{}) {
+func (self *Context) ReportReferenceNotFound(kind string, entityPtr interface{}) bool {
 	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
 	name := GetContext(entityPtr).Name
-	self.ReportPathf("unknown %s reference in %s \"%s\": %s", kind, typeName, format.ColorName(name), self.FormatBadData())
+	return self.ReportPathf("unknown %s reference in %s \"%s\": %s", kind, typeName, format.ColorName(name), self.FormatBadData())
 }
 
-func (self *Context) ReportReferenceAmbiguous(kind string, entityPtr interface{}) {
+func (self *Context) ReportReferenceAmbiguous(kind string, entityPtr interface{}) bool {
 	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
 	name := GetContext(entityPtr).Name
-	self.ReportPathf("ambiguous %s in %s \"%s\": %s", kind, typeName, format.ColorName(name), self.FormatBadData())
+	return self.ReportPathf("ambiguous %s in %s \"%s\": %s", kind, typeName, format.ColorName(name), self.FormatBadData())
 }
 
-func (self *Context) ReportPropertyRequired(kind string) {
-	self.ReportPathf("unassigned required %s", kind)
+func (self *Context) ReportPropertyRequired(kind string) bool {
+	return self.ReportPathf("unassigned required %s", kind)
 }
 
-func (self *Context) ReportReservedMetadata() {
-	self.ReportPath("reserved for use by Puccini")
+func (self *Context) ReportReservedMetadata() bool {
+	return self.ReportPath("reserved for use by Puccini")
 }
 
-func (self *Context) ReportUnknownDataType(dataTypeName string) {
-	self.ReportPathf("unknown data type \"%s\"", format.ColorError(dataTypeName))
+func (self *Context) ReportUnknownDataType(dataTypeName string) bool {
+	return self.ReportPathf("unknown data type \"%s\"", format.ColorError(dataTypeName))
 }
 
-func (self *Context) ReportMissingEntrySchema(kind string) {
-	self.ReportPathf("missing entry schema for %s definition", kind)
+func (self *Context) ReportMissingEntrySchema(kind string) bool {
+	return self.ReportPathf("missing entry schema for %s definition", kind)
 }
 
-func (self *Context) ReportUnsupportedType() {
-	self.ReportPathf("unsupported puccini.type \"%s\"", format.ColorError(self.Name))
+func (self *Context) ReportUnsupportedType() bool {
+	return self.ReportPathf("unsupported puccini.type \"%s\"", format.ColorError(self.Name))
 }
 
-func (self *Context) ReportIncompatibleType(typeName string, parentTypeName string) {
-	self.ReportPathf("type \"%s\" is incompatible with parent type \"%s\"", format.ColorTypeName(typeName), format.ColorTypeName(parentTypeName))
+func (self *Context) ReportIncompatibleType(typeName string, parentTypeName string) bool {
+	return self.ReportPathf("type \"%s\" is incompatible with parent type \"%s\"", format.ColorTypeName(typeName), format.ColorTypeName(parentTypeName))
 }
 
-func (self *Context) ReportIncompatible(name string, typeName string, kind string) {
-	self.ReportPathf("\"%s\" cannot be %s of %s", format.ColorName(name), kind, typeName)
+func (self *Context) ReportIncompatible(name string, typeName string, kind string) bool {
+	return self.ReportPathf("\"%s\" cannot be %s of %s", format.ColorName(name), kind, typeName)
 }
 
-func (self *Context) ReportIncompatibleExtension(extension string, requiredExtensions []string) {
-	self.ReportPathf("extension \"%s\" is not %s", format.ColorValue(extension), format.ColoredOptions(requiredExtensions, format.ColorValue))
+func (self *Context) ReportIncompatibleExtension(extension string, requiredExtensions []string) bool {
+	return self.ReportPathf("extension \"%s\" is not %s", format.ColorValue(extension), format.ColoredOptions(requiredExtensions, format.ColorValue))
 }
 
-func (self *Context) ReportNotInRange(name string, value uint64, lower uint64, upper uint64) {
-	self.ReportPathf("%s is %d, must be >= %d and <= %d", name, value, lower, upper)
+func (self *Context) ReportNotInRange(name string, value uint64, lower uint64, upper uint64) bool {
+	return self.ReportPathf("%s is %d, must be >= %d and <= %d", name, value, lower, upper)
 }

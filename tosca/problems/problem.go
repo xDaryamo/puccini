@@ -23,6 +23,10 @@ func (self Problem) String() string {
 	return self.Message
 }
 
+func (self Problem) Equals(problem Problem) bool {
+	return (self.Message == problem.Message) && (self.Section == problem.Section)
+}
+
 //
 // ProblemSlice
 //
@@ -59,6 +63,31 @@ type Problems struct {
 
 func (self *Problems) Empty() bool {
 	return len(self.Problems) == 0
+}
+
+func (self *Problems) Append(problem Problem) bool {
+	// Avoid duplicates
+	for _, problem_ := range self.Problems {
+		if problem.Equals(problem_) {
+			return false
+		}
+	}
+
+	self.Problems = append(self.Problems, problem)
+	return true
+}
+
+func (self *Problems) Merge(problems *Problems) bool {
+	if self == problems {
+		return false
+	}
+	merged := false
+	for _, problem := range problems.Problems {
+		if self.Append(problem) {
+			merged = true
+		}
+	}
+	return merged
 }
 
 // fmt.Stringify interface

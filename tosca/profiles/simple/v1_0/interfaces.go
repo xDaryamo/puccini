@@ -20,7 +20,7 @@ interface_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.8.3
+      citation_location: 5.7.3
     description: >-
       This is the default (root) TOSCA Interface Type definition that all other TOSCA Interface
       Types derive from.
@@ -29,7 +29,7 @@ interface_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.8.4
+      citation_location: 5.7.4
     description: >-
       This lifecycle interface defines the essential, normative operations that TOSCA nodes may
       support.
@@ -54,7 +54,7 @@ interface_types:
     metadata:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.8.5
+      citation_location: 5.7.5
     description: >-
       The lifecycle interfaces define the essential, normative operations that each TOSCA
       Relationship Types may support.

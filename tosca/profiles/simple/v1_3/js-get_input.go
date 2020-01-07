@@ -8,6 +8,7 @@ func init() {
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 4.4.1
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.4.1
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 4.4.1
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 4.4.1
 
 clout.exec('tosca.helpers');
 

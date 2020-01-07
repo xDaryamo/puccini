@@ -103,7 +103,7 @@ relationship_types:
           must provide it and it cannot be "root".
         type: string
         constraints:
-          - min_length: 1
+        - min_length: 1
       device:
         description: >-
           The logical device name which for the attached device (which is represented by the target
@@ -127,6 +127,10 @@ relationship_types:
       networks.
     derived_from: tosca.relationships.ConnectsTo
     valid_target_types: [ tosca.capabilities.Endpoint ]
+
+  #
+  # Network
+  #
 
   tosca.relationships.network.LinksTo:
     metadata:
