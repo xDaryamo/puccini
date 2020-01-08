@@ -57,6 +57,13 @@ node_types:
       range:
         type: range
 
+      # These can also be considered to be "special" types
+      # Though they are currently part of the Simple Profile
+      json:
+        type: tosca.datatypes.json
+      xml:
+        type: tosca.datatypes.xml
+
       # Properties can have constraints
       # Note that constraints *must* use literal values (no function calls)
       # (*All* constraints must be satisfied by values; it's a logical "and")
@@ -219,6 +226,20 @@ topology_template:
         # You can also use "UNBOUNDED" string for the upper bound, which will be converted to
         # the maximum uint value
         range: [ 1, UNBOUNDED ]
+
+        # These are validated, but otherwise the text will be left as is
+        json: |-
+          {
+            "key1": "value",
+            "key2": [1, 2, 3]
+          }
+        xml: |-
+          <tag1>value</tag1>
+          <tag2>
+            <entry>1</entry>
+            <entry>2</entry>
+            <entry>3</entry>
+          </tag2>
 
         # Constraints: min length = 2 and max length = 5
         # (The length-related constraints work on both strings and lists)

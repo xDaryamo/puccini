@@ -2,7 +2,6 @@ package format
 
 import (
 	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"io"
 
@@ -17,8 +16,6 @@ func Read(reader io.Reader, format string) (interface{}, error) {
 		return ReadYaml(reader)
 	case "json":
 		return ReadJson(reader)
-	case "xml":
-		return ReadXml(reader)
 	default:
 		return "", fmt.Errorf("unsupported format: %s", format)
 	}
@@ -41,17 +38,6 @@ func ReadYaml(reader io.Reader) (interface{}, error) {
 func ReadJson(reader io.Reader) (interface{}, error) {
 	var data interface{}
 	decoder := json.NewDecoder(reader)
-	if err := decoder.Decode(&data); err == nil {
-		data, _ = ard.ToMaps(data)
-		return data, nil
-	} else {
-		return nil, err
-	}
-}
-
-func ReadXml(reader io.Reader) (interface{}, error) {
-	var data interface{}
-	decoder := xml.NewDecoder(reader)
 	if err := decoder.Decode(&data); err == nil {
 		data, _ = ard.ToMaps(data)
 		return data, nil

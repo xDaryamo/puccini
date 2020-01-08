@@ -114,20 +114,24 @@ data_types:
   tosca.datatypes.json:
     metadata:
       normative: 'true'
+      puccini.type: json
       citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
       citation_location: 5.3.2
+    # ERRATUM: typo
     description: >-
-      The json type is a TOSCA data Type used to define a string that containst data in the
+      The json type is a TOSCA data Type used to define a string that contains data in the
       JavaScript Object Notation (JSON) format.
     derived_from: string
 
   tosca.datatypes.xml:
     metadata:
       normative: 'true'
+      puccini.type: xml
       citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
       citation_location: 5.3.4
+    # ERRATUM: typo
     description: >-
-      The xml type is a TOSCA data Type used to define a string that containst data in the
+      The xml type is a TOSCA data Type used to define a string that contains data in the
       Extensible Markup Language (XML) format.
     derived_from: string
 

@@ -2,7 +2,6 @@ package ard
 
 import (
 	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"io"
 
@@ -45,14 +44,4 @@ func DecodeYaml(reader io.Reader, locate bool) (Map, Locator, error) {
 
 	// We do not need to call EnsureMaps because yamlkeys takes care of it
 	return data, locator, nil
-}
-
-func DecodeXml(reader io.Reader, locate bool) (Map, Locator, error) {
-	data := make(Map)
-	decoder := xml.NewDecoder(reader)
-	if err := decoder.Decode(&data); err == nil {
-		return EnsureMaps(data), nil, nil
-	} else {
-		return nil, nil, err
-	}
 }

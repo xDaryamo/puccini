@@ -62,8 +62,8 @@ func (self *Context) ReportValueWrongType(requiredTypeNames ...string) bool {
 	return self.ReportPathf("\"%s\" instead of %s", format.ColorTypeName(PrimitiveTypeName(self.Data)), format.ColoredOptions(requiredTypeNames, format.ColorTypeName))
 }
 
-func (self *Context) ReportValueWrongFormat(f string) bool {
-	return self.ReportPathf("wrong format, must be \"%s\": %s", f, self.FormatBadData())
+func (self *Context) ReportValueWrongFormat(format string) bool {
+	return self.ReportPathf("wrong format, must be \"%s\": %s", format, self.FormatBadData())
 }
 
 func (self *Context) ReportValueWrongLength(typeName string, length int) bool {
