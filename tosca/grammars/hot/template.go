@@ -100,8 +100,8 @@ func (self *Template) SetInputs(inputs map[string]interface{}) {
 	}
 }
 
-// tosca.Normalizable interface
-func (self *Template) Normalize() *normal.ServiceTemplate {
+// normal.Normalizable interface
+func (self *Template) NormalizeServiceTemplate() *normal.ServiceTemplate {
 	log.Info("{normalize} template")
 
 	s := normal.NewServiceTemplate()

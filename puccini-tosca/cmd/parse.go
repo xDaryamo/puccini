@@ -180,7 +180,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	}
 
 	// Normalize
-	s, ok := parser.Normalize(context.Root.EntityPtr)
+	s, ok := normal.NormalizeServiceTemplate(context.Root.EntityPtr)
 	if !ok {
 		common.Fail("grammar does not support normalization")
 	}

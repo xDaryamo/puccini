@@ -33,8 +33,8 @@ func ReadServiceTemplate(context *tosca.Context) interface{} {
 	return self
 }
 
-// tosca.Normalizable interface
-func (self *ServiceTemplate) Normalize() *normal.ServiceTemplate {
+// normal.Normalizable interface
+func (self *ServiceTemplate) NormalizeServiceTemplate() *normal.ServiceTemplate {
 	log.Info("{normalize} service template")
 
 	s := normal.NewServiceTemplate()

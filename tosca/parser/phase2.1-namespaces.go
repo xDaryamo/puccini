@@ -7,7 +7,7 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-var namespacesWork = ContextsWork{Phase: "namespaces"}
+var namespacesWork = NewContextualWork("namespaces")
 
 func (self *Context) AddNamespaces() {
 	self.Root.MergeNamespaces()

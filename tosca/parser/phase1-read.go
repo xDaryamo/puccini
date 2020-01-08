@@ -8,6 +8,7 @@ import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/csar"
+	"github.com/tliron/puccini/tosca/grammars"
 	"github.com/tliron/puccini/tosca/reflection"
 	"github.com/tliron/puccini/url"
 )
@@ -25,13 +26,10 @@ func (self *Context) ReadRoot(url_ url.URL) bool {
 
 	sort.Sort(self.Units)
 
-	if ok {
-		// Merge problems from imports
-		self.Root.MergeProblems(&self.Problems, nil)
-	}
-
 	return ok
 }
+
+var readCache sync.Map // entityPtr or Promise
 
 func (self *Context) read(promise Promise, toscaContext *tosca.Context, container *Unit, nameTransfomer tosca.NameTransformer, readerName string) (*Unit, bool) {
 	defer self.WG.Done()
@@ -59,7 +57,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 	}
 
 	// Detect grammar
-	if !DetectGrammar(toscaContext) {
+	if !grammars.Detect(toscaContext) {
 		return nil, false
 	}
 
@@ -77,7 +75,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 	// Validate required fields
 	reflection.Traverse(entityPtr, tosca.ValidateRequiredFields)
 
-	cache.Store(toscaContext.URL.Key(), entityPtr)
+	readCache.Store(toscaContext.URL.Key(), entityPtr)
 
 	unit := NewUnit(entityPtr, container, nameTransfomer)
 	self.AddUnit(unit)
@@ -95,7 +93,7 @@ func (self *Context) goReadImports(container *Unit) {
 	}
 
 	// Implicit import
-	if implicitImportSpec, ok := GetImplicitImportSpec(container.GetContext()); ok {
+	if implicitImportSpec, ok := grammars.GetImplicitImportSpec(container.GetContext()); ok {
 		importSpecs = append(importSpecs, implicitImportSpec)
 	}
 
@@ -120,11 +118,11 @@ func (self *Context) goReadImports(container *Unit) {
 		}
 
 		promise := NewPromise()
-		if cached, inCache := cache.LoadOrStore(key, promise); inCache {
+		if cached, inCache := readCache.LoadOrStore(key, promise); inCache {
 			switch cached_ := cached.(type) {
 			case Promise:
 				// Wait for promise
-				log.Debugf("{read} cache promise: %s", key)
+				log.Debugf("{read} wait for promise: %s", key)
 				self.WG.Add(1)
 				go self.waitForPromise(cached_, key, container, importSpec.NameTransformer)
 
@@ -147,19 +145,17 @@ func (self *Context) waitForPromise(promise Promise, key string, container *Unit
 	defer self.WG.Done()
 	promise.Wait()
 
-	if cached, inCache := cache.Load(key); inCache {
+	if cached, inCache := readCache.Load(key); inCache {
 		switch cached.(type) {
 		case Promise:
-			log.Debugf("{read} cache promise failed: %s", key)
+			log.Debugf("{read} promise broken: %s", key)
 
 		default: // entityPtr
 			// Cache hit
-			log.Debugf("{read} cache promise hit: %s", key)
+			log.Debugf("{read} promise kept: %s", key)
 			self.AddUnitFor(cached, container, nameTransformer)
 		}
 	} else {
-		log.Debugf("{read} cache promise failed (empty): %s", key)
+		log.Debugf("{read} promise broken (empty): %s", key)
 	}
 }
-
-var cache sync.Map // entityPtr or Promise

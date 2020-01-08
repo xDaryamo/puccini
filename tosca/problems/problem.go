@@ -79,14 +79,17 @@ func (self *Problems) Append(problem Problem) bool {
 
 func (self *Problems) Merge(problems *Problems) bool {
 	if self == problems {
+		// Merging into self
 		return false
 	}
+
 	merged := false
 	for _, problem := range problems.Problems {
 		if self.Append(problem) {
 			merged = true
 		}
 	}
+
 	return merged
 }
 

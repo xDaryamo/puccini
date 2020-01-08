@@ -46,8 +46,8 @@ func (self *Blueprint) SetInputs(inputs map[string]interface{}) {
 	}
 }
 
-// tosca.Normalizable interface
-func (self *Blueprint) Normalize() *normal.ServiceTemplate {
+// normal.Normalizable interface
+func (self *Blueprint) NormalizeServiceTemplate() *normal.ServiceTemplate {
 	log.Info("{normalize} blueprint")
 
 	s := normal.NewServiceTemplate()

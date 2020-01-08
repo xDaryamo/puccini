@@ -7,7 +7,7 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-var hierarchiesWork = ContextsWork{Phase: "hierarchies"}
+var hierarchiesWork = NewContextualWork("hierarchies")
 
 func (self *Context) AddHierarchies() {
 	self.Root.MergeHierarchies(make(tosca.HierarchyContext))

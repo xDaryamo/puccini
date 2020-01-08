@@ -7,7 +7,6 @@ import (
 	"github.com/tliron/puccini/format"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/problems"
-	"github.com/tliron/puccini/tosca/reflection"
 )
 
 type Context struct {
@@ -34,29 +33,13 @@ func (self *Context) AddUnit(unit *Unit) {
 
 func (self *Context) AddUnitFor(entityPtr interface{}, container *Unit, nameTransformer tosca.NameTransformer) {
 	unit := NewUnit(entityPtr, container, nameTransformer)
-	if container == nil {
-		// It's a root unit, so it won't be added later
-		self.AddUnit(unit)
+	if container != nil {
+		// Merge problems into container
+		// Note: In concurrent uses of the same unit this can lead to the same problems being merged more than once
+		// But because duplicate problems are not merged, everything is OK :)
+		container.GetContext().Problems.Merge(unit.GetContext().Problems)
 	}
 	self.goReadImports(unit)
-}
-
-func (self *Context) Traverse(phase string, traverse reflection.Traverser) {
-	done := make(EntitiesDone)
-	t := func(entityPtr interface{}) bool {
-		if done.IsDone(phase, entityPtr) {
-			return false
-		}
-		return traverse(entityPtr)
-	}
-
-	reflection.Traverse(self.Root.EntityPtr, t)
-
-	for _, forType := range self.Root.GetContext().Namespace {
-		for _, entityPtr := range forType {
-			reflection.Traverse(entityPtr, t)
-		}
-	}
 }
 
 // Print

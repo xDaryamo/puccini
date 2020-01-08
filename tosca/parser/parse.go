@@ -43,8 +43,6 @@ func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*n
 	// Phase 3: Hierarchies
 	context.AddHierarchies()
 	if !context.Problems.Empty() {
-		//panic(urlString)
-		//panic(context.Problems.String())
 		parserLock.Unlock()
 		return nil, &context.Problems, errors.New("phase 3: hierarchies")
 	}
@@ -69,7 +67,7 @@ func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*n
 	parserLock.Unlock()
 
 	// Normalize
-	s, ok := Normalize(context.Root.EntityPtr)
+	s, ok := normal.NormalizeServiceTemplate(context.Root.EntityPtr)
 	if !ok || !context.Problems.Empty() {
 		return nil, &context.Problems, errors.New("normalization")
 	}

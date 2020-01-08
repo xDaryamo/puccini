@@ -7,27 +7,18 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-func (self *Context) Gather(path string) tosca.EntityPtrs {
+func (self *Context) Gather(pattern string) tosca.EntityPtrs {
 	var entityPtrs tosca.EntityPtrs
 
-	split := strings.Split(path, "*")
-	last := len(split) - 1
-	var reString string
-	for index, s := range split {
-		reString += regexp.QuoteMeta(s)
-		if index != last {
-			reString += ".*"
-		}
-	}
-	re := regexp.MustCompile(reString)
+	re := compileGatherPattern(pattern)
 
 	self.Traverse("gather", func(entityPtr interface{}) bool {
 		context := tosca.GetContext(entityPtr)
 
 		if re.MatchString(context.Path.String()) {
 			found := false
-			for _, e := range entityPtrs {
-				if e == entityPtr {
+			for _, entityPtr_ := range entityPtrs {
+				if entityPtr_ == entityPtr {
 					found = true
 					break
 				}
@@ -41,4 +32,17 @@ func (self *Context) Gather(path string) tosca.EntityPtrs {
 	})
 
 	return entityPtrs
+}
+
+func compileGatherPattern(pattern string) *regexp.Regexp {
+	split := strings.Split(pattern, "*")
+	last := len(split) - 1
+	var reString string
+	for index, s := range split {
+		reString += regexp.QuoteMeta(s)
+		if index != last {
+			reString += ".*"
+		}
+	}
+	return regexp.MustCompile(reString)
 }
