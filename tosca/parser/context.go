@@ -10,13 +10,12 @@ import (
 )
 
 type Context struct {
-	Root     *Unit
-	Problems problems.Problems
-	Quirks   []string
-	Units    Units
-	Parsing  sync.Map
-	WG       sync.WaitGroup
-	Locker   sync.Mutex
+	Root    *Unit
+	Quirks  []string
+	Units   Units
+	Parsing sync.Map
+	WG      sync.WaitGroup
+	Locker  sync.Mutex
 }
 
 func NewContext(quirks []string) Context {
@@ -25,21 +24,28 @@ func NewContext(quirks []string) Context {
 	}
 }
 
-func (self *Context) AddUnit(unit *Unit) {
+func (self *Context) GetProblems() *problems.Problems {
+	return self.Root.GetContext().Problems
+}
+
+func (self *Context) AddUnit(entityPtr interface{}, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
+	unit := NewUnit(entityPtr, container, nameTransformer)
+
 	self.Locker.Lock()
 	self.Units = append(self.Units, unit)
 	self.Locker.Unlock()
-}
 
-func (self *Context) AddUnitFor(entityPtr interface{}, container *Unit, nameTransformer tosca.NameTransformer) {
-	unit := NewUnit(entityPtr, container, nameTransformer)
 	if container != nil {
 		// Merge problems into container
-		// Note: In concurrent uses of the same unit this can lead to the same problems being merged more than once
-		// But because duplicate problems are not merged, everything is OK :)
+		// Note: This happens every time the same unit is imported,
+		// so it could be that that problems are merged multiple times,
+		// but because problems are de-duped, everything is OK :)
 		container.GetContext().Problems.Merge(unit.GetContext().Problems)
 	}
+
 	self.goReadImports(unit)
+
+	return unit
 }
 
 // Print

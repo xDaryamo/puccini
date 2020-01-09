@@ -7,8 +7,10 @@ import (
 //
 // CapabilityDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.7.2
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.7.2
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.2
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.6.1
 //
 
 type CapabilityDefinition struct {

@@ -35,7 +35,12 @@ func NewInheritContext() *InheritContext {
 func (self *InheritContext) GetInheritTask(entityPtr interface{}) *Task {
 	task, ok := self.TasksForEntities[entityPtr]
 	if !ok {
-		task = NewTask(tosca.GetContext(entityPtr).Path.String())
+		path := tosca.GetContext(entityPtr).Path.String()
+		if path == "" {
+			path = "<root>"
+		}
+
+		task = NewTask(path)
 		self.Tasks.Add(task)
 		self.TasksForEntities[entityPtr] = task
 

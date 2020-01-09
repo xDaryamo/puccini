@@ -14,8 +14,10 @@ type HasComparer interface {
 //
 // DataType
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.7.6
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.7.6
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.6
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.6.5
 //
 
 type DataType struct {

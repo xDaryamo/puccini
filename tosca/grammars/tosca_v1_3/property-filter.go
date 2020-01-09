@@ -8,8 +8,10 @@ import (
 //
 // PropertyFilter
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.4
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.4
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.3
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.3
 //
 
 type PropertyFilter struct {

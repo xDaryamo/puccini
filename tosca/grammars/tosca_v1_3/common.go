@@ -39,13 +39,14 @@ func init() {
 	Grammar.RegisterReader("InterfaceDefinition", ReadInterfaceDefinition)
 	Grammar.RegisterReader("InterfaceMapping", ReadInterfaceMapping) // introduced in TOSCA 1.2
 	Grammar.RegisterReader("InterfaceType", ReadInterfaceType)
-	Grammar.RegisterReader("json", ReadJson)
+	Grammar.RegisterReader("json", ReadJson) // introduced in TOSCA 1.2
 	Grammar.RegisterReader("Metadata", ReadMetadata)
 	Grammar.RegisterReader("NodeFilter", ReadNodeFilter)
 	Grammar.RegisterReader("NodeTemplate", ReadNodeTemplate)
 	Grammar.RegisterReader("NodeType", ReadNodeType)
 	Grammar.RegisterReader("NotificationAssignment", ReadNotificationAssignment) // introduced in TOSCA 1.3
 	Grammar.RegisterReader("NotificationDefinition", ReadNotificationDefinition) // introduced in TOSCA 1.3
+	Grammar.RegisterReader("NotificationOutput", ReadNotificationOutput)         // introduced in TOSCA 1.3
 	Grammar.RegisterReader("OperationAssignment", ReadOperationAssignment)
 	Grammar.RegisterReader("OperationDefinition", ReadOperationDefinition)
 	Grammar.RegisterReader("InterfaceImplementation", ReadInterfaceImplementation)
@@ -77,12 +78,12 @@ func init() {
 	Grammar.RegisterReader("TriggerDefinitionCondition", ReadTriggerDefinitionCondition)
 	Grammar.RegisterReader("Value", ReadValue)
 	Grammar.RegisterReader("version", ReadVersion)
-	Grammar.RegisterReader("WorkflowActivityCallOperation", ReadWorkflowActivityCallOperation) // introduced in TOSCA 1.3
-	Grammar.RegisterReader("WorkflowActivityDefinition", ReadWorkflowActivityDefinition)
-	Grammar.RegisterReader("WorkflowDefinition", ReadWorkflowDefinition)
-	Grammar.RegisterReader("WorkflowPreconditionDefinition", ReadWorkflowPreconditionDefinition)
-	Grammar.RegisterReader("WorkflowStepDefinition", ReadWorkflowStepDefinition)
-	Grammar.RegisterReader("xml", ReadXml)
+	Grammar.RegisterReader("WorkflowActivityCallOperation", ReadWorkflowActivityCallOperation)   // TODO: introduced in TOSCA 1.3
+	Grammar.RegisterReader("WorkflowActivityDefinition", ReadWorkflowActivityDefinition)         // introduced in TOSCA 1.1
+	Grammar.RegisterReader("WorkflowDefinition", ReadWorkflowDefinition)                         // introduced in TOSCA 1.1
+	Grammar.RegisterReader("WorkflowPreconditionDefinition", ReadWorkflowPreconditionDefinition) // introduced in TOSCA 1.1
+	Grammar.RegisterReader("WorkflowStepDefinition", ReadWorkflowStepDefinition)                 // introduced in TOSCA 1.1
+	Grammar.RegisterReader("xml", ReadXml)                                                       // introduced in TOSCA 1.2
 
 	DefaultScriptletNamespace.RegisterScriptlets(FunctionScriptlets, nil)
 	DefaultScriptletNamespace.RegisterScriptlets(ConstraintClauseScriptlets, ConstraintClauseNativeArgumentIndexes)

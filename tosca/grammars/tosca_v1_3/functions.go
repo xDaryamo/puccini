@@ -11,10 +11,15 @@ import (
 //
 // Built-in functions and constraints
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 4
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 4
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 4
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 4
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.3
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
 //
 
 var FunctionScriptlets = map[string]string{

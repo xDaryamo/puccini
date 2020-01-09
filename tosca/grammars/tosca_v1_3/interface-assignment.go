@@ -8,8 +8,10 @@ import (
 //
 // InterfaceAssignment
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.20
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.16
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.14
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.14
 //
 
 type InterfaceAssignment struct {
@@ -17,7 +19,7 @@ type InterfaceAssignment struct {
 	Name    string
 
 	Inputs        Values                  `read:"inputs,Value"`
-	Operations    OperationAssignments    `read:"operations,OperationAssignment"`
+	Operations    OperationAssignments    `read:"operations,OperationAssignment"`       // keyword since TOSCA 1.3
 	Notifications NotificationAssignments `read:"notifications,NotificationAssignment"` // introduced in TOSCA 1.3
 }
 

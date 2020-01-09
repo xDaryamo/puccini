@@ -45,8 +45,8 @@ func (self Map) Coerce() (interface{}, error) {
 //
 
 type MapEntry struct {
-	Key   Coercible `json:"key" yaml:"key"`
-	Value Coercible `json:"value" yaml:"value"`
+	Key   Coercible `json:"$key" yaml:"$key"`
+	Value Coercible `json:"$value" yaml:"$value"`
 }
 
 func (self *CloutContext) NewMapEntry(data interface{}, keyConstraints Constraints, valueConstraints Constraints, functionCallContext FunctionCallContext) (MapEntry, error) {

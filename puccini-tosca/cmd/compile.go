@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/tebeka/atexit"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/format"
 	"github.com/tliron/puccini/tosca/compiler"
@@ -39,6 +38,7 @@ var compileCmd = &cobra.Command{
 func Compile(urlString string) {
 	// Parse
 	context, s := Parse(urlString)
+	problems := context.GetProblems()
 
 	// Compile
 	clout, err := compiler.Compile(s)
@@ -46,24 +46,14 @@ func Compile(urlString string) {
 
 	// Resolve
 	if resolve {
-		compiler.Resolve(clout, &context.Problems, ardFormat, pretty)
-		if !context.Problems.Empty() {
-			if !common.Quiet {
-				context.Problems.Print()
-			}
-			atexit.Exit(1)
-		}
+		compiler.Resolve(clout, problems, ardFormat, pretty)
+		FailOnProblems(problems)
 	}
 
 	// Coerce
 	if coerce {
-		compiler.Coerce(clout, &context.Problems, ardFormat, pretty)
-		if !context.Problems.Empty() {
-			if !common.Quiet {
-				context.Problems.Print()
-			}
-			atexit.Exit(1)
-		}
+		compiler.Coerce(clout, problems, ardFormat, pretty)
+		FailOnProblems(problems)
 	}
 
 	if !common.Quiet || (output != "") {

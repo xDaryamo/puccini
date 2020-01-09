@@ -7,8 +7,10 @@ import (
 //
 // RelationshipTemplate
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.8.4
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.8.4
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.7.4
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.7.4
 //
 
 type RelationshipTemplate struct {

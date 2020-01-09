@@ -14,6 +14,7 @@ import (
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
+	"github.com/tliron/puccini/tosca/problems"
 	"github.com/tliron/puccini/url"
 	"github.com/tliron/yamlkeys"
 )
@@ -74,26 +75,19 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	common.FailOnError(err)
 
 	context := parser.NewContext(quirks)
+	var problems_ *problems.Problems
 
 	// Phase 1: Read
 	if stopAtPhase >= 1 {
 		if !context.ReadRoot(url_) {
 			// Stop here if failed to read
-			if !common.Quiet {
-				context.Problems.Print()
-			}
 			atexit.Exit(1)
 		}
 
-		// Stop here if there are problems
-		if !context.Problems.Empty() {
-			if !common.Quiet {
-				context.Problems.Print()
-			}
-			atexit.Exit(1)
-		}
+		problems_ = context.GetProblems()
+		FailOnProblems(problems_)
 
-		if !common.Quiet && ToPrintPhase(1) {
+		if ToPrintPhase(1) {
 			if len(dumpPhases) > 1 {
 				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Imports"))
 			}
@@ -105,7 +99,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	if stopAtPhase >= 2 {
 		context.AddNamespaces()
 		context.LookupNames()
-		if !common.Quiet && ToPrintPhase(2) {
+		if ToPrintPhase(2) {
 			if len(dumpPhases) > 1 {
 				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Namespaces"))
 			}
@@ -116,7 +110,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	// Phase 3: Hieararchies
 	if stopAtPhase >= 3 {
 		context.AddHierarchies()
-		if !common.Quiet && ToPrintPhase(3) {
+		if ToPrintPhase(3) {
 			if len(dumpPhases) > 1 {
 				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Hierarchies"))
 			}
@@ -127,7 +121,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	// Phase 4: Inheritance
 	if stopAtPhase >= 4 {
 		tasks := context.GetInheritTasks()
-		if !common.Quiet && ToPrintPhase(4) {
+		if ToPrintPhase(4) {
 			if len(dumpPhases) > 1 {
 				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Inheritance Tasks"))
 			}
@@ -145,7 +139,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 	// Phase 5: Rendering
 	if stopAtPhase >= 5 {
 		entityPtrs := context.Render()
-		if !common.Quiet && ToPrintPhase(5) {
+		if ToPrintPhase(5) {
 			sort.Sort(entityPtrs)
 			if len(dumpPhases) > 1 {
 				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Rendering"))
@@ -171,27 +165,23 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		}
 	}
 
-	if !common.Quiet {
-		context.Problems.Print()
-	}
-
-	if !context.Problems.Empty() {
-		atexit.Exit(1)
-	}
+	FailOnProblems(problems_)
 
 	// Normalize
-	s, ok := normal.NormalizeServiceTemplate(context.Root.EntityPtr)
-	if !ok {
+	if s, ok := normal.NormalizeServiceTemplate(context.Root.EntityPtr); ok {
+		return context, s
+	} else {
 		common.Fail("grammar does not support normalization")
+		return context, nil
 	}
-
-	return context, s
 }
 
 func ToPrintPhase(phase uint) bool {
-	for _, p := range dumpPhases {
-		if p == phase {
-			return true
+	if !common.Quiet {
+		for _, phase_ := range dumpPhases {
+			if phase_ == phase {
+				return true
+			}
 		}
 	}
 	return false

@@ -14,10 +14,10 @@ import (
 //
 // Value
 //
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.10
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.12
-// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.9
-// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.11
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.11, 3.6.13
+// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.10, 3.6.12
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.9, 3.5.11
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.9, 3.5.11
 //
 
 type Value struct {

@@ -17,60 +17,59 @@ func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*n
 
 	url_, err := url.NewValidURL(urlString, nil)
 	if err != nil {
-		return nil, &context.Problems, err
+		return nil, nil, err
 	}
 
 	parserLock.Lock()
+	defer parserLock.Unlock()
 
 	// Phase 1: Read
-	if !context.ReadRoot(url_) || !context.Problems.Empty() {
-		parserLock.Unlock()
-		return nil, &context.Problems, errors.New("phase 1: read")
+	if !context.ReadRoot(url_) {
+		return nil, nil, errors.New("phase 1: read")
+	}
+
+	problems := context.GetProblems()
+
+	if !problems.Empty() {
+		return nil, problems, errors.New("phase 1: read")
 	}
 
 	// Phase 2: Namespaces
 	context.AddNamespaces()
-	if !context.Problems.Empty() {
-		parserLock.Unlock()
-		return nil, &context.Problems, errors.New("phase 2.1: namespaces")
+	if !problems.Empty() {
+		return nil, problems, errors.New("phase 2.1: namespaces")
 	}
 	context.LookupNames()
-	if !context.Problems.Empty() {
-		parserLock.Unlock()
-		return nil, &context.Problems, errors.New("phase 2.2: namespaces lookup")
+	if !problems.Empty() {
+		return nil, problems, errors.New("phase 2.2: namespaces lookup")
 	}
 
 	// Phase 3: Hierarchies
 	context.AddHierarchies()
-	if !context.Problems.Empty() {
-		parserLock.Unlock()
-		return nil, &context.Problems, errors.New("phase 3: hierarchies")
+	if !problems.Empty() {
+		return nil, problems, errors.New("phase 3: hierarchies")
 	}
 
 	// Phase 4: Inheritance
 	tasks := context.GetInheritTasks()
 	tasks.Drain()
-	if !context.Problems.Empty() {
-		parserLock.Unlock()
-		return nil, &context.Problems, errors.New("phase 4: inheritance")
+	if !problems.Empty() {
+		return nil, problems, errors.New("phase 4: inheritance")
 	}
 
 	SetInputs(context.Root.EntityPtr, inputs)
 
 	// Phase 5: Rendering
 	context.Render()
-	if !context.Problems.Empty() {
-		parserLock.Unlock()
-		return nil, &context.Problems, errors.New("phase 5: rendering")
+	if !problems.Empty() {
+		return nil, problems, errors.New("phase 5: rendering")
 	}
-
-	parserLock.Unlock()
 
 	// Normalize
 	s, ok := normal.NormalizeServiceTemplate(context.Root.EntityPtr)
-	if !ok || !context.Problems.Empty() {
-		return nil, &context.Problems, errors.New("normalization")
+	if !ok || !problems.Empty() {
+		return nil, problems, errors.New("normalization")
 	}
 
-	return s, &context.Problems, nil
+	return s, problems, nil
 }

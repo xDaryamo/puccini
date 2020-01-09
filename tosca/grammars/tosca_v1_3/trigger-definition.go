@@ -9,6 +9,7 @@ import (
 //
 // TriggerDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.22
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.18
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.16
 //

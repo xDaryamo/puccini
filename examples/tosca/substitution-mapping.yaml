@@ -34,8 +34,10 @@ topology_template:
       # Expose the requirements of our software components
       admin_host: [ admin, host ]
       db_host: [ db, host ]
-    # Mapping properties and interfaces only supported since TOSCA 1.2
     properties:
       version: [ admin, component_version ]
+    attributes:
+      admin_state: [ admin, state ]
+      db_state: [ db, state ]
     interfaces:
       Standard: [ admin, Standard ]

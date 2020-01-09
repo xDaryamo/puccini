@@ -8,17 +8,19 @@ import (
 //
 // InterfaceImplementation
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.16, 3.6.18
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.14
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.13.2.3
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.13.2.3
 //
 
 type InterfaceImplementation struct {
-	*Entity `name:"operation implementation"`
+	*Entity `name:"interface implementation"`
 
 	Primary       *string   `read:"primary"`
 	Dependencies  *[]string `read:"dependencies"`
-	Timeout       *int64    `read:"timeout"`
-	OperationHost *string   `read:"operation_host"`
+	Timeout       *int64    `read:"timeout"`        // introduced in TOSCA 1.2
+	OperationHost *string   `read:"operation_host"` // introduced in TOSCA 1.2
 }
 
 func NewInterfaceImplementation(context *tosca.Context) *InterfaceImplementation {

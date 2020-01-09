@@ -8,8 +8,10 @@ import (
 //
 // ParameterDefinition
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.14
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.13
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.12
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.12
 //
 
 type ParameterDefinition struct {

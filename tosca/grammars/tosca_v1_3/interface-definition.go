@@ -10,6 +10,7 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.20
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.16
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.14
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.14
 //
 
 type InterfaceDefinition struct {
@@ -18,7 +19,7 @@ type InterfaceDefinition struct {
 
 	InterfaceTypeName       *string                 `read:"type"` // required only if cannot be inherited
 	InputDefinitions        PropertyDefinitions     `read:"inputs,PropertyDefinition" inherit:"inputs,InterfaceType"`
-	OperationDefinitions    OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,InterfaceType"`
+	OperationDefinitions    OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,InterfaceType"`          // keyword since TOSCA 1.3
 	NotificationDefinitions NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,InterfaceType"` // introduced in TOSCA 1.3
 
 	InterfaceType *InterfaceType `lookup:"type,InterfaceTypeName" json:"-" yaml:"-"`

@@ -12,7 +12,7 @@ type Value struct {
 	Notation ard.StringMap `json:"-" yaml:"-"`
 
 	Data        interface{} `json:"data" yaml:"data"`
-	Constraints Constraints `json:"constraints" yaml:"constraints"`
+	Constraints Constraints `json:"constraints,omitempty" yaml:"constraints,omitempty"`
 }
 
 func (self *CloutContext) NewValue(data interface{}, notation ard.StringMap, functionCallContext FunctionCallContext) (*Value, error) {

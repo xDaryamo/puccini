@@ -47,12 +47,12 @@ type Context struct {
 	ReadOverrides      map[string]string
 }
 
-func NewContext(problems *problems.Problems, quirks []string) *Context {
+func NewContext(quirks []string) *Context {
 	return &Context{
 		Namespace:          make(Namespace),
 		ScriptletNamespace: make(ScriptletNamespace),
 		Hierarchy:          &Hierarchy{},
-		Problems:           problems,
+		Problems:           &problems.Problems{},
 		Quirks:             quirks,
 	}
 }

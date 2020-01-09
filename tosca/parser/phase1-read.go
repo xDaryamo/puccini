@@ -14,7 +14,7 @@ import (
 )
 
 func (self *Context) ReadRoot(url_ url.URL) bool {
-	toscaContext := tosca.NewContext(&self.Problems, self.Quirks)
+	toscaContext := tosca.NewContext(self.Quirks)
 
 	toscaContext.URL = url_
 
@@ -77,12 +77,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 
 	readCache.Store(toscaContext.URL.Key(), entityPtr)
 
-	unit := NewUnit(entityPtr, container, nameTransfomer)
-	self.AddUnit(unit)
-
-	self.goReadImports(unit)
-
-	return unit, true
+	return self.AddUnit(entityPtr, container, nameTransfomer), true
 }
 
 // From Importer interface
@@ -102,11 +97,11 @@ func (self *Context) goReadImports(container *Unit) {
 
 		// Skip if causes import loop
 		skip := false
-		for c := container; c != nil; c = c.Container {
-			url_ := c.GetContext().URL
+		for container_ := container; container_ != nil; container_ = container_.Container {
+			url_ := container_.GetContext().URL
 			if url_.Key() == key {
 				if !importSpec.Implicit {
-					// Explicit import loops are considered errors
+					// Import loops are considered errors
 					container.GetContext().ReportImportLoop(url_)
 				}
 				skip = true
@@ -129,7 +124,7 @@ func (self *Context) goReadImports(container *Unit) {
 			default: // entityPtr
 				// Cache hit
 				log.Debugf("{read} cache hit: %s", key)
-				self.AddUnitFor(cached, container, importSpec.NameTransformer)
+				self.AddUnit(cached, container, importSpec.NameTransformer)
 			}
 		} else {
 			importToscaContext := container.GetContext().NewImportContext(importSpec.URL)
@@ -153,7 +148,7 @@ func (self *Context) waitForPromise(promise Promise, key string, container *Unit
 		default: // entityPtr
 			// Cache hit
 			log.Debugf("{read} promise kept: %s", key)
-			self.AddUnitFor(cached, container, nameTransformer)
+			self.AddUnit(cached, container, nameTransformer)
 		}
 	} else {
 		log.Debugf("{read} promise broken (empty): %s", key)

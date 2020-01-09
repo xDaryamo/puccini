@@ -15,8 +15,6 @@ var log = logging.MustGetLogger("grammars.tosca_v1_0")
 
 var Grammar = tosca.NewGrammar()
 
-var DefaultScriptletNamespace = make(tosca.ScriptletNamespace)
-
 func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_yaml_1_0", "/tosca/simple/1.0/profile.yaml")
 
@@ -33,10 +31,8 @@ func init() {
 	Grammar.RegisterReader("CapabilityFilter", tosca_v1_3.ReadCapabilityFilter)
 	Grammar.RegisterReader("CapabilityMapping", tosca_v1_3.ReadCapabilityMapping)
 	Grammar.RegisterReader("CapabilityType", tosca_v1_3.ReadCapabilityType)
-	Grammar.RegisterReader("ConditionClause", tosca_v1_3.ReadConditionClause)
 	Grammar.RegisterReader("ConstraintClause", tosca_v1_3.ReadConstraintClause)
 	Grammar.RegisterReader("DataType", tosca_v1_3.ReadDataType)
-	Grammar.RegisterReader("EventFilter", tosca_v1_3.ReadEventFilter)
 	Grammar.RegisterReader("Group", tosca_v1_2.ReadGroup)         // 1.2
 	Grammar.RegisterReader("GroupType", tosca_v1_2.ReadGroupType) // 1.2
 	Grammar.RegisterReader("Import", tosca_v1_3.ReadImport)
@@ -47,13 +43,12 @@ func init() {
 	Grammar.RegisterReader("NodeFilter", tosca_v1_3.ReadNodeFilter)
 	Grammar.RegisterReader("NodeTemplate", tosca_v1_3.ReadNodeTemplate)
 	Grammar.RegisterReader("NodeType", tosca_v1_3.ReadNodeType)
-	Grammar.RegisterReader("NotificationDefinition", tosca_v1_3.ReadNotificationDefinition) // unused
 	Grammar.RegisterReader("OperationAssignment", tosca_v1_3.ReadOperationAssignment)
 	Grammar.RegisterReader("OperationDefinition", tosca_v1_3.ReadOperationDefinition)
 	Grammar.RegisterReader("InterfaceImplementation", tosca_v1_1.ReadInterfaceImplementation) // 1.1
 	Grammar.RegisterReader("ParameterDefinition", tosca_v1_3.ReadParameterDefinition)
-	Grammar.RegisterReader("Policy", tosca_v1_3.ReadPolicy)
-	Grammar.RegisterReader("PolicyType", tosca_v1_3.ReadPolicyType)
+	Grammar.RegisterReader("Policy", ReadPolicy)                                    // override
+	Grammar.RegisterReader("PolicyType", ReadPolicyType)                            // override
 	Grammar.RegisterReader("PropertyDefinition", tosca_v1_2.ReadPropertyDefinition) // 1.2
 	Grammar.RegisterReader("PropertyFilter", tosca_v1_3.ReadPropertyFilter)
 	Grammar.RegisterReader("range", tosca_v1_3.ReadRange)
@@ -72,16 +67,7 @@ func init() {
 	Grammar.RegisterReader("Schema", tosca_v1_3.ReadSchema)
 	Grammar.RegisterReader("SubstitutionMappings", tosca_v1_1.ReadSubstitutionMappings) // 1.1
 	Grammar.RegisterReader("timestamp", tosca_v1_3.ReadTimestamp)
-	Grammar.RegisterReader("TopologyTemplate", tosca_v1_3.ReadTopologyTemplate)
-	Grammar.RegisterReader("TriggerDefinition", tosca_v1_3.ReadTriggerDefinition)
-	Grammar.RegisterReader("TriggerDefinitionCondition", tosca_v1_3.ReadTriggerDefinitionCondition)
+	Grammar.RegisterReader("TopologyTemplate", ReadTopologyTemplate) // override
 	Grammar.RegisterReader("Value", tosca_v1_3.ReadValue)
 	Grammar.RegisterReader("version", tosca_v1_3.ReadVersion)
-	Grammar.RegisterReader("WorkflowActivityDefinition", tosca_v1_3.ReadWorkflowActivityDefinition)
-	Grammar.RegisterReader("WorkflowDefinition", tosca_v1_3.ReadWorkflowDefinition)
-	Grammar.RegisterReader("WorkflowPreconditionDefinition", tosca_v1_3.ReadWorkflowPreconditionDefinition)
-	Grammar.RegisterReader("WorkflowStepDefinition", tosca_v1_3.ReadWorkflowStepDefinition)
-
-	DefaultScriptletNamespace.RegisterScriptlets(tosca_v1_3.FunctionScriptlets, nil, "join")
-	DefaultScriptletNamespace.RegisterScriptlets(tosca_v1_3.ConstraintClauseScriptlets, tosca_v1_3.ConstraintClauseNativeArgumentIndexes, "schema")
 }

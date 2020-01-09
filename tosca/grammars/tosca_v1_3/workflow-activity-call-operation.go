@@ -9,6 +9,10 @@ import (
 //
 // WorkflowActivityCallOperation
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.23.3
+// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.19.2.3
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.17.2.3
+//
 
 type WorkflowActivityCallOperation struct {
 	*Entity `name:"workflow activity call operation"`

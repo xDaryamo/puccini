@@ -9,6 +9,11 @@ import (
 //
 // Attaches to SubstitutionMappings
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.8.8
+// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.8.8
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 2.10, 2.11
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 2.10, 2.11
+//
 
 type RequirementMapping struct {
 	*Entity `name:"requirement mapping"`

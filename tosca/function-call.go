@@ -10,9 +10,9 @@ package tosca
 type FunctionCall struct {
 	Name      string        `json:"name" yaml:"name"`
 	Arguments []interface{} `json:"arguments" yaml:"arguments"`
-	URL       string        `json:"url" yaml:"url"`
-	Location  string        `json:"location" yaml:"location"`
-	Path      string        `json:"path" yaml:"path"`
+	URL       string        `json:"url,omitempty" yaml:"url,omitempty"`
+	Location  string        `json:"location,omitempty" yaml:"location,omitempty"`
+	Path      string        `json:"path,omitempty" yaml:"path,omitempty"`
 }
 
 func NewFunctionCall(name string, arguments []interface{}, url string, location string, path string) *FunctionCall {

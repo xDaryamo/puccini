@@ -37,10 +37,10 @@ type FunctionCall struct {
 
 	Name        string      `json:"name" yaml:"name"`
 	Arguments   []Coercible `json:"arguments" yaml:"arguments"`
-	URL         string      `json:"url" yaml:"url"`
-	Path        string      `json:"path" yaml:"path"`
-	Location    string      `json:"location" yaml:"location"`
-	Constraints Constraints `json:"constraints" yaml:"constraints"`
+	URL         string      `json:"url,omitempty" yaml:"url,omitempty"`
+	Path        string      `json:"path,omitempty" yaml:"path,omitempty"`
+	Location    string      `json:"location,omitempty" yaml:"location,omitempty"`
+	Constraints Constraints `json:"constraints,omitempty" yaml:"constraints,omitempty"`
 }
 
 func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.StringMap, functionCallContext FunctionCallContext) (*FunctionCall, error) {

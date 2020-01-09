@@ -10,6 +10,7 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.7.4
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.7.4
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.4
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.6.3
 //
 
 type ArtifactType struct {

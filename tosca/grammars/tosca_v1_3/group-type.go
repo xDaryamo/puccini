@@ -10,6 +10,7 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.7.11
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.7.11
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.11
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.6.10
 //
 
 type GroupType struct {
