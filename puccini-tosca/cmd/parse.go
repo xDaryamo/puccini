@@ -10,7 +10,7 @@ import (
 	"github.com/tebeka/atexit"
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/common/format"
+	format_ "github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
@@ -43,9 +43,9 @@ var parseCmd = &cobra.Command{
 	Long:  `Parses and validates a TOSCA service template and reports problems if there are any. Provides access to phase diagnostics and entities.`,
 	Args:  cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		var urlString string
+		var url_ string
 		if len(args) == 1 {
-			urlString = args[0]
+			url_ = args[0]
 		}
 
 		if filter != "" {
@@ -53,25 +53,25 @@ var parseCmd = &cobra.Command{
 			dumpPhases = nil
 		}
 
-		_, s := Parse(urlString)
+		_, s := Parse(url_)
 
 		if (filter == "") && (len(dumpPhases) == 0) {
-			format.Print(s, ardFormat, pretty)
+			format_.Print(s, format, pretty)
 		}
 	},
 }
 
-func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
+func Parse(url_ string) (parser.Context, *normal.ServiceTemplate) {
 	ParseInputs()
 
-	var url_ url.URL
+	var url__ url.URL
 	var err error
-	if urlString == "" {
-		log.Infof("parsing stdin", urlString)
-		url_, err = url.ReadToInternalURLFromStdin(ardFormat)
+	if url_ == "" {
+		log.Infof("parsing stdin", url_)
+		url__, err = url.ReadToInternalURLFromStdin(format)
 	} else {
-		log.Infof("parsing \"%s\"", urlString)
-		url_, err = url.NewValidURL(urlString, nil)
+		log.Infof("parsing \"%s\"", url_)
+		url__, err = url.NewValidURL(url_, nil)
 	}
 	common.FailOnError(err)
 
@@ -80,7 +80,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 
 	// Phase 1: Read
 	if stopAtPhase >= 1 {
-		if !context.ReadRoot(url_) {
+		if !context.ReadRoot(url__) {
 			// Stop here if failed to read
 			atexit.Exit(1)
 		}
@@ -147,7 +147,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 			}
 			for _, entityPtr := range entityPtrs {
 				fmt.Fprintf(terminal.Stdout, "%s:\n", terminal.ColorPath(tosca.GetContext(entityPtr).Path.String()))
-				err = format.Print(entityPtr, ardFormat, pretty)
+				err = format_.Print(entityPtr, format, pretty)
 				common.FailOnError(err)
 			}
 		}
@@ -160,7 +160,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		} else if !terminal.Quiet {
 			for _, entityPtr := range entityPtrs {
 				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorPath(tosca.GetContext(entityPtr).Path.String()))
-				err = format.Print(entityPtr, ardFormat, pretty)
+				err = format_.Print(entityPtr, format, pretty)
 				common.FailOnError(err)
 			}
 		}
@@ -198,7 +198,7 @@ func ParseInputs() {
 		if readerCloser, ok := reader.(io.ReadCloser); ok {
 			defer readerCloser.Close()
 		}
-		data, err := format.Read(reader, "yaml")
+		data, err := format_.Read(reader, "yaml")
 		common.FailOnError(err)
 		if map_, ok := data.(ard.Map); ok {
 			for key, value := range map_ {
@@ -214,7 +214,7 @@ func ParseInputs() {
 		if len(s) != 2 {
 			common.Failf("malformed input: %s", input)
 		}
-		value, err := format.Decode(s[1], "yaml")
+		value, err := format_.Decode(s[1], "yaml")
 		common.FailOnError(err)
 		inputValues[s[0]] = value
 	}

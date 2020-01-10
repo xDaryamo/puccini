@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/common/format"
+	format_ "github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/compiler"
 )
@@ -27,18 +27,18 @@ var compileCmd = &cobra.Command{
 	Long:  `Parses a TOSCA service template and compiles the normalized output of the parser to Clout. Supports JavaScript plugins.`,
 	Args:  cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		var urlString string
+		var url string
 		if len(args) == 1 {
-			urlString = args[0]
+			url = args[0]
 		}
 
-		Compile(urlString)
+		Compile(url)
 	},
 }
 
-func Compile(urlString string) {
+func Compile(url string) {
 	// Parse
-	context, s := Parse(urlString)
+	context, s := Parse(url)
 	problems := context.GetProblems()
 
 	// Compile
@@ -47,18 +47,18 @@ func Compile(urlString string) {
 
 	// Resolve
 	if resolve {
-		compiler.Resolve(clout, problems, ardFormat, pretty)
+		compiler.Resolve(clout, problems, format, pretty)
 		FailOnProblems(problems)
 	}
 
 	// Coerce
 	if coerce {
-		compiler.Coerce(clout, problems, ardFormat, pretty)
+		compiler.Coerce(clout, problems, format, pretty)
 		FailOnProblems(problems)
 	}
 
 	if !terminal.Quiet || (output != "") {
-		err = format.WriteOrPrint(clout, ardFormat, pretty, output)
+		err = format_.WriteOrPrint(clout, format, pretty, output)
 		common.FailOnError(err)
 	}
 }

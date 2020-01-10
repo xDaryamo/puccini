@@ -1,8 +1,8 @@
 package format
 
 func Normalize(data interface{}) (interface{}, error) {
-	if code, err := EncodeYaml(data, " "); err == nil {
-		return DecodeYaml(code)
+	if code, err := EncodeYAML(data, " "); err == nil {
+		return DecodeYAML(code)
 	} else {
 		return nil, err
 	}

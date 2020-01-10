@@ -10,28 +10,28 @@ import (
 func Encode(data interface{}, format string) (string, error) {
 	switch format {
 	case "yaml", "":
-		return EncodeYaml(data, terminal.Indent)
+		return EncodeYAML(data, terminal.Indent)
 	case "json":
-		return EncodeJson(data, terminal.Indent)
+		return EncodeJSON(data, terminal.Indent)
 	case "xml":
-		return EncodeXml(data, terminal.Indent)
+		return EncodeXML(data, terminal.Indent)
 	default:
 		return "", fmt.Errorf("unsupported format: %s", format)
 	}
 }
 
-func EncodeYaml(data interface{}, indent string) (string, error) {
+func EncodeYAML(data interface{}, indent string) (string, error) {
 	var writer strings.Builder
-	if err := WriteYaml(data, &writer, indent); err == nil {
+	if err := WriteYAML(data, &writer, indent); err == nil {
 		return writer.String(), nil
 	} else {
 		return "", err
 	}
 }
 
-func EncodeJson(data interface{}, indent string) (string, error) {
+func EncodeJSON(data interface{}, indent string) (string, error) {
 	var writer strings.Builder
-	if err := WriteJson(data, &writer, indent); err == nil {
+	if err := WriteJSON(data, &writer, indent); err == nil {
 		s := writer.String()
 		if indent == "" {
 			// json.Encoder adds a "\n", unlike json.Marshal
@@ -43,9 +43,9 @@ func EncodeJson(data interface{}, indent string) (string, error) {
 	}
 }
 
-func EncodeXml(data interface{}, indent string) (string, error) {
+func EncodeXML(data interface{}, indent string) (string, error) {
 	var writer strings.Builder
-	if err := WriteXml(data, &writer, indent); err == nil {
+	if err := WriteXML(data, &writer, indent); err == nil {
 		return writer.String(), nil
 	} else {
 		return "", err

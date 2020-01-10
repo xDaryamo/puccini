@@ -13,20 +13,20 @@ type Locator interface {
 }
 
 //
-// YamlLocator
+// YAMLLocator
 //
 
-type YamlLocator struct {
+type YAMLLocator struct {
 	RootNode *yaml.Node
 }
 
-func NewYamlLocator(rootNode *yaml.Node) *YamlLocator {
-	return &YamlLocator{rootNode}
+func NewYAMLLocator(rootNode *yaml.Node) *YAMLLocator {
+	return &YAMLLocator{rootNode}
 }
 
 // Locator interface
-func (self *YamlLocator) Locate(path ...PathElement) (int, int, bool) {
-	if node := FindYamlNode(self.RootNode, path...); node != nil {
+func (self *YAMLLocator) Locate(path ...PathElement) (int, int, bool) {
+	if node := FindYAMLNode(self.RootNode, path...); node != nil {
 		return node.Line, node.Column, true
 	} else {
 		return 0, 0, false

@@ -13,9 +13,9 @@ import (
 //
 
 // tosca.Reader signature
-func ReadXml(context *tosca.Context) interface{} {
+func ReadXML(context *tosca.Context) interface{} {
 	if content := context.ReadString(); content != nil {
-		if err := format.ValidateXml(*content); err != nil {
+		if err := format.ValidateXML(*content); err != nil {
 			context.ReportValueMalformed("XML", err.Error())
 		}
 	}

@@ -17,28 +17,28 @@ import (
 //
 
 type Context struct {
-	Quiet     bool
-	ArdFormat string
-	Pretty    bool
-	Output    string
-	Log       *Log
-	Stdout    *os.File
-	Stderr    *os.File
-	Stdin     *os.File
+	Quiet  bool
+	Format string
+	Pretty bool
+	Output string
+	Log    *Log
+	Stdout *os.File
+	Stderr *os.File
+	Stdin  *os.File
 
 	programCache sync.Map
 }
 
-func NewContext(name string, logger *logging.Logger, quiet bool, ardFormat string, pretty bool, output string) *Context {
+func NewContext(name string, logger *logging.Logger, quiet bool, format string, pretty bool, output string) *Context {
 	return &Context{
-		Quiet:     quiet,
-		ArdFormat: ardFormat,
-		Pretty:    pretty,
-		Output:    output,
-		Log:       NewLog(logger, name),
-		Stdout:    os.Stdout,
-		Stderr:    os.Stderr,
-		Stdin:     os.Stdin,
+		Quiet:  quiet,
+		Format: format,
+		Pretty: pretty,
+		Output: output,
+		Log:    NewLog(logger, name),
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+		Stdin:  os.Stdin,
 	}
 }
 
@@ -46,9 +46,9 @@ func (self *Context) NewCloutRuntime(clout_ *clout.Clout, apis map[string]interf
 	runtime := goja.New()
 	runtime.SetFieldNameMapper(mapper)
 
-	runtime.Set("puccini", self.NewPucciniApi())
+	runtime.Set("puccini", self.NewPucciniAPI())
 
-	runtime.Set("clout", self.NewCloutApi(clout_, runtime))
+	runtime.Set("clout", self.NewCloutAPI(clout_, runtime))
 
 	for name, api := range apis {
 		runtime.Set(name, api)

@@ -65,17 +65,17 @@ func (self *Artifact) Render(definition *ArtifactDefinition) {
 	self.Properties.RenderProperties(self.ArtifactType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
 
 	// Validate extension (if "file_ext" was not set in type, then anything goes)
-	if self.ArtifactType.FileExt != nil {
+	if self.ArtifactType.FileExtension != nil {
 		extension := self.GetExtension()
 		found := false
-		for _, e := range *self.ArtifactType.FileExt {
+		for _, e := range *self.ArtifactType.FileExtension {
 			if e == extension {
 				found = true
 				break
 			}
 		}
 		if !found {
-			self.Context.FieldChild("file", nil).ReportIncompatibleExtension(extension, *self.ArtifactType.FileExt)
+			self.Context.FieldChild("file", nil).ReportIncompatibleExtension(extension, *self.ArtifactType.FileExtension)
 		}
 	}
 }

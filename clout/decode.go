@@ -1,14 +1,10 @@
 package clout
 
 import (
-	"encoding/json"
-	"encoding/xml"
 	"errors"
 	"fmt"
-	"io"
 
 	"github.com/tliron/puccini/ard"
-	"github.com/tliron/yamlkeys"
 )
 
 func Decode(map_ ard.Map) (*Clout, error) {
@@ -111,57 +107,4 @@ func Decode(map_ ard.Map) (*Clout, error) {
 	}
 
 	return clout, nil
-}
-
-func DecodeJson(reader io.Reader) (*Clout, error) {
-	var clout Clout
-	var err error
-
-	decoder := json.NewDecoder(reader)
-	decoder.DisallowUnknownFields()
-
-	if err = decoder.Decode(&clout); err != nil {
-		return nil, err
-	}
-
-	if err = clout.Resolve(); err != nil {
-		return nil, err
-	}
-
-	return &clout, nil
-}
-
-func DecodeYaml(reader io.Reader) (*Clout, error) {
-	var err error
-
-	var map_ ard.Map
-	map_, err = yamlkeys.Decode(reader)
-
-	var clout *Clout
-	if clout, err = Decode(map_); err != nil {
-		return nil, err
-	}
-
-	if err = clout.Resolve(); err != nil {
-		return nil, err
-	}
-
-	return clout, nil
-}
-
-func DecodeXml(reader io.Reader) (*Clout, error) {
-	var clout Clout
-	var err error
-
-	decoder := xml.NewDecoder(reader)
-
-	if err = decoder.Decode(&clout); err != nil {
-		return nil, err
-	}
-
-	if err = clout.Resolve(); err != nil {
-		return nil, err
-	}
-
-	return &clout, nil
 }

@@ -12,10 +12,10 @@ import (
 // TODO: this is a brute-force method to avoid race conditions
 var parserLock sync.Mutex
 
-func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*normal.ServiceTemplate, *problems.Problems, error) {
+func Parse(url_ string, quirks []string, inputs map[string]interface{}) (*normal.ServiceTemplate, *problems.Problems, error) {
 	context := NewContext(quirks)
 
-	url_, err := url.NewValidURL(urlString, nil)
+	url__, err := url.NewValidURL(url_, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -24,7 +24,7 @@ func Parse(urlString string, quirks []string, inputs map[string]interface{}) (*n
 	defer parserLock.Unlock()
 
 	// Phase 1: Read
-	if !context.ReadRoot(url_) {
+	if !context.ReadRoot(url__) {
 		return nil, nil, errors.New("phase 1: read")
 	}
 

@@ -103,7 +103,7 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.Strin
 func (self *FunctionCall) Signature(arguments []interface{}) string {
 	s := make([]string, len(arguments))
 	for index, argument := range arguments {
-		s[index], _ = format.EncodeJson(argument, "")
+		s[index], _ = format.EncodeYAML(argument, "")
 	}
 	return fmt.Sprintf("%s(%s)", self.Name, strings.Join(s, ","))
 }

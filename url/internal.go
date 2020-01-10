@@ -15,10 +15,10 @@ import (
 
 // Note: we *must* use the "path" package rather than "filepath" to ensure consistency with Windows
 
-var Internal sync.Map
+var internal sync.Map
 
 func RegisterInternalURL(path string, content string) error {
-	if _, loaded := Internal.LoadOrStore(path, content); !loaded {
+	if _, loaded := internal.LoadOrStore(path, content); !loaded {
 		return nil
 	} else {
 		return fmt.Errorf("internal URL conflict: %s", path)
@@ -61,7 +61,7 @@ func NewInternalURL(path string) *InternalURL {
 }
 
 func NewValidInternalURL(path string) (*InternalURL, error) {
-	if content, ok := Internal.Load(path); ok {
+	if content, ok := internal.Load(path); ok {
 		return &InternalURL{path, content.(string)}, nil
 	} else {
 		return nil, fmt.Errorf("internal URL not found: %s", path)

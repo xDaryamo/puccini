@@ -13,9 +13,9 @@ import (
 //
 
 // tosca.Reader signature
-func ReadJson(context *tosca.Context) interface{} {
+func ReadJSON(context *tosca.Context) interface{} {
 	if content := context.ReadString(); content != nil {
-		if err := format.ValidateJson(*content); err != nil {
+		if err := format.ValidateJSON(*content); err != nil {
 			context.ReportValueMalformed("JSON", err.Error())
 		}
 	}

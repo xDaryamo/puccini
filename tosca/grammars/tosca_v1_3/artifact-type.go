@@ -17,8 +17,8 @@ type ArtifactType struct {
 	*Type `name:"artifact type"`
 
 	PropertyDefinitions PropertyDefinitions `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
-	MimeType            *string             `read:"mime_type" inherit:"mime_type,Parent"`
-	FileExt             *[]string           `read:"file_ext" inherit:"file_ext,Parent"`
+	MIMEType            *string             `read:"mime_type" inherit:"mime_type,Parent"`
+	FileExtension       *[]string           `read:"file_ext" inherit:"file_ext,Parent"`
 
 	Parent *ArtifactType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
 }

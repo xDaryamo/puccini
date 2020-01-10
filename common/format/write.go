@@ -19,22 +19,22 @@ func Write(data interface{}, format string, indent string, writer io.Writer) err
 
 	// Special handling for etree
 	if xmlDocument, ok := data.(*etree.Document); ok {
-		return WriteXmlDocument(xmlDocument, writer, indent)
+		return WriteXMLDocument(xmlDocument, writer, indent)
 	}
 
 	switch format {
 	case "yaml", "":
-		return WriteYaml(data, writer, indent)
+		return WriteYAML(data, writer, indent)
 	case "json":
-		return WriteJson(data, writer, indent)
+		return WriteJSON(data, writer, indent)
 	case "xml":
-		return WriteXml(data, writer, indent)
+		return WriteXML(data, writer, indent)
 	default:
 		return fmt.Errorf("unsupported format: %s", format)
 	}
 }
 
-func WriteYaml(data interface{}, writer io.Writer, indent string) error {
+func WriteYAML(data interface{}, writer io.Writer, indent string) error {
 	encoder := yaml.NewEncoder(writer)
 	// BUG: currently does not allow a value of 1, see: https://github.com/go-yaml/yaml/issues/501
 	encoder.SetIndent(len(indent)) // This might not work as expected for tabs!
@@ -52,13 +52,13 @@ func WriteYaml(data interface{}, writer io.Writer, indent string) error {
 	}
 }
 
-func WriteJson(data interface{}, writer io.Writer, indent string) error {
+func WriteJSON(data interface{}, writer io.Writer, indent string) error {
 	encoder := json.NewEncoder(writer)
 	encoder.SetIndent("", indent)
 	return encoder.Encode(data)
 }
 
-func WriteXml(data interface{}, writer io.Writer, indent string) error {
+func WriteXML(data interface{}, writer io.Writer, indent string) error {
 	// Because we don't provide explicit marshalling for XML in the codebase (as we do for
 	// JSON and YAML) then we must normalize the data before encoding it
 	data, err := Normalize(data)
@@ -66,7 +66,7 @@ func WriteXml(data interface{}, writer io.Writer, indent string) error {
 		return err
 	}
 
-	data = EnsureXml(data)
+	data = EnsureXML(data)
 
 	if _, err := io.WriteString(writer, xml.Header); err != nil {
 		return err
@@ -86,7 +86,7 @@ func WriteXml(data interface{}, writer io.Writer, indent string) error {
 	return nil
 }
 
-func WriteXmlDocument(xmlDocument *etree.Document, writer io.Writer, indent string) error {
+func WriteXMLDocument(xmlDocument *etree.Document, writer io.Writer, indent string) error {
 	xmlDocument.Indent(len(indent))
 	_, err := xmlDocument.WriteTo(writer)
 	return err

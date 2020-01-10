@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/op/go-logging"
@@ -20,7 +19,7 @@ func ReadClout(path string) (*clout.Clout, error) {
 	if path != "" {
 		url_, err = url.NewValidURL(path, nil)
 	} else {
-		url_, err = url.ReadToInternalURLFromStdin(ardFormat)
+		url_, err = url.ReadToInternalURLFromStdin(format)
 	}
 	if err != nil {
 		return nil, err
@@ -35,16 +34,5 @@ func ReadClout(path string) (*clout.Clout, error) {
 		defer readerCloser.Close()
 	}
 
-	f := url_.Format()
-
-	switch f {
-	case "json":
-		return clout.DecodeJson(reader)
-	case "yaml", "":
-		return clout.DecodeYaml(reader)
-	case "xml":
-		return clout.DecodeXml(reader)
-	default:
-		return nil, fmt.Errorf("unsupported format: %s", f)
-	}
+	return clout.Read(reader, url_.Format())
 }

@@ -26,30 +26,30 @@ func Print(data interface{}, format string, pretty bool) error {
 
 	// Special handling for etree
 	if xmlDocument, ok := data.(*etree.Document); ok {
-		return PrintXmlDocument(xmlDocument, pretty)
+		return PrintXMLDocument(xmlDocument, pretty)
 	}
 
 	switch format {
 	case "yaml", "":
-		return PrintYaml(data, pretty)
+		return PrintYAML(data, pretty)
 	case "json":
-		return PrintJson(data, pretty)
+		return PrintJSON(data, pretty)
 	case "xml":
-		return PrintXml(data, pretty)
+		return PrintXML(data, pretty)
 	default:
 		return fmt.Errorf("unsupported format: %s", format)
 	}
 }
 
-func PrintYaml(data interface{}, pretty bool) error {
+func PrintYAML(data interface{}, pretty bool) error {
 	indent := "          "
 	if pretty {
 		indent = terminal.Indent
 	}
-	return WriteYaml(data, terminal.Stdout, indent)
+	return WriteYAML(data, terminal.Stdout, indent)
 }
 
-func PrintJson(data interface{}, pretty bool) error {
+func PrintJSON(data interface{}, pretty bool) error {
 	if pretty {
 		bytes, err := prettyjsonFormatter.Marshal(data)
 		if err != nil {
@@ -57,17 +57,17 @@ func PrintJson(data interface{}, pretty bool) error {
 		}
 		fmt.Fprintf(terminal.Stdout, "%s\n", bytes)
 	} else {
-		return WriteJson(data, terminal.Stdout, "")
+		return WriteJSON(data, terminal.Stdout, "")
 	}
 	return nil
 }
 
-func PrintXml(data interface{}, pretty bool) error {
+func PrintXML(data interface{}, pretty bool) error {
 	indent := ""
 	if pretty {
 		indent = terminal.Indent
 	}
-	if err := WriteXml(data, terminal.Stdout, indent); err != nil {
+	if err := WriteXML(data, terminal.Stdout, indent); err != nil {
 		return err
 	}
 	if pretty {
@@ -76,7 +76,7 @@ func PrintXml(data interface{}, pretty bool) error {
 	return nil
 }
 
-func PrintXmlDocument(xmlDocument *etree.Document, pretty bool) error {
+func PrintXMLDocument(xmlDocument *etree.Document, pretty bool) error {
 	if pretty {
 		xmlDocument.Indent(terminal.IndentSpaces)
 	} else {

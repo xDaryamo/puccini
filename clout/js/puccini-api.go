@@ -12,10 +12,10 @@ import (
 )
 
 //
-// PucciniApi
+// PucciniAPI
 //
 
-type PucciniApi struct {
+type PucciniAPI struct {
 	Log    *Log
 	Stdout *os.File
 	Stderr *os.File
@@ -26,12 +26,12 @@ type PucciniApi struct {
 	context *Context
 }
 
-func (self *Context) NewPucciniApi() *PucciniApi {
-	format := self.ArdFormat
+func (self *Context) NewPucciniAPI() *PucciniAPI {
+	format := self.Format
 	if format == "" {
 		format = "yaml"
 	}
-	return &PucciniApi{
+	return &PucciniAPI{
 		Log:     self.Log,
 		Stdout:  self.Stdout,
 		Stderr:  self.Stderr,
@@ -42,19 +42,19 @@ func (self *Context) NewPucciniApi() *PucciniApi {
 	}
 }
 
-func (entry *PucciniApi) Sprintf(f string, a ...interface{}) string {
+func (entry *PucciniAPI) Sprintf(f string, a ...interface{}) string {
 	return fmt.Sprintf(f, a...)
 }
 
-func (self *PucciniApi) Timestamp() string {
+func (self *PucciniAPI) Timestamp() string {
 	return common.Timestamp()
 }
 
-func (self *PucciniApi) NewXmlDocument() *etree.Document {
+func (self *PucciniAPI) NewXMLDocument() *etree.Document {
 	return etree.NewDocument()
 }
 
-func (self *PucciniApi) Write(data interface{}, path string, dontOverwrite bool) {
+func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool) {
 	output := self.context.Output
 	if path != "" {
 		output = filepath.Join(output, path)

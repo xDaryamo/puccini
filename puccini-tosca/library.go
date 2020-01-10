@@ -50,7 +50,7 @@ func Compile(url *C.char) *C.char {
 		return nil
 	}
 
-	format.WriteYaml(clout_, buffer, "  ")
+	format.WriteYAML(clout_, buffer, "  ")
 
 	return C.CString(buffer.String())
 }

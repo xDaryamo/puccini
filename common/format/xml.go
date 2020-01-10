@@ -7,7 +7,7 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-func EnsureXml(data interface{}) interface{} {
+func EnsureXML(data interface{}) interface{} {
 	if data == nil {
 		return nil
 	}
@@ -20,75 +20,75 @@ func EnsureXml(data interface{}) interface{} {
 		slice := make([]interface{}, length)
 		for index := 0; index < length; index++ {
 			v := value.Index(index).Interface()
-			slice[index] = EnsureXml(v)
+			slice[index] = EnsureXML(v)
 		}
 		return slice
 	} else if type_.Kind() == reflect.Map {
-		// Convert to slice of XmlMapEntry
-		slice := make([]XmlMapEntry, value.Len())
+		// Convert to slice of XMLMapEntry
+		slice := make([]XMLMapEntry, value.Len())
 		for index, key := range value.MapKeys() {
 			k := yamlkeys.KeyData(key.Interface())
 			v := value.MapIndex(key).Interface()
-			slice[index] = XmlMapEntry{EnsureXml(k), EnsureXml(v)}
+			slice[index] = XMLMapEntry{EnsureXML(k), EnsureXML(v)}
 		}
-		return XmlMap{slice}
+		return XMLMap{slice}
 	}
 
 	return data
 }
 
 //
-// XmlMap
+// XMLMap
 //
 
-type XmlMap struct {
-	Entries []XmlMapEntry
+type XMLMap struct {
+	Entries []XMLMapEntry
 }
 
-var XmlMapStartElement = xml.StartElement{Name: xml.Name{Local: "map"}}
+var XMLMapStartElement = xml.StartElement{Name: xml.Name{Local: "map"}}
 
 // xml.Marshaler interface
-func (self XmlMap) MarshalXML(encoder *xml.Encoder, start xml.StartElement) error {
+func (self XMLMap) MarshalXML(encoder *xml.Encoder, start xml.StartElement) error {
 	var err error
-	if err = encoder.EncodeToken(XmlMapStartElement); err != nil {
+	if err = encoder.EncodeToken(XMLMapStartElement); err != nil {
 		return err
 	}
 	if err = encoder.Encode(self.Entries); err != nil {
 		return err
 	}
-	return encoder.EncodeToken(XmlMapStartElement.End())
+	return encoder.EncodeToken(XMLMapStartElement.End())
 }
 
 //
-// XmlMapEntry
+// XMLMapEntry
 //
 
-type XmlMapEntry struct {
+type XMLMapEntry struct {
 	Key   interface{}
 	Value interface{}
 }
 
-var XmlMapEntryStart = xml.StartElement{Name: xml.Name{Local: "entry"}}
-var XmlKeyStart = xml.StartElement{Name: xml.Name{Local: "key"}}
-var XmlValueStart = xml.StartElement{Name: xml.Name{Local: "value"}}
+var XMLMapEntryStart = xml.StartElement{Name: xml.Name{Local: "entry"}}
+var XMLKeyStart = xml.StartElement{Name: xml.Name{Local: "key"}}
+var XMLValueStart = xml.StartElement{Name: xml.Name{Local: "value"}}
 
 // xml.Marshaler interface
-func (self XmlMapEntry) MarshalXML(encoder *xml.Encoder, start xml.StartElement) error {
+func (self XMLMapEntry) MarshalXML(encoder *xml.Encoder, start xml.StartElement) error {
 	var err error
-	if err := encoder.EncodeToken(XmlMapEntryStart); err != nil {
+	if err := encoder.EncodeToken(XMLMapEntryStart); err != nil {
 		return err
 	}
-	if err := encoder.EncodeElement(self.Key, XmlKeyStart); err != nil {
+	if err := encoder.EncodeElement(self.Key, XMLKeyStart); err != nil {
 		return err
 	}
-	if err := encoder.EncodeToken(XmlValueStart); err != nil {
+	if err := encoder.EncodeToken(XMLValueStart); err != nil {
 		return err
 	}
 	if err = encoder.Encode(self.Value); err != nil {
 		return err
 	}
-	if err = encoder.EncodeToken(XmlValueStart.End()); err != nil {
+	if err = encoder.EncodeToken(XMLValueStart.End()); err != nil {
 		return err
 	}
-	return encoder.EncodeToken(XmlMapEntryStart.End())
+	return encoder.EncodeToken(XMLMapEntryStart.End())
 }

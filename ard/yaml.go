@@ -8,19 +8,19 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func FindYamlNode(node *yaml.Node, path ...PathElement) *yaml.Node {
+func FindYAMLNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 	if len(path) == 0 {
 		return node
 	}
 
 	switch node.Kind {
 	case yaml.AliasNode:
-		return FindYamlNode(node.Alias, path...)
+		return FindYAMLNode(node.Alias, path...)
 
 	case yaml.DocumentNode:
 		for _, childNode := range node.Content {
 			// We assume it's a single document
-			return FindYamlNode(childNode, path...)
+			return FindYAMLNode(childNode, path...)
 		}
 
 	case yaml.MappingNode:
@@ -41,7 +41,7 @@ func FindYamlNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 				// Is it in one of the merged values?
 				if (keyNode.Kind == yaml.ScalarNode) && (keyNode.Tag == "!!merge") {
 					valueNode := node.Content[i+1]
-					foundNode := FindYamlNode(valueNode, path...)
+					foundNode := FindYAMLNode(valueNode, path...)
 					if foundNode != valueNode {
 						return foundNode
 					}
@@ -50,7 +50,7 @@ func FindYamlNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 				// We only support comparisons with string keys
 				if (keyNode.Kind == yaml.ScalarNode) && (keyNode.Tag == "!!str") && (keyNode.Value == v) {
 					valueNode := node.Content[i+1]
-					foundNode := FindYamlNode(valueNode, path[1:]...)
+					foundNode := FindYAMLNode(valueNode, path[1:]...)
 					if foundNode == valueNode {
 						// We will use the key node for the location instead of the value node
 						return keyNode
@@ -66,7 +66,7 @@ func FindYamlNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 		case ListPathType:
 			index := pathElement.Value.(int)
 			if index < len(node.Content) {
-				return FindYamlNode(node.Content[index], path[1:]...)
+				return FindYAMLNode(node.Content[index], path[1:]...)
 			}
 		}
 	}
@@ -77,7 +77,7 @@ func FindYamlNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 
 // Write
 
-var YamlNodeKinds = map[yaml.Kind]string{
+var YAMLNodeKinds = map[yaml.Kind]string{
 	yaml.DocumentNode: "Document",
 	yaml.SequenceNode: "Sequence",
 	yaml.MappingNode:  "Mapping",
@@ -85,16 +85,16 @@ var YamlNodeKinds = map[yaml.Kind]string{
 	yaml.AliasNode:    "Alias",
 }
 
-func WriteYamlNodes(writer io.Writer, node *yaml.Node) {
-	WriteYamlNode(writer, node, 0)
+func WriteYAMLNodes(writer io.Writer, node *yaml.Node) {
+	WriteYAMLNode(writer, node, 0)
 }
 
-func WriteYamlNode(writer io.Writer, node *yaml.Node, indent int) {
+func WriteYAMLNode(writer io.Writer, node *yaml.Node, indent int) {
 	s := ""
 
 	s += strings.Repeat(" ", indent)
 
-	s += YamlNodeKinds[node.Kind]
+	s += YAMLNodeKinds[node.Kind]
 
 	switch node.Kind {
 	// Document and alias tag is always "", nothing to print
@@ -115,6 +115,6 @@ func WriteYamlNode(writer io.Writer, node *yaml.Node, indent int) {
 
 	indent += 1
 	for _, child := range node.Content {
-		WriteYamlNode(writer, child, indent)
+		WriteYAMLNode(writer, child, indent)
 	}
 }

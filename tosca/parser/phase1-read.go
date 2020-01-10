@@ -20,9 +20,9 @@ func (self *Context) ReadRoot(url_ url.URL) bool {
 
 	var ok bool
 
-	self.WG.Add(1)
+	self.WaitGroup.Add(1)
 	self.Root, ok = self.read(nil, toscaContext, nil, nil, "$Root")
-	self.WG.Wait()
+	self.WaitGroup.Wait()
 
 	sort.Sort(self.Units)
 
@@ -32,7 +32,7 @@ func (self *Context) ReadRoot(url_ url.URL) bool {
 var readCache sync.Map // entityPtr or Promise
 
 func (self *Context) read(promise Promise, toscaContext *tosca.Context, container *Unit, nameTransfomer tosca.NameTransformer, readerName string) (*Unit, bool) {
-	defer self.WG.Done()
+	defer self.WaitGroup.Done()
 	if promise != nil {
 		// For the goroutines waiting for our cached entityPtr
 		defer promise.Release()
@@ -51,7 +51,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 
 	// Read ARD
 	var err error
-	if toscaContext.Data, toscaContext.Locator, err = ard.ReadURL(toscaContext.URL, true); err != nil {
+	if toscaContext.Data, toscaContext.Locator, err = ard.ReadFromURL(toscaContext.URL, true); err != nil {
 		toscaContext.ReportError(err)
 		return nil, false
 	}
@@ -118,7 +118,7 @@ func (self *Context) goReadImports(container *Unit) {
 			case Promise:
 				// Wait for promise
 				log.Debugf("{read} wait for promise: %s", key)
-				self.WG.Add(1)
+				self.WaitGroup.Add(1)
 				go self.waitForPromise(cached_, key, container, importSpec.NameTransformer)
 
 			default: // entityPtr
@@ -130,14 +130,14 @@ func (self *Context) goReadImports(container *Unit) {
 			importToscaContext := container.GetContext().NewImportContext(importSpec.URL)
 
 			// Read (concurrently)
-			self.WG.Add(1)
+			self.WaitGroup.Add(1)
 			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, "$Unit")
 		}
 	}
 }
 
 func (self *Context) waitForPromise(promise Promise, key string, container *Unit, nameTransformer tosca.NameTransformer) {
-	defer self.WG.Done()
+	defer self.WaitGroup.Done()
 	promise.Wait()
 
 	if cached, inCache := readCache.Load(key); inCache {

@@ -8,7 +8,7 @@ clout.exec('tosca.utils');
 
 tosca.coerce();
 
-var bpmn = puccini.newXmlDocument();
+var bpmn = puccini.newXMLDocument();
 
 bpmn.createProcInst('xml', 'version="1.0" encoding="UTF-8"');
 

@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/common/format"
+	format_ "github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/url"
 )
 
@@ -39,7 +39,7 @@ var putCmd = &cobra.Command{
 		err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)
 		common.FailOnError(err)
 
-		err = format.WriteOrPrint(clout, ardFormat, pretty, output)
+		err = format_.WriteOrPrint(clout, format, pretty, output)
 		common.FailOnError(err)
 	},
 }

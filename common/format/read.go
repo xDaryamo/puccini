@@ -13,15 +13,15 @@ import (
 func Read(reader io.Reader, format string) (interface{}, error) {
 	switch format {
 	case "yaml", "":
-		return ReadYaml(reader)
+		return ReadYAML(reader)
 	case "json":
-		return ReadJson(reader)
+		return ReadJSON(reader)
 	default:
 		return "", fmt.Errorf("unsupported format: %s", format)
 	}
 }
 
-func ReadYaml(reader io.Reader) (interface{}, error) {
+func ReadYAML(reader io.Reader) (interface{}, error) {
 	var node yaml.Node
 	decoder := yaml.NewDecoder(reader)
 	if err := decoder.Decode(&node); err == nil {
@@ -35,7 +35,7 @@ func ReadYaml(reader io.Reader) (interface{}, error) {
 	}
 }
 
-func ReadJson(reader io.Reader) (interface{}, error) {
+func ReadJSON(reader io.Reader) (interface{}, error) {
 	var data interface{}
 	decoder := json.NewDecoder(reader)
 	if err := decoder.Decode(&data); err == nil {

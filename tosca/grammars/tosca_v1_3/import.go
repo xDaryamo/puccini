@@ -24,7 +24,7 @@ type Import struct {
 
 	File            *string `read:"file" require:"file"`
 	RepositoryName  *string `read:"repository"`
-	NamespaceUri    *string `read:"namespace_uri"`
+	NamespaceURI    *string `read:"namespace_uri"`
 	NamespacePrefix *string `read:"namespace_prefix"`
 
 	Repository *Repository `lookup:"repository,RepositoryName" json:"-" yaml:"-"`

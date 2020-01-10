@@ -10,35 +10,35 @@ import (
 )
 
 //
-// CloutApi
+// CloutAPI
 //
 
-type CloutApi struct {
+type CloutAPI struct {
 	*clout.Clout
 
 	cloutContext *CloutContext
 }
 
-func (self *Context) NewCloutApi(clout_ *clout.Clout, runtime *goja.Runtime) *CloutApi {
-	return &CloutApi{
+func (self *Context) NewCloutAPI(clout_ *clout.Clout, runtime *goja.Runtime) *CloutAPI {
+	return &CloutAPI{
 		clout_,
 		self.NewCloutContext(clout_, runtime),
 	}
 }
 
-func (self *CloutApi) NewKey() string {
+func (self *CloutAPI) NewKey() string {
 	return clout.NewKey()
 }
 
-func (self *CloutApi) Exec(scriptletName string) error {
+func (self *CloutAPI) Exec(scriptletName string) error {
 	return self.cloutContext.Exec(scriptletName)
 }
 
-func (self *CloutApi) Call(scriptletName string, functionName string, arguments []interface{}) (interface{}, error) {
+func (self *CloutAPI) Call(scriptletName string, functionName string, arguments []interface{}) (interface{}, error) {
 	return self.cloutContext.CallFunction(scriptletName, functionName, arguments, FunctionCallContext{})
 }
 
-func (self *CloutApi) NewCoercible(value goja.Value, site interface{}, source interface{}, target interface{}) (Coercible, error) {
+func (self *CloutAPI) NewCoercible(value goja.Value, site interface{}, source interface{}, target interface{}) (Coercible, error) {
 	if goja.IsUndefined(value) {
 		return nil, errors.New("undefined")
 	}
@@ -50,7 +50,7 @@ func (self *CloutApi) NewCoercible(value goja.Value, site interface{}, source in
 	}
 }
 
-func (self *CloutApi) NewConstraints(value goja.Value, site interface{}, source interface{}, target interface{}) (Constraints, error) {
+func (self *CloutAPI) NewConstraints(value goja.Value, site interface{}, source interface{}, target interface{}) (Constraints, error) {
 	if goja.IsUndefined(value) {
 		return nil, errors.New("undefined")
 	}
@@ -67,7 +67,7 @@ func (self *CloutApi) NewConstraints(value goja.Value, site interface{}, source 
 	return nil, errors.New("not an array")
 }
 
-func (self *CloutApi) Coerce(value interface{}) (interface{}, error) {
+func (self *CloutAPI) Coerce(value interface{}) (interface{}, error) {
 	if coercible, ok := value.(Coercible); ok {
 		return coercible.Coerce()
 	}
@@ -75,7 +75,7 @@ func (self *CloutApi) Coerce(value interface{}) (interface{}, error) {
 	return value, nil
 }
 
-func (self *CloutApi) Unwrap(value interface{}) interface{} {
+func (self *CloutAPI) Unwrap(value interface{}) interface{} {
 	if coercible, ok := value.(Coercible); ok {
 		return coercible.Unwrap()
 	}
@@ -83,18 +83,18 @@ func (self *CloutApi) Unwrap(value interface{}) interface{} {
 	return value
 }
 
-func (self *CloutApi) GetPlugins(name string) []goja.Value {
+func (self *CloutAPI) GetPlugins(name string) []goja.Value {
 	plugins, err := GetPlugins(name, self.cloutContext)
 	self.cloutContext.Context.FailOnError(err)
 	return plugins
 }
 
 // json.Marshaler interface
-func (self *CloutApi) MarshalJSON() ([]byte, error) {
+func (self *CloutAPI) MarshalJSON() ([]byte, error) {
 	return json.Marshal(self.Clout)
 }
 
 // yaml.Marshaler interface
-func (self *CloutApi) MarshalYAML() (interface{}, error) {
+func (self *CloutAPI) MarshalYAML() (interface{}, error) {
 	return self.Clout, nil
 }
