@@ -9,6 +9,8 @@ import (
 // SubstitutionMappings
 //
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 2.10, 2.11
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 2.10, 2.11
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 2.10, 2.11
 //
 
 // tosca.Reader signature

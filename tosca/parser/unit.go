@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -42,7 +42,7 @@ func (self *Unit) GetContext() *tosca.Context {
 
 // Print
 
-func (self *Unit) PrintImports(indent int, treePrefix format.TreePrefix) {
+func (self *Unit) PrintImports(indent int, treePrefix terminal.TreePrefix) {
 	length := len(self.Imports)
 	last := length - 1
 
@@ -58,9 +58,9 @@ func (self *Unit) PrintImports(indent int, treePrefix format.TreePrefix) {
 	}
 }
 
-func (self *Unit) PrintNode(indent int, treePrefix format.TreePrefix, last bool) {
+func (self *Unit) PrintNode(indent int, treePrefix terminal.TreePrefix, last bool) {
 	treePrefix.Print(indent, last)
-	fmt.Fprintf(format.Stdout, "%s\n", format.ColorValue(self.GetContext().URL.String()))
+	fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorValue(self.GetContext().URL.String()))
 }
 
 //

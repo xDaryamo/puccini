@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/problems"
 )
@@ -51,7 +51,7 @@ func (self *Context) AddUnit(entityPtr interface{}, container *Unit, nameTransfo
 // Print
 
 func (self *Context) PrintImports(indent int) {
-	format.PrintIndent(indent)
-	fmt.Fprintf(format.Stdout, "%s\n", format.ColorValue(self.Root.GetContext().URL.String()))
-	self.Root.PrintImports(indent, format.TreePrefix{})
+	terminal.PrintIndent(indent)
+	fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorValue(self.Root.GetContext().URL.String()))
+	self.Root.PrintImports(indent, terminal.TreePrefix{})
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/op/go-logging"
 	"github.com/tebeka/atexit"
 	"github.com/tliron/puccini/clout"
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/terminal"
 )
 
 //
@@ -21,7 +21,7 @@ type Context struct {
 	ArdFormat string
 	Pretty    bool
 	Output    string
-	Log       *format.Log
+	Log       *Log
 	Stdout    *os.File
 	Stderr    *os.File
 	Stdin     *os.File
@@ -35,7 +35,7 @@ func NewContext(name string, logger *logging.Logger, quiet bool, ardFormat strin
 		ArdFormat: ardFormat,
 		Pretty:    pretty,
 		Output:    output,
-		Log:       format.NewLog(logger, name),
+		Log:       NewLog(logger, name),
 		Stdout:    os.Stdout,
 		Stderr:    os.Stderr,
 		Stdin:     os.Stdin,
@@ -89,7 +89,7 @@ func (self *Context) Exec(clout_ *clout.Clout, scriptletName string, apis map[st
 
 func (self *Context) Failf(f string, args ...interface{}) {
 	if !self.Quiet {
-		fmt.Fprintln(self.Stderr, format.ColorError(fmt.Sprintf(f, args...)))
+		fmt.Fprintln(self.Stderr, terminal.ColorError(fmt.Sprintf(f, args...)))
 	}
 	atexit.Exit(1)
 }

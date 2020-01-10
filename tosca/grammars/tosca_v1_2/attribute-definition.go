@@ -10,6 +10,7 @@ import (
 //
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.11
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.10
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.10
 //
 
 // tosca.Reader signature

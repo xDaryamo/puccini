@@ -1,7 +1,7 @@
 package tosca_v1_3
 
 import (
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/tosca"
 )
 

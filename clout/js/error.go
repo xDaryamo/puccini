@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dop251/goja"
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/terminal"
 )
 
 func UnwrapException(err error) error {
@@ -75,7 +75,7 @@ func (self Error) Error() string {
 
 // tosca.problems.Problematic interface
 func (self Error) ProblemMessage() string {
-	r := fmt.Sprintf("%s: call to %s failed", format.ColorPath(self.FunctionCall.Path), format.ColorName(self.Signature()))
+	r := fmt.Sprintf("%s: call to %s failed", terminal.ColorPath(self.FunctionCall.Path), terminal.ColorName(self.Signature()))
 	if self.Message != "" {
 		r += fmt.Sprintf(", %s", self.Message)
 	}
@@ -83,7 +83,7 @@ func (self Error) ProblemMessage() string {
 		if r != "" {
 			r += " "
 		}
-		r += format.ColorValue("@" + self.FunctionCall.Location)
+		r += terminal.ColorValue("@" + self.FunctionCall.Location)
 	}
 	if self.Cause != nil {
 		if jsError, ok := self.Cause.(*Error); ok {

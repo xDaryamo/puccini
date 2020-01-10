@@ -3,7 +3,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/format"
+	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/compiler"
 )
 
@@ -56,7 +57,7 @@ func Compile(urlString string) {
 		FailOnProblems(problems)
 	}
 
-	if !common.Quiet || (output != "") {
+	if !terminal.Quiet || (output != "") {
 		err = format.WriteOrPrint(clout, ardFormat, pretty, output)
 		common.FailOnError(err)
 	}

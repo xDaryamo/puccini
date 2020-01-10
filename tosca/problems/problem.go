@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/terminal"
 )
 
 //
@@ -108,20 +108,20 @@ func (self *Problems) Write(writer io.Writer) bool {
 		copy(problems, self.Problems)
 		sort.Sort(problems)
 
-		fmt.Fprintf(writer, "%s (%d)\n", format.ColorHeading("Problems"), length)
+		fmt.Fprintf(writer, "%s (%d)\n", terminal.ColorHeading("Problems"), length)
 		var currentSection string
 		for _, problem := range problems {
 			section := problem.Section
 			if currentSection != section {
 				currentSection = section
-				fmt.Fprint(writer, format.IndentString(1))
+				fmt.Fprint(writer, terminal.IndentString(1))
 				if currentSection != "" {
-					fmt.Fprintf(writer, "%s\n", format.ColorValue(currentSection))
+					fmt.Fprintf(writer, "%s\n", terminal.ColorValue(currentSection))
 				} else {
 					fmt.Fprintf(writer, "General\n")
 				}
 			}
-			fmt.Fprint(writer, format.IndentString(2))
+			fmt.Fprint(writer, terminal.IndentString(2))
 			fmt.Fprintf(writer, "%s\n", problem)
 		}
 		return true
@@ -132,5 +132,5 @@ func (self *Problems) Write(writer io.Writer) bool {
 // Print
 
 func (self *Problems) Print() bool {
-	return self.Write(format.Stderr)
+	return self.Write(terminal.Stderr)
 }

@@ -2,7 +2,7 @@ package compiler
 
 import (
 	"github.com/tliron/puccini/clout"
-	"github.com/tliron/puccini/js"
+	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/tosca/problems"
 )
 

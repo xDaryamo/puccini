@@ -1,43 +1,43 @@
-package format
+package terminal
 
 import (
 	"strings"
 )
 
 func Options(options []string) string {
-	var r strings.Builder
+	var writer strings.Builder
 	penultimate := len(options) - 2
 	for i, o := range options {
-		r.WriteString(o)
+		writer.WriteString(o)
 		if i == penultimate {
 			if penultimate > 0 {
-				r.WriteString(", or ")
+				writer.WriteString(", or ")
 			} else {
-				r.WriteString(" or ")
+				writer.WriteString(" or ")
 			}
 		} else if i < penultimate {
-			r.WriteString(", ")
+			writer.WriteString(", ")
 		}
 	}
-	return r.String()
+	return writer.String()
 }
 
 func ColoredOptions(options []string, colorizer Colorizer) string {
-	var r strings.Builder
+	var writer strings.Builder
 	penultimate := len(options) - 2
 	for i, o := range options {
-		r.WriteString("\"")
-		r.WriteString(colorizer(o))
-		r.WriteString("\"")
+		writer.WriteString("\"")
+		writer.WriteString(colorizer(o))
+		writer.WriteString("\"")
 		if i == penultimate {
 			if penultimate > 0 {
-				r.WriteString(", or ")
+				writer.WriteString(", or ")
 			} else {
-				r.WriteString(" or ")
+				writer.WriteString(" or ")
 			}
 		} else if i < penultimate {
-			r.WriteString(", ")
+			writer.WriteString(", ")
 		}
 	}
-	return r.String()
+	return writer.String()
 }

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/format"
 )
 
 //

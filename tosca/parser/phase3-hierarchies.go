@@ -3,7 +3,7 @@ package parser
 import (
 	"fmt"
 
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -37,8 +37,8 @@ func (self *Context) PrintHierarchies(indent int) {
 	for _, import_ := range self.Units {
 		context := import_.GetContext()
 		if len(context.Hierarchy.Children) > 0 {
-			format.PrintIndent(indent)
-			fmt.Fprintf(format.Stdout, "%s\n", format.ColorValue(context.URL.String()))
+			terminal.PrintIndent(indent)
+			fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorValue(context.URL.String()))
 			context.Hierarchy.Print(indent)
 		}
 	}

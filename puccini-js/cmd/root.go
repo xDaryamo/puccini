@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/terminal"
 )
 
 var logTo string
@@ -16,7 +16,7 @@ var pretty bool
 var bashCompletionTo string
 
 func init() {
-	rootCmd.PersistentFlags().BoolVarP(&common.Quiet, "quiet", "q", false, "suppress output")
+	rootCmd.PersistentFlags().BoolVarP(&terminal.Quiet, "quiet", "q", false, "suppress output")
 	rootCmd.PersistentFlags().StringVarP(&logTo, "log", "l", "", "log to file (defaults to stderr)")
 	rootCmd.PersistentFlags().CountVarP(&verbose, "verbose", "v", "add a log verbosity level (can be used twice)")
 	rootCmd.PersistentFlags().StringVarP(&ardFormat, "format", "f", "", "force format (\"yaml\", \"json\", or \"xml\")")
@@ -30,7 +30,7 @@ var rootCmd = &cobra.Command{
 	Short: "JavaScript processor for Clout",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if logTo == "" {
-			if common.Quiet {
+			if terminal.Quiet {
 				verbose = -4
 			}
 			common.ConfigureLogging(verbose, nil)
@@ -40,8 +40,8 @@ var rootCmd = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if bashCompletionTo != "" {
-			if !common.Quiet {
-				fmt.Fprintf(format.Stdout, "generating bash completion script: %s\n", bashCompletionTo)
+			if !terminal.Quiet {
+				fmt.Fprintf(terminal.Stdout, "generating bash completion script: %s\n", bashCompletionTo)
 			}
 			cmd.GenBashCompletionFile(bashCompletionTo)
 		}

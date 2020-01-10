@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/terminal"
 )
 
 type Executor func(task *Task)
@@ -51,12 +51,12 @@ func (self *Task) Done() {
 }
 
 func (self *Task) Print(indent int) {
-	format.PrintIndent(indent)
-	fmt.Fprintf(format.Stdout, "%s\n", format.ColorPath(self.Name))
-	self.PrintDependencies(indent, format.TreePrefix{})
+	terminal.PrintIndent(indent)
+	fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorPath(self.Name))
+	self.PrintDependencies(indent, terminal.TreePrefix{})
 }
 
-func (self *Task) PrintDependencies(indent int, treePrefix format.TreePrefix) {
+func (self *Task) PrintDependencies(indent int, treePrefix terminal.TreePrefix) {
 	// Sort
 	var taskList TaskList
 	for dependency := range self.Dependencies {
@@ -72,9 +72,9 @@ func (self *Task) PrintDependencies(indent int, treePrefix format.TreePrefix) {
 	}
 }
 
-func (self *Task) PrintDependency(indent int, treePrefix format.TreePrefix, last bool) {
+func (self *Task) PrintDependency(indent int, treePrefix terminal.TreePrefix, last bool) {
 	treePrefix.Print(indent, last)
-	fmt.Fprintf(format.Stdout, "%s\n", self.Name)
+	fmt.Fprintf(terminal.Stdout, "%s\n", self.Name)
 }
 
 func (self *Task) AddDependency(task *Task) {

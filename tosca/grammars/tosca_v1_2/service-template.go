@@ -9,6 +9,8 @@ import (
 // ServiceTemplate
 //
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.10
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.9
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.9
 //
 
 // tosca.Reader signature

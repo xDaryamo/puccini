@@ -5,12 +5,13 @@ import (
 
 	"github.com/beevik/etree"
 	"github.com/hokaccha/go-prettyjson"
+	"github.com/tliron/puccini/common/terminal"
 )
 
 var prettyjsonFormatter = prettyjson.NewFormatter()
 
 func init() {
-	prettyjsonFormatter.Indent = IndentSpaces
+	prettyjsonFormatter.Indent = terminal.IndentSpaces
 }
 
 func Print(data interface{}, format string, pretty bool) error {
@@ -19,7 +20,7 @@ func Print(data interface{}, format string, pretty bool) error {
 		if pretty {
 			s += "\n"
 		}
-		_, err := fmt.Fprint(Stdout, s)
+		_, err := fmt.Fprint(terminal.Stdout, s)
 		return err
 	}
 
@@ -43,9 +44,9 @@ func Print(data interface{}, format string, pretty bool) error {
 func PrintYaml(data interface{}, pretty bool) error {
 	indent := "          "
 	if pretty {
-		indent = Indent
+		indent = terminal.Indent
 	}
-	return WriteYaml(data, Stdout, indent)
+	return WriteYaml(data, terminal.Stdout, indent)
 }
 
 func PrintJson(data interface{}, pretty bool) error {
@@ -54,9 +55,9 @@ func PrintJson(data interface{}, pretty bool) error {
 		if err != nil {
 			return err
 		}
-		fmt.Fprintf(Stdout, "%s\n", bytes)
+		fmt.Fprintf(terminal.Stdout, "%s\n", bytes)
 	} else {
-		return WriteJson(data, Stdout, "")
+		return WriteJson(data, terminal.Stdout, "")
 	}
 	return nil
 }
@@ -64,23 +65,23 @@ func PrintJson(data interface{}, pretty bool) error {
 func PrintXml(data interface{}, pretty bool) error {
 	indent := ""
 	if pretty {
-		indent = Indent
+		indent = terminal.Indent
 	}
-	if err := WriteXml(data, Stdout, indent); err != nil {
+	if err := WriteXml(data, terminal.Stdout, indent); err != nil {
 		return err
 	}
 	if pretty {
-		fmt.Fprintln(Stdout)
+		fmt.Fprintln(terminal.Stdout)
 	}
 	return nil
 }
 
 func PrintXmlDocument(xmlDocument *etree.Document, pretty bool) error {
 	if pretty {
-		xmlDocument.Indent(IndentSpaces)
+		xmlDocument.Indent(terminal.IndentSpaces)
 	} else {
 		xmlDocument.Indent(0)
 	}
-	_, err := xmlDocument.WriteTo(Stdout)
+	_, err := xmlDocument.WriteTo(terminal.Stdout)
 	return err
 }

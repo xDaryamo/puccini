@@ -1,4 +1,4 @@
-package format
+package js
 
 import (
 	"fmt"
@@ -11,29 +11,30 @@ import (
 //
 
 type Log struct {
+	Prefix string
+
 	logger *logging.Logger
-	prefix string
 }
 
 func NewLog(logger *logging.Logger, name string) *Log {
 	return &Log{
+		Prefix: fmt.Sprintf("{%s} ", name),
 		logger: logger,
-		prefix: fmt.Sprintf("{%s} ", name),
 	}
 }
 
 func (self *Log) Errorf(f string, args ...interface{}) {
-	self.logger.Errorf(self.prefix+f, args...)
+	self.logger.Errorf(self.Prefix+f, args...)
 }
 
 func (self *Log) Warningf(f string, args ...interface{}) {
-	self.logger.Warningf(self.prefix+f, args...)
+	self.logger.Warningf(self.Prefix+f, args...)
 }
 
 func (self *Log) Infof(f string, args ...interface{}) {
-	self.logger.Infof(self.prefix+f, args...)
+	self.logger.Infof(self.Prefix+f, args...)
 }
 
 func (self *Log) Debugf(f string, args ...interface{}) {
-	self.logger.Debugf(self.prefix+f, args...)
+	self.logger.Debugf(self.Prefix+f, args...)
 }

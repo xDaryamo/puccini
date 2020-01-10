@@ -10,7 +10,8 @@ import (
 	"github.com/tebeka/atexit"
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/format"
+	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
@@ -89,7 +90,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 
 		if ToPrintPhase(1) {
 			if len(dumpPhases) > 1 {
-				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Imports"))
+				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorHeading("Imports"))
 			}
 			context.PrintImports(1)
 		}
@@ -101,7 +102,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		context.LookupNames()
 		if ToPrintPhase(2) {
 			if len(dumpPhases) > 1 {
-				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Namespaces"))
+				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorHeading("Namespaces"))
 			}
 			context.PrintNamespaces(1)
 		}
@@ -112,7 +113,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		context.AddHierarchies()
 		if ToPrintPhase(3) {
 			if len(dumpPhases) > 1 {
-				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Hierarchies"))
+				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorHeading("Hierarchies"))
 			}
 			context.PrintHierarchies(1)
 		}
@@ -123,7 +124,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		tasks := context.GetInheritTasks()
 		if ToPrintPhase(4) {
 			if len(dumpPhases) > 1 {
-				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Inheritance Tasks"))
+				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorHeading("Inheritance Tasks"))
 			}
 			tasks.Print(1)
 		}
@@ -142,10 +143,10 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		if ToPrintPhase(5) {
 			sort.Sort(entityPtrs)
 			if len(dumpPhases) > 1 {
-				fmt.Fprintf(format.Stdout, "%s\n", format.ColorHeading("Rendering"))
+				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorHeading("Rendering"))
 			}
 			for _, entityPtr := range entityPtrs {
-				fmt.Fprintf(format.Stdout, "%s:\n", format.ColorPath(tosca.GetContext(entityPtr).Path.String()))
+				fmt.Fprintf(terminal.Stdout, "%s:\n", terminal.ColorPath(tosca.GetContext(entityPtr).Path.String()))
 				err = format.Print(entityPtr, ardFormat, pretty)
 				common.FailOnError(err)
 			}
@@ -156,9 +157,9 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 		entityPtrs := context.Gather(filter)
 		if len(entityPtrs) == 0 {
 			common.Failf("No paths found matching filter: \"%s\"\n", filter)
-		} else if !common.Quiet {
+		} else if !terminal.Quiet {
 			for _, entityPtr := range entityPtrs {
-				fmt.Fprintf(format.Stdout, "%s\n", format.ColorPath(tosca.GetContext(entityPtr).Path.String()))
+				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorPath(tosca.GetContext(entityPtr).Path.String()))
 				err = format.Print(entityPtr, ardFormat, pretty)
 				common.FailOnError(err)
 			}
@@ -177,7 +178,7 @@ func Parse(urlString string) (parser.Context, *normal.ServiceTemplate) {
 }
 
 func ToPrintPhase(phase uint) bool {
-	if !common.Quiet {
+	if !terminal.Quiet {
 		for _, phase_ := range dumpPhases {
 			if phase_ == phase {
 				return true

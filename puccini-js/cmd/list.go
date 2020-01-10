@@ -7,9 +7,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/clout"
+	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/format"
-	"github.com/tliron/puccini/js"
+	"github.com/tliron/puccini/common/terminal"
 )
 
 func init() {
@@ -44,8 +44,8 @@ func List(clout_ *clout.Clout) {
 func ListValue(value interface{}, path []string) {
 	switch value_ := value.(type) {
 	case string:
-		if !common.Quiet {
-			fmt.Fprintf(format.Stdout, "%s\n", strings.Join(path, "."))
+		if !terminal.Quiet {
+			fmt.Fprintf(terminal.Stdout, "%s\n", strings.Join(path, "."))
 		}
 
 	case ard.StringMap:

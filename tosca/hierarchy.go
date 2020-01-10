@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/reflection"
 )
 
@@ -244,10 +244,10 @@ func (self *Hierarchy) AddTypeTo(field reflect.Value, type_ reflect.Type) {
 // other files can have the same name (though you would need a namespace_prefix to avoid a
 // namespace error)
 func (self *Hierarchy) Print(indent int) {
-	self.PrintChildren(indent, format.TreePrefix{})
+	self.PrintChildren(indent, terminal.TreePrefix{})
 }
 
-func (self *Hierarchy) PrintChildren(indent int, treePrefix format.TreePrefix) {
+func (self *Hierarchy) PrintChildren(indent int, treePrefix terminal.TreePrefix) {
 	length := len(self.Children)
 	last := length - 1
 
@@ -263,10 +263,10 @@ func (self *Hierarchy) PrintChildren(indent int, treePrefix format.TreePrefix) {
 	}
 }
 
-func (self *Hierarchy) PrintChild(indent int, treePrefix format.TreePrefix, last bool) {
+func (self *Hierarchy) PrintChild(indent int, treePrefix terminal.TreePrefix, last bool) {
 	treePrefix.Print(indent, last)
 	if self.EntityPtr != nil {
-		fmt.Fprintf(format.Stdout, "%s\n", format.ColorTypeName(self.GetContext().Name))
+		fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorTypeName(self.GetContext().Name))
 	}
 }
 

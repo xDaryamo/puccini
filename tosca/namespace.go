@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/reflection"
 )
 
@@ -111,8 +111,8 @@ func (self Namespace) Print(indent int) {
 	nameIndent := indent + 1
 	for _, type_ := range types {
 		forType := self[type_]
-		format.PrintIndent(indent)
-		fmt.Fprintf(format.Stdout, "%s\n", format.ColorTypeName(type_.Elem().String()))
+		terminal.PrintIndent(indent)
+		fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorTypeName(type_.Elem().String()))
 
 		// Sort names
 		names := make([]string, len(forType))
@@ -124,8 +124,8 @@ func (self Namespace) Print(indent int) {
 		sort.Strings(names)
 
 		for _, name := range names {
-			format.PrintIndent(nameIndent)
-			fmt.Fprintf(format.Stdout, "%s\n", name)
+			terminal.PrintIndent(nameIndent)
+			fmt.Fprintf(terminal.Stdout, "%s\n", name)
 		}
 	}
 }

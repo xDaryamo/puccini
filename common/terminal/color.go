@@ -1,15 +1,10 @@
-package format
+package terminal
 
 import (
-	"io"
 	"strings"
 
 	"github.com/fatih/color"
 )
-
-var Stdout io.Writer
-
-var Stderr io.Writer
 
 func init() {
 	Stdout = color.Output

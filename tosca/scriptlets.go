@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tliron/puccini/js"
+	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/url"
 )
 

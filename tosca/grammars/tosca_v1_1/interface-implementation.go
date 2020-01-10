@@ -9,6 +9,7 @@ import (
 // InterfaceImplementation
 //
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.13.2.3
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.13.2.3
 //
 
 // tosca.Reader signature

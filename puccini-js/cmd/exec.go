@@ -3,8 +3,9 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"github.com/tliron/puccini/clout"
+	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/js"
+	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/url"
 )
 
@@ -50,7 +51,7 @@ var execCmd = &cobra.Command{
 }
 
 func Exec(scriptletName string, scriptlet string, clout_ *clout.Clout) error {
-	jsContext := js.NewContext(scriptletName, log, common.Quiet, ardFormat, pretty, output)
+	jsContext := js.NewContext(scriptletName, log, terminal.Quiet, ardFormat, pretty, output)
 
 	program, err := jsContext.GetProgram(scriptletName, scriptlet)
 	if err != nil {

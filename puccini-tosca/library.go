@@ -6,7 +6,8 @@ import (
 
 	"github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/format"
+	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
@@ -18,7 +19,7 @@ func Compile(url *C.char) *C.char {
 	common.ConfigureLogging(0, nil)
 
 	buffer := bytes.NewBuffer(nil)
-	format.Stdout = buffer
+	terminal.Stdout = buffer
 
 	var inputs map[string]interface{}
 

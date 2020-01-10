@@ -7,9 +7,10 @@ HERE=$(dirname "$(readlink -f "$0")")
 gofmt -w -s -e \
 	"$ROOT/ard" \
 	"$ROOT/clout" \
+	"$ROOT/clout/js" \
 	"$ROOT/common" \
-	"$ROOT/format" \
-	"$ROOT/js" \
+	"$ROOT/common/format" \
+	"$ROOT/common/terminal" \
 	"$ROOT/puccini-js" \
 	"$ROOT/puccini-js/cmd" \
 	"$ROOT/puccini-tosca" \

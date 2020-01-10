@@ -8,7 +8,7 @@ import (
 	"github.com/beevik/etree"
 	"github.com/fatih/color"
 	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/format"
 )
 
 //
@@ -16,7 +16,7 @@ import (
 //
 
 type PucciniApi struct {
-	Log    *format.Log
+	Log    *Log
 	Stdout *os.File
 	Stderr *os.File
 	Stdin  *os.File

@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/format"
-	"github.com/tliron/puccini/js"
+	"github.com/tliron/puccini/common/format"
+	"github.com/tliron/puccini/common/terminal"
 )
 
 func init() {
@@ -31,7 +32,7 @@ var getCmd = &cobra.Command{
 		scriptlet, err := js.GetScriptlet(scriptletName, clout)
 		common.FailOnError(err)
 
-		if !common.Quiet {
+		if !terminal.Quiet {
 			err = format.WriteOrPrint(scriptlet, ardFormat, pretty, output)
 			common.FailOnError(err)
 		}

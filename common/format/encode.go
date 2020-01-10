@@ -3,16 +3,18 @@ package format
 import (
 	"fmt"
 	"strings"
+
+	"github.com/tliron/puccini/common/terminal"
 )
 
 func Encode(data interface{}, format string) (string, error) {
 	switch format {
 	case "yaml", "":
-		return EncodeYaml(data, Indent)
+		return EncodeYaml(data, terminal.Indent)
 	case "json":
-		return EncodeJson(data, Indent)
+		return EncodeJson(data, terminal.Indent)
 	case "xml":
-		return EncodeXml(data, Indent)
+		return EncodeXml(data, terminal.Indent)
 	default:
 		return "", fmt.Errorf("unsupported format: %s", format)
 	}

@@ -1,6 +1,7 @@
 package format
 
 import (
+	"github.com/tliron/puccini/common/terminal"
 	"os"
 	"path/filepath"
 )
@@ -12,7 +13,7 @@ func WriteOrPrint(data interface{}, format string, pretty bool, output string) e
 			return err
 		}
 		defer f.Close()
-		return Write(data, format, Indent, f)
+		return Write(data, format, terminal.Indent, f)
 	} else {
 		return Print(data, format, pretty)
 	}

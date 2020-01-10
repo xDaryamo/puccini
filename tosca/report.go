@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/tliron/puccini/format"
+	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/url"
 )
 
@@ -36,7 +36,7 @@ func (self *Context) ReportPath(message string) bool {
 	}
 
 	if path != "" {
-		message = fmt.Sprintf("%s: %s", format.ColorPath(path), message)
+		message = fmt.Sprintf("%s: %s", terminal.ColorPath(path), message)
 	}
 
 	return self.Report(message)
@@ -55,11 +55,11 @@ func (self *Context) ReportError(err error) bool {
 //
 
 func (self *Context) FormatBadData() string {
-	return format.ColorError(fmt.Sprintf("%+v", self.Data))
+	return terminal.ColorError(fmt.Sprintf("%+v", self.Data))
 }
 
 func (self *Context) ReportValueWrongType(requiredTypeNames ...string) bool {
-	return self.ReportPathf("\"%s\" instead of %s", format.ColorTypeName(PrimitiveTypeName(self.Data)), format.ColoredOptions(requiredTypeNames, format.ColorTypeName))
+	return self.ReportPathf("\"%s\" instead of %s", terminal.ColorTypeName(PrimitiveTypeName(self.Data)), terminal.ColoredOptions(requiredTypeNames, terminal.ColorTypeName))
 }
 
 func (self *Context) ReportValueWrongFormat(format string) bool {
@@ -67,14 +67,14 @@ func (self *Context) ReportValueWrongFormat(format string) bool {
 }
 
 func (self *Context) ReportValueWrongLength(typeName string, length int) bool {
-	return self.ReportPathf("\"%s\" does not have %d elements", format.ColorTypeName(typeName), length)
+	return self.ReportPathf("\"%s\" does not have %d elements", terminal.ColorTypeName(typeName), length)
 }
 
 func (self *Context) ReportValueMalformed(typeName string, reason string) bool {
 	if reason == "" {
-		return self.ReportPathf("malformed \"%s\": %s", format.ColorTypeName(typeName), self.FormatBadData())
+		return self.ReportPathf("malformed \"%s\": %s", terminal.ColorTypeName(typeName), self.FormatBadData())
 	} else {
-		return self.ReportPathf("malformed \"%s\", %s: %s", format.ColorTypeName(typeName), reason, self.FormatBadData())
+		return self.ReportPathf("malformed \"%s\", %s: %s", terminal.ColorTypeName(typeName), reason, self.FormatBadData())
 	}
 }
 
@@ -83,11 +83,11 @@ func (self *Context) ReportValueMalformed(typeName string, reason string) bool {
 //
 
 func (self *Context) ReportImportLoop(url_ url.URL) bool {
-	return self.Reportf("endless loop caused by importing \"%s\"", format.ColorValue(url_.String()))
+	return self.Reportf("endless loop caused by importing \"%s\"", terminal.ColorValue(url_.String()))
 }
 
 func (self *Context) ReportRepositoryInaccessible(repositoryName string) bool {
-	return self.ReportPathf("inaccessible repository \"%s\"", format.ColorValue(repositoryName))
+	return self.ReportPathf("inaccessible repository \"%s\"", terminal.ColorValue(repositoryName))
 }
 
 func (self *Context) ReportFieldMissing() bool {
@@ -103,7 +103,7 @@ func (self *Context) ReportFieldUnsupportedValue() bool {
 }
 
 func (self *Context) ReportFieldMalformedSequencedList() bool {
-	return self.ReportPathf("field must be a \"%s\" of single-key \"%s\" elements", format.ColorTypeName("sequenced list"), format.ColorTypeName("map"))
+	return self.ReportPathf("field must be a \"%s\" of single-key \"%s\" elements", terminal.ColorTypeName("sequenced list"), terminal.ColorTypeName("map"))
 }
 
 func (self *Context) ReportPrimitiveType() bool {
@@ -111,7 +111,7 @@ func (self *Context) ReportPrimitiveType() bool {
 }
 
 func (self *Context) ReportMapKeyReused(key string) bool {
-	return self.ReportPathf("reused map key: %s", format.ColorValue(key))
+	return self.ReportPathf("reused map key: %s", terminal.ColorValue(key))
 }
 
 //
@@ -123,7 +123,7 @@ func (self *Context) ReportNameAmbiguous(type_ reflect.Type, name string, entity
 	for i, entityPtr := range entityPtrs {
 		url[i] = GetContext(entityPtr).URL.String()
 	}
-	return self.Reportf("ambiguous %s name \"%s\", can be in %s", GetEntityTypeName(type_), format.ColorName(name), format.ColoredOptions(url, format.ColorValue))
+	return self.Reportf("ambiguous %s name \"%s\", can be in %s", GetEntityTypeName(type_), terminal.ColorName(name), terminal.ColoredOptions(url, terminal.ColorValue))
 }
 
 func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) bool {
@@ -131,7 +131,7 @@ func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) bool {
 	for _, type_ := range types {
 		entityTypeNames = append(entityTypeNames, GetEntityTypeName(type_))
 	}
-	return self.ReportPathf("reference to unknown %s: %s", format.Options(entityTypeNames), self.FormatBadData())
+	return self.ReportPathf("reference to unknown %s: %s", terminal.Options(entityTypeNames), self.FormatBadData())
 }
 
 //
@@ -139,11 +139,11 @@ func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) bool {
 //
 
 func (self *Context) ReportInheritanceLoop(parent interface{}) bool {
-	return self.ReportPathf("inheritance loop by deriving from \"%s\"", format.ColorTypeName(GetContext(parent).Name))
+	return self.ReportPathf("inheritance loop by deriving from \"%s\"", terminal.ColorTypeName(GetContext(parent).Name))
 }
 
 func (self *Context) ReportTypeIncomplete(parent interface{}) bool {
-	return self.ReportPathf("deriving from incomplete type \"%s\"", format.ColorTypeName(GetContext(parent).Name))
+	return self.ReportPathf("deriving from incomplete type \"%s\"", terminal.ColorTypeName(GetContext(parent).Name))
 }
 
 //
@@ -161,13 +161,13 @@ func (self *Context) ReportUnknown(kind string) bool {
 func (self *Context) ReportReferenceNotFound(kind string, entityPtr interface{}) bool {
 	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
 	name := GetContext(entityPtr).Name
-	return self.ReportPathf("unknown %s reference in %s \"%s\": %s", kind, typeName, format.ColorName(name), self.FormatBadData())
+	return self.ReportPathf("unknown %s reference in %s \"%s\": %s", kind, typeName, terminal.ColorName(name), self.FormatBadData())
 }
 
 func (self *Context) ReportReferenceAmbiguous(kind string, entityPtr interface{}) bool {
 	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
 	name := GetContext(entityPtr).Name
-	return self.ReportPathf("ambiguous %s in %s \"%s\": %s", kind, typeName, format.ColorName(name), self.FormatBadData())
+	return self.ReportPathf("ambiguous %s in %s \"%s\": %s", kind, typeName, terminal.ColorName(name), self.FormatBadData())
 }
 
 func (self *Context) ReportPropertyRequired(kind string) bool {
@@ -179,7 +179,7 @@ func (self *Context) ReportReservedMetadata() bool {
 }
 
 func (self *Context) ReportUnknownDataType(dataTypeName string) bool {
-	return self.ReportPathf("unknown data type \"%s\"", format.ColorError(dataTypeName))
+	return self.ReportPathf("unknown data type \"%s\"", terminal.ColorError(dataTypeName))
 }
 
 func (self *Context) ReportMissingEntrySchema(kind string) bool {
@@ -187,19 +187,19 @@ func (self *Context) ReportMissingEntrySchema(kind string) bool {
 }
 
 func (self *Context) ReportUnsupportedType() bool {
-	return self.ReportPathf("unsupported puccini.type \"%s\"", format.ColorError(self.Name))
+	return self.ReportPathf("unsupported puccini.type \"%s\"", terminal.ColorError(self.Name))
 }
 
 func (self *Context) ReportIncompatibleType(typeName string, parentTypeName string) bool {
-	return self.ReportPathf("type \"%s\" is incompatible with parent type \"%s\"", format.ColorTypeName(typeName), format.ColorTypeName(parentTypeName))
+	return self.ReportPathf("type \"%s\" is incompatible with parent type \"%s\"", terminal.ColorTypeName(typeName), terminal.ColorTypeName(parentTypeName))
 }
 
 func (self *Context) ReportIncompatible(name string, typeName string, kind string) bool {
-	return self.ReportPathf("\"%s\" cannot be %s of %s", format.ColorName(name), kind, typeName)
+	return self.ReportPathf("\"%s\" cannot be %s of %s", terminal.ColorName(name), kind, typeName)
 }
 
 func (self *Context) ReportIncompatibleExtension(extension string, requiredExtensions []string) bool {
-	return self.ReportPathf("extension \"%s\" is not %s", format.ColorValue(extension), format.ColoredOptions(requiredExtensions, format.ColorValue))
+	return self.ReportPathf("extension \"%s\" is not %s", terminal.ColorValue(extension), terminal.ColoredOptions(requiredExtensions, terminal.ColorValue))
 }
 
 func (self *Context) ReportNotInRange(name string, value uint64, lower uint64, upper uint64) bool {

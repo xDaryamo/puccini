@@ -3,15 +3,13 @@ package common
 import (
 	"fmt"
 
-	"github.com/fatih/color"
 	"github.com/tebeka/atexit"
+	"github.com/tliron/puccini/common/terminal"
 )
 
-var Quiet bool
-
 func Fail(message string) {
-	if !Quiet {
-		fmt.Fprintln(color.Error, color.RedString(message))
+	if !terminal.Quiet {
+		fmt.Fprintln(terminal.Stderr, terminal.ColorError(message))
 	}
 	atexit.Exit(1)
 }
