@@ -82,6 +82,10 @@ func (self *Context) ReportValueMalformed(typeName string, reason string) bool {
 // Read
 //
 
+func (self *Context) ReportImportIncompatible(url_ url.URL) bool {
+	return self.Reportf("incompatible import \"%s\"", terminal.ColorValue(url_.String()))
+}
+
 func (self *Context) ReportImportLoop(url_ url.URL) bool {
 	return self.Reportf("endless loop caused by importing \"%s\"", terminal.ColorValue(url_.String()))
 }

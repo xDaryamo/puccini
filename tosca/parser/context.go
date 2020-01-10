@@ -6,6 +6,7 @@ import (
 
 	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/grammars"
 	"github.com/tliron/puccini/tosca/problems"
 )
 
@@ -31,17 +32,26 @@ func (self *Context) GetProblems() *problems.Problems {
 func (self *Context) AddUnit(entityPtr interface{}, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
 	unit := NewUnit(entityPtr, container, nameTransformer)
 
-	self.Locker.Lock()
-	self.Units = append(self.Units, unit)
-	self.Locker.Unlock()
-
 	if container != nil {
+		containerContext := container.GetContext()
+		if !containerContext.HasQuirk("imports.permissive") {
+			unitContext := unit.GetContext()
+			if !grammars.CompatibleGrammars(containerContext, unitContext) {
+				containerContext.ReportImportIncompatible(unitContext.URL)
+				return unit
+			}
+		}
+
 		// Merge problems into container
 		// Note: This happens every time the same unit is imported,
 		// so it could be that that problems are merged multiple times,
 		// but because problems are de-duped, everything is OK :)
 		container.GetContext().Problems.Merge(unit.GetContext().Problems)
 	}
+
+	self.Locker.Lock()
+	self.Units = append(self.Units, unit)
+	self.Locker.Unlock()
 
 	self.goReadImports(unit)
 

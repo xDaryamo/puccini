@@ -8,35 +8,30 @@ import (
 )
 
 func Detect(context *tosca.Context) bool {
-	if versionContext, version := GetVersion(context); version != nil {
+	if context.Grammar == nil {
+		if context.Grammar = GetGrammar(context); context.Grammar == nil {
+			context.ReportFieldUnsupportedValue()
+		}
+	}
+	return context.Grammar != nil
+}
+
+func GetGrammar(context *tosca.Context) *tosca.Grammar {
+	if versionContext, version := DetectVersion(context); version != nil {
 		if grammars, ok := Grammars[versionContext.Name]; ok {
-			if context.Grammar, ok = grammars[*version]; ok {
-				return true
-			}
-		}
-		versionContext.ReportFieldUnsupportedValue()
-	}
-
-	return false
-}
-
-func GetImplicitImportSpec(context *tosca.Context) (*tosca.ImportSpec, bool) {
-	if versionContext, version := GetVersion(context); version != nil {
-		if paths, ok := ImplicitProfilePaths[versionContext.Name]; ok {
-			if path, ok := paths[*version]; ok {
-				if url_, err := url.NewValidInternalURL(path); err == nil {
-					return &tosca.ImportSpec{url_, nil, true}, true
-				} else {
-					context.ReportError(err)
-				}
+			if grammar, ok := grammars[*version]; ok {
+				return grammar
 			}
 		}
 	}
-
-	return nil, false
+	return nil
 }
 
-func GetVersion(context *tosca.Context) (*tosca.Context, *string) {
+func CompatibleGrammars(context1 *tosca.Context, context2 *tosca.Context) bool {
+	return GetGrammar(context1) == GetGrammar(context2)
+}
+
+func DetectVersion(context *tosca.Context) (*tosca.Context, *string) {
 	var versionContext *tosca.Context
 	var ok bool
 
@@ -65,4 +60,20 @@ func GetVersion(context *tosca.Context) (*tosca.Context, *string) {
 	}
 
 	return nil, nil
+}
+
+func GetImplicitImportSpec(context *tosca.Context) (*tosca.ImportSpec, bool) {
+	if versionContext, version := DetectVersion(context); version != nil {
+		if paths, ok := ImplicitProfilePaths[versionContext.Name]; ok {
+			if path, ok := paths[*version]; ok {
+				if url_, err := url.NewValidInternalURL(path); err == nil {
+					return &tosca.ImportSpec{url_, nil, true}, true
+				} else {
+					context.ReportError(err)
+				}
+			}
+		}
+	}
+
+	return nil, false
 }
