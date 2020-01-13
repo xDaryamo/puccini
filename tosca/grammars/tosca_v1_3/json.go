@@ -12,6 +12,8 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 5.3.2
 //
 
+// TODO: implement as constraint, so that we can validate function call results
+
 // tosca.Reader signature
 func ReadJSON(context *tosca.Context) interface{} {
 	if content := context.ReadString(); content != nil {

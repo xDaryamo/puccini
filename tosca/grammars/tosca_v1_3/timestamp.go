@@ -30,7 +30,6 @@ const TimestampTimezoneFormat = "%s%02d:%02d"
 //
 
 type Timestamp struct {
-	Type            string `json:"$type" yaml:"$type"`
 	CanonicalNumber int64  `json:"$number" yaml:"$number"`
 	CanonicalString string `json:"$string" yaml:"$string"`
 	OriginalString  string `json:"$originalString" yaml:"$originalString"`
@@ -49,7 +48,7 @@ type Timestamp struct {
 
 // tosca.Reader signature
 func ReadTimestamp(context *tosca.Context) interface{} {
-	self := Timestamp{Type: "timestamp"}
+	var self Timestamp
 
 	if context.Is("string") {
 		self.OriginalString = *context.ReadString()

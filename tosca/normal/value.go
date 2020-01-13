@@ -14,6 +14,7 @@ type Value struct {
 	Constraints FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
 
 	Value interface{} `json:"$value" yaml:"$value"`
+	Type  string      `json:"$type,omitempty" yaml:"$type,omitempty"`
 }
 
 func NewValue(value interface{}) *Value {

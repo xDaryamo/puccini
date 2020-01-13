@@ -8,9 +8,10 @@ func init() {
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.2.2
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.2.2
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.2.2
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.2.2
 
 function compare(a, b) {
-	if ((a.$type !== 'version') || (b.$type !== 'version'))
+	if (a.$comparer !== b.$comparer)
 		throw 'both values must be of type "version"';
 	if (a.major !== b.major)
 		return a.major < b.major ? -1 : 1;

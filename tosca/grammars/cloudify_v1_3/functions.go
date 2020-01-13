@@ -86,13 +86,16 @@ func ToFunctionCalls(context *tosca.Context) {
 
 func NormalizeFunctionCallArguments(functionCall *tosca.FunctionCall, context *tosca.Context) {
 	for index, argument := range functionCall.Arguments {
-		if _, ok := argument.(normal.Constrainable); ok {
-			// Because the same constraint instance may be shared among more than one value, this
-			// func might be called more than once on the same arguments, so we must make sure not
-			// to normalize more than once
-			return
+		// Because the same constraint instance may be shared among more than one value, this
+		// func might be called more than once on the same arguments, so we must make sure not
+		// to normalize more than once
+		if _, ok := argument.(normal.Constrainable); !ok {
+			if value, ok := argument.(*Value); ok {
+				functionCall.Arguments[index] = value.Normalize()
+			} else {
+				// Note: this literal value will not have a $type field
+				functionCall.Arguments[index] = NewValue(context.ListChild(index, argument)).Normalize()
+			}
 		}
-		value := NewValue(context.ListChild(index, argument))
-		functionCall.Arguments[index] = value.Normalize()
 	}
 }

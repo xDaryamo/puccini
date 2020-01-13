@@ -14,7 +14,7 @@ import (
 //
 
 type Artifact struct {
-	*ArtifactDefinition
+	*ArtifactDefinition `name:"artifact"`
 }
 
 func NewArtifact(context *tosca.Context) *Artifact {

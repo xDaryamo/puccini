@@ -16,6 +16,7 @@ type Value struct {
 	Name    string
 
 	Description *string
+	Type        string
 
 	rendered bool
 }
@@ -59,23 +60,25 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 		self.Description = dataType.Description
 	}
 
-	if allowNil && (self.Context.Data == nil) {
-		return
-	}
+	self.Type = dataType.Name
 
 	if _, ok := self.Context.Data.(*tosca.FunctionCall); ok {
 		return
 	}
 
-	//dataType.Complete(self.Context.Data, self.Context)
+	if allowNil && (self.Context.Data == nil) {
+		return
+	}
+
+	// TODO: dataType.Complete(self.Context.Data, self.Context)
 
 	// Internal types
-	if typeName, ok := dataType.GetInternalTypeName(); ok {
-		if validator, ok := tosca.PrimitiveTypeValidators[typeName]; ok {
+	if internalTypeName, ok := dataType.GetInternalTypeName(); ok {
+		if validator, ok := tosca.PrimitiveTypeValidators[internalTypeName]; ok {
 			if self.Context.Data == nil {
 				// Nil data only happens when an parameter is added despite not having a
 				// "default" value; we will give it a valid zero value instead
-				self.Context.Data = tosca.PrimitiveTypeZeroes[typeName]
+				self.Context.Data = tosca.PrimitiveTypeZeroes[internalTypeName]
 			}
 
 			// Primitive types
@@ -84,7 +87,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 			}
 		} else {
 			// Special types
-			if read, ok := self.Context.Grammar.Readers[typeName]; ok {
+			if read, ok := self.Context.Grammar.Readers[internalTypeName]; ok {
 				self.Context.Data = read(self.Context)
 			} else {
 				// Avoid reporting more than once
@@ -94,44 +97,38 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 				}
 			}
 		}
+	} else if self.Context.ValidateType("map") {
+		// Complex data types
 
-		return
-	}
+		map_ := self.Context.Data.(ard.Map)
 
-	// Complex data types
-
-	if !self.Context.ValidateType("map") {
-		return
-	}
-
-	map_ := self.Context.Data.(ard.Map)
-
-	// All properties must be defined in type
-	for key := range map_ {
-		name := yamlkeys.KeyString(key)
-		if _, ok := dataType.PropertyDefinitions[name]; !ok {
-			self.Context.MapChild(name, nil).ReportUndeclared("property")
-			delete(map_, key)
+		// All properties must be defined in type
+		for key := range map_ {
+			name := yamlkeys.KeyString(key)
+			if _, ok := dataType.PropertyDefinitions[name]; !ok {
+				self.Context.MapChild(name, nil).ReportUndeclared("property")
+				delete(map_, key)
+			}
 		}
-	}
 
-	// Render properties
-	for key, definition := range dataType.PropertyDefinitions {
-		if data, ok := map_[key]; ok {
-			var value *Value
-			if value, ok = data.(*Value); !ok {
-				// Convert to value
-				value = NewValue(self.Context.MapChild(key, data))
-				map_[key] = value
-			}
-			if definition.DataType != nil {
-				value.RenderProperty(definition.DataType, definition)
-			}
-		} else {
-			// PropertyDefinition.Required defaults to true
-			required := (definition.Required == nil) || *definition.Required
-			if required {
-				self.Context.MapChild(key, data).ReportPropertyRequired("property")
+		// Render properties
+		for key, definition := range dataType.PropertyDefinitions {
+			if data, ok := map_[key]; ok {
+				var value *Value
+				if value, ok = data.(*Value); !ok {
+					// Convert to value
+					value = NewValue(self.Context.MapChild(key, data))
+					map_[key] = value
+				}
+				if definition.DataType != nil {
+					value.RenderProperty(definition.DataType, definition)
+				}
+			} else {
+				// PropertyDefinition.Required defaults to true
+				required := (definition.Required == nil) || *definition.Required
+				if required {
+					self.Context.MapChild(key, data).ReportPropertyRequired("property")
+				}
 			}
 		}
 	}
@@ -165,7 +162,9 @@ func (self *Value) Normalize() normal.Constrainable {
 		constrainable = normal.NewFunctionCall(data)
 
 	default:
-		constrainable = normal.NewValue(data)
+		value := normal.NewValue(data)
+		value.Type = self.Type
+		constrainable = value
 	}
 
 	if self.Description != nil {

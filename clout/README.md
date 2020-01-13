@@ -112,15 +112,18 @@ The following additional fields are optional for all coercibles:
 
 * `$description`: a human-readable description of the coercible
 * `$constraints`: a list of coercibles in the `$functionCall` format (see notation below)
-* `$comparer`: name of scriptlet to be used for value comparisons
 
-If the `$value` is a map with custom fields, it may have one or more of the following special fields
-in addition to those custom fields:
+The following additional field is optional for `$value`:
 
 * `$type`: type name, which can help with interpreting the value
+
+If the `$value` is a map, it may have one or more of the following special fields in addition to the
+custom map fields:
+
 * `$string`: textual representation of the value for human-readability, comparison, sorting, etc.
 * `$number`: numeric representation of the value (float or integer) for comparison, sorting, etc.
 * `$originalString`: if the value was parsed from a string then this would be that string
+* `$comparer`: name of scriptlet to be used for value comparisons
 
 The following additional fields are optional for `$list` coercibles:
 

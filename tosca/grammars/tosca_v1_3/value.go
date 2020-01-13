@@ -26,6 +26,7 @@ type Value struct {
 
 	ConstraintClauses ConstraintClauses
 	Description       *string
+	Type              string
 
 	rendered bool
 }
@@ -101,11 +102,13 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 		}
 	}
 
-	if allowNil && (self.Context.Data == nil) {
+	self.Type = dataType.Name
+
+	if _, ok := self.Context.Data.(*tosca.FunctionCall); ok {
 		return
 	}
 
-	if _, ok := self.Context.Data.(*tosca.FunctionCall); ok {
+	if allowNil && (self.Context.Data == nil) {
 		return
 	}
 
@@ -115,15 +118,15 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 	}
 
 	// Internal types
-	if typeName, ok := dataType.GetInternalTypeName(); ok {
-		if validator, ok := tosca.PrimitiveTypeValidators[typeName]; ok {
+	if internalTypeName, ok := dataType.GetInternalTypeName(); ok {
+		if validator, ok := tosca.PrimitiveTypeValidators[internalTypeName]; ok {
 			if self.Context.Data == nil {
 				// Nil data only happens when an attribute is added despite not having a
 				// "default" value; we will give it a valid zero value instead
-				self.Context.Data = tosca.PrimitiveTypeZeroes[typeName]
+				self.Context.Data = tosca.PrimitiveTypeZeroes[internalTypeName]
 			}
 
-			if (typeName == "string") && self.Context.HasQuirk("data_types.string.permissive") {
+			if (internalTypeName == "string") && self.Context.HasQuirk("data_types.string.permissive") {
 				switch data := self.Context.Data.(type) {
 				case bool:
 					self.Context.Data = strconv.FormatBool(data)
@@ -146,7 +149,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 			if validator(self.Context.Data) {
 				// Render list and map elements according to entry schema
 				// (The entry schema may also have additional constraints)
-				switch typeName {
+				switch internalTypeName {
 				case "list", "map":
 					if (definition == nil) || (definition.EntrySchema == nil) || (definition.EntrySchema.DataType == nil) {
 						// This problem is reported in AttributeDefinition.Render
@@ -156,7 +159,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 					entryDataType := definition.EntrySchema.DataType
 					entryConstraints := definition.EntrySchema.RenderConstraints()
 
-					if typeName == "list" {
+					if internalTypeName == "list" {
 						slice := self.Context.Data.(ard.List)
 
 						valueList := NewValueList(definition, len(slice), self.Description, entryConstraints)
@@ -194,7 +197,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 			}
 		} else {
 			// Special types
-			if read, ok := self.Context.Grammar.Readers[typeName]; ok {
+			if read, ok := self.Context.Grammar.Readers[internalTypeName]; ok {
 				self.Context.Data = read(self.Context)
 			} else {
 				// Avoid reporting more than once
@@ -212,44 +215,38 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 				panic(fmt.Sprintf("type has \"puccini.comparer\" metadata but does not support HasComparer interface: %T", self.Context.Data))
 			}
 		}
+	} else if self.Context.ValidateType("map") {
+		// Complex data types
 
-		return
-	}
+		map_ := self.Context.Data.(ard.Map)
 
-	// Complex data types
-
-	if !self.Context.ValidateType("map") {
-		return
-	}
-
-	map_ := self.Context.Data.(ard.Map)
-
-	// All properties must be defined in type
-	for key := range map_ {
-		name := yamlkeys.KeyString(key)
-		if _, ok := dataType.PropertyDefinitions[name]; !ok {
-			self.Context.MapChild(name, nil).ReportUndeclared("property")
-			delete(map_, key)
+		// All properties must be defined in type
+		for key := range map_ {
+			name := yamlkeys.KeyString(key)
+			if _, ok := dataType.PropertyDefinitions[name]; !ok {
+				self.Context.MapChild(name, nil).ReportUndeclared("property")
+				delete(map_, key)
+			}
 		}
-	}
 
-	// Render properties
-	for key, definition := range dataType.PropertyDefinitions {
-		if data, ok := map_[key]; ok {
-			var value *Value
-			if value, ok = data.(*Value); !ok {
-				// Convert to value
-				value = ReadValue(self.Context.MapChild(key, data)).(*Value)
-				map_[key] = value
-			}
-			if definition.DataType != nil {
-				value.RenderProperty(definition.DataType, definition)
-			}
-		} else {
-			// PropertyDefinition.Required defaults to true
-			required := (definition.Required == nil) || *definition.Required
-			if required {
-				self.Context.MapChild(key, data).ReportPropertyRequired("property")
+		// Render properties
+		for key, definition := range dataType.PropertyDefinitions {
+			if data, ok := map_[key]; ok {
+				var value *Value
+				if value, ok = data.(*Value); !ok {
+					// Convert to value
+					value = ReadValue(self.Context.MapChild(key, data)).(*Value)
+					map_[key] = value
+				}
+				if definition.DataType != nil {
+					value.RenderProperty(definition.DataType, definition)
+				}
+			} else {
+				// PropertyDefinition.Required defaults to true
+				required := (definition.Required == nil) || *definition.Required
+				if required {
+					self.Context.MapChild(key, data).ReportPropertyRequired("property")
+				}
 			}
 		}
 	}
@@ -297,7 +294,9 @@ func (self *Value) Normalize() normal.Constrainable {
 		constrainable = normal.NewFunctionCall(data)
 
 	default:
-		constrainable = normal.NewValue(data)
+		value := normal.NewValue(data)
+		value.Type = self.Type
+		constrainable = value
 	}
 
 	self.ConstraintClauses.NormalizeConstrainable(self.Context, constrainable)

@@ -17,14 +17,13 @@ import (
 //
 
 type Range struct {
-	Type  string `json:"$type" yaml:"$type"`
 	Lower uint64 `json:"lower" yaml:"lower"`
 	Upper uint64 `json:"upper" yaml:"upper"`
 }
 
 // tosca.Reader signature
 func ReadRange(context *tosca.Context) interface{} {
-	self := Range{Type: "range"}
+	var self Range
 
 	if !context.ValidateType("list") {
 		return &self

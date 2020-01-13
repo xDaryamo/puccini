@@ -20,13 +20,13 @@ import (
 //
 
 type ArtifactDefinition struct {
-	*Entity `name:"artifact"`
+	*Entity `name:"artifact definition"`
 	Name    string
 
 	ArtifactTypeName  *string `read:"type"` // required only if cannot be inherited
 	Description       *string `read:"description" inherit:"description,ArtifactType"`
 	ArtifactVersion   *string `read:"artifact_version"` // introduced in TOSCA 1.3
-	Properties        Values  `read:"properties,Value"` // ERRATUM: ommited in TOSCA 1.2
+	Properties        Values  `read:"properties,Value"` // ERRATUM: ommited in TOSCA 1.0-1.2 (appears in artifact type)
 	RepositoryName    *string `read:"repository"`
 	File              *string `read:"file"` // required only if cannot be inherited
 	DeployPath        *string `read:"deploy_path"`
