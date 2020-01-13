@@ -10,12 +10,37 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
+//
+// NoEntity
+//
+
+type NoEntity struct {
+	Context *tosca.Context
+}
+
+func NewNoEntity(toscaContext *tosca.Context) *NoEntity {
+	return &NoEntity{toscaContext}
+}
+
+// tosca.Contextual interface
+func (self *NoEntity) GetContext() *tosca.Context {
+	return self.Context
+}
+
+//
+// Unit
+//
+
 type Unit struct {
 	EntityPtr       interface{}
 	Container       *Unit
 	Imports         Units
 	NameTransformer tosca.NameTransformer
 	Locker          sync.Mutex
+}
+
+func NewUnitNoEntity(toscaContext *tosca.Context, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
+	return NewUnit(NewNoEntity(toscaContext), container, nameTransformer)
 }
 
 func NewUnit(entityPtr interface{}, container *Unit, nameTransformer tosca.NameTransformer) *Unit {

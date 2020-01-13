@@ -24,14 +24,16 @@ func Parse(url_ string, quirks []string, inputs map[string]interface{}) (*normal
 	defer parserLock.Unlock()
 
 	// Phase 1: Read
-	if !context.ReadRoot(url__) {
-		return nil, nil, errors.New("phase 1: read")
-	}
+	ok := context.ReadRoot(url__)
 
 	problems := context.GetProblems()
 
 	if !problems.Empty() {
 		return nil, problems, errors.New("phase 1: read")
+	}
+
+	if !ok {
+		return nil, nil, errors.New("phase 1: read")
 	}
 
 	// Phase 2: Namespaces

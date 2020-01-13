@@ -31,7 +31,7 @@ func (self *Context) ReadRoot(url_ url.URL) bool {
 
 var readCache sync.Map // entityPtr or Promise
 
-func (self *Context) read(promise Promise, toscaContext *tosca.Context, container *Unit, nameTransfomer tosca.NameTransformer, readerName string) (*Unit, bool) {
+func (self *Context) read(promise Promise, toscaContext *tosca.Context, container *Unit, nameTransformer tosca.NameTransformer, readerName string) (*Unit, bool) {
 	defer self.WaitGroup.Done()
 	if promise != nil {
 		// For the goroutines waiting for our cached entityPtr
@@ -45,7 +45,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 		var err error
 		if toscaContext.URL, err = csar.GetRootURL(toscaContext.URL); err != nil {
 			toscaContext.ReportError(err)
-			return nil, false
+			return NewUnitNoEntity(toscaContext, container, nameTransformer), false
 		}
 	}
 
@@ -53,12 +53,12 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 	var err error
 	if toscaContext.Data, toscaContext.Locator, err = ard.ReadFromURL(toscaContext.URL, true); err != nil {
 		toscaContext.ReportError(err)
-		return nil, false
+		return NewUnitNoEntity(toscaContext, container, nameTransformer), false
 	}
 
 	// Detect grammar
 	if !grammars.Detect(toscaContext) {
-		return nil, false
+		return NewUnitNoEntity(toscaContext, container, nameTransformer), false
 	}
 
 	// Read entityPtr
@@ -77,7 +77,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 
 	readCache.Store(toscaContext.URL.Key(), entityPtr)
 
-	return self.AddUnit(entityPtr, container, nameTransfomer), true
+	return self.AddUnit(entityPtr, container, nameTransformer), true
 }
 
 // From Importer interface

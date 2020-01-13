@@ -80,13 +80,15 @@ func Parse(url_ string) (parser.Context, *normal.ServiceTemplate) {
 
 	// Phase 1: Read
 	if stopAtPhase >= 1 {
-		if !context.ReadRoot(url__) {
-			// Stop here if failed to read
-			atexit.Exit(1)
-		}
+		ok := context.ReadRoot(url__)
 
 		problems_ = context.GetProblems()
 		FailOnProblems(problems_)
+
+		if !ok {
+			// Stop here if failed to read
+			atexit.Exit(1)
+		}
 
 		if ToPrintPhase(1) {
 			if len(dumpPhases) > 1 {
