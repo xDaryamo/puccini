@@ -8,7 +8,7 @@ import (
 //
 // Workflow
 //
-// [https://docs.cloudify.co/4.5.5/developer/blueprints/spec-workflows/]
+// [https://docs.cloudify.co/5.0.5/developer/blueprints/spec-workflows/]
 //
 
 type Workflow struct {

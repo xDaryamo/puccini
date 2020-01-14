@@ -40,7 +40,7 @@ Puccini can compile several popular TOSCA and TOSCA-like dialects:
 [TOSCA 1.2](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.2/TOSCA-Simple-Profile-YAML-v1.2.html),
 [TOSCA 1.1](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html),
 as well as the more limited grammars of
-[Cloudify DSL 1.3](https://docs.cloudify.co/latest/developer/blueprints/),
+[Cloudify DSL 1.3](https://docs.cloudify.co/5.0.5/developer/blueprints/),
 and
 [OpenStack Heat HOT 2018-08-31](https://docs.openstack.org/heat/stein/template_guide/hot_guide.html).
 

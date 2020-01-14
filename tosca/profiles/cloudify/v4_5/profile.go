@@ -18,10 +18,10 @@ tosca_definitions_version: cloudify_dsl_1_3
 ##################################################################################
 metadata:
   cloudify_types: true
-  puccini.scriptlet.import.tosca.resolve: internal:/tosca/common/1.0/js/resolve.js
-  puccini.scriptlet.import.tosca.coerce: internal:/tosca/common/1.0/js/coerce.js
-  puccini.scriptlet.import.tosca.utils: internal:/tosca/common/1.0/js/utils.js
-  puccini.scriptlet.import.tosca.helpers: internal:/tosca/common/1.0/js/helpers.js
+  puccini.scriptlet.import|tosca.resolve: internal:/tosca/common/1.0/js/resolve.js
+  puccini.scriptlet.import|tosca.coerce: internal:/tosca/common/1.0/js/coerce.js
+  puccini.scriptlet.import|tosca.utils: internal:/tosca/common/1.0/js/utils.js
+  puccini.scriptlet.import|tosca.helpers: internal:/tosca/common/1.0/js/helpers.js
 
 imports:
 - data.yaml

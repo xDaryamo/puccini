@@ -93,7 +93,7 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.Strin
 	}
 
 	var err error
-	if functionCall.Constraints, err = self.NewConstraintsFromNotation(notation, "constraints", functionCallContext); err != nil {
+	if functionCall.Constraints, err = self.NewConstraintsFromNotation(notation, "$constraints", functionCallContext); err != nil {
 		return nil, err
 	}
 

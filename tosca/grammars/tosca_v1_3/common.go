@@ -39,7 +39,6 @@ func init() {
 	Grammar.RegisterReader("InterfaceDefinition", ReadInterfaceDefinition)
 	Grammar.RegisterReader("InterfaceMapping", ReadInterfaceMapping) // introduced in TOSCA 1.2
 	Grammar.RegisterReader("InterfaceType", ReadInterfaceType)
-	Grammar.RegisterReader("json", ReadJSON) // introduced in TOSCA 1.2
 	Grammar.RegisterReader("Metadata", ReadMetadata)
 	Grammar.RegisterReader("NodeFilter", ReadNodeFilter)
 	Grammar.RegisterReader("NodeTemplate", ReadNodeTemplate)
@@ -83,7 +82,6 @@ func init() {
 	Grammar.RegisterReader("WorkflowDefinition", ReadWorkflowDefinition)                         // introduced in TOSCA 1.1
 	Grammar.RegisterReader("WorkflowPreconditionDefinition", ReadWorkflowPreconditionDefinition) // introduced in TOSCA 1.1
 	Grammar.RegisterReader("WorkflowStepDefinition", ReadWorkflowStepDefinition)                 // introduced in TOSCA 1.1
-	Grammar.RegisterReader("xml", ReadXML)                                                       // introduced in TOSCA 1.2
 
 	DefaultScriptletNamespace.RegisterScriptlets(FunctionScriptlets, nil)
 	DefaultScriptletNamespace.RegisterScriptlets(ConstraintClauseScriptlets, ConstraintClauseNativeArgumentIndexes)

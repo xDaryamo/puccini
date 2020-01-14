@@ -47,7 +47,6 @@ func init() {
 	Grammar.RegisterReader("OperationAssignment", tosca_v1_3.ReadOperationAssignment)
 	Grammar.RegisterReader("OperationDefinition", tosca_v1_3.ReadOperationDefinition)
 	Grammar.RegisterReader("InterfaceImplementation", tosca_v1_3.ReadInterfaceImplementation)
-	Grammar.RegisterReader("json", tosca_v1_3.ReadJSON) // introduced in TOSCA 1.2
 	Grammar.RegisterReader("ParameterDefinition", tosca_v1_3.ReadParameterDefinition)
 	Grammar.RegisterReader("Policy", tosca_v1_3.ReadPolicy)
 	Grammar.RegisterReader("PolicyType", tosca_v1_3.ReadPolicyType)
@@ -79,7 +78,6 @@ func init() {
 	Grammar.RegisterReader("WorkflowDefinition", tosca_v1_3.ReadWorkflowDefinition)                         // introduced in TOSCA 1.1
 	Grammar.RegisterReader("WorkflowPreconditionDefinition", tosca_v1_3.ReadWorkflowPreconditionDefinition) // introduced in TOSCA 1.1
 	Grammar.RegisterReader("WorkflowStepDefinition", tosca_v1_3.ReadWorkflowStepDefinition)                 // introduced in TOSCA 1.1
-	Grammar.RegisterReader("xml", tosca_v1_3.ReadXML)                                                       // introduced in TOSCA 1.2
 
 	DefaultScriptletNamespace.RegisterScriptlets(tosca_v1_3.FunctionScriptlets, nil, "join")
 	DefaultScriptletNamespace.RegisterScriptlets(tosca_v1_3.ConstraintClauseScriptlets, tosca_v1_3.ConstraintClauseNativeArgumentIndexes)

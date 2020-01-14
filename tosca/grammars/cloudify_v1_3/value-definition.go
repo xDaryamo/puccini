@@ -8,8 +8,8 @@ import (
 //
 // ValueDefinition
 //
-// [https://docs.cloudify.co/4.5.5/developer/blueprints/spec-capabilities/]
-// [https://docs.cloudify.co/4.5.5/developer/blueprints/spec-outputs/]
+// [https://docs.cloudify.co/5.0.5/developer/blueprints/spec-capabilities/]
+// [https://docs.cloudify.co/5.0.5/developer/blueprints/spec-outputs/]
 //
 
 type ValueDefinition struct {

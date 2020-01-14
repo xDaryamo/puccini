@@ -9,7 +9,8 @@
 tosca_definitions_version: tosca_simple_yaml_1_2
 
 metadata:
-  puccini.scriptlet.import.tosca.compare_version: internal:/tosca/simple/1.3/js/compare_version.js
+  puccini.scriptlet.import|puccini.compare_version: internal:/tosca/simple/1.3/js/compare_version.js
+  puccini.scriptlet.import|puccini.format: internal:/tosca/simple/1.3/js/format.js
 
 data_types:
 
@@ -44,7 +45,7 @@ data_types:
   version:
     metadata:
       puccini.type: version
-      puccini.comparer: tosca.compare_version
+      puccini.comparer: puccini.compare_version
       citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       citation_location: 3.2.2
 
@@ -53,6 +54,32 @@ data_types:
       puccini.type: range
       citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       citation_location: 3.2.3
+
+  tosca.datatypes.json:
+    metadata:
+      normative: 'true'
+      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      citation_location: 5.3.2
+    # ERRATUM: typo
+    description: >-
+      The json type is a TOSCA data Type used to define a string that contains data in the
+      JavaScript Object Notation (JSON) format.
+    derived_from: string
+    constraints:
+    - puccini.format: json
+
+  tosca.datatypes.xml:
+    metadata:
+      normative: 'true'
+      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      citation_location: 5.3.4
+    # ERRATUM: typo
+    description: >-
+      The xml type is a TOSCA data Type used to define a string that contains data in the
+      Extensible Markup Language (XML) format.
+    derived_from: string
+    constraints:
+    - puccini.format: xml
 
   #
   # With entry schema
@@ -104,30 +131,6 @@ data_types:
     description: >-
       This is the default (root) TOSCA Root Type definition that all complex TOSCA Data Types derive
       from.
-
-  tosca.datatypes.json:
-    metadata:
-      normative: 'true'
-      puccini.type: json
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.3.2
-    # ERRATUM: typo
-    description: >-
-      The json type is a TOSCA data Type used to define a string that contains data in the
-      JavaScript Object Notation (JSON) format.
-    derived_from: string
-
-  tosca.datatypes.xml:
-    metadata:
-      normative: 'true'
-      puccini.type: xml
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.3.4
-    # ERRATUM: typo
-    description: >-
-      The xml type is a TOSCA data Type used to define a string that contains data in the
-      Extensible Markup Language (XML) format.
-    derived_from: string
 
   tosca.datatypes.Credential:
     metadata:

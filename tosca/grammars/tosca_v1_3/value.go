@@ -104,17 +104,17 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 
 	self.Type = dataType.Name
 
+	dataType.Complete(self.Context)
+	if !bare {
+		dataType.ConstraintClauses.RenderAndAppend(&self.ConstraintClauses, dataType)
+	}
+
 	if _, ok := self.Context.Data.(*tosca.FunctionCall); ok {
 		return
 	}
 
 	if allowNil && (self.Context.Data == nil) {
 		return
-	}
-
-	dataType.Complete(self.Context)
-	if !bare {
-		dataType.ConstraintClauses.RenderAndAppend(&self.ConstraintClauses, dataType)
 	}
 
 	// Internal types

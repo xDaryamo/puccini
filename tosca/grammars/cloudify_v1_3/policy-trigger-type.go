@@ -7,7 +7,7 @@ import (
 //
 // PolicyTriggerType
 //
-// [https://docs.cloudify.co/4.5.5/developer/blueprints/spec-policy-triggers/]
+// [https://docs.cloudify.co/5.0.5/developer/blueprints/spec-policy-triggers/]
 //
 
 type PolicyTriggerType struct {

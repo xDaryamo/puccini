@@ -233,14 +233,17 @@ topology_template:
             "key1": "value",
             "key2": [1, 2, 3]
           }
-        xml: |-
-          <tag1>value</tag1>
-          <tag2>
-            <entry>1</entry>
-            <entry>2</entry>
-            <entry>3</entry>
-          </tag2>
-
+        xml:
+          concat:
+          - |
+            <tag1>value</tag1>
+            <tag2>
+              <entry>1</entry>
+              <entry>2</entry>
+              <entry>3</entry>
+          - |-
+            </tag2>
+  
         # Constraints: min length = 2 and max length = 5
         # (The length-related constraints work on both strings and lists)
         constrained_string: ABCDE

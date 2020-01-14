@@ -46,6 +46,10 @@ func (entry *PucciniAPI) Sprintf(f string, a ...interface{}) string {
 	return fmt.Sprintf(f, a...)
 }
 
+func (entry *PucciniAPI) ValidateFormat(code string, format_ string) error {
+	return format.Validate(code, format_)
+}
+
 func (self *PucciniAPI) Timestamp() string {
 	return common.Timestamp()
 }

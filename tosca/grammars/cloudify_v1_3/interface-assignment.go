@@ -8,7 +8,7 @@ import (
 //
 // InterfaceAssignment
 //
-// [https://docs.cloudify.co/4.5.5/developer/blueprints/spec-interfaces/]
+// [https://docs.cloudify.co/5.0.5/developer/blueprints/spec-interfaces/]
 //
 
 type InterfaceAssignment struct {

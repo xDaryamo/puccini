@@ -7,7 +7,7 @@ import (
 //
 // Plugin
 //
-// [https://docs.cloudify.co/4.5.5/developer/blueprints/spec-plugins/]
+// [https://docs.cloudify.co/5.0.5/developer/blueprints/spec-plugins/]
 //
 
 type Plugin struct {

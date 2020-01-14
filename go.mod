@@ -13,6 +13,6 @@ require (
 	github.com/segmentio/ksuid v1.0.2
 	github.com/spf13/cobra v0.0.5
 	github.com/tebeka/atexit v0.1.0
-	github.com/tliron/yamlkeys v1.0.0
+	github.com/tliron/yamlkeys v1.1.0
 	gopkg.in/yaml.v3 v3.0.0-20191120175047-4206685974f2
 )

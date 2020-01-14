@@ -7,7 +7,7 @@ import (
 //
 // RelationshipType
 //
-// [https://docs.cloudify.co/4.5.5/developer/blueprints/spec-relationships/]
+// [https://docs.cloudify.co/5.0.5/developer/blueprints/spec-relationships/]
 //
 
 type RelationshipType struct {

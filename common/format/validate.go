@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 func Validate(code string, format string) error {
@@ -14,20 +17,50 @@ func Validate(code string, format string) error {
 	case "json":
 		return ValidateJSON(code)
 	case "xml":
-		return ValidateJSON(code)
+		return ValidateXML(code)
 	default:
 		return fmt.Errorf("unsupported format: %s", format)
 	}
 }
+
 func ValidateYAML(code string) error {
-	_, err := DecodeYAML(code)
-	return err
+	decoder := yaml.NewDecoder(strings.NewReader(code))
+	// Note: decoder.Decode will only decode the first document it finds
+	for {
+		if err := decoder.Decode(new(interface{})); err != nil {
+			if err == io.EOF {
+				return nil
+			} else {
+				return err
+			}
+		}
+	}
 }
 
 func ValidateJSON(code string) error {
-	return json.NewDecoder(strings.NewReader(code)).Decode(new(interface{}))
+	decoder := json.NewDecoder(strings.NewReader(code))
+	// Note: decoder.Decode will only decode the first element it finds
+	for {
+		if _, err := decoder.Token(); err != nil {
+			if err == io.EOF {
+				return nil
+			} else {
+				return err
+			}
+		}
+	}
 }
 
 func ValidateXML(code string) error {
-	return xml.NewDecoder(strings.NewReader(code)).Decode(new(interface{}))
+	decoder := xml.NewDecoder(strings.NewReader(code))
+	// Note: decoder.Decode will only decode the first element it finds
+	for {
+		if _, err := decoder.Token(); err != nil {
+			if err == io.EOF {
+				return nil
+			} else {
+				return err
+			}
+		}
+	}
 }

@@ -7,7 +7,7 @@ import (
 //
 // UploadResources
 //
-// [https://docs.cloudify.co/4.5.5/developer/blueprints/spec-upload-resources/]
+// [https://docs.cloudify.co/5.0.5/developer/blueprints/spec-upload-resources/]
 //
 
 type UploadResources struct {

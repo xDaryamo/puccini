@@ -25,10 +25,10 @@ func ReadMetadata(context *tosca.Context) interface{} {
 
 	if self != nil {
 		for key, value := range self {
-			if strings.HasPrefix(key, "puccini.scriptlet.import.") {
+			if strings.HasPrefix(key, "puccini.scriptlet.import|") {
 				context.ImportScriptlet(key[25:], value)
 				delete(self, key)
-			} else if strings.HasPrefix(key, "puccini.scriptlet.") {
+			} else if strings.HasPrefix(key, "puccini.scriptlet|") {
 				context.EmbedScriptlet(key[18:], value)
 				delete(self, key)
 			}

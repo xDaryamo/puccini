@@ -5,7 +5,7 @@ package v4_5
 func init() {
 	Profile["/cloudify/4.5/js/get_input.js"] = `
 
-// [https://docs.cloudify.co/4.5.5/developer/blueprints/spec-intrinsic-functions/]
+// [https://docs.cloudify.co/5.0.5/developer/blueprints/spec-intrinsic-functions/]
 
 function evaluate() {
 	return 'TODO';

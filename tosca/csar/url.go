@@ -15,6 +15,7 @@ func GetRootURL(csarUrl url.URL) (url.URL, error) {
 	switch url_ := csarUrl.(type) {
 	case *url.FileURL:
 		csarFileUrl = url_
+
 	case *url.NetworkURL:
 		if file, err := url.Download(url_, "puccini-*.csar"); err == nil {
 			if csarFileUrl, err = url.NewValidFileURL(file.Name()); err != nil {
@@ -23,6 +24,7 @@ func GetRootURL(csarUrl url.URL) (url.URL, error) {
 		} else {
 			return nil, err
 		}
+
 	default:
 		return nil, fmt.Errorf("can't open CSAR URL: %s", csarUrl.String())
 	}

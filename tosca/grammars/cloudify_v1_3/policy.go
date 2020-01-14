@@ -8,7 +8,7 @@ import (
 //
 // Policy
 //
-// [https://docs.cloudify.co/4.5.5/developer/blueprints/spec-policies/]
+// [https://docs.cloudify.co/5.0.5/developer/blueprints/spec-policies/]
 //
 
 type Policy struct {

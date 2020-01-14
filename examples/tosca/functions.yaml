@@ -34,6 +34,10 @@ topology_template:
           - { join: [ [ 192, 168, 1, 1 ], . ] }
           # Function calls can be nested
           - { concat: [ 127, ., 0, ., { concat: [ 0, ., 1 ] } ] }
+          # Also note that YAML allows this multiline notation:
+          - concat:
+            - '::'
+            - 1
         admin_port:
           addresses:
           - ::1
