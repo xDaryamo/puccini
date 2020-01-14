@@ -20,7 +20,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&terminal.Quiet, "quiet", "q", false, "suppress output")
 	rootCmd.PersistentFlags().StringVarP(&logTo, "log", "l", "", "log to file (defaults to stderr)")
 	rootCmd.PersistentFlags().CountVarP(&verbose, "verbose", "v", "add a log verbosity level (can be used twice)")
-	rootCmd.PersistentFlags().StringVarP(&format, "format", "f", "", "force format (\"yaml\", \"json\", or \"xml\")")
+	rootCmd.PersistentFlags().StringVarP(&format, "format", "f", "", "force output format (\"yaml\", \"json\", or \"xml\")")
 	rootCmd.PersistentFlags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
 	rootCmd.PersistentFlags().StringSliceVarP(&quirks, "quirk", "x", nil, "parser quirk")
 

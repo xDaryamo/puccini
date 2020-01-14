@@ -25,9 +25,9 @@ builds:
   - windows
   - js
 
-nfpm:
+nfpms:
 
-  formats:
+- formats:
   - rpm
   - deb
   homepage: https://github.com/tliron/puccini
@@ -37,9 +37,9 @@ nfpm:
   files:
     puccini-csar: /usr/local/bin/puccini-csar
 
-archive:
+archives:
 
-  files:
+- files:
   - README.md
   - LICENSE
   - NOTICE

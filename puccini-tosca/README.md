@@ -3,7 +3,7 @@ puccini-tosca
 
 ### Format
 
-The default format for input/output is YAML, but you can switch to JSON using `--format/-f`. Note
+The default format for output is YAML, but you can switch to JSON or XML using `--format/-f`. Note
 that Clout in JSON may lose some type information (e.g. JSON doesn't distinguish between an integer
 and a float).
 

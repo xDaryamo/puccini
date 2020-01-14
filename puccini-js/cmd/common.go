@@ -19,7 +19,7 @@ func ReadClout(path string) (*clout.Clout, error) {
 	if path != "" {
 		url_, err = url.NewValidURL(path, nil)
 	} else {
-		url_, err = url.ReadToInternalURLFromStdin(format)
+		url_, err = url.ReadToInternalURLFromStdin("yaml")
 	}
 	if err != nil {
 		return nil, err

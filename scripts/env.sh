@@ -11,6 +11,6 @@ fi
 PATH=$GOPATH/bin:$ROOT:$PATH
 
 function git_version () {
-	VERSION=$(git -C "$ROOT" describe)
+	VERSION=$(git -C "$ROOT" describe --tags)
 	REVISION=$(git -C "$ROOT" rev-parse HEAD)
 }

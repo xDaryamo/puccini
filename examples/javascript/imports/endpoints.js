@@ -9,8 +9,8 @@ tosca.coerce();
 
 var endpoints = [];
 
-for (var vertexId in clout.vertexes) {
-	var vertex = clout.vertexes[vertexId];
+for (var v in clout.vertexes) {
+	var vertex = clout.vertexes[v];
 
 	// We'll skip vertexes that are not TOSCA node templates
 	if (!tosca.isNodeTemplate(vertex))
@@ -25,7 +25,7 @@ for (var vertexId in clout.vertexes) {
 		if (!('tosca.capabilities.Endpoint' in capability.types))
 			continue;
 
-		// Adding to the report
+		// Add endpoint to the report
 		endpoints.push({
 			name : nodeTemplate.name + '.' + c,
 			protocol : capability.properties.protocol,
@@ -36,5 +36,4 @@ for (var vertexId in clout.vertexes) {
 
 // "puccini.write" will use either YAML (the default), JSON, or XML according to the format selected
 // in the command line (use --format to change it)
-
 puccini.write(endpoints);

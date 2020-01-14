@@ -68,7 +68,7 @@ func Parse(url_ string) (parser.Context, *normal.ServiceTemplate) {
 	var err error
 	if url_ == "" {
 		log.Infof("parsing stdin", url_)
-		url__, err = url.ReadToInternalURLFromStdin(format)
+		url__, err = url.ReadToInternalURLFromStdin("yaml")
 	} else {
 		log.Infof("parsing \"%s\"", url_)
 		url__, err = url.NewValidURL(url_, nil)
@@ -200,7 +200,7 @@ func ParseInputs() {
 		if readerCloser, ok := reader.(io.ReadCloser); ok {
 			defer readerCloser.Close()
 		}
-		data, err := format_.Read(reader, "yaml")
+		data, err := format_.ReadYAML(reader)
 		common.FailOnError(err)
 		if map_, ok := data.(ard.Map); ok {
 			for key, value := range map_ {
@@ -216,7 +216,7 @@ func ParseInputs() {
 		if len(s) != 2 {
 			common.Failf("malformed input: %s", input)
 		}
-		value, err := format_.Decode(s[1], "yaml")
+		value, err := format_.DecodeYAML(s[1])
 		common.FailOnError(err)
 		inputValues[s[0]] = value
 	}

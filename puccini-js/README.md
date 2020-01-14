@@ -12,7 +12,7 @@ switch to specify a file (or direct to a file in the shell via `>`).
 `exec` creates a specialized JavaScript environment in which to run the code, providing  access to
 the parsed Clout structure as well as a few helper functions.
 
-The default format for input/output is YAML, but you can switch to JSON using `--format/-f`. Note
+The default format for output is YAML, but you can switch to JSON or XML using `--format/-f`. Note
 that Clout in JSON may lose some type information (e.g. JSON doesn't distinguish between an integer
 and a float).
 
