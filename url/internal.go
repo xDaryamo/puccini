@@ -69,8 +69,7 @@ func NewValidInternalURL(path string) (*InternalURL, error) {
 }
 
 func NewValidRelativeInternalURL(path_ string, origin *InternalURL) (*InternalURL, error) {
-	path_ = path.Join(origin.Path, path_)
-	return NewValidInternalURL(path_)
+	return NewValidInternalURL(path.Join(origin.Path, path_))
 }
 
 // URL interface
@@ -86,6 +85,11 @@ func (self *InternalURL) Format() string {
 // URL interface
 func (self *InternalURL) Origin() URL {
 	return &InternalURL{path.Dir(self.Path), ""}
+}
+
+// URL interface
+func (self *InternalURL) Relative(path_ string) URL {
+	return NewInternalURL(path.Join(self.Path, path_))
 }
 
 // URL interface

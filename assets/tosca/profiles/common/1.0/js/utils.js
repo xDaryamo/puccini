@@ -57,6 +57,8 @@ tosca.traverseValues = function(traverser) {
 			for (var artifactName in nodeTemplate.artifacts) {
 				var artifact = nodeTemplate.artifacts[artifactName];
 				tosca.traverseObjectValues(traverser, artifact.properties, vertex);
+				if (artifact.credential !== null)
+					artifact.credential = traverser(artifact.credential, vertex);
 			}
 
 			for (var e = 0; e < vertex.edgesOut.length; e++) {

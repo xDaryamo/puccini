@@ -41,8 +41,7 @@ func NewValidFileURL(path string) (*FileURL, error) {
 }
 
 func NewValidRelativeFileURL(path string, origin *FileURL) (*FileURL, error) {
-	path = filepath.Join(origin.Path, path)
-	return NewValidFileURL(path)
+	return NewValidFileURL(filepath.Join(origin.Path, path))
 }
 
 // URL interface
@@ -58,6 +57,11 @@ func (self *FileURL) Format() string {
 // URL interface
 func (self *FileURL) Origin() URL {
 	return &FileURL{filepath.Dir(self.Path)}
+}
+
+// URL interface
+func (self *FileURL) Relative(path string) URL {
+	return NewFileURL(filepath.Join(self.Path, path))
 }
 
 // URL interface

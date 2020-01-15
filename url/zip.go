@@ -89,8 +89,7 @@ func NewValidZipURLFromURL(url string) (*ZipURL, error) {
 }
 
 func NewValidRelativeZipURL(path_ string, origin *ZipURL) (*ZipURL, error) {
-	path_ = path.Join(origin.Path, path_)
-	return NewValidZipURL(path_, origin.ArchiveURL)
+	return NewValidZipURL(path.Join(origin.Path, path_), origin.ArchiveURL)
 }
 
 func (self *ZipURL) OpenArchive() (*zip.ReadCloser, error) {
@@ -110,6 +109,11 @@ func (self *ZipURL) Format() string {
 // URL interface
 func (self *ZipURL) Origin() URL {
 	return &ZipURL{path.Dir(self.Path), self.ArchiveURL}
+}
+
+// URL interface
+func (self *ZipURL) Relative(path_ string) URL {
+	return NewZipURL(path.Join(self.Path, path_), self.ArchiveURL)
 }
 
 // URL interface

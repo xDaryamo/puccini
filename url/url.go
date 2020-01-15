@@ -17,8 +17,9 @@ import (
 type URL interface {
 	String() string
 	Format() string // yaml|json|xml
-	Origin() URL    // base dir, is not a valid URL
-	Key() string    // for maps
+	Origin() URL    // base dir, is not necessarily a valid URL
+	Relative(path string) URL
+	Key() string // for maps
 	Open() (io.Reader, error)
 }
 

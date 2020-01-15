@@ -3,12 +3,14 @@ package js
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 
 	"github.com/beevik/etree"
 	"github.com/fatih/color"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/common/format"
+	"github.com/tliron/puccini/url"
 )
 
 //
@@ -20,6 +22,7 @@ type PucciniAPI struct {
 	Stdout *os.File
 	Stderr *os.File
 	Stdin  *os.File
+	Output string
 	Format string
 	Pretty bool
 
@@ -36,6 +39,7 @@ func (self *Context) NewPucciniAPI() *PucciniAPI {
 		Stdout:  self.Stdout,
 		Stderr:  self.Stderr,
 		Stdin:   self.Stdin,
+		Output:  self.Output,
 		Format:  format,
 		Pretty:  self.Pretty,
 		context: self,
@@ -44,6 +48,10 @@ func (self *Context) NewPucciniAPI() *PucciniAPI {
 
 func (entry *PucciniAPI) Sprintf(f string, a ...interface{}) string {
 	return fmt.Sprintf(f, a...)
+}
+
+func (entry *PucciniAPI) JoinFilePath(elements ...string) string {
+	return filepath.Join(elements...)
 }
 
 func (entry *PucciniAPI) ValidateFormat(code string, format_ string) error {
@@ -93,6 +101,22 @@ func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool)
 		}
 	}
 
-	err := format.WriteOrPrint(data, self.Format, self.Pretty, output)
-	self.context.FailOnError(err)
+	self.context.FailOnError(format.WriteOrPrint(data, self.Format, self.Pretty, output))
+}
+
+func (self *PucciniAPI) Exec(name string, arguments ...string) (string, error) {
+	cmd := exec.Command(name, arguments...)
+	if out, err := cmd.Output(); err == nil {
+		return common.BytesToString(out), nil
+	} else {
+		return "", err
+	}
+}
+
+func (self *PucciniAPI) Download(sourceUrl string, targetPath string) error {
+	if sourceUrl_, err := url.NewValidURL(sourceUrl, nil); err == nil {
+		return url.DownloadTo(sourceUrl_, targetPath)
+	} else {
+		return err
+	}
 }

@@ -1,7 +1,9 @@
 tosca_definitions_version: tosca_simple_yaml_1_3
 
-# Puccini does not deploy artifacts to your remote servers, but you can write your own JavaScript or
-# a processor to do so
+# You can write your own JavaScript scriptlet or chain a processor to extract artifact
+# files, upload them, execute them, etc.
+
+# For an example, see: examples/javascript/artifacts.yaml
 
 repositories:
 
@@ -36,13 +38,13 @@ node_types:
         type: QCOW
         artifact_version: '2'
         # You don't have to use a repository like we do here
-        # (Without a repository, it is assumed that your artifact is in the CSAR)
+        # Without a repository, path is relative to this file's location, even if it's within a CSAR
         repository: centos
         # The extension must match our definition at the artifact type
         file: CentOS-7-x86_64-GenericCloud-1804_02.qcow2
         properties:
           os: CentOS
-          version: 7.0
+          version: '7.0'
 
 topology_template:
 

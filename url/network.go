@@ -64,6 +64,15 @@ func (self *NetworkURL) Origin() URL {
 }
 
 // URL interface
+func (self *NetworkURL) Relative(path string) URL {
+	if url_, err := gourl.Parse(path); err == nil {
+		return NewNetworkURL(self.URL.ResolveReference(url_))
+	} else {
+		return nil
+	}
+}
+
+// URL interface
 func (self *NetworkURL) Key() string {
 	return self.String_
 }

@@ -1,6 +1,8 @@
 package tosca_v1_3
 
 import (
+	"path/filepath"
+
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
@@ -29,17 +31,20 @@ func ReadArtifact(context *tosca.Context) interface{} {
 }
 
 func (self *Artifact) Render(definition *ArtifactDefinition) {
-	if self.ArtifactType == nil {
-		return
-	}
-
 	if definition != nil {
-		// Our artifact type must be compatible with definition's
-		if (definition.ArtifactType != nil) && !self.Context.Hierarchy.IsCompatible(definition.ArtifactType, self.ArtifactType) {
-			self.Context.ReportIncompatible(self.ArtifactType.Name, "artifact", "type")
+		if self.ArtifactType == nil {
+			self.ArtifactType = definition.ArtifactType
+		} else {
+			// Our artifact type must be compatible with definition's
+			if (definition.ArtifactType != nil) && !self.Context.Hierarchy.IsCompatible(definition.ArtifactType, self.ArtifactType) {
+				self.Context.ReportIncompatible(self.ArtifactType.Name, "artifact", "type")
+			}
 		}
 
 		// Copy values from definition
+		if self.ArtifactVersion == nil {
+			self.ArtifactVersion = definition.ArtifactVersion
+		}
 		if self.Description == nil {
 			self.Description = definition.Description
 		}
@@ -60,6 +65,16 @@ func (self *Artifact) Render(definition *ArtifactDefinition) {
 		if self.Repository == nil {
 			self.Repository = definition.Repository
 		}
+		if self.ChecksumAlgorithm == nil {
+			self.ChecksumAlgorithm = definition.ChecksumAlgorithm
+		}
+		if self.Checksum == nil {
+			self.Checksum = definition.Checksum
+		}
+	}
+
+	if self.ArtifactType == nil {
+		return
 	}
 
 	self.Properties.RenderProperties(self.ArtifactType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
@@ -96,7 +111,11 @@ func (self *Artifact) Normalize(n *normal.NodeTemplate) *normal.Artifact {
 	self.Properties.Normalize(a.Properties)
 
 	if self.File != nil {
-		a.SourcePath = *self.File
+		a.Filename = filepath.Base(*self.File)
+	}
+	url_ := self.GetURL()
+	if url_ != nil {
+		a.SourcePath = url_.String()
 	}
 	if self.DeployPath != nil {
 		a.TargetPath = *self.DeployPath
@@ -110,6 +129,9 @@ func (self *Artifact) Normalize(n *normal.NodeTemplate) *normal.Artifact {
 	if self.Checksum != nil {
 		a.Checksum = *self.Checksum
 	}
+	if (self.Repository != nil) && (self.Repository.Credential != nil) {
+		a.Credential = self.Repository.Credential.Normalize()
+	}
 
 	return a
 }
@@ -122,13 +144,8 @@ type Artifacts map[string]*Artifact
 
 func (self Artifacts) Render(definitions ArtifactDefinitions, context *tosca.Context) {
 	for key, definition := range definitions {
-		artifact, ok := self[key]
-		if ok {
+		if artifact, ok := self[key]; ok {
 			artifact.Render(definition)
-		} else {
-			artifact := NewArtifact(context.MapChild(key, nil))
-			artifact.ArtifactDefinition = definition
-			self[key] = artifact
 		}
 	}
 

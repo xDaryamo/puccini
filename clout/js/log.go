@@ -31,6 +31,10 @@ func (self *Log) Warningf(f string, args ...interface{}) {
 	self.logger.Warningf(self.Prefix+f, args...)
 }
 
+func (self *Log) Noticef(f string, args ...interface{}) {
+	self.logger.Noticef(self.Prefix+f, args...)
+}
+
 func (self *Log) Infof(f string, args ...interface{}) {
 	self.logger.Infof(self.Prefix+f, args...)
 }
