@@ -104,6 +104,16 @@ func (self *SubstitutionMappings) Normalize(s *normal.ServiceTemplate) *normal.S
 		}
 	}
 
+	for _, mapping := range self.AttributeMappings {
+		if (mapping.NodeTemplate == nil) || (mapping.AttributeName == nil) {
+			continue
+		}
+
+		if n, ok := s.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+			s.Substitution.AttributeMappings[n] = *mapping.AttributeName
+		}
+	}
+
 	for _, mapping := range self.InterfaceMappings {
 		if (mapping.NodeTemplate == nil) || (mapping.InterfaceName == nil) {
 			continue

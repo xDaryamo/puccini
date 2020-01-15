@@ -16,6 +16,7 @@ type Substitution struct {
 	CapabilityMappings  map[*NodeTemplate]*Capability
 	RequirementMappings map[*NodeTemplate]string
 	PropertyMappings    map[*NodeTemplate]string
+	AttributeMappings   map[*NodeTemplate]string
 	InterfaceMappings   map[*NodeTemplate]string
 }
 
@@ -26,6 +27,7 @@ func (self *ServiceTemplate) NewSubstitution() *Substitution {
 		CapabilityMappings:  make(map[*NodeTemplate]*Capability),
 		RequirementMappings: make(map[*NodeTemplate]string),
 		PropertyMappings:    make(map[*NodeTemplate]string),
+		AttributeMappings:   make(map[*NodeTemplate]string),
 		InterfaceMappings:   make(map[*NodeTemplate]string),
 	}
 	self.Substitution = substitutionMappings
@@ -38,6 +40,7 @@ type MarshalableSubstitution struct {
 	CapabilityMappings  map[string]string `json:"capabilityMappings" yaml:"capabilityMappings"`
 	RequirementMappings map[string]string `json:"requirementMappings" yaml:"requirementMappings"`
 	PropertyMappings    map[string]string `json:"propertyMappings" yaml:"propertyMappings"`
+	AttributeMappings   map[string]string `json:"attributeMappings" yaml:"attributeMappings"`
 	InterfaceMappings   map[string]string `json:"interfaceMappings" yaml:"interfaceMappings"`
 }
 
@@ -57,6 +60,11 @@ func (self *Substitution) Marshalable() interface{} {
 		propertyMappings[n.Name] = p
 	}
 
+	attributeMappings := make(map[string]string)
+	for n, a := range self.AttributeMappings {
+		attributeMappings[n.Name] = a
+	}
+
 	interfaceMappings := make(map[string]string)
 	for n, i := range self.InterfaceMappings {
 		interfaceMappings[n.Name] = i
@@ -68,6 +76,7 @@ func (self *Substitution) Marshalable() interface{} {
 		CapabilityMappings:  capabilityMappings,
 		RequirementMappings: requirementMappings,
 		PropertyMappings:    propertyMappings,
+		AttributeMappings:   attributeMappings,
 		InterfaceMappings:   interfaceMappings,
 	}
 }

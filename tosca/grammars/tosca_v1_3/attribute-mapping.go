@@ -13,7 +13,7 @@ import (
 //
 
 type AttributeMapping struct {
-	*Entity `name:"capability mapping"`
+	*Entity `name:"attribute mapping"`
 
 	NodeTemplateName *string `require:"0"`
 	AttributeName    *string `require:"1"`
@@ -39,7 +39,7 @@ func ReadAttributeMapping(context *tosca.Context) interface{} {
 
 // tosca.Renderable interface
 func (self *AttributeMapping) Render() {
-	log.Info("{render} capability mapping")
+	log.Info("{render} attribute mapping")
 
 	if (self.NodeTemplate == nil) || (self.AttributeName == nil) {
 		return

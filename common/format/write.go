@@ -17,7 +17,7 @@ func Write(data interface{}, format string, indent string, writer io.Writer) err
 		return err
 	}
 
-	// Special handling for etree
+	// Special handling for etree XML
 	if xmlDocument, ok := data.(*etree.Document); ok {
 		return WriteXMLDocument(xmlDocument, writer, indent)
 	}
@@ -36,19 +36,21 @@ func Write(data interface{}, format string, indent string, writer io.Writer) err
 
 func WriteYAML(data interface{}, writer io.Writer, indent string) error {
 	encoder := yaml.NewEncoder(writer)
-	// BUG: currently does not allow a value of 1, see: https://github.com/go-yaml/yaml/issues/501
+
 	encoder.SetIndent(len(indent)) // This might not work as expected for tabs!
-	if slice, ok := data.([]interface{}); ok {
+	// BUG: currently does not allow an indent value of 1, see: https://github.com/go-yaml/yaml/issues/501
+
+	if slice, ok := data.([]interface{}); !ok {
+		return encoder.Encode(data)
+	} else {
 		// YAML separates each entry with "---"
 		// (In JSON the slice would be written as an array)
-		for _, d := range slice {
-			if err := encoder.Encode(d); err != nil {
+		for _, data_ := range slice {
+			if err := encoder.Encode(data_); err != nil {
 				return err
 			}
 		}
 		return nil
-	} else {
-		return encoder.Encode(data)
 	}
 }
 
@@ -71,11 +73,13 @@ func WriteXML(data interface{}, writer io.Writer, indent string) error {
 	if _, err := io.WriteString(writer, xml.Header); err != nil {
 		return err
 	}
+
 	encoder := xml.NewEncoder(writer)
 	encoder.Indent("", indent)
 	if err := encoder.Encode(data); err != nil {
 		return err
 	}
+
 	if indent == "" {
 		// When there's no indent the XML encoder does not emit a final newline
 		// (We want it for consistency with YAML and JSON)
@@ -83,6 +87,7 @@ func WriteXML(data interface{}, writer io.Writer, indent string) error {
 			return err
 		}
 	}
+
 	return nil
 }
 

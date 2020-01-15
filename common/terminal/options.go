@@ -7,15 +7,15 @@ import (
 func Options(options []string) string {
 	var writer strings.Builder
 	penultimate := len(options) - 2
-	for i, o := range options {
-		writer.WriteString(o)
-		if i == penultimate {
+	for index, option := range options {
+		writer.WriteString(option)
+		if index == penultimate {
 			if penultimate > 0 {
 				writer.WriteString(", or ")
 			} else {
 				writer.WriteString(" or ")
 			}
-		} else if i < penultimate {
+		} else if index < penultimate {
 			writer.WriteString(", ")
 		}
 	}
@@ -25,17 +25,17 @@ func Options(options []string) string {
 func ColoredOptions(options []string, colorizer Colorizer) string {
 	var writer strings.Builder
 	penultimate := len(options) - 2
-	for i, o := range options {
+	for index, option := range options {
 		writer.WriteString("\"")
-		writer.WriteString(colorizer(o))
+		writer.WriteString(colorizer(option))
 		writer.WriteString("\"")
-		if i == penultimate {
+		if index == penultimate {
 			if penultimate > 0 {
 				writer.WriteString(", or ")
 			} else {
 				writer.WriteString(" or ")
 			}
-		} else if i < penultimate {
+		} else if index < penultimate {
 			writer.WriteString(", ")
 		}
 	}

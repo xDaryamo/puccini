@@ -248,6 +248,14 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 			e.Properties["property"] = property
 		}
 
+		for nodeTemplate, attribute := range s.Substitution.AttributeMappings {
+			vv := nodeTemplates[nodeTemplate.Name]
+			e := v.NewEdgeTo(vv)
+
+			SetMetadata(e, "attributeMapping")
+			e.Properties["attribute"] = attribute
+		}
+
 		for nodeTemplate, interface_ := range s.Substitution.InterfaceMappings {
 			vv := nodeTemplates[nodeTemplate.Name]
 			e := v.NewEdgeTo(vv)

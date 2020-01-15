@@ -14,9 +14,9 @@ func GetStructFields(type_ reflect.Type) []reflect.StructField {
 	}
 
 	var structFields []reflect.StructField
-	numField := type_.NumField()
-	for i := 0; i < numField; i++ {
-		structField := type_.Field(i)
+	fields := type_.NumField()
+	for index := 0; index < fields; index++ {
+		structField := type_.Field(index)
 		if structField.Anonymous && (structField.Type.Kind() == reflect.Ptr) {
 			for _, structField = range GetStructFields(structField.Type.Elem()) {
 				structFields = appendStructField(structFields, structField)

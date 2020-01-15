@@ -8,9 +8,9 @@ import (
 
 // From "name" tag
 func GetEntityTypeName(type_ reflect.Type) string {
-	numField := type_.NumField()
-	for i := 0; i < numField; i++ {
-		structField := type_.Field(i)
+	fields := type_.NumField()
+	for index := 0; index < fields; index++ {
+		structField := type_.Field(index)
 		if value, ok := structField.Tag.Lookup("name"); ok {
 			return value
 		}
