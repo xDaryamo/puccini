@@ -25,10 +25,13 @@ For testing it's recommended to install in a [virtualenv](https://virtualenv.pyp
     . env/bin/activate
     pip install git+https://github.com/tliron/puccini#subdirectory=wrappers/python
 
-To build a distribution or an egg:
+To build a distribution:
 
     cd wrappers/python
     ./setup.py bdist
+
+Or an egg:
+
     ./setup.py bdist_egg
 
 The output will be in the `dist/` subdirectory here.

@@ -4,7 +4,7 @@ require 'yaml'
 
 module Puccini
   extend Fiddle::Importer
-  dlload 'libpuccini.so'
+  dlload File.join(__dir__, 'libpuccini.so')
   extern 'char *Compile(char *)'
 
   module TOSCA

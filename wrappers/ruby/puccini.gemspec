@@ -10,5 +10,8 @@ Gem::Specification.new do |s|
   s.authors     = ['Tal Liron']
   s.email       = 'tal.liron@gmail.com'
 
-  s.files       = ['lib/puccini.rb']
+  s.files       = [
+  	'lib/puccini.rb',
+  	'lib/libpuccini.so'
+  ]
 end

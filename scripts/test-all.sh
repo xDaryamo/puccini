@@ -5,6 +5,7 @@ HERE=$(dirname "$(readlink -f "$0")")
 . "$HERE/env.sh"
 
 "$HERE/test.sh"
+"$HERE/build-library.sh"
 "$HERE/test-js.sh"
 "$HERE/test-https.sh"
 "$HERE/test-csar.sh"

@@ -9,12 +9,12 @@ script = '''\
 ROOT="{}"
 
 # Install Go
-curl https://storage.googleapis.com/golang/go1.13.1.linux-amd64.tar.gz --silent --location | tar -xz
+curl https://storage.googleapis.com/golang/go1.13.6.linux-amd64.tar.gz --silent --location | tar -xz
 export PATH="$PATH:go/bin"
 
 # Fetch repository
 REPO=puccini
-git clone --depth 1 https://github.com/tliron/puccini "$REPO"
+git clone https://github.com/tliron/puccini "$REPO"
 
 # Build library
 "$REPO/scripts/build-library.sh"

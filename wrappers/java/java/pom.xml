@@ -3,6 +3,13 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
+	<!--
+	Create "puccini.jar", which in order to run requires:
+
+	1) The JNI shim ("libpuccinijni.so"), created by ../native/pom.xml
+	2) Which in turn requires the Puccini library ("libpuccini.so"), created by ../../scripts/build-library.sh
+	-->
+
 	<groupId>puccini</groupId>
 	<artifactId>puccini</artifactId>
 	<version>1.0-SNAPSHOT</version>
@@ -17,27 +24,43 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.10.0</version>
+			<version>2.10.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
-			<version>2.10.0</version>
+			<version>2.10.2</version>
 		</dependency>
 	</dependencies>
 
 	<build>
-		<finalName>puccini</finalName> <!-- override the extra stuff Maven adds to the Jar name -->
+		<!-- Override the extra stuff Maven adds to the Jar name: "puccini.jar" -->
+		<finalName>puccini</finalName>
+
 		<plugins>
+			<!-- Create Jar in our "dist" directory -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.1.2</version>
+				<version>3.2.0</version>
 				<configuration>
 					<outputDirectory>${project.basedir}/../../../dist</outputDirectory>
 				</configuration>
 			</plugin>
+
+			<!-- Generate C headers for all "public static native" methods (used in ../native/pom.xml) -->
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<compilerArgs>
+						<arg>-h</arg> <!-- "javac -h" replaces the old "javah" tool -->
+						<arg>${project.build.directory}/native/include</arg>
+					</compilerArgs>
+				</configuration>
+
+				<!-- Won't work in JDK 10+ as of 1.0-alpha-9
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>native-maven-plugin</artifactId>
 				<version>1.0-alpha-9</version>
@@ -47,6 +70,7 @@
 						<javahClassName>puccini.TOSCA</javahClassName>
 					</javahClassNames>
 				</configuration>
+				-->
 			</plugin>
 		</plugins>
 	</build>
