@@ -61,7 +61,7 @@ func init() {
 func testCompile(t *testing.T, url string, inputs map[string]interface{}) {
 	t.Run(url, func(t *testing.T) {
 		// Running the tests in parallel is not for speed;
-		// it actually allows us to find concurrency bugs
+		// it actually helps us to find concurrency bugs
 		t.Parallel()
 
 		var s *normal.ServiceTemplate

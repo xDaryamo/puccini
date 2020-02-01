@@ -10,7 +10,7 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-type Reader func(*Context) interface{}
+type Reader = func(*Context) interface{}
 
 type Readers map[string]Reader
 

@@ -7,20 +7,18 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-var namespacesWork = NewContextualWork("namespaces")
-
 func (self *Context) AddNamespaces() {
-	self.Root.MergeNamespaces()
+	self.Root.MergeNamespaces(self.NamespacesWork)
 }
 
-func (self *Unit) MergeNamespaces() {
+func (self *Unit) MergeNamespaces(work *ContextualWork) {
 	context := self.GetContext()
 
-	if promise, ok := namespacesWork.Start(context); ok {
+	if promise, ok := work.Start(context); ok {
 		defer promise.Release()
 
 		for _, import_ := range self.Imports {
-			import_.MergeNamespaces()
+			import_.MergeNamespaces(work)
 			context.Namespace.Merge(import_.GetContext().Namespace, import_.NameTransformer)
 			context.ScriptletNamespace.Merge(import_.GetContext().ScriptletNamespace)
 		}

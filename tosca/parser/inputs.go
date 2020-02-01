@@ -14,6 +14,10 @@ type HasInputs interface {
 
 // From HasInputs interface
 func SetInputs(entityPtr interface{}, inputs map[string]interface{}) {
+	if inputs == nil {
+		return
+	}
+
 	reflection.Traverse(entityPtr, func(entityPtr interface{}) bool {
 		if hasInputs, ok := entityPtr.(HasInputs); ok {
 			hasInputs.SetInputs(inputs)

@@ -2,6 +2,7 @@ package js
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"sync"
 
@@ -22,9 +23,9 @@ type Context struct {
 	Pretty bool
 	Output string
 	Log    *Log
-	Stdout *os.File
-	Stderr *os.File
-	Stdin  *os.File
+	Stdout io.Writer
+	Stderr io.Writer
+	Stdin  io.Writer
 
 	programCache sync.Map
 }
@@ -36,8 +37,8 @@ func NewContext(name string, logger *logging.Logger, quiet bool, format string, 
 		Pretty: pretty,
 		Output: output,
 		Log:    NewLog(logger, name),
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
+		Stdout: terminal.Stdout,
+		Stderr: terminal.Stderr,
 		Stdin:  os.Stdin,
 	}
 }

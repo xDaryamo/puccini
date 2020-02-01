@@ -8,13 +8,13 @@ if [ "$EUID" -ne 0 ]; then
 	exit 1
 fi
 
-KUBECTL_VERSION=v1.17.0
+KUBECTL_VERSION=v1.17.2
 MINIKUBE_VERSION=v1.6.2
 OVERWRITE=false
 
 for ARG in "$@"; do
 	case "$ARG" in
-		-o)
+		-f)
 			OVERWRITE=true
 			;;
 		-l)

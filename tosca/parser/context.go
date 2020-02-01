@@ -11,17 +11,21 @@ import (
 )
 
 type Context struct {
-	Root      *Unit
-	Quirks    []string
-	Units     Units
-	Parsing   sync.Map
-	WaitGroup sync.WaitGroup
-	Locker    sync.Mutex
+	Root            *Unit
+	Quirks          []string
+	Units           Units
+	Parsing         sync.Map
+	WaitGroup       sync.WaitGroup
+	Locker          sync.Mutex
+	NamespacesWork  *ContextualWork
+	HierarchiesWork *ContextualWork
 }
 
 func NewContext(quirks []string) Context {
 	return Context{
-		Quirks: quirks,
+		Quirks:          quirks,
+		NamespacesWork:  NewContextualWork("namespaces"),
+		HierarchiesWork: NewContextualWork("hierarchies"),
 	}
 }
 

@@ -10,12 +10,10 @@ import (
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_1"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_2"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
-	"github.com/tliron/puccini/tosca/profiles"
+	_ "github.com/tliron/puccini/tosca/profiles"
 )
 
 func init() {
-	profiles.Register()
-
 	initGrammar(&tosca_v1_0.Grammar)
 	initGrammar(&tosca_v1_1.Grammar)
 	initGrammar(&tosca_v1_2.Grammar)

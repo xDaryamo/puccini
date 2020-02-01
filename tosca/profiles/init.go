@@ -16,21 +16,21 @@ import (
 	"github.com/tliron/puccini/url"
 )
 
-func Register() {
-	registerProfile(common.Profile)
-	registerProfile(simple_v1_0.Profile)
-	registerProfile(simple_v1_1.Profile)
-	registerProfile(simple_v1_2.Profile)
-	registerProfile(simple_v1_3.Profile)
-	registerProfile(simpleForNFV_v1_0.Profile)
-	registerProfile(kubernetes_v1_0.Profile)
-	registerProfile(openstack_v1_0.Profile)
-	registerProfile(bpmn_v1_0.Profile)
-	registerProfile(cloudify_v4_5.Profile)
-	registerProfile(hot_v1_0.Profile)
+func init() {
+	initProfile(common.Profile)
+	initProfile(simple_v1_0.Profile)
+	initProfile(simple_v1_1.Profile)
+	initProfile(simple_v1_2.Profile)
+	initProfile(simple_v1_3.Profile)
+	initProfile(simpleForNFV_v1_0.Profile)
+	initProfile(kubernetes_v1_0.Profile)
+	initProfile(openstack_v1_0.Profile)
+	initProfile(bpmn_v1_0.Profile)
+	initProfile(cloudify_v4_5.Profile)
+	initProfile(hot_v1_0.Profile)
 }
 
-func registerProfile(profile map[string]string) {
+func initProfile(profile map[string]string) {
 	for path, content := range profile {
 		if err := url.RegisterInternalURL(path, content); err != nil {
 			panic(err)

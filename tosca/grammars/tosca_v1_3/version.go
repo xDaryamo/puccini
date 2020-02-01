@@ -102,7 +102,7 @@ func (self *Version) String() string {
 	return self.CanonicalString
 }
 
-// HasComparer signature
+// HasComparer interface
 func (self *Version) SetComparer(comparer string) {
 	self.Comparer = comparer
 }

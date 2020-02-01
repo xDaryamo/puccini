@@ -2,6 +2,7 @@ package js
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -19,9 +20,9 @@ import (
 
 type PucciniAPI struct {
 	Log    *Log
-	Stdout *os.File
-	Stderr *os.File
-	Stdin  *os.File
+	Stdout io.Writer
+	Stderr io.Writer
+	Stdin  io.Writer
 	Output string
 	Format string
 	Pretty bool

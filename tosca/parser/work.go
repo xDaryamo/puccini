@@ -50,8 +50,8 @@ type ContextualWork struct {
 	Phase string
 }
 
-func NewContextualWork(phase string) ContextualWork {
-	return ContextualWork{Phase: phase}
+func NewContextualWork(phase string) *ContextualWork {
+	return &ContextualWork{Phase: phase}
 }
 
 func (self *ContextualWork) Start(context *tosca.Context) (Promise, bool) {

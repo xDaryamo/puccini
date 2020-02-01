@@ -7,20 +7,18 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-var hierarchiesWork = NewContextualWork("hierarchies")
-
 func (self *Context) AddHierarchies() {
-	self.Root.MergeHierarchies(make(tosca.HierarchyContext))
+	self.Root.MergeHierarchies(make(tosca.HierarchyContext), self.HierarchiesWork)
 }
 
-func (self *Unit) MergeHierarchies(hierarchyContext tosca.HierarchyContext) {
+func (self *Unit) MergeHierarchies(hierarchyContext tosca.HierarchyContext, work *ContextualWork) {
 	context := self.GetContext()
 
-	if promise, ok := hierarchiesWork.Start(context); ok {
+	if promise, ok := work.Start(context); ok {
 		defer promise.Release()
 
 		for _, import_ := range self.Imports {
-			import_.MergeHierarchies(hierarchyContext)
+			import_.MergeHierarchies(hierarchyContext, work)
 			context.Hierarchy.Merge(import_.GetContext().Hierarchy, hierarchyContext)
 		}
 

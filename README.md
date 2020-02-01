@@ -27,7 +27,7 @@ To build Puccini yourself see the [build guide](scripts/).
 puccini-tosca
 -------------
 
-[> Documentation](puccini-tosca/)
+⮕ [Documentation](puccini-tosca/)
 
 Clout frontend for TOSCA. Parses a TOSCA service template and compiles it to Clout (see below).
 
@@ -75,7 +75,7 @@ Clout output with your own tools.
 
 ### Standalone Parser
 
-[> Documentation](tosca/parser/)
+⮕ [Documentation](tosca/parser/)
 
 Puccini's TOSCA parser is available as an independent Go library. Its 5 phases do normalization,
 validation, inheritance, and assignment of TOSCA's many types and templates, resulting in a
@@ -115,7 +115,7 @@ The visualization scriptlet is not embedded by default into the Clout, but can b
 puccini-js
 ----------
 
-[> Documentation](puccini-js/)
+⮕ [Documentation](puccini-js/)
 
 Clout processor for JavaScript. Executes existing JavaScript scriptlets in a Clout file (in the
 metadata section). For example, it can evaluate TOSCA functions, apply constraints, execute
@@ -215,7 +215,7 @@ TOSCA artifacts with `kubectl cp` and executes them with `kubectl exec`.
 Clout
 -----
 
-[> Documentation](clout/)
+⮕ [Documentation](clout/)
 
 Introducing the **clou**d **t**opology ("clou" + "t") representation language, which is simply a
 representation of a generic graph database in YAML/JSON/XML.
