@@ -58,7 +58,7 @@ func Compile(url string) {
 	}
 
 	if !terminal.Quiet || (output != "") {
-		err = format_.WriteOrPrint(clout, format, pretty, output)
+		err = format_.WriteOrPrint(clout, format, terminal.Stdout, pretty, output)
 		common.FailOnError(err)
 	}
 }

@@ -1,13 +1,14 @@
 package format
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/tliron/puccini/common/terminal"
 )
 
-func WriteOrPrint(data interface{}, format string, pretty bool, output string) error {
+func WriteOrPrint(data interface{}, format string, writer io.Writer, pretty bool, output string) error {
 	if output != "" {
 		if f, err := OpenFileForWrite(output); err == nil {
 			defer f.Close()
@@ -16,7 +17,7 @@ func WriteOrPrint(data interface{}, format string, pretty bool, output string) e
 			return err
 		}
 	} else {
-		return Print(data, format, pretty)
+		return Print(data, format, writer, pretty)
 	}
 }
 

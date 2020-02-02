@@ -102,7 +102,7 @@ func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool)
 		}
 	}
 
-	self.context.FailOnError(format.WriteOrPrint(data, self.Format, self.Pretty, output))
+	self.context.FailOnError(format.WriteOrPrint(data, self.Format, self.Stdout, self.Pretty, output))
 }
 
 func (self *PucciniAPI) Exec(name string, arguments ...string) (string, error) {

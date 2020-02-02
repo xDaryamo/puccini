@@ -327,16 +327,19 @@ choice at any point in the toolchain. Here's an example using
 
     puccini-tosca compile my-app.yaml | gomplate | puccini-js exec kubernetes.generate
 
-Your TOSCA can then inject expressions into values, such as:
+Your TOSCA can then include template expressions, such as:
 
 	username: "{{strings.ReplaceAll "\"" "\\\"" .Env.USER}}"
 
-Just make sure that your templating engine can emit valid YAML where appropriate. For example, it
-should be able to escape quotation marks, like we did above.
+Note the proper escaping of quotation marks to avoid invalid YAML. Also remember that indentation
+in YAML is significant, so it can be tricky to insert blocks into arbitrary locations. Generally,
+using text templating to generate YAML is not a great idea for these reasons. You're better off
+using a proper YAML manipulation tool, such as [yq](https://github.com/mikefarah/yq), or
+parsing/editing/emitting it with a scripting language like Python.
 
-A useful convention for your toolchain could be to add a file extension to mark a file for text
-template processing. For example, `.yaml.j2` could be recognized as requiring Jinja2 template
-processing, after which the `.j2` extension would be stripped.
+If you insist on text templating, a useful convention for your toolchain could be to add a file
+extension to mark a file for template processing. For example, `.yaml.j2` could be recognized as
+requiring Jinja2 template processing, after which the `.j2` extension would be stripped.
 
 ### Can I compose a single service from several interrelated Clout files?
 

@@ -2,6 +2,7 @@ package format
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/beevik/etree"
 	"github.com/hokaccha/go-prettyjson"
@@ -14,74 +15,74 @@ func init() {
 	prettyjsonFormatter.Indent = terminal.IndentSpaces
 }
 
-func Print(data interface{}, format string, pretty bool) error {
+func Print(data interface{}, format string, writer io.Writer, pretty bool) error {
 	// Special handling for strings
 	if s, ok := data.(string); ok {
 		if pretty {
 			s += "\n"
 		}
-		_, err := fmt.Fprint(terminal.Stdout, s)
+		_, err := fmt.Fprint(writer, s)
 		return err
 	}
 
 	// Special handling for etree
 	if xmlDocument, ok := data.(*etree.Document); ok {
-		return PrintXMLDocument(xmlDocument, pretty)
+		return PrintXMLDocument(xmlDocument, writer, pretty)
 	}
 
 	switch format {
 	case "yaml", "":
-		return PrintYAML(data, pretty)
+		return PrintYAML(data, writer, pretty)
 	case "json":
-		return PrintJSON(data, pretty)
+		return PrintJSON(data, writer, pretty)
 	case "xml":
-		return PrintXML(data, pretty)
+		return PrintXML(data, writer, pretty)
 	default:
 		return fmt.Errorf("unsupported format: %s", format)
 	}
 }
 
-func PrintYAML(data interface{}, pretty bool) error {
+func PrintYAML(data interface{}, writer io.Writer, pretty bool) error {
 	indent := "          "
 	if pretty {
 		indent = terminal.Indent
 	}
-	return WriteYAML(data, terminal.Stdout, indent)
+	return WriteYAML(data, writer, indent)
 }
 
-func PrintJSON(data interface{}, pretty bool) error {
+func PrintJSON(data interface{}, writer io.Writer, pretty bool) error {
 	if pretty {
 		bytes, err := prettyjsonFormatter.Marshal(data)
 		if err != nil {
 			return err
 		}
-		fmt.Fprintf(terminal.Stdout, "%s\n", bytes)
+		fmt.Fprintf(writer, "%s\n", bytes)
 	} else {
-		return WriteJSON(data, terminal.Stdout, "")
+		return WriteJSON(data, writer, "")
 	}
 	return nil
 }
 
-func PrintXML(data interface{}, pretty bool) error {
+func PrintXML(data interface{}, writer io.Writer, pretty bool) error {
 	indent := ""
 	if pretty {
 		indent = terminal.Indent
 	}
-	if err := WriteXML(data, terminal.Stdout, indent); err != nil {
+	if err := WriteXML(data, writer, indent); err != nil {
 		return err
 	}
 	if pretty {
-		fmt.Fprintln(terminal.Stdout)
+		fmt.Fprintln(writer)
 	}
 	return nil
 }
 
-func PrintXMLDocument(xmlDocument *etree.Document, pretty bool) error {
+func PrintXMLDocument(xmlDocument *etree.Document, writer io.Writer, pretty bool) error {
 	if pretty {
 		xmlDocument.Indent(terminal.IndentSpaces)
 	} else {
 		xmlDocument.Indent(0)
 	}
-	_, err := xmlDocument.WriteTo(terminal.Stdout)
+	_, err := xmlDocument.WriteTo(writer)
 	return err
 }

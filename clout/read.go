@@ -25,9 +25,17 @@ func Read(reader io.Reader, format string) (*Clout, error) {
 
 func ReadYAML(reader io.Reader) (*Clout, error) {
 	var err error
+	var ok bool
+
+	var data interface{}
+	if data, err = yamlkeys.Decode(reader); err != nil {
+		return nil, err
+	}
 
 	var map_ ard.Map
-	map_, err = yamlkeys.Decode(reader)
+	if map_, ok = data.(ard.Map); !ok {
+		return nil, fmt.Errorf("not a map: %T", data)
+	}
 
 	var clout *Clout
 	if clout, err = Decode(map_); err != nil {

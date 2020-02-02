@@ -5,7 +5,7 @@ go 1.13
 require (
 	github.com/beevik/etree v1.1.0
 	github.com/dlclark/regexp2 v1.2.0 // indirect
-	github.com/dop251/goja v0.0.0-20200110130636-0a0a0d8cb944
+	github.com/dop251/goja v0.0.0-20200126140343-a7d7d4827263
 	github.com/fatih/color v1.9.0
 	github.com/go-sourcemap/sourcemap v2.1.2+incompatible // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20190818114111-108c894c2c0e
@@ -13,6 +13,6 @@ require (
 	github.com/segmentio/ksuid v1.0.2
 	github.com/spf13/cobra v0.0.5
 	github.com/tebeka/atexit v0.1.0
-	github.com/tliron/yamlkeys v1.1.0
-	gopkg.in/yaml.v3 v3.0.0-20191120175047-4206685974f2
+	github.com/tliron/yamlkeys v1.2.0
+	gopkg.in/yaml.v3 v3.0.0-20200121175148-a6ecf24a6d71
 )
