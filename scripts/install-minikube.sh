@@ -34,7 +34,7 @@ function fetch () {
 		if [ "$OVERWRITE" == true ]; then
 			echo "overriding existing \"$EXEC\"..."
 		else
-			echo "\"$EXEC\" already exists (use -o to overwrite)"
+			echo "\"$EXEC\" already exists (use -f to overwrite)"
 			return 0
 		fi
 	fi

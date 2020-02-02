@@ -3,6 +3,7 @@ package problems
 import (
 	"fmt"
 	"io"
+	"runtime"
 	"sort"
 	"strings"
 
@@ -16,14 +17,31 @@ import (
 type Problem struct {
 	Message string
 	Section string
+	File    string
+	Line    int
+}
+
+func NewProblem(message string, section string, skip int) *Problem {
+	self := Problem{
+		Message: message,
+		Section: section,
+	}
+
+	if _, file, line, ok := runtime.Caller(skip + 1); ok {
+		self.File = file
+		self.Line = line
+	}
+
+	return &self
 }
 
 // fmt.Stringify interface
-func (self Problem) String() string {
+func (self *Problem) String() string {
 	return self.Message
 }
 
-func (self Problem) Equals(problem Problem) bool {
+func (self *Problem) Equals(problem *Problem) bool {
+	// TODO: compare File and Line?
 	return (self.Message == problem.Message) && (self.Section == problem.Section)
 }
 
@@ -31,7 +49,7 @@ func (self Problem) Equals(problem Problem) bool {
 // ProblemSlice
 //
 
-type ProblemSlice []Problem
+type ProblemSlice []*Problem
 
 // sort.Interface
 
@@ -65,7 +83,7 @@ func (self *Problems) Empty() bool {
 	return len(self.Problems) == 0
 }
 
-func (self *Problems) Append(problem Problem) bool {
+func (self *Problems) Append(problem *Problem) bool {
 	// Avoid duplicates
 	for _, problem_ := range self.Problems {
 		if problem.Equals(problem_) {
@@ -93,14 +111,18 @@ func (self *Problems) Merge(problems *Problems) bool {
 	return merged
 }
 
-// fmt.Stringify interface
-func (self *Problems) String() string {
+func (self *Problems) ToString(locate bool) string {
 	var writer strings.Builder
-	self.Write(&writer)
+	self.Write(&writer, false, locate)
 	return writer.String()
 }
 
-func (self *Problems) Write(writer io.Writer) bool {
+// fmt.Stringify interface
+func (self *Problems) String() string {
+	return self.ToString(false)
+}
+
+func (self *Problems) Write(writer io.Writer, pretty bool, locate bool) bool {
 	length := len(self.Problems)
 	if length > 0 {
 		// Sort
@@ -108,7 +130,12 @@ func (self *Problems) Write(writer io.Writer) bool {
 		copy(problems, self.Problems)
 		sort.Sort(problems)
 
-		fmt.Fprintf(writer, "%s (%d)\n", terminal.ColorHeading("Problems"), length)
+		if pretty {
+			fmt.Fprintf(writer, "%s (%d)\n", terminal.ColorHeading("Problems"), length)
+		} else {
+			fmt.Fprintf(writer, "%s (%d)\n", "Problems", length)
+		}
+
 		var currentSection string
 		for _, problem := range problems {
 			section := problem.Section
@@ -116,13 +143,23 @@ func (self *Problems) Write(writer io.Writer) bool {
 				currentSection = section
 				fmt.Fprint(writer, terminal.IndentString(1))
 				if currentSection != "" {
-					fmt.Fprintf(writer, "%s\n", terminal.ColorValue(currentSection))
+					if pretty {
+						fmt.Fprintf(writer, "%s\n", terminal.ColorValue(currentSection))
+					} else {
+						fmt.Fprintf(writer, "%s\n", currentSection)
+					}
 				} else {
 					fmt.Fprintf(writer, "General\n")
 				}
 			}
+
 			fmt.Fprint(writer, terminal.IndentString(2))
 			fmt.Fprintf(writer, "%s\n", problem)
+
+			if locate && (problem.File != "") {
+				fmt.Fprint(writer, terminal.IndentString(2))
+				fmt.Fprintf(writer, "└─%s:%d\n", problem.File, problem.Line)
+			}
 		}
 		return true
 	}
@@ -131,6 +168,6 @@ func (self *Problems) Write(writer io.Writer) bool {
 
 // Print
 
-func (self *Problems) Print() bool {
-	return self.Write(terminal.Stderr)
+func (self *Problems) Print(locate bool) bool {
+	return self.Write(terminal.Stderr, true, locate)
 }

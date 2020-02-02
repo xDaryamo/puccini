@@ -12,7 +12,7 @@ var log = logging.MustGetLogger("puccini-tosca")
 func FailOnProblems(problems_ *problems.Problems) {
 	if !problems_.Empty() {
 		if !terminal.Quiet {
-			problems_.Print()
+			problems_.Print(verbose > 0)
 		}
 		atexit.Exit(1)
 	}

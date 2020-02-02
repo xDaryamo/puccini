@@ -70,24 +70,24 @@ func testCompile(t *testing.T, url string, inputs map[string]interface{}) {
 		var err error
 
 		if s, p, err = parser.Parse(fmt.Sprintf("%s/examples/%s", ROOT, url), nil, inputs); err != nil {
-			t.Errorf("%s\n%s", err.Error(), p)
+			t.Errorf("%s\n%s", err.Error(), p.ToString(true))
 			return
 		}
 
 		if c, err = compiler.Compile(s); err != nil {
-			t.Errorf("%s\n%s", err.Error(), p)
+			t.Errorf("%s\n%s", err.Error(), p.ToString(true))
 			return
 		}
 
 		compiler.Resolve(c, p, "yaml", true)
 		if !p.Empty() {
-			t.Errorf("%s", p)
+			t.Errorf("%s", p.ToString(true))
 			return
 		}
 
 		compiler.Coerce(c, p, "yaml", true)
 		if !p.Empty() {
-			t.Errorf("%s", p)
+			t.Errorf("%s", p.ToString(true))
 			return
 		}
 	})
