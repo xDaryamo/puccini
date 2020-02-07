@@ -11,8 +11,7 @@ imports:
 
 relationship_types:
 
-  kubernetes.Route:
-    derived_from: tosca.relationships.Root
-    valid_target_types: [ kubernetes.Service ] # capability
+  Route:
+    valid_target_types: [ Service ] # capability
 `
 }

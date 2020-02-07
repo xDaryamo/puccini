@@ -40,15 +40,18 @@ func GetHierarchyTypes(hierarchy *tosca.Hierarchy) Types {
 	types := make(Types)
 	h := hierarchy
 	for (h != nil) && (h.EntityPtr != nil) {
-		name := h.GetContext().Name
-		type_ := NewType(name)
+		type_ := NewType(h.GetCanonicalName())
+
 		if (h.Parent != nil) && (h.Parent.EntityPtr != nil) {
-			type_.Parent = h.Parent.GetContext().Name
+			type_.Parent = h.Parent.GetCanonicalName()
 		}
+
 		if metadata, ok := GetMetadata(h.EntityPtr); ok {
 			type_.Metadata = metadata
 		}
-		types[name] = type_
+
+		types[type_.Name] = type_
+
 		h = h.Parent
 	}
 	return types

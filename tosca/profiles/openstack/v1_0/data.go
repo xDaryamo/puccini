@@ -8,51 +8,51 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 data_types:
 
-  openstack.IpAddress:
+  IpAddress:
     derived_from:
       string
 
-  openstack.MacAddress:
+  MacAddress:
     derived_from:
       string
 
-  openstack.NetCidr:
+  NetCidr:
     derived_from:
       string
 
-  openstack.Neutron.Network:
+  neutron.Network:
     derived_from:
       string
 
-  openstack.Neutron.Port:
+  neutron.Port:
     derived_from:
       string
 
-  openstack.Neutron.QosPolicy:
+  neutron.QosPolicy:
     derived_from:
       string
 
-  openstack.Glance.Image:
+  glance.Image:
     derived_from:
       string
 
-  openstack.Cinder.Snapshot:
+  cinder.Snapshot:
     derived_from:
       string
 
-  openstack.Cinder.Volume:
+  cinder.Volume:
     derived_from:
       string
 
-  openstack.nova.Flavor:
+  nova.Flavor:
     derived_from:
       string
 
-  openstack.nova.Keypair:
+  nova.Keypair:
     derived_from:
       string
 
-  openstack.nova.Server.Network:
+  nova.Server.Network:
     derived_from: Root
     properties:
       allocate_network:
@@ -68,11 +68,11 @@ data_types:
       fixed_ip:
         description: >-
           Fixed IP address to specify for the port created on the requested network.
-        type: openstack.IpAddress
+        type: IpAddress
       network:
         description: >-
           Name or ID of network to create a port on.
-        type: openstack.Neutron.Network
+        type: neutron.Network
       floating_ip:
         description: >-
           ID of the floating IP to associate.
@@ -80,13 +80,13 @@ data_types:
       port:
         description: >-
           ID of an existing port to associate with this server.
-        type: openstack.Neutron.Port
+        type: neutron.Port
       port_extra_properties:
         description: >-
           Dict, which has expand properties for port. Used only if port property is not specified
           for creating port.
         type: map
-        entry_schema: openstack.nova.Server.Port
+        entry_schema: nova.Server.Port
       subnet:
         description: >-
           Subnet in which to allocate the IP address for port. Used for creating port, based on
@@ -97,7 +97,7 @@ data_types:
           Port tag. Heat ignores any update on this property as nova does not support it.
         type: string
 
-  openstack.nova.Server.Port:
+  nova.Server.Port:
     derived_from: Root
     properties:
       admin_state_up:
@@ -109,7 +109,7 @@ data_types:
         description: >-
           Additional MAC/IP address pairs allowed to pass through the port.
         type: list
-        entry_schema: openstack.nova.Server.AddressPair
+        entry_schema: nova.Server.AddressPair
       binding.vnic_type:
         description: >-
           The vnic type to be bound on the neutron port. To support SR-IOV PCI passthrough
@@ -125,7 +125,7 @@ data_types:
         description: >-
           MAC address to give to this port. The default update policy of this property in neutron is
           that allow admin role only.
-        type: openstack.MacAddress
+        type: MacAddress
       port_security_enabled:
         description: >-
           Flag to enable/disable port security on the port. When disable this feature (set it to
@@ -134,26 +134,26 @@ data_types:
       qos_policy:
         description: >-
           The name or ID of QoS policy to attach to this port.
-        type: openstack.Neutron.QosPolicy
+        type: neutron.QosPolicy
       value_specs:
         description: >-
           Extra parameters to include in the request.
         type: map
         entry_schema: string # TODO
 
-  openstack.nova.Server.AddressPair:
+  nova.Server.AddressPair:
     derived_from: Root
     properties:
       ip_address:
         description: >-
           IP address to allow through this port.
-        type: openstack.NetCidr
+        type: NetCidr
       mac_address:
         description: >-
           MAC address to allow through this port.
-        type: openstack.MacAddress
+        type: MacAddress
 
-  openstack.nova.Server.SwiftData:
+  nova.Server.SwiftData:
     derived_from: Root
     properties:
       container:
@@ -169,7 +169,7 @@ data_types:
         constraints:
         - min_length: 1
 
-  openstack.nova.Server.BlockDevice:
+  nova.Server.BlockDevice:
     derived_from: Root
     properties:
       delete_on_termination:
@@ -184,18 +184,18 @@ data_types:
       snapshot_id:
         description: >-
           The ID of the snapshot to create a volume from.
-        type: openstack.Cinder.Snapshot
+        type: cinder.Snapshot
       volume_id:
         description: >-
           The ID of the volume to boot from. Only one of volume_id or snapshot_id should be provided.
-        type: openstack.Cinder.Volume
+        type: cinder.Volume
       volume_size:
         description: >-
           The size of the volume, in GB. It is safe to leave this blank and have the Compute service
           infer the size.
         type: scalar-unit.size
 
-  openstack.nova.Server.BlockDevice2:
+  nova.Server.BlockDevice2:
     derived_from: Root
     properties:
       boot_index:
@@ -241,11 +241,11 @@ data_types:
       image:
         description: >-
           The ID or name of the image to create a volume from.
-        type: openstack.Glance.Image
+        type: glance.Image
       snapshot_id:
         description: >-
           The ID of the snapshot to create a volume from.
-        type: openstack.Cinder.Snapshot
+        type: cinder.Snapshot
       swap_size:
         description: >-
           The size of the swap, in MB.
@@ -253,7 +253,7 @@ data_types:
       volume_id:
         description: >-
           The volume_id can be boot or non-boot device to the server.
-        type: openstack.Cinder.Volume
+        type: cinder.Volume
       volume_size:
         description: >-
           Size of the block device in GB. If it is omitted, hypervisor driver calculates size.

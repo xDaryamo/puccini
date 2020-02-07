@@ -15,7 +15,7 @@ capability_types:
 
   # https://github.com/kubernetes/community/blob/master/contributors/devel/api-conventions.md#metadata
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#objectmeta-v1-meta
-  kubernetes.Metadata:
+  Metadata:
     description: >-
       ObjectMeta is metadata that all persisted resources must have, which includes all objects
       users must create.
@@ -131,7 +131,8 @@ capability_types:
         description: >-
           A sequence number representing a specific generation of the desired state. Populated by
           the system. Read-only.
-        type: kubernetes.Count
+        type: Count
+        default: 0
 
       # Lifecycle
       creationTimestamp:
@@ -165,21 +166,21 @@ capability_types:
           removed from the system. Only set when deletionTimestamp is also set. May only be
           shortened. Read-only.
         type: scalar-unit.time
+        default: 0 s
 
   # https://kubernetes.io/docs/concepts/services-networking/service/
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#service-v1-core
-  kubernetes.Service:
+  Service:
     description: >-
       Service is a named abstraction of software service (for example, mysql) consisting of local
       port (for example 3306) that the proxy listens on, and the selector that determines which pods
       will answer requests sent through the proxy.
-    derived_from: tosca.capabilities.Root
     properties:
       ports:
         description: >-
           The list of ports that are exposed by this service.
         type: list
-        entry_schema: kubernetes.ServicePort
+        entry_schema: ServicePort
 
       # Pods
       selector:
@@ -211,7 +212,7 @@ capability_types:
           for ensuring that traffic arrives at a node with this IP. A common example is external
           load-balancers that are not part of the Kubernetes system.
         type: map
-        entry_schema: kubernetes.IP
+        entry_schema: IP
         required: false
       externalTrafficPolicy:
         description: >-
@@ -241,13 +242,13 @@ capability_types:
           Most recently observed status of the service. Populated by the system. Read-only.
         type: string # TODO
 
-  kubernetes.ClusterIP:
+  ClusterIP:
     description: >-
       "ClusterIP" allocates a cluster-internal IP address for load-balancing to endpoints. Endpoints
       are determined by the selector or if that is not specified, by manual construction of an
       Endpoints object. If clusterIP is "None", no virtual IP is allocated and the endpoints are
       published as a set of endpoints rather than a stable IP.
-    derived_from: kubernetes.Service
+    derived_from: Service
     attributes:
       clusterIP:
         description: >-
@@ -256,19 +257,19 @@ capability_types:
           the service; otherwise, creation of the service will fail. This field can not be changed
           through updates. Valid values are "None", empty string (""), or a valid IP address.
           "None" can be specified for headless services when proxying is not required.
-        type: kubernetes.IP
+        type: IP
 
-  kubernetes.NodePort:
+  NodePort:
     description: >-
       "NodePort" builds on ClusterIP and allocates a port on every node which routes to the
       clusterIP.
-    derived_from: kubernetes.ClusterIP
+    derived_from: ClusterIP
 
-  kubernetes.LoadBalancer:
+  LoadBalancer:
     description: >-
       "LoadBalancer" builds on NodePort and creates an external load-balancer (if supported in the
       current cloud) which routes to the clusterIP.
-    derived_from: kubernetes.NodePort
+    derived_from: NodePort
     properties:
       loadBalancerIP:
         description: >-
@@ -276,14 +277,14 @@ capability_types:
           whether the underlying cloud-provider supports specifying the loadBalancerIP when a load
           balancer is created. This field will be ignored if the cloud-provider does not support the
           feature.
-        type: kubernetes.IP
+        type: IP
       loadBalancerSourceRanges:
         description: >-
           If specified and supported by the platform, this will restrict traffic through the
           cloud-provider load-balancer will be restricted to the specified client IPs. This field
           will be ignored if the cloud-provider does not support the feature.
         type: list
-        entry_schema: kubernetes.IP
+        entry_schema: IP
     attributes:
       healthCheckNodePort:
         description: >-
@@ -291,43 +292,42 @@ capability_types:
           HealthCheckNodePort is created by the service api backend with the allocated nodePort.
           Will use user-specified nodePort value if specified by the client. Only effects when
           ExternalTrafficPolicy is set to Local.
-        type: kubernetes.Port
+        type: Port
 
-  kubernetes.ExternalName:
+  ExternalName:
     description: >-
       "ExternalName" maps to the specified externalName.
-    derived_from: kubernetes.Service
+    derived_from: Service
     properties:
       externalName:
         description: >-
           externalName is the external reference that kubedns or equivalent will return as a CNAME
           record for this service. No proxying will be involved. Must be a valid RFC-1123 hostname.
-        type: kubernetes.Hostname
+        type: Hostname
 
   # Controllers
 
-  kubernetes.Controller:
+  Controller:
     description: >-
       Controller
-    derived_from: tosca.capabilities.Root
 
   # https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#deployment-v1-apps
-  kubernetes.Deployment:
+  Deployment:
     description: >-
       Deployment enables declarative updates for Pods and ReplicaSets.
-    derived_from: kubernetes.Controller
+    derived_from: Controller
     properties:
       # Resources
       template:
         description: >-
           Template describes the pods that will be created.
-        type: kubernetes.Pod
+        type: Pod
       selector:
         description: >-
           Label selector for pods. Existing ReplicaSets whose pods are selected by this will be the
           ones affected by this deployment. It must match the pod template's labels.
-        type: kubernetes.LabelSelector
+        type: LabelSelector
         default: {}
 
       # Deployment
@@ -335,18 +335,18 @@ capability_types:
         description: >-
           Number of desired pods. This is a pointer to distinguish between explicit zero and not
           specified. Defaults to 1.
-        type: kubernetes.Count
+        type: Count
         default: 1
       revisionHistoryLimit:
         description: >-
           The number of old ReplicaSets to retain to allow rollback. This is a pointer to
           distinguish between explicit zero and not specified. Defaults to 10.
-        type: kubernetes.Count
+        type: Count
         default: 10
       strategy:
         description: >-
           The deployment strategy to use to replace existing pods with new ones.
-        type: kubernetes.DeploymentStrategy
+        type: DeploymentStrategy
         default: {}
 
       # Lifecycle
@@ -373,12 +373,12 @@ capability_types:
           Indicates that the deployment is paused.
         type: boolean
 
-  istio.VirtualService:
+  VirtualService:
     metadata:
       puccini.kubernetes.plugins.1: js/plugins/istio.js
     description: >-
       Creates a DestinationRule subset with the name of the node template
       Adds to VirtualService (with HttpRoute) for that subset
-    derived_from: kubernetes.Service
+    derived_from: Service
 `
 }

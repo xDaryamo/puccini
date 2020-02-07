@@ -10,7 +10,7 @@ import (
 	"github.com/tliron/puccini/tosca/reflection"
 )
 
-type NameTransformer func(string, interface{}) []string
+type NameTransformer = func(string, interface{}) []string
 
 //
 // Namespace

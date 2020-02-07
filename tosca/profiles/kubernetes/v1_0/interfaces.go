@@ -3,11 +3,13 @@
 package v1_0
 
 func init() {
-	Profile["/tosca/openstack/1.0/relationships.yaml"] = `
+	Profile["/tosca/kubernetes/1.0/interfaces.yaml"] = `
 tosca_definitions_version: tosca_simple_yaml_1_3
 
-relationship_types:
+interface_types:
 
-  Depends: {}
+  Lifecycle:
+    operations:
+      on_created: {}
 `
 }

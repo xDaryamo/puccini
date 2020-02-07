@@ -29,7 +29,7 @@ function writeTopology() {
 
 	for (var vertexId in clout.vertexes) {
 		var vertex = clout.vertexes[vertexId];
-		if (!tosca.isNodeTemplate(vertex, 'openstack.nova.Server'))
+		if (!tosca.isNodeTemplate(vertex, 'openstack:nova.Server'))
 			continue;
 		var nodeTemplate = vertex.properties;
 

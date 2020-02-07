@@ -8,10 +8,9 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 artifact_types:
 
-  kubernetes.Spec:
+  Spec:
     description: >-
       Object specification
-    derived_from: tosca.artifacts.Root
     file_ext: [ yaml, yml, json ]
 `
 }

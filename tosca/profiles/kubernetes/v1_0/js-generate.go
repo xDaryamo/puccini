@@ -21,7 +21,7 @@ for (var vertexId in clout.vertexes) {
 	var metadata = {};
 	for (var capabilityName in nodeTemplate.capabilities) {
 		var capability = nodeTemplate.capabilities[capabilityName];
-		if ('kubernetes.Metadata' in capability.types) {
+		if ('Metadata' in capability.types) {
 			metadata = capability.properties;
 			break;
 		}
@@ -35,14 +35,14 @@ for (var vertexId in clout.vertexes) {
 	// Generate specs
 	for (var capabilityName in nodeTemplate.capabilities) {
 		var capability = nodeTemplate.capabilities[capabilityName];
-		if ('kubernetes.Service' in capability.types)
+		if ('kubernetes:Service' in capability.types)
 			generateService(capability, metadata);
-		else if ('kubernetes.Deployment' in capability.types)
+		else if ('kubernetes:Deployment' in capability.types)
 			generateDeployment(capability, metadata);
 	}
 
 	// Run plugins
-//	plugins = clout.getPlugins('kubernetes.plugins');
+//	plugins = clout.getPlugins('kubernetes:plugins');
 //	for (var p in plugins) {
 //		plugin = plugins[p];
 //		log.debugf('calling plugin: %s', plugin.name);

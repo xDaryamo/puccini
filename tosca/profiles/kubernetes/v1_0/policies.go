@@ -10,9 +10,8 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 policy_types:
 
-  istio.TrafficPolicy:
+  TrafficPolicy:
     description: >-
       DestinationRule (with TrafficPolicy) 
-    derived_from: tosca.policies.Root
 `
 }

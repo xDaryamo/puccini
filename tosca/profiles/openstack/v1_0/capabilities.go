@@ -8,6 +8,6 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 capability_types:
 
-  openstack.Resource: {}
+  Resource: {}
 `
 }

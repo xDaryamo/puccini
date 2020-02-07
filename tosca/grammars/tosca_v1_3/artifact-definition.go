@@ -102,53 +102,43 @@ func (self *ArtifactDefinition) GetKey() string {
 }
 
 func (self *ArtifactDefinition) Inherit(parentDefinition *ArtifactDefinition) {
-	if parentDefinition != nil {
-		if (self.ArtifactTypeName == nil) && (parentDefinition.ArtifactTypeName != nil) {
-			self.ArtifactTypeName = parentDefinition.ArtifactTypeName
-		}
-		if (self.Description == nil) && (parentDefinition.Description != nil) {
-			self.Description = parentDefinition.Description
-		}
-		if (self.ArtifactVersion == nil) && (parentDefinition.ArtifactVersion != nil) {
-			self.ArtifactVersion = parentDefinition.ArtifactVersion
-		}
-		if (self.Properties == nil) && (parentDefinition.Properties != nil) {
-			self.Properties = parentDefinition.Properties
-		}
-		if (self.RepositoryName == nil) && (parentDefinition.RepositoryName != nil) {
-			self.RepositoryName = parentDefinition.RepositoryName
-		}
-		if (self.File == nil) && (parentDefinition.File != nil) {
-			self.File = parentDefinition.File
-		}
-		if (self.DeployPath == nil) && (parentDefinition.DeployPath != nil) {
-			self.DeployPath = parentDefinition.DeployPath
-		}
-		if (self.ChecksumAlgorithm == nil) && (parentDefinition.ChecksumAlgorithm != nil) {
-			self.ChecksumAlgorithm = parentDefinition.ChecksumAlgorithm
-		}
-		if (self.Checksum == nil) && (parentDefinition.Checksum != nil) {
-			self.Checksum = parentDefinition.Checksum
-		}
-		if (self.ArtifactType == nil) && (parentDefinition.ArtifactType != nil) {
-			self.ArtifactType = parentDefinition.ArtifactType
-		}
-		if (self.Repository == nil) && (parentDefinition.Repository != nil) {
-			self.Repository = parentDefinition.Repository
-		}
-
-		// Validate type compatibility
-		if (self.ArtifactType != nil) && (parentDefinition.ArtifactType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.ArtifactType, self.ArtifactType) {
-			self.Context.ReportIncompatibleType(self.ArtifactType.Name, parentDefinition.ArtifactType.Name)
-		}
+	if (self.ArtifactTypeName == nil) && (parentDefinition.ArtifactTypeName != nil) {
+		self.ArtifactTypeName = parentDefinition.ArtifactTypeName
+	}
+	if (self.Description == nil) && (parentDefinition.Description != nil) {
+		self.Description = parentDefinition.Description
+	}
+	if (self.ArtifactVersion == nil) && (parentDefinition.ArtifactVersion != nil) {
+		self.ArtifactVersion = parentDefinition.ArtifactVersion
+	}
+	if (self.Properties == nil) && (parentDefinition.Properties != nil) {
+		self.Properties = parentDefinition.Properties
+	}
+	if (self.RepositoryName == nil) && (parentDefinition.RepositoryName != nil) {
+		self.RepositoryName = parentDefinition.RepositoryName
+	}
+	if (self.File == nil) && (parentDefinition.File != nil) {
+		self.File = parentDefinition.File
+	}
+	if (self.DeployPath == nil) && (parentDefinition.DeployPath != nil) {
+		self.DeployPath = parentDefinition.DeployPath
+	}
+	if (self.ChecksumAlgorithm == nil) && (parentDefinition.ChecksumAlgorithm != nil) {
+		self.ChecksumAlgorithm = parentDefinition.ChecksumAlgorithm
+	}
+	if (self.Checksum == nil) && (parentDefinition.Checksum != nil) {
+		self.Checksum = parentDefinition.Checksum
+	}
+	if (self.ArtifactType == nil) && (parentDefinition.ArtifactType != nil) {
+		self.ArtifactType = parentDefinition.ArtifactType
+	}
+	if (self.Repository == nil) && (parentDefinition.Repository != nil) {
+		self.Repository = parentDefinition.Repository
 	}
 
-	if self.File == nil {
-		// Avoid reporting more than once
-		if !self.fileMissingProblemReported {
-			self.Context.FieldChild("file", nil).ReportFieldMissing()
-			self.fileMissingProblemReported = true
-		}
+	// Validate type compatibility
+	if (self.ArtifactType != nil) && (parentDefinition.ArtifactType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.ArtifactType, self.ArtifactType) {
+		self.Context.ReportIncompatibleType(self.ArtifactType.Name, parentDefinition.ArtifactType.Name)
 	}
 }
 
@@ -170,8 +160,6 @@ func (self ArtifactDefinitions) Inherit(parentDefinitions ArtifactDefinitions) {
 			if definition != parentDefinition {
 				definition.Inherit(parentDefinition)
 			}
-		} else {
-			definition.Inherit(nil)
 		}
 	}
 }

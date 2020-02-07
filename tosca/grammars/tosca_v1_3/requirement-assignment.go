@@ -75,13 +75,17 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, s *norm
 	r := n.NewRequirement(self.Name, self.Context.Path.String())
 
 	if self.TargetCapabilityType != nil {
-		r.CapabilityTypeName = &self.TargetCapabilityType.Name
+		if capabilityTypeName, ok := self.Context.Hierarchy.GetCanonicalNameFor(self.TargetCapabilityType); ok {
+			r.CapabilityTypeName = &capabilityTypeName
+		}
 	} else if self.TargetCapabilityNameOrTypeName != nil {
 		r.CapabilityName = self.TargetCapabilityNameOrTypeName
 	}
 
 	if self.TargetNodeType != nil {
-		r.NodeTypeName = &self.TargetNodeType.Name
+		if nodeTypeName, ok := self.Context.Hierarchy.GetCanonicalNameFor(self.TargetNodeType); ok {
+			r.NodeTypeName = &nodeTypeName
+		}
 	} else if self.TargetNodeTemplate != nil {
 		r.NodeTemplate, _ = s.NodeTemplates[self.TargetNodeTemplate.Name]
 	}

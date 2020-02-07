@@ -38,6 +38,7 @@ type Context struct {
 	URL                url.URL
 	Data               interface{} // ARD
 	Locator            ard.Locator
+	CanonicalNamespace *string
 	Namespace          Namespace
 	ScriptletNamespace ScriptletNamespace
 	Hierarchy          *Hierarchy
@@ -62,6 +63,7 @@ func (self *Context) NewImportContext(url_ url.URL) *Context {
 		Name:               self.Name,
 		Path:               self.Path,
 		URL:                url_,
+		CanonicalNamespace: self.CanonicalNamespace,
 		Namespace:          make(Namespace),
 		ScriptletNamespace: make(ScriptletNamespace),
 		Hierarchy:          &Hierarchy{},
@@ -79,6 +81,7 @@ func (self *Context) Clone(data interface{}) *Context {
 		URL:                self.URL,
 		Data:               data,
 		Locator:            self.Locator,
+		CanonicalNamespace: self.CanonicalNamespace,
 		Namespace:          self.Namespace,
 		ScriptletNamespace: self.ScriptletNamespace,
 		Hierarchy:          self.Hierarchy,
@@ -95,6 +98,16 @@ func (self *Context) GetAncestor(generation int) *Context {
 		return self.Parent
 	} else if self.Parent != nil {
 		return self.Parent.GetAncestor(generation - 1)
+	} else {
+		return nil
+	}
+}
+
+func (self *Context) GetCanonicalNamespace() *string {
+	if self.CanonicalNamespace != nil {
+		return self.CanonicalNamespace
+	} else if self.Parent != nil {
+		return self.Parent.GetCanonicalNamespace()
 	} else {
 		return nil
 	}
@@ -146,6 +159,7 @@ func (self *Context) FieldChild(name interface{}, data interface{}) *Context {
 		URL:                self.URL,
 		Data:               data,
 		Locator:            self.Locator,
+		CanonicalNamespace: self.CanonicalNamespace,
 		Namespace:          self.Namespace,
 		ScriptletNamespace: self.ScriptletNamespace,
 		Hierarchy:          self.Hierarchy,
@@ -191,6 +205,7 @@ func (self *Context) MapChild(name interface{}, data interface{}) *Context {
 		URL:                self.URL,
 		Data:               data,
 		Locator:            self.Locator,
+		CanonicalNamespace: self.CanonicalNamespace,
 		Namespace:          self.Namespace,
 		ScriptletNamespace: self.ScriptletNamespace,
 		Hierarchy:          self.Hierarchy,
@@ -208,6 +223,7 @@ func (self *Context) ListChild(index int, data interface{}) *Context {
 		URL:                self.URL,
 		Data:               data,
 		Locator:            self.Locator,
+		CanonicalNamespace: self.CanonicalNamespace,
 		Namespace:          self.Namespace,
 		ScriptletNamespace: self.ScriptletNamespace,
 		Hierarchy:          self.Hierarchy,
@@ -225,6 +241,7 @@ func (self *Context) SequencedListChild(index int, name string, data interface{}
 		URL:                self.URL,
 		Data:               data,
 		Locator:            self.Locator,
+		CanonicalNamespace: self.CanonicalNamespace,
 		Namespace:          self.Namespace,
 		ScriptletNamespace: self.ScriptletNamespace,
 		Hierarchy:          self.Hierarchy,

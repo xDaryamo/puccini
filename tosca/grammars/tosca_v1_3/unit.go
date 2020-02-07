@@ -20,6 +20,7 @@ type Unit struct {
 	*Entity `name:"unit"`
 
 	ToscaDefinitionsVersion *string           `read:"tosca_definitions_version" require:"tosca_definitions_version"`
+	Namespace               *string           `read:"namespace"` // introduced in TOSCA 1.2
 	Metadata                Metadata          `read:"metadata,!Metadata"`
 	Repositories            Repositories      `read:"repositories,Repository"`
 	Imports                 Imports           `read:"imports,[]Import"`
@@ -42,6 +43,9 @@ func ReadUnit(context *tosca.Context) interface{} {
 	self := NewUnit(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
+	if self.Namespace != nil {
+		context.CanonicalNamespace = self.Namespace
+	}
 	return self
 }
 

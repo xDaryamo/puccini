@@ -3,20 +3,23 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 imports:
 - capabilities.yaml
 - relationships.yaml
+- interfaces.yaml
 
 node_types:
 
-  kubernetes.Service:
+  Service:
     description: >-
       Represents a collection of workloads (pods and controllers) and resources that all use the
       same selector.
-    derived_from: tosca.nodes.Root
+    interfaces:
+      lifecycle:
+        type: Lifecycle
     capabilities:
-      metadata: kubernetes.Metadata
-      service: kubernetes.Service
-      deployment: kubernetes.Deployment
+      metadata: Metadata
+      service: Service
+      deployment: Deployment
     requirements:
     - route:
-        capability: kubernetes.Service
-        relationship: kubernetes.Route
+        capability: Service
+        relationship: Route
         occurrences: [ 0, UNBOUNDED ]

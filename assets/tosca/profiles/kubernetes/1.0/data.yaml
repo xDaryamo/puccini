@@ -2,53 +2,51 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 data_types:
 
-  kubernetes.Count:
+  Count:
     derived_from: integer
     constraints:
     - greater_or_equal: 0
 
-  kubernetes.Factor:
+  Factor:
     derived_from: float
     constraints:
     - in_range: [ 0.0, 1.0 ]
 
-  kubernetes.Amount:
-    derived_from: Root
+  Amount:
     properties:
       factor:
-        type: kubernetes.Factor
+        type: Factor
         required: false
       count:
-        type: kubernetes.Count
+        type: Count
         required: false
 
-  kubernetes.IP:
+  IP:
     derived_from: string
 
-  kubernetes.Port:
+  Port:
     derived_from: integer
     constraints:
     - in_range: [ 1, 65535 ]
 
   # https://stackoverflow.com/questions/2063213/regular-expression-for-validating-dns-label-host-name
-  kubernetes.Hostname:
+  Hostname:
     derived_from: string
     constraints:
     - pattern: ^(?!-)[a-zA-Z0-9-]{1,63}(?<!-)$
 
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#labelselector-v1-meta
-  kubernetes.LabelSelector:
+  LabelSelector:
     description: >-
       A label selector is a label query over a set of resources. The result of matchLabels and
       matchExpressions are ANDed. An empty label selector matches all objects. A null label selector
       matches no objects.
-    derived_from: tosca.datatypes.Root
     properties:
       matchExpressions:
         description: >-
           matchExpressions is a list of label selector requirements. The requirements are ANDed.
         type: list
-        entry_schema: kubernetes.LabelSelectorRequirement
+        entry_schema: LabelSelectorRequirement
         required: false
       matchLabels:
         description: >-
@@ -60,11 +58,10 @@ data_types:
         required: false
 
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#labelselectorrequirement-v1-meta
-  kubernetes.LabelSelectorRequirement:
+  LabelSelectorRequirement:
     description: >-
       A label selector requirement is a selector that contains values, a key, and an operator that
       relates the key and values.
-    derived_from: tosca.datatypes.Root
     properties:
       key:
         description: >-
@@ -86,29 +83,28 @@ data_types:
         entry_schema: string
 
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#serviceport-v1-core
-  kubernetes.ServicePort:
+  ServicePort:
     description: >-
       ServicePort contains information on service's port.
-    derived_from: tosca.datatypes.Root
     properties:
       name:
         description: >-
           The name of this port within the service. This must be a DNS_LABEL. All ports within a
           ServiceSpec must have unique names. This maps to the 'Name' field in EndpointPort
           objects. Optional if only one ServicePort is defined on this service.
-        type: kubernetes.Hostname
+        type: Hostname
         required: false
       port:
         description: >-
           The port that will be exposed by this service.
-        type: kubernetes.Port
+        type: Port
       nodePort:
         description: >-
           The port on each node on which this service is exposed when type=NodePort or LoadBalancer.
           Usually assigned by the system. If specified, it will be allocated to the service if
           unused or else creation of the service will fail. Default is to auto-allocate a port if
           the ServiceType of this Service requires one.
-        type: kubernetes.Port
+        type: Port
         required: false
       targetPort:
         description: >-
@@ -116,7 +112,7 @@ data_types:
           in the range 1 to 65535. Name must be an IANA_SVC_NAME. If this is not specified, the
           value of the 'port' field is used (an identity map). This field is ignored for services
           with clusterIP=None, and should be omitted or set equal to the 'port' field.
-        type: kubernetes.Port
+        type: Port
         required: false
       targetPortName:
         description: >-
@@ -133,10 +129,9 @@ data_types:
         - valid_values: [ TCP, UDP ]
 
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#containerport-v1-core
-  kubernetes.ContainerPort:
+  ContainerPort:
     description: >-
       ContainerPort represents a network port in a single container.
-    derived_from: tosca.datatypes.Root
     properties:
       name:
         description: >-
@@ -148,18 +143,18 @@ data_types:
         description: >-
           Number of port to expose on the pod's IP address. This must be a valid port number, 0 < x
           < 65536.
-        type: kubernetes.Port
+        type: Port
       hostPort:
         description: >-
           Number of port to expose on the host. If specified, this must be a valid port number, 0 <
           x < 65536. If HostNetwork is specified, this must match ContainerPort. Most containers do
           not need this.
-        type: kubernetes.Port
+        type: Port
         required: false
       hostIP:
         description: >-
           What host IP to bind the external port to.
-        type: kubernetes.IP
+        type: IP
         required: false
       protocol:
         description: >-
@@ -170,10 +165,9 @@ data_types:
         - valid_values: [ TCP, UDP ]
 
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#deploymentstrategy-v1-apps
-  kubernetes.DeploymentStrategy:
+  DeploymentStrategy:
     description: >-
       The deployment strategy to use to replace existing pods with new ones.
-    derived_from: Root
     properties:
       type:
         description: >-
@@ -192,7 +186,7 @@ data_types:
           exceed 130% of desired pods. Once old pods have been killed, new RC can be scaled up
           further, ensuring that total number of pods running at any time during the update is at
           most 130% of desired pods.
-        type: kubernetes.Amount
+        type: Amount
         default:
           factor: .25
       maxUnavailable:
@@ -204,16 +198,15 @@ data_types:
           pods immediately when the rolling update starts. Once new pods are ready, old RC can be
           scaled down further, followed by scaling up the new RC, ensuring that the total number of
           pods available at all times during the update is at least 70% of desired pods.
-        type: kubernetes.Amount
+        type: Amount
         default:
           factor: .25
 
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#podspec-v1-core
-  kubernetes.Pod:
+  Pod:
     description: >-
       Pod is a collection of containers that can run on a host. This resource is created by clients
       and scheduled onto hosts.
-    derived_from: Root
     properties:
       # Resources
       containers:
@@ -221,7 +214,7 @@ data_types:
           List of containers belonging to the pod. Containers cannot currently be added or removed.
           There must be at least one container in a Pod. Cannot be updated.
         type: list
-        entry_schema: kubernetes.Container
+        entry_schema: Container
         constraints:
         - min_length: 1
       initContainers:
@@ -236,13 +229,13 @@ data_types:
           that value or the sum of the normal containers. Limits are applied to init containers in a
           similar fashion. Init containers cannot currently be added or removed. Cannot be updated. 
         type: list
-        entry_schema: kubernetes.Container
+        entry_schema: Container
         required: false
       volumes:
         description: >-
           List of volumes that can be mounted by containers belonging to the pod.
         type: list
-        entry_schema: kubernetes.Volume 
+        entry_schema: Volume 
         required: false
 
       # Scheduling
@@ -255,7 +248,7 @@ data_types:
       affinity:
         description: >-
           If specified, the pod's scheduling constraints
-        type: kubernetes.Affinity
+        type: Affinity
         required: false
       nodeName:
         description: >-
@@ -328,7 +321,7 @@ data_types:
         description: >-
           Specifies the hostname of the Pod If not specified, the pod's hostname will be set to a
           system-defined value.
-        type: kubernetes.Hostname
+        type: Hostname
         required: false
       subdomain:
         description: >-
@@ -417,16 +410,15 @@ data_types:
         required: false
 
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#container-v1-core
-  kubernetes.Container:
+  Container:
     description: >-
       A single application container that you want to run within a pod.
-    derived_from: Root
     properties:
       name:
         description: >-
           Name of the container specified as a DNS_LABEL. Each container in a pod must have a unique
           name (DNS_LABEL). Cannot be updated.
-        type: kubernetes.Hostname
+        type: Hostname
 
       # Image
       image:
@@ -471,7 +463,7 @@ data_types:
           Any port which is listening on the default "0.0.0.0" address inside a container will be
           accessible from the network. Cannot be updated.
         type: list
-        entry_schema: kubernetes.ContainerPort
+        entry_schema: ContainerPort
         required: false
 
       # Terminal
@@ -592,38 +584,35 @@ data_types:
         type: string # TODO
         required: false
 
-  kubernetes.Volume:
-    derived_from: Root
+  Volume: {}
 
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#affinity-v1-core
-  kubernetes.Affinity:
+  Affinity:
     description: >-
       Affinity is a group of affinity scheduling rules.
-    derived_from: Root
     properties:
       nodeAffinity:
         description: >-
           Describes node affinity scheduling rules for the pod.
-        type: kubernetes.NodeAffinity
+        type: NodeAffinity
         required: false
       podAffinity:
         description: >-
           Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone,
           etc. as some other pod(s)).
-        type: kubernetes.PodAffinity
+        type: PodAffinity
         required: false
       podAntiAffinity:
         description: >-
           Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same
           node, zone, etc. as some other pod(s)).
-        type: kubernetes.PodAntiAffinity
+        type: PodAntiAffinity
         required: false
 
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#affinity-v1-core
-  kubernetes.NodeAffinity:
+  NodeAffinity:
     description: >-
       Node affinity is a group of node affinity scheduling rules.
-    derived_from: Root
     properties:
       preferredDuringSchedulingIgnoredDuringExecution:
         description: >-
@@ -646,10 +635,9 @@ data_types:
         required: false
 
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#podaffinity-v1-core
-  kubernetes.PodAffinity:
+  PodAffinity:
     description: >-
       Pod affinity is a group of inter pod affinity scheduling rules.
-    derived_from: Root
     properties:
       preferredDuringSchedulingIgnoredDuringExecution:
         description: >-
@@ -675,10 +663,9 @@ data_types:
         required: false
 
   # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#podantiaffinity-v1-core
-  kubernetes.PodAntiAffinity:
+  PodAntiAffinity:
     description: >-
       Pod anti affinity is a group of inter pod anti affinity scheduling rules.
-    derived_from: Root
     properties:
       preferredDuringSchedulingIgnoredDuringExecution:
         description: >-

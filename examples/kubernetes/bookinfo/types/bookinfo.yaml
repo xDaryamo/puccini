@@ -1,12 +1,13 @@
 tosca_definitions_version: tosca_simple_yaml_1_3
 
 imports:
-- internal:/tosca/kubernetes/1.0/profile.yaml
+- file: internal:/tosca/kubernetes/1.0/profile.yaml
+  namespace_prefix: k8s
 
 node_types:
 
   Bookinfo:
-    derived_from: kubernetes.Service
+    derived_from: k8s:Service
     properties:
       name:
         type: string
@@ -19,7 +20,7 @@ node_types:
           name:
             default: { get_property: [ SELF, name ] }
       service:
-        type: kubernetes.ClusterIP
+        type: k8s:ClusterIP
         properties:
           ports:
             default:
@@ -37,20 +38,20 @@ node_types:
 
   Productpage:
 #    metadata:
-#      puccini.kubernetes.plugins.2: internal:/tosca/kubernetes/1.0/js/plugins/dummy.js
+#      puccini.k8s:plugins.2: internal:/tosca/kubernetes/1.0/js/plugins/dummy.js
     derived_from: Bookinfo
     properties:
       name:
         default: productpage
     requirements:
     - reviews:
-        capability: kubernetes.Service
+        capability: k8s:Service
         node: Reviews
-        relationship: kubernetes.Route
+        relationship: k8s:Route
     - details:
-        capability: kubernetes.Service
+        capability: k8s:Service
         node: Details
-        relationship: kubernetes.Route
+        relationship: k8s:Route
 
   Reviews:
     derived_from: Bookinfo
@@ -59,9 +60,9 @@ node_types:
         default: reviews
     requirements:
     - ratings:
-        capability: kubernetes.Service
+        capability: k8s:Service
         node: Ratings
-        relationship: kubernetes.Route
+        relationship: k8s:Route
         occurrences: [ 0, UNBOUNDED ] # can be 0!
 
   Details:

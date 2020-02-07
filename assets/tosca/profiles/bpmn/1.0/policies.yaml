@@ -2,19 +2,18 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 policy_types:
 
-  bpmn.Root:
+  Base:
     description: >-
       Root for policies implemented by BPM software.
-    derived_from: Root
 
-  bpmn.Process:
+  Process:
     description: >-
       Policy implemented by a process defined in BPMN.
-    derived_from: bpmn.Root
+    derived_from: Base
     properties:
       bpmn_process_id:
         description: >-
           Execute this BPMN process when triggered.
         type: string
     targets:
-    - Root
+    - tosca:Root

@@ -11,12 +11,11 @@ imports:
 
 group_types:
 
-  kubernetes.Namespace:
+  Namespace:
     description: >-
       Will automatically use a "group" label (the name of the group) for all deployment controllers.
-    derived_from: tosca.groups.Root
     members:
-    - tosca.nodes.Root
+    - Service
     properties:
       namespace:
         type: string

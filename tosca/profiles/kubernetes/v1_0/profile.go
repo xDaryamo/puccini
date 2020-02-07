@@ -10,6 +10,8 @@ metadata:
   puccini.scriptlet.import|kubernetes.generate: js/generate.js
   puccini.scriptlet.import|kubernetes.update: js/update.js
 
+namespace: kubernetes
+
 imports:
 - artifacts.yaml
 - groups.yaml

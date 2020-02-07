@@ -73,6 +73,14 @@ func (self *Artifact) Render(definition *ArtifactDefinition) {
 		}
 	}
 
+	if self.File == nil {
+		// Avoid reporting more than once
+		if !self.fileMissingProblemReported {
+			self.Context.FieldChild("file", nil).ReportFieldMissing()
+			self.fileMissingProblemReported = true
+		}
+	}
+
 	if self.ArtifactType == nil {
 		return
 	}

@@ -86,7 +86,7 @@ func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool)
 		var skip bool
 		if (err == nil) || os.IsExist(err) {
 			if dontOverwrite {
-				message = color.RedString("skippping:  ")
+				message = color.RedString("skipping:   ")
 				skip = true
 			} else {
 				message = color.YellowString("overwriting:")
