@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-HERE=$(dirname "$(readlink -f "$0")")
+HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
 . "$HERE/env.sh"
 
 rm --force "$ROOT/go.mod" "$ROOT/go.sum"

@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 
-HERE=$(dirname "$(readlink -f "$0")")
-
 if [ "$EUID" -ne 0 ]; then
 	echo "Run this script as root"
 	exit 1
 fi
+
+HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
 
 KUBECTL_VERSION=v1.17.2
 MINIKUBE_VERSION=v1.6.2

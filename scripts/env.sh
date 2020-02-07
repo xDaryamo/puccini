@@ -1,8 +1,6 @@
-#!/bin/bash
-set -e
 
-HERE=$(dirname "$(readlink -f "$0")")
-ROOT=$(readlink -f "$HERE/..")
+_HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
+ROOT=$(readlink -f "$_HERE/..")
 
 if [ -z "$GOPATH" ]; then
 	GOPATH=$HOME/go
@@ -10,7 +8,4 @@ fi
 
 PATH=$GOPATH/bin:$ROOT:$PATH
 
-function git_version () {
-	VERSION=$(git -C "$ROOT" describe --tags --always)
-	REVISION=$(git -C "$ROOT" rev-parse HEAD)
-}
+. "$_HERE/functions.sh"
