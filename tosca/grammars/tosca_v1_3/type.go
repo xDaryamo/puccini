@@ -29,7 +29,7 @@ func NewType(context *tosca.Context) *Type {
 	}
 }
 
-// normal.HasMetadata interface
+// tosca.HasMetadata interface
 func (self *Type) GetMetadata() (map[string]string, bool) {
 	metadata := make(map[string]string)
 	if self.Metadata != nil {

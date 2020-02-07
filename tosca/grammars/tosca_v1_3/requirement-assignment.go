@@ -75,17 +75,15 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, s *norm
 	r := n.NewRequirement(self.Name, self.Context.Path.String())
 
 	if self.TargetCapabilityType != nil {
-		if capabilityTypeName, ok := tosca.GetCanonicalName(self.TargetCapabilityType); ok {
-			r.CapabilityTypeName = &capabilityTypeName
-		}
+		name := tosca.GetCanonicalName(self.TargetCapabilityType)
+		r.CapabilityTypeName = &name
 	} else if self.TargetCapabilityNameOrTypeName != nil {
 		r.CapabilityName = self.TargetCapabilityNameOrTypeName
 	}
 
 	if self.TargetNodeType != nil {
-		if nodeTypeName, ok := tosca.GetCanonicalName(self.TargetNodeType); ok {
-			r.NodeTypeName = &nodeTypeName
-		}
+		name := tosca.GetCanonicalName(self.TargetNodeType)
+		r.NodeTypeName = &name
 	} else if self.TargetNodeTemplate != nil {
 		r.NodeTemplate, _ = s.NodeTemplates[self.TargetNodeTemplate.Name]
 	}

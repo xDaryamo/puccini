@@ -6,7 +6,6 @@ import (
 	"unicode"
 
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/url"
 )
 
@@ -93,13 +92,11 @@ func newImportNameTransformer(prefix *string) tosca.NameTransformer {
 	return func(name string, entityPtr interface{}) []string {
 		var names []string
 
-		if hasMetadata, ok := entityPtr.(normal.HasMetadata); ok {
-			if metadata, ok := hasMetadata.GetMetadata(); ok {
-				if normative, ok := metadata["normative"]; ok {
-					if normative == "true" {
-						// Reserved "tosca." names also get shorthand and prefixed names
-						names = appendShorthandNames(names, name, "tosca")
-					}
+		if metadata, ok := tosca.GetMetadata(entityPtr); ok {
+			if normative, ok := metadata["normative"]; ok {
+				if normative == "true" {
+					// Reserved "tosca." names also get shorthand and prefixed names
+					names = appendShorthandNames(names, name, "tosca")
 				}
 			}
 		}

@@ -63,7 +63,7 @@ tosca.traverseValues = function(traverser) {
 
 			for (var e = 0; e < vertex.edgesOut.length; e++) {
 				var edge = vertex.edgesOut[e];
-				if (!tosca.isTosca(edge, 'relationship'))
+				if (!tosca.isTosca(edge, 'Relationship'))
 					continue;
 
 				var relationship = edge.properties;
@@ -71,12 +71,12 @@ tosca.traverseValues = function(traverser) {
 				tosca.traverseObjectValues(traverser, relationship.attributes, edge, vertex, edge.target);
 				tosca.traverseInterfaceValues(traverser, relationship.interfaces, edge, vertex, edge.target);
 			}
-		} else if (tosca.isTosca(vertex, 'group')) {
+		} else if (tosca.isTosca(vertex, 'Group')) {
 			var group = vertex.properties;
 
 			tosca.traverseObjectValues(traverser, group.properties, vertex);
 			tosca.traverseInterfaceValues(traverser, group.interfaces, vertex)
-		} else if (tosca.isTosca(vertex, 'policy')) {
+		} else if (tosca.isTosca(vertex, 'Policy')) {
 			var policy = vertex.properties;
 
 			tosca.traverseObjectValues(traverser, policy.properties, vertex);

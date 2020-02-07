@@ -21,7 +21,7 @@ tosca.isTosca = function(o, kind) {
 };
 
 tosca.isNodeTemplate = function(vertex, typeName) {
-	if (tosca.isTosca(vertex, 'nodeTemplate')) {
+	if (tosca.isTosca(vertex, 'NodeTemplate')) {
 		if (typeName !== undefined)
 			return typeName in vertex.properties.types;
 		return true;
@@ -52,7 +52,7 @@ tosca.getNodeTemplate = function(entity) {
 		}
 		throw puccini.sprintf('node template "%s" not found', entity);
 	}
-	if (!tosca.isTosca(vertex))
+	if (!tosca.isNodeTemplate(vertex))
 		throw puccini.sprintf('node template "%s" not found', entity);
 	return vertex.properties;
 };
@@ -60,7 +60,7 @@ tosca.getNodeTemplate = function(entity) {
 tosca.getHost = function(vertex) {
 	for (var e = 0; e < vertex.edgesOut.length; e++) {
 		var edge = vertex.edgesOut[e];
-		if (tosca.isTosca(edge, 'relationship')) {
+		if (tosca.isTosca(edge, 'Relationship')) {
 			for (var typeName in edge.properties.types) {
 				var type = edge.properties.types[typeName];
 				if (type.metadata.role === 'host')

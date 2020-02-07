@@ -15,7 +15,7 @@ for (var vertexId in clout.vertexes) {
 		nodeTemplateVertexes.push(vertex);
 		for (var e = 0; e < vertex.edgesOut.length; e++) {
 			edge = vertex.edgesOut[e];
-			if (tosca.isTosca(edge, 'relationship'))
+			if (tosca.isTosca(edge, 'Relationship'))
 				edge.remove();
 		}
 	}
@@ -229,7 +229,7 @@ function addRelationship(sourceVertex, requirement, targetVertex, capabilityName
 	var edge = sourceVertex.newEdgeTo(targetVertex);
 	edge.metadata['puccini-tosca'] = {
 		version: '1.0',
-		kind: 'relationship'
+		kind: 'Relationship'
 	};
 
 	var relationship = requirement.relationship;
@@ -260,7 +260,7 @@ function countRelationships(vertex, capabilityName) {
 	var count = 0;
 	for (var e = 0; e < vertex.edgesIn.length; e++) {
 		var edge = vertex.edgesIn[e];
-		if (tosca.isTosca(edge, 'relationship') && (edge.properties.capability === capabilityName))
+		if (tosca.isTosca(edge, 'Relationship') && (edge.properties.capability === capabilityName))
 			count++;
 	}
 	return count;
@@ -295,10 +295,10 @@ function arePropertiesValid(path, sourceVertex, kind, name, entity, constraintsM
 function isSubstituted(nodeTemplateName, requirementName) {
 	for (var vertexId in clout.vertexes) {
 		var vertex = clout.vertexes[vertexId];
-		if (tosca.isTosca(vertex, 'substitution')) {
+		if (tosca.isTosca(vertex, 'Substitution')) {
 			for (var e = 0; e < vertex.edgesOut.length; e++) {
 				var edge = vertex.edgesOut[e];
-				if (!tosca.isTosca(edge, 'requirementMapping'))
+				if (!tosca.isTosca(edge, 'RequirementMapping'))
 					continue;
 
 				if ((edge.target.properties.name === nodeTemplateName) && (edge.properties.requirement === requirementName))
@@ -325,14 +325,14 @@ function unsatisfied(path, name, message) {
 	if (typeof problems === 'undefined')
 		throw puccini.sprintf('%s: could not satisfy "%s" because %s', path, name, message);
 	else
-		problems.reportf('%s: could not satisfy "%s" because %s', path, name, message);
+		problems.reportf(11, '%s: could not satisfy "%s" because %s', path, name, message);
 }
 
 function notEnoughRelationships(nodeTemplateName, capabilityName, relationshipCount, minRelationshipCount) {
 	if (typeof problems === 'undefined')
 		throw puccini.sprintf('capability "%s" of node template "%s" does not have enough relationships: %d < %d', capabilityName, nodeTemplateName, relationshipCount, minRelationshipCount);
 	else
-		problems.reportf('capability "%s" of node template "%s" does not have enough relationships: %d < %d', capabilityName, nodeTemplateName, relationshipCount, minRelationshipCount);
+		problems.reportf(11, 'capability "%s" of node template "%s" does not have enough relationships: %d < %d', capabilityName, nodeTemplateName, relationshipCount, minRelationshipCount);
 }
 `
 }

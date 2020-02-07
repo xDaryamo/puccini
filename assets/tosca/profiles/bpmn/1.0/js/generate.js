@@ -20,10 +20,10 @@ definitions.createAttr('exporter', 'puccini');
 for (var id in clout.vertexes) {
 	var vertex = clout.vertexes[id];
 
-	if (tosca.isTosca(vertex, 'policy') && ('bpmn:Process' in vertex.properties.types))
+	if (tosca.isTosca(vertex, 'Policy') && ('bpmn:Process' in vertex.properties.types))
 		createPolicyProcess(id, vertex);
 
-	if (tosca.isTosca(vertex, 'workflow'))
+	if (tosca.isTosca(vertex, 'Workflow'))
 		createWorkflowProcess(id, vertex);
 }
 
@@ -37,17 +37,17 @@ function createPolicyProcess(id, vertex) {
 	var tasks = [];
 	for (var e = 0; e < vertex.edgesOut.length; e++) {
 		var edge = vertex.edgesOut[e];
-		if (!tosca.isTosca(edge, 'nodeTemplateTarget') && !tosca.isTosca(edge, 'groupTarget'))
+		if (!tosca.isTosca(edge, 'NodeTemplateTarget') && !tosca.isTosca(edge, 'GroupTarget'))
 			continue;
 		var target = edge.target.properties;
 
 		// Iterate edges
 		for (var ee = 0; ee < vertex.edgesOut.length; ee++) {
 			edge = vertex.edgesOut[ee];
-			if (tosca.isTosca(edge, 'policyTriggerOperation')) {
+			if (tosca.isTosca(edge, 'PolicyTriggerOperation')) {
 				task = createPolicyTriggerOperationTask(process, target, edge.target.properties);
 				tasks.push(task);
-			} else if (tosca.isTosca(edge, 'policyTriggerWorkflow')) {
+			} else if (tosca.isTosca(edge, 'PolicyTriggerWorkflow')) {
 				// TODO
 			}
 		}
@@ -91,7 +91,7 @@ function createWorkflowProcess(id, vertex) {
 	var tasks = {};
 	for (var e = 0; e < vertex.edgesOut.length; e++) {
 		var edge = vertex.edgesOut[e];
-		if (!tosca.isTosca(edge, 'workflowStep'))
+		if (!tosca.isTosca(edge, 'WorkflowStep'))
 			continue;
 
 		var step = edge.target;
@@ -185,17 +185,17 @@ function createWorkflowTask(process, step, stepID, tasks) {
 	var activities = [];
 	for (var ee =- 0; ee < step.edgesOut.length; ee++) {
 		var edge = step.edgesOut[ee];
-		if (tosca.isTosca(edge, 'nodeTemplateTarget'))
+		if (tosca.isTosca(edge, 'NodeTemplateTarget'))
 			code += puccini.sprintf('\nnodeTemplates.push("%s");', edge.target.properties.name);
-		else if (tosca.isTosca(edge, 'groupTarget'))
+		else if (tosca.isTosca(edge, 'GroupTarget'))
 			code += puccini.sprintf('\ngroups.push("%s");', edge.target.properties.name);
-		else if (tosca.isTosca(edge, 'workflowActivity')) {
+		else if (tosca.isTosca(edge, 'WorkflowActivity')) {
 			// Put activities in the right sequence
 			var sequence = edge.properties.sequence;
 			activities[sequence] = edge.target.properties;
-		} else if (tosca.isTosca(edge, 'onSuccess')) {
+		} else if (tosca.isTosca(edge, 'OnSuccess')) {
 			next.push(edge.target.properties.name);
-		} else if (tosca.isTosca(edge, 'onFailure')) {
+		} else if (tosca.isTosca(edge, 'OnFailure')) {
 			next.push(edge.target.properties.name);
 		}
 	}

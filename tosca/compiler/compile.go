@@ -47,7 +47,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 
 		nodeTemplates[nodeTemplate.Name] = v
 
-		SetMetadata(v, "nodeTemplate")
+		SetMetadata(v, "NodeTemplate")
 		v.Properties["name"] = nodeTemplate.Name
 		v.Properties["description"] = nodeTemplate.Description
 		v.Properties["types"] = nodeTemplate.Types
@@ -68,7 +68,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 
 		groups[group.Name] = v
 
-		SetMetadata(v, "group")
+		SetMetadata(v, "Group")
 		v.Properties["name"] = group.Name
 		v.Properties["description"] = group.Description
 		v.Properties["types"] = group.Types
@@ -79,7 +79,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 			nv := nodeTemplates[nodeTemplate.Name]
 			e := v.NewEdgeTo(nv)
 
-			SetMetadata(e, "member")
+			SetMetadata(e, "Member")
 		}
 	}
 
@@ -91,7 +91,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 
 		workflows[workflow.Name] = v
 
-		SetMetadata(v, "workflow")
+		SetMetadata(v, "Workflow")
 		v.Properties["name"] = workflow.Name
 		v.Properties["description"] = workflow.Description
 	}
@@ -107,20 +107,20 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 
 			steps[step.Name] = sv
 
-			SetMetadata(sv, "workflowStep")
+			SetMetadata(sv, "WorkflowStep")
 			sv.Properties["name"] = step.Name
 
 			e := v.NewEdgeTo(sv)
-			SetMetadata(e, "workflowStep")
+			SetMetadata(e, "WorkflowStep")
 
 			if step.TargetNodeTemplate != nil {
 				nv := nodeTemplates[step.TargetNodeTemplate.Name]
 				e = sv.NewEdgeTo(nv)
-				SetMetadata(e, "nodeTemplateTarget")
+				SetMetadata(e, "NodeTemplateTarget")
 			} else if step.TargetGroup != nil {
 				gv := groups[step.TargetGroup.Name]
 				e = sv.NewEdgeTo(gv)
-				SetMetadata(e, "groupTarget")
+				SetMetadata(e, "GroupTarget")
 			} else {
 				// This would happen only if there was a parsing error
 				continue
@@ -131,18 +131,18 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 				av := clout_.NewVertex(clout.NewKey())
 
 				e = sv.NewEdgeTo(av)
-				SetMetadata(e, "workflowActivity")
+				SetMetadata(e, "WorkflowActivity")
 				e.Properties["sequence"] = sequence
 
-				SetMetadata(av, "workflowActivity")
+				SetMetadata(av, "WorkflowActivity")
 				if activity.DelegateWorkflow != nil {
 					wv := workflows[activity.DelegateWorkflow.Name]
 					e = av.NewEdgeTo(wv)
-					SetMetadata(e, "delegateWorflow")
+					SetMetadata(e, "DelegateWorkflow")
 				} else if activity.InlineWorkflow != nil {
 					wv := workflows[activity.InlineWorkflow.Name]
 					e = av.NewEdgeTo(wv)
-					SetMetadata(e, "inlineWorflow")
+					SetMetadata(e, "InlineWorkflow")
 				} else if activity.SetNodeState != "" {
 					av.Properties["setNodeState"] = activity.SetNodeState
 				} else if activity.CallOperation != nil {
@@ -160,13 +160,13 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 			for _, next := range step.OnSuccessSteps {
 				nsv := steps[next.Name]
 				e := sv.NewEdgeTo(nsv)
-				SetMetadata(e, "onSuccess")
+				SetMetadata(e, "OnSuccess")
 			}
 
 			for _, next := range step.OnFailureSteps {
 				nsv := steps[next.Name]
 				e := sv.NewEdgeTo(nsv)
-				SetMetadata(e, "onFailure")
+				SetMetadata(e, "OnFailure")
 			}
 		}
 	}
@@ -175,7 +175,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 	for _, policy := range s.Policies {
 		v := clout_.NewVertex(clout.NewKey())
 
-		SetMetadata(v, "policy")
+		SetMetadata(v, "Policy")
 		v.Properties["name"] = policy.Name
 		v.Properties["description"] = policy.Description
 		v.Properties["types"] = policy.Types
@@ -185,33 +185,33 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 			nv := nodeTemplates[nodeTemplate.Name]
 			e := v.NewEdgeTo(nv)
 
-			SetMetadata(e, "nodeTemplateTarget")
+			SetMetadata(e, "NodeTemplateTarget")
 		}
 
 		for _, group := range policy.GroupTargets {
 			gv := groups[group.Name]
 			e := v.NewEdgeTo(gv)
 
-			SetMetadata(e, "groupTarget")
+			SetMetadata(e, "GroupTarget")
 		}
 
 		for _, trigger := range policy.Triggers {
 			if trigger.Operation != nil {
 				to := clout_.NewVertex(clout.NewKey())
 
-				SetMetadata(to, "operation")
+				SetMetadata(to, "Operation")
 				to.Properties["description"] = trigger.Operation.Description
 				to.Properties["implementation"] = trigger.Operation.Implementation
 				to.Properties["dependencies"] = trigger.Operation.Dependencies
 				to.Properties["inputs"] = trigger.Operation.Inputs
 
 				e := v.NewEdgeTo(to)
-				SetMetadata(e, "policyTriggerOperation")
+				SetMetadata(e, "PolicyTriggerOperation")
 			} else if trigger.Workflow != nil {
 				wv := workflows[trigger.Workflow.Name]
 
 				e := v.NewEdgeTo(wv)
-				SetMetadata(e, "policyTriggerWorkflow")
+				SetMetadata(e, "PolicyTriggerWorkflow")
 			}
 		}
 	}
@@ -220,7 +220,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 	if s.Substitution != nil {
 		v := clout_.NewVertex(clout.NewKey())
 
-		SetMetadata(v, "substitution")
+		SetMetadata(v, "Substitution")
 		v.Properties["type"] = s.Substitution.Type
 		v.Properties["typeMetadata"] = s.Substitution.TypeMetadata
 
@@ -228,7 +228,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 			vv := nodeTemplates[nodeTemplate.Name]
 			e := v.NewEdgeTo(vv)
 
-			SetMetadata(e, "capabilityMapping")
+			SetMetadata(e, "CapabilityMapping")
 			e.Properties["capability"] = capability.Name
 		}
 
@@ -236,7 +236,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 			vv := nodeTemplates[nodeTemplate.Name]
 			e := v.NewEdgeTo(vv)
 
-			SetMetadata(e, "requirementMapping")
+			SetMetadata(e, "RequirementMapping")
 			e.Properties["requirement"] = requirement
 		}
 
@@ -244,7 +244,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 			vv := nodeTemplates[nodeTemplate.Name]
 			e := v.NewEdgeTo(vv)
 
-			SetMetadata(e, "propertyMapping")
+			SetMetadata(e, "PropertyMapping")
 			e.Properties["property"] = property
 		}
 
@@ -252,7 +252,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 			vv := nodeTemplates[nodeTemplate.Name]
 			e := v.NewEdgeTo(vv)
 
-			SetMetadata(e, "attributeMapping")
+			SetMetadata(e, "AttributeMapping")
 			e.Properties["attribute"] = attribute
 		}
 
@@ -260,7 +260,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 			vv := nodeTemplates[nodeTemplate.Name]
 			e := v.NewEdgeTo(vv)
 
-			SetMetadata(e, "interfaceMapping")
+			SetMetadata(e, "InterfaceMapping")
 			e.Properties["interface"] = interface_
 		}
 	}

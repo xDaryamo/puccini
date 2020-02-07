@@ -20,23 +20,26 @@ type Contextual interface {
 
 // From Contextual interface
 func GetContext(entityPtr interface{}) *Context {
-	contextual, ok := entityPtr.(Contextual)
-	if !ok {
+	if contextual, ok := entityPtr.(Contextual); ok {
+		return contextual.GetContext()
+	} else {
 		panic(fmt.Sprintf("entity does not implement \"Contextual\" interface: %T", entityPtr))
 	}
-	return contextual.GetContext()
 }
 
-func GetCanonicalName(entityPtr interface{}) (string, bool) {
-	if context := GetContext(entityPtr); context != nil {
-		canonicalNamespace := context.GetCanonicalNamespace()
-		if canonicalNamespace != nil {
-			return fmt.Sprintf("%s:%s", *canonicalNamespace, context.Name), true
-		} else {
-			return context.Name, true
+func GetCanonicalName(entityPtr interface{}) string {
+	if metadata, ok := GetMetadata(entityPtr); ok {
+		if canonicalName, ok := metadata["canonical_name"]; ok {
+			return canonicalName
 		}
+	}
+
+	context := GetContext(entityPtr)
+	canonicalNamespace := context.GetCanonicalNamespace()
+	if canonicalNamespace != nil {
+		return fmt.Sprintf("%s:%s", *canonicalNamespace, context.Name)
 	} else {
-		return "", false
+		return context.Name
 	}
 }
 

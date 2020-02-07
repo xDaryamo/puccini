@@ -78,19 +78,19 @@ function addVertex(id, vertex) {
 		data: tosca.isTosca(vertex) ? vertex.properties : vertex
 	};
 
-	if (tosca.isTosca(vertex, 'nodeTemplate'))
+	if (tosca.isTosca(vertex, 'NodeTemplate'))
 		addNodeTemplate(node);
-	else if (tosca.isTosca(vertex, 'group'))
+	else if (tosca.isTosca(vertex, 'Group'))
 		addGroup(node);
-	else if (tosca.isTosca(vertex, 'policy'))
+	else if (tosca.isTosca(vertex, 'Policy'))
 		addPolicy(node);
-	else if (tosca.isTosca(vertex, 'substitution'))
+	else if (tosca.isTosca(vertex, 'Substitution'))
 		addSubstitution(node);
-	else if (tosca.isTosca(vertex, 'workflow'))
+	else if (tosca.isTosca(vertex, 'Workflow'))
 		addWorkflow(node);
-	else if (tosca.isTosca(vertex, 'workflowStep'))
+	else if (tosca.isTosca(vertex, 'WorkflowStep'))
 		addWorkflowStep(node);
-	else if (tosca.isTosca(vertex, 'workflowActivity'))
+	else if (tosca.isTosca(vertex, 'WorkflowActivity'))
 		addWorkflowActivity(node);
 	else
 		node.data = vertex;
@@ -116,17 +116,17 @@ function addEdge(id, e) {
 		data: tosca.isTosca(e) ? e.properties : e
 	};
 
-	if (tosca.isTosca(e, 'relationship'))
+	if (tosca.isTosca(e, 'Relationship'))
 		addRelationship(edge);
-	else if (tosca.isTosca(e, 'requirementMapping'))
+	else if (tosca.isTosca(e, 'RequirementMapping'))
 		addRequirementMapping(edge);
-	else if (tosca.isTosca(e, 'capabilityMapping'))
+	else if (tosca.isTosca(e, 'CapabilityMapping'))
 		addCapabilityMapping(edge);
-	else if (tosca.isTosca(e, 'propertyMapping'))
+	else if (tosca.isTosca(e, 'PropertyMapping'))
 		addPropertyMapping(edge);
-	else if (tosca.isTosca(e, 'interfaceMapping'))
+	else if (tosca.isTosca(e, 'InterfaceMapping'))
 		addInterfaceMapping(edge);
-	else if (tosca.isTosca(e, 'onFailure'))
+	else if (tosca.isTosca(e, 'OnFailure'))
 		addOnFailure(edge);
 	else
 		edge.data = e;
