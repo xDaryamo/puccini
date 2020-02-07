@@ -15,7 +15,7 @@ for (var vertexId in clout.vertexes) {
 	var metadata = {};
 	for (var capabilityName in nodeTemplate.capabilities) {
 		var capability = nodeTemplate.capabilities[capabilityName];
-		if ('Metadata' in capability.types) {
+		if ('kubernetes:Metadata' in capability.types) {
 			metadata = capability.properties;
 			break;
 		}

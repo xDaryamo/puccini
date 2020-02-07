@@ -58,24 +58,6 @@ func NewHierarchy(entityPtr interface{}, hierarchyContext HierarchyContext) *Hie
 	return hierarchy
 }
 
-func (self *Hierarchy) GetCanonicalName() string {
-	context := self.GetContext()
-	canonicalNamespace := context.GetCanonicalNamespace()
-	if canonicalNamespace != nil {
-		return fmt.Sprintf("%s:%s", *canonicalNamespace, context.Name)
-	} else {
-		return context.Name
-	}
-}
-
-func (self *Hierarchy) GetCanonicalNameFor(entityPtr interface{}) (string, bool) {
-	if node, ok := self.Find(entityPtr); ok {
-		return node.GetCanonicalName(), true
-	} else {
-		return "", false
-	}
-}
-
 func (self *Hierarchy) Root() *Hierarchy {
 	for self != nil {
 		if self.Parent == nil {

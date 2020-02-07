@@ -27,6 +27,19 @@ func GetContext(entityPtr interface{}) *Context {
 	return contextual.GetContext()
 }
 
+func GetCanonicalName(entityPtr interface{}) (string, bool) {
+	if context := GetContext(entityPtr); context != nil {
+		canonicalNamespace := context.GetCanonicalNamespace()
+		if canonicalNamespace != nil {
+			return fmt.Sprintf("%s:%s", *canonicalNamespace, context.Name), true
+		} else {
+			return context.Name, true
+		}
+	} else {
+		return "", false
+	}
+}
+
 //
 // Context
 //
