@@ -2,7 +2,7 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
-. "$HERE/env.sh"
+. "$HERE/_env"
 
 gofmt -w -s -e \
 	"$ROOT/ard" \

@@ -9,6 +9,7 @@ clout.exec('tosca.utils');
 
 tosca.coerce();
 
+// From: https://cdnjs.com
 var jQueryVersion = '2.2.4';
 var jQueryUiVersion = '1.12.1';
 var jQueryLayoutVersion = '1.4.3';

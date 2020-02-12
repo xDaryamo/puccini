@@ -13,6 +13,8 @@ embedded in toolchains, orchestration, and development environments. They are co
 [Go](https://golang.org/) and are very portable, even runnable on
 [WebAssembly](https://webassembly.org/).
 
+Check out this [live demo of Puccini running in a browser](https://tliron.github.io/puccini-web/)!
+
 Puccini is also available as self-contained shared C libraries that can be called directly from many
 other languages. See wrappers for [Java](wrappers/java/), [Python](wrappers/python/), and
 [Ruby](wrappers/ruby/).
@@ -39,6 +41,7 @@ Puccini can compile several popular TOSCA and TOSCA-like dialects:
 [TOSCA 1.3](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html) (in progress),
 [TOSCA 1.2](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.2/TOSCA-Simple-Profile-YAML-v1.2.html),
 [TOSCA 1.1](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html),
+[TOSCA 1.0](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.0/TOSCA-Simple-Profile-YAML-v1.0.html),
 as well as the more limited grammars of
 [Cloudify DSL 1.3](https://docs.cloudify.co/5.0.5/developer/blueprints/),
 and

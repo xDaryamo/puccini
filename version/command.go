@@ -22,6 +22,9 @@ func NewCommand(name string) *cobra.Command {
 			if GitRevision != "" {
 				fmt.Fprintf(terminal.Stdout, "revision=%s\n", GitRevision)
 			}
+			if Timestamp != "" {
+				fmt.Fprintf(terminal.Stdout, "timestamp=%s\n", Timestamp)
+			}
 			fmt.Fprintf(terminal.Stdout, "arch=%s\n", runtime.GOARCH)
 			fmt.Fprintf(terminal.Stdout, "os=%s\n", runtime.GOOS)
 			fmt.Fprintf(terminal.Stdout, "compiler=%s\n", runtime.Compiler)

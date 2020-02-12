@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
+. "$HERE/_env"
+
+"$HERE/test"
+"$HERE/build-library"
+"$HERE/test-js"
+"$HERE/test-https"
+"$HERE/test-csar"
+"$HERE/test-csar-http"
+"$HERE/test-zip"
+"$HERE/test-zip-http"
+"$HERE/test-wasm"
+
+echo done!

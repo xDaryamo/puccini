@@ -2,7 +2,7 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
-. "$HERE/env.sh"
+. "$HERE/_env"
 
 PORT=6060
 DOCS="$ROOT/docs/html"

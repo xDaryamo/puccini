@@ -2,8 +2,8 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
-. "$HERE/env.sh"
+. "$HERE/_env"
 
-"$HERE/build.sh"
+"$HERE/build"
 
 puccini-tosca compile "$ROOT/examples/kubernetes/bookinfo/bookinfo-simple.yaml" "$@" 

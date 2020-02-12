@@ -9,26 +9,33 @@ import (
 
 func Detect(context *tosca.Context) bool {
 	if context.Grammar == nil {
-		if context.Grammar = GetGrammar(context); context.Grammar == nil {
-			context.ReportFieldUnsupportedValue()
+		var errorContext *tosca.Context
+		if context.Grammar, errorContext = GetGrammar(context); errorContext != nil {
+			errorContext.ReportFieldUnsupportedValue()
 		}
 	}
 	return context.Grammar != nil
 }
 
-func GetGrammar(context *tosca.Context) *tosca.Grammar {
+func GetGrammar(context *tosca.Context) (*tosca.Grammar, *tosca.Context) {
 	if versionContext, version := DetectVersion(context); version != nil {
 		if grammars, ok := Grammars[versionContext.Name]; ok {
 			if grammar, ok := grammars[*version]; ok {
-				return grammar
+				return grammar, nil
+			} else {
+				return nil, versionContext
 			}
+		} else {
+			return nil, versionContext
 		}
 	}
-	return nil
+	return nil, nil
 }
 
 func CompatibleGrammars(context1 *tosca.Context, context2 *tosca.Context) bool {
-	return GetGrammar(context1) == GetGrammar(context2)
+	grammar1, _ := GetGrammar(context1)
+	grammar2, _ := GetGrammar(context2)
+	return grammar1 == grammar2
 }
 
 func DetectVersion(context *tosca.Context) (*tosca.Context, *string) {

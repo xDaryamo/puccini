@@ -2,8 +2,8 @@
 set -e
 
 HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
-. "$HERE/env.sh"
+. "$HERE/_env"
 
-"$HERE/build-csar.sh"
+"$HERE/build-csar"
 
 puccini-tosca compile "zip:$ROOT/dist/bookinfo.csar!bookinfo-simple.yaml" "$@"

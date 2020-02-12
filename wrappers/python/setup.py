@@ -9,7 +9,7 @@ script = '''\
 ROOT="{}"
 
 # Install Go
-curl https://storage.googleapis.com/golang/go1.13.6.linux-amd64.tar.gz --silent --location | tar -xz
+curl https://storage.googleapis.com/golang/go1.13.7.linux-amd64.tar.gz --silent --location | tar -xz
 export PATH="$PATH:go/bin"
 
 # Fetch repository
@@ -17,7 +17,7 @@ REPO=puccini
 git clone https://github.com/tliron/puccini "$REPO"
 
 # Build library
-"$REPO/scripts/build-library.sh"
+"$REPO/scripts/build-library"
 mv "$REPO/dist/libpuccini.so" "$ROOT/puccini/" 
 '''.format(os.path.abspath(os.path.dirname(__file__)).replace('"', '\\"'))
 

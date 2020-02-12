@@ -8,4 +8,4 @@ fi
 
 PATH=$GOPATH/bin:$ROOT:$PATH
 
-. "$_HERE/functions.sh"
+. "$_HERE/_functions"

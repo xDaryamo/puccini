@@ -10,6 +10,6 @@ func Timestamp() string {
 	return time.Now().Format(time.RFC3339)
 }
 
-func Delay() {
+func RandomDelay() {
 	time.Sleep(time.Duration(rand.Int63n(100)) * time.Millisecond)
 }

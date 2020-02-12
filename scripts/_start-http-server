@@ -1,3 +1,4 @@
+
 pushd "$ROOT/dist" > /dev/null
 python3 -m http.server 8000 &
 HTTP_SERVER_PID=$!

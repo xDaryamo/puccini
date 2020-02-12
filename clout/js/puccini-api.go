@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 
 	"github.com/beevik/etree"
-	"github.com/fatih/color"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/common/format"
+	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/url"
 )
 
@@ -86,13 +86,13 @@ func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool)
 		var skip bool
 		if (err == nil) || os.IsExist(err) {
 			if dontOverwrite {
-				message = color.RedString("skipping:   ")
+				message = terminal.ColorError("skipping:   ")
 				skip = true
 			} else {
-				message = color.YellowString("overwriting:")
+				message = terminal.ColorValue("overwriting:")
 			}
 		} else {
-			message = color.GreenString("writing:    ")
+			message = terminal.ColorHeading("writing:    ")
 		}
 		if !self.context.Quiet {
 			fmt.Fprintln(self.Stdout, fmt.Sprintf("%s %s", message, output))

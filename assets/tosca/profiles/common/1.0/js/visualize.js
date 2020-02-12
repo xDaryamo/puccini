@@ -3,6 +3,7 @@ clout.exec('tosca.utils');
 
 tosca.coerce();
 
+// From: https://cdnjs.com
 var jQueryVersion = '2.2.4';
 var jQueryUiVersion = '1.12.1';
 var jQueryLayoutVersion = '1.4.3';
@@ -211,12 +212,12 @@ var template = '\
 <head>\n\
 	<title>Clout from TOSCA Service Template</title>\n\
 	<meta charset="utf-8"/>\n\
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/%s/jquery.min.js"></script>\n\
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/%s/jquery-ui.min.js"></script>\n\
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/%s/jquery.min.js" type="text/javascript"></script>\n\
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/%s/jquery-ui.min.js" type="text/javascript"></script>\n\
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/%s/jquery-ui.min.css" rel="stylesheet" type="text/css" />\n\
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-layout/%s/jquery.layout.min.js"></script>\n\
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-layout/%s/jquery.layout.min.js" type="text/javascript"></script>\n\
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-layout/%s/layout-default.min.css" rel="stylesheet" type="text/css" />\n\
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/%s/vis.min.js"></script>\n\
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/%s/vis.min.js" type="text/javascript"></script>\n\
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/vis/%s/vis.min.css" rel="stylesheet" type="text/css" />\n\
 	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />\n\
 	<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet" />\n\

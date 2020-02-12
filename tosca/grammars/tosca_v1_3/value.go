@@ -171,6 +171,10 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 
 						self.Context.Data = valueList
 					} else { // "map"
+						if definition.KeySchema == nil {
+							return
+						}
+
 						keyDataType := definition.KeySchema.DataType
 						keyConstraints := definition.KeySchema.RenderConstraints()
 

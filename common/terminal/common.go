@@ -2,10 +2,11 @@ package terminal
 
 import (
 	"io"
+	"os"
 )
 
-var Stdout io.Writer
+var Stdout io.Writer = os.Stdout
 
-var Stderr io.Writer
+var Stderr io.Writer = os.Stderr
 
 var Quiet bool = false
