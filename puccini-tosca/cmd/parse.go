@@ -15,7 +15,7 @@ import (
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
-	"github.com/tliron/puccini/tosca/problems"
+	problems_ "github.com/tliron/puccini/tosca/problems"
 	"github.com/tliron/puccini/url"
 	"github.com/tliron/yamlkeys"
 )
@@ -76,14 +76,14 @@ func Parse(url_ string) (parser.Context, *normal.ServiceTemplate) {
 	common.FailOnError(err)
 
 	context := parser.NewContext(quirks)
-	var problems_ *problems.Problems
+	var problems *problems_.Problems
 
 	// Phase 1: Read
 	if stopAtPhase >= 1 {
 		ok := context.ReadRoot(url__)
 
-		problems_ = context.GetProblems()
-		FailOnProblems(problems_)
+		problems = context.GetProblems()
+		FailOnProblems(problems)
 
 		if !ok {
 			// Stop here if failed to read
@@ -168,7 +168,7 @@ func Parse(url_ string) (parser.Context, *normal.ServiceTemplate) {
 		}
 	}
 
-	FailOnProblems(problems_)
+	FailOnProblems(problems)
 
 	// Normalize
 	if s, ok := normal.NormalizeServiceTemplate(context.Root.EntityPtr); ok {
