@@ -13,7 +13,7 @@ var verbose int
 var format string
 var colorize bool
 var pretty bool
-var formatProblems string
+var problemsFormat string
 var quirks []string
 
 var bashCompletionTo string
@@ -25,7 +25,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&format, "format", "f", "", "force output format (\"yaml\", \"json\", or \"xml\")")
 	rootCmd.PersistentFlags().BoolVarP(&colorize, "colorize", "z", true, "colorize output")
 	rootCmd.PersistentFlags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
-	rootCmd.PersistentFlags().StringVarP(&formatProblems, "problems-format", "m", "", "problems format (\"yaml\", \"json\", or \"xml\")")
+	rootCmd.PersistentFlags().StringVarP(&problemsFormat, "problems-format", "m", "", "problems format (\"yaml\", \"json\", or \"xml\")")
 	rootCmd.PersistentFlags().StringSliceVarP(&quirks, "quirk", "x", nil, "parser quirk")
 
 	rootCmd.Flags().StringVarP(&bashCompletionTo, "bash-completion", "b", "", "generate bash completion file")

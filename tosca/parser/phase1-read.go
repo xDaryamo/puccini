@@ -52,6 +52,10 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 	// Read ARD
 	var err error
 	if toscaContext.Data, toscaContext.Locator, err = ard.ReadFromURL(toscaContext.URL, true); err != nil {
+		format := toscaContext.URL.Format()
+		if (format == "yaml") || (format == "") {
+			err = NewYAMLError(err)
+		}
 		toscaContext.ReportError(err)
 		return NewUnitNoEntity(toscaContext, container, nameTransformer), false
 	}

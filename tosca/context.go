@@ -145,21 +145,21 @@ func (self *Context) Is(typeNames ...string) bool {
 }
 
 func (self *Context) HasQuirk(quirk string) bool {
-	for _, q := range self.Quirks {
-		if q == quirk {
+	for _, quirk_ := range self.Quirks {
+		if quirk_ == quirk {
 			return true
 		}
 	}
 	return false
 }
 
-func (self *Context) Location() string {
+func (self *Context) GetLocation() (int, int) {
 	if self.Locator != nil {
-		if r, c, ok := self.Locator.Locate(self.Path...); ok {
-			return fmt.Sprintf("%d,%d", r, c)
+		if row, column, ok := self.Locator.Locate(self.Path...); ok {
+			return row, column
 		}
 	}
-	return ""
+	return -1, -1
 }
 
 //

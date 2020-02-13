@@ -15,16 +15,20 @@ import (
 //
 
 type Problem struct {
-	Message string
-	Section string
-	File    string
-	Line    int
+	Message string `json:"message" yaml:"message"`
+	Section string `json:"section" yaml:"section"`
+	Row     int    `json:"row" yaml:"row"`
+	Column  int    `json:"column" yaml:"column"`
+	File    string `json:"file" yaml:"file"`
+	Line    int    `json:"line" yaml:"line"`
 }
 
-func NewProblem(message string, section string, skip int) *Problem {
+func NewProblem(message string, section string, row int, column int, skip int) *Problem {
 	self := Problem{
 		Message: message,
 		Section: section,
+		Row:     row,
+		Column:  column,
 	}
 
 	if _, file, line, ok := runtime.Caller(skip + 1); ok {
@@ -35,14 +39,22 @@ func NewProblem(message string, section string, skip int) *Problem {
 	return &self
 }
 
-// fmt.Stringify interface
+// fmt.Stringer interface
 func (self *Problem) String() string {
-	return self.Message
+	r := ""
+	if self.Row != -1 {
+		r = fmt.Sprintf("@%d", self.Row)
+		if self.Column != -1 {
+			r = r + fmt.Sprintf(",%d", self.Column)
+		}
+		r = r + " "
+	}
+	r = r + self.Message
+	return r
 }
 
 func (self *Problem) Equals(problem *Problem) bool {
-	// TODO: compare File and Line?
-	return (self.Message == problem.Message) && (self.Section == problem.Section)
+	return (self.Message == problem.Message) && (self.Section == problem.Section) && (self.Row == problem.Row) && (self.Column == problem.Column)
 }
 
 //
@@ -117,7 +129,7 @@ func (self *Problems) ToString(locate bool) string {
 	return writer.String()
 }
 
-// fmt.Stringify interface
+// fmt.Stringer interface
 func (self *Problems) String() string {
 	return self.ToString(false)
 }

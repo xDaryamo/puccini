@@ -5,6 +5,5 @@ package problems
 //
 
 type Problematic interface {
-	ProblemMessage() string
-	ProblemSection() string
+	Problem() (string, string, int, int)
 }

@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/tliron/puccini/common/terminal"
+	"github.com/tliron/puccini/tosca/problems"
 	"github.com/tliron/puccini/url"
 )
 
@@ -12,12 +13,17 @@ import (
 // Context
 //
 
-func (self *Context) Report(skip int, message string) bool {
+func (self *Context) ReportInSection(skip int, message string, row int, column int) bool {
 	if self.URL != nil {
-		return self.Problems.ReportInSection(skip+1, message, self.URL.String())
+		return self.Problems.ReportInSection(skip+1, message, self.URL.String(), row, column)
 	} else {
 		return self.Problems.Report(skip+1, message)
 	}
+}
+
+func (self *Context) Report(skip int, message string) bool {
+	row, column := self.GetLocation()
+	return self.ReportInSection(skip+1, message, row, column)
 }
 
 func (self *Context) Reportf(skip int, f string, arg ...interface{}) bool {
@@ -26,19 +32,9 @@ func (self *Context) Reportf(skip int, f string, arg ...interface{}) bool {
 
 func (self *Context) ReportPath(skip int, message string) bool {
 	path := self.Path.String()
-
-	location := self.Location()
-	if location != "" {
-		if path != "" {
-			path += " "
-		}
-		path += "@" + location
-	}
-
 	if path != "" {
 		message = fmt.Sprintf("%s: %s", terminal.ColorPath(path), message)
 	}
-
 	return self.Report(skip+1, message)
 }
 
@@ -46,8 +42,17 @@ func (self *Context) ReportPathf(skip int, f string, arg ...interface{}) bool {
 	return self.ReportPath(skip+1, fmt.Sprintf(f, arg...))
 }
 
+func (self *Context) ReportProblematic(skip int, problematic problems.Problematic) bool {
+	message, _, row, column := problematic.Problem()
+	return self.ReportInSection(skip+1, message, row, column)
+}
+
 func (self *Context) ReportError(err error) bool {
-	return self.ReportPathf(1, "%s", err)
+	if problematic, ok := err.(problems.Problematic); ok {
+		return self.ReportProblematic(1, problematic)
+	} else {
+		return self.ReportPath(1, err.Error())
+	}
 }
 
 //

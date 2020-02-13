@@ -47,6 +47,7 @@ func NewValidRelativeNetworkURL(path string, origin *NetworkURL) (*NetworkURL, e
 }
 
 // URL interface
+// fmt.Stringer interface
 func (self *NetworkURL) String() string {
 	return self.Key()
 }

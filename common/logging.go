@@ -26,7 +26,7 @@ func ConfigureLogging(verbosity int, path *string) {
 			backend = logging.NewLogBackend(file, "", 0)
 			logging.SetFormatter(plainFormatter)
 		} else {
-			Failf("log file error: %s", err)
+			Failf("log file error: %s", err.Error())
 		}
 	} else {
 		backend = logging.NewLogBackend(terminal.Stderr, "", 0)

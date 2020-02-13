@@ -20,6 +20,6 @@ func Failf(f string, args ...interface{}) {
 
 func FailOnError(err error) {
 	if err != nil {
-		Failf("%s", err)
+		Fail(err.Error())
 	}
 }

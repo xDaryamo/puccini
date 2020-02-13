@@ -45,6 +45,7 @@ func NewValidRelativeFileURL(path string, origin *FileURL) (*FileURL, error) {
 }
 
 // URL interface
+// fmt.Stringer interface
 func (self *FileURL) String() string {
 	return self.Key()
 }

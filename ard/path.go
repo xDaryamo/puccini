@@ -38,6 +38,7 @@ func NewListPathElement(index int) PathElement {
 
 type Path []PathElement
 
+// fmt.Stringer interface
 func (self Path) String() string {
 	var path string
 

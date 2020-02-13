@@ -73,6 +73,7 @@ func NewValidRelativeInternalURL(path_ string, origin *InternalURL) (*InternalUR
 }
 
 // URL interface
+// fmt.Stringer interface
 func (self *InternalURL) String() string {
 	return self.Key()
 }

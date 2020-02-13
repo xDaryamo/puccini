@@ -52,7 +52,7 @@ func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, c
 	// Scalar
 	var err error
 	if self.Scalar, err = strconv.ParseFloat(matches[1], 64); err != nil {
-		context.ReportValueMalformed(name, fmt.Sprintf("%s", err))
+		context.ReportValueMalformed(name, err.Error())
 		return &self
 	}
 
@@ -72,7 +72,7 @@ func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, c
 	return &self
 }
 
-// fmt.Stringify interface
+// fmt.Stringer interface
 func (self *ScalarUnit) String() string {
 	var singular bool
 

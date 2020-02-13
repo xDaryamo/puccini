@@ -97,6 +97,7 @@ func (self *ZipURL) OpenArchive() (*zip.ReadCloser, error) {
 }
 
 // URL interface
+// fmt.Stringer interface
 func (self *ZipURL) String() string {
 	return self.Key()
 }

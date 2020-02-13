@@ -13,8 +13,8 @@ var log = logging.MustGetLogger("puccini-tosca")
 func FailOnProblems(problems *problems_.Problems) {
 	if !problems.Empty() {
 		if !terminal.Quiet {
-			if formatProblems != "" {
-				format_.Print(problems, formatProblems, terminal.Stderr, pretty)
+			if problemsFormat != "" {
+				format_.Print(problems, problemsFormat, terminal.Stderr, pretty)
 			} else {
 				problems.Print(verbose > 0)
 			}

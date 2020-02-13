@@ -204,7 +204,7 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 	return &self
 }
 
-// fmt.Stringify interface
+// fmt.Stringer interface
 func (self *Timestamp) String() string {
 	return self.CanonicalString
 }

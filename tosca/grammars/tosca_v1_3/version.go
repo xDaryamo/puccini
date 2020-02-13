@@ -97,7 +97,7 @@ func ReadVersion(context *tosca.Context) interface{} {
 	return &self
 }
 
-// fmt.Stringify interface
+// fmt.Stringer interface
 func (self *Version) String() string {
 	return self.CanonicalString
 }

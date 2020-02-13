@@ -5,15 +5,15 @@ import (
 	"strings"
 )
 
-func (self *Problems) ReportInSection(skip int, message string, section string) bool {
+func (self *Problems) ReportInSection(skip int, message string, section string, row int, column int) bool {
 	// We want our reports to fit in one line
 	message = strings.ReplaceAll(message, "\n", "¶")
 
-	return self.Append(NewProblem(message, section, skip+1))
+	return self.Append(NewProblem(message, section, row, column, skip+1))
 }
 
 func (self *Problems) Report(skip int, message string) bool {
-	return self.ReportInSection(skip+1, message, "")
+	return self.ReportInSection(skip+1, message, "", -1, -1)
 }
 
 func (self *Problems) Reportf(skip int, format string, arg ...interface{}) bool {
@@ -21,13 +21,14 @@ func (self *Problems) Reportf(skip int, format string, arg ...interface{}) bool 
 }
 
 func (self *Problems) ReportProblematic(skip int, problematic Problematic) bool {
-	return self.ReportInSection(skip+1, problematic.ProblemMessage(), problematic.ProblemSection())
+	message, section, row, column := problematic.Problem()
+	return self.ReportInSection(skip+1, message, section, row, column)
 }
 
 func (self *Problems) ReportError(err error) bool {
 	if problematic, ok := err.(Problematic); ok {
 		return self.ReportProblematic(1, problematic)
 	} else {
-		return self.Reportf(1, "%s", err.Error())
+		return self.Report(1, err.Error())
 	}
 }

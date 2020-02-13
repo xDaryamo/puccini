@@ -10,7 +10,9 @@ import (
 func UnwrapException(err error) error {
 	if exception, ok := err.(*goja.Exception); ok {
 		original := exception.Value().Export()
-		if map_, ok := original.(map[string]interface{}); ok {
+		if wrapped, ok := original.(error); ok {
+			return wrapped
+		} else if map_, ok := original.(map[string]interface{}); ok {
 			if value, ok := map_["value"]; ok {
 				if wrapped, ok := value.(error); ok {
 					return wrapped
@@ -19,11 +21,7 @@ func UnwrapException(err error) error {
 				}
 			}
 		} else {
-			if wrapped, ok := original.(error); ok {
-				return wrapped
-			} else {
-				return fmt.Errorf("%s", original)
-			}
+			return fmt.Errorf("%s", original)
 		}
 	}
 	return err
@@ -62,7 +60,7 @@ func (self *Error) Signature() string {
 }
 
 // error interface
-func (self Error) Error() string {
+func (self *Error) Error() string {
 	r := fmt.Sprintf("%s: call to %s failed", self.FunctionCall.Path, self.Signature())
 	if self.Message != "" {
 		r += fmt.Sprintf(", %s", self.Message)
@@ -73,29 +71,24 @@ func (self Error) Error() string {
 	return r
 }
 
+// fmt.Stringer interface
+func (self *Error) String() string {
+	return self.Error()
+}
+
 // tosca.problems.Problematic interface
-func (self Error) ProblemMessage() string {
+func (self *Error) Problem() (string, string, int, int) {
 	r := fmt.Sprintf("%s: call to %s failed", terminal.ColorPath(self.FunctionCall.Path), terminal.ColorName(self.Signature()))
 	if self.Message != "" {
 		r += fmt.Sprintf(", %s", self.Message)
 	}
-	if self.FunctionCall.Location != "" {
-		if r != "" {
-			r += " "
-		}
-		r += terminal.ColorValue("@" + self.FunctionCall.Location)
-	}
 	if self.Cause != nil {
 		if jsError, ok := self.Cause.(*Error); ok {
-			r += fmt.Sprintf(" because %s", jsError.ProblemMessage())
+			message, _, _, _ := jsError.Problem()
+			r += fmt.Sprintf(" because %s", message)
 		} else {
 			r += fmt.Sprintf(" because %s", self.Cause.Error())
 		}
 	}
-	return r
-}
-
-// tosca.problems.Problematic interface
-func (self Error) ProblemSection() string {
-	return self.FunctionCall.URL
+	return r, self.FunctionCall.URL, self.FunctionCall.Row, self.FunctionCall.Column
 }

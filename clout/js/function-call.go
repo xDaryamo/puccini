@@ -37,9 +37,10 @@ type FunctionCall struct {
 
 	Name        string      `json:"name" yaml:"name"`
 	Arguments   []Coercible `json:"arguments" yaml:"arguments"`
-	URL         string      `json:"url,omitempty" yaml:"url,omitempty"`
 	Path        string      `json:"path,omitempty" yaml:"path,omitempty"`
-	Location    string      `json:"location,omitempty" yaml:"location,omitempty"`
+	URL         string      `json:"url,omitempty" yaml:"url,omitempty"`
+	Row         int         `json:"row" yaml:"row"`
+	Column      int         `json:"column" yaml:"column"`
 	Constraints Constraints `json:"constraints,omitempty" yaml:"constraints,omitempty"`
 }
 
@@ -74,21 +75,27 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.Strin
 		return nil, fmt.Errorf("malformed function call, no \"arguments\": %v", map_)
 	}
 
-	if data, ok := map_["url"]; ok {
-		if functionCall.URL, ok = data.(string); !ok {
-			return nil, fmt.Errorf("malformed function call, \"url\" not a string: %T", data)
-		}
-	}
-
 	if data, ok := map_["path"]; ok {
 		if functionCall.Path, ok = data.(string); !ok {
 			return nil, fmt.Errorf("malformed function call, \"path\" not a string: %T", data)
 		}
 	}
 
-	if data, ok := map_["location"]; ok {
-		if functionCall.Location, ok = data.(string); !ok {
-			return nil, fmt.Errorf("malformed function call, \"location\" not a string: %T", data)
+	if data, ok := map_["url"]; ok {
+		if functionCall.URL, ok = data.(string); !ok {
+			return nil, fmt.Errorf("malformed function call, \"url\" not a string: %T", data)
+		}
+	}
+
+	if data, ok := map_["row"]; ok {
+		if functionCall.Row, ok = data.(int); !ok {
+			return nil, fmt.Errorf("malformed function call, \"row\" not an integer: %T", data)
+		}
+	}
+
+	if data, ok := map_["column"]; ok {
+		if functionCall.Column, ok = data.(int); !ok {
+			return nil, fmt.Errorf("malformed function call, \"column\" not an integer: %T", data)
 		}
 	}
 
