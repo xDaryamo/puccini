@@ -45,6 +45,12 @@ topology_template:
           on_success:
           - shutdown
           - backup
+          filter:
+          - or:
+            - assert:
+              - foo: [ { equals: true } ]
+            - assert:
+              - bar: [ { greater_than: 2 }, { less_than: 20 } ]
         shutdown:
           target: web
           # You can specify 0 or more activities for the step
