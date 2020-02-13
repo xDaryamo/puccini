@@ -10,13 +10,13 @@ topology_template:
   node_templates:
 
     cpd:
-      type: VduCpd
+      type: tosca:VduCpd
       requirements:
       - virtual_binding: firewall
       - virtual_binding: router
 
     firewall:
-      type: VDU.Compute
+      type: tosca:VDU.Compute
       properties:
         name: vfirewall
         description: Virtual Firewall
@@ -30,7 +30,7 @@ topology_template:
               virtual_mem_size: 8 GB
 
     router:
-      type: VDU.Compute
+      type: tosca:VDU.Compute
       properties:
         name: vrouter
         description: Virtual Router

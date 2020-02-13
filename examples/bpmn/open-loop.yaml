@@ -13,7 +13,7 @@ interface_types:
 node_types:
 
   MyVNF:
-    derived_from: WebApplication
+    derived_from: tosca:WebApplication
     interfaces:
       Backup:
         type: Backup
@@ -23,7 +23,7 @@ topology_template:
   node_templates:
 
     frontend:
-      type: LoadBalancer
+      type: tosca:LoadBalancer
       requirements:
       - application: vnf
 
@@ -36,18 +36,18 @@ topology_template:
             port: 8080
 
     agent:
-      type: WebApplication
+      type: tosca:WebApplication
 
     node_js:
-      type: WebServer
+      type: tosca:WebServer
 
     host1:
-      type: Compute
+      type: tosca:Compute
       attributes:
         public_address: 192.168.1.123
 
     host2:
-      type: Compute
+      type: tosca:Compute
       attributes:
         public_address: 192.168.1.124
 

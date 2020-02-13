@@ -5,7 +5,7 @@ node_types:
   # (You can also define interfaces in group and relationship types)
 
   Server:
-    derived_from: Compute
+    derived_from: tosca:Compute
     interfaces:
       Maintenance:
         type: Maintenance
@@ -47,7 +47,7 @@ data_types:
 interface_types:
 
   Maintenance:
-    derived_from: Root
+    derived_from: tosca:Root
     # You can define inputs for the interface as a whole as well as for individual operations
     inputs:
       mode:

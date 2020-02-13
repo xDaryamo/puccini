@@ -3,10 +3,10 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 policy_types:
 
   Backup:
-    derived_from: Root
+    derived_from: tosca:Root
     targets:
     # Targets can include both node types and group types
-    - Compute
+    - tosca:Compute
     - Redundants
     
   ContinuousBackup:
@@ -23,7 +23,7 @@ policy_types:
 group_types:
 
   Redundants:
-    derived_from: Root
+    derived_from: tosca:Root
     # Groups can have properties (and interfaces, too)
     properties:
       priority:
@@ -31,31 +31,31 @@ group_types:
           float
     members:
     # Members can only be node types (so, no nested groups)
-    - Compute
+    - tosca:Compute
 
 node_types:
 
   SuperCompute:
-    derived_from: Compute
+    derived_from: tosca:Compute
 
 topology_template:
 
   node_templates:
 
     server1:
-      type: Compute
+      type: tosca:Compute
 
     server2:
-      type: Compute
+      type: tosca:Compute
 
     server3:
-      type: Compute
+      type: tosca:Compute
 
     server4:
       type: SuperCompute
 
     storage:
-      type: ObjectStorage
+      type: tosca:ObjectStorage
       properties:
         name: My Storage
 

@@ -13,7 +13,7 @@ interface_types:
 node_types:
 
   MyDB:
-    derived_from: DBMS
+    derived_from: tosca:DBMS
     interfaces:
       Backup:
         type: Backup
@@ -23,13 +23,13 @@ topology_template:
   node_templates:
 
     web:
-      type: WebServer
+      type: tosca:WebServer
 
     db:
       type: MyDB
 
     server:
-      type: Compute
+      type: tosca:Compute
 
   workflows:
 

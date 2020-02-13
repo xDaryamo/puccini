@@ -6,16 +6,16 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 node_types:
 
   Ports:
-    derived_from: Root
+    derived_from: tosca:Root
     properties:
       user_port:
-        type: PortInfo
+        type: tosca:PortInfo
         required: false
       admin_port:
-        type: PortInfo
+        type: tosca:PortInfo
         required: false
       management_port:
-        type: PortInfo
+        type: tosca:PortInfo
         required: false
 
 topology_template:

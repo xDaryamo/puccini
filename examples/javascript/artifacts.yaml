@@ -14,10 +14,10 @@ topology_template:
   node_templates:
 
     host:
-      type: Compute
+      type: tosca:Compute
       artifacts:
         deploy:
-          type: Implementation.Bash
+          type: tosca:Implementation.Bash
           # Path is relative to this file's location, even if it's within a CSAR
           # (Note that extraction will even work from within a CSAR!
           # This works by unzipping the archive if it's a local CSAR, or by downloading

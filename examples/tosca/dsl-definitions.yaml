@@ -18,11 +18,11 @@ topology_template:
   node_templates:
 
     web:
-      type: WebServer
+      type: tosca:WebServer
       capabilities:
         # Here we'll use the anchor
         data_endpoint: *PORT
         admin_endpoint: *PORT
 
     host:
-      type: Compute
+      type: tosca:Compute

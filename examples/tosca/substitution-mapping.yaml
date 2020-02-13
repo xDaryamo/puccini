@@ -11,7 +11,7 @@ topology_template:
   node_templates:
 
     loadbalancer:
-      type: LoadBalancer
+      type: tosca:LoadBalancer
 
     # Both the WebServer and DBMS types derive from SoftwareComponent, meaning that they require a host
     # So normally this service template would fail to parse due to unsatisfied requirements
@@ -19,10 +19,10 @@ topology_template:
     # (They are expected to be satisfied by a client service template)
 
     admin:
-      type: WebServer
+      type: tosca:WebServer
 
     db:
-      type: DBMS
+      type: tosca:DBMS
 
   # Allow this entire service to be used as a single node
   substitution_mappings:

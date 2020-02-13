@@ -18,7 +18,7 @@ repositories:
 artifact_types:
 
   QCOW:
-    derived_from: Deployment.Image.VM
+    derived_from: tosca:Deployment.Image.VM
     properties:
       os:
         type: string
@@ -30,7 +30,7 @@ artifact_types:
 node_types:
 
   Orchestrator:
-    derived_from: Compute
+    derived_from: tosca:Compute
     # When you attach an artifact to a node type it is *not* automatically attached to node templates
     # It's just a way to provide default values
     artifacts:

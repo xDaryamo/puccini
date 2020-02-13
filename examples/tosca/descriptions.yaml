@@ -9,7 +9,7 @@ description: >-
 node_types:
 
   Server:
-    derived_from: Compute
+    derived_from: tosca:Compute
     # It's good practice to use YAML's ">-" for multiline strings
     # (It will collapse paragraphs into lines and remove the final trailing newline)
     description: >-

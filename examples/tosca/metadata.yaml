@@ -20,7 +20,7 @@ metadata:
 node_types:
 
   Server:
-    derived_from: Compute
+    derived_from: tosca:Compute
     # You can also add metadata to any type
     # Note that it is not normally inherited: every distinct type has its own metadata
     # However, every node template in Clout will get a map of its entire type hierarchy with the

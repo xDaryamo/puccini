@@ -20,7 +20,7 @@ topology_template:
     # This single Compute will satisfy *both* "admin_host" and "db_hosts" requirements in loadbalancer
     # (It's allowed because the "occurrences" for our "host" capability is the default [0, UNBOUNDED])
     server:
-      type: Compute
+      type: tosca:Compute
 
 # So, you might be wondering how our loadbalancer node will be "substituted"
 # by the complete service modeled in substitution-mapping.yaml

@@ -4,7 +4,7 @@ node_types:
 
   # We're going to allow this single node to be substituted by an entire service 
   SuperLoadBalancer:
-    derived_from: LoadBalancer
+    derived_from: tosca:LoadBalancer
     properties:
       version:
         type: version
@@ -17,10 +17,10 @@ node_types:
     requirements:
     # We require hosts for our internal components 
     - admin_host:
-        capability: Compute
-        node: Compute
-        relationship: HostedOn
+        capability: tosca:Compute
+        node: tosca:Compute
+        relationship: tosca:HostedOn
     - db_host:
-        capability: Compute
-        node: Compute
-        relationship: HostedOn
+        capability: tosca:Compute
+        node: tosca:Compute
+        relationship: tosca:HostedOn

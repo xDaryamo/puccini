@@ -14,7 +14,7 @@ topology_template:
   node_templates:
 
     frontend:
-      type: LoadBalancer
+      type: tosca:LoadBalancer
       capabilities:
         client:
           properties:
@@ -23,7 +23,7 @@ topology_template:
       - application: application
 
     application:
-      type: WebApplication
+      type: tosca:WebApplication
       capabilities:
         app_endpoint:
           properties:
@@ -31,7 +31,7 @@ topology_template:
             port: 8080
 
     node_js:
-      type: WebServer
+      type: tosca:WebServer
       capabilities:
         admin_endpoint:
           properties:
@@ -42,7 +42,7 @@ topology_template:
             port: 9000
 
     host:
-      type: Compute
+      type: tosca:Compute
       capabilities:
         endpoint:
           properties:

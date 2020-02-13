@@ -3,7 +3,7 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 node_types:
 
   Application:
-    derived_from: WebServer
+    derived_from: tosca:WebServer
     properties:
       url:
         type: string
@@ -13,7 +13,7 @@ topology_template:
   node_templates:
 
     server:
-      type: Compute
+      type: tosca:Compute
       attributes:
         public_address: myapp.com
       requirements:
@@ -34,10 +34,10 @@ topology_template:
         url: { get_attribute: [ HOST, public_address ] }
       requirements:
       - host:
-          relationship: HostedOn
+          relationship: tosca:HostedOn
 
     storage:
-      type: BlockStorage
+      type: tosca:BlockStorage
       properties:
         name: storage
         volume_id: bucket
