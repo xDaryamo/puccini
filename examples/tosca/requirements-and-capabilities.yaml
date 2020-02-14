@@ -40,7 +40,7 @@ node_types:
       emergency:
         type: SuperSocket
         # The long notation lets us specify "occurrences", which is how many times the capability *must* be required
-        # This applies to the resolution phase and doest *not* have a grammatical (parsing) effect
+        # This applies to the resolution phase and does *not* have a grammatical (parsing) effect
         # (It's thus *very* different from "occurrences" in requirements)
         # The default is [ 0, UNBOUNDED ]
         occurrences: [ 2, 4 ]
@@ -209,7 +209,7 @@ topology_template:
             properties:
               vendor: PowerEmperor
               failsafe: false
-      # Because the "occurrences" for this requirement is [ 2, 4 ] we must assign it at least twice
+      # Because "occurrences" for this requirement is [ 2, 4 ] we must assign it *at least* twice
       - socket:
           relationship:
             properties:
@@ -239,6 +239,12 @@ topology_template:
 
   relationship_templates:
 
+    # "Relationship templates" are nothing like "node templates"!
+    # They do *not* model the deployment topology
+    # Instead, they are used as a set of "pre-filled" values for a relationship assignments 
+    # (See usage in "light12" above)
+    # You can achieve *exactly* the same result by deriving a relationship type and providing
+    # "default" values to properties, attributes, and interface inputs 
     smart_plug:
       type: SmartPlug
       properties:

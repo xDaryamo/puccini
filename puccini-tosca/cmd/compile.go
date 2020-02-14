@@ -2,15 +2,19 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	clout_ "github.com/tliron/puccini/clout"
+	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/common"
 	format_ "github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/compiler"
+	url_ "github.com/tliron/puccini/url"
 )
 
 var output string
 var resolve bool
 var coerce bool
+var exec string
 
 func init() {
 	rootCmd.AddCommand(compileCmd)
@@ -19,6 +23,7 @@ func init() {
 	compileCmd.Flags().StringVarP(&output, "output", "o", "", "output Clout to file (default is stdout)")
 	compileCmd.Flags().BoolVarP(&resolve, "resolve", "r", true, "resolves the topology (attempts to satisfy all requirements with capabilities)")
 	compileCmd.Flags().BoolVarP(&coerce, "coerce", "c", false, "coerces all values (calls functions and applies constraints)")
+	compileCmd.Flags().StringVarP(&exec, "exec", "e", "", "execute JavaScript scriptlet")
 }
 
 var compileCmd = &cobra.Command{
@@ -57,8 +62,46 @@ func Compile(url string) {
 		FailOnProblems(problems)
 	}
 
-	if !terminal.Quiet || (output != "") {
+	if exec != "" {
+		err = Exec(exec, clout)
+		common.FailOnError(err)
+	} else if !terminal.Quiet || (output != "") {
 		err = format_.WriteOrPrint(clout, format, terminal.Stdout, pretty, output)
 		common.FailOnError(err)
 	}
+}
+
+func Exec(scriptletName string, clout *clout_.Clout) error {
+	clout, err := clout.Normalize()
+	if err != nil {
+		return err
+	}
+
+	// Try loading JavaScript from Clout
+	scriptlet, err := js.GetScriptlet(scriptletName, clout)
+
+	if err != nil {
+		// Try loading JavaScript from path or URL
+		url, err := url_.NewValidURL(scriptletName, nil)
+		common.FailOnError(err)
+
+		scriptlet, err = url_.Read(url)
+		common.FailOnError(err)
+
+		err = js.SetScriptlet(exec, js.CleanupScriptlet(scriptlet), clout)
+		common.FailOnError(err)
+	}
+
+	jsContext := js.NewContext(scriptletName, log, terminal.Quiet, format, pretty, output)
+
+	program, err := jsContext.GetProgram(scriptletName, scriptlet)
+	if err != nil {
+		return err
+	}
+
+	runtime := jsContext.NewCloutRuntime(clout, nil)
+
+	_, err = runtime.RunProgram(program)
+
+	return js.UnwrapException(err)
 }

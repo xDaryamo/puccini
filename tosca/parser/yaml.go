@@ -39,7 +39,7 @@ func (self *YAMLError) Problem() (string, string, int, int) {
 		if colon := strings.Index(suffix, ": "); colon != -1 {
 			line := suffix[:colon]
 			if row, err := strconv.Atoi(line); err == nil {
-				return fmt.Sprintf("malformed YAML, %s", suffix[colon+2:]), "", row - 1, 0
+				return fmt.Sprintf("malformed YAML, %s", suffix[colon+2:]), "", row, 0
 			}
 		}
 	}

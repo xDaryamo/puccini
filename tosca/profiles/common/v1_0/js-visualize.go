@@ -218,12 +218,12 @@ var template = '\
 <head>\n\
 	<title>Clout from TOSCA Service Template</title>\n\
 	<meta charset="utf-8"/>\n\
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/%s/jquery.min.js"></script>\n\
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/%s/jquery-ui.min.js"></script>\n\
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/%s/jquery.min.js" type="text/javascript"></script>\n\
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/%s/jquery-ui.min.js" type="text/javascript"></script>\n\
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/%s/jquery-ui.min.css" rel="stylesheet" type="text/css" />\n\
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-layout/%s/jquery.layout.min.js"></script>\n\
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-layout/%s/jquery.layout.min.js" type="text/javascript"></script>\n\
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-layout/%s/layout-default.min.css" rel="stylesheet" type="text/css" />\n\
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/%s/vis.min.js"></script>\n\
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/%s/vis.min.js" type="text/javascript"></script>\n\
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/vis/%s/vis.min.css" rel="stylesheet" type="text/css" />\n\
 	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />\n\
 	<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet" />\n\
@@ -259,8 +259,9 @@ var template = '\
 	<script type="text/javascript">\n\
 $(document).ready(function () {\n\
 	$(\'body\').layout({\n\
-		applyDefaultStyles: true,\n\
+		north__resizable: false,\n\
 		east__size: \'25%%\',\n\
+		livePaneResizing: true\n\
 	});\n\
 	var nodes = new vis.DataSet(%s);\n\
 	var edges = new vis.DataSet(%s);\n\

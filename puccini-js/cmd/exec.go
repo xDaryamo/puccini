@@ -6,7 +6,7 @@ import (
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/common/terminal"
-	"github.com/tliron/puccini/url"
+	url_ "github.com/tliron/puccini/url"
 )
 
 func init() {
@@ -35,10 +35,10 @@ var execCmd = &cobra.Command{
 
 		if err != nil {
 			// Try loading JavaScript from path or URL
-			url_, err := url.NewValidURL(scriptletName, nil)
+			url, err := url_.NewValidURL(scriptletName, nil)
 			common.FailOnError(err)
 
-			scriptlet, err = url.Read(url_)
+			scriptlet, err = url_.Read(url)
 			common.FailOnError(err)
 
 			err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout_)

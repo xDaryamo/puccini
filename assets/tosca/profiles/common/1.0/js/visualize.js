@@ -253,8 +253,9 @@ var template = '\
 	<script type="text/javascript">\n\
 $(document).ready(function () {\n\
 	$(\'body\').layout({\n\
-		applyDefaultStyles: true,\n\
+		north__resizable: false,\n\
 		east__size: \'25%%\',\n\
+		livePaneResizing: true\n\
 	});\n\
 	var nodes = new vis.DataSet(%s);\n\
 	var edges = new vis.DataSet(%s);\n\

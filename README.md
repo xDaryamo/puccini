@@ -13,7 +13,7 @@ embedded in toolchains, orchestration, and development environments. They are co
 [Go](https://golang.org/) and are very portable, even runnable on
 [WebAssembly](https://webassembly.org/).
 
-Check out this [live demo of Puccini running in a browser](https://tliron.github.io/puccini-web/)!
+Check out this [live demo of Puccini running in a browser](https://web.puccini.cloud/)!
 
 Puccini is also available as self-contained shared C libraries that can be called directly from many
 other languages. See wrappers for [Java](wrappers/java/), [Python](wrappers/python/), and
@@ -63,13 +63,12 @@ TOSCA-compliant product.
 Puccini allows for the inclusion of JavaScript scriptlets in its Clout output (in the metadata
 section), as an option for self-contained orchestration integration. How do TOSCA, Clout,
 JavaScript, and cloud infrastructures all fit together in Puccini? Consider this: with a single
-command line you can take a TOSCA service template, compile it with **puccini-tosca**, pipe the
-Clout through the **puccini-js** processor, which will run JavaScript to generate Kubernetes
-specifications, then pipe those to
+command line you can take a TOSCA service template, compile it with **puccini-tosca**, execute
+JavaScript to generate Kubernetes specifications, then pipe those to
 [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/), which will upload the
 specifications to a running Kubernetes cluster in order to be scheduled. Like so:
 
-     puccini-tosca compile my-app.yaml | puccini-js exec kubernetes.generate | kubectl apply -f -
+     puccini-tosca compile my-app.yaml --exec=kubernetes.generate | kubectl apply -f -
 
 Et voilà, your abstract architectural design became a running deployment.
 
@@ -109,7 +108,7 @@ before final resolution. Resolution is handled via the embedded **tosca.resolve*
 
 You can graphically visualize the compiled TOSCA in a dynamic web page. A one-line example:
 
-    puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml | puccini-js exec assets/tosca/profiles/common/1.0/js/visualize.js > /tmp/puccini.html && xdg-open /tmp/puccini.html
+    puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml --exec=assets/tosca/profiles/common/1.0/js/visualize.js > /tmp/puccini.html && xdg-open /tmp/puccini.html
 
 The visualization scriptlet is not embedded by default into the Clout, but can be manually added via
 `puccini-js put` (see below) for added portability.
@@ -133,6 +132,12 @@ Kubernetes to handle custom application needs, such as adding sidecars, routers,
 Indeed, Istio support is implemented as a plugin. You can also use **puccini-js** to add plugins to
 the Clout file, either storing them permanently or piping through to add and execute them
 on-the-fly.
+
+For convenience, execution functionality is included in **puccini-tosca** via the `--exec` switch.
+These two commands are equivalent:
+
+    puccini-tosca compile template.yaml | puccini-js exec my.scriptlet
+    puccini-tosca compile template.yaml --exec=my.scriptlet
 
 ### TOSCA Functions and Constraints
 
