@@ -136,8 +136,8 @@ on-the-fly.
 For convenience, execution functionality is included in **puccini-tosca** via the `--exec` switch.
 These two commands are equivalent:
 
-    puccini-tosca compile template.yaml | puccini-js exec my.scriptlet
-    puccini-tosca compile template.yaml --exec=my.scriptlet
+    puccini-tosca compile my-app.yaml | puccini-js exec my.scriptlet
+    puccini-tosca compile my-app.yaml --exec=my.scriptlet
 
 ### TOSCA Functions and Constraints
 
@@ -309,13 +309,8 @@ encourages good programming practices and reduces the chance for bugs.
 
 ### Why JavaScript?
 
-The decision to use an embedded interpreted programming language is intentional and important.
-Unlike some Kubernetes tools ([Helm](https://helm.sh/)), we do not treat YAML files as plain text
-to be manipulated by an anemic text templating language, where just working around YAML's strict
-indentation requirements becomes a cumbersome nightmare.
-
-JavaScript lets you manipulate data structures directly using a full-blown, conventional language.
-It's probably
+JavaScript lets you manipulate the Clout data structures directly using a full-blown, conventional
+language. It's probably
 [not anyone's favorite language](https://archive.org/details/wat_destroyallsoftware), but it's
 familiar, mature, standardized (as [ECMAScript](https://en.wikipedia.org/wiki/ECMAScript)), and does
 the job. From a certain angle it's essentially the Scheme language (because it has powerful closures
@@ -327,7 +322,19 @@ then be interpreted and run almost anywhere.
 Our chosen ECMAScript engine is [goja](https://github.com/dop251/goja), which is 100% Go and does
 not require any external dependencies.
 
-### Can I use simple text templating instead of TOSCA functions and JavaScript?
+### Is there an alternative to JavaScript if I just need to extract data from the Clout?
+
+If the built-in JavaScript support is insufficient or unwanted, you can write your own custom YAML
+processor in Python, Ruby, etc., to do exactly what you need, e.g.:
+
+    puccini-tosca compile my-app.yaml | python myprocessor.py
+
+Also check out [yq](https://mikefarah.gitbook.io/yq/), a great little tool for extracting YAML and
+even performing simple manipulations. Example:
+
+    puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml | yq r - 'vertexes.(properties.name==light12)'
+
+### Can I use simple text templating instead of TOSCA functions and YAML processing?
 
 Nothing is stopping you. You can pipe the input and output to and from the text translator of your
 choice at any point in the toolchain. Here's an example using
@@ -335,15 +342,19 @@ choice at any point in the toolchain. Here's an example using
 
     puccini-tosca compile my-app.yaml | gomplate | puccini-js exec kubernetes.generate
 
-Your TOSCA can then include template expressions, such as:
+Your TOSCA `my-app.yaml` can then include template expressions, such as:
 
 	username: "{{strings.ReplaceAll "\"" "\\\"" .Env.USER}}"
 
-Note the proper escaping of quotation marks to avoid invalid YAML. Also remember that indentation
+Note the proper escaping of quotation marks to avoid invalid YAML. Also, remember that indentation
 in YAML is significant, so it can be tricky to insert blocks into arbitrary locations. Generally,
-using text templating to generate YAML is not a great idea for these reasons. You're better off
-using a proper YAML manipulation tool, such as [yq](https://github.com/mikefarah/yq), or
-parsing/editing/emitting it with a scripting language like Python.
+using text templating to manipulate YAML is not a great idea for these reasons.
+
+Puccini's decision to use an embedded interpreted programming language (JavaScript) is intentional
+and important. Unlike some Kubernetes tools ([Helm](https://helm.sh/)), we prefer not treat YAML
+files as plain text to be manipulated by an anemic text templating language. Perhaps in the future
+someone will create a templating language specifically for YAML that is designed to work with its
+special requirements. 
 
 If you insist on text templating, a useful convention for your toolchain could be to add a file
 extension to mark a file for template processing. For example, `.yaml.j2` could be recognized as

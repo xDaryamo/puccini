@@ -165,19 +165,21 @@ func (self *RequirementAssignments) Render(definitions RequirementDefinitions, c
 				}
 
 				if assignment.Relationship.RelationshipTemplateNameOrTypeName == nil {
+					// Note: the definition can only specify a relationship type, not a relationship template
 					assignment.Relationship.RelationshipTemplateNameOrTypeName = definition.RelationshipDefinition.RelationshipTypeName
 				}
 
-				if assignment.Relationship.RelationshipType == nil {
+				if (assignment.Relationship.RelationshipType == nil) && (assignment.Relationship.RelationshipTemplate == nil) {
+					// Note: we are careful not set the relationship type if the assignment uses a relationship template
 					assignment.Relationship.RelationshipType = definition.RelationshipDefinition.RelationshipType
 				}
+			}
 
+			if assignment.Relationship != nil {
 				assignment.Relationship.Render(definition.RelationshipDefinition)
 			}
 		} else {
 			assignment.Context.ReportUndeclared("requirement")
-			// TODO: move to outside of loop?
-			//*self = append((*self)[:index], (*self)[index+1:]...)
 		}
 	}
 }

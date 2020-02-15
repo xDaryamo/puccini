@@ -50,6 +50,7 @@ func (self *RelationshipTemplate) Render() {
 	log.Infof("{render} relationship template: %s", self.Name)
 
 	// TODO: copy
+
 	if self.RelationshipType == nil {
 		return
 	}

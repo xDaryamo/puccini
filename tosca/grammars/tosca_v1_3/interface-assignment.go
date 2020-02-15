@@ -62,10 +62,11 @@ func (self *InterfaceAssignment) GetDefinitionForGroup(group *Group) (*Interface
 }
 
 func (self *InterfaceAssignment) GetDefinitionForRelationship(relationship *RelationshipAssignment) (*InterfaceDefinition, bool) {
-	if relationship.RelationshipType == nil {
+	relationshipType := relationship.GetType()
+	if relationshipType == nil {
 		return nil, false
 	}
-	definition, ok := relationship.RelationshipType.InterfaceDefinitions[self.Name]
+	definition, ok := relationshipType.InterfaceDefinitions[self.Name]
 	return definition, ok
 }
 

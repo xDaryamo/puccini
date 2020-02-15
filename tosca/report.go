@@ -200,7 +200,7 @@ func (self *Context) ReportUnsupportedType() bool {
 }
 
 func (self *Context) ReportIncompatibleType(typeName string, parentTypeName string) bool {
-	return self.ReportPathf(1, "type \"%s\" is incompatible with parent type \"%s\"", terminal.ColorTypeName(typeName), terminal.ColorTypeName(parentTypeName))
+	return self.ReportPathf(1, "type \"%s\" must be derived from type \"%s\"", terminal.ColorTypeName(typeName), terminal.ColorTypeName(parentTypeName))
 }
 
 func (self *Context) ReportIncompatible(name string, typeName string, kind string) bool {

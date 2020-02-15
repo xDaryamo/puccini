@@ -50,27 +50,49 @@ func ReadRelationshipAssignment(context *tosca.Context) interface{} {
 	return self
 }
 
-func (self *RelationshipAssignment) Render(definition *RelationshipDefinition) {
-	// TODO: could be relationship template
+func (self *RelationshipAssignment) GetType() *RelationshipType {
+	if self.RelationshipTemplate != nil {
+		return self.RelationshipTemplate.RelationshipType
+	} else if self.RelationshipType != nil {
+		return self.RelationshipType
+	} else {
+		return nil
+	}
+}
 
-	// We will consider the "interfaces" at the definition to take priority over those at the type
-	self.Interfaces.Render(definition.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
+func (self *RelationshipAssignment) Render(definition *RelationshipDefinition) {
+	if definition != nil {
+		// We will consider the "interfaces" at the definition to take priority over those at the type
+		self.Interfaces.Render(definition.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
+
+		// Validate type compatibility
+		relationshipType := self.GetType()
+		if (relationshipType != nil) && (definition.RelationshipType != nil) && !self.Context.Hierarchy.IsCompatible(definition.RelationshipType, relationshipType) {
+			self.Context.ReportIncompatibleType(relationshipType.Name, definition.RelationshipType.Name)
+			return
+		}
+	}
 
 	if self.RelationshipType != nil {
 		self.Properties.RenderProperties(self.RelationshipType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
 		self.Attributes.RenderAttributes(self.RelationshipType.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
 		self.Interfaces.Render(self.RelationshipType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
+	} else if self.RelationshipTemplate != nil {
+		self.Properties = self.RelationshipTemplate.Properties
+		self.Attributes = self.RelationshipTemplate.Attributes
+		self.Interfaces = self.RelationshipTemplate.Interfaces
 	}
 }
 
 func (self *RelationshipAssignment) Normalize(r *normal.Relationship) {
+	relationshipType := self.GetType()
 	if (self.RelationshipTemplate != nil) && (self.RelationshipTemplate.Description != nil) {
 		r.Description = *self.RelationshipTemplate.Description
-	} else if (self.RelationshipType != nil) && (self.RelationshipType.Description != nil) {
-		r.Description = *self.RelationshipType.Description
+	} else if (relationshipType != nil) && (relationshipType.Description != nil) {
+		r.Description = *relationshipType.Description
 	}
 
-	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.RelationshipType); ok {
+	if types, ok := normal.GetTypes(self.Context.Hierarchy, relationshipType); ok {
 		r.Types = types
 	}
 
