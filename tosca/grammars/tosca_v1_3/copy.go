@@ -13,13 +13,8 @@ func CopyTemplate(context *tosca.Context) {
 				if context.Parent != nil {
 					templates_ := context.Parent.Data
 					if templates, ok := templates_.(ard.Map); ok {
-						getCopyData := func(name string) (interface{}, bool) {
-							template, ok := templates[name]
-							return template, ok
-						}
-
-						if copyFromTemplate, ok := getCopyData(copyFromName); ok {
-							if copied, ok := CopyAndMerge(copyFromTemplate, context.Data, nil, getCopyData); ok {
+						if copyFromTemplate, ok := templates[copyFromName]; ok {
+							if copied, ok := CopyAndMerge(copyFromTemplate, context.Data, nil, templates); ok {
 								context.Data = copied
 							} else {
 								context.FieldChild("copy", copyFromName).ReportCopyLoop(copyFromName)
@@ -32,9 +27,7 @@ func CopyTemplate(context *tosca.Context) {
 	}
 }
 
-type GetCopyDataFunc = func(string) (interface{}, bool)
-
-func CopyAndMerge(target interface{}, source interface{}, copiedNames []string, getCopyData GetCopyDataFunc) (interface{}, bool) {
+func CopyAndMerge(target interface{}, source interface{}, copiedNames []string, targets ard.Map) (interface{}, bool) {
 	target = ard.Copy(target)
 
 	if targetMap, ok := target.(ard.Map); ok {
@@ -47,9 +40,9 @@ func CopyAndMerge(target interface{}, source interface{}, copiedNames []string, 
 					}
 				}
 
-				if targetCopyFromData, ok := getCopyData(targetCopyFromName); ok {
+				if targetCopyFromData, ok := targets[targetCopyFromName]; ok {
 					copiedNames = append(copiedNames, targetCopyFromName)
-					if target, ok = CopyAndMerge(targetCopyFromData, target, copiedNames, getCopyData); ok {
+					if target, ok = CopyAndMerge(targetCopyFromData, target, copiedNames, targets); ok {
 						if targetMap_, ok := target.(ard.Map); ok {
 							targetMap = targetMap_
 						}
@@ -61,7 +54,7 @@ func CopyAndMerge(target interface{}, source interface{}, copiedNames []string, 
 		}
 
 		if sourceMap, ok := source.(ard.Map); ok {
-			ard.MergeMaps(targetMap, sourceMap)
+			ard.MergeMaps(targetMap, sourceMap, false)
 		}
 	}
 
