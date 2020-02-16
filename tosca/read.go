@@ -14,6 +14,10 @@ type Reader = func(*Context) interface{}
 
 type Readers map[string]Reader
 
+type PreReadable interface {
+	PreRead()
+}
+
 const (
 	ReadFieldModeDefault       = 0
 	ReadFieldModeList          = 1
@@ -23,6 +27,10 @@ const (
 
 // From "read" tags
 func (self *Context) ReadFields(entityPtr interface{}) []string {
+	if preReadable, ok := entityPtr.(PreReadable); ok {
+		preReadable.PreRead()
+	}
+
 	if !self.ValidateType("map") {
 		return nil
 	}

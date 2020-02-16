@@ -15,6 +15,7 @@ import (
 func TestParse(t *testing.T) {
 	testCompile(t, "tosca/artifacts.yaml", nil)
 	testCompile(t, "tosca/attributes.yaml", nil)
+	testCompile(t, "tosca/copy.yaml", nil)
 	testCompile(t, "tosca/data-types.yaml", nil)
 	testCompile(t, "tosca/descriptions.yaml", nil)
 	testCompile(t, "tosca/dsl-definitions.yaml", nil)

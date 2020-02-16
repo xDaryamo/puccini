@@ -98,6 +98,18 @@ func (self *InterfaceAssignment) Normalize(i *normal.Interface, definition *Inte
 
 type InterfaceAssignments map[string]*InterfaceAssignment
 
+func (self InterfaceAssignments) CopyUnassigned(assignments InterfaceAssignments) {
+	for key, assignment := range assignments {
+		if selfAssignment, ok := self[key]; ok {
+			selfAssignment.Inputs.CopyUnassigned(assignment.Inputs)
+			selfAssignment.Operations.CopyUnassigned(assignment.Operations)
+			selfAssignment.Notifications.CopyUnassigned(assignment.Notifications)
+		} else {
+			self[key] = assignment
+		}
+	}
+}
+
 func (self InterfaceAssignments) Render(definitions InterfaceDefinitions, context *tosca.Context) {
 	for key, definition := range definitions {
 		assignment, ok := self[key]

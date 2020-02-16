@@ -142,3 +142,30 @@ func StringMapPutNested(map_ StringMap, key string, value string) error {
 
 	return nil
 }
+
+func MergeMaps(target Map, source Map) {
+	for key, sourceValue := range source {
+		if targetValue, ok := target[key]; ok {
+			switch sourceValue_ := sourceValue.(type) {
+			case Map:
+				if targetValueMap, ok := targetValue.(Map); ok {
+					MergeMaps(targetValueMap, sourceValue_)
+				} else {
+					target[key] = Copy(sourceValue_)
+				}
+
+			case List:
+				if targetValueList, ok := targetValue.(List); ok {
+					target[key] = append(targetValueList, sourceValue_...)
+				} else {
+					target[key] = Copy(sourceValue_)
+				}
+
+			default:
+				target[key] = Copy(sourceValue_)
+			}
+		} else {
+			target[key] = Copy(sourceValue)
+		}
+	}
+}

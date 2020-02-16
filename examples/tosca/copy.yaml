@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+# "copy" is a convience feature that works like a YAML copy-and-paste
+# It is available for both node templates and relationship templates
+# The YAML is copied from the source to the target *before* applying the changes
+# This can happen recursively,
+# Though Puccini does make sure to report a problem if you are copying in a loop 
+
+node_types:
+
+  Machine:
+    properties:
+      cpu:
+        type: string
+
+topology_template:
+
+  node_templates:
+
+    server1:
+      type: Machine
+      properties:
+        cpu: x86
+
+    server2:
+      copy: server1
+
+    client:
+      copy: server2
+      properties:
+        cpu: arm

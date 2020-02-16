@@ -319,6 +319,14 @@ func (self *Value) Normalize() normal.Constrainable {
 
 type Values map[string]*Value
 
+func (self Values) CopyUnassigned(values Values) {
+	for key, value := range values {
+		if _, ok := self[key]; !ok {
+			self[key] = value
+		}
+	}
+}
+
 func (self Values) RenderMissingValue(definition *AttributeDefinition, kind string, required bool, context *tosca.Context) {
 	if definition.Default != nil {
 		self[definition.Name] = definition.Default

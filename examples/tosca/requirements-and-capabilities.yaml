@@ -195,7 +195,6 @@ topology_template:
               vendor: Smart Appliances Industries
 
     # Yet another option is to use a relationship template (see below) instead of a type
-    # (A confusing and unnecessary feature)
     light12:
       type: LightBulb
       requirements:
@@ -244,12 +243,12 @@ topology_template:
 
   relationship_templates:
 
-    # "Relationship templates" are nothing like "node templates"!
-    # They do *not* model the deployment topology
-    # Instead, they are used as a set of "pre-filled" values for a relationship assignments 
-    # (See usage in "light12" above)
-    # You can achieve *exactly* the same result by deriving a relationship type and providing
-    # "default" values to properties, attributes, and interface inputs 
+    # Relationship templates are not like node templates!
+    # They do *not* model the topology
+    # Instead, they are used as a set of "pre-filled" values for relationship assignments
+    # (See usage in node template "light12" above)
+    # You can achieve a similar result by deriving a relationship type and providing
+    # "default" values to properties, attributes, and interface inputs/outputs
     smart_plug:
       type: SuperSmartPlug
       properties:

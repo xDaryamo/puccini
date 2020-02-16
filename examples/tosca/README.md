@@ -12,6 +12,7 @@ Syntax
 ------
 
 * [Namespaces](namespaces.yaml)
+* [Copy](copy.yaml)
 * [DSL Definitions](dsl-definitions.yaml)
 * [Unicode](unicode.yaml)
 
@@ -57,4 +58,3 @@ NFV
 ---
 
 * [Simple for NFV](simple-for-nfv.yaml)
-

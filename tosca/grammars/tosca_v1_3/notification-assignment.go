@@ -72,6 +72,16 @@ func (self *NotificationAssignment) Normalize(i *normal.Interface) *normal.Notif
 
 type NotificationAssignments map[string]*NotificationAssignment
 
+func (self NotificationAssignments) CopyUnassigned(assignments NotificationAssignments) {
+	for key, assignment := range assignments {
+		if selfAssignment, ok := self[key]; ok {
+			selfAssignment.Outputs.CopyUnassigned(assignment.Outputs)
+		} else {
+			self[key] = assignment
+		}
+	}
+}
+
 func (self NotificationAssignments) Render(definitions NotificationDefinitions, context *tosca.Context) {
 	for key, definition := range definitions {
 		assignment, ok := self[key]

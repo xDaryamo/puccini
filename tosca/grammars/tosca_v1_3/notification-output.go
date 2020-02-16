@@ -49,6 +49,14 @@ func (self *NotificationOutput) GetKey() string {
 
 type NotificationOutputs map[string]*NotificationOutput
 
+func (self NotificationOutputs) CopyUnassigned(outputs NotificationOutputs) {
+	for key, output := range outputs {
+		if _, ok := self[key]; !ok {
+			self[key] = output
+		}
+	}
+}
+
 func (self NotificationOutputs) Inherit(parent NotificationOutputs) {
 	for name, notificationOutput := range parent {
 		if _, ok := self[name]; !ok {

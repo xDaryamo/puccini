@@ -76,6 +76,22 @@ func (self *OperationAssignment) Normalize(i *normal.Interface) *normal.Operatio
 
 type OperationAssignments map[string]*OperationAssignment
 
+func (self OperationAssignments) CopyUnassigned(assignments OperationAssignments) {
+	for key, assignment := range assignments {
+		if selfAssignment, ok := self[key]; ok {
+			selfAssignment.Inputs.CopyUnassigned(assignment.Inputs)
+			if selfAssignment.Description == nil {
+				selfAssignment.Description = assignment.Description
+			}
+			if selfAssignment.Implementation == nil {
+				selfAssignment.Implementation = assignment.Implementation
+			}
+		} else {
+			self[key] = assignment
+		}
+	}
+}
+
 func (self OperationAssignments) Render(definitions OperationDefinitions, context *tosca.Context) {
 	for key, definition := range definitions {
 		assignment, ok := self[key]

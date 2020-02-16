@@ -53,6 +53,11 @@ func ReadNodeTemplate(context *tosca.Context) interface{} {
 	return self
 }
 
+// tosca.PreReadable interface
+func (self *NodeTemplate) PreRead() {
+	CopyTemplate(self.Context)
+}
+
 func (self *NodeTemplate) GetCapabilitiesOfType(capabilityType *CapabilityType) []*CapabilityAssignment {
 	var capabilities []*CapabilityAssignment
 	for _, capability := range self.Capabilities {
@@ -86,8 +91,6 @@ func (self *NodeTemplate) GetCapabilityByName(capabilityName string, capabilityT
 // tosca.Renderable interface
 func (self *NodeTemplate) Render() {
 	log.Infof("{render} node template: %s", self.Name)
-
-	// TODO: copy
 
 	if self.NodeType == nil {
 		return

@@ -78,9 +78,9 @@ func (self *RelationshipAssignment) Render(definition *RelationshipDefinition) {
 		self.Attributes.RenderAttributes(self.RelationshipType.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
 		self.Interfaces.Render(self.RelationshipType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
 	} else if self.RelationshipTemplate != nil {
-		self.Properties = self.RelationshipTemplate.Properties
-		self.Attributes = self.RelationshipTemplate.Attributes
-		self.Interfaces = self.RelationshipTemplate.Interfaces
+		self.Properties.CopyUnassigned(self.RelationshipTemplate.Properties)
+		self.Attributes.CopyUnassigned(self.RelationshipTemplate.Attributes)
+		self.Interfaces.CopyUnassigned(self.RelationshipTemplate.Interfaces)
 	}
 }
 

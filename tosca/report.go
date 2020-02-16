@@ -214,3 +214,7 @@ func (self *Context) ReportIncompatibleExtension(extension string, requiredExten
 func (self *Context) ReportNotInRange(name string, value uint64, lower uint64, upper uint64) bool {
 	return self.ReportPathf(1, "%s is %d, must be >= %d and <= %d", name, value, lower, upper)
 }
+
+func (self *Context) ReportCopyLoop(name string) bool {
+	return self.ReportPathf(1, "endless loop caused by copying \"%s\"", terminal.ColorValue(name))
+}
