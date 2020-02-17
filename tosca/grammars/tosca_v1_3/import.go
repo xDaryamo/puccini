@@ -84,11 +84,13 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 		return nil, false
 	}
 
-	importSpec := &tosca.ImportSpec{url_, newImportNameTransformer(self.NamespacePrefix), false}
+	appendShortcutNames := !self.Context.HasQuirk("namespace.normative.shortcuts.disable")
+
+	importSpec := &tosca.ImportSpec{url_, newImportNameTransformer(self.NamespacePrefix, appendShortcutNames), false}
 	return importSpec, true
 }
 
-func newImportNameTransformer(prefix *string) tosca.NameTransformer {
+func newImportNameTransformer(prefix *string, appendShortCutnames bool) tosca.NameTransformer {
 	return func(name string, entityPtr interface{}) []string {
 		var names []string
 
@@ -96,7 +98,7 @@ func newImportNameTransformer(prefix *string) tosca.NameTransformer {
 			if normative, ok := metadata["normative"]; ok {
 				if normative == "true" {
 					// Reserved "tosca." names also get shorthand and prefixed names
-					names = appendShorthandNames(names, name, "tosca")
+					names = appendNormativeNames(names, name, "tosca", appendShortCutnames)
 				}
 			}
 		}
@@ -113,25 +115,33 @@ func newImportNameTransformer(prefix *string) tosca.NameTransformer {
 	}
 }
 
-func appendShorthandNames(names []string, name string, prefix string) []string {
+func appendNormativeNames(names []string, name string, prefix string, appendShortcut bool) []string {
 	if !strings.HasPrefix(name, prefix+".") {
 		return names
 	}
 
 	s := strings.Split(name, ".")
 
-	// The shorthand starts at the first camel-cased segment
+	// The short name starts at the first camel-cased segment
 	// (e.g. "prefix.blah.blah.Endpoint.Public")
-	firstShorthandSegment := len(s) - 1
+	firstShortSegment := len(s) - 1
 	for i, segment := range s {
 		if (len(segment) > 0) && unicode.IsUpper([]rune(segment)[0]) {
-			firstShorthandSegment = i
+			firstShortSegment = i
 			break
 		}
 	}
-	shorthand := strings.Join(s[firstShorthandSegment:], ".")
+	short := strings.Join(s[firstShortSegment:], ".")
 
-	return append(names, shorthand, fmt.Sprintf("%s:%s", prefix, shorthand))
+	// Prefixed
+	names = append(names, fmt.Sprintf("%s:%s", prefix, short))
+
+	// Shortcut
+	if appendShortcut {
+		names = append(names, short)
+	}
+
+	return names
 }
 
 //
