@@ -5,10 +5,11 @@ policy_types:
   Backup:
     derived_from: tosca:Root
     targets:
-    # Targets can include both node types and group types
+    # Can include both node types and group types
     - tosca:Compute
-    - Redundants
-    
+    - RedundantResources # This group type is declared below
+    # If "targets" is not specified then any node template or group can be a target
+
   ContinuousBackup:
     derived_from: Backup
     # Properties are how you configure the policy
@@ -16,9 +17,17 @@ policy_types:
       frequency:
         type:
           scalar-unit.time
+    # Targets are inherited
+
+  ContinuousBlockStorageBackup:
+    derived_from: ContinuousBackup
     targets:
-    # We've inherited our parent's targets and are also adding one more
-    - ObjectStorage
+    # When inheriting we are allowed to remove target types that were specified in the parent
+    # But any types we *do* specify must be equal to or derived from any of those in the parent
+    - tosca:Compute
+    - RedundantBlockStorages
+    # So this would not work:
+    #- Redundants
 
 group_types:
 
@@ -29,9 +38,23 @@ group_types:
       priority:
         type:
           float
+    # "members" is not specified here, so any node template can be a member
+
+  RedundantResources:
+    derived_from: Redundants
     members:
-    # Members can only be node types (so, no nested groups)
+    # Can only be node types (nested groups are not supported)
     - tosca:Compute
+    - tosca:Abstract.Storage
+
+  RedundantBlockStorages:
+    derived_from: RedundantResources
+    members:
+    # When inheriting we are allowed to remove member types that were specified in the parent
+    # But any types we *do* specify must be equal to or derived from any of those in the parent
+    - tosca:BlockStorage
+    # So this would not work:
+    #- tosca:LoadBalancer
 
 node_types:
 
@@ -62,7 +85,7 @@ topology_template:
   groups:
 
     redundants:
-      type: Redundants
+      type: RedundantResources
       properties:
         priority: 0.8
       members:
@@ -70,6 +93,7 @@ topology_template:
       # (Can include derived types)
       - server3
       - server4
+      - storage
 
   policies:
 
@@ -80,6 +104,5 @@ topology_template:
       targets:
       # Target node templates and groups must match our definition at the policy type
       # (Can include derived types)
-      - storage
       - server2
       - redundants

@@ -78,10 +78,10 @@ func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefiniti
 
 		// Validate type compatibility
 		if (self.TargetCapabilityType != nil) && (parentDefinition.TargetCapabilityType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.TargetCapabilityType, self.TargetCapabilityType) {
-			self.Context.ReportIncompatibleType(self.TargetCapabilityType.Name, parentDefinition.TargetCapabilityType.Name)
+			self.Context.ReportIncompatibleType(self.TargetCapabilityType, parentDefinition.TargetCapabilityType)
 		}
 		if (self.TargetNodeType != nil) && (parentDefinition.TargetNodeType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.TargetNodeType, self.TargetNodeType) {
-			self.Context.ReportIncompatibleType(self.TargetNodeType.Name, parentDefinition.TargetNodeType.Name)
+			self.Context.ReportIncompatibleType(self.TargetNodeType, parentDefinition.TargetNodeType)
 		}
 	}
 

@@ -68,7 +68,7 @@ func (self *RelationshipAssignment) Render(definition *RelationshipDefinition) {
 		// Validate type compatibility
 		relationshipType := self.GetType()
 		if (relationshipType != nil) && (definition.RelationshipType != nil) && !self.Context.Hierarchy.IsCompatible(definition.RelationshipType, relationshipType) {
-			self.Context.ReportIncompatibleType(relationshipType.Name, definition.RelationshipType.Name)
+			self.Context.ReportIncompatibleType(relationshipType, definition.RelationshipType)
 			return
 		}
 	}

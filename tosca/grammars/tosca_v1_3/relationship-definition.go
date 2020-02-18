@@ -64,7 +64,7 @@ func (self *RelationshipDefinition) Inherit(parentDefinition *RelationshipDefini
 
 		// Validate type compatibility
 		if (self.RelationshipType != nil) && (parentDefinition.RelationshipType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.RelationshipType, self.RelationshipType) {
-			self.Context.ReportIncompatibleType(self.RelationshipType.Name, parentDefinition.RelationshipType.Name)
+			self.Context.ReportIncompatibleType(self.RelationshipType, parentDefinition.RelationshipType)
 			return
 		}
 

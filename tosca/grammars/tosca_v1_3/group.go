@@ -56,17 +56,20 @@ func (self *Group) Render() {
 	self.Interfaces.Render(self.GroupType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
 
 	// Validate members
-	for index, nodeTemplate := range self.MemberNodeTemplates {
-		compatible := false
-		for _, nodeType := range self.GroupType.MemberNodeTypes {
-			if self.Context.Hierarchy.IsCompatible(nodeType, nodeTemplate.NodeType) {
-				compatible = true
-				break
+	// (Note we are checking for MemberNodeTypeNames and not MemberNodeTypes, because the latter will never be nil)
+	if self.GroupType.MemberNodeTypeNames != nil {
+		for index, nodeTemplate := range self.MemberNodeTemplates {
+			compatible := false
+			for _, nodeType := range self.GroupType.MemberNodeTypes {
+				if self.Context.Hierarchy.IsCompatible(nodeType, nodeTemplate.NodeType) {
+					compatible = true
+					break
+				}
 			}
-		}
-		if !compatible {
-			childContext := self.Context.FieldChild("members", nil).ListChild(index, nil)
-			childContext.ReportIncompatible(nodeTemplate.Name, "group", "member")
+			if !compatible {
+				childContext := self.Context.FieldChild("members", nil).ListChild(index, nil)
+				childContext.ReportIncompatible(nodeTemplate.Name, "group", "member")
+			}
 		}
 	}
 }

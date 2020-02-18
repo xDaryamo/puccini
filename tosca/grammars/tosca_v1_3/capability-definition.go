@@ -82,7 +82,7 @@ func (self *CapabilityDefinition) Inherit(parentDefinition *CapabilityDefinition
 
 		// Validate type compatibility
 		if (self.CapabilityType != nil) && (parentDefinition.CapabilityType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.CapabilityType, self.CapabilityType) {
-			self.Context.ReportIncompatibleType(self.CapabilityType.Name, parentDefinition.CapabilityType.Name)
+			self.Context.ReportIncompatibleType(self.CapabilityType, parentDefinition.CapabilityType)
 			return
 		}
 

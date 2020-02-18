@@ -60,6 +60,27 @@ func (self *GroupType) Inherit() {
 	self.CapabilityDefinitions.Inherit(self.Parent.CapabilityDefinitions)
 	self.RequirementDefinitions.Inherit(self.Parent.RequirementDefinitions)
 	self.InterfaceDefinitions.Inherit(self.Parent.InterfaceDefinitions)
+
+	// (Note we are checking for MemberNodeTypeNames and not MemberNodeTypes, because the latter will never be nil)
+	if self.MemberNodeTypeNames == nil {
+		self.MemberNodeTypeNames = self.Parent.MemberNodeTypeNames
+		self.MemberNodeTypes = self.Parent.MemberNodeTypes
+	}
+	// We cannot handle the "else" case here, because the node type hierarchy may not have been created yet,
+	// So we will do that check in the rendering phase, below
+}
+
+// tosca.Renderable interface
+func (self *GroupType) Render() {
+	log.Infof("{render} group type: %s", self.Name)
+
+	// (Note we are checking for MemberNodeTypeNames and not MemberNodeTypes, because the latter will never be nil)
+	if (self.Parent == nil) || (self.Parent.MemberNodeTypeNames == nil) {
+		return
+	}
+
+	context := self.Context.FieldChild("members", nil)
+	self.Parent.MemberNodeTypes.ValidateSubset(self.MemberNodeTypes, context)
 }
 
 //
@@ -67,3 +88,23 @@ func (self *GroupType) Inherit() {
 //
 
 type GroupTypes []*GroupType
+
+func (self GroupTypes) IsCompatible(groupType *GroupType) bool {
+	for _, baseGroupType := range self {
+		if baseGroupType.Context.Hierarchy.IsCompatible(baseGroupType, groupType) {
+			return true
+		}
+	}
+	return false
+}
+
+func (self GroupTypes) ValidateSubset(subset GroupTypes, context *tosca.Context) bool {
+	isSubset := true
+	for _, subsetGroupType := range subset {
+		if !self.IsCompatible(subsetGroupType) {
+			context.ReportIncompatibleTypeInSet(subsetGroupType)
+			isSubset = false
+		}
+	}
+	return isSubset
+}

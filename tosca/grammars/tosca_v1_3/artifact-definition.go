@@ -138,7 +138,7 @@ func (self *ArtifactDefinition) Inherit(parentDefinition *ArtifactDefinition) {
 
 	// Validate type compatibility
 	if (self.ArtifactType != nil) && (parentDefinition.ArtifactType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.ArtifactType, self.ArtifactType) {
-		self.Context.ReportIncompatibleType(self.ArtifactType.Name, parentDefinition.ArtifactType.Name)
+		self.Context.ReportIncompatibleType(self.ArtifactType, parentDefinition.ArtifactType)
 	}
 }
 

@@ -71,15 +71,15 @@ func (self *Context) ReportValueWrongFormat(format string) bool {
 	return self.ReportPathf(1, "wrong format, must be \"%s\": %s", format, self.FormatBadData())
 }
 
-func (self *Context) ReportValueWrongLength(typeName string, length int) bool {
-	return self.ReportPathf(1, "\"%s\" does not have %d elements", terminal.ColorTypeName(typeName), length)
+func (self *Context) ReportValueWrongLength(kind string, length int) bool {
+	return self.ReportPathf(1, "\"%s\" does not have %d elements", terminal.ColorTypeName(kind), length)
 }
 
-func (self *Context) ReportValueMalformed(typeName string, reason string) bool {
+func (self *Context) ReportValueMalformed(kind string, reason string) bool {
 	if reason == "" {
-		return self.ReportPathf(1, "malformed \"%s\": %s", terminal.ColorTypeName(typeName), self.FormatBadData())
+		return self.ReportPathf(1, "malformed \"%s\": %s", terminal.ColorTypeName(kind), self.FormatBadData())
 	} else {
-		return self.ReportPathf(1, "malformed \"%s\", %s: %s", terminal.ColorTypeName(typeName), reason, self.FormatBadData())
+		return self.ReportPathf(1, "malformed \"%s\", %s: %s", terminal.ColorTypeName(kind), reason, self.FormatBadData())
 	}
 }
 
@@ -147,12 +147,12 @@ func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) bool {
 // Inheritance
 //
 
-func (self *Context) ReportInheritanceLoop(parent interface{}) bool {
-	return self.ReportPathf(1, "inheritance loop by deriving from \"%s\"", terminal.ColorTypeName(GetContext(parent).Name))
+func (self *Context) ReportInheritanceLoop(parentType interface{}) bool {
+	return self.ReportPathf(1, "inheritance loop by deriving from \"%s\"", terminal.ColorTypeName(GetCanonicalName(parentType)))
 }
 
-func (self *Context) ReportTypeIncomplete(parent interface{}) bool {
-	return self.ReportPathf(1, "deriving from incomplete type \"%s\"", terminal.ColorTypeName(GetContext(parent).Name))
+func (self *Context) ReportTypeIncomplete(parentType interface{}) bool {
+	return self.ReportPathf(1, "deriving from incomplete type \"%s\"", terminal.ColorTypeName(GetCanonicalName(parentType)))
 }
 
 //
@@ -199,12 +199,16 @@ func (self *Context) ReportUnsupportedType() bool {
 	return self.ReportPathf(1, "unsupported puccini.type \"%s\"", terminal.ColorError(self.Name))
 }
 
-func (self *Context) ReportIncompatibleType(typeName string, parentTypeName string) bool {
-	return self.ReportPathf(1, "type \"%s\" must be derived from type \"%s\"", terminal.ColorTypeName(typeName), terminal.ColorTypeName(parentTypeName))
+func (self *Context) ReportIncompatibleType(type_ interface{}, parentType interface{}) bool {
+	return self.ReportPathf(1, "type \"%s\" must be derived from type \"%s\"", terminal.ColorTypeName(GetCanonicalName(type_)), terminal.ColorTypeName(GetCanonicalName(parentType)))
 }
 
-func (self *Context) ReportIncompatible(name string, typeName string, kind string) bool {
-	return self.ReportPathf(1, "\"%s\" cannot be %s of %s", terminal.ColorName(name), kind, typeName)
+func (self *Context) ReportIncompatibleTypeInSet(type_ interface{}) bool {
+	return self.ReportPathf(1, "type \"%s\" must be derived from one of the types in the parent set", terminal.ColorTypeName(GetCanonicalName(type_)))
+}
+
+func (self *Context) ReportIncompatible(name string, target string, kind string) bool {
+	return self.ReportPathf(1, "\"%s\" cannot be %s of %s", terminal.ColorName(name), kind, target)
 }
 
 func (self *Context) ReportIncompatibleExtension(extension string, requiredExtensions []string) bool {

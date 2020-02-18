@@ -20,9 +20,9 @@ type PolicyType struct {
 	TargetNodeTypeOrGroupTypeNames *[]string           `read:"targets" inherit:"targets,Parent"`
 	TriggerDefinitions             TriggerDefinitions  `read:"triggers,TriggerDefinition" inherit:"triggers,Parent"` // introduced in TOSCA 1.1
 
-	Parent           *PolicyType  `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
-	TargetNodeTypes  []*NodeType  `lookup:"targets,TargetNodeTypeOrGroupTypeNames" inherit:"targets,Parent" json:"-" yaml:"-"`
-	TargetGroupTypes []*GroupType `lookup:"targets,TargetNodeTypeOrGroupTypeNames" inherit:"targets,Parent" json:"-" yaml:"-"`
+	Parent           *PolicyType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
+	TargetNodeTypes  NodeTypes   `lookup:"targets,TargetNodeTypeOrGroupTypeNames" inherit:"targets,Parent" json:"-" yaml:"-"`
+	TargetGroupTypes GroupTypes  `lookup:"targets,TargetNodeTypeOrGroupTypeNames" inherit:"targets,Parent" json:"-" yaml:"-"`
 }
 
 func NewPolicyType(context *tosca.Context) *PolicyType {
@@ -54,6 +54,31 @@ func (self *PolicyType) Inherit() {
 	}
 
 	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
+
+	// TODO: inherit TriggerDefinitions?
+
+	// (Note we are checking for TargetNodeTypeOrGroupTypeNames and not TargetNodeTypes/TargetGroupTypes, because the latter will never be nil)
+	if self.TargetNodeTypeOrGroupTypeNames == nil {
+		self.TargetNodeTypeOrGroupTypeNames = self.Parent.TargetNodeTypeOrGroupTypeNames
+		self.TargetNodeTypes = self.Parent.TargetNodeTypes
+		self.TargetGroupTypes = self.Parent.TargetGroupTypes
+	}
+	// We cannot handle the "else" case here, because the node type hierarchy may not have been created yet,
+	// So we will do that check in the rendering phase, below
+}
+
+// tosca.Renderable interface
+func (self *PolicyType) Render() {
+	log.Infof("{render} policy type: %s", self.Name)
+
+	// (Note we are checking for TargetNodeTypeOrGroupTypeNames and not TargetNodeTypes/TargetGroupTypes, because the latter will never be nil)
+	if (self.Parent == nil) || (self.Parent.TargetNodeTypeOrGroupTypeNames == nil) {
+		return
+	}
+
+	context := self.Context.FieldChild("targets", nil)
+	self.Parent.TargetNodeTypes.ValidateSubset(self.TargetNodeTypes, context)
+	self.Parent.TargetGroupTypes.ValidateSubset(self.TargetGroupTypes, context)
 }
 
 //

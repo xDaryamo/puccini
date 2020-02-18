@@ -37,7 +37,7 @@ func (self *Artifact) Render(definition *ArtifactDefinition) {
 		} else {
 			// Our artifact type must be compatible with definition's
 			if (definition.ArtifactType != nil) && !self.Context.Hierarchy.IsCompatible(definition.ArtifactType, self.ArtifactType) {
-				self.Context.ReportIncompatible(self.ArtifactType.Name, "artifact", "type")
+				self.Context.ReportIncompatible(tosca.GetCanonicalName(self.ArtifactType), "artifact", "type")
 			}
 		}
 

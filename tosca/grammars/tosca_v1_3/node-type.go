@@ -71,3 +71,23 @@ func (self *NodeType) Inherit() {
 //
 
 type NodeTypes []*NodeType
+
+func (self NodeTypes) IsCompatible(nodeType *NodeType) bool {
+	for _, baseNodeType := range self {
+		if baseNodeType.Context.Hierarchy.IsCompatible(baseNodeType, nodeType) {
+			return true
+		}
+	}
+	return false
+}
+
+func (self NodeTypes) ValidateSubset(subset NodeTypes, context *tosca.Context) bool {
+	isSubset := true
+	for _, subsetNodeType := range subset {
+		if !self.IsCompatible(subsetNodeType) {
+			context.ReportIncompatibleTypeInSet(subsetNodeType)
+			isSubset = false
+		}
+	}
+	return isSubset
+}

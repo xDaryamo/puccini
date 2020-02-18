@@ -72,7 +72,7 @@ func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) 
 
 		// Validate type compatibility
 		if (self.DataType != nil) && (parentDefinition.DataType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.DataType, self.DataType) {
-			self.Context.ReportIncompatibleType(self.DataType.Name, parentDefinition.DataType.Name)
+			self.Context.ReportIncompatibleType(self.DataType, parentDefinition.DataType)
 			return
 		}
 	}

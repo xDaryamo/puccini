@@ -198,7 +198,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 					}
 				}
 			} else {
-				self.Context.ReportValueWrongType(dataType.Name)
+				self.Context.ReportValueWrongType(tosca.GetCanonicalName(dataType))
 			}
 		} else {
 			// Special types

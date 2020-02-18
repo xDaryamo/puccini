@@ -60,7 +60,7 @@ func (self *InterfaceDefinition) Inherit(parentDefinition *InterfaceDefinition) 
 
 		// Validate type compatibility
 		if (self.InterfaceType != nil) && (parentDefinition.InterfaceType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.InterfaceType, self.InterfaceType) {
-			self.Context.ReportIncompatibleType(self.InterfaceType.Name, parentDefinition.InterfaceType.Name)
+			self.Context.ReportIncompatibleType(self.InterfaceType, parentDefinition.InterfaceType)
 			return
 		}
 
