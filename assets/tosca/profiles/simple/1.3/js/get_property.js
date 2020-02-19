@@ -6,16 +6,30 @@
 
 clout.exec('tosca.helpers');
 
-function evaluate(entity, property) {
+function evaluate(entity, first) {
 	var length = arguments.length;
 	if (length < 2)
 		throw 'must have at least 2 arguments';
 	var nodeTemplate = tosca.getNodeTemplate(entity);
-	var properties = nodeTemplate.properties;
-	if (!(property in properties))
-		throw puccini.sprintf('property "%s" not found in "%s"', property, nodeTemplate.name);
-	var r = clout.coerce(properties[property]);
-	for (var i = 2; i < length; i++)
-		r = r[arguments[i]];
-	return r;
+	var p = 1;
+	var value = nodeTemplate.properties;
+	if (first in nodeTemplate.capabilities) {
+		value = nodeTemplate.capabilities[first].properties;
+		first = arguments[++p];
+	} else for (var r = 0; r < nodeTemplate.requirements.length; r++) {
+		var requirement = nodeTemplate.requirements[r];
+		if ((requirement.name === first) && (requirement.relationship !== undefined)) {
+			values = requirement.relationship.properties;
+			first = arguments[++p];
+			break;
+		}
+	}
+	if (first in value)
+		value = value[first];
+	else
+		throw puccini.sprintf('property "%s" not found in "%s"', first, nodeTemplate.name);
+	value = clout.coerce(value);
+	for (var i = p + 1; i < length; i++)
+		value = value[arguments[i]];
+	return value;
 }
