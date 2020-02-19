@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/clout"
+	cloutpkg "github.com/tliron/puccini/clout"
 )
 
 func CleanupScriptlet(scriptlet string) string {
@@ -15,8 +15,8 @@ func CleanupScriptlet(scriptlet string) string {
 	return scriptlet
 }
 
-func GetScriptlet(name string, clout_ *clout.Clout) (string, error) {
-	section, err := GetMetadataSection(name, clout_)
+func GetScriptlet(name string, clout *cloutpkg.Clout) (string, error) {
+	section, err := GetMetadataSection(name, clout)
 	if err != nil {
 		return "", err
 	}
@@ -29,8 +29,8 @@ func GetScriptlet(name string, clout_ *clout.Clout) (string, error) {
 	return scriptlet, nil
 }
 
-func GetScriptlets(name string, clout_ *clout.Clout) (ard.List, error) {
-	section, err := GetMetadataSection(name, clout_)
+func GetScriptlets(name string, clout *cloutpkg.Clout) (ard.List, error) {
+	section, err := GetMetadataSection(name, clout)
 	if err != nil {
 		return nil, err
 	}
@@ -48,8 +48,8 @@ func GetScriptlets(name string, clout_ *clout.Clout) (ard.List, error) {
 	return list, nil
 }
 
-func GetFunctionScriptlet(name string, clout_ *clout.Clout) (string, error) {
-	metadata, err := GetMetadata(clout_)
+func GetFunctionScriptlet(name string, clout *cloutpkg.Clout) (string, error) {
+	metadata, err := GetMetadata(clout)
 	if err != nil {
 		return "", err
 	}
@@ -77,8 +77,8 @@ func GetFunctionScriptlet(name string, clout_ *clout.Clout) (string, error) {
 	return scriptlet, nil
 }
 
-func SetScriptlet(name string, scriptlet string, clout_ *clout.Clout) error {
-	metadata, err := GetMetadata(clout_)
+func SetScriptlet(name string, scriptlet string, clout *cloutpkg.Clout) error {
+	metadata, err := GetMetadata(clout)
 	if err != nil {
 		return err
 	}

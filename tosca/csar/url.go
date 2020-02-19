@@ -7,18 +7,18 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
-func GetRootURL(csarUrl url.URL) (url.URL, error) {
-	var csarFileUrl *url.FileURL
-	switch url_ := csarUrl.(type) {
-	case *url.FileURL:
-		csarFileUrl = url_
+func GetRootURL(csarUrl urlpkg.URL) (urlpkg.URL, error) {
+	var csarFileUrl *urlpkg.FileURL
+	switch url := csarUrl.(type) {
+	case *urlpkg.FileURL:
+		csarFileUrl = url
 
-	case *url.NetworkURL:
-		if file, err := url.Download(url_, "puccini-*.csar"); err == nil {
-			if csarFileUrl, err = url.NewValidFileURL(file.Name()); err != nil {
+	case *urlpkg.NetworkURL:
+		if file, err := urlpkg.Download(url, "puccini-*.csar"); err == nil {
+			if csarFileUrl, err = urlpkg.NewValidFileURL(file.Name()); err != nil {
 				return nil, err
 			}
 		} else {
@@ -29,7 +29,7 @@ func GetRootURL(csarUrl url.URL) (url.URL, error) {
 		return nil, fmt.Errorf("can't open CSAR URL: %s", csarUrl.String())
 	}
 
-	metaUrl, err := url.NewValidZipURL("/TOSCA-Metadata/TOSCA.meta", csarFileUrl)
+	metaUrl, err := urlpkg.NewValidZipURL("/TOSCA-Metadata/TOSCA.meta", csarFileUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -38,8 +38,8 @@ func GetRootURL(csarUrl url.URL) (url.URL, error) {
 	if err != nil {
 		return nil, err
 	}
-	if readerCloser, ok := reader.(io.ReadCloser); ok {
-		defer readerCloser.Close()
+	if readCloser, ok := reader.(io.ReadCloser); ok {
+		defer readCloser.Close()
 	}
 
 	meta, err := ReadMeta(reader)
@@ -49,7 +49,7 @@ func GetRootURL(csarUrl url.URL) (url.URL, error) {
 
 	if meta.EntryDefinitions != "" {
 		// Use entry point in TOSCA.meta
-		return url.NewValidZipURL(meta.EntryDefinitions, csarFileUrl)
+		return urlpkg.NewValidZipURL(meta.EntryDefinitions, csarFileUrl)
 	}
 
 	// Find entry point in root of zip
@@ -75,5 +75,5 @@ func GetRootURL(csarUrl url.URL) (url.URL, error) {
 		return nil, fmt.Errorf("CSAR does not contain a service template: %s", csarUrl.String())
 	}
 
-	return url.NewValidZipURL(found.Name, csarFileUrl)
+	return urlpkg.NewValidZipURL(found.Name, csarFileUrl)
 }

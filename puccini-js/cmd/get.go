@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/common"
-	format_ "github.com/tliron/puccini/common/format"
+	formatpkg "github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/common/terminal"
 )
 
@@ -33,7 +33,7 @@ var getCmd = &cobra.Command{
 		common.FailOnError(err)
 
 		if !terminal.Quiet {
-			err = format_.WriteOrPrint(scriptlet, format, terminal.Stdout, pretty, output)
+			err = formatpkg.WriteOrPrint(scriptlet, format, terminal.Stdout, pretty, output)
 			common.FailOnError(err)
 		}
 	},

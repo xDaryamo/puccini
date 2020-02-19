@@ -6,7 +6,7 @@ import (
 
 	"github.com/dop251/goja"
 	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/clout"
+	cloutpkg "github.com/tliron/puccini/clout"
 )
 
 //
@@ -14,20 +14,20 @@ import (
 //
 
 type CloutAPI struct {
-	*clout.Clout
+	*cloutpkg.Clout
 
 	cloutContext *CloutContext
 }
 
-func (self *Context) NewCloutAPI(clout_ *clout.Clout, runtime *goja.Runtime) *CloutAPI {
+func (self *Context) NewCloutAPI(clout *cloutpkg.Clout, runtime *goja.Runtime) *CloutAPI {
 	return &CloutAPI{
-		clout_,
-		self.NewCloutContext(clout_, runtime),
+		clout,
+		self.NewCloutContext(clout, runtime),
 	}
 }
 
 func (self *CloutAPI) NewKey() string {
-	return clout.NewKey()
+	return cloutpkg.NewKey()
 }
 
 func (self *CloutAPI) Exec(scriptletName string) error {

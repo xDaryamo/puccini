@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/tliron/puccini/clout"
+	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/common/terminal"
-	url_ "github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 func init() {
@@ -27,30 +27,30 @@ var execCmd = &cobra.Command{
 			path = args[1]
 		}
 
-		clout_, err := ReadClout(path)
+		clout, err := ReadClout(path)
 		common.FailOnError(err)
 
 		// Try loading JavaScript from Clout
-		scriptlet, err := js.GetScriptlet(scriptletName, clout_)
+		scriptlet, err := js.GetScriptlet(scriptletName, clout)
 
 		if err != nil {
 			// Try loading JavaScript from path or URL
-			url, err := url_.NewValidURL(scriptletName, nil)
+			url, err := urlpkg.NewValidURL(scriptletName, nil)
 			common.FailOnError(err)
 
-			scriptlet, err = url_.Read(url)
+			scriptlet, err = urlpkg.Read(url)
 			common.FailOnError(err)
 
-			err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout_)
+			err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)
 			common.FailOnError(err)
 		}
 
-		err = Exec(scriptletName, scriptlet, clout_)
+		err = Exec(scriptletName, scriptlet, clout)
 		common.FailOnError(err)
 	},
 }
 
-func Exec(scriptletName string, scriptlet string, clout_ *clout.Clout) error {
+func Exec(scriptletName string, scriptlet string, clout *cloutpkg.Clout) error {
 	jsContext := js.NewContext(scriptletName, log, terminal.Quiet, format, pretty, output)
 
 	program, err := jsContext.GetProgram(scriptletName, scriptlet)
@@ -58,7 +58,7 @@ func Exec(scriptletName string, scriptlet string, clout_ *clout.Clout) error {
 		return err
 	}
 
-	runtime := jsContext.NewCloutRuntime(clout_, nil)
+	runtime := jsContext.NewCloutRuntime(clout, nil)
 
 	_, err = runtime.RunProgram(program)
 

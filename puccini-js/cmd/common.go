@@ -5,7 +5,7 @@ import (
 
 	"github.com/op/go-logging"
 	"github.com/tliron/puccini/clout"
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 var log = logging.MustGetLogger("puccini-js")
@@ -13,26 +13,26 @@ var log = logging.MustGetLogger("puccini-js")
 var output string
 
 func ReadClout(path string) (*clout.Clout, error) {
-	var url_ url.URL
+	var url urlpkg.URL
 
 	var err error
 	if path != "" {
-		url_, err = url.NewValidURL(path, nil)
+		url, err = urlpkg.NewValidURL(path, nil)
 	} else {
-		url_, err = url.ReadToInternalURLFromStdin("yaml")
+		url, err = urlpkg.ReadToInternalURLFromStdin("yaml")
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	reader, err := url_.Open()
+	reader, err := url.Open()
 	if err != nil {
 		return nil, err
 	}
 
-	if readerCloser, ok := reader.(io.ReadCloser); ok {
-		defer readerCloser.Close()
+	if readCloser, ok := reader.(io.ReadCloser); ok {
+		defer readCloser.Close()
 	}
 
-	return clout.Read(reader, url_.Format())
+	return clout.Read(reader, url.Format())
 }

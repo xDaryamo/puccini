@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/clout"
+	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/common/terminal"
@@ -27,15 +27,15 @@ var listCmd = &cobra.Command{
 			path = args[0]
 		}
 
-		clout_, err := ReadClout(path)
+		clout, err := ReadClout(path)
 		common.FailOnError(err)
 
-		List(clout_)
+		List(clout)
 	},
 }
 
-func List(clout_ *clout.Clout) {
-	metadata, err := js.GetMetadata(clout_)
+func List(clout *cloutpkg.Clout) {
+	metadata, err := js.GetMetadata(clout)
 	common.FailOnError(err)
 
 	ListValue(metadata, nil)

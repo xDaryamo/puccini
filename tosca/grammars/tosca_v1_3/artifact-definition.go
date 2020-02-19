@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 //
@@ -64,21 +64,21 @@ func ReadArtifactDefinition(context *tosca.Context) interface{} {
 	return self
 }
 
-func (self *ArtifactDefinition) GetURL() url.URL {
+func (self *ArtifactDefinition) GetURL() urlpkg.URL {
 	if self.File == nil {
 		return nil
 	}
 
 	if self.Repository != nil {
-		if url_ := self.Repository.GetURL(); url_ != nil {
-			return url_.Relative(*self.File)
+		if url := self.Repository.GetURL(); url != nil {
+			return url.Relative(*self.File)
 		}
 	}
 
 	if self.Context.URL != nil {
 		return self.Context.URL.Origin().Relative(*self.File)
-	} else if url_, err := url.NewURL(*self.File); err == nil {
-		return url_
+	} else if url, err := urlpkg.NewURL(*self.File); err == nil {
+		return url
 	} else {
 		self.Context.ReportError(err)
 		return nil

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/tliron/puccini/clout/js"
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 func (self *Context) ImportScriptlet(name string, path string) {
@@ -49,25 +49,25 @@ func parseScriptletName(name string) (string, []uint) {
 //
 
 type Scriptlet struct {
-	Origin                url.URL `json:"origin" yaml:"origin"`
-	Path                  string  `json:"path" yaml:"path"`
-	Scriptlet             string  `json:"scriptlet" yaml:"scriptlet"`
-	NativeArgumentIndexes []uint  `json:"nativeArgumentIndexes" yaml:"nativeArgumentIndexes"`
+	Origin                urlpkg.URL `json:"origin" yaml:"origin"`
+	Path                  string     `json:"path" yaml:"path"`
+	Scriptlet             string     `json:"scriptlet" yaml:"scriptlet"`
+	NativeArgumentIndexes []uint     `json:"nativeArgumentIndexes" yaml:"nativeArgumentIndexes"`
 }
 
 func (self *Scriptlet) Read() (string, error) {
 	if self.Path != "" {
-		var origins []url.URL
+		var origins []urlpkg.URL
 		if self.Origin != nil {
-			origins = []url.URL{self.Origin}
+			origins = []urlpkg.URL{self.Origin}
 		}
 
-		url_, err := url.NewValidURL(self.Path, origins)
+		url, err := urlpkg.NewValidURL(self.Path, origins)
 		if err != nil {
 			return "", err
 		}
 
-		scriptlet, err := url.Read(url_)
+		scriptlet, err := urlpkg.Read(url)
 		if err != nil {
 			return "", err
 		}

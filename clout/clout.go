@@ -33,12 +33,7 @@ func NewClout() *Clout {
 	}
 }
 
-type MarshalableCloutStringMaps struct {
-	Version    string        `json:"version"`
-	Metadata   ard.StringMap `json:"metadata"`
-	Properties ard.StringMap `json:"properties"`
-	Vertexes   Vertexes      `json:"vertexes"`
-}
+type MarshalableCloutStringMaps Clout
 
 func (self *Clout) MarshalableStringMaps() interface{} {
 	return &MarshalableCloutStringMaps{

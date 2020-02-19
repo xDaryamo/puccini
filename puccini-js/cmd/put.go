@@ -4,9 +4,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/common"
-	format_ "github.com/tliron/puccini/common/format"
+	formatpkg "github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/common/terminal"
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 func init() {
@@ -31,16 +31,16 @@ var putCmd = &cobra.Command{
 		clout, err := ReadClout(cloutPath)
 		common.FailOnError(err)
 
-		url_, err := url.NewValidURL(jsUrl, nil)
+		url, err := urlpkg.NewValidURL(jsUrl, nil)
 		common.FailOnError(err)
 
-		scriptlet, err := url.Read(url_)
+		scriptlet, err := urlpkg.Read(url)
 		common.FailOnError(err)
 
 		err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)
 		common.FailOnError(err)
 
-		err = format_.WriteOrPrint(clout, format, terminal.Stdout, pretty, output)
+		err = formatpkg.WriteOrPrint(clout, format, terminal.Stdout, pretty, output)
 		common.FailOnError(err)
 	},
 }

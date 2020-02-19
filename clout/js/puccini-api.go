@@ -9,9 +9,9 @@ import (
 
 	"github.com/beevik/etree"
 	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/common/format"
+	formatpkg "github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/common/terminal"
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 //
@@ -55,8 +55,8 @@ func (entry *PucciniAPI) JoinFilePath(elements ...string) string {
 	return filepath.Join(elements...)
 }
 
-func (entry *PucciniAPI) ValidateFormat(code string, format_ string) error {
-	return format.Validate(code, format_)
+func (entry *PucciniAPI) ValidateFormat(code string, format string) error {
+	return formatpkg.Validate(code, format)
 }
 
 func (self *PucciniAPI) Timestamp() string {
@@ -102,7 +102,7 @@ func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool)
 		}
 	}
 
-	self.context.FailOnError(format.WriteOrPrint(data, self.Format, self.Stdout, self.Pretty, output))
+	self.context.FailOnError(formatpkg.WriteOrPrint(data, self.Format, self.Stdout, self.Pretty, output))
 }
 
 func (self *PucciniAPI) Exec(name string, arguments ...string) (string, error) {
@@ -115,8 +115,8 @@ func (self *PucciniAPI) Exec(name string, arguments ...string) (string, error) {
 }
 
 func (self *PucciniAPI) Download(sourceUrl string, targetPath string) error {
-	if sourceUrl_, err := url.NewValidURL(sourceUrl, nil); err == nil {
-		return url.DownloadTo(sourceUrl_, targetPath)
+	if sourceUrl_, err := urlpkg.NewValidURL(sourceUrl, nil); err == nil {
+		return urlpkg.DownloadTo(sourceUrl_, targetPath)
 	} else {
 		return err
 	}

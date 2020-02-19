@@ -6,7 +6,7 @@ import (
 	"unicode"
 
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 //
@@ -64,7 +64,7 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 		}
 	}
 
-	var origins []url.URL
+	var origins []urlpkg.URL
 
 	if repository != nil {
 		repositoryUrl := repository.GetURL()
@@ -73,12 +73,12 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 			return nil, false
 		}
 
-		origins = []url.URL{repositoryUrl}
+		origins = []urlpkg.URL{repositoryUrl}
 	} else {
-		origins = []url.URL{self.Context.URL.Origin()}
+		origins = []urlpkg.URL{self.Context.URL.Origin()}
 	}
 
-	url_, err := url.NewValidURL(*self.File, origins)
+	url, err := urlpkg.NewValidURL(*self.File, origins)
 	if err != nil {
 		self.Context.ReportError(err)
 		return nil, false
@@ -86,7 +86,7 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 
 	appendShortcutNames := !self.Context.HasQuirk("namespace.normative.shortcuts.disable")
 
-	importSpec := &tosca.ImportSpec{url_, newImportNameTransformer(self.NamespacePrefix, appendShortcutNames), false}
+	importSpec := &tosca.ImportSpec{url, newImportNameTransformer(self.NamespacePrefix, appendShortcutNames), false}
 	return importSpec, true
 }
 

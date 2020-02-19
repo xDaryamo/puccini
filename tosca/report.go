@@ -6,7 +6,7 @@ import (
 
 	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/problems"
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 //
@@ -87,12 +87,12 @@ func (self *Context) ReportValueMalformed(kind string, reason string) bool {
 // Read
 //
 
-func (self *Context) ReportImportIncompatible(url_ url.URL) bool {
-	return self.Reportf(1, "incompatible import \"%s\"", terminal.ColorValue(url_.String()))
+func (self *Context) ReportImportIncompatible(url urlpkg.URL) bool {
+	return self.Reportf(1, "incompatible import \"%s\"", terminal.ColorValue(url.String()))
 }
 
-func (self *Context) ReportImportLoop(url_ url.URL) bool {
-	return self.Reportf(1, "endless loop caused by importing \"%s\"", terminal.ColorValue(url_.String()))
+func (self *Context) ReportImportLoop(url urlpkg.URL) bool {
+	return self.Reportf(1, "endless loop caused by importing \"%s\"", terminal.ColorValue(url.String()))
 }
 
 func (self *Context) ReportRepositoryInaccessible(repositoryName string) bool {

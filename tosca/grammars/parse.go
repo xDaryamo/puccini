@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 func Detect(context *tosca.Context) bool {
@@ -73,8 +73,8 @@ func GetImplicitImportSpec(context *tosca.Context) (*tosca.ImportSpec, bool) {
 	if versionContext, version := DetectVersion(context); version != nil {
 		if paths, ok := ImplicitProfilePaths[versionContext.Name]; ok {
 			if path, ok := paths[*version]; ok {
-				if url_, err := url.NewValidInternalURL(path); err == nil {
-					return &tosca.ImportSpec{url_, nil, true}, true
+				if url, err := urlpkg.NewValidInternalURL(path); err == nil {
+					return &tosca.ImportSpec{url, nil, true}, true
 				} else {
 					context.ReportError(err)
 				}

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 //
@@ -51,14 +51,14 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 		file = s[1]
 	}
 
-	var origins = []url.URL{self.Context.URL.Origin()}
-	url_, err := url.NewValidURL(file, origins)
+	var origins = []urlpkg.URL{self.Context.URL.Origin()}
+	url, err := urlpkg.NewValidURL(file, origins)
 	if err != nil {
 		self.Context.ReportError(err)
 		return nil, false
 	}
 
-	importSpec := &tosca.ImportSpec{url_, nameTransformer, false}
+	importSpec := &tosca.ImportSpec{url, nameTransformer, false}
 	return importSpec, true
 }
 

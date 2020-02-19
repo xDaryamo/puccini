@@ -5,11 +5,11 @@ import (
 	"fmt"
 
 	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/clout"
+	cloutpkg "github.com/tliron/puccini/clout"
 )
 
-func GetMetadata(clout_ *clout.Clout) (ard.StringMap, error) {
-	metadata, ok := clout_.Metadata["puccini-js"]
+func GetMetadata(clout *cloutpkg.Clout) (ard.StringMap, error) {
+	metadata, ok := clout.Metadata["puccini-js"]
 	if !ok {
 		return nil, errors.New("no \"puccini-js\" metadata in Clout")
 	}
@@ -22,13 +22,13 @@ func GetMetadata(clout_ *clout.Clout) (ard.StringMap, error) {
 	return m, nil
 }
 
-func GetMetadataSection(name string, clout_ *clout.Clout) (interface{}, error) {
+func GetMetadataSection(name string, clout *cloutpkg.Clout) (interface{}, error) {
 	segments, final, err := parseScriptletName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	metadata, err := GetMetadata(clout_)
+	metadata, err := GetMetadata(clout)
 	if err != nil {
 		return nil, err
 	}

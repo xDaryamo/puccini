@@ -4,7 +4,7 @@ import (
 	"archive/zip"
 	"fmt"
 	"io"
-	"path"
+	pathpkg "path"
 	"strings"
 )
 
@@ -88,8 +88,8 @@ func NewValidZipURLFromURL(url string) (*ZipURL, error) {
 	return nil, fmt.Errorf("unsupported archive URL type in \"zip:\" URL: %s", url)
 }
 
-func NewValidRelativeZipURL(path_ string, origin *ZipURL) (*ZipURL, error) {
-	return NewValidZipURL(path.Join(origin.Path, path_), origin.ArchiveURL)
+func NewValidRelativeZipURL(path string, origin *ZipURL) (*ZipURL, error) {
+	return NewValidZipURL(pathpkg.Join(origin.Path, path), origin.ArchiveURL)
 }
 
 func (self *ZipURL) OpenArchive() (*zip.ReadCloser, error) {
@@ -109,12 +109,12 @@ func (self *ZipURL) Format() string {
 
 // URL interface
 func (self *ZipURL) Origin() URL {
-	return &ZipURL{path.Dir(self.Path), self.ArchiveURL}
+	return &ZipURL{pathpkg.Dir(self.Path), self.ArchiveURL}
 }
 
 // URL interface
-func (self *ZipURL) Relative(path_ string) URL {
-	return NewZipURL(path.Join(self.Path, path_), self.ArchiveURL)
+func (self *ZipURL) Relative(path string) URL {
+	return NewZipURL(pathpkg.Join(self.Path, path), self.ArchiveURL)
 }
 
 // URL interface

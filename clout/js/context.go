@@ -9,7 +9,7 @@ import (
 	"github.com/dop251/goja"
 	"github.com/op/go-logging"
 	"github.com/tebeka/atexit"
-	"github.com/tliron/puccini/clout"
+	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/common/terminal"
 )
 
@@ -43,13 +43,13 @@ func NewContext(name string, logger *logging.Logger, quiet bool, format string, 
 	}
 }
 
-func (self *Context) NewCloutRuntime(clout_ *clout.Clout, apis map[string]interface{}) *goja.Runtime {
+func (self *Context) NewCloutRuntime(clout *cloutpkg.Clout, apis map[string]interface{}) *goja.Runtime {
 	runtime := goja.New()
 	runtime.SetFieldNameMapper(mapper)
 
 	runtime.Set("puccini", self.NewPucciniAPI())
 
-	runtime.Set("clout", self.NewCloutAPI(clout_, runtime))
+	runtime.Set("clout", self.NewCloutAPI(clout, runtime))
 
 	for name, api := range apis {
 		runtime.Set(name, api)
@@ -71,8 +71,8 @@ func (self *Context) GetProgram(name string, scriptlet string) (*goja.Program, e
 	return p.(*goja.Program), nil
 }
 
-func (self *Context) Exec(clout_ *clout.Clout, scriptletName string, apis map[string]interface{}) error {
-	scriptlet, err := GetScriptlet(scriptletName, clout_)
+func (self *Context) Exec(clout *cloutpkg.Clout, scriptletName string, apis map[string]interface{}) error {
+	scriptlet, err := GetScriptlet(scriptletName, clout)
 	if err != nil {
 		return err
 	}
@@ -82,21 +82,25 @@ func (self *Context) Exec(clout_ *clout.Clout, scriptletName string, apis map[st
 		return err
 	}
 
-	runtime := self.NewCloutRuntime(clout_, apis)
+	runtime := self.NewCloutRuntime(clout, apis)
 
 	_, err = runtime.RunProgram(program)
 	return UnwrapException(err)
 }
 
-func (self *Context) Failf(f string, args ...interface{}) {
+func (self *Context) Fail(msg string) {
 	if !self.Quiet {
-		fmt.Fprintln(self.Stderr, terminal.ColorError(fmt.Sprintf(f, args...)))
+		fmt.Fprintln(self.Stderr, terminal.ColorError(msg))
 	}
 	atexit.Exit(1)
 }
 
+func (self *Context) Failf(f string, args ...interface{}) {
+	self.Fail(fmt.Sprintf(f, args...))
+}
+
 func (self *Context) FailOnError(err error) {
 	if err != nil {
-		self.Failf("%s", err)
+		self.Fail(err.Error())
 	}
 }

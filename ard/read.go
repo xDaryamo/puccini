@@ -5,22 +5,22 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 	"github.com/tliron/yamlkeys"
 	"gopkg.in/yaml.v3"
 )
 
-func ReadFromURL(url_ url.URL, locate bool) (Map, Locator, error) {
-	reader, err := url_.Open()
+func ReadFromURL(url urlpkg.URL, locate bool) (Map, Locator, error) {
+	reader, err := url.Open()
 	if err != nil {
 		return nil, nil, err
 	}
 
-	if readerCloser, ok := reader.(io.ReadCloser); ok {
-		defer readerCloser.Close()
+	if readCloser, ok := reader.(io.ReadCloser); ok {
+		defer readCloser.Close()
 	}
 
-	return Read(reader, url_.Format(), locate)
+	return Read(reader, url.Format(), locate)
 }
 
 func Read(reader io.Reader, format string, locate bool) (Map, Locator, error) {

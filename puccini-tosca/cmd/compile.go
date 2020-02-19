@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	clout_ "github.com/tliron/puccini/clout"
+	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/common"
-	format_ "github.com/tliron/puccini/common/format"
+	formatpkg "github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/compiler"
-	url_ "github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 var output string
@@ -66,12 +66,12 @@ func Compile(url string) {
 		err = Exec(exec, clout)
 		common.FailOnError(err)
 	} else if !terminal.Quiet || (output != "") {
-		err = format_.WriteOrPrint(clout, format, terminal.Stdout, pretty, output)
+		err = formatpkg.WriteOrPrint(clout, format, terminal.Stdout, pretty, output)
 		common.FailOnError(err)
 	}
 }
 
-func Exec(scriptletName string, clout *clout_.Clout) error {
+func Exec(scriptletName string, clout *cloutpkg.Clout) error {
 	clout, err := clout.Normalize()
 	if err != nil {
 		return err
@@ -82,10 +82,10 @@ func Exec(scriptletName string, clout *clout_.Clout) error {
 
 	if err != nil {
 		// Try loading JavaScript from path or URL
-		url, err := url_.NewValidURL(scriptletName, nil)
+		url, err := urlpkg.NewValidURL(scriptletName, nil)
 		common.FailOnError(err)
 
-		scriptlet, err = url_.Read(url)
+		scriptlet, err = urlpkg.Read(url)
 		common.FailOnError(err)
 
 		err = js.SetScriptlet(exec, js.CleanupScriptlet(scriptlet), clout)

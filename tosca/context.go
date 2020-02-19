@@ -6,7 +6,7 @@ import (
 
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca/problems"
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -51,7 +51,7 @@ type Context struct {
 	Parent             *Context
 	Name               string
 	Path               ard.Path
-	URL                url.URL
+	URL                urlpkg.URL
 	Data               interface{} // ARD
 	Locator            ard.Locator
 	CanonicalNamespace *string
@@ -74,11 +74,11 @@ func NewContext(quirks []string) *Context {
 	}
 }
 
-func (self *Context) NewImportContext(url_ url.URL) *Context {
+func (self *Context) NewImportContext(url urlpkg.URL) *Context {
 	return &Context{
 		Name:               self.Name,
 		Path:               self.Path,
-		URL:                url_,
+		URL:                url,
 		CanonicalNamespace: self.CanonicalNamespace,
 		Namespace:          make(Namespace),
 		ScriptletNamespace: make(ScriptletNamespace),

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	gourl "net/url"
+	neturlpkg "net/url"
 	"path"
 )
 
@@ -15,20 +15,20 @@ import (
 //
 
 type NetworkURL struct {
-	URL     *gourl.URL
+	URL     *neturlpkg.URL
 	String_ string `json:"string" yaml:"string"`
 }
 
-func NewNetworkURL(url_ *gourl.URL) *NetworkURL {
-	return &NetworkURL{url_, url_.String()}
+func NewNetworkURL(neturl *neturlpkg.URL) *NetworkURL {
+	return &NetworkURL{neturl, neturl.String()}
 }
 
-func NewValidNetworkURL(url_ *gourl.URL) (*NetworkURL, error) {
-	string_ := url_.String()
+func NewValidNetworkURL(neturl *neturlpkg.URL) (*NetworkURL, error) {
+	string_ := neturl.String()
 	if response, err := http.Get(string_); err == nil {
 		response.Body.Close()
 		if response.StatusCode == http.StatusOK {
-			return &NetworkURL{url_, string_}, nil
+			return &NetworkURL{neturl, string_}, nil
 		} else {
 			return nil, fmt.Errorf("HTTP status: %s", response.Status)
 		}
@@ -38,9 +38,9 @@ func NewValidNetworkURL(url_ *gourl.URL) (*NetworkURL, error) {
 }
 
 func NewValidRelativeNetworkURL(path string, origin *NetworkURL) (*NetworkURL, error) {
-	if url_, err := gourl.Parse(path); err == nil {
-		url_ = origin.URL.ResolveReference(url_)
-		return NewValidNetworkURL(url_)
+	if neturl, err := neturlpkg.Parse(path); err == nil {
+		neturl = origin.URL.ResolveReference(neturl)
+		return NewValidNetworkURL(neturl)
 	} else {
 		return nil, err
 	}
@@ -59,15 +59,15 @@ func (self *NetworkURL) Format() string {
 
 // URL interface
 func (self *NetworkURL) Origin() URL {
-	url_ := *self
-	url_.URL.Path = path.Dir(url_.URL.Path)
-	return &url_
+	url := *self
+	url.URL.Path = path.Dir(url.URL.Path)
+	return &url
 }
 
 // URL interface
 func (self *NetworkURL) Relative(path string) URL {
-	if url_, err := gourl.Parse(path); err == nil {
-		return NewNetworkURL(self.URL.ResolveReference(url_))
+	if neturl, err := neturlpkg.Parse(path); err == nil {
+		return NewNetworkURL(self.URL.ResolveReference(neturl))
 	} else {
 		return nil
 	}

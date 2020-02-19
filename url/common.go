@@ -19,8 +19,8 @@ func Read(url URL) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if readerCloser, ok := reader.(io.ReadCloser); ok {
-		defer readerCloser.Close()
+	if readCloser, ok := reader.(io.ReadCloser); ok {
+		defer readCloser.Close()
 	}
 	buffer, err := ioutil.ReadAll(reader)
 	return common.BytesToString(buffer), err

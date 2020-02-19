@@ -5,7 +5,7 @@ go 1.13
 require (
 	github.com/beevik/etree v1.1.0
 	github.com/dlclark/regexp2 v1.2.0 // indirect
-	github.com/dop251/goja v0.0.0-20200126140343-a7d7d4827263
+	github.com/dop251/goja v0.0.0-20200219165308-d1232e640a87
 	github.com/fatih/color v1.9.0
 	github.com/go-sourcemap/sourcemap v2.1.2+incompatible // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20190818114111-108c894c2c0e

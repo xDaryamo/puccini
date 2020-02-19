@@ -2,13 +2,13 @@ package compiler
 
 import (
 	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/clout"
+	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/tosca/normal"
 )
 
-func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
-	clout_ := clout.NewClout()
+func Compile(s *normal.ServiceTemplate) (*cloutpkg.Clout, error) {
+	clout := cloutpkg.NewClout()
 
 	metadata := make(ard.StringMap)
 	for name, scriptlet := range s.ScriptletNamespace {
@@ -20,7 +20,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 			return nil, err
 		}
 	}
-	clout_.Metadata["puccini-js"] = metadata
+	clout.Metadata["puccini-js"] = metadata
 
 	history := ard.List{ard.StringMap{
 		"timestamp":   common.Timestamp(),
@@ -30,20 +30,20 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 	metadata = make(ard.StringMap)
 	metadata["version"] = VERSION
 	metadata["history"] = history
-	clout_.Metadata["puccini-tosca"] = metadata
+	clout.Metadata["puccini-tosca"] = metadata
 
 	tosca := make(ard.StringMap)
 	tosca["description"] = s.Description
 	tosca["metadata"] = s.Metadata
 	tosca["inputs"] = s.Inputs
 	tosca["outputs"] = s.Outputs
-	clout_.Properties["tosca"] = tosca
+	clout.Properties["tosca"] = tosca
 
-	nodeTemplates := make(map[string]*clout.Vertex)
+	nodeTemplates := make(map[string]*cloutpkg.Vertex)
 
 	// Node templates
 	for _, nodeTemplate := range s.NodeTemplates {
-		v := clout_.NewVertex(clout.NewKey())
+		v := clout.NewVertex(cloutpkg.NewKey())
 
 		nodeTemplates[nodeTemplate.Name] = v
 
@@ -60,11 +60,11 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 		v.Properties["artifacts"] = nodeTemplate.Artifacts
 	}
 
-	groups := make(map[string]*clout.Vertex)
+	groups := make(map[string]*cloutpkg.Vertex)
 
 	// Groups
 	for _, group := range s.Groups {
-		v := clout_.NewVertex(clout.NewKey())
+		v := clout.NewVertex(cloutpkg.NewKey())
 
 		groups[group.Name] = v
 
@@ -83,11 +83,11 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 		}
 	}
 
-	workflows := make(map[string]*clout.Vertex)
+	workflows := make(map[string]*cloutpkg.Vertex)
 
 	// Workflows
 	for _, workflow := range s.Workflows {
-		v := clout_.NewVertex(clout.NewKey())
+		v := clout.NewVertex(cloutpkg.NewKey())
 
 		workflows[workflow.Name] = v
 
@@ -100,10 +100,10 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 	for name, workflow := range s.Workflows {
 		v := workflows[name]
 
-		steps := make(map[string]*clout.Vertex)
+		steps := make(map[string]*cloutpkg.Vertex)
 
 		for _, step := range workflow.Steps {
-			sv := clout_.NewVertex(clout.NewKey())
+			sv := clout.NewVertex(cloutpkg.NewKey())
 
 			steps[step.Name] = sv
 
@@ -128,7 +128,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 
 			// Workflow activities
 			for sequence, activity := range step.Activities {
-				av := clout_.NewVertex(clout.NewKey())
+				av := clout.NewVertex(cloutpkg.NewKey())
 
 				e = sv.NewEdgeTo(av)
 				SetMetadata(e, "WorkflowActivity")
@@ -173,7 +173,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 
 	// Policies
 	for _, policy := range s.Policies {
-		v := clout_.NewVertex(clout.NewKey())
+		v := clout.NewVertex(cloutpkg.NewKey())
 
 		SetMetadata(v, "Policy")
 		v.Properties["name"] = policy.Name
@@ -197,7 +197,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 
 		for _, trigger := range policy.Triggers {
 			if trigger.Operation != nil {
-				to := clout_.NewVertex(clout.NewKey())
+				to := clout.NewVertex(cloutpkg.NewKey())
 
 				SetMetadata(to, "Operation")
 				to.Properties["description"] = trigger.Operation.Description
@@ -218,7 +218,7 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 
 	// Substitution
 	if s.Substitution != nil {
-		v := clout_.NewVertex(clout.NewKey())
+		v := clout.NewVertex(cloutpkg.NewKey())
 
 		SetMetadata(v, "Substitution")
 		v.Properties["type"] = s.Substitution.Type
@@ -267,17 +267,17 @@ func Compile(s *normal.ServiceTemplate) (*clout.Clout, error) {
 
 	// Normalize
 	var err error
-	clout_, err = clout_.Normalize()
+	clout, err = clout.Normalize()
 	if err != nil {
-		return clout_, err
+		return clout, err
 	}
 
 	// TODO: call JavaScript plugins
 
-	return clout_, nil
+	return clout, nil
 }
 
-func SetMetadata(entity clout.Entity, kind string) {
+func SetMetadata(entity cloutpkg.Entity, kind string) {
 	metadata := make(ard.StringMap)
 	metadata["version"] = VERSION
 	metadata["kind"] = kind

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	gourl "net/url"
-	"path"
+	neturlpkg "net/url"
+	pathpkg "path"
 )
 
 // Note: we *must* use the "path" package rather than "filepath" to ensure consistency with Windows
@@ -24,14 +24,14 @@ type URL interface {
 }
 
 func NewURL(url string) (URL, error) {
-	url_, err := gourl.ParseRequestURI(url)
+	neturl, err := neturlpkg.ParseRequestURI(url)
 	if err != nil {
 		return nil, fmt.Errorf("unsupported URL format: %s", url)
 	} else {
-		switch url_.Scheme {
+		switch neturl.Scheme {
 		case "http", "https":
 			// Go's "net/http" only handles "http:" and "https:"
-			return NewNetworkURL(url_), nil
+			return NewNetworkURL(neturl), nil
 
 		case "internal":
 			return NewInternalURL(url[9:]), nil
@@ -40,7 +40,7 @@ func NewURL(url string) (URL, error) {
 			return NewZipURLFromURL(url)
 
 		case "file":
-			return NewFileURL(url_.Path), nil
+			return NewFileURL(neturl.Path), nil
 
 		case "":
 			return NewFileURL(url), nil
@@ -51,15 +51,15 @@ func NewURL(url string) (URL, error) {
 }
 
 func NewValidURL(url string, origins []URL) (URL, error) {
-	url_, err := gourl.ParseRequestURI(url)
+	neturl, err := neturlpkg.ParseRequestURI(url)
 	if err != nil {
 		// Malformed URL, so it might be a relative path
 		return newRelativeURL(url, origins, true)
 	} else {
-		switch url_.Scheme {
+		switch neturl.Scheme {
 		case "http", "https":
 			// Go's "net/http" package only handles "http:" and "https:"
-			return NewValidNetworkURL(url_)
+			return NewValidNetworkURL(neturl)
 
 		case "internal":
 			return NewValidInternalURL(url[9:])
@@ -69,7 +69,7 @@ func NewValidURL(url string, origins []URL) (URL, error) {
 
 		case "file":
 			// They're rarely used, but relative "file:" URLs are possible
-			return newRelativeURL(url_.Path, origins, true)
+			return newRelativeURL(neturl.Path, origins, true)
 
 		case "":
 			return newRelativeURL(url, origins, false)
@@ -79,10 +79,10 @@ func NewValidURL(url string, origins []URL) (URL, error) {
 	return nil, fmt.Errorf("unsupported URL format: %s", url)
 }
 
-func newRelativeURL(path_ string, origins []URL, avoidNetworkURLs bool) (URL, error) {
+func newRelativeURL(path string, origins []URL, avoidNetworkURLs bool) (URL, error) {
 	// Absolute file path?
-	if path.IsAbs(path_) {
-		url, err := NewValidFileURL(path_)
+	if pathpkg.IsAbs(path) {
+		url, err := NewValidFileURL(path)
 		if err != nil {
 			return nil, err
 		}
@@ -90,36 +90,36 @@ func newRelativeURL(path_ string, origins []URL, avoidNetworkURLs bool) (URL, er
 	} else {
 		// Try relative to origins
 		for _, origin := range origins {
-			var url_ URL
+			var url URL
 			var err = errors.New("")
 
 			switch origin_ := origin.(type) {
 			case *FileURL:
-				url_, err = NewValidRelativeFileURL(path_, origin_)
+				url, err = NewValidRelativeFileURL(path, origin_)
 
 			case *NetworkURL:
 				if !avoidNetworkURLs {
-					url_, err = NewValidRelativeNetworkURL(path_, origin_)
+					url, err = NewValidRelativeNetworkURL(path, origin_)
 				}
 
 			case *InternalURL:
-				url_, err = NewValidRelativeInternalURL(path_, origin_)
+				url, err = NewValidRelativeInternalURL(path, origin_)
 
 			case *ZipURL:
-				url_, err = NewValidRelativeZipURL(path_, origin_)
+				url, err = NewValidRelativeZipURL(path, origin_)
 			}
 
 			if err == nil {
-				return url_, nil
+				return url, nil
 			}
 		}
 
 		// Try relative to work dir
-		url_, err := NewValidFileURL(path_)
+		url, err := NewValidFileURL(path)
 		if err != nil {
-			return nil, fmt.Errorf("URL not found: %s", path_)
+			return nil, fmt.Errorf("URL not found: %s", path)
 		}
 
-		return url_, nil
+		return url, nil
 	}
 }

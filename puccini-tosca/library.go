@@ -4,7 +4,7 @@ import (
 	"C"
 	"bytes"
 
-	"github.com/tliron/puccini/clout"
+	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/common/terminal"
@@ -24,7 +24,7 @@ func Compile(url *C.char) *C.char {
 	var inputs map[string]interface{}
 
 	var serviceTemplate *normal.ServiceTemplate
-	var clout_ *clout.Clout
+	var clout *cloutpkg.Clout
 	var problems *problems.Problems
 	var err error
 
@@ -33,24 +33,24 @@ func Compile(url *C.char) *C.char {
 		return nil
 	}
 
-	if clout_, err = compiler.Compile(serviceTemplate); err != nil {
+	if clout, err = compiler.Compile(serviceTemplate); err != nil {
 		//t.Errorf("%s\n%s", err.Error(), p)
 		return nil
 	}
 
-	compiler.Resolve(clout_, problems, "yaml", true)
+	compiler.Resolve(clout, problems, "yaml", true)
 	if !problems.Empty() {
 		//t.Errorf("%s", p)
 		return nil
 	}
 
-	compiler.Coerce(clout_, problems, "yaml", true)
+	compiler.Coerce(clout, problems, "yaml", true)
 	if !problems.Empty() {
 		//t.Errorf("%s", p)
 		return nil
 	}
 
-	format.WriteYAML(clout_, buffer, "  ")
+	format.WriteYAML(clout, buffer, "  ")
 
 	return C.CString(buffer.String())
 }

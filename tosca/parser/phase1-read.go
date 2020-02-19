@@ -10,13 +10,13 @@ import (
 	"github.com/tliron/puccini/tosca/csar"
 	"github.com/tliron/puccini/tosca/grammars"
 	"github.com/tliron/puccini/tosca/reflection"
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
-func (self *Context) ReadRoot(url_ url.URL) bool {
+func (self *Context) ReadRoot(url urlpkg.URL) bool {
 	toscaContext := tosca.NewContext(self.Quirks)
 
-	toscaContext.URL = url_
+	toscaContext.URL = url
 
 	var ok bool
 
@@ -102,11 +102,11 @@ func (self *Context) goReadImports(container *Unit) {
 		// Skip if causes import loop
 		skip := false
 		for container_ := container; container_ != nil; container_ = container_.Container {
-			url_ := container_.GetContext().URL
-			if url_.Key() == key {
+			url := container_.GetContext().URL
+			if url.Key() == key {
 				if !importSpec.Implicit {
 					// Import loops are considered errors
-					container.GetContext().ReportImportLoop(url_)
+					container.GetContext().ReportImportLoop(url)
 				}
 				skip = true
 				break

@@ -5,7 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"path"
+	pathpkg "path"
 	"strings"
 	"sync"
 
@@ -26,8 +26,8 @@ func RegisterInternalURL(path string, content string) error {
 }
 
 func ReadToInternalURL(path string, reader io.Reader) (*InternalURL, error) {
-	if readerCloser, ok := reader.(io.ReadCloser); ok {
-		defer readerCloser.Close()
+	if readCloser, ok := reader.(io.ReadCloser); ok {
+		defer readCloser.Close()
 	}
 	if buffer, err := ioutil.ReadAll(reader); err == nil {
 		if err = RegisterInternalURL(path, common.BytesToString(buffer)); err != nil {
@@ -68,8 +68,8 @@ func NewValidInternalURL(path string) (*InternalURL, error) {
 	}
 }
 
-func NewValidRelativeInternalURL(path_ string, origin *InternalURL) (*InternalURL, error) {
-	return NewValidInternalURL(path.Join(origin.Path, path_))
+func NewValidRelativeInternalURL(path string, origin *InternalURL) (*InternalURL, error) {
+	return NewValidInternalURL(pathpkg.Join(origin.Path, path))
 }
 
 // URL interface
@@ -85,12 +85,12 @@ func (self *InternalURL) Format() string {
 
 // URL interface
 func (self *InternalURL) Origin() URL {
-	return &InternalURL{path.Dir(self.Path), ""}
+	return &InternalURL{pathpkg.Dir(self.Path), ""}
 }
 
 // URL interface
-func (self *InternalURL) Relative(path_ string) URL {
-	return NewInternalURL(path.Join(self.Path, path_))
+func (self *InternalURL) Relative(path string) URL {
+	return NewInternalURL(pathpkg.Join(self.Path, path))
 }
 
 // URL interface

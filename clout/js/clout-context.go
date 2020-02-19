@@ -2,7 +2,7 @@ package js
 
 import (
 	"github.com/dop251/goja"
-	"github.com/tliron/puccini/clout"
+	cloutpkg "github.com/tliron/puccini/clout"
 )
 
 //
@@ -11,14 +11,14 @@ import (
 
 type CloutContext struct {
 	Context *Context
-	Clout   *clout.Clout
+	Clout   *cloutpkg.Clout
 	Runtime *goja.Runtime
 }
 
-func (self *Context) NewCloutContext(clout_ *clout.Clout, runtime *goja.Runtime) *CloutContext {
+func (self *Context) NewCloutContext(clout *cloutpkg.Clout, runtime *goja.Runtime) *CloutContext {
 	return &CloutContext{
 		Context: self,
-		Clout:   clout_,
+		Clout:   clout,
 		Runtime: runtime,
 	}
 }

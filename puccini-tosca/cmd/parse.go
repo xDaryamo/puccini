@@ -10,13 +10,13 @@ import (
 	"github.com/tebeka/atexit"
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/common"
-	format_ "github.com/tliron/puccini/common/format"
+	formatpkg "github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
-	problems_ "github.com/tliron/puccini/tosca/problems"
-	"github.com/tliron/puccini/url"
+	problemspkg "github.com/tliron/puccini/tosca/problems"
+	urlpkg "github.com/tliron/puccini/url"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -43,9 +43,9 @@ var parseCmd = &cobra.Command{
 	Long:  `Parses and validates a TOSCA service template and reports problems if there are any. Provides access to phase diagnostics and entities.`,
 	Args:  cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		var url_ string
+		var url string
 		if len(args) == 1 {
-			url_ = args[0]
+			url = args[0]
 		}
 
 		if filter != "" {
@@ -53,34 +53,34 @@ var parseCmd = &cobra.Command{
 			dumpPhases = nil
 		}
 
-		_, s := Parse(url_)
+		_, s := Parse(url)
 
 		if (filter == "") && (len(dumpPhases) == 0) {
-			format_.Print(s, format, terminal.Stdout, pretty)
+			formatpkg.Print(s, format, terminal.Stdout, pretty)
 		}
 	},
 }
 
-func Parse(url_ string) (parser.Context, *normal.ServiceTemplate) {
+func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 	ParseInputs()
 
-	var url__ url.URL
+	var url_ urlpkg.URL
 	var err error
-	if url_ == "" {
-		log.Infof("parsing stdin", url_)
-		url__, err = url.ReadToInternalURLFromStdin("yaml")
+	if url == "" {
+		log.Infof("parsing stdin", url)
+		url_, err = urlpkg.ReadToInternalURLFromStdin("yaml")
 	} else {
-		log.Infof("parsing \"%s\"", url_)
-		url__, err = url.NewValidURL(url_, nil)
+		log.Infof("parsing \"%s\"", url)
+		url_, err = urlpkg.NewValidURL(url, nil)
 	}
 	common.FailOnError(err)
 
 	context := parser.NewContext(quirks)
-	var problems *problems_.Problems
+	var problems *problemspkg.Problems
 
 	// Phase 1: Read
 	if stopAtPhase >= 1 {
-		ok := context.ReadRoot(url__)
+		ok := context.ReadRoot(url_)
 
 		problems = context.GetProblems()
 		FailOnProblems(problems)
@@ -149,7 +149,7 @@ func Parse(url_ string) (parser.Context, *normal.ServiceTemplate) {
 			}
 			for _, entityPtr := range entityPtrs {
 				fmt.Fprintf(terminal.Stdout, "%s:\n", terminal.ColorPath(tosca.GetContext(entityPtr).Path.String()))
-				err = format_.Print(entityPtr, format, terminal.Stdout, pretty)
+				err = formatpkg.Print(entityPtr, format, terminal.Stdout, pretty)
 				common.FailOnError(err)
 			}
 		}
@@ -162,7 +162,7 @@ func Parse(url_ string) (parser.Context, *normal.ServiceTemplate) {
 		} else if !terminal.Quiet {
 			for _, entityPtr := range entityPtrs {
 				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorPath(tosca.GetContext(entityPtr).Path.String()))
-				err = format_.Print(entityPtr, format, terminal.Stdout, pretty)
+				err = formatpkg.Print(entityPtr, format, terminal.Stdout, pretty)
 				common.FailOnError(err)
 			}
 		}
@@ -193,14 +193,14 @@ func ToPrintPhase(phase uint) bool {
 func ParseInputs() {
 	if inputsUrl != "" {
 		log.Infof("load inputs from \"%s\"", inputsUrl)
-		url_, err := url.NewValidURL(inputsUrl, nil)
+		url, err := urlpkg.NewValidURL(inputsUrl, nil)
 		common.FailOnError(err)
-		reader, err := url_.Open()
+		reader, err := url.Open()
 		common.FailOnError(err)
-		if readerCloser, ok := reader.(io.ReadCloser); ok {
-			defer readerCloser.Close()
+		if readCloser, ok := reader.(io.ReadCloser); ok {
+			defer readCloser.Close()
 		}
-		data, err := format_.ReadYAML(reader)
+		data, err := formatpkg.ReadYAML(reader)
 		common.FailOnError(err)
 		if map_, ok := data.(ard.Map); ok {
 			for key, value := range map_ {
@@ -216,7 +216,7 @@ func ParseInputs() {
 		if len(s) != 2 {
 			common.Failf("malformed input: %s", input)
 		}
-		value, err := format_.DecodeYAML(s[1])
+		value, err := formatpkg.DecodeYAML(s[1])
 		common.FailOnError(err)
 		inputValues[s[0]] = value
 	}
