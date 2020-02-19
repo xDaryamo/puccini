@@ -7,10 +7,11 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 metadata:
 
+  # Use metadata prefixed with "puccini.scriptlet|tosca.constraint."
   # Your code must provide a global function named "validate"
   # The first argument is always the value to validate
   # It must return "true" if valid
-  puccini.scriptlet|multiple_of: |-
+  puccini.scriptlet|tosca.constraint.multiple_of: |-
     function validate(value, multiple) {
       if (arguments.length !== 2)
         throw 'must have 1 argument';

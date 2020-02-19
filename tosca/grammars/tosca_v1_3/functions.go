@@ -23,15 +23,15 @@ import (
 //
 
 var FunctionScriptlets = map[string]string{
-	"concat":               profile.Profile["/tosca/simple/1.3/js/concat.js"],
-	"join":                 profile.Profile["/tosca/simple/1.3/js/join.js"], // introduced in TOSCA 1.2
-	"token":                profile.Profile["/tosca/simple/1.3/js/token.js"],
-	"get_input":            profile.Profile["/tosca/simple/1.3/js/get_input.js"],
-	"get_property":         profile.Profile["/tosca/simple/1.3/js/get_property.js"],
-	"get_attribute":        profile.Profile["/tosca/simple/1.3/js/get_attribute.js"],
-	"get_operation_output": profile.Profile["/tosca/simple/1.3/js/get_operation_output.js"],
-	"get_nodes_of_type":    profile.Profile["/tosca/simple/1.3/js/get_nodes_of_type.js"],
-	"get_artifact":         profile.Profile["/tosca/simple/1.3/js/get_artifact.js"],
+	"tosca.function.concat":               profile.Profile["/tosca/simple/1.3/js/functions/concat.js"],
+	"tosca.function.join":                 profile.Profile["/tosca/simple/1.3/js/functions/join.js"], // introduced in TOSCA 1.2
+	"tosca.function.token":                profile.Profile["/tosca/simple/1.3/js/functions/token.js"],
+	"tosca.function.get_input":            profile.Profile["/tosca/simple/1.3/js/functions/get_input.js"],
+	"tosca.function.get_property":         profile.Profile["/tosca/simple/1.3/js/functions/get_property.js"],
+	"tosca.function.get_attribute":        profile.Profile["/tosca/simple/1.3/js/functions/get_attribute.js"],
+	"tosca.function.get_operation_output": profile.Profile["/tosca/simple/1.3/js/functions/get_operation_output.js"],
+	"tosca.function.get_nodes_of_type":    profile.Profile["/tosca/simple/1.3/js/functions/get_nodes_of_type.js"],
+	"tosca.function.get_artifact":         profile.Profile["/tosca/simple/1.3/js/functions/get_artifact.js"],
 }
 
 func ToFunctionCall(context *tosca.Context) bool {
@@ -48,7 +48,8 @@ func ToFunctionCall(context *tosca.Context) bool {
 	for key, data := range map_ {
 		name := yamlkeys.KeyString(key)
 
-		_, ok := context.ScriptletNamespace[name]
+		scriptletName := "tosca.function." + name
+		_, ok := context.ScriptletNamespace[scriptletName]
 		if !ok {
 			// Not a function call, despite having the right data structure
 			return false
@@ -68,7 +69,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 			arguments[index] = argumentContext.Data
 		}
 
-		context.Data = context.NewFunctionCall(name, arguments)
+		context.Data = context.NewFunctionCall(scriptletName, arguments)
 
 		// We have only one key
 		return true

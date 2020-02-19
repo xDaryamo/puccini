@@ -20,9 +20,9 @@ type FunctionCallContext struct {
 
 func (self FunctionCallContext) API() map[string]interface{} {
 	return map[string]interface{}{
-		"site":   self.Site,
-		"source": self.Source,
-		"target": self.Target,
+		"$site":   self.Site,
+		"$source": self.Source,
+		"$target": self.Target,
 	}
 }
 

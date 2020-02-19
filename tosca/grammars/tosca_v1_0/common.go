@@ -1,8 +1,5 @@
 package tosca_v1_0
 
-// TODO: This is currently a copy of the v1_1 grammar,
-// but we should properly remove unsupported features
-
 import (
 	"github.com/op/go-logging"
 	"github.com/tliron/puccini/tosca"

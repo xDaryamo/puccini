@@ -10,12 +10,12 @@ import (
 
 // Built-in constraint functions
 var ConstraintScriptlets = map[string]string{
-	"length":            profile.Profile["/hot/1.0/js/length.js"],
-	"range":             profile.Profile["/hot/1.0/js/range.js"],
-	"modulo":            profile.Profile["/hot/1.0/js/modulo.js"],
-	"allowed_values":    profile.Profile["/hot/1.0/js/allowed_values.js"],
-	"allowed_pattern":   profile.Profile["/hot/1.0/js/allowed_pattern.js"],
-	"custom_constraint": profile.Profile["/hot/1.0/js/custom_constraint.js"],
+	"tosca.constraint.length":            profile.Profile["/hot/1.0/js/constraints/length.js"],
+	"tosca.constraint.range":             profile.Profile["/hot/1.0/js/constraints/range.js"],
+	"tosca.constraint.modulo":            profile.Profile["/hot/1.0/js/constraints/modulo.js"],
+	"tosca.constraint.allowed_values":    profile.Profile["/hot/1.0/js/constraints/allowed_values.js"],
+	"tosca.constraint.allowed_pattern":   profile.Profile["/hot/1.0/js/constraints/allowed_pattern.js"],
+	"tosca.constraint.custom_constraint": profile.Profile["/hot/1.0/js/constraints/custom_constraint.js"],
 }
 
 var ConstraintNativeArgumentIndexes = map[string][]uint{}
@@ -58,7 +58,8 @@ func ReadConstraint(context *tosca.Context) interface{} {
 				continue
 			}
 
-			if _, ok := context.ScriptletNamespace[operator]; !ok {
+			scriptletName := "tosca.constraint." + operator
+			if _, ok := context.ScriptletNamespace[scriptletName]; !ok {
 				context.Clone(operator).ReportValueMalformed("constraint", "unsupported operator")
 				return self
 			}
@@ -77,7 +78,7 @@ func ReadConstraint(context *tosca.Context) interface{} {
 }
 
 func (self *Constraint) NewFunctionCall(context *tosca.Context) *tosca.FunctionCall {
-	return context.NewFunctionCall(self.Operator, self.Arguments)
+	return context.NewFunctionCall("tosca.constraint."+self.Operator, self.Arguments)
 }
 
 //

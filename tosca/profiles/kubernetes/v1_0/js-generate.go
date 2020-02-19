@@ -5,7 +5,7 @@ package v1_0
 func init() {
 	Profile["/tosca/kubernetes/1.0/js/generate.js"] = `
 
-clout.exec('tosca.utils');
+clout.exec('tosca.lib.coerce');
 
 tosca.coerce();
 

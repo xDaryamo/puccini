@@ -7,7 +7,7 @@ func init() {
 tosca_definitions_version: tosca_simple_yaml_1_0
 
 metadata:
-  puccini.scriptlet.import|puccini.compare_version: internal:/tosca/simple/1.3/js/compare_version.js
+  puccini.scriptlet.import|tosca.comparer.version: internal:/tosca/simple/1.3/js/comparers/version.js
 
 data_types:
 
@@ -42,7 +42,7 @@ data_types:
   version:
     metadata:
       puccini.type: version
-      puccini.comparer: puccini.compare_version
+      puccini.comparer: tosca.comparer.version
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       citation_location: 3.2.2
 

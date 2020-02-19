@@ -15,12 +15,12 @@ import (
 //
 
 var FunctionScriptlets = map[string]string{
-	"concat":         profile.Profile["/cloudify/4.5/js/get_secret.js"],
-	"get_attribute":  profile.Profile["/cloudify/4.5/js/get_attribute.js"],
-	"get_capability": profile.Profile["/cloudify/4.5/js/get_capability.js"],
-	"get_input":      profile.Profile["/cloudify/4.5/js/get_input.js"],
-	"get_property":   profile.Profile["/cloudify/4.5/js/get_property.js"],
-	"get_secret":     profile.Profile["/cloudify/4.5/js/get_secret.js"],
+	"tosca.function.concat":         profile.Profile["/cloudify/4.5/js/functions/get_secret.js"],
+	"tosca.function.get_attribute":  profile.Profile["/cloudify/4.5/js/functions/get_attribute.js"],
+	"tosca.function.get_capability": profile.Profile["/cloudify/4.5/js/functions/get_capability.js"],
+	"tosca.function.get_input":      profile.Profile["/cloudify/4.5/js/functions/get_input.js"],
+	"tosca.function.get_property":   profile.Profile["/cloudify/4.5/js/functions/get_property.js"],
+	"tosca.function.get_secret":     profile.Profile["/cloudify/4.5/js/functions/get_secret.js"],
 }
 
 func ToFunctionCall(context *tosca.Context) bool {
@@ -37,7 +37,8 @@ func ToFunctionCall(context *tosca.Context) bool {
 	for key, data := range map_ {
 		name := yamlkeys.KeyString(key)
 
-		_, ok := context.ScriptletNamespace[name]
+		scriptletName := "tosca.function." + name
+		_, ok := context.ScriptletNamespace[scriptletName]
 		if !ok {
 			// Not a function call, despite having the right data structure
 			return false
@@ -57,7 +58,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 			arguments[index] = argumentContext.Data
 		}
 
-		context.Data = context.NewFunctionCall(name, arguments)
+		context.Data = context.NewFunctionCall(scriptletName, arguments)
 
 		// We have only one key
 		return true

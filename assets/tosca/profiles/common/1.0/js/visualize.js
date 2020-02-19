@@ -1,5 +1,5 @@
 
-clout.exec('tosca.utils');
+clout.exec('tosca.lib.coerce');
 
 tosca.coerce();
 
@@ -92,7 +92,7 @@ function addVertex(id, vertex) {
 
 	nodes.push(node);
 
-	for (var e in vertex.edgesOut)
+	for (var e = 0, l = vertex.edgesOut.length; e < l; e++)
 		addEdge(id, vertex.edgesOut[e]);
 }
 

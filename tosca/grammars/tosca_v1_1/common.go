@@ -77,6 +77,6 @@ func init() {
 	Grammar.RegisterReader("WorkflowPreconditionDefinition", tosca_v1_3.ReadWorkflowPreconditionDefinition) // introduced in TOSCA 1.1
 	Grammar.RegisterReader("WorkflowStepDefinition", tosca_v1_3.ReadWorkflowStepDefinition)                 // introduced in TOSCA 1.1
 
-	DefaultScriptletNamespace.RegisterScriptlets(tosca_v1_3.FunctionScriptlets, nil, "join")
-	DefaultScriptletNamespace.RegisterScriptlets(tosca_v1_3.ConstraintClauseScriptlets, tosca_v1_3.ConstraintClauseNativeArgumentIndexes, "schema")
+	DefaultScriptletNamespace.RegisterScriptlets(tosca_v1_3.FunctionScriptlets, nil, "tosca.function.join")
+	DefaultScriptletNamespace.RegisterScriptlets(tosca_v1_3.ConstraintClauseScriptlets, tosca_v1_3.ConstraintClauseNativeArgumentIndexes, "tosca.constraint.schema")
 }

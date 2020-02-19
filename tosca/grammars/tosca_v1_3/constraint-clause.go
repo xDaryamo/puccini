@@ -10,27 +10,27 @@ import (
 
 // Built-in constraint functions
 var ConstraintClauseScriptlets = map[string]string{
-	"equal":            profile.Profile["/tosca/simple/1.3/js/equal.js"],
-	"greater_than":     profile.Profile["/tosca/simple/1.3/js/greater_than.js"],
-	"greater_or_equal": profile.Profile["/tosca/simple/1.3/js/greater_or_equal.js"],
-	"less_than":        profile.Profile["/tosca/simple/1.3/js/less_than.js"],
-	"less_or_equal":    profile.Profile["/tosca/simple/1.3/js/less_or_equal.js"],
-	"in_range":         profile.Profile["/tosca/simple/1.3/js/in_range.js"],
-	"valid_values":     profile.Profile["/tosca/simple/1.3/js/valid_values.js"],
-	"length":           profile.Profile["/tosca/simple/1.3/js/length.js"],
-	"min_length":       profile.Profile["/tosca/simple/1.3/js/min_length.js"],
-	"max_length":       profile.Profile["/tosca/simple/1.3/js/max_length.js"],
-	"pattern":          profile.Profile["/tosca/simple/1.3/js/pattern.js"],
-	"schema":           profile.Profile["/tosca/simple/1.3/js/schema.js"], // introduced in TOSCA 1.3
+	"tosca.constraint.equal":            profile.Profile["/tosca/simple/1.3/js/constraints/equal.js"],
+	"tosca.constraint.greater_than":     profile.Profile["/tosca/simple/1.3/js/constraints/greater_than.js"],
+	"tosca.constraint.greater_or_equal": profile.Profile["/tosca/simple/1.3/js/constraints/greater_or_equal.js"],
+	"tosca.constraint.less_than":        profile.Profile["/tosca/simple/1.3/js/constraints/less_than.js"],
+	"tosca.constraint.less_or_equal":    profile.Profile["/tosca/simple/1.3/js/constraints/less_or_equal.js"],
+	"tosca.constraint.in_range":         profile.Profile["/tosca/simple/1.3/js/constraints/in_range.js"],
+	"tosca.constraint.valid_values":     profile.Profile["/tosca/simple/1.3/js/constraints/valid_values.js"],
+	"tosca.constraint.length":           profile.Profile["/tosca/simple/1.3/js/constraints/length.js"],
+	"tosca.constraint.min_length":       profile.Profile["/tosca/simple/1.3/js/constraints/min_length.js"],
+	"tosca.constraint.max_length":       profile.Profile["/tosca/simple/1.3/js/constraints/max_length.js"],
+	"tosca.constraint.pattern":          profile.Profile["/tosca/simple/1.3/js/constraints/pattern.js"],
+	"tosca.constraint.schema":           profile.Profile["/tosca/simple/1.3/js/constraints/schema.js"], // introduced in TOSCA 1.3
 }
 
 var ConstraintClauseNativeArgumentIndexes = map[string][]uint{
-	"equal":            {0},
-	"greater_than":     {0},
-	"greater_or_equal": {0},
-	"less_than":        {0},
-	"less_or_equal":    {0},
-	"in_range":         {0, 1},
+	"tosca.constraint.equal":            {0},
+	"tosca.constraint.greater_than":     {0},
+	"tosca.constraint.greater_or_equal": {0},
+	"tosca.constraint.less_than":        {0},
+	"tosca.constraint.less_or_equal":    {0},
+	"tosca.constraint.in_range":         {0, 1},
 }
 
 //
@@ -69,7 +69,8 @@ func ReadConstraintClause(context *tosca.Context) interface{} {
 		for key, value := range map_ {
 			operator := yamlkeys.KeyString(key)
 
-			script, ok := context.ScriptletNamespace[operator]
+			scriptletName := "tosca.constraint." + operator
+			scriptlet, ok := context.ScriptletNamespace[scriptletName]
 			if !ok {
 				context.Clone(operator).ReportValueMalformed("constraint clause", "unsupported operator")
 				return self
@@ -83,7 +84,7 @@ func ReadConstraintClause(context *tosca.Context) interface{} {
 				self.Arguments = ard.List{value}
 			}
 
-			self.NativeArgumentIndexes = script.NativeArgumentIndexes
+			self.NativeArgumentIndexes = scriptlet.NativeArgumentIndexes
 
 			// We have only one key
 			break
@@ -109,7 +110,7 @@ func (self *ConstraintClause) ToFunctionCall(context *tosca.Context, strict bool
 		}
 		arguments[index] = argument
 	}
-	return context.NewFunctionCall(self.Operator, arguments)
+	return context.NewFunctionCall("tosca.constraint."+self.Operator, arguments)
 }
 
 func (self *ConstraintClause) IsNativeArgument(index uint) bool {

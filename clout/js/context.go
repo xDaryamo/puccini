@@ -88,15 +88,15 @@ func (self *Context) Exec(clout *cloutpkg.Clout, scriptletName string, apis map[
 	return UnwrapException(err)
 }
 
-func (self *Context) Fail(msg string) {
+func (self *Context) Fail(message string) {
 	if !self.Quiet {
-		fmt.Fprintln(self.Stderr, terminal.ColorError(msg))
+		fmt.Fprintln(self.Stderr, terminal.ColorError(message))
 	}
 	atexit.Exit(1)
 }
 
-func (self *Context) Failf(f string, args ...interface{}) {
-	self.Fail(fmt.Sprintf(f, args...))
+func (self *Context) Failf(format string, args ...interface{}) {
+	self.Fail(fmt.Sprintf(format, args...))
 }
 
 func (self *Context) FailOnError(err error) {

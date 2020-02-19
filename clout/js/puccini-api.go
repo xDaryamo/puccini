@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/beevik/etree"
+	"github.com/tebeka/atexit"
 	"github.com/tliron/puccini/common"
 	formatpkg "github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/common/terminal"
@@ -47,8 +48,8 @@ func (self *Context) NewPucciniAPI() *PucciniAPI {
 	}
 }
 
-func (entry *PucciniAPI) Sprintf(f string, a ...interface{}) string {
-	return fmt.Sprintf(f, a...)
+func (entry *PucciniAPI) Sprintf(format string, args ...interface{}) string {
+	return fmt.Sprintf(format, args...)
 }
 
 func (entry *PucciniAPI) JoinFilePath(elements ...string) string {
@@ -73,7 +74,7 @@ func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool)
 		output = filepath.Join(output, path)
 		var err error
 		output, err = filepath.Abs(output)
-		self.context.FailOnError(err)
+		self.failOnError(err)
 	}
 
 	if output == "" {
@@ -102,7 +103,7 @@ func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool)
 		}
 	}
 
-	self.context.FailOnError(formatpkg.WriteOrPrint(data, self.Format, self.Stdout, self.Pretty, output))
+	self.failOnError(formatpkg.WriteOrPrint(data, self.Format, self.Stdout, self.Pretty, output))
 }
 
 func (self *PucciniAPI) Exec(name string, arguments ...string) (string, error) {
@@ -119,5 +120,22 @@ func (self *PucciniAPI) Download(sourceUrl string, targetPath string) error {
 		return urlpkg.DownloadTo(sourceUrl_, targetPath)
 	} else {
 		return err
+	}
+}
+
+func (self *PucciniAPI) Fail(message string) {
+	if !self.context.Quiet {
+		fmt.Fprintln(self.Stderr, terminal.ColorError(message))
+	}
+	atexit.Exit(1)
+}
+
+func (self *PucciniAPI) Failf(format string, args ...interface{}) {
+	self.Fail(fmt.Sprintf(format, args...))
+}
+
+func (self *PucciniAPI) failOnError(err error) {
+	if err != nil {
+		self.Fail(err.Error())
 	}
 }

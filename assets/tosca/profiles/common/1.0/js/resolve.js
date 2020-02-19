@@ -1,5 +1,5 @@
 
-clout.exec('tosca.utils');
+clout.exec('tosca.lib.coerce');
 
 // Remove existing relationships
 var nodeTemplateVertexes = [];
@@ -7,7 +7,7 @@ for (var vertexId in clout.vertexes) {
 	var vertex = clout.vertexes[vertexId];
 	if (tosca.isNodeTemplate(vertex)) {
 		nodeTemplateVertexes.push(vertex);
-		for (var e = 0; e < vertex.edgesOut.length; e++) {
+		for (var e = 0, l = vertex.edgesOut.length; e < l; e++) {
 			edge = vertex.edgesOut[e];
 			if (tosca.isTosca(edge, 'Relationship'))
 				edge.remove();
@@ -23,18 +23,18 @@ nodeTemplateVertexes.sort(function(a, b) {
 tosca.toCoercibles();
 
 // Resolve all requirements
-for (var v = 0; v < nodeTemplateVertexes.length; v++) {
+for (var v = 0, l = nodeTemplateVertexes.length; v < l; v++) {
 	var vertex = nodeTemplateVertexes[v];
 	var nodeTemplate = vertex.properties;
 	var requirements = nodeTemplate.requirements;
-	for (var r = 0; r < requirements.length; r++) {
+	for (var r = 0, ll = requirements.length; r < ll; r++) {
 		var requirement = requirements[r];
 		resolve(vertex, nodeTemplate, requirement);
 	}
 }
 
 // Check that all capabilities have their minimum relationship count
-for (var v = 0; v < nodeTemplateVertexes.length; v++) {
+for (var v = 0, l = nodeTemplateVertexes.length; v < l; v++) {
 	var vertex = nodeTemplateVertexes[v];
 	var nodeTemplate = vertex.properties;
 	var capabilities = nodeTemplate.capabilities;
@@ -76,7 +76,7 @@ function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 
 	// Gather priority candidates: those that have not yet fulfilled their minimum relationship count
 	var priorityCandidates = [];
-	for (var c = 0; c < candidates.length; c++) {
+	for (var c = 0, l = candidates.length; c < l; c++) {
 		var candidate = candidates[c];
 		if ((candidate.capability.minRelationshipCount !== 0) && (countRelationships(candidate.vertex, candidate.capabilityName) < candidate.capability.minRelationshipCount))
 			priorityCandidates.push(candidate);
@@ -87,7 +87,7 @@ function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 	if (priorityCandidates.length !== 0)
 		// Of the priority candidates, pick the one with the highest minimum relationship count
 		// (needs to be fulfilled soonest)
-		for (var c = 0; c < priorityCandidates.length; c++) {
+		for (var c = 0, l = priorityCandidates.length; c < l; c++) {
 			var candidate = priorityCandidates[c];
 			if ((chosen === null) || (candidate.capability.minRelationshipCount > chosen.capability.minRelationshipCount))
 				chosen = candidate;
@@ -95,7 +95,7 @@ function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 	else
 		// Of the candidates, pick the one with highest maximum relationship count
 		// (has the most room)
-		for (var c = 0; c < candidates.length; c++) {
+		for (var c = 0, l = candidates.length; c < l; c++) {
 			candidate = candidates[c];
 			if ((chosen === null) || isMaxCountGreater(candidate.capability.maxRelationshipCount, chosen.capability.maxRelationshipCount))
 				chosen = candidate;
@@ -113,7 +113,7 @@ function gatherCandidateNodeTemplates(sourceVertex, requirement) {
 	var capabilityPropertyConstraintsMap = requirement.capabilityPropertyConstraints;
 
 	var candidates = [];
-	for (var v = 0; v < nodeTemplateVertexes.length; v++) {
+	for (var v = 0, l = nodeTemplateVertexes.length; v < l; v++) {
 		var vertex = nodeTemplateVertexes[v];
 		var candidateNodeTemplate = vertex.properties;
 		var candidateNodeTemplateName = candidateNodeTemplate.name;
@@ -168,7 +168,7 @@ function gatherCandidateCapabilities(requirement, candidateNodeTemplates) {
 	var capabilityTypeName = requirement.capabilityTypeName;
 
 	var candidates = [];
-	for (var c = 0; c < candidateNodeTemplates.length; c++) {
+	for (var c = 0, l = candidateNodeTemplates.length; c < l; c++) {
 		var candidate = candidateNodeTemplates[c];
 		var candidateVertex = candidate.vertex;
 		var candidateNodeTemplateName = candidate.nodeTemplateName;
@@ -186,7 +186,7 @@ function gatherCandidateCapabilities(requirement, candidateNodeTemplates) {
 			return a.name < b.name ? -1 : 1;
 		});
 
-		for (var cc = 0; cc < candidateCapabilities.length; cc++) {
+		for (var cc = 0, ll = candidateCapabilities.length; cc < ll; cc++) {
 			var candidateCapabilityName = candidateCapabilities[cc].name;
 
 			if ((capabilityName !== '') && (capabilityName !== candidateCapabilityName)) {
@@ -252,7 +252,7 @@ function addRelationship(sourceVertex, requirement, targetVertex, capabilityName
 
 function countRelationships(vertex, capabilityName) {
 	var count = 0;
-	for (var e = 0; e < vertex.edgesIn.length; e++) {
+	for (var e = 0, l = vertex.edgesIn.length; e < l; e++) {
 		var edge = vertex.edgesIn[e];
 		if (tosca.isTosca(edge, 'Relationship') && (edge.properties.capability === capabilityName))
 			count++;
@@ -290,7 +290,7 @@ function isSubstituted(nodeTemplateName, requirementName) {
 	for (var vertexId in clout.vertexes) {
 		var vertex = clout.vertexes[vertexId];
 		if (tosca.isTosca(vertex, 'Substitution')) {
-			for (var e = 0; e < vertex.edgesOut.length; e++) {
+			for (var e = 0, l = vertex.edgesOut.length; e < l; e++) {
 				var edge = vertex.edgesOut[e];
 				if (!tosca.isTosca(edge, 'RequirementMapping'))
 					continue;

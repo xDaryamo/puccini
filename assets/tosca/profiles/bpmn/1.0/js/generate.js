@@ -1,4 +1,5 @@
-clout.exec('tosca.utils');
+
+clout.exec('tosca.lib.coerce');
 
 tosca.coerce();
 
