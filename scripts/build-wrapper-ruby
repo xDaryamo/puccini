@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
+. "$HERE/_env"
+
+"$HERE/build-library"
+
+cp "$ROOT/dist/libpuccini.so" "$ROOT/wrappers/ruby/lib/"
+
+gem build \
+	-C "$ROOT/wrappers/ruby" \
+	--output ../../dist/puccini.gem \
+	"$ROOT/wrappers/ruby/puccini.gemspec"

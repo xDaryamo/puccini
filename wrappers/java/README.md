@@ -15,7 +15,7 @@ on Fedora:
 To build the libraries:
 
     scripts/build-library.sh
-    mvn -f wrappers/java
+    mvn --file wrappers/java
 
 The Puccini shared library as well as the JNI shim shared library will both be in the `dist/`
 subdirectory. To use them you can either copy them into your operating system's standard library

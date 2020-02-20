@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
+. "$HERE/_env"
+
+"$HERE/build-wrapper-java"
+
+# Build
+mvn --file "$ROOT/examples/java"
+
+# Run
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROOT/dist \
+mvn --quiet --file "$ROOT/examples/java" \
+	exec:java --define exec.args="$ROOT/examples/tosca/data-types.yaml"

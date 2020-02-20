@@ -1,25 +1,34 @@
 #!/usr/bin/env python
 
-import os.path, setuptools, subprocess, tempfile, shutil
+# Supported environment variables:
+#
+# PUCCINI_REPO: set this to override the Puccini git repo location (i.e. to use a local clone) 
+# PUCCINI_GO_VERSION: set this to override the Go distribution version used to compile Puccini
+
+import os, os.path, setuptools, subprocess, tempfile, shutil
 
 with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
     readme = f.read()
 
+repo = os.environ.get('PUCCINI_REPO', 'https://github.com/tliron/puccini')
+go_version = os.environ.get('PUCCINI_GO_VERSION', '1.13.8')
+root = os.path.abspath(os.path.dirname(__file__)).replace('"', '\\"')
+
 script = '''\
-ROOT="{}"
+ROOT="{root}"
 
 # Install Go
-curl https://storage.googleapis.com/golang/go1.13.7.linux-amd64.tar.gz --silent --location | tar -xz
+curl https://storage.googleapis.com/golang/go{go_version}.linux-amd64.tar.gz --silent --location | tar -xz
 export PATH="$PATH:go/bin"
 
 # Fetch repository
 REPO=puccini
-git clone https://github.com/tliron/puccini "$REPO"
+git clone {repo} "$REPO"
 
 # Build library
 "$REPO/scripts/build-library"
 mv "$REPO/dist/libpuccini.so" "$ROOT/puccini/" 
-'''.format(os.path.abspath(os.path.dirname(__file__)).replace('"', '\\"'))
+'''.format(root=root, go_version=go_version, repo=repo)
 
 t = tempfile.mkdtemp()
 try:

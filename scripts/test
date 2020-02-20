@@ -11,4 +11,4 @@ HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
 echo 'testing...'
 
 ROOT=$ROOT \
-go test -count=1 github.com/tliron/puccini/puccini-tosca "$@"
+go test -count=1 "$MODULE/puccini-tosca" "$@"

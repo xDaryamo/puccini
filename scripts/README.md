@@ -39,11 +39,15 @@ compiled into Puccini's executables. So, after running this you would likely als
 [test](test)
 ------------
 
-This runs `build` and then runs some tests using Go's built-in testing tool.
+This runs `build` and then some tests using Go's built-in testing tool.
 
 [release](release)
 ------------------
 
 This script installs and runs the amazing [GoReleaser](https://goreleaser.com/) tool in order to
-cross-compile and create installation packages for Linux, Windows, and MacOS. It relies on the
+cross-compile Puccini, create installation packages for Linux, Windows, and MacOS, and publish them
+to [GitHub](https://github.com/tliron/puccini/releases). It uses the
 [.goreleaser.yml](../.goreleaser.yml) file for its configuration.
+
+Run it with the "-t" switch to do a test release, which will create local distributions (under
+`dist/release/`) without publishing them to GitHub.

@@ -11,10 +11,6 @@ go get -u github.com/goreleaser/goreleaser
 # Uses the current tag for the release version
 # (So you likely want to tag before running this)
 
-# Useful flags:
-# --snapshot - doesn't need a tag
-# --skip-publish - don't publish, just build
-
 WORK=$(mktemp --directory)
 
 function the_end () {
@@ -25,10 +21,18 @@ function the_end () {
 
 trap the_end EXIT
 
+# Create a clean copy of our repo
 rsync --recursive "$ROOT/" "$WORK"
 cd "$WORK"
 git clean -xdf
 find . -type f -name .gitignore -exec rm {} \;
-goreleaser --parallelism=$(nproc) --skip-validate "$@"
+
+if [ "$1" == -t ]; then
+	goreleaser --parallelism=$(nproc) --skip-validate --snapshot --skip-publish
+else
+	goreleaser --parallelism=$(nproc) --skip-validate
+fi
+
+# Copy releases back here
 rm --recursive --force "$ROOT/dist/release"
 rsync --recursive "$WORK/dist/" "$ROOT/dist/release"

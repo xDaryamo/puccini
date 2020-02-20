@@ -13,5 +13,8 @@ HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
 "$HERE/test-zip"
 "$HERE/test-zip-http"
 "$HERE/test-wasm"
+"$HERE/test-java"
+"$HERE/test-python"
+"$HERE/test-ruby"
 
 echo done!

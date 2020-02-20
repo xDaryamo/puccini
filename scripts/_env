@@ -2,10 +2,13 @@
 _HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
 ROOT=$(readlink -f "$_HERE/..")
 
+MODULE=github.com/tliron/puccini
+
 if [ -z "$GOPATH" ]; then
 	GOPATH=$HOME/go
 fi
 
-PATH=$GOPATH/bin:$ROOT:$PATH
+export PATH=$GOPATH/bin:$ROOT:$PATH
+export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java}
 
 . "$_HERE/_functions"

@@ -5,8 +5,8 @@
 
 	<!--
 	Create "libpuccinijni.so" JNI shim, which implements the native methods in "puccini.jar"
-	(created by ../java/pom.xml) and relies on the Puccini library ("libpuccini.so"), created
-	by ../../scripts/build-library.sh
+	(created by ../java/pom.xml) and relies on the Puccini library ("libpuccini.so"),
+	created	by ../../scripts/build-library.sh
 	-->
 
 	<groupId>puccini</groupId>

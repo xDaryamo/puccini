@@ -7,7 +7,7 @@ HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
 rm --force "$ROOT/go.mod" "$ROOT/go.sum"
 
 cd "$ROOT"
-go mod init github.com/tliron/puccini
+go mod init "$MODULE"
 
 "$HERE/test"
 
