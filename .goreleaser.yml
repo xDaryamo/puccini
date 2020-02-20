@@ -44,8 +44,8 @@ archives:
   - LICENSE
   - NOTICE
   - puccini-csar
-  - assets/**
-  - examples/**
+  - assets/tosca/**/*
+  - examples/**/*
 
   format_overrides:
   - goos: windows
