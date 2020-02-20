@@ -13,9 +13,22 @@ go get -u github.com/goreleaser/goreleaser
 
 # Useful flags:
 # --snapshot - doesn't need a tag
-# --skip-validate - to accept a dirty git repo
 # --skip-publish - don't publish, just build
 
-cd "$ROOT"
+WORK=$(mktemp --directory)
 
-goreleaser --rm-dist "$@"
+function the_end () {
+	local ERR=$?
+	rm --recursive --force "$WORK"
+	exit $ERR
+}
+
+trap the_end EXIT
+
+rsync --recursive "$ROOT/" "$WORK"
+cd "$WORK"
+git clean -xdf
+find . -type f -name .gitignore -exec rm {} \;
+goreleaser --parallelism=$(nproc) --skip-validate "$@"
+rm --recursive --force "$ROOT/dist/release"
+rsync --recursive "$WORK/dist/" "$ROOT/dist/release"
