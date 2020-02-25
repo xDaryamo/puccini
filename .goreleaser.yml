@@ -12,6 +12,10 @@ builds:
   - darwin
   - windows
   - js
+  ldflags:
+  - -X 'github.com/tliron/puccini/version.GitVersion={{.Env.VERSION}}'
+  - -X 'github.com/tliron/puccini/version.GitRevision={{.Env.REVISION}}'
+  - -X 'github.com/tliron/puccini/version.Timestamp={{.Env.TIMESTAMP}}'
 
 - id: puccini-js
   main: ./puccini-js
@@ -24,6 +28,10 @@ builds:
   - darwin
   - windows
   - js
+  ldflags:
+  - -X 'github.com/tliron/puccini/version.GitVersion={{.Env.VERSION}}'
+  - -X 'github.com/tliron/puccini/version.GitRevision={{.Env.REVISION}}'
+  - -X 'github.com/tliron/puccini/version.Timestamp={{.Env.TIMESTAMP}}'
 
 nfpms:
 

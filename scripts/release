@@ -27,11 +27,15 @@ cd "$WORK"
 git clean -xdf
 find . -type f -name .gitignore -exec rm {} \;
 
+git_version
+
+ARGS=
 if [ "$1" == -t ]; then
-	goreleaser --parallelism=$(nproc) --skip-validate --snapshot --skip-publish
-else
-	goreleaser --parallelism=$(nproc) --skip-validate
+	ARGS='--snapshot --skip-publish'
 fi
+
+VERSION=$VERSION REVISION=$REVISION TIMESTAMP=$TIMESTAMP \
+goreleaser --parallelism=$(nproc) --skip-validate $ARGS
 
 # Copy releases back here
 rm --recursive --force "$ROOT/dist/release"
