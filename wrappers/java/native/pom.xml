@@ -9,16 +9,16 @@
 	created	by ../../scripts/build-library.sh
 	-->
 
-	<groupId>puccini</groupId>
-	<artifactId>libpuccinijni</artifactId>
-	<version>1.0-SNAPSHOT</version>
-
-	<!-- Shared library extension (Linux): libpuccinijni.so -->
-	<packaging>so</packaging>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+	<groupId>puccini</groupId>
+	<artifactId>libpuccinijni</artifactId>
+	<version>${puccini.version}</version>
+
+	<!-- Shared library extension (Linux): libpuccinijni.so -->
+	<packaging>so</packaging>
 
 	<build>
 		<plugins>

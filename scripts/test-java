@@ -6,8 +6,10 @@ HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
 
 "$HERE/build-wrapper-java"
 
+git_version
+
 # Build
-mvn --file "$ROOT/examples/java"
+mvn --file "$ROOT/examples/java" --define puccini.version=${VERSION:1}
 
 # Run
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROOT/dist \

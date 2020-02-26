@@ -8,6 +8,9 @@ HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
 
 cp "$ROOT/dist/libpuccini.so" "$ROOT/wrappers/ruby/lib/"
 
+git_version
+
+PUCCINI_VERSION=${VERSION:1} \
 gem build \
 	-C "$ROOT/wrappers/ruby" \
 	--output ../../dist/puccini.gem \

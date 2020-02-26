@@ -10,8 +10,9 @@ import os, os.path, setuptools, subprocess, tempfile, shutil
 with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
     readme = f.read()
 
+version = os.environ.get('PUCCINI_VERSION', '0.0.0')
 repo = os.environ.get('PUCCINI_REPO', 'https://github.com/tliron/puccini')
-go_version = os.environ.get('PUCCINI_GO_VERSION', '1.13.8')
+go_version = os.environ.get('PUCCINI_GO_VERSION', '1.14')
 root = os.path.abspath(os.path.dirname(__file__)).replace('"', '\\"')
 
 script = '''\
@@ -38,7 +39,7 @@ finally:
 
 setuptools.setup(
     name='puccini',
-    version='0.1',
+    version=version,
     description='Puccini',
     long_description=readme,
     license='Apache License 2.0',

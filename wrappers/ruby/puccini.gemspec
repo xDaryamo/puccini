@@ -1,6 +1,8 @@
+version = ENV['PUCCINI_VERSION'] || '0.0.0'
+
 Gem::Specification.new do |s|
   s.name        = 'puccini'
-  s.version     = '0.1'
+  s.version     = version
 
   s.summary     = 'Puccini'
   s.description = 'Deliberately stateless cloud topology management and deployment tools based on TOSCA'
