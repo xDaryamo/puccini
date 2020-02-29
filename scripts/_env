@@ -1,6 +1,6 @@
 
-_HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
-ROOT=$(readlink -f "$_HERE/..")
+_HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
+ROOT=$(readlink --canonicalize "$_HERE/..")
 
 MODULE=github.com/tliron/puccini
 

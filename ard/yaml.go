@@ -19,7 +19,7 @@ func FindYAMLNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 
 	case yaml.DocumentNode:
 		for _, childNode := range node.Content {
-			// We assume it's a single document
+			// It is a single document, so returning from the first iteration should work
 			return FindYAMLNode(childNode, path...)
 		}
 
@@ -29,7 +29,7 @@ func FindYAMLNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 		case FieldPathType, MapPathType:
 			v := pathElement.Value.(string)
 
-			// Content is a slice of pairs of key followed by value
+			// Content is a slice of pairs of key-followed-by-value
 			length := len(node.Content)
 			for i := 0; i < length; i += 2 {
 				keyNode := node.Content[i]

@@ -17,7 +17,7 @@ const (
 
 type PathElement struct {
 	Type  int
-	Value interface{} // int for ListPathType, string for FieldPathType and MapPathType
+	Value interface{} // string for FieldPathType and MapPathType, int for ListPathType
 }
 
 func NewFieldPathElement(name string) PathElement {
@@ -45,7 +45,7 @@ func (self Path) String() string {
 	for _, element := range self {
 		switch element.Type {
 		case FieldPathType:
-			value := element.Value.(string)
+			value := escapeQuotes(element.Value.(string))
 			if path == "" {
 				path = value
 			} else {
@@ -53,8 +53,8 @@ func (self Path) String() string {
 			}
 
 		case MapPathType:
-			value := element.Value.(string)
-			path = fmt.Sprintf("%s[\"%s\"]", path, escapeQuotes(value))
+			value := escapeQuotes(element.Value.(string))
+			path = fmt.Sprintf("%s[\"%s\"]", path, value)
 
 		case ListPathType:
 			value := element.Value.(int)

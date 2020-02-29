@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
-ROOT=$(readlink -f "$HERE/..")
+HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
+ROOT=$(readlink --canonicalize "$HERE/..")
 
 function header () {
 	local DEST=$1

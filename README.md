@@ -38,10 +38,10 @@ reusable and extensible objects. It allows architects to focus on application de
 requirements without being bogged down by the ever-changing specificities of the infrastructure.
 
 Puccini can compile several popular TOSCA and TOSCA-like dialects:
-[TOSCA 1.3](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html) (in progress),
-[TOSCA 1.2](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.2/TOSCA-Simple-Profile-YAML-v1.2.html),
-[TOSCA 1.1](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html),
-[TOSCA 1.0](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.0/TOSCA-Simple-Profile-YAML-v1.0.html),
+[TOSCA 1.3](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html),
+[TOSCA 1.2](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.2/TOSCA-Simple-Profile-YAML-v1.2.html),
+[TOSCA 1.1](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html),
+[TOSCA 1.0](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.0/TOSCA-Simple-Profile-YAML-v1.0.html),
 as well as the more limited grammars of
 [Cloudify DSL 1.3](https://docs.cloudify.co/5.0.5/developer/blueprints/),
 and
@@ -49,7 +49,7 @@ and
 
 All these dialects are supported as straightforward YAML files, in the file system or hosted on
 URLs, as well as packaged in
-[CSAR files](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/cos01/TOSCA-Simple-Profile-YAML-v1.3-cos01.html#_Toc26969474).
+[CSAR files](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html#_Toc302251718).
 Puccini also includes a simple CSAR creation tool, **puccini-csar**.
 
 **puccini-tosca** comes with TOSCA profiles for the
@@ -283,8 +283,8 @@ FAQ
 
 If you didn't plan it that way, then: no. Our TOSCA Kubernetes/OpenStack profiles do *not* make use
 of TOSCA's
-[Simple Profile](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/TOSCA-Simple-Profile-YAML-v1.1.html)
-or [Simple Profile for NFV](http://docs.oasis-open.org/tosca/tosca-nfv/v1.0/tosca-nfv-v1.0.html)
+[Simple Profile](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html)
+or [Simple Profile for NFV](https://docs.oasis-open.org/tosca/tosca-nfv/v1.0/tosca-nfv-v1.0.html)
 types (Compute, BlockStorage, VDU, etc.). Still, if you find these so-called "normative" types
 useful, they are included in Puccini and will be compiled into Clout. You may bring in your
 own orchestration to deploy them to your cloud environments. But, we encourage you to consider
@@ -379,8 +379,8 @@ it—namespaces? proxies? catalogs? repositories?—so it insists on not having 
 ### TOSCA is so complicated! Help!
 
 I know, right? Now imagine writing a parser for it... Not only is it a complex language, but the
-[specification itself](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.2/TOSCA-Simple-Profile-YAML-v1.2.html)
-(as of version 1.2) has many contradictions, errors, and gaps.
+[specification itself](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html)
+(as of version 1.3) has many contradictions, errors, and gaps.
 
 Please join [OASIS's TOSCA community](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=tosca)
 to help improve the language!

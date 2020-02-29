@@ -4,7 +4,7 @@ set -e
 # Requirements (Fedora)
 # sudo dnf install python3-virtualenv python3-libselinux
 
-HERE=$(dirname "$(readlink -f "$BASH_SOURCE")")
+HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 . "$HERE/_env"
 
 virtualenv --system-site-packages "$ROOT/env"
