@@ -3,6 +3,11 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 # To apply the constraints use "--coerce":
 #   puccini-tosca compile --coerce examples/tosca/data-types.yaml
 
+metadata:
+
+  template_name: Data Types Example
+  template_author: Puccini
+
 node_types:
 
   DataNode:

@@ -5,6 +5,11 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 # For an example, see: examples/javascript/artifacts.yaml
 
+metadata:
+
+  template_name: Artifacts Example
+  template_author: Puccini
+
 repositories:
 
   centos:

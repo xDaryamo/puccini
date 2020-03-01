@@ -7,6 +7,11 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 # This can happen recursively,
 # though Puccini does make sure to report a problem if you are copying in a loop 
 
+metadata:
+
+  template_name: Copy Example
+  template_author: Puccini
+
 node_types:
 
   Machine:

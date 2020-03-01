@@ -1,13 +1,25 @@
 tosca_definitions_version: tosca_simple_yaml_1_3
 
+metadata:
+
+  template_name: Namespaces Example
+  template_author: Puccini
+
 imports:
 
-# The short notation of import merges the names into our global namespace
+# The short notation of import merges the names into this namespace
 - imports/nginx.yaml
 
 # Use the long notation of import to specify "namespace_prefix" 
 - file: imports/mongodb.yaml
   namespace_prefix: mongodb
+
+# The optional "namespace" keyword specifies the canonical namespace for the types declared here
+# (In Puccini it appears only in the compiled Clout output)
+# It is typically used when designing type profiles
+# In this file it does nothing, because we do not declare types here
+# But see its use in "imports/nginx.yaml" and "imports/mongodb.yaml" 
+namespace: example
 
 topology_template:
 
@@ -22,13 +34,16 @@ topology_template:
       type: mongodb:MongoDB
 
     server1:
-      # Fully qualified name
-      type: tosca.nodes.Compute
+      # Normative types have the "tosca" namespace prefix by default
+      # This is the recommended way to refer to them
+      type: tosca:Compute
 
     server2:
-      # Normative types also have a short alias (meaning that you can't use these names yourself)
+      # Normative types can also be reffered to without the namespace prefix
+      # Unfortunately, this means that you can't use these names for your own types
+      # (This feature can be disabled in Puccini via the "namespace.normative.shortcuts.disable" quirk)
       type: Compute
 
     server3:
-      # Normative types also have the "tosca" prefix for the short alias
-      type: tosca:Compute
+      # Normative types also have a "fully qualified name"
+      type: tosca.nodes.Compute

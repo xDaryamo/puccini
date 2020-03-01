@@ -8,6 +8,11 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 # But it's possible to disable it:
 #   puccini-tosca compile --resolve=false examples/tosca/requirements-and-capabilities.yaml
 
+metadata:
+
+  template_name: Requirements and Capabilities Example
+  template_author: Puccini
+
 node_types:
 
   # Though requirements are a sequenced list, you cannot specify the same name more than once at the node type

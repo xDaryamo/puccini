@@ -2,6 +2,11 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 # Puccini supports Unicode everywhere
 
+metadata:
+
+  template_name: Unicode Example
+  template_author: Puccini
+
 node_types:
 
   燈泡:

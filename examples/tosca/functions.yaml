@@ -6,6 +6,11 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 # Puccini also lets you create your own custom functions
 # See: examples/javascript/functions.yaml
 
+metadata:
+
+  template_name: Functions Example
+  template_author: Puccini
+
 node_types:
 
   Ports:

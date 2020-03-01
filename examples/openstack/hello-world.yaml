@@ -3,7 +3,13 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 # Straightforward TOSCA version of the Heat hello world:
 # https://docs.openstack.org/heat/pike/template_guide/hello_world.html
 
+metadata:
+
+  template_name: OpenStack Profile Example
+  template_author: Puccini
+
 imports:
+
 - file: internal:/tosca/openstack/1.0/profile.yaml
   namespace_prefix: openstack
 

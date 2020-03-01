@@ -7,6 +7,9 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 metadata:
 
+  template_name: JavaScript Functions Example
+  template_author: Puccini
+
   # Use metadata prefixed with "puccini.scriptlet|tosca.function."
   # The postfix is the function name
   # Your scriptlet must provide a global function named "evaluate"

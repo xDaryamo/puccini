@@ -10,7 +10,7 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 # The service template can have optional metadata
 metadata:
   # The following fields are "normative" and expected in TOSCA 
-  template_name: Metadata Demonstration
+  template_name: Metadata Example
   template_author: Puccini
   template_version: '1.0' # (must be a string so we add quotes to avoid being read as a float)
   # And you can add your custom metadata

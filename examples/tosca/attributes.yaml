@@ -1,5 +1,10 @@
 tosca_definitions_version: tosca_simple_yaml_1_3
 
+metadata:
+
+  template_name: Attributes Example
+  template_author: Puccini
+
 node_types:
 
   Backup:
