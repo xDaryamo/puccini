@@ -11,13 +11,13 @@ import (
 )
 
 func Write(data interface{}, format string, indent string, writer io.Writer) error {
-	// Special handling for strings
+	// Special handling for bare strings
 	if s, ok := data.(string); ok {
 		_, err := io.WriteString(writer, s)
 		return err
 	}
 
-	// Special handling for etree XML
+	// Special handling for XML document (etree)
 	if xmlDocument, ok := data.(*etree.Document); ok {
 		return WriteXMLDocument(xmlDocument, writer, indent)
 	}
@@ -62,13 +62,13 @@ func WriteJSON(data interface{}, writer io.Writer, indent string) error {
 
 func WriteXML(data interface{}, writer io.Writer, indent string) error {
 	// Because we don't provide explicit marshalling for XML in the codebase (as we do for
-	// JSON and YAML) then we must normalize the data before encoding it
+	// JSON and YAML) we must normalize the data before encoding it
 	data, err := Normalize(data)
 	if err != nil {
 		return err
 	}
 
-	data = EnsureXML(data)
+	data = ToXMLWritable(data)
 
 	if _, err := io.WriteString(writer, xml.Header); err != nil {
 		return err

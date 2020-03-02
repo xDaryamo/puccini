@@ -126,7 +126,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 				self.Context.Data = tosca.PrimitiveTypeZeroes[internalTypeName]
 			}
 
-			if (internalTypeName == "string") && self.Context.HasQuirk("data_types.string.permissive") {
+			if (internalTypeName == "string") && self.Context.HasQuirk(tosca.QuirkDataTypesStringPermissive) {
 				switch data := self.Context.Data.(type) {
 				case bool:
 					self.Context.Data = strconv.FormatBool(data)

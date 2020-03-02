@@ -84,7 +84,7 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 		return nil, false
 	}
 
-	appendShortcutNames := !self.Context.HasQuirk("namespace.normative.shortcuts.disable")
+	appendShortcutNames := !self.Context.HasQuirk(tosca.QuirkNamespaceNormativeShortcutsDisable)
 
 	importSpec := &tosca.ImportSpec{url, newImportNameTransformer(self.NamespacePrefix, appendShortcutNames), false}
 	return importSpec, true

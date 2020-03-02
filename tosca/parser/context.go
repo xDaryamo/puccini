@@ -12,7 +12,7 @@ import (
 
 type Context struct {
 	Root            *Unit
-	Quirks          []string
+	Quirks          tosca.Quirks
 	Units           Units
 	Parsing         sync.Map
 	WaitGroup       sync.WaitGroup
@@ -21,7 +21,7 @@ type Context struct {
 	HierarchiesWork *ContextualWork
 }
 
-func NewContext(quirks []string) Context {
+func NewContext(quirks tosca.Quirks) Context {
 	return Context{
 		Quirks:          quirks,
 		NamespacesWork:  NewContextualWork("namespaces"),
@@ -38,7 +38,7 @@ func (self *Context) AddUnit(entityPtr interface{}, container *Unit, nameTransfo
 
 	if container != nil {
 		containerContext := container.GetContext()
-		if !containerContext.HasQuirk("imports.permissive") {
+		if !containerContext.HasQuirk(tosca.QuirkImportsImperssive) {
 			unitContext := unit.GetContext()
 			if !grammars.CompatibleGrammars(containerContext, unitContext) {
 				containerContext.ReportImportIncompatible(unitContext.URL)

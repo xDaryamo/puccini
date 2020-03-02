@@ -53,7 +53,6 @@ data_types:
       string
 
   nova.Server.Network:
-    derived_from: Root
     properties:
       allocate_network:
         description: >-
@@ -98,7 +97,6 @@ data_types:
         type: string
 
   nova.Server.Port:
-    derived_from: Root
     properties:
       admin_state_up:
         description: >-
@@ -142,7 +140,6 @@ data_types:
         entry_schema: string # TODO
 
   nova.Server.AddressPair:
-    derived_from: Root
     properties:
       ip_address:
         description: >-
@@ -154,7 +151,6 @@ data_types:
         type: MacAddress
 
   nova.Server.SwiftData:
-    derived_from: Root
     properties:
       container:
         description: >-
@@ -170,7 +166,6 @@ data_types:
         - min_length: 1
 
   nova.Server.BlockDevice:
-    derived_from: Root
     properties:
       delete_on_termination:
         description: >-
@@ -196,7 +191,6 @@ data_types:
         type: scalar-unit.size
 
   nova.Server.BlockDevice2:
-    derived_from: Root
     properties:
       boot_index:
         description: >-

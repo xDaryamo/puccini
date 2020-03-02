@@ -34,7 +34,7 @@ func NewSubstitutionMappings(context *tosca.Context) *SubstitutionMappings {
 
 // tosca.Reader signature
 func ReadSubstitutionMappings(context *tosca.Context) interface{} {
-	if context.HasQuirk("substitution_mappings.requirements.list") {
+	if context.HasQuirk(tosca.QuirkSubstitutionMappingsRequirementsList) {
 		if context.ReadOverrides == nil {
 			context.ReadOverrides = make(map[string]string)
 		}

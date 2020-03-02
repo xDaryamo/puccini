@@ -59,12 +59,12 @@ type Context struct {
 	ScriptletNamespace ScriptletNamespace
 	Hierarchy          *Hierarchy
 	Problems           *problems.Problems
-	Quirks             []string
+	Quirks             Quirks
 	Grammar            *Grammar
 	ReadOverrides      map[string]string
 }
 
-func NewContext(quirks []string) *Context {
+func NewContext(quirks Quirks) *Context {
 	return &Context{
 		Namespace:          make(Namespace),
 		ScriptletNamespace: make(ScriptletNamespace),
@@ -144,13 +144,8 @@ func (self *Context) Is(typeNames ...string) bool {
 	return valid
 }
 
-func (self *Context) HasQuirk(quirk string) bool {
-	for _, quirk_ := range self.Quirks {
-		if quirk_ == quirk {
-			return true
-		}
-	}
-	return false
+func (self *Context) HasQuirk(quirk Quirk) bool {
+	return self.Quirks.Has(quirk)
 }
 
 func (self *Context) GetLocation() (int, int) {

@@ -71,6 +71,8 @@ func (self *PucciniAPI) NewXMLDocument() *etree.Document {
 func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool) {
 	output := self.context.Output
 	if path != "" {
+		// Our path is relative to output path
+		// (output path is here considered to be a directory)
 		output = filepath.Join(output, path)
 		var err error
 		output, err = filepath.Abs(output)
@@ -96,7 +98,7 @@ func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool)
 			message = terminal.ColorHeading("writing:    ")
 		}
 		if !self.context.Quiet {
-			fmt.Fprintln(self.Stdout, fmt.Sprintf("%s %s", message, output))
+			fmt.Fprintf(self.Stdout, "%s %s\n", message, output)
 		}
 		if skip {
 			return

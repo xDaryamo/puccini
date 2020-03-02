@@ -7,29 +7,29 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-func EnsureXML(data interface{}) interface{} {
+func ToXMLWritable(data interface{}) interface{} {
 	if data == nil {
 		return nil
 	}
 
 	value := reflect.ValueOf(data)
-	type_ := value.Type()
 
-	if type_.Kind() == reflect.Slice {
+	switch value.Type().Kind() {
+	case reflect.Slice:
 		length := value.Len()
 		slice := make([]interface{}, length)
 		for index := 0; index < length; index++ {
 			v := value.Index(index).Interface()
-			slice[index] = EnsureXML(v)
+			slice[index] = ToXMLWritable(v)
 		}
 		return slice
-	} else if type_.Kind() == reflect.Map {
+	case reflect.Map:
 		// Convert to slice of XMLMapEntry
 		slice := make([]XMLMapEntry, value.Len())
 		for index, key := range value.MapKeys() {
 			k := yamlkeys.KeyData(key.Interface())
 			v := value.MapIndex(key).Interface()
-			slice[index] = XMLMapEntry{EnsureXML(k), EnsureXML(v)}
+			slice[index] = XMLMapEntry{ToXMLWritable(k), ToXMLWritable(v)}
 		}
 		return XMLMap{slice}
 	}
@@ -49,14 +49,15 @@ var XMLMapStartElement = xml.StartElement{Name: xml.Name{Local: "map"}}
 
 // xml.Marshaler interface
 func (self XMLMap) MarshalXML(encoder *xml.Encoder, start xml.StartElement) error {
-	var err error
-	if err = encoder.EncodeToken(XMLMapStartElement); err != nil {
+	if err := encoder.EncodeToken(XMLMapStartElement); err == nil {
+		if err := encoder.Encode(self.Entries); err == nil {
+			return encoder.EncodeToken(XMLMapStartElement.End())
+		} else {
+			return err
+		}
+	} else {
 		return err
 	}
-	if err = encoder.Encode(self.Entries); err != nil {
-		return err
-	}
-	return encoder.EncodeToken(XMLMapStartElement.End())
 }
 
 //
@@ -74,21 +75,25 @@ var XMLValueStart = xml.StartElement{Name: xml.Name{Local: "value"}}
 
 // xml.Marshaler interface
 func (self XMLMapEntry) MarshalXML(encoder *xml.Encoder, start xml.StartElement) error {
-	var err error
-	if err := encoder.EncodeToken(XMLMapEntryStart); err != nil {
+	if err := encoder.EncodeToken(XMLMapEntryStart); err == nil {
+		if err := encoder.EncodeElement(self.Key, XMLKeyStart); err == nil {
+			if err := encoder.EncodeToken(XMLValueStart); err == nil {
+				if err := encoder.Encode(self.Value); err == nil {
+					if err := encoder.EncodeToken(XMLValueStart.End()); err == nil {
+						return encoder.EncodeToken(XMLMapEntryStart.End())
+					} else {
+						return err
+					}
+				} else {
+					return err
+				}
+			} else {
+				return err
+			}
+		} else {
+			return err
+		}
+	} else {
 		return err
 	}
-	if err := encoder.EncodeElement(self.Key, XMLKeyStart); err != nil {
-		return err
-	}
-	if err := encoder.EncodeToken(XMLValueStart); err != nil {
-		return err
-	}
-	if err = encoder.Encode(self.Value); err != nil {
-		return err
-	}
-	if err = encoder.EncodeToken(XMLValueStart.End()); err != nil {
-		return err
-	}
-	return encoder.EncodeToken(XMLMapEntryStart.End())
 }

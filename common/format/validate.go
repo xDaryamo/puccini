@@ -27,7 +27,8 @@ func ValidateYAML(code string) error {
 	decoder := yaml.NewDecoder(strings.NewReader(code))
 	// Note: decoder.Decode will only decode the first document it finds
 	for {
-		if err := decoder.Decode(new(interface{})); err != nil {
+		var node yaml.Node
+		if err := decoder.Decode(&node); err != nil {
 			if err == io.EOF {
 				return nil
 			} else {

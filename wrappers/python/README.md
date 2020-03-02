@@ -21,7 +21,7 @@ Or, if you've cloned the repository locally:
 
 For testing it's recommended to install in a [virtualenv](https://virtualenv.pypa.io/):
 
-    virtualenv env
+    python -m venv env
     . env/bin/activate
     pip install git+https://github.com/tliron/puccini#subdirectory=wrappers/python
 

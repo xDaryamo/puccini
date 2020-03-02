@@ -75,7 +75,7 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 	}
 	common.FailOnError(err)
 
-	context := parser.NewContext(quirks)
+	context := parser.NewContext(tosca.NewQuirks(quirks...))
 	var problems *problemspkg.Problems
 
 	// Phase 1: Read

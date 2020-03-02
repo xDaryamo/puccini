@@ -14,13 +14,13 @@ These are activated via the `--quirk/-x` switch for
   *not* be identical to the YAML source code. For example, `1.0000` in YAML (a float) would become
   the string `1` in TOSCA.
 
+* **namespace.normative.shortcuts.disable**: In TOSCA 1.0-1.3 all the normative types have long
+  names, such as "tosca.nodes.Compute", prefixed names ("tosca:Compute"), and also short names
+  ("Compute"). Those short names are annoying because it means you can't use those names for your
+  own types. This quirk disables the short names (the prefixed names remain).
+
 * **substitution_mappings.requirements.list**: According to the examples in the TOSCA 1.0-1.3 specs,
   the `requirements` key under `substitution_mappings` is syntactically a map. However, this syntax
   is inconsistent because it doesn't match the syntax in node templates, which is a sequenced list.
   (In node types, too, it is a sequenced list, although grammatically it works like a map.) This
   quirk changes the expected syntax to be a sequenced list.
-
-* **namespace.normative.shortcuts.disable**: In TOSCA 1.0-1.3 all the normative types have long
-  names, such as "tosca.nodes.Compute", prefixed names ("tosca:Compute"), and also short names
-  ("Compute"). Those short names are annoying because it means you can't use those names for your
-  own types. This quirk disables the short names (the prefixed names remain).

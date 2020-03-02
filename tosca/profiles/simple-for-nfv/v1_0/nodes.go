@@ -205,7 +205,7 @@ node_types:
           this CPD.
         type: list
         entry_schema:
-          type: VirtualNetworkInterfaceRequirements
+          type: tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements
         required: false
     requirements:
     # ERRATUM: seems to be a leftover from csd03

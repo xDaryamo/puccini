@@ -10,4 +10,4 @@ topology_template:
   node_templates:
 
     main:
-      type: Compute
+      type: tosca:Compute

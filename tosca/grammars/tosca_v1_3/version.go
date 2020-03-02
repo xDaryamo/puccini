@@ -41,7 +41,7 @@ func ReadVersion(context *tosca.Context) interface{} {
 	if context.Is("string") {
 		self.OriginalString = *context.ReadString()
 		self.CanonicalString = self.OriginalString
-	} else if context.HasQuirk("data_types.string.permissive") {
+	} else if context.HasQuirk(tosca.QuirkDataTypesStringPermissive) {
 		if context.Is("float") {
 			value := *context.ReadFloat()
 			self.OriginalString = strconv.FormatFloat(value, 'g', -1, 64)
