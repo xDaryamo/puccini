@@ -108,29 +108,29 @@ func (self *WorkflowActivityDefinition) Render(stepDefinition *WorkflowStepDefin
 	}
 }
 
-func (self *WorkflowActivityDefinition) Normalize(st *normal.WorkflowStep, s *normal.ServiceTemplate) *normal.WorkflowActivity {
+func (self *WorkflowActivityDefinition) Normalize(normalWorkflowStep *normal.WorkflowStep) *normal.WorkflowActivity {
 	log.Info("{normalize} workflow activity")
 
-	a := st.NewActivity()
+	normalWorkflowActivity := normalWorkflowStep.NewActivity()
 	if self.DelegateWorkflowDefinition != nil {
-		a.DelegateWorkflow = s.Workflows[self.DelegateWorkflowDefinition.Name]
+		normalWorkflowActivity.DelegateWorkflow = normalWorkflowStep.Workflow.ServiceTemplate.Workflows[self.DelegateWorkflowDefinition.Name]
 	} else if self.InlineWorkflowDefinition != nil {
-		a.InlineWorkflow = s.Workflows[self.InlineWorkflowDefinition.Name]
+		normalWorkflowActivity.InlineWorkflow = normalWorkflowStep.Workflow.ServiceTemplate.Workflows[self.InlineWorkflowDefinition.Name]
 	} else if self.SetNodeState != nil {
-		a.SetNodeState = *self.SetNodeState
+		normalWorkflowActivity.SetNodeState = *self.SetNodeState
 	} else if self.CallOperation != nil {
-		var i *normal.Interface
-		if st.TargetNodeTemplate != nil {
-			i = st.TargetNodeTemplate.Interfaces[self.CallInterface.Name]
-		} else if st.TargetGroup != nil {
-			i = st.TargetGroup.Interfaces[self.CallInterface.Name]
+		var normalInterface *normal.Interface
+		if normalWorkflowStep.TargetNodeTemplate != nil {
+			normalInterface = normalWorkflowStep.TargetNodeTemplate.Interfaces[self.CallInterface.Name]
+		} else if normalWorkflowStep.TargetGroup != nil {
+			normalInterface = normalWorkflowStep.TargetGroup.Interfaces[self.CallInterface.Name]
 		} else {
-			return a
+			return normalWorkflowActivity
 		}
-		a.CallOperation = i.Operations[self.CallOperation.Name]
+		normalWorkflowActivity.CallOperation = normalInterface.Operations[self.CallOperation.Name]
 	}
 
-	return a
+	return normalWorkflowActivity
 }
 
 //

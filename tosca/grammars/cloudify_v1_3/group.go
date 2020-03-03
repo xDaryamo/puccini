@@ -39,22 +39,22 @@ func ReadGroup(context *tosca.Context) interface{} {
 var groupTypeName = "cloudify.Group"
 var groupTypes = normal.NewTypes(groupTypeName)
 
-func (self *Group) Normalize(s *normal.ServiceTemplate) *normal.Group {
+func (self *Group) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Group {
 	log.Infof("{normalize} group: %s", self.Name)
 
-	g := s.NewGroup(self.Name)
-	g.Types = groupTypes
+	normalGroup := normalServiceTemplate.NewGroup(self.Name)
+	normalGroup.Types = groupTypes
 
 	for _, nodeTemplate := range self.MemberNodeTemplates {
-		if n, ok := s.NodeTemplates[nodeTemplate.Name]; ok {
-			g.Members = append(g.Members, n)
+		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[nodeTemplate.Name]; ok {
+			normalGroup.Members = append(normalGroup.Members, normalNodeTemplate)
 		}
 	}
 
 	// TODO: normalize policies
 	// TODO: normalize triggers in policies
 
-	return g
+	return normalGroup
 }
 
 //
@@ -63,8 +63,8 @@ func (self *Group) Normalize(s *normal.ServiceTemplate) *normal.Group {
 
 type Groups []*Group
 
-func (self Groups) Normalize(s *normal.ServiceTemplate) {
+func (self Groups) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
 	for _, group := range self {
-		s.Groups[group.Name] = group.Normalize(s)
+		normalServiceTemplate.Groups[group.Name] = group.Normalize(normalServiceTemplate)
 	}
 }

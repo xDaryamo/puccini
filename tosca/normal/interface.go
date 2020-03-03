@@ -18,7 +18,7 @@ type Interface struct {
 }
 
 func (self *NodeTemplate) NewInterface(name string) *Interface {
-	intr := &Interface{
+	interface_ := &Interface{
 		NodeTemplate:  self,
 		Name:          name,
 		Types:         make(Types),
@@ -26,12 +26,12 @@ func (self *NodeTemplate) NewInterface(name string) *Interface {
 		Operations:    make(Operations),
 		Notifications: make(Notifications),
 	}
-	self.Interfaces[name] = intr
-	return intr
+	self.Interfaces[name] = interface_
+	return interface_
 }
 
 func (self *Group) NewInterface(name string) *Interface {
-	intr := &Interface{
+	interface_ := &Interface{
 		Group:         self,
 		Name:          name,
 		Types:         make(Types),
@@ -39,12 +39,12 @@ func (self *Group) NewInterface(name string) *Interface {
 		Operations:    make(Operations),
 		Notifications: make(Notifications),
 	}
-	self.Interfaces[name] = intr
-	return intr
+	self.Interfaces[name] = interface_
+	return interface_
 }
 
 func (self *Relationship) NewInterface(name string) *Interface {
-	intr := &Interface{
+	interface_ := &Interface{
 		Relationship:  self,
 		Name:          name,
 		Types:         make(Types),
@@ -52,8 +52,8 @@ func (self *Relationship) NewInterface(name string) *Interface {
 		Operations:    make(Operations),
 		Notifications: make(Notifications),
 	}
-	self.Interfaces[name] = intr
-	return intr
+	self.Interfaces[name] = interface_
+	return interface_
 }
 
 //

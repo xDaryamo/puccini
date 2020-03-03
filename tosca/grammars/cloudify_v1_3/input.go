@@ -65,8 +65,8 @@ func (self *Input) Render() {
 
 type Inputs map[string]*Input
 
-func (self Inputs) Normalize(c normal.Constrainables, context *tosca.Context) {
+func (self Inputs) Normalize(normalConstrainables normal.Constrainables, context *tosca.Context) {
 	for key, input := range self {
-		c[key] = input.Normalize(context)
+		normalConstrainables[key] = input.Normalize(context)
 	}
 }

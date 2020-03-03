@@ -5,11 +5,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/tliron/puccini/clout"
+	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
-	"github.com/tliron/puccini/tosca/problems"
+	problemspkg "github.com/tliron/puccini/tosca/problems"
 )
 
 func TestParse(t *testing.T) {
@@ -65,30 +65,30 @@ func testCompile(t *testing.T, url string, inputs map[string]interface{}) {
 		// it actually helps us to find concurrency bugs
 		t.Parallel()
 
-		var s *normal.ServiceTemplate
-		var c *clout.Clout
-		var p *problems.Problems
+		var serviceTemplate *normal.ServiceTemplate
+		var clout *cloutpkg.Clout
+		var problems *problemspkg.Problems
 		var err error
 
-		if s, p, err = parser.Parse(fmt.Sprintf("%s/examples/%s", ROOT, url), nil, inputs); err != nil {
-			t.Errorf("%s\n%s", err.Error(), p.ToString(true))
+		if serviceTemplate, problems, err = parser.Parse(fmt.Sprintf("%s/examples/%s", ROOT, url), nil, inputs); err != nil {
+			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))
 			return
 		}
 
-		if c, err = compiler.Compile(s); err != nil {
-			t.Errorf("%s\n%s", err.Error(), p.ToString(true))
+		if clout, err = compiler.Compile(serviceTemplate); err != nil {
+			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))
 			return
 		}
 
-		compiler.Resolve(c, p, "yaml", true)
-		if !p.Empty() {
-			t.Errorf("%s", p.ToString(true))
+		compiler.Resolve(clout, problems, "yaml", true)
+		if !problems.Empty() {
+			t.Errorf("%s", problems.ToString(true))
 			return
 		}
 
-		compiler.Coerce(c, p, "yaml", true)
-		if !p.Empty() {
-			t.Errorf("%s", p.ToString(true))
+		compiler.Coerce(clout, problems, "yaml", true)
+		if !problems.Empty() {
+			t.Errorf("%s", problems.ToString(true))
 			return
 		}
 	})

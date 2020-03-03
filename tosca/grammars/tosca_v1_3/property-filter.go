@@ -44,14 +44,14 @@ func (self *PropertyFilter) GetKey() string {
 	return self.Name
 }
 
-func (self *PropertyFilter) Normalize(functionCallMap normal.FunctionCallMap) normal.FunctionCalls {
+func (self *PropertyFilter) Normalize(normalFunctionCallMap normal.FunctionCallMap) normal.FunctionCalls {
 	if len(self.ConstraintClauses) == 0 {
 		return nil
 	}
 
-	functionCalls := self.ConstraintClauses.Normalize(self.Context)
-	functionCallMap[self.Name] = functionCalls
-	return functionCalls
+	normalFunctionCalls := self.ConstraintClauses.Normalize(self.Context)
+	normalFunctionCallMap[self.Name] = normalFunctionCalls
+	return normalFunctionCalls
 }
 
 //
@@ -60,8 +60,8 @@ func (self *PropertyFilter) Normalize(functionCallMap normal.FunctionCallMap) no
 
 type PropertyFilters map[string]*PropertyFilter
 
-func (self PropertyFilters) Normalize(functionCallMap normal.FunctionCallMap) {
+func (self PropertyFilters) Normalize(normalFunctionCallMap normal.FunctionCallMap) {
 	for _, propertyFilter := range self {
-		propertyFilter.Normalize(functionCallMap)
+		propertyFilter.Normalize(normalFunctionCallMap)
 	}
 }

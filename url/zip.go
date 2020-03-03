@@ -69,12 +69,12 @@ func NewValidZipURLFromURL(url string) (*ZipURL, error) {
 		return nil, err
 	}
 
-	switch url_ := archiveUrl.(type) {
+	switch url := archiveUrl.(type) {
 	case *FileURL:
-		return NewValidZipURL(path, url_)
+		return NewValidZipURL(path, url)
 
 	case *NetworkURL:
-		if file, err := Download(url_, "puccini-*.zip"); err == nil {
+		if file, err := Download(url, "puccini-*.zip"); err == nil {
 			if fileUrl, err := NewValidFileURL(file.Name()); err == nil {
 				return NewValidZipURL(path, fileUrl)
 			} else {
@@ -131,15 +131,16 @@ func (self *ZipURL) Open() (io.Reader, error) {
 
 	for _, file := range archiveReader.File {
 		if self.Path == file.Name {
-			fileReader, err := file.Open()
-			if err != nil {
+			if fileReader, err := file.Open(); err == nil {
+				return ZipFileReadCloser{fileReader, archiveReader}, nil
+			} else {
 				archiveReader.Close()
 				return nil, err
 			}
-			return ZipFileReadCloser{fileReader, archiveReader}, nil
 		}
 	}
 
+	// Path not found
 	archiveReader.Close()
 	return nil, fmt.Errorf("path not found in zip: %s", self.Path)
 }

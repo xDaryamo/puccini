@@ -104,30 +104,30 @@ func (self *NodeTemplate) Render() {
 	self.Artifacts.Render(self.NodeType.ArtifactDefinitions, self.Context.FieldChild("artifacts", nil))
 }
 
-func (self *NodeTemplate) Normalize(s *normal.ServiceTemplate) *normal.NodeTemplate {
+func (self *NodeTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.NodeTemplate {
 	log.Infof("{normalize} node template: %s", self.Name)
 
-	n := s.NewNodeTemplate(self.Name)
+	normalNodeTemplate := normalServiceTemplate.NewNodeTemplate(self.Name)
 
 	if self.Description != nil {
-		n.Description = *self.Description
+		normalNodeTemplate.Description = *self.Description
 	}
 
 	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.NodeType); ok {
-		n.Types = types
+		normalNodeTemplate.Types = types
 	}
 
 	if self.Directives != nil {
-		n.Directives = *self.Directives
+		normalNodeTemplate.Directives = *self.Directives
 	}
 
-	self.Properties.Normalize(n.Properties)
-	self.Attributes.Normalize(n.Attributes)
-	self.Capabilities.Normalize(self, n)
-	self.Interfaces.NormalizeForNodeTemplate(self, n)
-	self.Artifacts.Normalize(n)
+	self.Properties.Normalize(normalNodeTemplate.Properties)
+	self.Attributes.Normalize(normalNodeTemplate.Attributes)
+	self.Capabilities.Normalize(self, normalNodeTemplate)
+	self.Interfaces.NormalizeForNodeTemplate(self, normalNodeTemplate)
+	self.Artifacts.Normalize(normalNodeTemplate)
 
-	return n
+	return normalNodeTemplate
 }
 
 //
@@ -136,16 +136,16 @@ func (self *NodeTemplate) Normalize(s *normal.ServiceTemplate) *normal.NodeTempl
 
 type NodeTemplates []*NodeTemplate
 
-func (self NodeTemplates) Normalize(s *normal.ServiceTemplate) {
+func (self NodeTemplates) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
 	for _, nodeTemplate := range self {
-		s.NodeTemplates[nodeTemplate.Name] = nodeTemplate.Normalize(s)
+		normalServiceTemplate.NodeTemplates[nodeTemplate.Name] = nodeTemplate.Normalize(normalServiceTemplate)
 	}
 
 	// Requirements must be normalized after node templates
 	// (because they may reference other node templates)
 	for _, nodeTemplate := range self {
-		if n, ok := s.NodeTemplates[nodeTemplate.Name]; ok {
-			nodeTemplate.Requirements.Normalize(nodeTemplate, s, n)
+		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[nodeTemplate.Name]; ok {
+			nodeTemplate.Requirements.Normalize(nodeTemplate, normalNodeTemplate)
 		}
 	}
 }

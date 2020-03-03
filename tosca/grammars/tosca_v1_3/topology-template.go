@@ -92,32 +92,32 @@ func (self *TopologyTemplate) Render() {
 	self.OutputParameterDefinitions.Render("output definition", self.Context.FieldChild("outputs", nil))
 }
 
-func (self *TopologyTemplate) Normalize(s *normal.ServiceTemplate) {
+func (self *TopologyTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
 	log.Info("{normalize} topology template")
 
 	if self.Description != nil {
 		// Append to description in service template
-		if s.Description != "" {
-			s.Description += "\n\n"
+		if normalServiceTemplate.Description != "" {
+			normalServiceTemplate.Description += "\n\n"
 		}
-		s.Description += *self.Description
+		normalServiceTemplate.Description += *self.Description
 	}
 
-	self.InputParameterDefinitions.Normalize(s.Inputs, self.Context.FieldChild("inputs", nil))
-	self.OutputParameterDefinitions.Normalize(s.Outputs, self.Context.FieldChild("outputs", nil))
+	self.InputParameterDefinitions.Normalize(normalServiceTemplate.Inputs, self.Context.FieldChild("inputs", nil))
+	self.OutputParameterDefinitions.Normalize(normalServiceTemplate.Outputs, self.Context.FieldChild("outputs", nil))
 
-	self.NodeTemplates.Normalize(s)
-	self.Groups.Normalize(s)
+	self.NodeTemplates.Normalize(normalServiceTemplate)
+	self.Groups.Normalize(normalServiceTemplate)
 
 	// Workflows must be normalized after node templates and groups
 	// (because step activities might call operations on them)
-	self.WorkflowDefinitions.Normalize(s)
+	self.WorkflowDefinitions.Normalize(normalServiceTemplate)
 
 	// Policies must be normalized after workflows
 	// (because policy triggers might call them)
-	self.Policies.Normalize(s)
+	self.Policies.Normalize(normalServiceTemplate)
 
 	if self.SubstitutionMappings != nil {
-		self.SubstitutionMappings.Normalize(s)
+		self.SubstitutionMappings.Normalize(normalServiceTemplate)
 	}
 }

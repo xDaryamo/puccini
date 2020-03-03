@@ -38,8 +38,8 @@ func GetRootURL(csarUrl urlpkg.URL) (urlpkg.URL, error) {
 	if err != nil {
 		return nil, err
 	}
-	if readCloser, ok := reader.(io.ReadCloser); ok {
-		defer readCloser.Close()
+	if closer, ok := reader.(io.Closer); ok {
+		defer closer.Close()
 	}
 
 	meta, err := ReadMeta(reader)

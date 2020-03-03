@@ -67,25 +67,25 @@ func (self *RelationshipAssignment) Render() {
 	self.Properties.SetIfNil(self.Context.FieldChild("properties", nil), "connection_type", "all_to_all")
 }
 
-func (self *RelationshipAssignment) Normalize(nodeTemplate *NodeTemplate, s *normal.ServiceTemplate, n *normal.NodeTemplate) *normal.Requirement {
-	r := n.NewRequirement("relationship", self.Context.Path.String())
+func (self *RelationshipAssignment) Normalize(nodeTemplate *NodeTemplate, normalNodeTemplate *normal.NodeTemplate) *normal.Requirement {
+	normalRequirement := normalNodeTemplate.NewRequirement("relationship", self.Context.Path.String())
 
 	if self.TargetNodeTemplate != nil {
-		r.NodeTemplate = s.NodeTemplates[self.TargetNodeTemplate.Name]
+		normalRequirement.NodeTemplate = normalNodeTemplate.ServiceTemplate.NodeTemplates[self.TargetNodeTemplate.Name]
 	}
-	r.CapabilityTypeName = &capabilityTypeName
+	normalRequirement.CapabilityTypeName = &capabilityTypeName
 
-	rr := r.NewRelationship()
+	normalRelationship := normalRequirement.NewRelationship()
 
 	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.RelationshipType); ok {
-		rr.Types = types
+		normalRelationship.Types = types
 	}
 
-	self.Properties.Normalize(rr.Properties, "")
-	self.SourceInterfaces.NormalizeForRelationshipSource(self, rr)
-	self.TargetInterfaces.NormalizeForRelationshipTarget(self, rr)
+	self.Properties.Normalize(normalRelationship.Properties, "")
+	self.SourceInterfaces.NormalizeForRelationshipSource(self, normalRelationship)
+	self.TargetInterfaces.NormalizeForRelationshipTarget(self, normalRelationship)
 
-	return r
+	return normalRequirement
 }
 
 //

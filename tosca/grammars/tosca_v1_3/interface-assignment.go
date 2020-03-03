@@ -76,20 +76,20 @@ func (self *InterfaceAssignment) Render(definition *InterfaceDefinition) {
 	self.Notifications.Render(definition.NotificationDefinitions, self.Context.FieldChild("notifications", nil))
 }
 
-func (self *InterfaceAssignment) Normalize(i *normal.Interface, definition *InterfaceDefinition) {
+func (self *InterfaceAssignment) Normalize(normalInterface *normal.Interface, definition *InterfaceDefinition) {
 	log.Debugf("{normalize} interface: %s", self.Name)
 
 	if (definition.InterfaceType != nil) && (definition.InterfaceType.Description != nil) {
-		i.Description = *definition.InterfaceType.Description
+		normalInterface.Description = *definition.InterfaceType.Description
 	}
 
 	if types, ok := normal.GetTypes(self.Context.Hierarchy, definition.InterfaceType); ok {
-		i.Types = types
+		normalInterface.Types = types
 	}
 
-	self.Inputs.Normalize(i.Inputs)
-	self.Operations.Normalize(i)
-	self.Notifications.Normalize(i)
+	self.Inputs.Normalize(normalInterface.Inputs)
+	self.Operations.Normalize(normalInterface)
+	self.Notifications.Normalize(normalInterface)
 }
 
 //
@@ -128,26 +128,26 @@ func (self InterfaceAssignments) Render(definitions InterfaceDefinitions, contex
 	}
 }
 
-func (self InterfaceAssignments) NormalizeForNodeTemplate(nodeTemplate *NodeTemplate, n *normal.NodeTemplate) {
-	for key, intr := range self {
-		if definition, ok := intr.GetDefinitionForNodeTemplate(nodeTemplate); ok {
-			intr.Normalize(n.NewInterface(key), definition)
+func (self InterfaceAssignments) NormalizeForNodeTemplate(nodeTemplate *NodeTemplate, normalNodeTemplate *normal.NodeTemplate) {
+	for key, interface_ := range self {
+		if definition, ok := interface_.GetDefinitionForNodeTemplate(nodeTemplate); ok {
+			interface_.Normalize(normalNodeTemplate.NewInterface(key), definition)
 		}
 	}
 }
 
-func (self InterfaceAssignments) NormalizeForGroup(group *Group, g *normal.Group) {
-	for key, intr := range self {
-		if definition, ok := intr.GetDefinitionForGroup(group); ok {
-			intr.Normalize(g.NewInterface(key), definition)
+func (self InterfaceAssignments) NormalizeForGroup(group *Group, normalGroup *normal.Group) {
+	for key, interface_ := range self {
+		if definition, ok := interface_.GetDefinitionForGroup(group); ok {
+			interface_.Normalize(normalGroup.NewInterface(key), definition)
 		}
 	}
 }
 
-func (self InterfaceAssignments) NormalizeForRelationship(relationship *RelationshipAssignment, r *normal.Relationship) {
-	for key, intr := range self {
-		if definition, ok := intr.GetDefinitionForRelationship(relationship); ok {
-			intr.Normalize(r.NewInterface(key), definition)
+func (self InterfaceAssignments) NormalizeForRelationship(relationship *RelationshipAssignment, normalRelationship *normal.Relationship) {
+	for key, interface_ := range self {
+		if definition, ok := interface_.GetDefinitionForRelationship(relationship); ok {
+			interface_.Normalize(normalRelationship.NewInterface(key), definition)
 		}
 	}
 }

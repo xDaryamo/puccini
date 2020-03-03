@@ -84,19 +84,19 @@ func (self *RelationshipAssignment) Render(definition *RelationshipDefinition) {
 	}
 }
 
-func (self *RelationshipAssignment) Normalize(r *normal.Relationship) {
+func (self *RelationshipAssignment) Normalize(normalRelationship *normal.Relationship) {
 	relationshipType := self.GetType()
 	if (self.RelationshipTemplate != nil) && (self.RelationshipTemplate.Description != nil) {
-		r.Description = *self.RelationshipTemplate.Description
+		normalRelationship.Description = *self.RelationshipTemplate.Description
 	} else if (relationshipType != nil) && (relationshipType.Description != nil) {
-		r.Description = *relationshipType.Description
+		normalRelationship.Description = *relationshipType.Description
 	}
 
 	if types, ok := normal.GetTypes(self.Context.Hierarchy, relationshipType); ok {
-		r.Types = types
+		normalRelationship.Types = types
 	}
 
-	self.Properties.Normalize(r.Properties)
-	self.Attributes.Normalize(r.Attributes)
-	self.Interfaces.NormalizeForRelationship(self, r)
+	self.Properties.Normalize(normalRelationship.Properties)
+	self.Attributes.Normalize(normalRelationship.Attributes)
+	self.Interfaces.NormalizeForRelationship(self, normalRelationship)
 }

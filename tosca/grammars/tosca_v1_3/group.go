@@ -74,29 +74,29 @@ func (self *Group) Render() {
 	}
 }
 
-func (self *Group) Normalize(s *normal.ServiceTemplate) *normal.Group {
+func (self *Group) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Group {
 	log.Infof("{normalize} group: %s", self.Name)
 
-	g := s.NewGroup(self.Name)
+	normalGroup := normalServiceTemplate.NewGroup(self.Name)
 
 	if self.Description != nil {
-		g.Description = *self.Description
+		normalGroup.Description = *self.Description
 	}
 
 	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.GroupType); ok {
-		g.Types = types
+		normalGroup.Types = types
 	}
 
-	self.Properties.Normalize(g.Properties)
-	self.Interfaces.NormalizeForGroup(self, g)
+	self.Properties.Normalize(normalGroup.Properties)
+	self.Interfaces.NormalizeForGroup(self, normalGroup)
 
 	for _, nodeTemplate := range self.MemberNodeTemplates {
-		if n, ok := s.NodeTemplates[nodeTemplate.Name]; ok {
-			g.Members = append(g.Members, n)
+		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[nodeTemplate.Name]; ok {
+			normalGroup.Members = append(normalGroup.Members, normalNodeTemplate)
 		}
 	}
 
-	return g
+	return normalGroup
 }
 
 //
@@ -105,8 +105,8 @@ func (self *Group) Normalize(s *normal.ServiceTemplate) *normal.Group {
 
 type Groups []*Group
 
-func (self Groups) Normalize(s *normal.ServiceTemplate) {
+func (self Groups) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
 	for _, group := range self {
-		s.Groups[group.Name] = group.Normalize(s)
+		normalServiceTemplate.Groups[group.Name] = group.Normalize(normalServiceTemplate)
 	}
 }

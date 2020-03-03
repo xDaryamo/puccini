@@ -104,19 +104,19 @@ func (self *Template) SetInputs(inputs map[string]interface{}) {
 func (self *Template) NormalizeServiceTemplate() *normal.ServiceTemplate {
 	log.Info("{normalize} template")
 
-	s := normal.NewServiceTemplate()
+	normalServiceTemplate := normal.NewServiceTemplate()
 
 	if self.Description != nil {
-		s.Description = *self.Description
+		normalServiceTemplate.Description = *self.Description
 	}
 
-	s.ScriptletNamespace = self.Context.ScriptletNamespace
+	normalServiceTemplate.ScriptletNamespace = self.Context.ScriptletNamespace
 
-	self.Parameters.Normalize(s.Inputs, self.Context.FieldChild("parameters", nil))
-	self.Outputs.Normalize(s.Outputs, self.Context.FieldChild("outputs", nil))
-	self.Resources.Normalize(s)
+	self.Parameters.Normalize(normalServiceTemplate.Inputs, self.Context.FieldChild("parameters", nil))
+	self.Outputs.Normalize(normalServiceTemplate.Outputs, self.Context.FieldChild("outputs", nil))
+	self.Resources.Normalize(normalServiceTemplate)
 
 	// TODO: normalize ParameterGroups
 
-	return s
+	return normalServiceTemplate
 }

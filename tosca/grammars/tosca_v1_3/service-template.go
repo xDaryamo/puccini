@@ -39,18 +39,18 @@ func ReadServiceTemplate(context *tosca.Context) interface{} {
 func (self *ServiceTemplate) NormalizeServiceTemplate() *normal.ServiceTemplate {
 	log.Info("{normalize} service template")
 
-	s := normal.NewServiceTemplate()
+	normalServiceTemplate := normal.NewServiceTemplate()
 
 	if self.Description != nil {
-		s.Description = *self.Description
+		normalServiceTemplate.Description = *self.Description
 	}
 
-	s.ScriptletNamespace = self.Context.ScriptletNamespace
+	normalServiceTemplate.ScriptletNamespace = self.Context.ScriptletNamespace
 
-	self.Unit.Normalize(s)
+	self.Unit.Normalize(normalServiceTemplate)
 	if self.TopologyTemplate != nil {
-		self.TopologyTemplate.Normalize(s)
+		self.TopologyTemplate.Normalize(normalServiceTemplate)
 	}
 
-	return s
+	return normalServiceTemplate
 }

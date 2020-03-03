@@ -69,10 +69,10 @@ func Parse(url string, quirks tosca.Quirks, inputs map[string]interface{}) (*nor
 	}
 
 	// Normalize
-	s, ok := normal.NormalizeServiceTemplate(context.Root.EntityPtr)
+	serviceTemplate, ok := normal.NormalizeServiceTemplate(context.Root.EntityPtr)
 	if !ok || !problems.Empty() {
 		return nil, problems, errors.New("normalization")
 	}
 
-	return s, problems, nil
+	return serviceTemplate, problems, nil
 }

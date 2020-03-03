@@ -64,13 +64,13 @@ func (self *OperationDefinition) Inherit(parentDefinition *OperationDefinition) 
 	}
 }
 
-func (self *OperationDefinition) Normalize(o *normal.Operation) {
+func (self *OperationDefinition) Normalize(normalOperation *normal.Operation) {
 	if self.Description != nil {
-		o.Description = *self.Description
+		normalOperation.Description = *self.Description
 	}
 
 	if self.Implementation != nil {
-		self.Implementation.NormalizeOperation(o)
+		self.Implementation.NormalizeOperation(normalOperation)
 	}
 
 	// TODO: input definitions

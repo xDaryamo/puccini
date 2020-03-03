@@ -15,15 +15,16 @@ import (
 var log = logging.MustGetLogger("url")
 
 func Read(url URL) (string, error) {
-	reader, err := url.Open()
-	if err != nil {
+	if reader, err := url.Open(); err == nil {
+		if closer, ok := reader.(io.Closer); ok {
+			defer closer.Close()
+		}
+
+		buffer, err := ioutil.ReadAll(reader)
+		return common.BytesToString(buffer), err
+	} else {
 		return "", err
 	}
-	if readCloser, ok := reader.(io.ReadCloser); ok {
-		defer readCloser.Close()
-	}
-	buffer, err := ioutil.ReadAll(reader)
-	return common.BytesToString(buffer), err
 }
 
 func GetFormat(path string) string {

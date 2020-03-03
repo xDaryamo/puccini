@@ -103,45 +103,45 @@ func (self *Artifact) Render(definition *ArtifactDefinition) {
 	}
 }
 
-func (self *Artifact) Normalize(n *normal.NodeTemplate) *normal.Artifact {
+func (self *Artifact) Normalize(normalNodeTemplate *normal.NodeTemplate) *normal.Artifact {
 	log.Debugf("{normalize} artifact: %s", self.Name)
 
-	a := n.NewArtifact(self.Name)
+	normalArtifact := normalNodeTemplate.NewArtifact(self.Name)
 
 	if self.Description != nil {
-		a.Description = *self.Description
+		normalArtifact.Description = *self.Description
 	}
 
 	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.ArtifactType); ok {
-		a.Types = types
+		normalArtifact.Types = types
 	}
 
-	self.Properties.Normalize(a.Properties)
+	self.Properties.Normalize(normalArtifact.Properties)
 
 	if self.File != nil {
-		a.Filename = filepath.Base(*self.File)
+		normalArtifact.Filename = filepath.Base(*self.File)
 	}
 	url := self.GetURL()
 	if url != nil {
-		a.SourcePath = url.String()
+		normalArtifact.SourcePath = url.String()
 	}
 	if self.DeployPath != nil {
-		a.TargetPath = *self.DeployPath
+		normalArtifact.TargetPath = *self.DeployPath
 	}
 	if self.ArtifactVersion != nil {
-		a.Version = *self.ArtifactVersion
+		normalArtifact.Version = *self.ArtifactVersion
 	}
 	if self.ChecksumAlgorithm != nil {
-		a.ChecksumAlgorithm = *self.ChecksumAlgorithm
+		normalArtifact.ChecksumAlgorithm = *self.ChecksumAlgorithm
 	}
 	if self.Checksum != nil {
-		a.Checksum = *self.Checksum
+		normalArtifact.Checksum = *self.Checksum
 	}
 	if (self.Repository != nil) && (self.Repository.Credential != nil) {
-		a.Credential = self.Repository.Credential.Normalize()
+		normalArtifact.Credential = self.Repository.Credential.Normalize()
 	}
 
-	return a
+	return normalArtifact
 }
 
 //
@@ -164,8 +164,8 @@ func (self Artifacts) Render(definitions ArtifactDefinitions, context *tosca.Con
 	}
 }
 
-func (self Artifacts) Normalize(n *normal.NodeTemplate) {
+func (self Artifacts) Normalize(normalNodeTemplate *normal.NodeTemplate) {
 	for key, artifact := range self {
-		n.Artifacts[key] = artifact.Normalize(n)
+		normalNodeTemplate.Artifacts[key] = artifact.Normalize(normalNodeTemplate)
 	}
 }

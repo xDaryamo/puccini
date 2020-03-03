@@ -62,18 +62,18 @@ func (self *OperationAssignment) GetKey() string {
 	return self.Name
 }
 
-func (self *OperationAssignment) Normalize(i *normal.Interface) *normal.Operation {
+func (self *OperationAssignment) Normalize(normalInterface *normal.Interface) *normal.Operation {
 	log.Debugf("{normalize} operation: %s", self.Name)
 
-	o := i.NewOperation(self.Name)
+	normalOperation := normalInterface.NewOperation(self.Name)
 
 	if self.Implementation != nil {
-		o.Implementation = *self.Implementation
+		normalOperation.Implementation = *self.Implementation
 	}
 
-	self.Inputs.Normalize(o.Inputs, "")
+	self.Inputs.Normalize(normalOperation.Inputs, "")
 
-	return o
+	return normalOperation
 }
 
 //
@@ -107,8 +107,8 @@ func (self OperationAssignments) Render(definitions OperationDefinitions, contex
 	}
 }
 
-func (self OperationAssignments) Normalize(i *normal.Interface) {
+func (self OperationAssignments) Normalize(normalInterface *normal.Interface) {
 	for key, operation := range self {
-		i.Operations[key] = operation.Normalize(i)
+		normalInterface.Operations[key] = operation.Normalize(normalInterface)
 	}
 }

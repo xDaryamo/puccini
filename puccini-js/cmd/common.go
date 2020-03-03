@@ -17,22 +17,22 @@ func ReadClout(path string) (*clout.Clout, error) {
 
 	var err error
 	if path != "" {
-		url, err = urlpkg.NewValidURL(path, nil)
+		if url, err = urlpkg.NewValidURL(path, nil); err != nil {
+			return nil, err
+		}
 	} else {
-		url, err = urlpkg.ReadToInternalURLFromStdin("yaml")
+		if url, err = urlpkg.ReadToInternalURLFromStdin("yaml"); err != nil {
+			return nil, err
+		}
 	}
-	if err != nil {
+
+	if reader, err := url.Open(); err == nil {
+		if closer, ok := reader.(io.Closer); ok {
+			defer closer.Close()
+		}
+
+		return clout.Read(reader, url.Format())
+	} else {
 		return nil, err
 	}
-
-	reader, err := url.Open()
-	if err != nil {
-		return nil, err
-	}
-
-	if readCloser, ok := reader.(io.ReadCloser); ok {
-		defer readCloser.Close()
-	}
-
-	return clout.Read(reader, url.Format())
 }

@@ -273,44 +273,44 @@ func ReadAndRenderBareAttribute(context *tosca.Context, dataType *DataType) *Val
 }
 
 func (self *Value) Normalize() normal.Constrainable {
-	var constrainable normal.Constrainable
+	var normalConstrainable normal.Constrainable
 
 	switch data := self.Context.Data.(type) {
 	case ard.Map:
 		// This is for complex types (the "map" type is a ValueMap, below)
-		map_ := normal.NewMap()
+		normalMap := normal.NewMap()
 		for key, value := range data {
 			if v, ok := value.(*Value); ok {
-				map_.Put(key, v.Normalize())
+				normalMap.Put(key, v.Normalize())
 			} else {
-				map_.Put(key, normal.NewValue(value))
+				normalMap.Put(key, normal.NewValue(value))
 			}
 		}
-		constrainable = map_
+		normalConstrainable = normalMap
 
 	case *ValueList:
-		constrainable = data.Normalize(self.Context)
+		normalConstrainable = data.Normalize(self.Context)
 
 	case *ValueMap:
-		constrainable = data.Normalize(self.Context)
+		normalConstrainable = data.Normalize(self.Context)
 
 	case *tosca.FunctionCall:
 		NormalizeFunctionCallArguments(data, self.Context)
-		constrainable = normal.NewFunctionCall(data)
+		normalConstrainable = normal.NewFunctionCall(data)
 
 	default:
 		value := normal.NewValue(data)
 		value.Type = self.Type
-		constrainable = value
+		normalConstrainable = value
 	}
 
-	self.ConstraintClauses.NormalizeConstrainable(self.Context, constrainable)
+	self.ConstraintClauses.NormalizeConstrainable(self.Context, normalConstrainable)
 
 	if self.Description != nil {
-		constrainable.SetDescription(*self.Description)
+		normalConstrainable.SetDescription(*self.Description)
 	}
 
-	return constrainable
+	return normalConstrainable
 }
 
 //
@@ -375,9 +375,9 @@ func (self Values) RenderAttributes(definitions AttributeDefinitions, context *t
 	}
 }
 
-func (self Values) Normalize(c normal.Constrainables) {
+func (self Values) Normalize(normalConstrainables normal.Constrainables) {
 	for key, value := range self {
-		c[key] = value.Normalize()
+		normalConstrainables[key] = value.Normalize()
 	}
 }
 
@@ -406,26 +406,26 @@ func (self *ValueList) Set(index int, value interface{}) {
 }
 
 func (self *ValueList) Normalize(context *tosca.Context) *normal.List {
-	l := normal.NewList(len(self.Slice))
+	normalList := normal.NewList(len(self.Slice))
 
 	if self.Description != nil {
-		l.Description = *self.Description
+		normalList.Description = *self.Description
 	}
 	if self.EntryDescription != nil {
-		l.EntryDescription = *self.EntryDescription
+		normalList.EntryDescription = *self.EntryDescription
 	}
 
-	self.EntryConstraints.NormalizeListEntries(context, l)
+	self.EntryConstraints.NormalizeListEntries(context, normalList)
 
 	for index, value := range self.Slice {
 		if v, ok := value.(*Value); ok {
-			l.Set(index, v.Normalize())
+			normalList.Set(index, v.Normalize())
 		} else {
-			l.Set(index, normal.NewValue(value))
+			normalList.Set(index, normal.NewValue(value))
 		}
 	}
 
-	return l
+	return normalList
 }
 
 //
@@ -461,31 +461,31 @@ func (self *ValueMap) Put(key interface{}, value interface{}) {
 }
 
 func (self *ValueMap) Normalize(context *tosca.Context) *normal.Map {
-	m := normal.NewMap()
+	normalMap := normal.NewMap()
 
 	if self.Description != nil {
-		m.Description = *self.Description
+		normalMap.Description = *self.Description
 	}
 	if self.KeyDescription != nil {
-		m.KeyDescription = *self.KeyDescription
+		normalMap.KeyDescription = *self.KeyDescription
 	}
 	if self.EntryDescription != nil {
-		m.ValueDescription = *self.EntryDescription
+		normalMap.ValueDescription = *self.EntryDescription
 	}
 
-	self.KeyConstraints.NormalizeMapKeys(context, m)
-	self.EntryConstraints.NormalizeMapValues(context, m)
+	self.KeyConstraints.NormalizeMapKeys(context, normalMap)
+	self.EntryConstraints.NormalizeMapValues(context, normalMap)
 
 	for key, value := range self.Map {
 		if k, ok := key.(*Value); ok {
 			key = k.Normalize()
 		}
 		if v, ok := value.(*Value); ok {
-			m.Put(key, v.Normalize())
+			normalMap.Put(key, v.Normalize())
 		} else {
-			m.Put(key, normal.NewValue(value))
+			normalMap.Put(key, normal.NewValue(value))
 		}
 	}
 
-	return m
+	return normalMap
 }

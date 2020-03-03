@@ -48,22 +48,22 @@ func (self *NotificationAssignment) GetKey() string {
 	return self.Name
 }
 
-func (self *NotificationAssignment) Normalize(i *normal.Interface) *normal.Notification {
+func (self *NotificationAssignment) Normalize(normalInterface *normal.Interface) *normal.Notification {
 	log.Debugf("{normalize} notification: %s", self.Name)
 
-	n := i.NewNotification(self.Name)
+	normalNotification := normalInterface.NewNotification(self.Name)
 
 	if self.Description != nil {
-		n.Description = *self.Description
+		normalNotification.Description = *self.Description
 	}
 
 	if self.Implementation != nil {
-		self.Implementation.NormalizeNotification(n)
+		self.Implementation.NormalizeNotification(normalNotification)
 	}
 
-	self.Outputs.Normalize(i.NodeTemplate, n.Outputs)
+	self.Outputs.Normalize(normalInterface.NodeTemplate, normalNotification.Outputs)
 
-	return n
+	return normalNotification
 }
 
 //
@@ -115,8 +115,8 @@ func (self NotificationAssignments) Render(definitions NotificationDefinitions, 
 	}
 }
 
-func (self NotificationAssignments) Normalize(i *normal.Interface) {
+func (self NotificationAssignments) Normalize(normalInterface *normal.Interface) {
 	for key, notification := range self {
-		i.Notifications[key] = notification.Normalize(i)
+		normalInterface.Notifications[key] = notification.Normalize(normalInterface)
 	}
 }

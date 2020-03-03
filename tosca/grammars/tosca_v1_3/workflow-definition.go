@@ -52,21 +52,21 @@ func (self *WorkflowDefinition) Render() {
 	self.StepDefinitions.Render()
 }
 
-func (self *WorkflowDefinition) Normalize(s *normal.ServiceTemplate) *normal.Workflow {
+func (self *WorkflowDefinition) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Workflow {
 	log.Infof("{normalize} workflow definition: %s", self.Name)
 
-	w := s.NewWorkflow(self.Name)
+	normalWorkflow := normalServiceTemplate.NewWorkflow(self.Name)
 
 	if self.Description != nil {
-		w.Description = *self.Description
+		normalWorkflow.Description = *self.Description
 	}
 
 	// TODO: support property definitions
 	//self.InputDefinitions.Normalize(w.Inputs)
 
-	self.StepDefinitions.Normalize(w, s)
+	self.StepDefinitions.Normalize(normalWorkflow)
 
-	return w
+	return normalWorkflow
 }
 
 //
@@ -75,8 +75,8 @@ func (self *WorkflowDefinition) Normalize(s *normal.ServiceTemplate) *normal.Wor
 
 type WorkflowDefinitions map[string]*WorkflowDefinition
 
-func (self WorkflowDefinitions) Normalize(s *normal.ServiceTemplate) {
+func (self WorkflowDefinitions) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
 	for _, workflowDefinition := range self {
-		s.Workflows[workflowDefinition.Name] = workflowDefinition.Normalize(s)
+		normalServiceTemplate.Workflows[workflowDefinition.Name] = workflowDefinition.Normalize(normalServiceTemplate)
 	}
 }

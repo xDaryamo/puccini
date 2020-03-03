@@ -56,8 +56,8 @@ func (self *Output) Normalize(context *tosca.Context) normal.Constrainable {
 
 type Outputs map[string]*Output
 
-func (self Outputs) Normalize(c normal.Constrainables, context *tosca.Context) {
+func (self Outputs) Normalize(normalConstrainables normal.Constrainables, context *tosca.Context) {
 	for key, output := range self {
-		c[key] = output.Value.Normalize()
+		normalConstrainables[key] = output.Value.Normalize()
 	}
 }

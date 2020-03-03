@@ -58,33 +58,33 @@ func (self *NodeTemplate) Render() {
 var capabilityTypeName = "cloudify.Node"
 var capabilityTypes = normal.NewTypes(capabilityTypeName)
 
-func (self *NodeTemplate) Normalize(s *normal.ServiceTemplate) *normal.NodeTemplate {
+func (self *NodeTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.NodeTemplate {
 	log.Infof("{normalize} node template: %s", self.Name)
 
-	n := s.NewNodeTemplate(self.Name)
+	normalNodeTemplate := normalServiceTemplate.NewNodeTemplate(self.Name)
 
 	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.NodeType); ok {
-		n.Types = types
+		normalNodeTemplate.Types = types
 	}
 
-	self.Properties.Normalize(n.Properties, "")
-	self.Interfaces.NormalizeForNodeTemplate(self, n)
+	self.Properties.Normalize(normalNodeTemplate.Properties, "")
+	self.Interfaces.NormalizeForNodeTemplate(self, normalNodeTemplate)
 
-	c := n.NewCapability("node")
-	c.Types = capabilityTypes
+	normalCapability := normalNodeTemplate.NewCapability("node")
+	normalCapability.Types = capabilityTypes
 	for _, capability := range self.Capabilities {
-		capability.Properties.Normalize(c.Properties, capability.Context.Name+".")
+		capability.Properties.Normalize(normalCapability.Properties, capability.Context.Name+".")
 	}
 
-	return n
+	return normalNodeTemplate
 }
 
-func (self *NodeTemplate) NormalizeRelationships(s *normal.ServiceTemplate) {
+func (self *NodeTemplate) NormalizeRelationships(normalServiceTemplate *normal.ServiceTemplate) {
 	log.Infof("{normalize} node template relationships: %s", self.Name)
 
-	n := s.NodeTemplates[self.Name]
+	normalNodeTemplate := normalServiceTemplate.NodeTemplates[self.Name]
 	for _, relationship := range self.Relationships {
-		relationship.Normalize(self, s, n)
+		relationship.Normalize(self, normalNodeTemplate)
 	}
 }
 
@@ -94,14 +94,14 @@ func (self *NodeTemplate) NormalizeRelationships(s *normal.ServiceTemplate) {
 
 type NodeTemplates []*NodeTemplate
 
-func (self NodeTemplates) Normalize(s *normal.ServiceTemplate) {
+func (self NodeTemplates) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
 	for _, nodeTemplate := range self {
-		s.NodeTemplates[nodeTemplate.Name] = nodeTemplate.Normalize(s)
+		normalServiceTemplate.NodeTemplates[nodeTemplate.Name] = nodeTemplate.Normalize(normalServiceTemplate)
 	}
 
 	// Relationships must be normalized after node templates
 	// (because they may reference other node templates)
 	for _, nodeTemplate := range self {
-		nodeTemplate.NormalizeRelationships(s)
+		nodeTemplate.NormalizeRelationships(normalServiceTemplate)
 	}
 }

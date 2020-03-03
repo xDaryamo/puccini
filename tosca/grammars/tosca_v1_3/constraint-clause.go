@@ -139,43 +139,43 @@ func (self ConstraintClauses) RenderAndAppend(constraints *ConstraintClauses, da
 }
 
 func (self ConstraintClauses) Normalize(context *tosca.Context) normal.FunctionCalls {
-	var functionCalls normal.FunctionCalls
+	var normalFunctionCalls normal.FunctionCalls
 	for _, constraintClause := range self {
 		functionCall := constraintClause.ToFunctionCall(context, false)
 		NormalizeFunctionCallArguments(functionCall, context)
-		functionCalls = append(functionCalls, normal.NewFunctionCall(functionCall))
+		normalFunctionCalls = append(normalFunctionCalls, normal.NewFunctionCall(functionCall))
 	}
-	return functionCalls
+	return normalFunctionCalls
 }
 
-func (self ConstraintClauses) NormalizeConstrainable(context *tosca.Context, constrainable normal.Constrainable) {
+func (self ConstraintClauses) NormalizeConstrainable(context *tosca.Context, normalConstrainable normal.Constrainable) {
 	for _, constraintClause := range self {
 		functionCall := constraintClause.ToFunctionCall(context, true)
 		NormalizeFunctionCallArguments(functionCall, context)
-		constrainable.AddConstraint(functionCall)
+		normalConstrainable.AddConstraint(functionCall)
 	}
 }
 
-func (self ConstraintClauses) NormalizeListEntries(context *tosca.Context, l *normal.List) {
+func (self ConstraintClauses) NormalizeListEntries(context *tosca.Context, normalList *normal.List) {
 	for _, constraintClause := range self {
 		functionCall := constraintClause.ToFunctionCall(context, true)
 		NormalizeFunctionCallArguments(functionCall, context)
-		l.AddEntryConstraint(functionCall)
+		normalList.AddEntryConstraint(functionCall)
 	}
 }
 
-func (self ConstraintClauses) NormalizeMapKeys(context *tosca.Context, m *normal.Map) {
+func (self ConstraintClauses) NormalizeMapKeys(context *tosca.Context, normalMap *normal.Map) {
 	for _, constraintClause := range self {
 		functionCall := constraintClause.ToFunctionCall(context, true)
 		NormalizeFunctionCallArguments(functionCall, context)
-		m.AddKeyConstraint(functionCall)
+		normalMap.AddKeyConstraint(functionCall)
 	}
 }
 
-func (self ConstraintClauses) NormalizeMapValues(context *tosca.Context, m *normal.Map) {
+func (self ConstraintClauses) NormalizeMapValues(context *tosca.Context, normalMap *normal.Map) {
 	for _, constraintClause := range self {
 		functionCall := constraintClause.ToFunctionCall(context, true)
 		NormalizeFunctionCallArguments(functionCall, context)
-		m.AddValueConstraint(functionCall)
+		normalMap.AddValueConstraint(functionCall)
 	}
 }

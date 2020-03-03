@@ -53,8 +53,8 @@ func (self *WorkflowStepDefinition) GetKey() string {
 func (self *WorkflowStepDefinition) Render(definitions WorkflowStepDefinitions) {
 	if self.OnSuccessStepNames != nil {
 		for index, name := range *self.OnSuccessStepNames {
-			if s, ok := definitions[name]; ok {
-				self.OnSuccessSteps = append(self.OnSuccessSteps, s)
+			if definition, ok := definitions[name]; ok {
+				self.OnSuccessSteps = append(self.OnSuccessSteps, definition)
 			} else {
 				self.Context.ListChild(index, name).ReportUnknown("step")
 			}
@@ -63,8 +63,8 @@ func (self *WorkflowStepDefinition) Render(definitions WorkflowStepDefinitions) 
 
 	if self.OnFailureStepNames != nil {
 		for index, name := range *self.OnFailureStepNames {
-			if s, ok := definitions[name]; ok {
-				self.OnFailureSteps = append(self.OnFailureSteps, s)
+			if definition, ok := definitions[name]; ok {
+				self.OnFailureSteps = append(self.OnFailureSteps, definition)
 			} else {
 				self.Context.ListChild(index, name).ReportUnknown("step")
 			}
@@ -78,39 +78,39 @@ func (self *WorkflowStepDefinition) Render(definitions WorkflowStepDefinitions) 
 	// TODO: validate OperationHost
 }
 
-func (self *WorkflowStepDefinition) Normalize(w *normal.Workflow, s *normal.ServiceTemplate) *normal.WorkflowStep {
+func (self *WorkflowStepDefinition) Normalize(normalWorkflow *normal.Workflow) *normal.WorkflowStep {
 	log.Infof("{normalize} workflow step: %s", self.Name)
 
-	st := w.NewStep(self.Name)
+	normalWorkflowStep := normalWorkflow.NewStep(self.Name)
 
 	if self.TargetNodeTemplate != nil {
-		if n, ok := s.NodeTemplates[self.TargetNodeTemplate.Name]; ok {
-			st.TargetNodeTemplate = n
+		if normalNodeTemplate, ok := normalWorkflow.ServiceTemplate.NodeTemplates[self.TargetNodeTemplate.Name]; ok {
+			normalWorkflowStep.TargetNodeTemplate = normalNodeTemplate
 		}
 	} else if self.TargetGroup != nil {
-		if g, ok := s.Groups[self.TargetGroup.Name]; ok {
-			st.TargetGroup = g
+		if normalGroup, ok := normalWorkflow.ServiceTemplate.Groups[self.TargetGroup.Name]; ok {
+			normalWorkflowStep.TargetGroup = normalGroup
 		}
 	}
 
 	for _, activity := range self.ActivityDefinitions {
-		activity.Normalize(st, s)
+		activity.Normalize(normalWorkflowStep)
 	}
 
-	return st
+	return normalWorkflowStep
 }
 
-func (self *WorkflowStepDefinition) NormalizeNext(st *normal.WorkflowStep, w *normal.Workflow) {
+func (self *WorkflowStepDefinition) NormalizeNext(normalWorkflowStep *normal.WorkflowStep, normalWorkflow *normal.Workflow) {
 	for _, next := range self.OnSuccessSteps {
-		st.OnSuccessSteps = append(st.OnSuccessSteps, w.Steps[next.Name])
+		normalWorkflowStep.OnSuccessSteps = append(normalWorkflowStep.OnSuccessSteps, normalWorkflow.Steps[next.Name])
 	}
 
 	for _, next := range self.OnFailureSteps {
-		st.OnFailureSteps = append(st.OnFailureSteps, w.Steps[next.Name])
+		normalWorkflowStep.OnFailureSteps = append(normalWorkflowStep.OnFailureSteps, normalWorkflow.Steps[next.Name])
 	}
 
 	if self.OperationHost != nil {
-		st.Host = *self.OperationHost
+		normalWorkflowStep.Host = *self.OperationHost
 	}
 }
 
@@ -126,12 +126,12 @@ func (self WorkflowStepDefinitions) Render() {
 	}
 }
 
-func (self WorkflowStepDefinitions) Normalize(w *normal.Workflow, s *normal.ServiceTemplate) {
+func (self WorkflowStepDefinitions) Normalize(normalWorkflow *normal.Workflow) {
 	steps := make(normal.WorkflowSteps)
 	for name, step := range self {
-		steps[name] = step.Normalize(w, s)
+		steps[name] = step.Normalize(normalWorkflow)
 	}
 	for name, step := range self {
-		step.NormalizeNext(steps[name], w)
+		step.NormalizeNext(steps[name], normalWorkflow)
 	}
 }

@@ -62,12 +62,12 @@ func (self *Unit) GetImportSpecs() []*tosca.ImportSpec {
 	return importSpecs
 }
 
-func (self *Unit) Normalize(s *normal.ServiceTemplate) {
+func (self *Unit) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
 	log.Info("{normalize} unit")
 
 	if self.Metadata != nil {
 		for k, v := range self.Metadata {
-			s.Metadata[k] = v
+			normalServiceTemplate.Metadata[k] = v
 		}
 	}
 }

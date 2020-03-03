@@ -11,16 +11,15 @@ import (
 )
 
 func ReadFromURL(url urlpkg.URL, locate bool) (Map, Locator, error) {
-	reader, err := url.Open()
-	if err != nil {
+	if reader, err := url.Open(); err == nil {
+		if closer, ok := reader.(io.Closer); ok {
+			defer closer.Close()
+		}
+
+		return Read(reader, url.Format(), locate)
+	} else {
 		return nil, nil, err
 	}
-
-	if readCloser, ok := reader.(io.ReadCloser); ok {
-		defer readCloser.Close()
-	}
-
-	return Read(reader, url.Format(), locate)
 }
 
 func Read(reader io.Reader, format string, locate bool) (Map, Locator, error) {

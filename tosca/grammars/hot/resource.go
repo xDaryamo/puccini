@@ -84,35 +84,35 @@ var capabilityTypeName = "Resource"
 var capabilityTypes = normal.NewTypes(capabilityTypeName)
 var relationshipTypes = normal.NewTypes("DependsOn")
 
-func (self *Resource) Normalize(s *normal.ServiceTemplate) *normal.NodeTemplate {
+func (self *Resource) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.NodeTemplate {
 	log.Infof("{normalize} resource: %s", self.Name)
 
-	n := s.NewNodeTemplate(self.Name)
+	normalNodeTemplate := normalServiceTemplate.NewNodeTemplate(self.Name)
 
 	if self.ToscaType != nil {
-		n.Types = normal.NewTypes(*self.ToscaType)
+		normalNodeTemplate.Types = normal.NewTypes(*self.ToscaType)
 	}
 
-	self.Properties.Normalize(n.Properties)
+	self.Properties.Normalize(normalNodeTemplate.Properties)
 
-	n.NewCapability("resource").Types = capabilityTypes
+	normalNodeTemplate.NewCapability("resource").Types = capabilityTypes
 
-	return n
+	return normalNodeTemplate
 }
 
-func (self *Resource) NormalizeDependencies(s *normal.ServiceTemplate) {
+func (self *Resource) NormalizeDependencies(normalServiceTemplate *normal.ServiceTemplate) {
 	log.Infof("{normalize} resource dependencies: %s", self.Name)
 
-	n := s.NodeTemplates[self.Name]
+	normalNodeTemplate := normalServiceTemplate.NodeTemplates[self.Name]
 	path := self.Context.FieldChild("depends_on", nil).Path.String()
 
 	for _, resource := range self.DependsOnResources {
-		r := n.NewRequirement("dependency", path)
-		r.NodeTemplate = s.NodeTemplates[resource.Name]
-		r.CapabilityTypeName = &capabilityTypeName
+		normalRequirement := normalNodeTemplate.NewRequirement("dependency", path)
+		normalRequirement.NodeTemplate = normalServiceTemplate.NodeTemplates[resource.Name]
+		normalRequirement.CapabilityTypeName = &capabilityTypeName
 
-		rr := r.NewRelationship()
-		rr.Types = relationshipTypes
+		normalRelationship := normalRequirement.NewRelationship()
+		normalRelationship.Types = relationshipTypes
 	}
 }
 
@@ -122,14 +122,14 @@ func (self *Resource) NormalizeDependencies(s *normal.ServiceTemplate) {
 
 type Resources []*Resource
 
-func (self Resources) Normalize(s *normal.ServiceTemplate) {
+func (self Resources) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
 	for _, resource := range self {
-		s.NodeTemplates[resource.Name] = resource.Normalize(s)
+		normalServiceTemplate.NodeTemplates[resource.Name] = resource.Normalize(normalServiceTemplate)
 	}
 
 	// Dependencies must be normalized after resources
 	// (because they may reference other resources)
 	for _, resource := range self {
-		resource.NormalizeDependencies(s)
+		resource.NormalizeDependencies(normalServiceTemplate)
 	}
 }

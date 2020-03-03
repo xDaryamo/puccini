@@ -7,11 +7,11 @@ import (
 	"github.com/tliron/puccini/tosca/normal"
 )
 
-func Compile(s *normal.ServiceTemplate) (*cloutpkg.Clout, error) {
+func Compile(serviceTemplate *normal.ServiceTemplate) (*cloutpkg.Clout, error) {
 	clout := cloutpkg.NewClout()
 
 	metadata := make(ard.StringMap)
-	for name, scriptlet := range s.ScriptletNamespace {
+	for name, scriptlet := range serviceTemplate.ScriptletNamespace {
 		scriptlet, err := scriptlet.Read()
 		if err != nil {
 			return nil, err
@@ -33,94 +33,94 @@ func Compile(s *normal.ServiceTemplate) (*cloutpkg.Clout, error) {
 	clout.Metadata["puccini-tosca"] = metadata
 
 	tosca := make(ard.StringMap)
-	tosca["description"] = s.Description
-	tosca["metadata"] = s.Metadata
-	tosca["inputs"] = s.Inputs
-	tosca["outputs"] = s.Outputs
+	tosca["description"] = serviceTemplate.Description
+	tosca["metadata"] = serviceTemplate.Metadata
+	tosca["inputs"] = serviceTemplate.Inputs
+	tosca["outputs"] = serviceTemplate.Outputs
 	clout.Properties["tosca"] = tosca
 
 	nodeTemplates := make(map[string]*cloutpkg.Vertex)
 
 	// Node templates
-	for _, nodeTemplate := range s.NodeTemplates {
-		v := clout.NewVertex(cloutpkg.NewKey())
+	for _, nodeTemplate := range serviceTemplate.NodeTemplates {
+		vertex := clout.NewVertex(cloutpkg.NewKey())
 
-		nodeTemplates[nodeTemplate.Name] = v
+		nodeTemplates[nodeTemplate.Name] = vertex
 
-		SetMetadata(v, "NodeTemplate")
-		v.Properties["name"] = nodeTemplate.Name
-		v.Properties["description"] = nodeTemplate.Description
-		v.Properties["types"] = nodeTemplate.Types
-		v.Properties["directives"] = nodeTemplate.Directives
-		v.Properties["properties"] = nodeTemplate.Properties
-		v.Properties["attributes"] = nodeTemplate.Attributes
-		v.Properties["requirements"] = nodeTemplate.Requirements
-		v.Properties["capabilities"] = nodeTemplate.Capabilities
-		v.Properties["interfaces"] = nodeTemplate.Interfaces
-		v.Properties["artifacts"] = nodeTemplate.Artifacts
+		SetMetadata(vertex, "NodeTemplate")
+		vertex.Properties["name"] = nodeTemplate.Name
+		vertex.Properties["description"] = nodeTemplate.Description
+		vertex.Properties["types"] = nodeTemplate.Types
+		vertex.Properties["directives"] = nodeTemplate.Directives
+		vertex.Properties["properties"] = nodeTemplate.Properties
+		vertex.Properties["attributes"] = nodeTemplate.Attributes
+		vertex.Properties["requirements"] = nodeTemplate.Requirements
+		vertex.Properties["capabilities"] = nodeTemplate.Capabilities
+		vertex.Properties["interfaces"] = nodeTemplate.Interfaces
+		vertex.Properties["artifacts"] = nodeTemplate.Artifacts
 	}
 
 	groups := make(map[string]*cloutpkg.Vertex)
 
 	// Groups
-	for _, group := range s.Groups {
-		v := clout.NewVertex(cloutpkg.NewKey())
+	for _, group := range serviceTemplate.Groups {
+		vertex := clout.NewVertex(cloutpkg.NewKey())
 
-		groups[group.Name] = v
+		groups[group.Name] = vertex
 
-		SetMetadata(v, "Group")
-		v.Properties["name"] = group.Name
-		v.Properties["description"] = group.Description
-		v.Properties["types"] = group.Types
-		v.Properties["properties"] = group.Properties
-		v.Properties["interfaces"] = group.Interfaces
+		SetMetadata(vertex, "Group")
+		vertex.Properties["name"] = group.Name
+		vertex.Properties["description"] = group.Description
+		vertex.Properties["types"] = group.Types
+		vertex.Properties["properties"] = group.Properties
+		vertex.Properties["interfaces"] = group.Interfaces
 
 		for _, nodeTemplate := range group.Members {
-			nv := nodeTemplates[nodeTemplate.Name]
-			e := v.NewEdgeTo(nv)
+			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
+			edge := vertex.NewEdgeTo(nodeTemplateVertex)
 
-			SetMetadata(e, "Member")
+			SetMetadata(edge, "Member")
 		}
 	}
 
 	workflows := make(map[string]*cloutpkg.Vertex)
 
 	// Workflows
-	for _, workflow := range s.Workflows {
-		v := clout.NewVertex(cloutpkg.NewKey())
+	for _, workflow := range serviceTemplate.Workflows {
+		vertex := clout.NewVertex(cloutpkg.NewKey())
 
-		workflows[workflow.Name] = v
+		workflows[workflow.Name] = vertex
 
-		SetMetadata(v, "Workflow")
-		v.Properties["name"] = workflow.Name
-		v.Properties["description"] = workflow.Description
+		SetMetadata(vertex, "Workflow")
+		vertex.Properties["name"] = workflow.Name
+		vertex.Properties["description"] = workflow.Description
 	}
 
 	// Workflow steps
-	for name, workflow := range s.Workflows {
-		v := workflows[name]
+	for name, workflow := range serviceTemplate.Workflows {
+		vertex := workflows[name]
 
 		steps := make(map[string]*cloutpkg.Vertex)
 
 		for _, step := range workflow.Steps {
-			sv := clout.NewVertex(cloutpkg.NewKey())
+			stepVertex := clout.NewVertex(cloutpkg.NewKey())
 
-			steps[step.Name] = sv
+			steps[step.Name] = stepVertex
 
-			SetMetadata(sv, "WorkflowStep")
-			sv.Properties["name"] = step.Name
+			SetMetadata(stepVertex, "WorkflowStep")
+			stepVertex.Properties["name"] = step.Name
 
-			e := v.NewEdgeTo(sv)
-			SetMetadata(e, "WorkflowStep")
+			edge := vertex.NewEdgeTo(stepVertex)
+			SetMetadata(edge, "WorkflowStep")
 
 			if step.TargetNodeTemplate != nil {
-				nv := nodeTemplates[step.TargetNodeTemplate.Name]
-				e = sv.NewEdgeTo(nv)
-				SetMetadata(e, "NodeTemplateTarget")
+				nodeTemplateVertex := nodeTemplates[step.TargetNodeTemplate.Name]
+				edge = stepVertex.NewEdgeTo(nodeTemplateVertex)
+				SetMetadata(edge, "NodeTemplateTarget")
 			} else if step.TargetGroup != nil {
-				gv := groups[step.TargetGroup.Name]
-				e = sv.NewEdgeTo(gv)
-				SetMetadata(e, "GroupTarget")
+				groupVertex := groups[step.TargetGroup.Name]
+				edge = stepVertex.NewEdgeTo(groupVertex)
+				SetMetadata(edge, "GroupTarget")
 			} else {
 				// This would happen only if there was a parsing error
 				continue
@@ -128,140 +128,140 @@ func Compile(s *normal.ServiceTemplate) (*cloutpkg.Clout, error) {
 
 			// Workflow activities
 			for sequence, activity := range step.Activities {
-				av := clout.NewVertex(cloutpkg.NewKey())
+				activityVertex := clout.NewVertex(cloutpkg.NewKey())
 
-				e = sv.NewEdgeTo(av)
-				SetMetadata(e, "WorkflowActivity")
-				e.Properties["sequence"] = sequence
+				edge = stepVertex.NewEdgeTo(activityVertex)
+				SetMetadata(edge, "WorkflowActivity")
+				edge.Properties["sequence"] = sequence
 
-				SetMetadata(av, "WorkflowActivity")
+				SetMetadata(activityVertex, "WorkflowActivity")
 				if activity.DelegateWorkflow != nil {
-					wv := workflows[activity.DelegateWorkflow.Name]
-					e = av.NewEdgeTo(wv)
-					SetMetadata(e, "DelegateWorkflow")
+					workflowVertex := workflows[activity.DelegateWorkflow.Name]
+					edge = activityVertex.NewEdgeTo(workflowVertex)
+					SetMetadata(edge, "DelegateWorkflow")
 				} else if activity.InlineWorkflow != nil {
-					wv := workflows[activity.InlineWorkflow.Name]
-					e = av.NewEdgeTo(wv)
-					SetMetadata(e, "InlineWorkflow")
+					workflowVertex := workflows[activity.InlineWorkflow.Name]
+					edge = activityVertex.NewEdgeTo(workflowVertex)
+					SetMetadata(edge, "InlineWorkflow")
 				} else if activity.SetNodeState != "" {
-					av.Properties["setNodeState"] = activity.SetNodeState
+					activityVertex.Properties["setNodeState"] = activity.SetNodeState
 				} else if activity.CallOperation != nil {
-					m := make(ard.StringMap)
-					m["interface"] = activity.CallOperation.Interface.Name
-					m["operation"] = activity.CallOperation.Name
-					av.Properties["callOperation"] = m
+					map_ := make(ard.StringMap)
+					map_["interface"] = activity.CallOperation.Interface.Name
+					map_["operation"] = activity.CallOperation.Name
+					activityVertex.Properties["callOperation"] = map_
 				}
 			}
 		}
 
 		for _, step := range workflow.Steps {
-			sv := steps[step.Name]
+			stepVertex := steps[step.Name]
 
 			for _, next := range step.OnSuccessSteps {
-				nsv := steps[next.Name]
-				e := sv.NewEdgeTo(nsv)
-				SetMetadata(e, "OnSuccess")
+				nextStepVertex := steps[next.Name]
+				edge := stepVertex.NewEdgeTo(nextStepVertex)
+				SetMetadata(edge, "OnSuccess")
 			}
 
 			for _, next := range step.OnFailureSteps {
-				nsv := steps[next.Name]
-				e := sv.NewEdgeTo(nsv)
-				SetMetadata(e, "OnFailure")
+				nextStepVertex := steps[next.Name]
+				edge := stepVertex.NewEdgeTo(nextStepVertex)
+				SetMetadata(edge, "OnFailure")
 			}
 		}
 	}
 
 	// Policies
-	for _, policy := range s.Policies {
-		v := clout.NewVertex(cloutpkg.NewKey())
+	for _, policy := range serviceTemplate.Policies {
+		vertex := clout.NewVertex(cloutpkg.NewKey())
 
-		SetMetadata(v, "Policy")
-		v.Properties["name"] = policy.Name
-		v.Properties["description"] = policy.Description
-		v.Properties["types"] = policy.Types
-		v.Properties["properties"] = policy.Properties
+		SetMetadata(vertex, "Policy")
+		vertex.Properties["name"] = policy.Name
+		vertex.Properties["description"] = policy.Description
+		vertex.Properties["types"] = policy.Types
+		vertex.Properties["properties"] = policy.Properties
 
 		for _, nodeTemplate := range policy.NodeTemplateTargets {
-			nv := nodeTemplates[nodeTemplate.Name]
-			e := v.NewEdgeTo(nv)
+			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
+			edge := vertex.NewEdgeTo(nodeTemplateVertex)
 
-			SetMetadata(e, "NodeTemplateTarget")
+			SetMetadata(edge, "NodeTemplateTarget")
 		}
 
 		for _, group := range policy.GroupTargets {
-			gv := groups[group.Name]
-			e := v.NewEdgeTo(gv)
+			groupVertex := groups[group.Name]
+			edge := vertex.NewEdgeTo(groupVertex)
 
-			SetMetadata(e, "GroupTarget")
+			SetMetadata(edge, "GroupTarget")
 		}
 
 		for _, trigger := range policy.Triggers {
 			if trigger.Operation != nil {
-				to := clout.NewVertex(cloutpkg.NewKey())
+				toVertex := clout.NewVertex(cloutpkg.NewKey())
 
-				SetMetadata(to, "Operation")
-				to.Properties["description"] = trigger.Operation.Description
-				to.Properties["implementation"] = trigger.Operation.Implementation
-				to.Properties["dependencies"] = trigger.Operation.Dependencies
-				to.Properties["inputs"] = trigger.Operation.Inputs
+				SetMetadata(toVertex, "Operation")
+				toVertex.Properties["description"] = trigger.Operation.Description
+				toVertex.Properties["implementation"] = trigger.Operation.Implementation
+				toVertex.Properties["dependencies"] = trigger.Operation.Dependencies
+				toVertex.Properties["inputs"] = trigger.Operation.Inputs
 
-				e := v.NewEdgeTo(to)
-				SetMetadata(e, "PolicyTriggerOperation")
+				edge := vertex.NewEdgeTo(toVertex)
+				SetMetadata(edge, "PolicyTriggerOperation")
 			} else if trigger.Workflow != nil {
-				wv := workflows[trigger.Workflow.Name]
+				workflowVertex := workflows[trigger.Workflow.Name]
 
-				e := v.NewEdgeTo(wv)
-				SetMetadata(e, "PolicyTriggerWorkflow")
+				edge := vertex.NewEdgeTo(workflowVertex)
+				SetMetadata(edge, "PolicyTriggerWorkflow")
 			}
 		}
 	}
 
 	// Substitution
-	if s.Substitution != nil {
-		v := clout.NewVertex(cloutpkg.NewKey())
+	if serviceTemplate.Substitution != nil {
+		vertex := clout.NewVertex(cloutpkg.NewKey())
 
-		SetMetadata(v, "Substitution")
-		v.Properties["type"] = s.Substitution.Type
-		v.Properties["typeMetadata"] = s.Substitution.TypeMetadata
+		SetMetadata(vertex, "Substitution")
+		vertex.Properties["type"] = serviceTemplate.Substitution.Type
+		vertex.Properties["typeMetadata"] = serviceTemplate.Substitution.TypeMetadata
 
-		for nodeTemplate, capability := range s.Substitution.CapabilityMappings {
-			vv := nodeTemplates[nodeTemplate.Name]
-			e := v.NewEdgeTo(vv)
+		for nodeTemplate, capability := range serviceTemplate.Substitution.CapabilityMappings {
+			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
+			edge := vertex.NewEdgeTo(nodeTemplateVertex)
 
-			SetMetadata(e, "CapabilityMapping")
-			e.Properties["capability"] = capability.Name
+			SetMetadata(edge, "CapabilityMapping")
+			edge.Properties["capability"] = capability.Name
 		}
 
-		for nodeTemplate, requirement := range s.Substitution.RequirementMappings {
-			vv := nodeTemplates[nodeTemplate.Name]
-			e := v.NewEdgeTo(vv)
+		for nodeTemplate, requirement := range serviceTemplate.Substitution.RequirementMappings {
+			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
+			edge := vertex.NewEdgeTo(nodeTemplateVertex)
 
-			SetMetadata(e, "RequirementMapping")
-			e.Properties["requirement"] = requirement
+			SetMetadata(edge, "RequirementMapping")
+			edge.Properties["requirement"] = requirement
 		}
 
-		for nodeTemplate, property := range s.Substitution.PropertyMappings {
-			vv := nodeTemplates[nodeTemplate.Name]
-			e := v.NewEdgeTo(vv)
+		for nodeTemplate, property := range serviceTemplate.Substitution.PropertyMappings {
+			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
+			edge := vertex.NewEdgeTo(nodeTemplateVertex)
 
-			SetMetadata(e, "PropertyMapping")
-			e.Properties["property"] = property
+			SetMetadata(edge, "PropertyMapping")
+			edge.Properties["property"] = property
 		}
 
-		for nodeTemplate, attribute := range s.Substitution.AttributeMappings {
-			vv := nodeTemplates[nodeTemplate.Name]
-			e := v.NewEdgeTo(vv)
+		for nodeTemplate, attribute := range serviceTemplate.Substitution.AttributeMappings {
+			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
+			edge := vertex.NewEdgeTo(nodeTemplateVertex)
 
-			SetMetadata(e, "AttributeMapping")
-			e.Properties["attribute"] = attribute
+			SetMetadata(edge, "AttributeMapping")
+			edge.Properties["attribute"] = attribute
 		}
 
-		for nodeTemplate, interface_ := range s.Substitution.InterfaceMappings {
-			vv := nodeTemplates[nodeTemplate.Name]
-			e := v.NewEdgeTo(vv)
+		for nodeTemplate, interface_ := range serviceTemplate.Substitution.InterfaceMappings {
+			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
+			edge := vertex.NewEdgeTo(nodeTemplateVertex)
 
-			SetMetadata(e, "InterfaceMapping")
-			e.Properties["interface"] = interface_
+			SetMetadata(edge, "InterfaceMapping")
+			edge.Properties["interface"] = interface_
 		}
 	}
 

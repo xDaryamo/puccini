@@ -50,31 +50,31 @@ func (self *Blueprint) SetInputs(inputs map[string]interface{}) {
 func (self *Blueprint) NormalizeServiceTemplate() *normal.ServiceTemplate {
 	log.Info("{normalize} blueprint")
 
-	s := normal.NewServiceTemplate()
+	normalServiceTemplate := normal.NewServiceTemplate()
 
 	if self.Metadata != nil {
 		for key, value := range self.Metadata {
 			// TODO: does Cloudify DSL really allow for any kind of value?
-			s.Metadata[yamlkeys.KeyString(key)] = fmt.Sprintf("%s", value)
+			normalServiceTemplate.Metadata[yamlkeys.KeyString(key)] = fmt.Sprintf("%s", value)
 		}
 	}
 
 	if self.Description != nil {
-		s.Description = *self.Description
+		normalServiceTemplate.Description = *self.Description
 	}
 
-	s.ScriptletNamespace = self.Context.ScriptletNamespace
+	normalServiceTemplate.ScriptletNamespace = self.Context.ScriptletNamespace
 
-	self.Inputs.Normalize(s.Inputs, self.Context.FieldChild("inputs", nil))
-	self.Outputs.Normalize(s.Outputs)
-	self.NodeTemplates.Normalize(s)
-	self.Groups.Normalize(s)
-	self.Workflows.Normalize(s)
-	self.Policies.Normalize(s)
+	self.Inputs.Normalize(normalServiceTemplate.Inputs, self.Context.FieldChild("inputs", nil))
+	self.Outputs.Normalize(normalServiceTemplate.Outputs)
+	self.NodeTemplates.Normalize(normalServiceTemplate)
+	self.Groups.Normalize(normalServiceTemplate)
+	self.Workflows.Normalize(normalServiceTemplate)
+	self.Policies.Normalize(normalServiceTemplate)
 
 	// TODO: normalize plugins
 	// TODO: normalize upload resources
 	// TODO: normalize capabilities
 
-	return s
+	return normalServiceTemplate
 }

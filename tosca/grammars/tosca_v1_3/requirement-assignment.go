@@ -71,36 +71,36 @@ func (self *RequirementAssignment) GetDefinition(nodeTemplate *NodeTemplate) (*R
 	return definition, ok
 }
 
-func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, s *normal.ServiceTemplate, n *normal.NodeTemplate) *normal.Requirement {
-	r := n.NewRequirement(self.Name, self.Context.Path.String())
+func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalNodeTemplate *normal.NodeTemplate) *normal.Requirement {
+	normalRequirement := normalNodeTemplate.NewRequirement(self.Name, self.Context.Path.String())
 
 	if self.TargetCapabilityType != nil {
 		name := tosca.GetCanonicalName(self.TargetCapabilityType)
-		r.CapabilityTypeName = &name
+		normalRequirement.CapabilityTypeName = &name
 	} else if self.TargetCapabilityNameOrTypeName != nil {
-		r.CapabilityName = self.TargetCapabilityNameOrTypeName
+		normalRequirement.CapabilityName = self.TargetCapabilityNameOrTypeName
 	}
 
 	if self.TargetNodeType != nil {
 		name := tosca.GetCanonicalName(self.TargetNodeType)
-		r.NodeTypeName = &name
+		normalRequirement.NodeTypeName = &name
 	} else if self.TargetNodeTemplate != nil {
-		r.NodeTemplate, _ = s.NodeTemplates[self.TargetNodeTemplate.Name]
+		normalRequirement.NodeTemplate, _ = normalNodeTemplate.ServiceTemplate.NodeTemplates[self.TargetNodeTemplate.Name]
 	}
 
 	if nodeTemplate.RequirementTargetsNodeFilter != nil {
-		nodeTemplate.RequirementTargetsNodeFilter.Normalize(r)
+		nodeTemplate.RequirementTargetsNodeFilter.Normalize(normalRequirement)
 	}
 
 	if self.TargetNodeFilter != nil {
-		self.TargetNodeFilter.Normalize(r)
+		self.TargetNodeFilter.Normalize(normalRequirement)
 	}
 
 	if self.Relationship != nil {
-		self.Relationship.Normalize(r.NewRelationship())
+		self.Relationship.Normalize(normalRequirement.NewRelationship())
 	}
 
-	return r
+	return normalRequirement
 }
 
 //
@@ -184,8 +184,8 @@ func (self *RequirementAssignments) Render(definitions RequirementDefinitions, c
 	}
 }
 
-func (self RequirementAssignments) Normalize(nodeTemplate *NodeTemplate, s *normal.ServiceTemplate, n *normal.NodeTemplate) {
+func (self RequirementAssignments) Normalize(nodeTemplate *NodeTemplate, normalNodeTemplate *normal.NodeTemplate) {
 	for _, requirement := range self {
-		requirement.Normalize(nodeTemplate, s, n)
+		requirement.Normalize(nodeTemplate, normalNodeTemplate)
 	}
 }

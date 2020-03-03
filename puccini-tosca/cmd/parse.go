@@ -171,8 +171,8 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 	FailOnProblems(problems)
 
 	// Normalize
-	if s, ok := normal.NormalizeServiceTemplate(context.Root.EntityPtr); ok {
-		return context, s
+	if serviceTemplate, ok := normal.NormalizeServiceTemplate(context.Root.EntityPtr); ok {
+		return context, serviceTemplate
 	} else {
 		common.Fail("grammar does not support normalization")
 		return context, nil
@@ -197,8 +197,8 @@ func ParseInputs() {
 		common.FailOnError(err)
 		reader, err := url.Open()
 		common.FailOnError(err)
-		if readCloser, ok := reader.(io.ReadCloser); ok {
-			defer readCloser.Close()
+		if closer, ok := reader.(io.Closer); ok {
+			defer closer.Close()
 		}
 		data, err := formatpkg.ReadYAML(reader)
 		common.FailOnError(err)

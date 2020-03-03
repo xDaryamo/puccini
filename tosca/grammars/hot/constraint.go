@@ -87,11 +87,11 @@ func (self *Constraint) NewFunctionCall(context *tosca.Context) *tosca.FunctionC
 
 type Constraints []*Constraint
 
-func (self Constraints) Normalize(context *tosca.Context, constrainable normal.Constrainable) {
+func (self Constraints) Normalize(context *tosca.Context, normalConstrainable normal.Constrainable) {
 	for _, constraint := range self {
 		functionCall := constraint.NewFunctionCall(context)
 		NormalizeFunctionCallArguments(functionCall, context)
-		constrainable.AddConstraint(functionCall)
+		normalConstrainable.AddConstraint(functionCall)
 		// TODO: normalize constraint description somewhere
 	}
 }

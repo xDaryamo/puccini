@@ -1,10 +1,6 @@
 package ard
 
 import (
-	"fmt"
-	"io"
-	"strings"
-
 	"gopkg.in/yaml.v3"
 )
 
@@ -18,16 +14,16 @@ func FindYAMLNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 		return FindYAMLNode(node.Alias, path...)
 
 	case yaml.DocumentNode:
-		for _, childNode := range node.Content {
-			// It is a single document, so returning from the first iteration should work
-			return FindYAMLNode(childNode, path...)
+		if len(node.Content) > 0 {
+			// Length *should* be 1
+			return FindYAMLNode(node.Content[0], path...)
 		}
 
 	case yaml.MappingNode:
 		pathElement := path[0]
 		switch pathElement.Type {
 		case FieldPathType, MapPathType:
-			v := pathElement.Value.(string)
+			value := pathElement.Value.(string)
 
 			// Content is a slice of pairs of key-followed-by-value
 			length := len(node.Content)
@@ -35,6 +31,7 @@ func FindYAMLNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 				keyNode := node.Content[i]
 
 				if i+1 >= length {
+					// Length *should* be an even number
 					return keyNode
 				}
 
@@ -48,7 +45,7 @@ func FindYAMLNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 				}
 
 				// We only support comparisons with string keys
-				if (keyNode.Kind == yaml.ScalarNode) && (keyNode.Tag == "!!str") && (keyNode.Value == v) {
+				if (keyNode.Kind == yaml.ScalarNode) && (keyNode.Tag == "!!str") && (keyNode.Value == value) {
 					valueNode := node.Content[i+1]
 					foundNode := FindYAMLNode(valueNode, path[1:]...)
 					if foundNode == valueNode {
@@ -71,50 +68,5 @@ func FindYAMLNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 		}
 	}
 
-	// case yaml.ScalarNode:
 	return node
-}
-
-// Write
-
-var YAMLNodeKinds = map[yaml.Kind]string{
-	yaml.DocumentNode: "Document",
-	yaml.SequenceNode: "Sequence",
-	yaml.MappingNode:  "Mapping",
-	yaml.ScalarNode:   "Scalar",
-	yaml.AliasNode:    "Alias",
-}
-
-func WriteYAMLNodes(writer io.Writer, node *yaml.Node) {
-	WriteYAMLNode(writer, node, 0)
-}
-
-func WriteYAMLNode(writer io.Writer, node *yaml.Node, indent int) {
-	s := ""
-
-	s += strings.Repeat(" ", indent)
-
-	s += YAMLNodeKinds[node.Kind]
-
-	switch node.Kind {
-	// Document and alias tag is always "", nothing to print
-	// Sequence tag is always "!!seq", no need to print
-	// Mapping tag is always "!!map", no need to print
-
-	case yaml.ScalarNode:
-		s += " "
-		s += node.Tag
-	}
-
-	if node.Value != "" {
-		s += " "
-		s += node.Value
-	}
-
-	fmt.Fprintln(writer, s)
-
-	indent += 1
-	for _, child := range node.Content {
-		WriteYAMLNode(writer, child, indent)
-	}
 }

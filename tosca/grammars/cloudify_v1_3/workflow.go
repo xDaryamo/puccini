@@ -42,17 +42,17 @@ func ReadWorkflow(context *tosca.Context) interface{} {
 	return self
 }
 
-func (self *Workflow) Normalize(s *normal.ServiceTemplate) *normal.Workflow {
+func (self *Workflow) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Workflow {
 	log.Infof("{normalize} workflow: %s", self.Name)
 
-	w := s.NewWorkflow(self.Name)
+	normalWorkflow := normalServiceTemplate.NewWorkflow(self.Name)
 
 	// TODO: mapping
 
 	// TODO: support property definitions
 	//self.ParameterDefinitions.Normalize(w.Inputs)
 
-	return w
+	return normalWorkflow
 }
 
 //
@@ -61,8 +61,8 @@ func (self *Workflow) Normalize(s *normal.ServiceTemplate) *normal.Workflow {
 
 type Workflows []*Workflow
 
-func (self Workflows) Normalize(s *normal.ServiceTemplate) {
+func (self Workflows) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
 	for _, workflow := range self {
-		s.Workflows[workflow.Name] = workflow.Normalize(s)
+		normalServiceTemplate.Workflows[workflow.Name] = workflow.Normalize(normalServiceTemplate)
 	}
 }

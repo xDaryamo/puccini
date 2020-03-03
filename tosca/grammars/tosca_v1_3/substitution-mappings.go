@@ -57,19 +57,19 @@ func (self *SubstitutionMappings) IsRequirementMapped(nodeTemplate *NodeTemplate
 	return false
 }
 
-func (self *SubstitutionMappings) Normalize(s *normal.ServiceTemplate) *normal.Substitution {
+func (self *SubstitutionMappings) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Substitution {
 	log.Info("{normalize} substitution mappings")
 
 	if self.NodeType == nil {
 		return nil
 	}
 
-	t := s.NewSubstitution()
+	normalSubstitution := normalServiceTemplate.NewSubstitution()
 
-	t.Type = self.NodeType.Name
+	normalSubstitution.Type = self.NodeType.Name
 
 	if metadata, ok := self.NodeType.GetMetadata(); ok {
-		t.TypeMetadata = metadata
+		normalSubstitution.TypeMetadata = metadata
 	}
 
 	for _, mapping := range self.CapabilityMappings {
@@ -77,9 +77,9 @@ func (self *SubstitutionMappings) Normalize(s *normal.ServiceTemplate) *normal.S
 			continue
 		}
 
-		if n, ok := s.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-			if c, ok := n.Capabilities[*mapping.CapabilityName]; ok {
-				t.CapabilityMappings[n] = c
+		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+			if normalCapability, ok := normalNodeTemplate.Capabilities[*mapping.CapabilityName]; ok {
+				normalSubstitution.CapabilityMappings[normalNodeTemplate] = normalCapability
 			}
 		}
 	}
@@ -89,8 +89,8 @@ func (self *SubstitutionMappings) Normalize(s *normal.ServiceTemplate) *normal.S
 			continue
 		}
 
-		if n, ok := s.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-			t.RequirementMappings[n] = *mapping.RequirementName
+		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+			normalSubstitution.RequirementMappings[normalNodeTemplate] = *mapping.RequirementName
 		}
 	}
 
@@ -99,8 +99,8 @@ func (self *SubstitutionMappings) Normalize(s *normal.ServiceTemplate) *normal.S
 			continue
 		}
 
-		if n, ok := s.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-			s.Substitution.PropertyMappings[n] = *mapping.PropertyName
+		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+			normalServiceTemplate.Substitution.PropertyMappings[normalNodeTemplate] = *mapping.PropertyName
 		}
 	}
 
@@ -109,8 +109,8 @@ func (self *SubstitutionMappings) Normalize(s *normal.ServiceTemplate) *normal.S
 			continue
 		}
 
-		if n, ok := s.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-			s.Substitution.AttributeMappings[n] = *mapping.AttributeName
+		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+			normalServiceTemplate.Substitution.AttributeMappings[normalNodeTemplate] = *mapping.AttributeName
 		}
 	}
 
@@ -119,10 +119,10 @@ func (self *SubstitutionMappings) Normalize(s *normal.ServiceTemplate) *normal.S
 			continue
 		}
 
-		if n, ok := s.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-			s.Substitution.InterfaceMappings[n] = *mapping.InterfaceName
+		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+			normalServiceTemplate.Substitution.InterfaceMappings[normalNodeTemplate] = *mapping.InterfaceName
 		}
 	}
 
-	return t
+	return normalSubstitution
 }

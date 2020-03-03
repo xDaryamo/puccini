@@ -38,24 +38,24 @@ func ReadPolicy(context *tosca.Context) interface{} {
 	return self
 }
 
-func (self *Policy) Normalize(s *normal.ServiceTemplate) *normal.Policy {
+func (self *Policy) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Policy {
 	log.Infof("{normalize} policy: %s", self.Name)
 
-	p := s.NewPolicy(self.Name)
+	normalPolicy := normalServiceTemplate.NewPolicy(self.Name)
 
 	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.PolicyType); ok {
-		p.Types = types
+		normalPolicy.Types = types
 	}
 
-	self.Properties.Normalize(p.Properties, "")
+	self.Properties.Normalize(normalPolicy.Properties, "")
 
 	for _, group := range self.TargetGroups {
-		if g, ok := s.Groups[group.Name]; ok {
-			p.GroupTargets = append(p.GroupTargets, g)
+		if normalGroup, ok := normalServiceTemplate.Groups[group.Name]; ok {
+			normalPolicy.GroupTargets = append(normalPolicy.GroupTargets, normalGroup)
 		}
 	}
 
-	return p
+	return normalPolicy
 }
 
 //
@@ -64,8 +64,8 @@ func (self *Policy) Normalize(s *normal.ServiceTemplate) *normal.Policy {
 
 type Policies []*Policy
 
-func (self Policies) Normalize(s *normal.ServiceTemplate) {
+func (self Policies) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
 	for _, policy := range self {
-		s.Policies[policy.Name] = policy.Normalize(s)
+		normalServiceTemplate.Policies[policy.Name] = policy.Normalize(normalServiceTemplate)
 	}
 }

@@ -53,32 +53,32 @@ func (self *CapabilityAssignment) GetDefinition(nodeTemplate *NodeTemplate) (*Ca
 	return definition, ok
 }
 
-func (self *CapabilityAssignment) Normalize(n *normal.NodeTemplate, definition *CapabilityDefinition) *normal.Capability {
+func (self *CapabilityAssignment) Normalize(normalNodeTemplate *normal.NodeTemplate, definition *CapabilityDefinition) *normal.Capability {
 	log.Debugf("{normalize} capability: %s", self.Name)
 
-	c := n.NewCapability(self.Name)
+	normalCapability := normalNodeTemplate.NewCapability(self.Name)
 
 	if definition.Description != nil {
-		c.Description = *definition.Description
+		normalCapability.Description = *definition.Description
 	}
 
 	if definition.Occurrences != nil {
-		c.MinRelationshipCount = definition.Occurrences.Range.Lower
-		c.MaxRelationshipCount = definition.Occurrences.Range.Upper
+		normalCapability.MinRelationshipCount = definition.Occurrences.Range.Lower
+		normalCapability.MaxRelationshipCount = definition.Occurrences.Range.Upper
 	} else {
 		// Default occurrences is [ 0, UNBOUNDED ]
-		c.MinRelationshipCount = 0
-		c.MaxRelationshipCount = math.MaxUint64
+		normalCapability.MinRelationshipCount = 0
+		normalCapability.MaxRelationshipCount = math.MaxUint64
 	}
 
 	if types, ok := normal.GetTypes(self.Context.Hierarchy, definition.CapabilityType); ok {
-		c.Types = types
+		normalCapability.Types = types
 	}
 
-	self.Properties.Normalize(c.Properties)
-	self.Attributes.Normalize(c.Attributes)
+	self.Properties.Normalize(normalCapability.Properties)
+	self.Attributes.Normalize(normalCapability.Attributes)
 
-	return c
+	return normalCapability
 }
 
 //

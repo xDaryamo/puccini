@@ -135,43 +135,43 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 }
 
 func (self *Value) Normalize() normal.Constrainable {
-	var constrainable normal.Constrainable
+	var normalConstrainable normal.Constrainable
 
 	switch data := self.Context.Data.(type) {
 	case ard.List:
-		list := normal.NewList(len(data))
+		normalList := normal.NewList(len(data))
 		for index, value := range data {
-			list.Set(index, NewValue(self.Context.ListChild(index, value)).Normalize())
+			normalList.Set(index, NewValue(self.Context.ListChild(index, value)).Normalize())
 		}
-		constrainable = list
+		normalConstrainable = normalList
 
 	case ard.Map:
-		map_ := normal.NewMap()
+		normalMap := normal.NewMap()
 		for key, value := range data {
 			if _, ok := key.(string); !ok {
 				// Cloudify DSL does not support complex keys
 				self.Context.MapChild(key, yamlkeys.KeyData(key)).ReportValueWrongType("string")
 			}
 			name := yamlkeys.KeyString(key)
-			map_.Put(name, NewValue(self.Context.MapChild(name, value)).Normalize())
+			normalMap.Put(name, NewValue(self.Context.MapChild(name, value)).Normalize())
 		}
-		constrainable = map_
+		normalConstrainable = normalMap
 
 	case *tosca.FunctionCall:
 		NormalizeFunctionCallArguments(data, self.Context)
-		constrainable = normal.NewFunctionCall(data)
+		normalConstrainable = normal.NewFunctionCall(data)
 
 	default:
 		value := normal.NewValue(data)
 		value.Type = self.Type
-		constrainable = value
+		normalConstrainable = value
 	}
 
 	if self.Description != nil {
-		constrainable.SetDescription(*self.Description)
+		normalConstrainable.SetDescription(*self.Description)
 	}
 
-	return constrainable
+	return normalConstrainable
 }
 
 //
@@ -227,8 +227,8 @@ func (self Values) RenderParameters(definitions ParameterDefinitions, kind strin
 	}
 }
 
-func (self Values) Normalize(c normal.Constrainables, prefix string) {
+func (self Values) Normalize(normalConstrainables normal.Constrainables, prefix string) {
 	for key, value := range self {
-		c[prefix+key] = value.Normalize()
+		normalConstrainables[prefix+key] = value.Normalize()
 	}
 }

@@ -26,8 +26,8 @@ func RegisterInternalURL(path string, content string) error {
 }
 
 func ReadToInternalURL(path string, reader io.Reader) (*InternalURL, error) {
-	if readCloser, ok := reader.(io.ReadCloser); ok {
-		defer readCloser.Close()
+	if closer, ok := reader.(io.Closer); ok {
+		defer closer.Close()
 	}
 	if buffer, err := ioutil.ReadAll(reader); err == nil {
 		if err = RegisterInternalURL(path, common.BytesToString(buffer)); err != nil {
