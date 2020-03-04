@@ -360,11 +360,15 @@ func (self *Context) ReadInteger() *int64 {
 	if self.ValidateType("integer") {
 		var value int64
 		switch d := self.Data.(type) {
-		case int:
-			value = int64(d)
 		case int64:
 			value = d
 		case int32:
+			value = int64(d)
+		case int16:
+			value = int64(d)
+		case int8:
+			value = int64(d)
+		case int:
 			value = int64(d)
 		}
 		return &value
@@ -378,7 +382,6 @@ func (self *Context) ReadFloat() *float64 {
 		switch data := self.Data.(type) {
 		case float64:
 			value = data
-
 		case float32:
 			value = float64(data)
 		}

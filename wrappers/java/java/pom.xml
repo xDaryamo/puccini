@@ -16,7 +16,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<puccini.version>0.0.0-SNAPSHOT</puccini.version>
-		<jackson.version>2.10.2</jackson.version>
+		<snakeyaml.version>2.1</snakeyaml.version>
 	</properties>
 
 	<groupId>puccini</groupId>
@@ -25,14 +25,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-yaml</artifactId>
-			<version>${jackson.version}</version>
+			<groupId>org.snakeyaml</groupId>
+			<artifactId>snakeyaml-engine</artifactId>
+			<version>${snakeyaml.version}</version>
 		</dependency>
 	</dependencies>
 

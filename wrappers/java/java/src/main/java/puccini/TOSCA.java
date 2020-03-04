@@ -1,32 +1,24 @@
 package puccini;
 
-import java.util.Map;
+import org.snakeyaml.engine.v2.api.Load;
+import org.snakeyaml.engine.v2.api.LoadSettings;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import java.util.Map;
 
 public class TOSCA
 {
+	public static Map<Object, Object> Compile( String url ) throws Exception
+	{
+		LoadSettings settings = LoadSettings.builder().setTagConstructors( SnakeYAML.tagConstructors ).build();
+		Load load = new Load( settings );
+		Map<Object, Object> clout = (Map<Object, Object>) load.loadFromString( _Compile( url ) );
+		return clout;
+	}
+
 	static
 	{
 		System.loadLibrary( "puccinijni" );
 	}
 
 	public static native String _Compile( String url );
-
-	public static Map<Object, Object> Compile( String url ) throws Exception
-	{
-		ObjectMapper mapper = new ObjectMapper( new YAMLFactory() );
-		try
-		{
-			@SuppressWarnings("unchecked")
-			Map<Object, Object> clout = mapper.readValue( _Compile( url ), Map.class );
-			return clout;
-		}
-		catch( JsonProcessingException x )
-		{
-			throw x;
-		}
-	}
 }

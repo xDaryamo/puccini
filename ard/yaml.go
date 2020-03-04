@@ -12,7 +12,6 @@ func ToYAMLDocumentNode(value interface{}, verbose bool) *yaml.Node {
 	var node yaml.Node
 	node.Kind = yaml.DocumentNode
 	node.Content = []*yaml.Node{ToYAMLNode(value, verbose)}
-	node.Style = yaml.TaggedStyle
 	return &node
 }
 
@@ -28,9 +27,7 @@ func ToYAMLNode(value interface{}, verbose bool) *yaml.Node {
 	case List:
 		node.Kind = yaml.SequenceNode
 		node.Tag = "!!seq"
-		if verbose {
-			node.Style = yaml.LiteralStyle
-		}
+		node.Style = 0
 		node.Content = make([]*yaml.Node, len(value_))
 		for index, v := range value_ {
 			node.Content[index] = ToYAMLNode(v, verbose)
@@ -39,9 +36,7 @@ func ToYAMLNode(value interface{}, verbose bool) *yaml.Node {
 	case Map:
 		node.Kind = yaml.MappingNode
 		node.Tag = "!!map"
-		if verbose {
-			node.Style = yaml.LiteralStyle
-		}
+		node.Style = 0
 		node.Content = make([]*yaml.Node, len(value_)*2)
 		index := 0
 		for k, v := range value_ {
@@ -68,6 +63,16 @@ func ToYAMLNode(value interface{}, verbose bool) *yaml.Node {
 		node.Tag = "!!int"
 		node.Value = strconv.FormatInt(int64(value_), 10)
 
+	case int8:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!int"
+		node.Value = strconv.FormatInt(int64(value_), 10)
+
+	case int16:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!int"
+		node.Value = strconv.FormatInt(int64(value_), 10)
+
 	case int32:
 		node.Kind = yaml.ScalarNode
 		node.Tag = "!!int"
@@ -79,6 +84,16 @@ func ToYAMLNode(value interface{}, verbose bool) *yaml.Node {
 		node.Value = strconv.FormatInt(value_, 10)
 
 	case uint:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!int"
+		node.Value = strconv.FormatUint(uint64(value_), 10)
+
+	case uint8:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!int"
+		node.Value = strconv.FormatUint(uint64(value_), 10)
+
+	case uint16:
 		node.Kind = yaml.ScalarNode
 		node.Tag = "!!int"
 		node.Value = strconv.FormatUint(uint64(value_), 10)

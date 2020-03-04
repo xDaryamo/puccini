@@ -18,10 +18,10 @@ func IsBool(value interface{}) bool {
 	return ok
 }
 
-// int, int64, int32
+// int64, int32, int16, int8, int
 func IsInt(value interface{}) bool {
 	switch value.(type) {
-	case int, int64, int32:
+	case int64, int32, int16, int8, int:
 		return true
 	}
 	return false

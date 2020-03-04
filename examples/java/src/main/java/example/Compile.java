@@ -1,10 +1,11 @@
 package example;
 
-import java.util.Map;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.snakeyaml.engine.v2.api.Dump;
+import org.snakeyaml.engine.v2.api.DumpSettings;
+import puccini.SnakeYAML;
 import puccini.TOSCA;
+
+import java.util.Map;
 
 public class Compile
 {
@@ -15,8 +16,9 @@ public class Compile
 			try
 			{
 				Map<Object, Object> clout = TOSCA.Compile( args[0] );
-				ObjectMapper mapper = new ObjectMapper( new YAMLFactory() );
-				mapper.writeValue( System.out, clout );
+				DumpSettings settings = DumpSettings.builder().build();
+				Dump dump = new Dump( settings, new SnakeYAML.Representer( settings ) );
+				System.out.print( dump.dumpToString( clout ) );
 			}
 			catch( Exception x )
 			{
