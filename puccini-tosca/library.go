@@ -38,19 +38,24 @@ func Compile(url *C.char) *C.char {
 		return nil
 	}
 
-	compiler.Resolve(clout, problems, "yaml", true)
+	compiler.Resolve(clout, problems, "yaml", true, false)
 	if !problems.Empty() {
 		//t.Errorf("%s", p)
 		return nil
 	}
 
-	compiler.Coerce(clout, problems, "yaml", true)
+	compiler.Coerce(clout, problems, "yaml", true, false)
 	if !problems.Empty() {
 		//t.Errorf("%s", p)
 		return nil
 	}
 
-	format.WriteYAML(clout, buffer, "  ")
+	ard, err := clout.ARD()
+	if err != nil {
+		return nil
+	}
+
+	format.WriteYAML(ard, buffer, "  ", true)
 
 	return C.CString(buffer.String())
 }

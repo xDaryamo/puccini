@@ -8,16 +8,16 @@ import (
 	"github.com/tliron/puccini/common/terminal"
 )
 
-func WriteOrPrint(data interface{}, format string, writer io.Writer, pretty bool, output string) error {
+func WriteOrPrint(data interface{}, format string, writer io.Writer, strict bool, pretty bool, output string) error {
 	if output != "" {
 		if f, err := OpenFileForWrite(output); err == nil {
 			defer f.Close()
-			return Write(data, format, terminal.Indent, f)
+			return Write(data, format, terminal.Indent, strict, f)
 		} else {
 			return err
 		}
 	} else {
-		return Print(data, format, writer, pretty)
+		return Print(data, format, writer, strict, pretty)
 	}
 }
 

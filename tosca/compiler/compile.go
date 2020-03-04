@@ -1,9 +1,10 @@
 package compiler
 
 import (
+	"time"
+
 	"github.com/tliron/puccini/ard"
 	cloutpkg "github.com/tliron/puccini/clout"
-	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/tosca/normal"
 )
 
@@ -23,7 +24,7 @@ func Compile(serviceTemplate *normal.ServiceTemplate) (*cloutpkg.Clout, error) {
 	clout.Metadata["puccini-js"] = metadata
 
 	history := ard.List{ard.StringMap{
-		"timestamp":   common.Timestamp(),
+		"timestamp":   time.Now(),
 		"description": "compile",
 	}}
 

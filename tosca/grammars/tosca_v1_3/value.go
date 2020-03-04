@@ -171,7 +171,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 
 						self.Context.Data = valueList
 					} else { // "map"
-						if definition.KeySchema == nil {
+						if (definition == nil) || (definition.KeySchema == nil) {
 							// TODO: check if this is reported elsewhere
 							return
 						}

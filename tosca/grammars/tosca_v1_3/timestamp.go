@@ -163,8 +163,6 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 		}
 	} else if context.Is("!!timestamp") {
 		// Note: OriginalString will be empty because it is not preserved by our parsing methods
-		// (In the YAML parser we could keep it if we
-
 		time := context.Data.(time.Time)
 		_, tzSeconds := time.Zone()
 

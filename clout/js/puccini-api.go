@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"time"
 
 	"github.com/beevik/etree"
 	"github.com/tebeka/atexit"
@@ -26,6 +27,7 @@ type PucciniAPI struct {
 	Stdin  io.Writer
 	Output string
 	Format string
+	Strict bool
 	Pretty bool
 
 	context *Context
@@ -39,10 +41,10 @@ func (self *Context) NewPucciniAPI() *PucciniAPI {
 	return &PucciniAPI{
 		Log:     self.Log,
 		Stdout:  self.Stdout,
-		Stderr:  self.Stderr,
 		Stdin:   self.Stdin,
 		Output:  self.Output,
 		Format:  format,
+		Strict:  self.Strict,
 		Pretty:  self.Pretty,
 		context: self,
 	}
@@ -60,8 +62,8 @@ func (entry *PucciniAPI) ValidateFormat(code string, format string) error {
 	return formatpkg.Validate(code, format)
 }
 
-func (self *PucciniAPI) Timestamp() string {
-	return common.Timestamp()
+func (self *PucciniAPI) Timestamp() time.Time {
+	return time.Now()
 }
 
 func (self *PucciniAPI) NewXMLDocument() *etree.Document {
@@ -105,7 +107,7 @@ func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool)
 		}
 	}
 
-	self.failOnError(formatpkg.WriteOrPrint(data, self.Format, self.Stdout, self.Pretty, output))
+	self.failOnError(formatpkg.WriteOrPrint(data, self.Format, self.Stdout, self.Strict, self.Pretty, output))
 }
 
 func (self *PucciniAPI) Exec(name string, arguments ...string) (string, error) {

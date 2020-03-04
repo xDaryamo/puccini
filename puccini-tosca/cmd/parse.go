@@ -56,7 +56,7 @@ var parseCmd = &cobra.Command{
 		_, s := Parse(url)
 
 		if (filter == "") && (len(dumpPhases) == 0) {
-			formatpkg.Print(s, format, terminal.Stdout, pretty)
+			formatpkg.Print(s, format, terminal.Stdout, strict, pretty)
 		}
 	},
 }
@@ -149,7 +149,7 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 			}
 			for _, entityPtr := range entityPtrs {
 				fmt.Fprintf(terminal.Stdout, "%s:\n", terminal.ColorPath(tosca.GetContext(entityPtr).Path.String()))
-				err = formatpkg.Print(entityPtr, format, terminal.Stdout, pretty)
+				err = formatpkg.Print(entityPtr, format, terminal.Stdout, strict, pretty)
 				common.FailOnError(err)
 			}
 		}
@@ -162,7 +162,7 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 		} else if !terminal.Quiet {
 			for _, entityPtr := range entityPtrs {
 				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorPath(tosca.GetContext(entityPtr).Path.String()))
-				err = formatpkg.Print(entityPtr, format, terminal.Stdout, pretty)
+				err = formatpkg.Print(entityPtr, format, terminal.Stdout, strict, pretty)
 				common.FailOnError(err)
 			}
 		}

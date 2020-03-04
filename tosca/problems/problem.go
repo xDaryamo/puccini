@@ -7,6 +7,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/tliron/puccini/ard"
+	"github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/common/terminal"
 )
 
@@ -132,6 +134,15 @@ func (self *Problems) ToString(locate bool) string {
 // fmt.Stringer interface
 func (self *Problems) String() string {
 	return self.ToString(false)
+}
+
+func (self *Problems) ARD() (ard.Map, error) {
+	if s, err := format.EncodeYAML(self, " ", false); err == nil {
+		map_, _, err := ard.ReadYAML(strings.NewReader(s), false)
+		return map_, err
+	} else {
+		return nil, err
+	}
 }
 
 func (self *Problems) Write(writer io.Writer, pretty bool, locate bool) bool {

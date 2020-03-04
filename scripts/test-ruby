@@ -6,4 +6,6 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 
 "$HERE/build-wrapper-ruby"
 
+gem install "$ROOT/dist/puccini.gem"
+
 "$ROOT/examples/ruby/compile.rb" "$ROOT/examples/tosca/data-types.yaml"

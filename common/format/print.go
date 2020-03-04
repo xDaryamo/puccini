@@ -15,7 +15,7 @@ func init() {
 	prettyjsonFormatter.Indent = terminal.IndentSpaces
 }
 
-func Print(data interface{}, format string, writer io.Writer, pretty bool) error {
+func Print(data interface{}, format string, writer io.Writer, strict bool, pretty bool) error {
 	// Special handling for strings
 	if s, ok := data.(string); ok {
 		if pretty {
@@ -32,7 +32,7 @@ func Print(data interface{}, format string, writer io.Writer, pretty bool) error
 
 	switch format {
 	case "yaml", "":
-		return PrintYAML(data, writer, pretty)
+		return PrintYAML(data, writer, strict, pretty)
 	case "json":
 		return PrintJSON(data, writer, pretty)
 	case "xml":
@@ -42,12 +42,12 @@ func Print(data interface{}, format string, writer io.Writer, pretty bool) error
 	}
 }
 
-func PrintYAML(data interface{}, writer io.Writer, pretty bool) error {
+func PrintYAML(data interface{}, writer io.Writer, strict bool, pretty bool) error {
 	indent := "          "
 	if pretty {
 		indent = terminal.Indent
 	}
-	return WriteYAML(data, writer, indent)
+	return WriteYAML(data, writer, indent, strict)
 }
 
 func PrintJSON(data interface{}, writer io.Writer, pretty bool) error {

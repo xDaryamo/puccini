@@ -33,7 +33,7 @@ var getCmd = &cobra.Command{
 		common.FailOnError(err)
 
 		if !terminal.Quiet {
-			err = formatpkg.WriteOrPrint(scriptlet, format, terminal.Stdout, pretty, output)
+			err = formatpkg.WriteOrPrint(scriptlet, format, terminal.Stdout, strict, pretty, output)
 			common.FailOnError(err)
 		}
 	},

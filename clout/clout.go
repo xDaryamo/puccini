@@ -77,22 +77,18 @@ func (self *Clout) Resolve() error {
 
 func (self *Clout) Normalize() (*Clout, error) {
 	// TODO: there must be a more efficient way to do this
-	if s, err := format.EncodeYAML(self, " "); err == nil {
+	if s, err := format.EncodeYAML(self, " ", false); err == nil {
 		return ReadYAML(strings.NewReader(s))
 	} else {
 		return nil, err
 	}
 }
 
-func (self *Clout) ToStringMaps() {
-	self.Metadata = ard.EnsureStringMaps(self.Metadata)
-	self.Properties = ard.EnsureStringMaps(self.Properties)
-	for _, v := range self.Vertexes {
-		v.Metadata = ard.EnsureStringMaps(v.Metadata)
-		v.Properties = ard.EnsureStringMaps(v.Properties)
-		for _, e := range v.EdgesOut {
-			e.Metadata = ard.EnsureStringMaps(e.Metadata)
-			e.Properties = ard.EnsureStringMaps(e.Properties)
-		}
+func (self *Clout) ARD() (ard.Map, error) {
+	if s, err := format.EncodeYAML(self, " ", false); err == nil {
+		map_, _, err := ard.ReadYAML(strings.NewReader(s), false)
+		return map_, err
+	} else {
+		return nil, err
 	}
 }

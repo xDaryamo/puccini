@@ -11,7 +11,6 @@ metadata:
 node_types:
 
   DataNode:
-    derived_from: tosca:Root
     properties:
 
       # Primitive types
@@ -118,8 +117,6 @@ node_types:
 data_types:
 
   Complex:
-    # (You don't really have to derive from Root, but it's common practice)
-    derived_from: tosca:Root
     # (Poorly named: these are really "fields" of our complex type, rather than "properties")
     properties:
       string:

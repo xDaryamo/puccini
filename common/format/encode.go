@@ -7,10 +7,10 @@ import (
 	"github.com/tliron/puccini/common/terminal"
 )
 
-func Encode(data interface{}, format string) (string, error) {
+func Encode(data interface{}, format string, strict bool) (string, error) {
 	switch format {
 	case "yaml", "":
-		return EncodeYAML(data, terminal.Indent)
+		return EncodeYAML(data, terminal.Indent, strict)
 	case "json":
 		return EncodeJSON(data, terminal.Indent)
 	case "xml":
@@ -20,9 +20,9 @@ func Encode(data interface{}, format string) (string, error) {
 	}
 }
 
-func EncodeYAML(data interface{}, indent string) (string, error) {
+func EncodeYAML(data interface{}, indent string, strict bool) (string, error) {
 	var writer strings.Builder
-	if err := WriteYAML(data, &writer, indent); err == nil {
+	if err := WriteYAML(data, &writer, indent, strict); err == nil {
 		return writer.String(), nil
 	} else {
 		return "", err

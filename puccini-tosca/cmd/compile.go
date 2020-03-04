@@ -52,13 +52,13 @@ func Compile(url string) {
 
 	// Resolve
 	if resolve {
-		compiler.Resolve(clout, problems, format, pretty)
+		compiler.Resolve(clout, problems, format, strict, pretty)
 		FailOnProblems(problems)
 	}
 
 	// Coerce
 	if coerce {
-		compiler.Coerce(clout, problems, format, pretty)
+		compiler.Coerce(clout, problems, format, strict, pretty)
 		FailOnProblems(problems)
 	}
 
@@ -66,7 +66,13 @@ func Compile(url string) {
 		err = Exec(exec, clout)
 		common.FailOnError(err)
 	} else if !terminal.Quiet || (output != "") {
-		err = formatpkg.WriteOrPrint(clout, format, terminal.Stdout, pretty, output)
+		if strict {
+			ard, err := clout.ARD()
+			common.FailOnError(err)
+			err = formatpkg.WriteOrPrint(ard, format, terminal.Stdout, strict, pretty, output)
+		} else {
+			err = formatpkg.WriteOrPrint(clout, format, terminal.Stdout, strict, pretty, output)
+		}
 		common.FailOnError(err)
 	}
 }
@@ -92,7 +98,7 @@ func Exec(scriptletName string, clout *cloutpkg.Clout) error {
 		common.FailOnError(err)
 	}
 
-	jsContext := js.NewContext(scriptletName, log, terminal.Quiet, format, pretty, output)
+	jsContext := js.NewContext(scriptletName, log, terminal.Quiet, format, strict, pretty, output)
 
 	program, err := jsContext.GetProgram(scriptletName, scriptlet)
 	if err != nil {

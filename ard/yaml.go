@@ -1,8 +1,137 @@
 package ard
 
 import (
+	"fmt"
+	"strconv"
+	"time"
+
 	"gopkg.in/yaml.v3"
 )
+
+func ToYAMLDocumentNode(value interface{}, verbose bool) *yaml.Node {
+	var node yaml.Node
+	node.Kind = yaml.DocumentNode
+	node.Content = []*yaml.Node{ToYAMLNode(value, verbose)}
+	node.Style = yaml.TaggedStyle
+	return &node
+}
+
+func ToYAMLNode(value interface{}, verbose bool) *yaml.Node {
+	// See: https://yaml.org/type/
+
+	var node yaml.Node
+	if verbose {
+		node.Style = yaml.TaggedStyle
+	}
+
+	switch value_ := value.(type) {
+	case List:
+		node.Kind = yaml.SequenceNode
+		node.Tag = "!!seq"
+		if verbose {
+			node.Style = yaml.LiteralStyle
+		}
+		node.Content = make([]*yaml.Node, len(value_))
+		for index, v := range value_ {
+			node.Content[index] = ToYAMLNode(v, verbose)
+		}
+
+	case Map:
+		node.Kind = yaml.MappingNode
+		node.Tag = "!!map"
+		if verbose {
+			node.Style = yaml.LiteralStyle
+		}
+		node.Content = make([]*yaml.Node, len(value_)*2)
+		index := 0
+		for k, v := range value_ {
+			node.Content[index] = ToYAMLNode(k, verbose)
+			index += 1
+			node.Content[index] = ToYAMLNode(v, verbose)
+			index += 1
+		}
+
+	case nil:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!null"
+
+	case string:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!str"
+		if verbose {
+			node.Style |= yaml.DoubleQuotedStyle
+		}
+		node.Value = value_
+
+	case int:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!int"
+		node.Value = strconv.FormatInt(int64(value_), 10)
+
+	case int32:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!int"
+		node.Value = strconv.FormatInt(int64(value_), 10)
+
+	case int64:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!int"
+		node.Value = strconv.FormatInt(value_, 10)
+
+	case uint:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!int"
+		node.Value = strconv.FormatUint(uint64(value_), 10)
+
+	case uint32:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!int"
+		node.Value = strconv.FormatUint(uint64(value_), 10)
+
+	case uint64:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!int"
+		node.Value = strconv.FormatUint(value_, 10)
+
+	case float32:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!float"
+		node.Value = fixFloat(strconv.FormatFloat(float64(value_), 'e', -1, 32))
+
+	case float64:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!float"
+		node.Value = fixFloat(strconv.FormatFloat(value_, 'e', -1, 64))
+
+	case bool:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!bool"
+		node.Value = strconv.FormatBool(value_)
+
+	case time.Time:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!timestamp"
+		node.Value = value_.Format(time.RFC3339Nano)
+
+	default:
+		panic(fmt.Sprintf("unsupported ARD value type: %T", value))
+	}
+
+	return &node
+}
+
+func fixFloat(s string) string {
+	// See:https://yaml.org/type/float.html
+	switch s {
+	case "+Inf":
+		return ".inf"
+	case "-Inf":
+		return "-.inf"
+	case "NaN":
+		return ".nan"
+	}
+	return s
+}
 
 func FindYAMLNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 	if len(path) == 0 {

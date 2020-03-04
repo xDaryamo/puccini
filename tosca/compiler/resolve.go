@@ -6,8 +6,8 @@ import (
 	problemspkg "github.com/tliron/puccini/tosca/problems"
 )
 
-func Resolve(clout *cloutpkg.Clout, problems *problemspkg.Problems, format string, pretty bool) {
-	context := js.NewContext("tosca.resolve", log, true, format, pretty, "")
+func Resolve(clout *cloutpkg.Clout, problems *problemspkg.Problems, format string, strict bool, pretty bool) {
+	context := js.NewContext("tosca.resolve", log, true, format, strict, pretty, "")
 	if err := context.Exec(clout, "tosca.resolve", map[string]interface{}{"problems": problems}); err != nil {
 		problems.ReportError(err)
 	}

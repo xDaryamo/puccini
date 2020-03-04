@@ -40,7 +40,7 @@ var putCmd = &cobra.Command{
 		err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)
 		common.FailOnError(err)
 
-		err = formatpkg.WriteOrPrint(clout, format, terminal.Stdout, pretty, output)
+		err = formatpkg.WriteOrPrint(clout, format, terminal.Stdout, strict, pretty, output)
 		common.FailOnError(err)
 	},
 }

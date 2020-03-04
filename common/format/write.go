@@ -7,10 +7,11 @@ import (
 	"io"
 
 	"github.com/beevik/etree"
+	"github.com/tliron/puccini/ard"
 	"gopkg.in/yaml.v3"
 )
 
-func Write(data interface{}, format string, indent string, writer io.Writer) error {
+func Write(data interface{}, format string, indent string, strict bool, writer io.Writer) error {
 	// Special handling for bare strings
 	if s, ok := data.(string); ok {
 		_, err := io.WriteString(writer, s)
@@ -24,7 +25,7 @@ func Write(data interface{}, format string, indent string, writer io.Writer) err
 
 	switch format {
 	case "yaml", "":
-		return WriteYAML(data, writer, indent)
+		return WriteYAML(data, writer, indent, strict)
 	case "json":
 		return WriteJSON(data, writer, indent)
 	case "xml":
@@ -34,7 +35,11 @@ func Write(data interface{}, format string, indent string, writer io.Writer) err
 	}
 }
 
-func WriteYAML(data interface{}, writer io.Writer, indent string) error {
+func WriteYAML(data interface{}, writer io.Writer, indent string, strict bool) error {
+	if strict {
+		data = ard.ToYAMLDocumentNode(data, true)
+	}
+
 	encoder := yaml.NewEncoder(writer)
 
 	encoder.SetIndent(len(indent)) // This might not work as expected for tabs!
