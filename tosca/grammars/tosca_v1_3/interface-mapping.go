@@ -27,7 +27,7 @@ func NewInterfaceMapping(context *tosca.Context) *InterfaceMapping {
 // tosca.Reader signature
 func ReadInterfaceMapping(context *tosca.Context) interface{} {
 	self := NewInterfaceMapping(context)
-	if context.ValidateType("list") {
+	if context.ValidateType("!!seq") {
 		strings := context.ReadStringListFixed(2)
 		if strings != nil {
 			self.NodeTemplateName = &(*strings)[0]

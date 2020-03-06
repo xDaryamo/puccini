@@ -32,7 +32,7 @@ func NewConditionDefinition(context *tosca.Context) *ConditionDefinition {
 func ReadConditionDefinition(context *tosca.Context) interface{} {
 	self := NewConditionDefinition(context)
 
-	if context.ValidateType("map") {
+	if context.ValidateType("!!map") {
 		map_ := context.Data.(ard.Map)
 		if len(map_) != 1 {
 			context.ReportValueMalformed("condition definition", "map length not 1")

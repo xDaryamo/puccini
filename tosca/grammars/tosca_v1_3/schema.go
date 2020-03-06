@@ -26,10 +26,10 @@ func NewSchema(context *tosca.Context) *Schema {
 func ReadSchema(context *tosca.Context) interface{} {
 	self := NewSchema(context)
 
-	if context.Is("map") {
+	if context.Is("!!map") {
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
-	} else if context.ValidateType("map", "string") {
+	} else if context.ValidateType("!!map", "!!str") {
 		// Short notation
 		self.DataTypeName = context.FieldChild("type", context.Data).ReadString()
 	}

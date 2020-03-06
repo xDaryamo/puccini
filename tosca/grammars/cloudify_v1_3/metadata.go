@@ -18,7 +18,7 @@ type Metadata map[string]interface{}
 func ReadMetadata(context *tosca.Context) interface{} {
 	var self map[string]interface{}
 
-	if context.ValidateType("map") {
+	if context.ValidateType("!!map") {
 		metadata := context.ReadStringMap()
 		if metadata != nil {
 			self = *metadata
@@ -32,14 +32,14 @@ func ReadMetadata(context *tosca.Context) interface{} {
 					context.ImportScriptlet(key[25:], v)
 					delete(self, key)
 				} else {
-					context.MapChild(key, value).ReportValueWrongType("string")
+					context.MapChild(key, value).ReportValueWrongType("!!str")
 				}
 			} else if strings.HasPrefix(key, "puccini.scriptlet|") {
 				if v, ok := value.(string); ok {
 					context.EmbedScriptlet(key[18:], v)
 					delete(self, key)
 				} else {
-					context.MapChild(key, value).ReportValueWrongType("string")
+					context.MapChild(key, value).ReportValueWrongType("!!str")
 				}
 			}
 		}

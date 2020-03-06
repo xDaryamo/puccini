@@ -29,7 +29,7 @@ func NewPropertyMapping(context *tosca.Context) *PropertyMapping {
 // tosca.Reader signature
 func ReadPropertyMapping(context *tosca.Context) interface{} {
 	self := NewPropertyMapping(context)
-	if context.ValidateType("list") {
+	if context.ValidateType("!!seq") {
 		strings := context.ReadStringListFixed(2)
 		if strings != nil {
 			self.NodeTemplateName = &(*strings)[0]

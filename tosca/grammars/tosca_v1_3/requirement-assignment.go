@@ -41,10 +41,10 @@ func NewRequirementAssignment(context *tosca.Context) *RequirementAssignment {
 func ReadRequirementAssignment(context *tosca.Context) interface{} {
 	self := NewRequirementAssignment(context)
 
-	if context.Is("map") {
+	if context.Is("!!map") {
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
-	} else if context.ValidateType("map", "string") {
+	} else if context.ValidateType("!!map", "!!str") {
 		// Short notation
 		self.TargetNodeTemplateNameOrTypeName = context.FieldChild("node", context.Data).ReadString()
 	}

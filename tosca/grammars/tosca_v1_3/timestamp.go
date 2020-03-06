@@ -50,7 +50,7 @@ type Timestamp struct {
 func ReadTimestamp(context *tosca.Context) interface{} {
 	var self Timestamp
 
-	if context.Is("string") {
+	if context.Is("!!str") {
 		self.OriginalString = *context.ReadString()
 		matches := TimestampShortRE.FindStringSubmatch(self.OriginalString)
 		length := len(matches)
@@ -182,7 +182,7 @@ func ReadTimestamp(context *tosca.Context) interface{} {
 		self.TZHour = uint32(tzSeconds / 3600)
 		self.TZMinute = uint32((tzSeconds % 3600) / 60)
 	} else {
-		context.ReportValueWrongType("string", "!!timestamp")
+		context.ReportValueWrongType("!!str", "!!timestamp")
 		return &self
 	}
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/problems"
 	urlpkg "github.com/tliron/puccini/url"
@@ -64,7 +65,7 @@ func (self *Context) FormatBadData() string {
 }
 
 func (self *Context) ReportValueWrongType(requiredTypeNames ...string) bool {
-	return self.ReportPathf(1, "\"%s\" instead of %s", terminal.ColorTypeName(PrimitiveTypeName(self.Data)), terminal.ColoredOptions(requiredTypeNames, terminal.ColorTypeName))
+	return self.ReportPathf(1, "\"%s\" instead of %s", terminal.ColorTypeName(ard.TypeName(self.Data)), terminal.ColoredOptions(requiredTypeNames, terminal.ColorTypeName))
 }
 
 func (self *Context) ReportValueWrongFormat(format string) bool {

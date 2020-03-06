@@ -34,10 +34,10 @@ func NewOperationAssignment(context *tosca.Context) *OperationAssignment {
 func ReadOperationAssignment(context *tosca.Context) interface{} {
 	self := NewOperationAssignment(context)
 
-	if context.Is("map") {
+	if context.Is("!!map") {
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
-	} else if context.ValidateType("map", "string") {
+	} else if context.ValidateType("!!map", "!!str") {
 		// Short notation
 		self.Implementation = context.FieldChild("implementation", context.Data).ReadString()
 	}

@@ -47,7 +47,7 @@ func DetectVersion(context *tosca.Context) (*tosca.Context, *string) {
 			if keyword == "heat_template_version" {
 				// Hack to allow HOT to use YAML !!timestamp values
 
-				if versionContext.Is("string") {
+				if versionContext.Is("!!str") {
 					return versionContext, versionContext.ReadString()
 				}
 
@@ -57,9 +57,9 @@ func DetectVersion(context *tosca.Context) (*tosca.Context, *string) {
 					return versionContext, versionContext.ReadString()
 				}
 
-				versionContext.ReportValueWrongType("string", "timestamp")
+				versionContext.ReportValueWrongType("!!str", "!!timestamp")
 			} else {
-				if versionContext.ValidateType("string") {
+				if versionContext.ValidateType("!!str") {
 					return versionContext, versionContext.ReadString()
 				}
 			}

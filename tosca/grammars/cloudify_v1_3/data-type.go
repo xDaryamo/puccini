@@ -60,8 +60,14 @@ func (self *DataType) Inherit() {
 
 func (self *DataType) GetInternalTypeName() (string, bool) {
 	switch self.Name {
-	case "string", "integer", "float", "boolean":
-		return self.Name, true
+	case "string":
+		return "!!str", true
+	case "integer":
+		return "!!int", true
+	case "float":
+		return "!!float", true
+	case "boolean":
+		return "!!bool", true
 	}
 	return "", false
 }

@@ -42,7 +42,7 @@ func NewConstraint(context *tosca.Context) *Constraint {
 func ReadConstraint(context *tosca.Context) interface{} {
 	self := NewConstraint(context)
 
-	if context.ValidateType("map") {
+	if context.ValidateType("!!map") {
 		map_ := context.Data.(ard.Map)
 		var length = len(map_)
 		if (length != 1) && (length != 2) {

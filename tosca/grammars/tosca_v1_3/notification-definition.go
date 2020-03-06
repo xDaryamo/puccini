@@ -31,10 +31,10 @@ func NewNotificationDefinition(context *tosca.Context) *NotificationDefinition {
 func ReadNotificationDefinition(context *tosca.Context) interface{} {
 	self := NewNotificationDefinition(context)
 
-	if context.Is("map") {
+	if context.Is("!!map") {
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
-	} else if context.ValidateType("map", "string") {
+	} else if context.ValidateType("!!map", "!!str") {
 		// Short notation
 		self.Implementation = ReadInterfaceImplementation(context.FieldChild("implementation", context.Data)).(*InterfaceImplementation)
 	}

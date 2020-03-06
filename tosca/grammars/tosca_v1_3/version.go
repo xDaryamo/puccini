@@ -38,11 +38,11 @@ type Version struct {
 func ReadVersion(context *tosca.Context) interface{} {
 	var self Version
 
-	if context.Is("string") {
+	if context.Is("!!str") {
 		self.OriginalString = *context.ReadString()
 		self.CanonicalString = self.OriginalString
 	} else if context.HasQuirk(tosca.QuirkDataTypesStringPermissive) {
-		if context.Is("float") {
+		if context.Is("!!float") {
 			value := *context.ReadFloat()
 			self.OriginalString = strconv.FormatFloat(value, 'g', -1, 64)
 			if strings.Index(self.CanonicalString, "e") == -1 {
@@ -53,17 +53,17 @@ func ReadVersion(context *tosca.Context) interface{} {
 				// Assume minor version is 0
 				self.CanonicalString += ".0"
 			}
-		} else if context.Is("integer") {
+		} else if context.Is("!!int") {
 			value := *context.ReadInteger()
 			// Assume minor version is 0
 			self.OriginalString = strconv.FormatInt(value, 10) + ".0"
 			self.CanonicalString = self.OriginalString
 		} else {
-			context.ReportValueWrongType("string", "float", "integer")
+			context.ReportValueWrongType("!!str", "!!float", "!!int")
 			return &self
 		}
 	} else {
-		context.ReportValueWrongType("string")
+		context.ReportValueWrongType("!!str")
 		return &self
 	}
 

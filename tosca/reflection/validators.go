@@ -1,64 +1,10 @@
 package reflection
 
-import (
-	"time"
-
-	"github.com/tliron/puccini/ard"
-)
-
 //
 // Validators
 //
 
-type TypeValidator func(interface{}) bool
-
-// bool
-func IsBool(value interface{}) bool {
-	_, ok := value.(bool)
-	return ok
-}
-
-// int64, int32, int16, int8, int
-func IsInt(value interface{}) bool {
-	switch value.(type) {
-	case int64, int32, int16, int8, int:
-		return true
-	}
-	return false
-}
-
-// float64, float32
-func IsFloat(value interface{}) bool {
-	switch value.(type) {
-	case float64, float32:
-		return true
-	}
-	return false
-}
-
-// string
-func IsString(value interface{}) bool {
-	_, ok := value.(string)
-	return ok
-}
-
-// time.Time
-func IsTime(value interface{}) bool {
-	_, ok := value.(time.Time)
-	return ok
-}
-
-// ard.List = []interface{}
-func IsSliceOfStruct(value interface{}) bool {
-	_, ok := value.(ard.List)
-	return ok
-}
-
-// ard.Map = map[interface{}]interface{}
-func IsMap(value interface{}) bool {
-	_, ok := value.(ard.Map)
-	return ok
-}
+// ard.TypeValidator signature
 
 // *string
 func IsPtrToString(value interface{}) bool {

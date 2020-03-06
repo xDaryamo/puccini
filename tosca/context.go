@@ -132,7 +132,7 @@ func (self *Context) GetCanonicalNamespace() *string {
 func (self *Context) Is(typeNames ...string) bool {
 	valid := false
 	for _, typeName := range typeNames {
-		typeValidator, ok := PrimitiveTypeValidators[typeName]
+		typeValidator, ok := ard.TypeValidators[typeName]
 		if !ok {
 			panic(fmt.Sprintf("unsupported field type: %s", typeName))
 		}
@@ -181,7 +181,7 @@ func (self *Context) FieldChild(name interface{}, data interface{}) *Context {
 }
 
 func (self *Context) GetFieldChild(name string) (*Context, bool) {
-	if self.ValidateType("map") {
+	if self.ValidateType("!!map") {
 		if data, ok := self.Data.(ard.Map)[name]; ok {
 			return self.FieldChild(name, data), true
 		}

@@ -16,7 +16,7 @@ type Metadata map[string]string
 func ReadMetadata(context *tosca.Context) interface{} {
 	var self Metadata
 
-	if context.Is("map") {
+	if context.Is("!!map") {
 		metadata := context.ReadStringStringMap()
 		if metadata != nil {
 			self = *metadata

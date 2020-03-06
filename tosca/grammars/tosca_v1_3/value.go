@@ -51,7 +51,7 @@ func ReadAttributeValue(context *tosca.Context) interface{} {
 	self := NewValue(context)
 
 	// Unpack long notation
-	if context.Is("map") {
+	if context.Is("!!map") {
 		map_ := context.Data.(ard.Map)
 		if len(map_) == 2 {
 			if description, ok := map_["description"]; ok {
@@ -119,14 +119,14 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 
 	// Internal types
 	if internalTypeName, ok := dataType.GetInternalTypeName(); ok {
-		if validator, ok := tosca.PrimitiveTypeValidators[internalTypeName]; ok {
+		if typeValidator, ok := ard.TypeValidators[internalTypeName]; ok {
 			if self.Context.Data == nil {
 				// Nil data only happens when an attribute is added despite not having a
 				// "default" value; we will give it a valid zero value instead
-				self.Context.Data = tosca.PrimitiveTypeZeroes[internalTypeName]
+				self.Context.Data = ard.TypeZeroes[internalTypeName]
 			}
 
-			if (internalTypeName == "string") && self.Context.HasQuirk(tosca.QuirkDataTypesStringPermissive) {
+			if (internalTypeName == "!!str") && self.Context.HasQuirk(tosca.QuirkDataTypesStringPermissive) {
 				switch data := self.Context.Data.(type) {
 				case bool:
 					self.Context.Data = strconv.FormatBool(data)
@@ -146,11 +146,11 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 			}
 
 			// Primitive types
-			if validator(self.Context.Data) {
+			if typeValidator(self.Context.Data) {
 				// Render list and map elements according to entry schema
 				// (The entry schema may also have additional constraints)
 				switch internalTypeName {
-				case "list", "map":
+				case "!!seq", "!!map":
 					if (definition == nil) || (definition.EntrySchema == nil) || (definition.EntrySchema.DataType == nil) {
 						// This problem is reported in AttributeDefinition.Render
 						return
@@ -159,7 +159,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 					entryDataType := definition.EntrySchema.DataType
 					entryConstraints := definition.EntrySchema.RenderConstraints()
 
-					if internalTypeName == "list" {
+					if internalTypeName == "!!seq" {
 						slice := self.Context.Data.(ard.List)
 
 						valueList := NewValueList(definition, len(slice), self.Description, entryConstraints)
@@ -170,7 +170,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 						}
 
 						self.Context.Data = valueList
-					} else { // "map"
+					} else { // "!!map"
 						if (definition == nil) || (definition.KeySchema == nil) {
 							// TODO: check if this is reported elsewhere
 							return
@@ -220,7 +220,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 				panic(fmt.Sprintf("type has \"puccini.comparer\" metadata but does not support HasComparer interface: %T", self.Context.Data))
 			}
 		}
-	} else if self.Context.ValidateType("map") {
+	} else if self.Context.ValidateType("!!map") {
 		// Complex data types
 
 		map_ := self.Context.Data.(ard.Map)

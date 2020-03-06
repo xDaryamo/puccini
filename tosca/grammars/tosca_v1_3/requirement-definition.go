@@ -39,10 +39,10 @@ func NewRequirementDefinition(context *tosca.Context) *RequirementDefinition {
 func ReadRequirementDefinition(context *tosca.Context) interface{} {
 	self := NewRequirementDefinition(context)
 
-	if context.Is("map") {
+	if context.Is("!!map") {
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
-	} else if context.ValidateType("map", "string") {
+	} else if context.ValidateType("!!map", "!!str") {
 		// Short notation
 		self.TargetCapabilityTypeName = context.FieldChild("capability", context.Data).ReadString()
 	}

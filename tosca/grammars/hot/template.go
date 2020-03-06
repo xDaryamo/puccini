@@ -57,7 +57,7 @@ func ReadTemplate(context *tosca.Context) interface{} {
 			heatTemplateVersionContext.Data = data.Format("2006-01-02")
 		}
 
-		if heatTemplateVersionContext.Is("string") {
+		if heatTemplateVersionContext.Is("!!str") {
 			self.HeatTemplateVersion = heatTemplateVersionContext.ReadString()
 		} else {
 			heatTemplateVersionContext.ReportValueWrongType("string", "timestamp")

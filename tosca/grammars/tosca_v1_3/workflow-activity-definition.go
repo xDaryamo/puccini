@@ -39,7 +39,7 @@ func NewWorkflowActivityDefinition(context *tosca.Context) *WorkflowActivityDefi
 func ReadWorkflowActivityDefinition(context *tosca.Context) interface{} {
 	self := NewWorkflowActivityDefinition(context)
 
-	if context.ValidateType("map") {
+	if context.ValidateType("!!map") {
 		map_ := context.Data.(ard.Map)
 		if len(map_) != 1 {
 			context.ReportValueMalformed("workflow activity definition", "map length not 1")

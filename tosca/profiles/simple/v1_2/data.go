@@ -18,19 +18,19 @@ data_types:
 
   string:
     metadata:
-      puccini.type: string
+      puccini.type: '!!str'
 
   integer:
     metadata:
-      puccini.type: integer
+      puccini.type: '!!int'
 
   float:
     metadata:
-      puccini.type: float
+      puccini.type: '!!float'
 
   boolean:
     metadata:
-      puccini.type: boolean
+      puccini.type: '!!bool'
 
   timestamp:
     metadata:
@@ -85,13 +85,13 @@ data_types:
 
   list:
     metadata:
-      puccini.type: list
+      puccini.type: '!!seq'
       citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       citation_location: 3.2.4
 
   map:
     metadata:
-      puccini.type: map
+      puccini.type: '!!map'
       citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       citation_location: 3.2.5
 

@@ -8,13 +8,13 @@ import (
 )
 
 func (self *Context) ValidateUnsupportedFields(keys []string) {
-	if !self.Is("map") {
+	if !self.Is("!!map") {
 		return
 	}
 	for key := range self.Data.(ard.Map) {
 		found := false
-		for _, k := range keys {
-			if key == k {
+		for _, key_ := range keys {
+			if key == key_ {
 				found = true
 				break
 			}

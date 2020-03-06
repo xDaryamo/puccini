@@ -35,7 +35,7 @@ func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, c
 		canonicalUnitPlural:   canonicalUnitPlural,
 	}
 
-	if !context.ValidateType("string") {
+	if !context.ValidateType("!!str") {
 		return &self
 	}
 

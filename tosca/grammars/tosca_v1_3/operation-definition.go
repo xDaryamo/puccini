@@ -36,10 +36,10 @@ func NewOperationDefinition(context *tosca.Context) *OperationDefinition {
 func ReadOperationDefinition(context *tosca.Context) interface{} {
 	self := NewOperationDefinition(context)
 
-	if context.Is("map") {
+	if context.Is("!!map") {
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
-	} else if context.ValidateType("map", "string") {
+	} else if context.ValidateType("!!map", "!!str") {
 		// Short notation
 		self.Implementation = ReadInterfaceImplementation(context.FieldChild("implementation", context.Data)).(*InterfaceImplementation)
 	}

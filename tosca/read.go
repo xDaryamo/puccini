@@ -31,7 +31,7 @@ func (self *Context) ReadFields(entityPtr interface{}) []string {
 		preReadable.PreRead()
 	}
 
-	if !self.ValidateType("map") {
+	if !self.ValidateType("!!map") {
 		return nil
 	}
 
@@ -288,7 +288,7 @@ func (self *ReadField) Read() {
 //
 
 func (self *Context) ReadString() *string {
-	if self.ValidateType("string") {
+	if self.ValidateType("!!str") {
 		value := self.Data.(string)
 		return &value
 	}
@@ -296,12 +296,12 @@ func (self *Context) ReadString() *string {
 }
 
 func (self *Context) ReadStringList() *[]string {
-	if self.ValidateType("list") {
+	if self.ValidateType("!!seq") {
 		var strings []string
 		for index, data := range self.Data.(ard.List) {
 			string, ok := data.(string)
 			if !ok {
-				self.ListChild(index, data).ReportValueWrongType("string")
+				self.ListChild(index, data).ReportValueWrongType("!!str")
 				continue
 			}
 			strings = append(strings, string)
@@ -312,9 +312,9 @@ func (self *Context) ReadStringList() *[]string {
 }
 
 func (self *Context) ReadStringOrStringList() *[]string {
-	if self.Is("list") {
+	if self.Is("!!seq") {
 		return self.ReadStringList()
-	} else if self.ValidateType("list", "string") {
+	} else if self.ValidateType("!!seq", "!!str") {
 		return &[]string{*self.ReadString()}
 	}
 	return nil
@@ -323,14 +323,14 @@ func (self *Context) ReadStringOrStringList() *[]string {
 func (self *Context) ReadStringListFixed(length int) *[]string {
 	strings := self.ReadStringList()
 	if (strings != nil) && (len(*strings) != length) {
-		self.ReportValueWrongLength("list", length)
+		self.ReportValueWrongLength("!!seq", length)
 		return nil
 	}
 	return strings
 }
 
 func (self *Context) ReadStringMap() *map[string]interface{} {
-	if self.ValidateType("map") {
+	if self.ValidateType("!!map") {
 		strings := make(map[string]interface{})
 		for key, data := range self.Data.(ard.Map) {
 			strings[yamlkeys.KeyString(key)] = data
@@ -341,13 +341,13 @@ func (self *Context) ReadStringMap() *map[string]interface{} {
 }
 
 func (self *Context) ReadStringStringMap() *map[string]string {
-	if self.ValidateType("map") {
+	if self.ValidateType("!!map") {
 		strings := make(map[string]string)
 		for key, data := range self.Data.(ard.Map) {
 			if string, ok := data.(string); ok {
 				strings[yamlkeys.KeyString(key)] = string
 			} else {
-				self.MapChild(key, data).ReportValueWrongType("string")
+				self.MapChild(key, data).ReportValueWrongType("!!str")
 				continue
 			}
 		}
@@ -357,7 +357,7 @@ func (self *Context) ReadStringStringMap() *map[string]string {
 }
 
 func (self *Context) ReadInteger() *int64 {
-	if self.ValidateType("integer") {
+	if self.ValidateType("!!int") {
 		var value int64
 		switch d := self.Data.(type) {
 		case int64:
@@ -377,7 +377,7 @@ func (self *Context) ReadInteger() *int64 {
 }
 
 func (self *Context) ReadFloat() *float64 {
-	if self.ValidateType("float") {
+	if self.ValidateType("!!float") {
 		var value float64
 		switch data := self.Data.(type) {
 		case float64:
@@ -391,17 +391,17 @@ func (self *Context) ReadFloat() *float64 {
 }
 
 func (self *Context) ReadBoolean() *bool {
-	if self.ValidateType("boolean") {
+	if self.ValidateType("!!bool") {
 		value := self.Data.(bool)
 		return &value
 	}
 	return nil
 }
 
-type Processor func(interface{})
+type Processor = func(interface{})
 
 func (self *Context) ReadMapItems(read Reader, process Processor) bool {
-	if self.ValidateType("map") {
+	if self.ValidateType("!!map") {
 		for itemName, data := range self.Data.(ard.Map) {
 			process(read(self.MapChild(itemName, data)))
 		}
@@ -411,7 +411,7 @@ func (self *Context) ReadMapItems(read Reader, process Processor) bool {
 }
 
 func (self *Context) ReadListItems(read Reader, process Processor) bool {
-	if self.ValidateType("list") {
+	if self.ValidateType("!!seq") {
 		for index, data := range self.Data.(ard.List) {
 			process(read(self.ListChild(index, data)))
 		}
@@ -421,9 +421,9 @@ func (self *Context) ReadListItems(read Reader, process Processor) bool {
 }
 
 func (self *Context) ReadSequencedListItems(read Reader, process Processor) bool {
-	if self.ValidateType("list") {
+	if self.ValidateType("!!seq") {
 		for index, data := range self.Data.(ard.List) {
-			if !reflection.IsMap(data) {
+			if !ard.IsMap(data) {
 				self.ReportFieldMalformedSequencedList()
 				return false
 			}

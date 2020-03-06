@@ -31,10 +31,10 @@ func NewInterfaceImplementation(context *tosca.Context) *InterfaceImplementation
 func ReadInterfaceImplementation(context *tosca.Context) interface{} {
 	self := NewInterfaceImplementation(context)
 
-	if context.Is("map") {
+	if context.Is("!!map") {
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
-	} else if context.ValidateType("map", "string") {
+	} else if context.ValidateType("!!map", "!!str") {
 		// Short notation
 		self.Primary = context.FieldChild("primary", context.Data).ReadString()
 	}

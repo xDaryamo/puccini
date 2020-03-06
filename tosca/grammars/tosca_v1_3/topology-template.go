@@ -61,15 +61,14 @@ func (self *TopologyTemplate) SetInputs(inputs map[string]interface{}) {
 		childContext := context.MapChild(name, data)
 		if definition, ok := self.InputParameterDefinitions[name]; ok {
 			if definition.DataType != nil {
-				if typeName, ok := definition.DataType.GetInternalTypeName(); ok {
-					if typeName == "integer" {
+				if internalTypeName, ok := definition.DataType.GetInternalTypeName(); ok {
+					if internalTypeName == "!!int" {
 						// In JSON, everything is a float
 						// But we want to support inputs coming from JSON
 						// So we'll auto-convert
 						switch data := childContext.Data.(type) {
 						case float64:
 							childContext.Data = int64(data)
-
 						case float32:
 							childContext.Data = int64(data)
 						}

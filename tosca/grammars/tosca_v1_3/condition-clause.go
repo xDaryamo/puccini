@@ -24,7 +24,7 @@ func NewConditionClause(context *tosca.Context) *ConditionClause {
 func ReadConditionClause(context *tosca.Context) interface{} {
 	self := NewConditionClause(context)
 
-	if context.ValidateType("map") {
+	if context.ValidateType("!!map") {
 		for _, childContext := range context.FieldChildren() {
 			if !self.readField(childContext) {
 				childContext.ReportFieldUnsupported()

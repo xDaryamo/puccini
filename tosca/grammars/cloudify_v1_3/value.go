@@ -74,15 +74,15 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 
 	// Internal types
 	if internalTypeName, ok := dataType.GetInternalTypeName(); ok {
-		if validator, ok := tosca.PrimitiveTypeValidators[internalTypeName]; ok {
+		if typeValidator, ok := ard.TypeValidators[internalTypeName]; ok {
 			if self.Context.Data == nil {
 				// Nil data only happens when an parameter is added despite not having a
 				// "default" value; we will give it a valid zero value instead
-				self.Context.Data = tosca.PrimitiveTypeZeroes[internalTypeName]
+				self.Context.Data = ard.TypeZeroes[internalTypeName]
 			}
 
 			// Primitive types
-			if !validator(self.Context.Data) {
+			if !typeValidator(self.Context.Data) {
 				self.Context.ReportValueWrongType(dataType.Name)
 			}
 		} else {
@@ -97,7 +97,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 				}
 			}
 		}
-	} else if self.Context.ValidateType("map") {
+	} else if self.Context.ValidateType("!!map") {
 		// Complex data types
 
 		map_ := self.Context.Data.(ard.Map)
@@ -150,7 +150,7 @@ func (self *Value) Normalize() normal.Constrainable {
 		for key, value := range data {
 			if _, ok := key.(string); !ok {
 				// Cloudify DSL does not support complex keys
-				self.Context.MapChild(key, yamlkeys.KeyData(key)).ReportValueWrongType("string")
+				self.Context.MapChild(key, yamlkeys.KeyData(key)).ReportValueWrongType("!!str")
 			}
 			name := yamlkeys.KeyString(key)
 			normalMap.Put(name, NewValue(self.Context.MapChild(name, value)).Normalize())

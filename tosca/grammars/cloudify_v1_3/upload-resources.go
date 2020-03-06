@@ -36,7 +36,7 @@ func ReadUploadResources(context *tosca.Context) interface{} {
 		childContext := parametersContext.MapChild(key, value.Context.Data)
 		switch key {
 		case "fetch_timeout":
-			childContext.ValidateType("integer")
+			childContext.ValidateType("!!int")
 		default:
 			childContext.ReportFieldUnsupported()
 		}

@@ -31,10 +31,10 @@ func NewWorkflow(context *tosca.Context) *Workflow {
 func ReadWorkflow(context *tosca.Context) interface{} {
 	self := NewWorkflow(context)
 
-	if context.Is("map") {
+	if context.Is("!!map") {
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
-	} else if context.ValidateType("map", "string") {
+	} else if context.ValidateType("!!map", "!!str") {
 		// Short notation
 		self.Mapping = context.FieldChild("mapping", context.Data).ReadString()
 	}

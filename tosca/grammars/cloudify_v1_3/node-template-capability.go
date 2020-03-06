@@ -34,11 +34,11 @@ func (self *NodeTemplateCapability) ValidateScalableProperties(instances *NodeTe
 	for key, value := range self.Properties {
 		switch key {
 		case "default_instances":
-			value.Context.ValidateType("integer")
+			value.Context.ValidateType("!!int")
 		case "min_instances":
-			value.Context.ValidateType("integer")
+			value.Context.ValidateType("!!int")
 		case "max_instances":
-			value.Context.ValidateType("integer", "string")
+			value.Context.ValidateType("!!int", "!!str")
 		default:
 			value.Context.ReportFieldUnsupported()
 		}

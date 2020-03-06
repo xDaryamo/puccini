@@ -39,10 +39,10 @@ func NewRelationshipAssignment(context *tosca.Context) *RelationshipAssignment {
 func ReadRelationshipAssignment(context *tosca.Context) interface{} {
 	self := NewRelationshipAssignment(context)
 
-	if context.Is("map") {
+	if context.Is("!!map") {
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
-	} else if context.ValidateType("map", "string") {
+	} else if context.ValidateType("!!map", "!!str") {
 		// Short notation
 		self.RelationshipTemplateNameOrTypeName = context.FieldChild("type", context.Data).ReadString()
 	}
