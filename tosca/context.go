@@ -124,24 +124,21 @@ func (self *Context) GetCanonicalNamespace() *string {
 		return self.CanonicalNamespace
 	} else if self.Parent != nil {
 		return self.Parent.GetCanonicalNamespace()
-	} else {
-		return nil
 	}
+	return nil
 }
 
 func (self *Context) Is(typeNames ...string) bool {
-	valid := false
 	for _, typeName := range typeNames {
-		typeValidator, ok := ard.TypeValidators[typeName]
-		if !ok {
+		if typeValidator, ok := ard.TypeValidators[typeName]; ok {
+			if typeValidator(self.Data) {
+				return true
+			}
+		} else {
 			panic(fmt.Sprintf("unsupported field type: %s", typeName))
 		}
-		if typeValidator(self.Data) {
-			valid = true
-			break
-		}
 	}
-	return valid
+	return false
 }
 
 func (self *Context) HasQuirk(quirk Quirk) bool {

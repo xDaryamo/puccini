@@ -2,7 +2,7 @@ package profiles
 
 import (
 	bpmn_v1_0 "github.com/tliron/puccini/tosca/profiles/bpmn/v1_0"
-	cloudify_v4_5 "github.com/tliron/puccini/tosca/profiles/cloudify/v4_5"
+	cloudify_v5_0_5 "github.com/tliron/puccini/tosca/profiles/cloudify/v5_0_5"
 	common "github.com/tliron/puccini/tosca/profiles/common/v1_0"
 	hot_v1_0 "github.com/tliron/puccini/tosca/profiles/hot/v1_0"
 	kubernetes_v1_0 "github.com/tliron/puccini/tosca/profiles/kubernetes/v1_0"
@@ -26,7 +26,7 @@ func init() {
 	initProfile(kubernetes_v1_0.Profile)
 	initProfile(openstack_v1_0.Profile)
 	initProfile(bpmn_v1_0.Profile)
-	initProfile(cloudify_v4_5.Profile)
+	initProfile(cloudify_v5_0_5.Profile)
 	initProfile(hot_v1_0.Profile)
 }
 

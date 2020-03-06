@@ -41,13 +41,13 @@ func (self *Value) GetKey() string {
 
 func (self *Value) RenderProperty(dataType *DataType, definition *PropertyDefinition) {
 	if definition == nil {
-		self.RenderParameter(dataType, nil, false)
+		self.RenderParameter(dataType, nil, true, false)
 	} else {
-		self.RenderParameter(dataType, definition.ParameterDefinition, false)
+		self.RenderParameter(dataType, definition.ParameterDefinition, true, false)
 	}
 }
 
-func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefinition, allowNil bool) {
+func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefinition, validateRequire bool, allowNil bool) {
 	if self.rendered {
 		// Avoid rendering more than once (can happen if we use the "default" value)
 		return
@@ -76,14 +76,14 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 	if internalTypeName, ok := dataType.GetInternalTypeName(); ok {
 		if typeValidator, ok := ard.TypeValidators[internalTypeName]; ok {
 			if self.Context.Data == nil {
-				// Nil data only happens when an parameter is added despite not having a
+				// Nil data only happens when a parameter is added despite not having a
 				// "default" value; we will give it a valid zero value instead
 				self.Context.Data = ard.TypeZeroes[internalTypeName]
 			}
 
 			// Primitive types
 			if !typeValidator(self.Context.Data) {
-				self.Context.ReportValueWrongType(dataType.Name)
+				self.Context.ReportValueWrongType(internalTypeName)
 			}
 		} else {
 			// Special types
@@ -123,7 +123,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 				if definition.DataType != nil {
 					value.RenderProperty(definition.DataType, definition)
 				}
-			} else {
+			} else if validateRequire {
 				// PropertyDefinition.Required defaults to true
 				required := (definition.Required == nil) || *definition.Required
 				if required {
@@ -222,7 +222,7 @@ func (self Values) RenderParameters(definitions ParameterDefinitions, kind strin
 			value.Context.ReportUndeclared(kind)
 			delete(self, key)
 		} else if definition.DataType != nil {
-			value.RenderParameter(definition.DataType, definition, true)
+			value.RenderParameter(definition.DataType, definition, true, true)
 		}
 	}
 }

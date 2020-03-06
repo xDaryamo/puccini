@@ -1,11 +1,8 @@
-// This file was auto-generated from a YAML file
-
-package v4_5
-
-func init() {
-	Profile["/cloudify/4.5/profile.yaml"] = `
 # Content below is modified from:
-# http://www.getcloudify.org/spec/cloudify/4.5.5/types.yaml
+# https://cloudify.co/spec/cloudify/5.0.5/types.yaml
+
+imports:
+- data.yaml
 
 ##################################################################################
 # The types defined here make use of features only available in the
@@ -23,9 +20,6 @@ metadata:
   puccini.scriptlet.import|tosca.coerce: internal:/tosca/common/1.0/js/coerce.js
   puccini.scriptlet.import|tosca.resolve: internal:/tosca/common/1.0/js/resolve.js
 
-imports:
-- data.yaml
-
 ##################################################################################
 # Base type definitions
 ##################################################################################
@@ -35,12 +29,19 @@ node_types:
   cloudify.nodes.Root:
     interfaces:
       cloudify.interfaces.lifecycle:
+        precreate: {}
         create: {}
         configure: {}
         start: {}
+        poststart: {}
+        prestop: {}
         stop: {}
         delete: {}
+        postdelete: {}
       cloudify.interfaces.validation:
+        create: {}
+        delete: {}
+        # Deprecated - should not be implemented.
         creation: {}
         deletion: {}
       cloudify.interfaces.monitoring:
@@ -371,6 +372,88 @@ node_types:
         description: >
           Links to Cloudify packages to be installed on the manager
 
+  cloudify.nodes.Component:
+    derived_from: cloudify.nodes.Root
+    properties:
+      resource_config:
+        type: cloudify.datatypes.Component
+        default: {}
+      client:
+        description: >
+          Cloudify HTTP client configuration,
+          if empty the current Cloudify manager client will be used.
+        type: cloudify.datatypes.RemoteCloudifyManagerClient
+        default: {}
+      plugins:
+        description: >
+          Dictionary of plugins to upload,
+          which each plugin is in format of:
+            plugin-name:
+              wagon_path: Url for plugin wagon file,
+              plugin_yaml_path: Url for plugin yaml file
+        type: dict
+        default: {}
+      secrets:
+        description: >
+          Dictionary of secrets to set before deploying Components,
+          which each secret is in format of:
+            secret-name: value
+        type: dict
+        default: {}
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: cfy_extensions.cloudify_types.component.upload_blueprint
+        configure:
+          implementation: cfy_extensions.cloudify_types.component.create
+        start:
+          implementation: cfy_extensions.cloudify_types.component.execute_start
+          inputs:
+            workflow_id:
+              type: string
+              default: install
+            timeout:
+              description: How long (in seconds) to wait for execution to finish before timing out.
+              type: integer
+              default: 1800
+            interval:
+              description: Polling interval (seconds).
+              type: integer
+              default: 10
+        stop:
+          implementation: cfy_extensions.cloudify_types.component.execute_start
+          inputs:
+            workflow_id:
+              default: uninstall
+            resource_config:
+              default:
+                blueprint: { get_property: [ SELF, resource_config, blueprint ] }
+                deployment: { get_property: [ SELF, resource_config, deployment ] }
+                executions_start_args:
+                  allow_custom_parameters: true
+        delete:
+          implementation: cfy_extensions.cloudify_types.component.delete
+
+  cloudify.nodes.ServiceComponent:
+    derived_from: cloudify.nodes.Component
+
+  cloudify.nodes.SharedResource:
+    derived_from: cloudify.nodes.Root
+    properties:
+      resource_config:
+        type: cloudify.datatypes.SharedResource
+        default: {}
+      client:
+        description: >
+          Client configuration, if empty Cloudify manager client will be used.
+        type: cloudify.datatypes.RemoteCloudifyManagerClient
+        default: {}
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: cfy_extensions.cloudify_types.shared_resource.connect_deployment
+
+
 ##################################################################################
 # Base relationship definitions
 ##################################################################################
@@ -398,6 +481,100 @@ relationships:
 
   cloudify.relationships.contained_in:
     derived_from: cloudify.relationships.depends_on
+
+  #####################################################
+  # This relationship will create a dependency of that
+  # node's lifecycle to a specific operation in the
+  # lifecycle of the specified target node.
+  #####################################################
+  cloudify.relationships.depends_on_lifecycle_operation:
+    derived_from: cloudify.relationships.depends_on
+    properties:
+      operation:
+        description: The target's lifecycle operation name.
+        type: string
+
+  cloudify.relationships.depends_on_shared_resource:
+    derived_from: cloudify.relationships.depends_on
+    target_interfaces:
+      cloudify.interfaces.relationship_lifecycle:
+        establish:
+          implementation: cfy_extensions.cloudify_types.shared_resource.execute_workflow
+          inputs:
+            workflow_id:
+              description: >
+                The workflow id that will be run in the SharedResource's deployment as
+                implementation defined there.
+              type: string
+            parameters:
+              description: >
+                Inputs for running the workflow in the format of key-value dictionary.
+              type: dict
+              default: {}
+            timeout:
+              description: >
+                Timeout in seconds for running the specified workflow on the deployment.
+              type: integer
+              default: 10
+        unlink:
+          implementation: cfy_extensions.cloudify_types.shared_resource.execute_workflow
+          inputs:
+            workflow_id:
+              description: >
+                The workflow id that will be run in the SharedResource's deployment as
+                implementation defined there.
+              type: string
+            parameters:
+              description: >
+                Inputs for running the workflow in the format of key-value dictionary.
+              type: dict
+              default: {}
+            timeout:
+              description: >
+                Timeout in seconds for running the specified workflow on the deployment.
+              type: integer
+              default: 10
+
+  cloudify.relationships.connected_to_shared_resource:
+    derived_from: cloudify.relationships.connected_to
+    target_interfaces:
+      cloudify.interfaces.relationship_lifecycle:
+        establish:
+          implementation: cfy_extensions.cloudify_types.shared_resource.execute_workflow
+          inputs:
+            workflow_id:
+              description: >
+                The workflow id that will be run in the SharedResource's deployment as
+                implementation defined there.
+              type: string
+            parameters:
+              description: >
+                Inputs for running the workflow in the format of key-value dictionary.
+              type: dict
+              default: {}
+            timeout:
+              description: >
+                Timeout in seconds for running the specified workflow on the deployment.
+              type: integer
+              default: 10
+        unlink:
+          implementation: cfy_extensions.cloudify_types.shared_resource.execute_workflow
+          inputs:
+            workflow_id:
+              description: >
+                The workflow id that will be run in the SharedResource deployment as
+                defined there.
+              type: string
+            parameters:
+              description: >
+                Inputs for running the workflow in the format of key-value dictionary.
+              type: dict
+              default: {}
+            timeout:
+              description: >
+                Timeout in seconds for running the specified workflow on the deployment.
+              type: integer
+              default: 10
 
   cloudify.relationships.file_system_depends_on_volume:
     derived_from: cloudify.relationships.depends_on
@@ -431,10 +608,13 @@ relationships:
 ##################################################################################
 workflows:
 
-  install: default_workflows.cloudify.plugins.workflows.install
+  install:
+    mapping: default_workflows.cloudify.plugins.workflows.install
+    is_cascading: false
 
   update:
     mapping: default_workflows.cloudify.plugins.workflows.update
+    is_cascading: false
     parameters:
       update_id:
         default: ''
@@ -444,22 +624,31 @@ workflows:
         default: false
       added_instance_ids:
         default: []
+        type: list
       added_target_instances_ids:
         default: []
+        type: list
       removed_instance_ids:
         default: []
+        type: list
       remove_target_instance_ids:
         default: []
+        type: list
       modified_entity_ids:
         default: []
+        type: list
       extended_instance_ids:
         default: []
+        type: list
       extend_target_instance_ids:
         default: []
+        type: list
       reduced_instance_ids:
         default: []
+        type: list
       reduce_target_instance_ids:
         default: []
+        type: list
       ignore_failure:
         default: false
         type: boolean
@@ -468,9 +657,20 @@ workflows:
         type: boolean
       node_instances_to_reinstall:
         default: []
+        type: list
+      central_plugins_to_install:
+        default: []
+        type: list
+      central_plugins_to_uninstall:
+        default: []
+        type: list
+      update_plugins:
+        default: true
+        type: boolean
 
   uninstall:
     mapping: default_workflows.cloudify.plugins.workflows.uninstall
+    is_cascading: false
     parameters:
       ignore_failure:
         default: false
@@ -478,6 +678,7 @@ workflows:
 
   start:
     mapping: default_workflows.cloudify.plugins.workflows.start
+    is_cascading: false
     parameters:
       operation_parms:
         default: {}
@@ -492,6 +693,7 @@ workflows:
 
   stop:
     mapping: default_workflows.cloudify.plugins.workflows.stop
+    is_cascading: false
     parameters:
       operation_parms:
         default: {}
@@ -506,6 +708,7 @@ workflows:
 
   restart:
     mapping: default_workflows.cloudify.plugins.workflows.restart
+    is_cascading: false
     parameters:
       stop_parms:
         default: {}
@@ -522,6 +725,7 @@ workflows:
 
   execute_operation:
     mapping: default_workflows.cloudify.plugins.workflows.execute_operation
+    is_cascading: false
     parameters:
       operation: {}
       operation_kwargs:
@@ -539,6 +743,7 @@ workflows:
 
   heal:
     mapping: default_workflows.cloudify.plugins.workflows.auto_heal_reinstall_node_subgraph
+    is_cascading: false
     parameters:
       node_instance_id:
         description: Which node instance has failed
@@ -551,6 +756,7 @@ workflows:
 
   scale:
     mapping: default_workflows.cloudify.plugins.workflows.scale_entity
+    is_cascading: false
     parameters:
       scalable_entity_name:
         description: >
@@ -565,7 +771,7 @@ workflows:
         type: integer
       scale_compute:
         description: >
-            If a node name is passed as the ` + "`" + `scalable_entity_name` + "`" + ` parameter
+            If a node name is passed as the `scalable_entity_name` parameter
             and that node is contained (transitively) within a compute node
             and this property is 'true', operate on the compute node instead
             of the specified node.
@@ -595,9 +801,17 @@ workflows:
       ignore_failure:
         default: false
         type: boolean
+      rollback_if_failed:
+        description: >
+            If this is False then no rollback will be triggered when an error
+            occurs during the workflow, otherwise the rollback will be
+            triggered.
+        default: true
+        type: boolean
 
   install_new_agents:
     mapping: default_workflows.cloudify.plugins.workflows.install_new_agents
+    is_cascading: false
     parameters:
       install_agent_timeout:
         default: 300
@@ -625,6 +839,7 @@ workflows:
 
   validate_agents:
     mapping: default_workflows.cloudify.plugins.workflows.validate_agents
+    is_cascading: false
     parameters:
       node_ids:
         default: []
@@ -674,7 +889,7 @@ data_types:
       network:
         description: >
           The name of the manager network to which the agent should be
-          connected. By default, the value will be ` + "`" + `default` + "`" + ` (which is the
+          connected. By default, the value will be `default` (which is the
           manager's private IP, by default)
         type: string
         required: false
@@ -740,11 +955,176 @@ data_types:
         description: >
           Optional additional low level configuration details. (type: dictionary)
         required: false
+      executable_temp_path:
+        description: >
+          Directory to use for temporary executable files. This is useful for installations where the
+          default temporary directory (`/tmp`) is mounted with `noexec`.
+        type: string
+        required: false
+      log_level:
+        description: >
+          The logging level for the agent. Can be one of the following values: critical, error, warning,
+          info, debug
+        type: string
+        required: false
+      log_max_bytes:
+        description: >
+          Maximum number of bytes in the agent's log file, before it is rolled over.
+        type: integer
+        required: false
+      log_max_history:
+        description: >
+          Maximum number of historical log files to keep.
+        type: integer
+        required: false
+
+  cloudify.datatypes.Blueprint:
+    properties:
+      external_resource:
+        description: >
+          Use external blueprint resource.
+        type: boolean
+        default: false
+      id:
+        description: >
+          This is the blueprint ID that the Component's node is connected to.
+        type: string
+        required: false
+      main_file_name:
+        description: >
+          The application blueprint filename. If the blueprint consists many
+          imported files this is the main blueprint.
+        type: string
+        default: blueprint.yaml
+      blueprint_archive:
+        description: >
+          The URL of a .zip to upload to the manager
+          (Will be skipped if external_resource == True).
+        type: string
+        default: ""
+        required: true
+
+  cloudify.datatypes.ComponentDeployment:
+    properties:
+      id:
+        description: >
+          This is the deployment ID that the Component's node is connected to.
+        type: string
+        required: false
+      inputs:
+        description: >
+          The inputs to the deployment.
+        type: dict
+        default: {}
+      logs:
+        description: >
+          This is a flag for logs and events redirect from the deployment, by default true.
+        type: boolean
+        required: false
+      auto_inc_suffix:
+        description: >
+          Optional, will add a suffix to the given deployment ID in the form of an auto incremented index.
+        type: boolean
+        required: false
+
+  cloudify.datatypes.Component:
+    properties:
+      blueprint:
+        type: cloudify.datatypes.Blueprint
+        required: true
+      deployment:
+        type: cloudify.datatypes.ComponentDeployment
+        required: true
+      executions_start_args:
+        description: >
+          Optional params for Component executions.
+        type: dict
+        default: {}
+
+  cloudify.datatypes.RemoteCloudifyManagerClient:
+    properties:
+      host:
+        description: >
+          Host of Cloudify's manager machine.
+        type: string
+        required: false
+      port:
+        description: >
+          The port of REST API service on Cloudify's management machine.
+        type: integer
+        required: false
+      protocol:
+        description: >
+          The protocol of REST API service on management machine, defaults to http.
+        type: string
+        required: false
+      api_version:
+        description: >
+          The version of Cloudify REST API service.
+        type: string
+        required: false
+      headers:
+        description: >
+          Headers to be added to HTTP requests.
+        type: dict
+        required: false
+      query_params:
+        description: >
+          Query parameters to be added to the HTTP request.
+        type: dict
+        required: false
+      cert:
+        description: >
+          Path on the Cloudify manager to a copy of the target Cloudify manager's certificate.
+        type: string
+        required: false
+      trust_all:
+        description: >
+          If False, the server's certificate (self-signed or not) will be verified.
+        type: boolean
+        required: false
+      username:
+        description: >
+          Cloudify user username.
+        type: string
+        required: false
+      password:
+        description: >
+          Cloudify user password.
+        type: string
+        required: false
+      token:
+        description: >
+          Cloudify user token.
+        type: string
+        required: false
+      tenant:
+        description: >
+          Cloudify user accessible tenant name.
+        type: string
+        required: false
+
+  cloudify.datatypes.SharedResourceDeployment:
+    properties:
+      id:
+        description: >
+          This is the deployment ID that the SharedResource node is connected to.
+        type: string
+        required: true
+
+  cloudify.datatypes.SharedResource:
+    properties:
+      deployment:
+        type: cloudify.datatypes.SharedResourceDeployment
+        required: true
 
 ##################################################################################
 # Base artifact definitions
 ##################################################################################
 plugins:
+  cfy_extensions:
+    executor: central_deployment_agent
+    install: false
 
   agent:
     executor: central_deployment_agent
@@ -769,6 +1149,7 @@ policy_types:
                 description: |
                     If the policy should maintain its state for the whole group
                     or each node instance individually.
+                default: false
             is_node_started_before_workflow:
                 description: Before triggering workflow, check if the node state is started
                 default: true
@@ -785,20 +1166,7 @@ policy_types:
 
     cloudify.policies.types.threshold:
         properties: &THRESHOLD_BASED_POLICY_PROPERTIES
-# ERRATUM: in strict YAML the same key ("service") cannot repeat
-#            <<: *BASIC_AH_POLICY_PROPERTIES
-            policy_operates_on_group:
-                description: |
-                    If the policy should maintain its state for the whole group
-                    or each node instance individually.
-            is_node_started_before_workflow:
-                description: Before triggering workflow, check if the node state is started
-                default: true
-            interval_between_workflows:
-                description: |
-                    Trigger workflow only if the last workflow was triggered earlier than interval-between-workflows seconds ago.
-                    if < 0  workflows can run concurrently.
-                default: 300
+            <<: *BASIC_AH_POLICY_PROPERTIES
             service:
                 description: The service name
                 default: service
@@ -853,5 +1221,3 @@ policy_triggers:
         description: Connection timeout when making request to manager REST in ms
         default: 1000
     source: file:///opt/manager/resources/cloudify/triggers/execute_workflow.clj
-`
-}

@@ -30,7 +30,7 @@ gofmt -w -s -e \
 	"$ROOT/tosca/problems" \
 	"$ROOT/tosca/profiles" \
 	"$ROOT/tosca/profiles/bpmn/v1_0" \
-	"$ROOT/tosca/profiles/cloudify/v4_5" \
+	"$ROOT/tosca/profiles/cloudify/v5_0_5" \
 	"$ROOT/tosca/profiles/common/v1_0" \
 	"$ROOT/tosca/profiles/hot/v1_0" \
 	"$ROOT/tosca/profiles/kubernetes/v1_0" \

@@ -66,7 +66,7 @@ func (self *ParameterDefinition) Inherit(parentDefinition *ParameterDefinition) 
 
 	if self.Default != nil {
 		// The "default" value must be a valid value of the type
-		self.Default.RenderParameter(self.DataType, self, false)
+		self.Default.RenderParameter(self.DataType, self, false, false)
 	}
 }
 

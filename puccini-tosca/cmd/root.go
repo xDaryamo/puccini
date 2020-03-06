@@ -25,7 +25,7 @@ func init() {
 	rootCmd.PersistentFlags().CountVarP(&verbose, "verbose", "v", "add a log verbosity level (can be used twice)")
 	rootCmd.PersistentFlags().StringVarP(&format, "format", "f", "", "force output format (\"yaml\", \"json\", or \"xml\")")
 	rootCmd.PersistentFlags().BoolVarP(&colorize, "colorize", "z", true, "colorize output")
-	rootCmd.PersistentFlags().BoolVarP(&strict, "strict", "", false, "strict output (for \"YAML\" format only)")
+	rootCmd.PersistentFlags().BoolVarP(&strict, "strict", "y", false, "strict output (for \"YAML\" format only)")
 	rootCmd.PersistentFlags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
 	rootCmd.PersistentFlags().StringVarP(&problemsFormat, "problems-format", "m", "", "problems format (\"yaml\", \"json\", or \"xml\")")
 	rootCmd.PersistentFlags().StringSliceVarP(&quirks, "quirk", "x", nil, "parser quirk")

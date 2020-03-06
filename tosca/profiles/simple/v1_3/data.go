@@ -16,9 +16,9 @@ data_types:
   # Primitive
   #
 
-  string:
+  boolean:
     metadata:
-      puccini.type: '!!str'
+      puccini.type: '!!bool'
 
   integer:
     metadata:
@@ -28,9 +28,9 @@ data_types:
     metadata:
       puccini.type: '!!float'
 
-  boolean:
+  string:
     metadata:
-      puccini.type: '!!bool'
+      puccini.type: '!!str'
 
   timestamp:
     metadata:

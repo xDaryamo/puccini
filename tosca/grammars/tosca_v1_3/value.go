@@ -130,16 +130,26 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 				switch data := self.Context.Data.(type) {
 				case bool:
 					self.Context.Data = strconv.FormatBool(data)
-
-				case int:
-					self.Context.Data = strconv.FormatInt(int64(data), 10)
-
 				case int64:
 					self.Context.Data = strconv.FormatInt(data, 10)
-
-				case float64: // YAML parser returns float64
+				case int32:
+					self.Context.Data = strconv.FormatInt(int64(data), 10)
+				case int8:
+					self.Context.Data = strconv.FormatInt(int64(data), 10)
+				case int:
+					self.Context.Data = strconv.FormatInt(int64(data), 10)
+				case uint64:
+					self.Context.Data = strconv.FormatUint(data, 10)
+				case uint32:
+					self.Context.Data = strconv.FormatUint(uint64(data), 10)
+				case uint8:
+					self.Context.Data = strconv.FormatUint(uint64(data), 10)
+				case uint:
+					self.Context.Data = strconv.FormatUint(uint64(data), 10)
+				case float64:
 					self.Context.Data = strconv.FormatFloat(data, 'g', -1, 64)
-
+				case float32:
+					self.Context.Data = strconv.FormatFloat(float64(data), 'g', -1, 32)
 				case time.Time:
 					self.Context.Data = data.String()
 				}
@@ -149,8 +159,8 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 			if typeValidator(self.Context.Data) {
 				// Render list and map elements according to entry schema
 				// (The entry schema may also have additional constraints)
-				switch internalTypeName {
-				case "!!seq", "!!map":
+				switch dataType.Name {
+				case "list", "map":
 					if (definition == nil) || (definition.EntrySchema == nil) || (definition.EntrySchema.DataType == nil) {
 						// This problem is reported in AttributeDefinition.Render
 						return
@@ -159,7 +169,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 					entryDataType := definition.EntrySchema.DataType
 					entryConstraints := definition.EntrySchema.RenderConstraints()
 
-					if internalTypeName == "!!seq" {
+					if dataType.Name == "list" {
 						slice := self.Context.Data.(ard.List)
 
 						valueList := NewValueList(definition, len(slice), self.Description, entryConstraints)
@@ -170,7 +180,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 						}
 
 						self.Context.Data = valueList
-					} else { // "!!map"
+					} else { // "map"
 						if (definition == nil) || (definition.KeySchema == nil) {
 							// TODO: check if this is reported elsewhere
 							return
@@ -198,7 +208,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 					}
 				}
 			} else {
-				self.Context.ReportValueWrongType(tosca.GetCanonicalName(dataType))
+				self.Context.ReportValueWrongType(internalTypeName)
 			}
 		} else {
 			// Special types

@@ -4,7 +4,7 @@ import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
-	profile "github.com/tliron/puccini/tosca/profiles/cloudify/v4_5"
+	profile "github.com/tliron/puccini/tosca/profiles/cloudify/v5_0_5"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -15,12 +15,12 @@ import (
 //
 
 var FunctionScriptlets = map[string]string{
-	"tosca.function.concat":         profile.Profile["/cloudify/4.5/js/functions/get_secret.js"],
-	"tosca.function.get_attribute":  profile.Profile["/cloudify/4.5/js/functions/get_attribute.js"],
-	"tosca.function.get_capability": profile.Profile["/cloudify/4.5/js/functions/get_capability.js"],
-	"tosca.function.get_input":      profile.Profile["/cloudify/4.5/js/functions/get_input.js"],
-	"tosca.function.get_property":   profile.Profile["/cloudify/4.5/js/functions/get_property.js"],
-	"tosca.function.get_secret":     profile.Profile["/cloudify/4.5/js/functions/get_secret.js"],
+	"tosca.function.concat":         profile.Profile["/cloudify/5.0.5/js/functions/get_secret.js"],
+	"tosca.function.get_attribute":  profile.Profile["/cloudify/5.0.5/js/functions/get_attribute.js"],
+	"tosca.function.get_capability": profile.Profile["/cloudify/5.0.5/js/functions/get_capability.js"],
+	"tosca.function.get_input":      profile.Profile["/cloudify/5.0.5/js/functions/get_input.js"],
+	"tosca.function.get_property":   profile.Profile["/cloudify/5.0.5/js/functions/get_property.js"],
+	"tosca.function.get_secret":     profile.Profile["/cloudify/5.0.5/js/functions/get_secret.js"],
 }
 
 func ToFunctionCall(context *tosca.Context) bool {

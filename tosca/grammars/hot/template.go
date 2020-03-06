@@ -60,7 +60,7 @@ func ReadTemplate(context *tosca.Context) interface{} {
 		if heatTemplateVersionContext.Is("!!str") {
 			self.HeatTemplateVersion = heatTemplateVersionContext.ReadString()
 		} else {
-			heatTemplateVersionContext.ReportValueWrongType("string", "timestamp")
+			heatTemplateVersionContext.ReportValueWrongType("!!str", "!!timestamp")
 		}
 	} else {
 		context.FieldChild("heat_template_version", nil).ReportFieldMissing()

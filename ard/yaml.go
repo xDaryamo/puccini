@@ -24,14 +24,7 @@ func ToYAMLNode(value interface{}, verbose bool) *yaml.Node {
 	}
 
 	switch value_ := value.(type) {
-	case List:
-		node.Kind = yaml.SequenceNode
-		node.Tag = "!!seq"
-		node.Style = 0
-		node.Content = make([]*yaml.Node, len(value_))
-		for index, v := range value_ {
-			node.Content[index] = ToYAMLNode(v, verbose)
-		}
+	// Failsafe schema: https://yaml.org/spec/1.2/spec.html#id2802346
 
 	case Map:
 		node.Kind = yaml.MappingNode
@@ -46,24 +39,38 @@ func ToYAMLNode(value interface{}, verbose bool) *yaml.Node {
 			index += 1
 		}
 
-	case nil:
-		node.Kind = yaml.ScalarNode
-		node.Tag = "!!null"
+	case List:
+		node.Kind = yaml.SequenceNode
+		node.Tag = "!!seq"
+		node.Style = 0
+		node.Content = make([]*yaml.Node, len(value_))
+		for index, v := range value_ {
+			node.Content[index] = ToYAMLNode(v, verbose)
+		}
 
 	case string:
 		node.Kind = yaml.ScalarNode
 		node.Tag = "!!str"
-		if verbose {
-			node.Style |= yaml.DoubleQuotedStyle
-		}
+		node.Style |= yaml.DoubleQuotedStyle
 		node.Value = value_
 
-	case int:
+	// JSON schema: https://yaml.org/spec/1.2/spec.html#id2803231
+
+	case nil:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!null"
+
+	case bool:
+		node.Kind = yaml.ScalarNode
+		node.Tag = "!!bool"
+		node.Value = strconv.FormatBool(value_)
+
+	case int64:
 		node.Kind = yaml.ScalarNode
 		node.Tag = "!!int"
-		node.Value = strconv.FormatInt(int64(value_), 10)
+		node.Value = strconv.FormatInt(value_, 10)
 
-	case int8:
+	case int32:
 		node.Kind = yaml.ScalarNode
 		node.Tag = "!!int"
 		node.Value = strconv.FormatInt(int64(value_), 10)
@@ -73,22 +80,22 @@ func ToYAMLNode(value interface{}, verbose bool) *yaml.Node {
 		node.Tag = "!!int"
 		node.Value = strconv.FormatInt(int64(value_), 10)
 
-	case int32:
+	case int8:
 		node.Kind = yaml.ScalarNode
 		node.Tag = "!!int"
 		node.Value = strconv.FormatInt(int64(value_), 10)
 
-	case int64:
+	case int:
 		node.Kind = yaml.ScalarNode
 		node.Tag = "!!int"
-		node.Value = strconv.FormatInt(value_, 10)
+		node.Value = strconv.FormatInt(int64(value_), 10)
 
-	case uint:
+	case uint64:
 		node.Kind = yaml.ScalarNode
 		node.Tag = "!!int"
-		node.Value = strconv.FormatUint(uint64(value_), 10)
+		node.Value = strconv.FormatUint(value_, 10)
 
-	case uint8:
+	case uint32:
 		node.Kind = yaml.ScalarNode
 		node.Tag = "!!int"
 		node.Value = strconv.FormatUint(uint64(value_), 10)
@@ -98,32 +105,30 @@ func ToYAMLNode(value interface{}, verbose bool) *yaml.Node {
 		node.Tag = "!!int"
 		node.Value = strconv.FormatUint(uint64(value_), 10)
 
-	case uint32:
+	case uint8:
 		node.Kind = yaml.ScalarNode
 		node.Tag = "!!int"
 		node.Value = strconv.FormatUint(uint64(value_), 10)
 
-	case uint64:
+	case uint:
 		node.Kind = yaml.ScalarNode
 		node.Tag = "!!int"
-		node.Value = strconv.FormatUint(value_, 10)
-
-	case float32:
-		node.Kind = yaml.ScalarNode
-		node.Tag = "!!float"
-		node.Value = fixFloat(strconv.FormatFloat(float64(value_), 'e', -1, 32))
+		node.Value = strconv.FormatUint(uint64(value_), 10)
 
 	case float64:
 		node.Kind = yaml.ScalarNode
 		node.Tag = "!!float"
-		node.Value = fixFloat(strconv.FormatFloat(value_, 'e', -1, 64))
+		node.Value = fixFloat(strconv.FormatFloat(value_, 'g', -1, 64))
 
-	case bool:
+	case float32:
 		node.Kind = yaml.ScalarNode
-		node.Tag = "!!bool"
-		node.Value = strconv.FormatBool(value_)
+		node.Tag = "!!float"
+		node.Value = fixFloat(strconv.FormatFloat(float64(value_), 'g', -1, 32))
+
+	// Other schemas: https://yaml.org/spec/1.2/spec.html#id2805770
 
 	case time.Time:
+		// See: https://yaml.org/type/timestamp.html
 		node.Kind = yaml.ScalarNode
 		node.Tag = "!!timestamp"
 		node.Value = value_.Format(time.RFC3339Nano)
@@ -136,7 +141,7 @@ func ToYAMLNode(value interface{}, verbose bool) *yaml.Node {
 }
 
 func fixFloat(s string) string {
-	// See:https://yaml.org/type/float.html
+	// See: https://yaml.org/spec/1.2/spec.html#id2804092
 	switch s {
 	case "+Inf":
 		return ".inf"

@@ -12,7 +12,7 @@ var Grammar = tosca.NewGrammar()
 var DefaultScriptletNamespace = make(tosca.ScriptletNamespace)
 
 func init() {
-	Grammar.RegisterVersion("tosca_definitions_version", "cloudify_dsl_1_3", "/cloudify/4.5/profile.yaml")
+	Grammar.RegisterVersion("tosca_definitions_version", "cloudify_dsl_1_3", "/cloudify/5.0.5/profile.yaml")
 
 	Grammar.RegisterReader("$Root", ReadBlueprint)
 	Grammar.RegisterReader("$Unit", ReadUnit)

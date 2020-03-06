@@ -7,10 +7,10 @@ The default format for output is YAML, but you can switch to JSON or XML using `
 that Clout in JSON may lose some type information (e.g. JSON doesn't distinguish between an integer
 and a float).
 
-For YAML you can add the additional `--strict` switch to output a stricter YAML, which adds scalar
-type tags (such as `!!str`, `!!int`, `!!timestamp`) and outputs all strings in double quotes with no
-`|` or `>` notations. This is useful if you are consuming the YAML output with a non-compliant or
-buggy parser.
+For YAML you can add the additional `--strict/-y` switch to output a stricter YAML, which adds
+scalar type tags (such as `!!str`, `!!int`, `!!timestamp`) and outputs all strings in double quotes
+with no `|` or `>` notations. This is useful if you are consuming the YAML output with a
+non-compliant or buggy parser.
 
 The `--pretty` switch (enabled by default) attempts a more human-readable output, with indentation
 and color highlighting in terminals. Disable this switch for a more compact output.
