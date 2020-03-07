@@ -29,6 +29,6 @@ func (self *YAMLLocator) Locate(path ...PathElement) (int, int, bool) {
 	if node := FindYAMLNode(self.RootNode, path...); node != nil {
 		return node.Line, node.Column, true
 	} else {
-		return 0, 0, false
+		return -1, -1, false
 	}
 }

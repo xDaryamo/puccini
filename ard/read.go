@@ -53,7 +53,7 @@ func ReadYAML(reader io.Reader, locate bool) (Map, Locator, error) {
 			return nil, nil, err
 		}
 	} else {
-		return nil, nil, err
+		return nil, nil, yamlkeys.WrapWithDecodeError(err)
 	}
 
 	// We do not need to call EnsureMaps because yamlkeys takes care of it

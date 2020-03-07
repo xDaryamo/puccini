@@ -11,6 +11,7 @@ import (
 	"github.com/tliron/puccini/tosca/grammars"
 	"github.com/tliron/puccini/tosca/reflection"
 	urlpkg "github.com/tliron/puccini/url"
+	"github.com/tliron/yamlkeys"
 )
 
 func (self *Context) ReadRoot(url urlpkg.URL) bool {
@@ -52,9 +53,8 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 	// Read ARD
 	var err error
 	if toscaContext.Data, toscaContext.Locator, err = ard.ReadFromURL(toscaContext.URL, true); err != nil {
-		format := toscaContext.URL.Format()
-		if (format == "yaml") || (format == "") {
-			err = NewYAMLError(err)
+		if decodeError, ok := err.(*yamlkeys.DecodeError); ok {
+			err = NewYAMLDecodeError(decodeError)
 		}
 		toscaContext.ReportError(err)
 		return NewUnitNoEntity(toscaContext, container, nameTransformer), false
