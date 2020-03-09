@@ -15,7 +15,8 @@ non-compliant or buggy parser.
 Another YAML-specific switch is `--timestamps`. By default Puccini will allow the YAML "!!timestamp"
 type in its output. This type was included in YAML 1.1 but made optional in YAML 1.2. Most YAML
 parsers should support it, but in case your YAML 1.2 parser doesn't, you can disable this feature
-by setting this switch to false, in which case a canonical ISO-8601 string will be output instead.
+by setting this switch to false, in which case a canonical ISO-8601 (RFC-3339) string will be output
+instead.
 
 The `--pretty` switch (enabled by default) attempts a more human-readable output, with indentation
 and color highlighting in terminals. Disable this switch for a more compact output.

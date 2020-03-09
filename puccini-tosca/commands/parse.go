@@ -1,4 +1,4 @@
-package cmd
+package commands
 
 import (
 	"fmt"
@@ -29,15 +29,15 @@ var filter string
 var inputValues = make(map[string]interface{})
 
 func init() {
-	rootCmd.AddCommand(parseCmd)
-	parseCmd.Flags().StringArrayVarP(&inputs, "input", "i", []string{}, "specify an input (name=YAML)")
-	parseCmd.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
-	parseCmd.Flags().Uint32VarP(&stopAtPhase, "stop", "s", 5, "parser phase at which to end")
-	parseCmd.Flags().UintSliceVarP(&dumpPhases, "dump", "d", nil, "dump phase internals")
-	parseCmd.Flags().StringVarP(&filter, "filter", "t", "", "filter output by entity path; use '*' for wildcard matching (disables --stop and --dump)")
+	rootCommand.AddCommand(parseCommand)
+	parseCommand.Flags().StringArrayVarP(&inputs, "input", "i", []string{}, "specify an input (name=YAML)")
+	parseCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
+	parseCommand.Flags().Uint32VarP(&stopAtPhase, "stop", "s", 5, "parser phase at which to end")
+	parseCommand.Flags().UintSliceVarP(&dumpPhases, "dump", "d", nil, "dump phase internals")
+	parseCommand.Flags().StringVarP(&filter, "filter", "t", "", "filter output by entity path; use '*' for wildcard matching (disables --stop and --dump)")
 }
 
-var parseCmd = &cobra.Command{
+var parseCommand = &cobra.Command{
 	Use:   "parse [[TOSCA PATH or URL]]",
 	Short: "Parse TOSCA",
 	Long:  `Parses and validates a TOSCA service template and reports problems if there are any. Provides access to phase diagnostics and entities.`,

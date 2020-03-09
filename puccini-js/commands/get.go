@@ -1,4 +1,4 @@
-package cmd
+package commands
 
 import (
 	"github.com/spf13/cobra"
@@ -9,11 +9,11 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(getCmd)
-	getCmd.Flags().StringVarP(&output, "output", "o", "", "output to file (default is stdout)")
+	rootCommand.AddCommand(getCommand)
+	getCommand.Flags().StringVarP(&output, "output", "o", "", "output to file (default is stdout)")
 }
 
-var getCmd = &cobra.Command{
+var getCommand = &cobra.Command{
 	Use:   "get [NAME] [[Clout PATH or URL]]",
 	Short: "Get JavaScript scriptlet from Clout",
 	Long:  ``,

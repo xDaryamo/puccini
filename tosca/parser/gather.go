@@ -41,7 +41,7 @@ func compileGatherPattern(pattern string) *regexp.Regexp {
 	for index, s := range split {
 		reString += regexp.QuoteMeta(s)
 		if index != last {
-			reString += ".*"
+			reString += `.*`
 		}
 	}
 	return regexp.MustCompile(reString)

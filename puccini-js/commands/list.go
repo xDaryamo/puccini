@@ -1,4 +1,4 @@
-package cmd
+package commands
 
 import (
 	"fmt"
@@ -13,10 +13,10 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(listCmd)
+	rootCommand.AddCommand(listCommand)
 }
 
-var listCmd = &cobra.Command{
+var listCommand = &cobra.Command{
 	Use:   "list [[Clout PATH or URL]]",
 	Short: "List JavaScript scriptlets in Clout",
 	Long:  ``,

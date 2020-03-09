@@ -1,4 +1,4 @@
-package cmd
+package commands
 
 import (
 	"github.com/spf13/cobra"
@@ -17,16 +17,16 @@ var coerce bool
 var exec string
 
 func init() {
-	rootCmd.AddCommand(compileCmd)
-	compileCmd.Flags().StringArrayVarP(&inputs, "input", "i", []string{}, "specify an input (name=YAML)")
-	compileCmd.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL")
-	compileCmd.Flags().StringVarP(&output, "output", "o", "", "output Clout to file (default is stdout)")
-	compileCmd.Flags().BoolVarP(&resolve, "resolve", "r", true, "resolves the topology (attempts to satisfy all requirements with capabilities)")
-	compileCmd.Flags().BoolVarP(&coerce, "coerce", "c", false, "coerces all values (calls functions and applies constraints)")
-	compileCmd.Flags().StringVarP(&exec, "exec", "e", "", "execute JavaScript scriptlet")
+	rootCommand.AddCommand(compileCommand)
+	compileCommand.Flags().StringArrayVarP(&inputs, "input", "i", []string{}, "specify an input (name=YAML)")
+	compileCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL")
+	compileCommand.Flags().StringVarP(&output, "output", "o", "", "output Clout to file (default is stdout)")
+	compileCommand.Flags().BoolVarP(&resolve, "resolve", "r", true, "resolves the topology (attempts to satisfy all requirements with capabilities)")
+	compileCommand.Flags().BoolVarP(&coerce, "coerce", "c", false, "coerces all values (calls functions and applies constraints)")
+	compileCommand.Flags().StringVarP(&exec, "exec", "e", "", "execute JavaScript scriptlet")
 }
 
-var compileCmd = &cobra.Command{
+var compileCommand = &cobra.Command{
 	Use:   "compile [[TOSCA PATH or URL]]",
 	Short: "Compile TOSCA to Clout",
 	Long:  `Parses a TOSCA service template and compiles the normalized output of the parser to Clout. Supports JavaScript plugins.`,

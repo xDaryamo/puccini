@@ -12,9 +12,9 @@ gofmt -w -s -e \
 	"$ROOT/common/format" \
 	"$ROOT/common/terminal" \
 	"$ROOT/puccini-js" \
-	"$ROOT/puccini-js/cmd" \
+	"$ROOT/puccini-js/commands" \
 	"$ROOT/puccini-tosca" \
-	"$ROOT/puccini-tosca/cmd" \
+	"$ROOT/puccini-tosca/commands" \
 	"$ROOT/tosca" \
 	"$ROOT/tosca/compiler" \
 	"$ROOT/tosca/csar" \
