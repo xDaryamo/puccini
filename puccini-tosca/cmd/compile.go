@@ -47,18 +47,18 @@ func Compile(url string) {
 	problems := context.GetProblems()
 
 	// Compile
-	clout, err := compiler.Compile(s)
+	clout, err := compiler.Compile(s, timestamps)
 	common.FailOnError(err)
 
 	// Resolve
 	if resolve {
-		compiler.Resolve(clout, problems, format, strict, pretty)
+		compiler.Resolve(clout, problems, format, strict, timestamps, pretty)
 		FailOnProblems(problems)
 	}
 
 	// Coerce
 	if coerce {
-		compiler.Coerce(clout, problems, format, strict, pretty)
+		compiler.Coerce(clout, problems, format, strict, timestamps, pretty)
 		FailOnProblems(problems)
 	}
 
@@ -98,7 +98,7 @@ func Exec(scriptletName string, clout *cloutpkg.Clout) error {
 		common.FailOnError(err)
 	}
 
-	jsContext := js.NewContext(scriptletName, log, terminal.Quiet, format, strict, pretty, output)
+	jsContext := js.NewContext(scriptletName, log, terminal.Quiet, format, strict, timestamps, pretty, output)
 
 	program, err := jsContext.GetProgram(scriptletName, scriptlet)
 	if err != nil {

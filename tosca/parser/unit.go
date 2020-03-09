@@ -36,7 +36,8 @@ type Unit struct {
 	Container       *Unit
 	Imports         Units
 	NameTransformer tosca.NameTransformer
-	Locker          sync.Mutex
+
+	importsLock sync.Mutex
 }
 
 func NewUnitNoEntity(toscaContext *tosca.Context, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
@@ -56,9 +57,9 @@ func NewUnit(entityPtr interface{}, container *Unit, nameTransformer tosca.NameT
 }
 
 func (self *Unit) AddImport(import_ *Unit) {
-	self.Locker.Lock()
+	self.importsLock.Lock()
 	self.Imports = append(self.Imports, import_)
-	self.Locker.Unlock()
+	self.importsLock.Unlock()
 }
 
 func (self *Unit) GetContext() *tosca.Context {

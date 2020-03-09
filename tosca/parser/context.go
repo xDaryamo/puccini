@@ -16,9 +16,10 @@ type Context struct {
 	Units           Units
 	Parsing         sync.Map
 	WaitGroup       sync.WaitGroup
-	Locker          sync.Mutex
 	NamespacesWork  *ContextualWork
 	HierarchiesWork *ContextualWork
+
+	unitsLock sync.Mutex
 }
 
 func NewContext(quirks tosca.Quirks) Context {
@@ -53,9 +54,9 @@ func (self *Context) AddUnit(entityPtr interface{}, container *Unit, nameTransfo
 		container.GetContext().Problems.Merge(unit.GetContext().Problems)
 	}
 
-	self.Locker.Lock()
+	self.unitsLock.Lock()
 	self.Units = append(self.Units, unit)
-	self.Locker.Unlock()
+	self.unitsLock.Unlock()
 
 	self.goReadImports(unit)
 

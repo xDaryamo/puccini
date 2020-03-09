@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"time"
 
 	"github.com/beevik/etree"
 	"github.com/tebeka/atexit"
@@ -21,14 +20,15 @@ import (
 //
 
 type PucciniAPI struct {
-	Log    *Log
-	Stdout io.Writer
-	Stderr io.Writer
-	Stdin  io.Writer
-	Output string
-	Format string
-	Strict bool
-	Pretty bool
+	Log             *Log
+	Stdout          io.Writer
+	Stderr          io.Writer
+	Stdin           io.Writer
+	Output          string
+	Format          string
+	Strict          bool
+	AllowTimestamps bool
+	Pretty          bool
 
 	context *Context
 }
@@ -39,14 +39,15 @@ func (self *Context) NewPucciniAPI() *PucciniAPI {
 		format = "yaml"
 	}
 	return &PucciniAPI{
-		Log:     self.Log,
-		Stdout:  self.Stdout,
-		Stdin:   self.Stdin,
-		Output:  self.Output,
-		Format:  format,
-		Strict:  self.Strict,
-		Pretty:  self.Pretty,
-		context: self,
+		Log:             self.Log,
+		Stdout:          self.Stdout,
+		Stdin:           self.Stdin,
+		Output:          self.Output,
+		Format:          format,
+		Strict:          self.Strict,
+		AllowTimestamps: self.AllowTimestamps,
+		Pretty:          self.Pretty,
+		context:         self,
 	}
 }
 
@@ -62,8 +63,8 @@ func (entry *PucciniAPI) ValidateFormat(code string, format string) error {
 	return formatpkg.Validate(code, format)
 }
 
-func (self *PucciniAPI) Timestamp() time.Time {
-	return time.Now()
+func (self *PucciniAPI) Timestamp() interface{} {
+	return common.Timestamp(!self.AllowTimestamps)
 }
 
 func (self *PucciniAPI) NewXMLDocument() *etree.Document {

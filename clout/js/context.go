@@ -18,30 +18,32 @@ import (
 //
 
 type Context struct {
-	Quiet  bool
-	Format string
-	Strict bool
-	Pretty bool
-	Output string
-	Log    *Log
-	Stdout io.Writer
-	Stderr io.Writer
-	Stdin  io.Writer
+	Quiet           bool
+	Format          string
+	Strict          bool
+	AllowTimestamps bool
+	Pretty          bool
+	Output          string
+	Log             *Log
+	Stdout          io.Writer
+	Stderr          io.Writer
+	Stdin           io.Writer
 
 	programCache sync.Map
 }
 
-func NewContext(name string, logger *logging.Logger, quiet bool, format string, strict bool, pretty bool, output string) *Context {
+func NewContext(name string, logger *logging.Logger, quiet bool, format string, strict bool, allowTimestamps bool, pretty bool, output string) *Context {
 	return &Context{
-		Quiet:  quiet,
-		Format: format,
-		Strict: strict,
-		Pretty: pretty,
-		Output: output,
-		Log:    NewLog(logger, name),
-		Stdout: terminal.Stdout,
-		Stderr: terminal.Stderr,
-		Stdin:  os.Stdin,
+		Quiet:           quiet,
+		Format:          format,
+		Strict:          strict,
+		AllowTimestamps: allowTimestamps,
+		Pretty:          pretty,
+		Output:          output,
+		Log:             NewLog(logger, name),
+		Stdout:          terminal.Stdout,
+		Stderr:          terminal.Stderr,
+		Stdin:           os.Stdin,
 	}
 }
 

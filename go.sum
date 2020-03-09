@@ -113,10 +113,8 @@ github.com/stretchr/testify v1.5.1 h1:nOGnQDM7FYENwehXlg/kFVnos3rEvtKTjRvOWSzb6H
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
 github.com/tebeka/atexit v0.3.0 h1:jleL99H7Ywt80oJKR+VWmJNnezcCOG0CuzcN3CIpsdI=
 github.com/tebeka/atexit v0.3.0/go.mod h1:WJmSUSmMT7WoR7etUOaGBVXk+f5/ZJ+67qwuedq7Fbs=
-github.com/tliron/yamlkeys v1.3.0 h1:TAlzCzgphPupOBZV4b5Bu2rtKdWQWAMwNjYeexSdiTI=
-github.com/tliron/yamlkeys v1.3.0/go.mod h1:7SGp7NQYRNR203RdKeL8nB7wR53AR7Uzh+pMvwOp5Vw=
-github.com/tliron/yamlkeys v1.3.1 h1:iW+I21jO0YQ2s/ckskOdZw/uDf/VWFStT3ZUeAjGHPY=
-github.com/tliron/yamlkeys v1.3.1/go.mod h1:7SGp7NQYRNR203RdKeL8nB7wR53AR7Uzh+pMvwOp5Vw=
+github.com/tliron/yamlkeys v1.3.2 h1:2HkLh43uUZt23wvozWQ2FDU8LaEl1DOzQnjY0sJFDQY=
+github.com/tliron/yamlkeys v1.3.2/go.mod h1:7SGp7NQYRNR203RdKeL8nB7wR53AR7Uzh+pMvwOp5Vw=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=

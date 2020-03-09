@@ -3,14 +3,19 @@ puccini-tosca
 
 ### Format
 
-The default format for output is YAML, but you can switch to JSON or XML using `--format/-f`. Note
+The default format for output is YAML, but you can use JSON or XML instead with `--format/-f`. Note
 that Clout in JSON may lose some type information (e.g. JSON doesn't distinguish between an integer
-and a float).
+and a float). XML output uses a bespoke structure for maps and lists.
 
 For YAML you can add the additional `--strict/-y` switch to output a stricter YAML, which adds
 scalar type tags (such as `!!str`, `!!int`, `!!timestamp`) and outputs all strings in double quotes
 with no `|` or `>` notations. This is useful if you are consuming the YAML output with a
 non-compliant or buggy parser.
+
+Another YAML-specific switch is `--timestamps`. By default Puccini will allow the YAML "!!timestamp"
+type in its output. This type was included in YAML 1.1 but made optional in YAML 1.2. Most YAML
+parsers should support it, but in case your YAML 1.2 parser doesn't, you can disable this feature
+by setting this switch to false, in which case a canonical ISO-8601 string will be output instead.
 
 The `--pretty` switch (enabled by default) attempts a more human-readable output, with indentation
 and color highlighting in terminals. Disable this switch for a more compact output.

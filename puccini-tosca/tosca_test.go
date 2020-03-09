@@ -75,18 +75,18 @@ func testCompile(t *testing.T, url string, inputs map[string]interface{}) {
 			return
 		}
 
-		if clout, err = compiler.Compile(serviceTemplate); err != nil {
+		if clout, err = compiler.Compile(serviceTemplate, true); err != nil {
 			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))
 			return
 		}
 
-		compiler.Resolve(clout, problems, "yaml", false, true)
+		compiler.Resolve(clout, problems, "yaml", false, true, true)
 		if !problems.Empty() {
 			t.Errorf("%s", problems.ToString(true))
 			return
 		}
 
-		compiler.Coerce(clout, problems, "yaml", false, true)
+		compiler.Coerce(clout, problems, "yaml", false, true, true)
 		if !problems.Empty() {
 			t.Errorf("%s", problems.ToString(true))
 			return

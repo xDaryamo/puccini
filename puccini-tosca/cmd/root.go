@@ -13,6 +13,7 @@ var verbose int
 var format string
 var colorize bool
 var strict bool
+var timestamps bool
 var pretty bool
 var problemsFormat string
 var quirks []string
@@ -26,6 +27,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&format, "format", "f", "", "force output format (\"yaml\", \"json\", or \"xml\")")
 	rootCmd.PersistentFlags().BoolVarP(&colorize, "colorize", "z", true, "colorize output")
 	rootCmd.PersistentFlags().BoolVarP(&strict, "strict", "y", false, "strict output (for \"YAML\" format only)")
+	rootCmd.PersistentFlags().BoolVarP(&timestamps, "timestamps", "", true, "allow timestamps (for \"YAML\" format only)")
 	rootCmd.PersistentFlags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
 	rootCmd.PersistentFlags().StringVarP(&problemsFormat, "problems-format", "m", "", "problems format (\"yaml\", \"json\", or \"xml\")")
 	rootCmd.PersistentFlags().StringSliceVarP(&quirks, "quirk", "x", nil, "parser quirk")

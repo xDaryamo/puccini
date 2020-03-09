@@ -33,18 +33,18 @@ func Compile(url *C.char) *C.char {
 		return nil
 	}
 
-	if clout, err = compiler.Compile(serviceTemplate); err != nil {
+	if clout, err = compiler.Compile(serviceTemplate, true); err != nil {
 		//t.Errorf("%s\n%s", err.Error(), p)
 		return nil
 	}
 
-	compiler.Resolve(clout, problems, "yaml", true, false)
+	compiler.Resolve(clout, problems, "yaml", true, true, false)
 	if !problems.Empty() {
 		//t.Errorf("%s", p)
 		return nil
 	}
 
-	compiler.Coerce(clout, problems, "yaml", true, false)
+	compiler.Coerce(clout, problems, "yaml", true, true, false)
 	if !problems.Empty() {
 		//t.Errorf("%s", p)
 		return nil
