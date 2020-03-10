@@ -39,9 +39,7 @@ func (self *ParameterDefinition) Render(kind string) {
 	}
 
 	if self.Value == nil {
-		// PropertyDefinition.Required defaults to true
-		required := (self.Required == nil) || *self.Required
-		if required {
+		if self.IsRequired() {
 			self.Context.ReportPropertyRequired(kind)
 			return
 		}

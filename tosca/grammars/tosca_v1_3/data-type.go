@@ -77,7 +77,7 @@ func (self *DataType) GetInternalTypeName() (string, bool) {
 	return typeName, ok
 }
 
-// Note that this may change the data (if it's a map), but that should be fine, because we intend to
+// Note that this may change the data (if it's a map), but that should be fine, because we intend
 // for the data to be complete. For the same reason, this action is idempotent (subsequent calls to
 // the same data will not have an effect).
 func (self *DataType) Complete(context *tosca.Context) {
@@ -90,14 +90,14 @@ func (self *DataType) Complete(context *tosca.Context) {
 	for key, definition := range self.PropertyDefinitions {
 		childContext := context.MapChild(key, nil)
 
-		var d interface{}
-		if d, ok = map_[key]; ok {
-			childContext.Data = d
+		var data interface{}
+		if data, ok = map_[key]; ok {
+			childContext.Data = data
 		} else if definition.Default != nil {
 			// Assign default value
-			d = definition.Default.Context.Data
-			childContext.Data = d
-			map_[key] = d
+			data = definition.Default.Context.Data
+			childContext.Data = data
+			map_[key] = data
 		}
 
 		if ToFunctionCall(childContext) {

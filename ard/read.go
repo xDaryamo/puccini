@@ -28,6 +28,7 @@ func Read(reader io.Reader, format string, locate bool) (Map, Locator, error) {
 		return ReadYAML(reader, locate)
 	case "json":
 		return ReadJSON(reader, locate)
+	// TODO: support "xml" via a custom schema
 	default:
 		return nil, nil, fmt.Errorf("unsupported format: \"%s\"", format)
 	}
@@ -61,6 +62,9 @@ func ReadYAML(reader io.Reader, locate bool) (Map, Locator, error) {
 }
 
 func ReadJSON(reader io.Reader, locate bool) (Map, Locator, error) {
+	// TODO: support an extended JSON format
+	// Inspiration: https://docs.mongodb.com/manual/reference/mongodb-extended-json/
+
 	data := make(Map)
 	decoder := json.NewDecoder(reader)
 	if err := decoder.Decode(&data); err == nil {

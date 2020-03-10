@@ -257,9 +257,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 					value.RenderProperty(definition.DataType, definition)
 				}
 			} else {
-				// PropertyDefinition.Required defaults to true
-				required := (definition.Required == nil) || *definition.Required
-				if required {
+				if definition.IsRequired() {
 					self.Context.MapChild(key, data).ReportPropertyRequired("property")
 				}
 			}
@@ -339,8 +337,11 @@ func (self Values) CopyUnassigned(values Values) {
 
 func (self Values) RenderMissingValue(definition *AttributeDefinition, kind string, required bool, context *tosca.Context) {
 	if definition.Default != nil {
+		// Note: it doesn't make sense if required=false for properties in this case,
+		// but we will just ignore it (future versions of TOSCA may specifically disallow it)
 		self[definition.Name] = definition.Default
 	} else if required {
+		// Attributes are always required=false
 		context.MapChild(definition.Name, nil).ReportPropertyRequired(kind)
 	} else if kind == "attribute" {
 		// Attributes should always appear, even if they have no default value
@@ -351,9 +352,7 @@ func (self Values) RenderMissingValue(definition *AttributeDefinition, kind stri
 func (self Values) RenderProperties(definitions PropertyDefinitions, kind string, context *tosca.Context) {
 	for key, definition := range definitions {
 		if value, ok := self[key]; !ok {
-			// PropertyDefinition.Required defaults to true
-			required := (definition.Required == nil) || *definition.Required
-			self.RenderMissingValue(definition.AttributeDefinition, kind, required, context)
+			self.RenderMissingValue(definition.AttributeDefinition, kind, definition.IsRequired(), context)
 			// (If the above assigns the "default" value -- it has already been rendered elsewhere)
 		} else if definition.DataType != nil {
 			value.RenderProperty(definition.DataType, definition)

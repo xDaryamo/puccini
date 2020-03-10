@@ -124,9 +124,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 					value.RenderProperty(definition.DataType, definition)
 				}
 			} else if validateRequire {
-				// PropertyDefinition.Required defaults to true
-				required := (definition.Required == nil) || *definition.Required
-				if required {
+				if definition.IsRequired() {
 					self.Context.MapChild(key, data).ReportPropertyRequired("property")
 				}
 			}
@@ -200,9 +198,7 @@ func (self Values) RenderMissingValue(definition *ParameterDefinition, kind stri
 func (self Values) RenderProperties(definitions PropertyDefinitions, kind string, context *tosca.Context) {
 	for key, definition := range definitions {
 		if value, ok := self[key]; !ok {
-			// PropertyDefinition.Required defaults to true
-			required := (definition.Required == nil) || *definition.Required
-			self.RenderMissingValue(definition.ParameterDefinition, kind, required, context)
+			self.RenderMissingValue(definition.ParameterDefinition, kind, definition.IsRequired(), context)
 			// (If the above assigns the "default" value -- it has already been rendered elsewhere)
 		} else if definition.DataType != nil {
 			value.RenderProperty(definition.DataType, definition)

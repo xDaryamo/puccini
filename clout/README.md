@@ -96,16 +96,18 @@ at runtime. Coercion could include evaluating an expression, calling a function,
 validity of the value by applying constraints, etc.
 
 Clout does not enforce a notation for such coercible values, however we do suggest a convention.
-Puccini comes with tools to help you parse according to this notation and to perform the coercion
-using JavaScript.
+Puccini comes with tools to help you parse according to this notation and to perform coercion using
+JavaScript.
 
 The convention is recursive and assumes that each value is a map with one (and only one) of
 the following fields:
 
 * `$value`: this is an ARD literal value (boolean, integer, float, string, list, map, etc.)
 * `$list`: this is a list of coercibles
-* `$map`: this is a list of coercibles whereby each entry *must* also include a `$key` field,
-  which itself is also a coercible
+* `$map`: this is a *list* of coercibles (not a map!) whereby each entry *must* also include a `$key`
+   field, which itself is also a coercible (a list is used for better compatibility with systems
+   that do not support maps with arbtirary keys; note that this implies that duplicate keys are
+   syntactically possible here, but that case should be considered a semantic error)
 * `$functionCall`: this is a function call (see notation below)
 
 The following additional fields are optional for all coercibles:

@@ -46,6 +46,11 @@ func (self *PropertyDefinition) Inherit(parentDefinition *PropertyDefinition) {
 	}
 }
 
+func (self *PropertyDefinition) IsRequired() bool {
+	// defaults to true
+	return (self.Required == nil) || *self.Required
+}
+
 //
 // PropertyDefinitions
 //

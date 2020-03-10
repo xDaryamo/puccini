@@ -31,6 +31,10 @@ func (self Map) Coerce() (interface{}, error) {
 
 	for _, entry := range self {
 		if k, v, err := entry.Coerce(); err == nil {
+			if _, ok := value[k]; ok {
+				// TODO: include location information, as with function calls?
+				return nil, fmt.Errorf("duplicate map key during coercion: %s", k)
+			}
 			value[k] = v
 		} else {
 			return nil, err
