@@ -33,7 +33,7 @@
 						<source>
 							<directory>src/main/c</directory>
 							<fileNames>
-								<fileName>puccini_TOSCA.c</fileName>
+								<fileName>cloud_puccini_TOSCA.c</fileName>
 							</fileNames>
 						</source>
 					</sources>

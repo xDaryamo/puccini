@@ -1,8 +1,8 @@
-#include "puccini_TOSCA.h"
+#include "cloud_puccini_TOSCA.h"
 #include "libpuccini.h"
 #include <stdlib.h>
 
-JNIEXPORT jstring JNICALL Java_puccini_TOSCA__1Compile
+JNIEXPORT jstring JNICALL Java_cloud_puccini_TOSCA__1Compile
   (JNIEnv *env, jclass cls, jstring url)
 {
 	const char *url_ = (*env)->GetStringUTFChars(env, url, 0);

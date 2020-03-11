@@ -2,8 +2,8 @@ package example;
 
 import org.snakeyaml.engine.v2.api.Dump;
 import org.snakeyaml.engine.v2.api.DumpSettings;
-import puccini.SnakeYAML;
-import puccini.TOSCA;
+import cloud.puccini.SnakeYAML;
+import cloud.puccini.TOSCA;
 
 import java.util.Map;
 
@@ -16,8 +16,7 @@ public class Compile
 			try
 			{
 				Map<Object, Object> clout = TOSCA.Compile( args[0] );
-				DumpSettings settings = DumpSettings.builder().build();
-				Dump dump = new Dump( settings, new SnakeYAML.Representer( settings ) );
+				Dump dump = new SnakeYAML.Dump( DumpSettings.builder().build() );
 				System.out.print( dump.dumpToString( clout ) );
 			}
 			catch( Exception x )

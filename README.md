@@ -8,20 +8,27 @@ Puccini
 Deliberately stateless cloud topology management and deployment tools based on
 [TOSCA](https://www.oasis-open.org/committees/tosca/).
 
-Each tool is a self-contained executable file, allowing them to be easily distributed and easily
-embedded in toolchains, orchestration, and development environments. They are coded in 100%
-[Go](https://golang.org/) and are very portable, even runnable on
-[WebAssembly](https://webassembly.org/).
+Want to dive in?
 
-Check out this [live demo of Puccini running in a browser](https://web.puccini.cloud/)!
+Check out this [live demo of Puccini TOSCA running in a browser](https://web.puccini.cloud/).
 
-Puccini is also available as self-contained shared C libraries that can be called directly from many
-other languages. See wrappers for [Java](wrappers/java/), [Python](wrappers/python/), and
-[Ruby](wrappers/ruby/).
+Check out the [quickstart guide](QUICKSTART.md).
+
+
+Get It
+------
 
 [![Download](assets/media/download.png "Download")](https://github.com/tliron/puccini/releases)
 
-Welcome, first timers! Check out the [quickstart guide](QUICKSTART.md).
+Each tool is a self-contained executable file, allowing them to be easily distributed and embedded
+in toolchains, orchestration, and development environments. They are coded in 100%
+[Go](https://golang.org/) and are very portable, even available for
+[WebAssembly](https://webassembly.org/) (which is how the in-browser demo linked above works).
+
+You can also embed Puccini into your program as a library. Puccini is immediately usable from Go,
+but can be used in many other programming languages via self-contained shared C libraries. See
+included wrappers and examples for [Java](wrappers/java/), [Python](wrappers/python/), and
+[Ruby](wrappers/ruby/).
 
 To build Puccini yourself see the [build guide](scripts/).
 
