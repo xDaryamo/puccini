@@ -8,7 +8,6 @@ metadata:
 node_types:
 
   Backup:
-    derived_from: tosca:Root
     # Unlike "properties", you can't mark an attribute as required or not
     # Attributes are *always* added to the node template, even if they have not been assigned
     # If they don't have a "default" value, they will get an automatic, sensible default

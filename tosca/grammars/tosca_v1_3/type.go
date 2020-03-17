@@ -40,6 +40,11 @@ func (self *Type) GetMetadata() (map[string]string, bool) {
 	return metadata, true
 }
 
+// tosca.HasMetadata interface
+func (self *Type) SetMetadata(name string, value string) {
+	self.Metadata[name] = value
+}
+
 func (self *Type) GetMetadataValue(key string) (string, bool) {
 	if self.Metadata != nil {
 		value, ok := self.Metadata[key]

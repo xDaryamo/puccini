@@ -24,7 +24,6 @@ metadata:
 node_types:
 
   Rack:
-    derived_from: tosca:Root
     properties:
       slots:
         type: integer

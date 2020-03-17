@@ -8,7 +8,6 @@ metadata:
 policy_types:
 
   Backup:
-    derived_from: tosca:Root
     targets:
     # Can include both node types and group types
     - tosca:Compute
@@ -37,7 +36,6 @@ policy_types:
 group_types:
 
   Redundants:
-    derived_from: tosca:Root
     # Groups can have properties (and interfaces, too)
     properties:
       priority:

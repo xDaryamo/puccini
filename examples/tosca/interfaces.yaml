@@ -52,7 +52,6 @@ data_types:
 interface_types:
 
   Maintenance:
-    derived_from: tosca:Root
     # You can define inputs for the interface as a whole as well as for individual operations
     inputs:
       mode:

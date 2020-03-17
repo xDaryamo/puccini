@@ -47,7 +47,12 @@ func GetHierarchyTypes(hierarchy *tosca.Hierarchy) Types {
 		}
 
 		if metadata, ok := tosca.GetMetadata(h.EntityPtr); ok {
-			type_.Metadata = metadata
+			for name, value := range metadata {
+				// No need to include "canonical_name" metadata
+				if name != "canonical_name" {
+					type_.Metadata[name] = value
+				}
+			}
 		}
 
 		types[type_.Name] = type_

@@ -98,7 +98,7 @@ func newImportNameTransformer(prefix *string, appendShortCutnames bool) tosca.Na
 			if normative, ok := metadata["normative"]; ok {
 				if normative == "true" {
 					// Reserved "tosca." names also get shorthand and prefixed names
-					names = appendNormativeNames(names, name, "tosca", appendShortCutnames)
+					names = appendNormativeNames(entityPtr, names, name, "tosca", appendShortCutnames)
 				}
 			}
 		}
@@ -115,7 +115,7 @@ func newImportNameTransformer(prefix *string, appendShortCutnames bool) tosca.Na
 	}
 }
 
-func appendNormativeNames(names []string, name string, prefix string, appendShortcut bool) []string {
+func appendNormativeNames(entityPtr interface{}, names []string, name string, prefix string, appendShortcut bool) []string {
 	if !strings.HasPrefix(name, prefix+".") {
 		return names
 	}
@@ -134,7 +134,11 @@ func appendNormativeNames(names []string, name string, prefix string, appendShor
 	short := strings.Join(s[firstShortSegment:], ".")
 
 	// Prefixed
-	names = append(names, fmt.Sprintf("%s:%s", prefix, short))
+	prefixed := fmt.Sprintf("%s:%s", prefix, short)
+	names = append(names, prefixed)
+
+	// Override canonical name
+	tosca.SetMetadata(entityPtr, "canonical_name", prefixed)
 
 	// Shortcut
 	if appendShortcut {
