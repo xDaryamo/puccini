@@ -15,7 +15,7 @@ for (var vertexId in clout.vertexes) {
 	var metadata = {};
 	for (var capabilityName in nodeTemplate.capabilities) {
 		var capability = nodeTemplate.capabilities[capabilityName];
-		if ('kubernetes:Metadata' in capability.types) {
+		if ('kubernetes::Metadata' in capability.types) {
 			metadata = capability.properties;
 			break;
 		}
@@ -29,9 +29,9 @@ for (var vertexId in clout.vertexes) {
 	// Generate specs
 	for (var capabilityName in nodeTemplate.capabilities) {
 		var capability = nodeTemplate.capabilities[capabilityName];
-		if ('kubernetes:Service' in capability.types)
+		if ('kubernetes::Service' in capability.types)
 			generateService(capability, metadata);
-		else if ('kubernetes:Deployment' in capability.types)
+		else if ('kubernetes::Deployment' in capability.types)
 			generateDeployment(capability, metadata);
 	}
 

@@ -37,7 +37,7 @@ func GetCanonicalName(entityPtr interface{}) string {
 	context := GetContext(entityPtr)
 	canonicalNamespace := context.GetCanonicalNamespace()
 	if canonicalNamespace != nil {
-		return fmt.Sprintf("%s:%s", *canonicalNamespace, context.Name)
+		return fmt.Sprintf("%s::%s", *canonicalNamespace, context.Name)
 	} else {
 		return context.Name
 	}

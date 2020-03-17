@@ -31,9 +31,6 @@ func ReadMetadata(context *tosca.Context) interface{} {
 			} else if strings.HasPrefix(key, "puccini.scriptlet|") {
 				context.EmbedScriptlet(key[18:], value)
 				delete(self, key)
-			} else if strings.HasPrefix(key, "puccini.scriptlet|") {
-				context.EmbedScriptlet(key[18:], value)
-				delete(self, key)
 			}
 		}
 	}

@@ -27,7 +27,7 @@ definitions.createAttr('exporter', 'puccini');
 for (var id in clout.vertexes) {
 	var vertex = clout.vertexes[id];
 
-	if (tosca.isTosca(vertex, 'Policy') && ('bpmn:Process' in vertex.properties.types))
+	if (tosca.isTosca(vertex, 'Policy') && ('bpmn::Process' in vertex.properties.types))
 		createPolicyProcess(id, vertex);
 
 	if (tosca.isTosca(vertex, 'Workflow'))

@@ -134,11 +134,10 @@ func appendNormativeNames(entityPtr interface{}, names []string, name string, pr
 	short := strings.Join(s[firstShortSegment:], ".")
 
 	// Prefixed
-	prefixed := fmt.Sprintf("%s:%s", prefix, short)
-	names = append(names, prefixed)
+	names = append(names, fmt.Sprintf("%s:%s", prefix, short))
 
 	// Override canonical name
-	tosca.SetMetadata(entityPtr, "canonical_name", prefixed)
+	tosca.SetMetadata(entityPtr, "canonical_name", fmt.Sprintf("%s::%s", prefix, short))
 
 	// Shortcut
 	if appendShortcut {
