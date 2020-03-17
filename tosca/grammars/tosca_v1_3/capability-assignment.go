@@ -20,9 +20,9 @@ type CapabilityAssignment struct {
 	*Entity `name:"capability"`
 	Name    string
 
-	Properties Values `read:"properties,Value"`
-	Attributes Values `read:"attributes,AttributeValue"`
-	// TODO: occurrences added in TOSCA 1.3
+	Properties  Values       `read:"properties,Value"`
+	Attributes  Values       `read:"attributes,AttributeValue"`
+	Occurrences *RangeEntity `read:"occurrences,RangeEntity"` // introduced in TOSCA 1.3
 }
 
 func NewCapabilityAssignment(context *tosca.Context) *CapabilityAssignment {
@@ -63,9 +63,9 @@ func (self *CapabilityAssignment) Normalize(normalNodeTemplate *normal.NodeTempl
 		normalCapability.Description = *definition.Description
 	}
 
-	if definition.Occurrences != nil {
-		normalCapability.MinRelationshipCount = definition.Occurrences.Range.Lower
-		normalCapability.MaxRelationshipCount = definition.Occurrences.Range.Upper
+	if self.Occurrences != nil {
+		normalCapability.MinRelationshipCount = self.Occurrences.Range.Lower
+		normalCapability.MaxRelationshipCount = self.Occurrences.Range.Upper
 	} else {
 		// Default occurrences is [ 0, UNBOUNDED ]
 		normalCapability.MinRelationshipCount = 0
@@ -91,6 +91,9 @@ type CapabilityAssignments map[string]*CapabilityAssignment
 func (self *CapabilityAssignment) Render(definition *CapabilityDefinition) {
 	self.Properties.RenderProperties(definition.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
 	self.Attributes.RenderAttributes(definition.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
+	if self.Occurrences == nil {
+		self.Occurrences = definition.Occurrences
+	}
 }
 
 func (self CapabilityAssignments) Render(definitions CapabilityDefinitions, context *tosca.Context) {

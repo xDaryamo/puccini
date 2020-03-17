@@ -23,7 +23,7 @@ func init() {
 	Grammar.RegisterReader("ArtifactType", tosca_v1_3.ReadArtifactType)
 	Grammar.RegisterReader("AttributeDefinition", tosca_v1_2.ReadAttributeDefinition) // 1.2
 	Grammar.RegisterReader("AttributeValue", tosca_v1_3.ReadAttributeValue)
-	Grammar.RegisterReader("CapabilityAssignment", tosca_v1_3.ReadCapabilityAssignment)
+	Grammar.RegisterReader("CapabilityAssignment", tosca_v1_2.ReadCapabilityAssignment) // 1.2
 	Grammar.RegisterReader("CapabilityDefinition", tosca_v1_3.ReadCapabilityDefinition)
 	Grammar.RegisterReader("CapabilityFilter", tosca_v1_3.ReadCapabilityFilter)
 	Grammar.RegisterReader("CapabilityMapping", tosca_v1_3.ReadCapabilityMapping)

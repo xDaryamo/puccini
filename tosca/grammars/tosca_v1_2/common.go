@@ -24,7 +24,7 @@ func init() {
 	Grammar.RegisterReader("ArtifactType", tosca_v1_3.ReadArtifactType)
 	Grammar.RegisterReader("AttributeDefinition", ReadAttributeDefinition) // override
 	Grammar.RegisterReader("AttributeValue", tosca_v1_3.ReadAttributeValue)
-	Grammar.RegisterReader("CapabilityAssignment", tosca_v1_3.ReadCapabilityAssignment)
+	Grammar.RegisterReader("CapabilityAssignment", ReadCapabilityAssignment) // override
 	Grammar.RegisterReader("CapabilityDefinition", tosca_v1_3.ReadCapabilityDefinition)
 	Grammar.RegisterReader("CapabilityFilter", tosca_v1_3.ReadCapabilityFilter)
 	Grammar.RegisterReader("CapabilityMapping", tosca_v1_3.ReadCapabilityMapping)
