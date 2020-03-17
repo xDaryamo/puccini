@@ -59,7 +59,7 @@ topology_template:
 
   policies:
 
-    notify_on_high_load:
+  - notify_on_high_load:
       type: bpmn:Process
       properties:
         bpmn_process_id: NotifyUser

@@ -22,6 +22,7 @@ type CapabilityAssignment struct {
 
 	Properties Values `read:"properties,Value"`
 	Attributes Values `read:"attributes,AttributeValue"`
+	// TODO: occurrences added in TOSCA 1.3
 }
 
 func NewCapabilityAssignment(context *tosca.Context) *CapabilityAssignment {

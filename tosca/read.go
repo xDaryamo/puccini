@@ -19,10 +19,11 @@ type PreReadable interface {
 }
 
 const (
-	ReadFieldModeDefault       = 0
-	ReadFieldModeList          = 1
-	ReadFieldModeSequencedList = 2
-	ReadFieldModeItem          = 3
+	ReadFieldModeDefault             = 0
+	ReadFieldModeList                = 1
+	ReadFieldModeSequencedList       = 2
+	ReadFieldModeUniqueSequencedList = 3
+	ReadFieldModeItem                = 4
 )
 
 // From "read" tags
@@ -104,10 +105,27 @@ func (self *Context) setMapItem(field reflect.Value, item interface{}) {
 
 	existing := field.MapIndex(keyValue)
 	if existing.IsValid() {
-		self.ReportMapKeyReused(key)
+		self.ReportDuplicateMapKey(key)
+		return
 	}
 
 	field.SetMapIndex(keyValue, itemValue)
+}
+
+func (self *Context) appendUnique(field reflect.Value, item interface{}) reflect.Value {
+	length := field.Len()
+	if length > 0 {
+		key := GetKey(item)
+		for index := 0; index < length; index++ {
+			element := field.Index(index).Interface()
+			if key == GetKey(element) {
+				self.ReportDuplicateMapKey(key)
+				return field
+			}
+		}
+	}
+
+	return reflect.Append(field, reflect.ValueOf(item))
 }
 
 //
@@ -162,6 +180,10 @@ func NewReadField(fieldName string, tag string, context *Context, entity reflect
 			// Sequenced list
 			readerName = readerName[2:]
 			self.Mode = ReadFieldModeSequencedList
+		} else if strings.HasPrefix(readerName, "<>") {
+			// Unique sequenced list
+			readerName = readerName[2:]
+			self.Mode = ReadFieldModeUniqueSequencedList
 		}
 
 		var ok bool
@@ -196,6 +218,11 @@ func (self *ReadField) Read() {
 				self.Context.FieldChild(self.Key, childData).ReadSequencedListItems(self.Reader, func(item interface{}) {
 					slice = reflect.Append(slice, reflect.ValueOf(item))
 				})
+			case ReadFieldModeUniqueSequencedList:
+				context := self.Context.FieldChild(self.Key, childData)
+				self.Context.FieldChild(self.Key, childData).ReadSequencedListItems(self.Reader, func(item interface{}) {
+					slice = context.appendUnique(slice, item)
+				})
 			case ReadFieldModeItem:
 				length := slice.Len()
 				slice = reflect.Append(slice, reflect.ValueOf(self.Reader(self.Context.ListChild(length, childData))))
@@ -218,7 +245,7 @@ func (self *ReadField) Read() {
 				context.ReadListItems(self.Reader, func(item interface{}) {
 					context.setMapItem(field, item)
 				})
-			case ReadFieldModeSequencedList:
+			case ReadFieldModeSequencedList, ReadFieldModeUniqueSequencedList:
 				context := self.Context.FieldChild(self.Key, childData)
 				context.ReadSequencedListItems(self.Reader, func(item interface{}) {
 					context.setMapItem(field, item)

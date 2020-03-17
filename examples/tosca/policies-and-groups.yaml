@@ -102,7 +102,10 @@ topology_template:
 
   policies:
 
-    backup:
+  # Policies are represented as a sequenced list (potentially indicating order of priority)
+  # However, note that Puccini does require them to have unique names
+
+  - backup:
       type: ContinuousBackup
       properties:
         frequency: .5 d

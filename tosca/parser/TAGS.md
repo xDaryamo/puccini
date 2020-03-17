@@ -30,8 +30,10 @@ Specify "[]reader" for a list of non-unique elements. (E.g. TOSCA constraint cla
 Specify "{}reader" for sequenced list of non-unique elements. (E.g. TOSCA node\_type.requirements
 and node\_template.requirements.)
 
+Specify "<>reader" for sequenced list of unique elements. (E.g. TOSCA topology\_template.policies.)
+
 Also, you can specify "!reader" to mark the field as important, meaning that it will be read before
-any other fields. You can combine "!" with "[]" and "{}".
+any other fields. You can combine "!" with "[]", "{}", and "<>".
 
 (Note: node\_type.requirements, as opposed to node\_template.requirements, are really "fake"
 sequenced lists, because actually you cannot repeat the same definition name more than once.

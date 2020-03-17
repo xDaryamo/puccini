@@ -21,7 +21,7 @@ type TopologyTemplate struct {
 	NodeTemplates              NodeTemplates         `read:"node_templates,NodeTemplate"`
 	RelationshipTemplates      RelationshipTemplates `read:"relationship_templates,RelationshipTemplate"`
 	Groups                     Groups                `read:"groups,Group"`
-	Policies                   Policies              `read:"policies,Policy"`
+	Policies                   Policies              `read:"policies,<>Policy"`
 	InputParameterDefinitions  ParameterDefinitions  `read:"inputs,ParameterDefinition"`
 	OutputParameterDefinitions ParameterDefinitions  `read:"outputs,ParameterDefinition"`
 	WorkflowDefinitions        WorkflowDefinitions   `read:"workflows,WorkflowDefinition"`

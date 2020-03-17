@@ -120,8 +120,8 @@ func (self *Context) ReportPrimitiveType() bool {
 	return self.ReportPath(1, "primitive type cannot have properties")
 }
 
-func (self *Context) ReportMapKeyReused(key string) bool {
-	return self.ReportPathf(1, "reused map key: %s", terminal.ColorValue(key))
+func (self *Context) ReportDuplicateMapKey(key string) bool {
+	return self.ReportPathf(1, "duplicate map key: %s", terminal.ColorValue(key))
 }
 
 //
