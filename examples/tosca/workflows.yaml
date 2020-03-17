@@ -69,7 +69,7 @@ topology_template:
           - set_state: down
           # We can call an operation on an interface on the target node
           # (Note that it *cannot* accept inputs)
-          - call_operation: Backup.start_backup 
+          - call_operation: Backup.start_backup
           on_failure:
           - notify_admins
           on_success:

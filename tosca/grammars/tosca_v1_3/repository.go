@@ -20,7 +20,7 @@ type Repository struct {
 
 	Description *string `read:"description"`
 	URL         *string `read:"url" required:"url"`
-	Credential  *Value  `read:"credential,Value"` // tosca.datatypes.Credential
+	Credential  *Value  `read:"credential,Value"` // tosca:Credential
 
 	url                url.URL
 	urlProblemReported bool
@@ -44,7 +44,7 @@ func ReadRepository(context *tosca.Context) interface{} {
 func (self *Repository) Render() {
 	log.Infof("{render} repository: %s", self.Name)
 	if self.Credential != nil {
-		self.Credential.RenderDataType("tosca.datatypes.Credential")
+		self.Credential.RenderDataType("tosca:Credential")
 	}
 }
 

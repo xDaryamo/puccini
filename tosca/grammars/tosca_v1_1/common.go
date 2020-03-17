@@ -68,7 +68,7 @@ func init() {
 	Grammar.RegisterReader("SubstitutionMappings", ReadSubstitutionMappings) // override
 	Grammar.RegisterReader("timestamp", tosca_v1_3.ReadTimestamp)
 	Grammar.RegisterReader("TopologyTemplate", tosca_v1_3.ReadTopologyTemplate)
-	Grammar.RegisterReader("TriggerDefinition", tosca_v1_3.ReadTriggerDefinition)
+	Grammar.RegisterReader("TriggerDefinition", tosca_v1_2.ReadTriggerDefinition) // 1.2
 	Grammar.RegisterReader("TriggerDefinitionCondition", tosca_v1_3.ReadTriggerDefinitionCondition)
 	Grammar.RegisterReader("Value", tosca_v1_3.ReadValue)
 	Grammar.RegisterReader("version", tosca_v1_3.ReadVersion)

@@ -61,10 +61,19 @@ group_types:
     # So this would not work:
     #- tosca:LoadBalancer
 
+interface_types:
+
+  Backup:
+    operations:
+      start_backup: {}
+
 node_types:
 
   SuperCompute:
     derived_from: tosca:Compute
+    interfaces:
+      backup:
+        type: Backup
 
 topology_template:
 
@@ -109,6 +118,16 @@ topology_template:
       type: ContinuousBackup
       properties:
         frequency: .5 d
+      triggers:
+        # Triggers are optional
+        backup:
+          event: power-failure
+          action:
+          - call_operation: Backup.start_backup
+          # Scheduling a trigger is optional
+          schedule:
+            start_time: '2020-01-01T10:00:00Z'
+            end_time: '2020-01-01T11:00:00Z'
       targets:
       # Target node templates and groups must match our definition at the policy type
       # (Can include derived types)

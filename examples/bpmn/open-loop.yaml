@@ -65,13 +65,9 @@ topology_template:
         bpmn_process_id: NotifyUser
       triggers:
         cpu_load:
-          event_type: BPMN
-          # Action can be an operation *or* a workflow ID, which can be used for closed loops
+          event: BPMN
           action:
-            implementation: scripts/get_cpu_metrics.sh
-            inputs:
-              format:
-                type: string
+          - delegate: backup
       targets:
       - host1
       - host2
