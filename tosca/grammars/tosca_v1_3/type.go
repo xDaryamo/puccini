@@ -19,7 +19,7 @@ type Type struct {
 	ParentName  *string  `read:"derived_from"`
 	Version     *Version `read:"version,version"`
 	Metadata    Metadata `read:"metadata,!Metadata"`
-	Description *string  `read:"description" inherit:"description,Parent"`
+	Description *string  `read:"description"`
 }
 
 func NewType(context *tosca.Context) *Type {
@@ -27,6 +27,14 @@ func NewType(context *tosca.Context) *Type {
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
+}
+
+// tosca.HasMetadata interface
+func (self *Type) GetDescription() (string, bool) {
+	if self.Description != nil {
+		return *self.Description, true
+	}
+	return "", false
 }
 
 // tosca.HasMetadata interface
@@ -41,8 +49,9 @@ func (self *Type) GetMetadata() (map[string]string, bool) {
 }
 
 // tosca.HasMetadata interface
-func (self *Type) SetMetadata(name string, value string) {
+func (self *Type) SetMetadata(name string, value string) bool {
 	self.Metadata[name] = value
+	return true
 }
 
 func (self *Type) GetMetadataValue(key string) (string, bool) {

@@ -19,7 +19,7 @@ type Policy struct {
 	Name    string `namespace:""`
 
 	PolicyTypeName                 *string            `read:"type" require:"type"`
-	Description                    *string            `read:"description" inherit:"description,PolicyType"`
+	Description                    *string            `read:"description"`
 	Properties                     Values             `read:"properties,Value"`
 	TargetNodeTemplateOrGroupNames *[]string          `read:"targets"`
 	TriggerDefinitions             TriggerDefinitions `read:"triggers,TriggerDefinition" inherit:"triggers,PolicyType"` // introduced in TOSCA 1.1

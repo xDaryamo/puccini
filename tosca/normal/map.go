@@ -18,6 +18,7 @@ type Map struct {
 	ValueConstraints FunctionCalls `json:"$valueConstraints,omitempty" yaml:"$valueConstraints,omitempty"`
 
 	Entries ConstrainableList `json:"$map" yaml:"$map"`
+	Type    string            `json:"$type,omitempty" yaml:"$type,omitempty"`
 }
 
 func NewMap() *Map {

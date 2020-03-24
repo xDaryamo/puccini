@@ -13,7 +13,7 @@ import (
 type DataType struct {
 	*Type `name:"data type"`
 
-	Description         *string             `read:"description" inherit:"description,Parent"`
+	Description         *string             `read:"description"`
 	PropertyDefinitions PropertyDefinitions `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
 
 	Parent *DataType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`

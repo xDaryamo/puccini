@@ -21,7 +21,7 @@ type NodeTemplate struct {
 	Directives                   *[]string              `read:"directives"`
 	CopyNodeTemplateName         *string                `read:"copy"`
 	NodeTypeName                 *string                `read:"type" require:"type"`
-	Description                  *string                `read:"description" inherit:"description,NodeType"`
+	Description                  *string                `read:"description"`
 	Properties                   Values                 `read:"properties,Value"`
 	Attributes                   Values                 `read:"attributes,AttributeValue"`
 	Capabilities                 CapabilityAssignments  `read:"capabilities,CapabilityAssignment"`

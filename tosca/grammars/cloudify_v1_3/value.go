@@ -60,7 +60,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 		self.Description = dataType.Description
 	}
 
-	self.Type = dataType.Name
+	self.Type = tosca.GetCanonicalName(dataType)
 
 	if _, ok := self.Context.Data.(*tosca.FunctionCall); ok {
 		return
@@ -145,6 +145,7 @@ func (self *Value) Normalize() normal.Constrainable {
 
 	case ard.Map:
 		normalMap := normal.NewMap()
+		normalMap.Type = self.Type
 		for key, value := range data {
 			if _, ok := key.(string); !ok {
 				// Cloudify DSL does not support complex keys

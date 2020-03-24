@@ -12,7 +12,7 @@ type ParameterDefinition struct {
 	*Entity `name:"parameter definition"`
 	Name    string
 
-	Description  *string `read:"description" inherit:"description,DataType"`
+	Description  *string `read:"description"`
 	DataTypeName *string `read:"type"`
 	Default      *Value  `read:"default,Value"`
 

@@ -102,7 +102,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 		}
 	}
 
-	self.Type = dataType.Name
+	self.Type = tosca.GetCanonicalName(dataType)
 
 	dataType.Complete(self.Context)
 	if !bare {
@@ -287,6 +287,7 @@ func (self *Value) Normalize() normal.Constrainable {
 	case ard.Map:
 		// This is for complex types (the "map" type is a ValueMap, below)
 		normalMap := normal.NewMap()
+		normalMap.Type = self.Type
 		for key, value := range data {
 			if v, ok := value.(*Value); ok {
 				normalMap.Put(key, v.Normalize())

@@ -115,9 +115,9 @@ The following additional fields are optional for all coercibles:
 * `$description`: a human-readable description of the coercible
 * `$constraints`: a list of coercibles in the `$functionCall` format (see notation below)
 
-The following additional field is optional for `$value`:
+The following additional field is optional for `$value` and `$map`:
 
-* `$type`: type name, which can help with interpreting the value
+* `$type`: canonical type name, which can help with interpreting the value
 
 If the `$value` is a map, it may have one or more of the following special fields in addition to the
 custom map fields:

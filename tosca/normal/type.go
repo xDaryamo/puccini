@@ -11,8 +11,9 @@ import (
 type Type struct {
 	Name string `json:"-" yaml:"-"`
 
-	Metadata map[string]string `json:"metadata" yaml:"metadata"`
-	Parent   string            `json:"parent,omitempty" yaml:"parent,omitempty"`
+	Description string            `json:"description,omitempty" yaml:"description,omitempty"`
+	Metadata    map[string]string `json:"metadata,omitempty" yaml:"metadata,omitempty"`
+	Parent      string            `json:"parent,omitempty" yaml:"parent,omitempty"`
 }
 
 func NewType(name string) *Type {
@@ -45,6 +46,8 @@ func GetHierarchyTypes(hierarchy *tosca.Hierarchy) Types {
 		if (h.Parent != nil) && (h.Parent.EntityPtr != nil) {
 			type_.Parent = tosca.GetCanonicalName(h.Parent.EntityPtr)
 		}
+
+		type_.Description, _ = tosca.GetDescription(h.EntityPtr)
 
 		if metadata, ok := tosca.GetMetadata(h.EntityPtr); ok {
 			for name, value := range metadata {

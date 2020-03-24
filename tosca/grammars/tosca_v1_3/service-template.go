@@ -32,6 +32,9 @@ func ReadServiceTemplate(context *tosca.Context) interface{} {
 	self := NewServiceTemplate(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
+	if self.Namespace != nil {
+		context.CanonicalNamespace = self.Namespace
+	}
 	return self
 }
 

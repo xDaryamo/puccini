@@ -12,7 +12,7 @@ type Schema struct {
 	*Entity `name:"schema"`
 
 	DataTypeName      *string           `read:"type" require:"type"`
-	Description       *string           `read:"description" inherit:"description,DataType"`
+	Description       *string           `read:"description"`
 	ConstraintClauses ConstraintClauses `read:"constraints,[]ConstraintClause"`
 
 	DataType *DataType `lookup:"type,DataTypeName" json:"-" yaml:"-"`

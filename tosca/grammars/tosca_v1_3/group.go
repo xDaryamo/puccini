@@ -19,7 +19,7 @@ type Group struct {
 	Name    string `namespace:""`
 
 	GroupTypeName           *string              `read:"type" require:"type"`
-	Description             *string              `read:"description" inherit:"description,GroupType"`
+	Description             *string              `read:"description"`
 	Properties              Values               `read:"properties,Value"`
 	Interfaces              InterfaceAssignments // removed in TOSCA 1.3
 	MemberNodeTemplateNames *[]string            `read:"members"`
