@@ -43,12 +43,13 @@ func ReadPropertyMapping(context *tosca.Context) interface{} {
 func (self *PropertyMapping) Render() {
 	log.Info("{render} property mapping")
 
-	if (self.NodeTemplate == nil) || (self.NodeTemplate.NodeType == nil) || (self.PropertyName == nil) {
+	if (self.NodeTemplate == nil) || (self.PropertyName == nil) {
 		return
 	}
 
 	name := *self.PropertyName
-	if _, ok := self.NodeTemplate.NodeType.PropertyDefinitions[name]; !ok {
+	self.NodeTemplate.Render()
+	if _, ok := self.NodeTemplate.Properties[name]; !ok {
 		self.Context.ListChild(1, name).ReportReferenceNotFound("property", self.NodeTemplate)
 	}
 }

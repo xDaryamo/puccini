@@ -46,6 +46,7 @@ func (self *InterfaceMapping) Render() {
 	}
 
 	name := *self.InterfaceName
+	self.NodeTemplate.Render()
 	if _, ok := self.NodeTemplate.Interfaces[name]; !ok {
 		self.Context.ListChild(1, name).ReportReferenceNotFound("interface", self.NodeTemplate)
 	}

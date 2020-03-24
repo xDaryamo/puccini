@@ -46,6 +46,7 @@ func (self *AttributeMapping) Render() {
 	}
 
 	name := *self.AttributeName
+	self.NodeTemplate.Render()
 	if _, ok := self.NodeTemplate.Attributes[name]; !ok {
 		self.Context.ListChild(1, name).ReportReferenceNotFound("attribute", self.NodeTemplate)
 	}

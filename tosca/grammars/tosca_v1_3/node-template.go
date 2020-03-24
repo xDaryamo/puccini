@@ -32,6 +32,8 @@ type NodeTemplate struct {
 
 	CopyNodeTemplate *NodeTemplate `lookup:"copy,CopyNodeTemplateName" json:"-" yaml:"-"`
 	NodeType         *NodeType     `lookup:"type,NodeTypeName" json:"-" yaml:"-"`
+
+	rendered bool
 }
 
 func NewNodeTemplate(context *tosca.Context) *NodeTemplate {
@@ -58,38 +60,13 @@ func (self *NodeTemplate) PreRead() {
 	CopyTemplate(self.Context)
 }
 
-func (self *NodeTemplate) GetCapabilitiesOfType(capabilityType *CapabilityType) []*CapabilityAssignment {
-	var capabilities []*CapabilityAssignment
-	for _, capability := range self.Capabilities {
-		definition, ok := capability.GetDefinition(self)
-		if ok && (definition.CapabilityType != nil) && self.Context.Hierarchy.IsCompatible(capabilityType, definition.CapabilityType) {
-			capabilities = append(capabilities, capability)
-		}
-	}
-	return capabilities
-}
-
-func (self *NodeTemplate) GetCapabilityByName(capabilityName string, capabilityType *CapabilityType) (*CapabilityAssignment, bool) {
-	if capabilityType == nil {
-		return nil, false
-	}
-
-	capability, ok := self.Capabilities[capabilityName]
-	if !ok {
-		return nil, false
-	}
-
-	// Make sure it matches the type
-	definition, ok := capability.GetDefinition(self)
-	if ok && self.Context.Hierarchy.IsCompatible(capabilityType, definition.CapabilityType) {
-		return capability, true
-	}
-
-	return nil, false
-}
-
 // tosca.Renderable interface
 func (self *NodeTemplate) Render() {
+	if self.rendered {
+		return
+	}
+	self.rendered = true
+
 	log.Infof("{render} node template: %s", self.Name)
 
 	if self.NodeType == nil {

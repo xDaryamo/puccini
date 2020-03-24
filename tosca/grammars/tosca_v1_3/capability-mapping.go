@@ -49,7 +49,9 @@ func (self *CapabilityMapping) Render() {
 	}
 
 	name := *self.CapabilityName
+	self.NodeTemplate.Render()
 	if _, ok := self.NodeTemplate.Capabilities[name]; !ok {
+		log.Infof("%s", self.NodeTemplate.Capabilities)
 		self.Context.ListChild(1, name).ReportReferenceNotFound("capability", self.NodeTemplate)
 	}
 }

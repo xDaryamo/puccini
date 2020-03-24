@@ -26,6 +26,8 @@ topology_template:
 
     admin:
       type: tosca:WebServer
+      properties:
+        component_version: '1.0'
 
     db:
       type: tosca:DBMS

@@ -50,6 +50,7 @@ func (self *RequirementMapping) Render() {
 
 	name := *self.RequirementName
 	found := false
+	self.NodeTemplate.Render()
 	for _, requirement := range self.NodeTemplate.Requirements {
 		if requirement.Name == name {
 			if found {
