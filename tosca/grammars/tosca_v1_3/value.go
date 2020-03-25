@@ -159,8 +159,8 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 			if typeValidator(self.Context.Data) {
 				// Render list and map elements according to entry schema
 				// (The entry schema may also have additional constraints)
-				switch dataType.Name {
-				case "list", "map":
+				switch internalTypeName {
+				case "!!seq", "!!map":
 					if (definition == nil) || (definition.EntrySchema == nil) || (definition.EntrySchema.DataType == nil) {
 						// This problem is reported in AttributeDefinition.Render
 						return
@@ -169,7 +169,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 					entryDataType := definition.EntrySchema.DataType
 					entryConstraints := definition.EntrySchema.RenderConstraints()
 
-					if dataType.Name == "list" {
+					if dataType.Name == "!!seq" {
 						slice := self.Context.Data.(ard.List)
 
 						valueList := NewValueList(definition, len(slice), self.Description, entryConstraints)
@@ -180,7 +180,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 						}
 
 						self.Context.Data = valueList
-					} else { // "map"
+					} else { // "!!map"
 						if (definition == nil) || (definition.KeySchema == nil) {
 							// TODO: check if this is reported elsewhere
 							return

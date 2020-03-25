@@ -38,6 +38,26 @@ func NewListPathElement(index int) PathElement {
 
 type Path []PathElement
 
+func (self Path) Append(element PathElement) Path {
+	length := len(self)
+	path := make(Path, length+1, length+1)
+	copy(path, self)
+	path[length] = element
+	return path
+}
+
+func (self Path) AppendField(name string) Path {
+	return self.Append(NewFieldPathElement(name))
+}
+
+func (self Path) AppendMap(name string) Path {
+	return self.Append(NewMapPathElement(name))
+}
+
+func (self Path) AppendList(index int) Path {
+	return self.Append(NewListPathElement(index))
+}
+
 // fmt.Stringer interface
 func (self Path) String() string {
 	var path string

@@ -220,7 +220,7 @@ func (self *ReadField) Read() {
 				})
 			case ReadFieldModeUniqueSequencedList:
 				context := self.Context.FieldChild(self.Key, childData)
-				self.Context.FieldChild(self.Key, childData).ReadSequencedListItems(self.Reader, func(item interface{}) {
+				context.ReadSequencedListItems(self.Reader, func(item interface{}) {
 					slice = context.appendUnique(slice, item)
 				})
 			case ReadFieldModeItem:

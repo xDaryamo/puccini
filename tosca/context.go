@@ -163,7 +163,7 @@ func (self *Context) FieldChild(name interface{}, data interface{}) *Context {
 	return &Context{
 		Parent:             self,
 		Name:               nameString,
-		Path:               append(self.Path, ard.NewFieldPathElement(nameString)),
+		Path:               self.Path.AppendField(nameString),
 		URL:                self.URL,
 		Data:               data,
 		Locator:            self.Locator,
@@ -209,7 +209,7 @@ func (self *Context) MapChild(name interface{}, data interface{}) *Context {
 	return &Context{
 		Parent:             self,
 		Name:               nameString,
-		Path:               append(self.Path, ard.NewMapPathElement(nameString)),
+		Path:               self.Path.AppendMap(nameString),
 		URL:                self.URL,
 		Data:               data,
 		Locator:            self.Locator,
@@ -227,7 +227,7 @@ func (self *Context) ListChild(index int, data interface{}) *Context {
 	return &Context{
 		Parent:             self,
 		Name:               fmt.Sprintf("%d", index),
-		Path:               append(self.Path, ard.NewListPathElement(index)),
+		Path:               self.Path.AppendList(index),
 		URL:                self.URL,
 		Data:               data,
 		Locator:            self.Locator,
@@ -245,7 +245,7 @@ func (self *Context) SequencedListChild(index int, name string, data interface{}
 	return &Context{
 		Parent:             self,
 		Name:               name,
-		Path:               append(self.Path, ard.NewListPathElement(index)),
+		Path:               self.Path.AppendList(index),
 		URL:                self.URL,
 		Data:               data,
 		Locator:            self.Locator,

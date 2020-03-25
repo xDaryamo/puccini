@@ -9,16 +9,32 @@ import (
 
 func (self *Context) Traverse(phase string, traverse reflection.Traverser) {
 	work := make(EntityWork)
+	var traversed tosca.EntityPtrs
+	var lock sync.Mutex
 
 	traverseWrapper := func(entityPtr interface{}) bool {
 		if work.Start(phase, entityPtr) {
 			return false
 		}
+
+		// Don't traverse the same entity more than once
+		lock.Lock()
+		for _, entityPtr_ := range traversed {
+			if entityPtr_ == entityPtr {
+				lock.Unlock()
+				return false
+			}
+		}
+		traversed = append(traversed, entityPtr)
+		lock.Unlock()
+
 		return traverse(entityPtr)
 	}
 
+	// Root
 	reflection.Traverse(self.Root.EntityPtr, traverseWrapper)
 
+	// Types
 	for _, forType := range self.Root.GetContext().Namespace {
 		for _, entityPtr := range forType {
 			reflection.Traverse(entityPtr, traverseWrapper)

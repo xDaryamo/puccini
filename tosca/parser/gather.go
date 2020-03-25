@@ -16,16 +16,7 @@ func (self *Context) Gather(pattern string) tosca.EntityPtrs {
 		context := tosca.GetContext(entityPtr)
 
 		if re.MatchString(context.Path.String()) {
-			found := false
-			for _, entityPtr_ := range entityPtrs {
-				if entityPtr_ == entityPtr {
-					found = true
-					break
-				}
-			}
-			if !found {
-				entityPtrs = append(entityPtrs, entityPtr)
-			}
+			entityPtrs = append(entityPtrs, entityPtr)
 		}
 
 		return true

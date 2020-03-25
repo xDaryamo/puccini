@@ -25,7 +25,7 @@ func Traverse(entityPtr interface{}, traverse Traverser) {
 			continue
 		}
 
-		// Has "lookup" tag?
+		// Ignore if has "lookup" tag
 		if _, ok = structField.Tag.Lookup("lookup"); ok {
 			continue
 		}
@@ -38,8 +38,8 @@ func Traverse(entityPtr interface{}, traverse Traverser) {
 		} else if IsSliceOfPtrToStruct(fieldType) {
 			// Compatible with []*interface{}
 			length := field.Len()
-			for i := 0; i < length; i++ {
-				element := field.Index(i)
+			for index := 0; index < length; index++ {
+				element := field.Index(index)
 				Traverse(element.Interface(), traverse)
 			}
 		} else if IsMapOfStringToPtrToStruct(fieldType) {
