@@ -16,7 +16,7 @@ type Value struct {
 	Name    string
 
 	Description *string
-	Type        string
+	TypeName    string
 
 	rendered bool
 }
@@ -60,7 +60,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 		self.Description = dataType.Description
 	}
 
-	self.Type = tosca.GetCanonicalName(dataType)
+	self.TypeName = tosca.GetCanonicalName(dataType)
 
 	if _, ok := self.Context.Data.(*tosca.FunctionCall); ok {
 		return
@@ -73,8 +73,8 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 	// TODO: dataType.Complete(self.Context.Data, self.Context)
 
 	// Internal types
-	if internalTypeName, ok := dataType.GetInternalTypeName(); ok {
-		if typeValidator, ok := ard.TypeValidators[internalTypeName]; ok {
+	if internalTypeName, typeValidator, reader, ok := dataType.GetInternal(); ok {
+		if typeValidator != nil {
 			if self.Context.Data == nil {
 				// Nil data only happens when a parameter is added despite not having a
 				// "default" value; we will give it a valid zero value instead
@@ -87,15 +87,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 			}
 		} else {
 			// Special types
-			if read, ok := self.Context.Grammar.Readers[internalTypeName]; ok {
-				self.Context.Data = read(self.Context)
-			} else {
-				// Avoid reporting more than once
-				if !dataType.typeProblemReported {
-					dataType.Context.ReportUnsupportedType()
-					dataType.typeProblemReported = true
-				}
-			}
+			self.Context.Data = reader(self.Context)
 		}
 	} else if self.Context.ValidateType("!!map") {
 		// Complex data types
@@ -145,7 +137,7 @@ func (self *Value) Normalize() normal.Constrainable {
 
 	case ard.Map:
 		normalMap := normal.NewMap()
-		normalMap.Type = self.Type
+		normalMap.Type = self.TypeName
 		for key, value := range data {
 			if _, ok := key.(string); !ok {
 				// Cloudify DSL does not support complex keys
@@ -162,7 +154,7 @@ func (self *Value) Normalize() normal.Constrainable {
 
 	default:
 		value := normal.NewValue(data)
-		value.Type = self.Type
+		value.Type = self.TypeName
 		normalConstrainable = value
 	}
 

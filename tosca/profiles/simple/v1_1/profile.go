@@ -7,12 +7,14 @@ func init() {
 tosca_definitions_version: tosca_simple_yaml_1_1
 
 metadata:
+
   puccini.scriptlet.import|tosca.lib.utils: internal:/tosca/common/1.0/js/lib/utils.js
   puccini.scriptlet.import|tosca.lib.coerce: internal:/tosca/common/1.0/js/lib/coerce.js
   puccini.scriptlet.import|tosca.coerce: internal:/tosca/common/1.0/js/coerce.js
   puccini.scriptlet.import|tosca.resolve: internal:/tosca/common/1.0/js/resolve.js
 
 imports:
+
 - artifacts.yaml
 - groups.yaml
 - nodes.yaml

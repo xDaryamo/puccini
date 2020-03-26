@@ -56,48 +56,49 @@ func (self *RequirementDefinition) GetKey() string {
 }
 
 func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefinition) {
-	if parentDefinition != nil {
-		if (self.TargetCapabilityTypeName == nil) && (parentDefinition.TargetCapabilityTypeName != nil) {
-			self.TargetCapabilityTypeName = parentDefinition.TargetCapabilityTypeName
-		}
-		if (self.TargetNodeTypeName == nil) && (parentDefinition.TargetNodeTypeName != nil) {
-			self.TargetNodeTypeName = parentDefinition.TargetNodeTypeName
-		}
-		if (self.RelationshipDefinition == nil) && (parentDefinition.RelationshipDefinition != nil) {
-			self.RelationshipDefinition = parentDefinition.RelationshipDefinition
-		}
-		if (self.Occurrences == nil) && (parentDefinition.Occurrences != nil) {
-			self.Occurrences = parentDefinition.Occurrences
-		}
-		if (self.TargetCapabilityType == nil) && (parentDefinition.TargetCapabilityType != nil) {
-			self.TargetCapabilityType = parentDefinition.TargetCapabilityType
-		}
-		if (self.TargetNodeType == nil) && (parentDefinition.TargetNodeType != nil) {
-			self.TargetNodeType = parentDefinition.TargetNodeType
-		}
+	log.Infof("{inherit} requirement definition: %s", self.Name)
 
-		// Validate type compatibility
-		if (self.TargetCapabilityType != nil) && (parentDefinition.TargetCapabilityType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.TargetCapabilityType, self.TargetCapabilityType) {
-			self.Context.ReportIncompatibleType(self.TargetCapabilityType, parentDefinition.TargetCapabilityType)
-		}
-		if (self.TargetNodeType != nil) && (parentDefinition.TargetNodeType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.TargetNodeType, self.TargetNodeType) {
-			self.Context.ReportIncompatibleType(self.TargetNodeType, parentDefinition.TargetNodeType)
-		}
+	// Validate type compatibility
+	if (self.TargetCapabilityType != nil) && (parentDefinition.TargetCapabilityType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.TargetCapabilityType, self.TargetCapabilityType) {
+		self.Context.ReportIncompatibleType(self.TargetCapabilityType, parentDefinition.TargetCapabilityType)
 	}
+	if (self.TargetNodeType != nil) && (parentDefinition.TargetNodeType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.TargetNodeType, self.TargetNodeType) {
+		self.Context.ReportIncompatibleType(self.TargetNodeType, parentDefinition.TargetNodeType)
+	}
+
+	if (self.TargetCapabilityTypeName == nil) && (parentDefinition.TargetCapabilityTypeName != nil) {
+		self.TargetCapabilityTypeName = parentDefinition.TargetCapabilityTypeName
+	}
+	if (self.TargetNodeTypeName == nil) && (parentDefinition.TargetNodeTypeName != nil) {
+		self.TargetNodeTypeName = parentDefinition.TargetNodeTypeName
+	}
+	if (self.RelationshipDefinition == nil) && (parentDefinition.RelationshipDefinition != nil) {
+		self.RelationshipDefinition = parentDefinition.RelationshipDefinition
+	}
+	if (self.Occurrences == nil) && (parentDefinition.Occurrences != nil) {
+		self.Occurrences = parentDefinition.Occurrences
+	}
+	if (self.TargetCapabilityType == nil) && (parentDefinition.TargetCapabilityType != nil) {
+		self.TargetCapabilityType = parentDefinition.TargetCapabilityType
+	}
+	if (self.TargetNodeType == nil) && (parentDefinition.TargetNodeType != nil) {
+		self.TargetNodeType = parentDefinition.TargetNodeType
+	}
+
+	if self.RelationshipDefinition != parentDefinition.RelationshipDefinition {
+		self.RelationshipDefinition.Inherit(parentDefinition.RelationshipDefinition)
+	}
+}
+
+// tosca.Renderable interface
+func (self RequirementDefinition) Render() {
+	log.Infof("{render} requirement definition: %s", self.Name)
 
 	if self.TargetCapabilityTypeName == nil {
 		// Avoid reporting more than once
 		if !self.capabilityMissingProblemReported {
 			self.Context.FieldChild("capability", nil).ReportFieldMissing()
 			self.capabilityMissingProblemReported = true
-		}
-	}
-
-	if self.RelationshipDefinition != nil {
-		if parentDefinition != nil {
-			self.RelationshipDefinition.Inherit(parentDefinition.RelationshipDefinition)
-		} else {
-			self.RelationshipDefinition.Inherit(nil)
 		}
 	}
 }
@@ -120,8 +121,6 @@ func (self RequirementDefinitions) Inherit(parentDefinitions RequirementDefiniti
 			if definition != parentDefinition {
 				definition.Inherit(parentDefinition)
 			}
-		} else {
-			definition.Inherit(nil)
 		}
 	}
 }

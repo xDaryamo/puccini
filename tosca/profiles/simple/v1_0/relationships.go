@@ -7,6 +7,7 @@ func init() {
 tosca_definitions_version: tosca_simple_yaml_1_0
 
 imports:
+
 - capabilities.yaml
 - interfaces.yaml
 

@@ -36,8 +36,6 @@ type ArtifactDefinition struct {
 
 	ArtifactType *ArtifactType `lookup:"type,ArtifactTypeName" json:"-" yaml:"-"`
 	Repository   *Repository   `lookup:"repository,RepositoryName" json:"-" yaml:"-"`
-
-	fileMissingProblemReported bool
 }
 
 func NewArtifactDefinition(context *tosca.Context) *ArtifactDefinition {
@@ -102,6 +100,13 @@ func (self *ArtifactDefinition) GetKey() string {
 }
 
 func (self *ArtifactDefinition) Inherit(parentDefinition *ArtifactDefinition) {
+	log.Infof("{inherit} artifact definition: %s", self.Name)
+
+	// Validate type compatibility
+	if (self.ArtifactType != nil) && (parentDefinition.ArtifactType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.ArtifactType, self.ArtifactType) {
+		self.Context.ReportIncompatibleType(self.ArtifactType, parentDefinition.ArtifactType)
+	}
+
 	if (self.ArtifactTypeName == nil) && (parentDefinition.ArtifactTypeName != nil) {
 		self.ArtifactTypeName = parentDefinition.ArtifactTypeName
 	}
@@ -134,11 +139,6 @@ func (self *ArtifactDefinition) Inherit(parentDefinition *ArtifactDefinition) {
 	}
 	if (self.Repository == nil) && (parentDefinition.Repository != nil) {
 		self.Repository = parentDefinition.Repository
-	}
-
-	// Validate type compatibility
-	if (self.ArtifactType != nil) && (parentDefinition.ArtifactType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.ArtifactType, self.ArtifactType) {
-		self.Context.ReportIncompatibleType(self.ArtifactType, parentDefinition.ArtifactType)
 	}
 }
 

@@ -63,6 +63,7 @@ func (self *NodeTemplate) PreRead() {
 // tosca.Renderable interface
 func (self *NodeTemplate) Render() {
 	if self.rendered {
+		// Avoid rendering more than once (can happen if we were called from PropertyMapping etc. Render)
 		return
 	}
 	self.rendered = true

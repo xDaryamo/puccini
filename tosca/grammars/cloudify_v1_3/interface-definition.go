@@ -38,11 +38,9 @@ func (self *InterfaceDefinition) GetKey() string {
 }
 
 func (self *InterfaceDefinition) Inherit(parentDefinition *InterfaceDefinition) {
-	if parentDefinition != nil {
-		self.OperationDefinitions.Inherit(parentDefinition.OperationDefinitions)
-	} else {
-		self.OperationDefinitions.Inherit(nil)
-	}
+	log.Infof("{inherit} interface definition: %s", self.Name)
+
+	self.OperationDefinitions.Inherit(parentDefinition.OperationDefinitions)
 }
 
 //
@@ -63,8 +61,6 @@ func (self InterfaceDefinitions) Inherit(parentDefinitions InterfaceDefinitions)
 			if definition != parentDefinition {
 				definition.Inherit(parentDefinition)
 			}
-		} else {
-			definition.Inherit(nil)
 		}
 	}
 }

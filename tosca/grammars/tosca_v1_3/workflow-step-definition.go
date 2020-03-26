@@ -51,6 +51,8 @@ func (self *WorkflowStepDefinition) GetKey() string {
 }
 
 func (self *WorkflowStepDefinition) Render(definitions WorkflowStepDefinitions) {
+	log.Infof("{inherit} workflow step definition: %s", self.Name)
+
 	if self.OnSuccessStepNames != nil {
 		for index, name := range *self.OnSuccessStepNames {
 			if definition, ok := definitions[name]; ok {
@@ -79,7 +81,7 @@ func (self *WorkflowStepDefinition) Render(definitions WorkflowStepDefinitions) 
 }
 
 func (self *WorkflowStepDefinition) Normalize(normalWorkflow *normal.Workflow) *normal.WorkflowStep {
-	log.Infof("{normalize} workflow step: %s", self.Name)
+	log.Infof("{normalize} workflow step definition: %s", self.Name)
 
 	normalWorkflowStep := normalWorkflow.NewStep(self.Name)
 

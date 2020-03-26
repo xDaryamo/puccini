@@ -30,62 +30,56 @@ func ReadArtifact(context *tosca.Context) interface{} {
 	return self
 }
 
-func (self *Artifact) Render(definition *ArtifactDefinition) {
-	if definition != nil {
-		if self.ArtifactType == nil {
-			self.ArtifactType = definition.ArtifactType
-		} else {
-			// Our artifact type must be compatible with definition's
-			if (definition.ArtifactType != nil) && !self.Context.Hierarchy.IsCompatible(definition.ArtifactType, self.ArtifactType) {
-				self.Context.ReportIncompatible(tosca.GetCanonicalName(self.ArtifactType), "artifact", "type")
-			}
-		}
-
-		// Copy values from definition
-		if self.ArtifactVersion == nil {
-			self.ArtifactVersion = definition.ArtifactVersion
-		}
-		if self.Description == nil {
-			self.Description = definition.Description
-		}
-		for name, value := range definition.Properties {
-			if _, ok := self.Properties[name]; !ok {
-				self.Properties[name] = value
-			}
-		}
-		if self.RepositoryName == nil {
-			self.RepositoryName = definition.RepositoryName
-		}
-		if self.File == nil {
-			self.File = definition.File
-		}
-		if self.DeployPath == nil {
-			self.DeployPath = definition.DeployPath
-		}
-		if self.Repository == nil {
-			self.Repository = definition.Repository
-		}
-		if self.ChecksumAlgorithm == nil {
-			self.ChecksumAlgorithm = definition.ChecksumAlgorithm
-		}
-		if self.Checksum == nil {
-			self.Checksum = definition.Checksum
-		}
+func (self *Artifact) Copy(definition *ArtifactDefinition) {
+	// Validate type compatibility
+	if (self.ArtifactType != nil) && (definition.ArtifactType != nil) && !self.Context.Hierarchy.IsCompatible(definition.ArtifactType, self.ArtifactType) {
+		self.Context.ReportIncompatible(tosca.GetCanonicalName(self.ArtifactType), "artifact", "type")
 	}
 
-	if self.File == nil {
-		// Avoid reporting more than once
-		if !self.fileMissingProblemReported {
-			self.Context.FieldChild("file", nil).ReportFieldMissing()
-			self.fileMissingProblemReported = true
+	if self.ArtifactType == nil {
+		self.ArtifactType = definition.ArtifactType
+	}
+	if self.ArtifactVersion == nil {
+		self.ArtifactVersion = definition.ArtifactVersion
+	}
+	if self.Description == nil {
+		self.Description = definition.Description
+	}
+	for name, value := range definition.Properties {
+		if _, ok := self.Properties[name]; !ok {
+			self.Properties[name] = value
 		}
+	}
+	if self.RepositoryName == nil {
+		self.RepositoryName = definition.RepositoryName
+	}
+	if self.File == nil {
+		self.File = definition.File
+	}
+	if self.DeployPath == nil {
+		self.DeployPath = definition.DeployPath
+	}
+	if self.Repository == nil {
+		self.Repository = definition.Repository
+	}
+	if self.ChecksumAlgorithm == nil {
+		self.ChecksumAlgorithm = definition.ChecksumAlgorithm
+	}
+	if self.Checksum == nil {
+		self.Checksum = definition.Checksum
+	}
+}
+
+func (self *Artifact) DoRender() {
+	log.Infof("{render} artifact: %s", self.Name)
+
+	if self.File == nil {
+		self.Context.FieldChild("file", nil).ReportFieldMissing()
 	}
 
 	if self.ArtifactType == nil {
 		return
 	}
-
-	self.Properties.RenderProperties(self.ArtifactType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
 
 	// Validate extension (if "file_ext" was not set in type, then anything goes)
 	if self.ArtifactType.FileExtension != nil {
@@ -101,6 +95,8 @@ func (self *Artifact) Render(definition *ArtifactDefinition) {
 			self.Context.FieldChild("file", nil).ReportIncompatibleExtension(extension, *self.ArtifactType.FileExtension)
 		}
 	}
+
+	self.Properties.RenderProperties(self.ArtifactType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
 }
 
 func (self *Artifact) Normalize(normalNodeTemplate *normal.NodeTemplate) *normal.Artifact {
@@ -153,13 +149,13 @@ type Artifacts map[string]*Artifact
 func (self Artifacts) Render(definitions ArtifactDefinitions, context *tosca.Context) {
 	for key, definition := range definitions {
 		if artifact, ok := self[key]; ok {
-			artifact.Render(definition)
+			artifact.Copy(definition)
 		}
 	}
 
 	for key, artifact := range self {
 		if _, ok := definitions[key]; !ok {
-			artifact.Render(nil)
+			artifact.DoRender()
 		}
 	}
 }

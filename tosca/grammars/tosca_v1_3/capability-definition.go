@@ -60,38 +60,40 @@ func (self *CapabilityDefinition) GetKey() string {
 }
 
 func (self *CapabilityDefinition) Inherit(parentDefinition *CapabilityDefinition) {
-	if parentDefinition != nil {
-		if ((self.Description == nil) || ((self.CapabilityType != nil) && (self.Description == self.CapabilityType.Description))) && (parentDefinition.Description != nil) {
-			self.Description = parentDefinition.Description
-		}
-		if (self.CapabilityTypeName == nil) && (parentDefinition.CapabilityTypeName != nil) {
-			self.CapabilityTypeName = parentDefinition.CapabilityTypeName
-		}
-		if (self.ValidSourceNodeTypeNames == nil) && (parentDefinition.ValidSourceNodeTypeNames != nil) {
-			self.ValidSourceNodeTypeNames = parentDefinition.ValidSourceNodeTypeNames
-		}
-		if (self.Occurrences == nil) && (parentDefinition.Occurrences != nil) {
-			self.Occurrences = parentDefinition.Occurrences
-		}
-		if (self.CapabilityType == nil) && (parentDefinition.CapabilityType != nil) {
-			self.CapabilityType = parentDefinition.CapabilityType
-		}
-		if (self.ValidSourceNodeTypes == nil) && (parentDefinition.ValidSourceNodeTypes != nil) {
-			self.ValidSourceNodeTypes = parentDefinition.ValidSourceNodeTypes
-		}
+	log.Infof("{inherit} capability definition: %s", self.Name)
 
-		// Validate type compatibility
-		if (self.CapabilityType != nil) && (parentDefinition.CapabilityType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.CapabilityType, self.CapabilityType) {
-			self.Context.ReportIncompatibleType(self.CapabilityType, parentDefinition.CapabilityType)
-			return
-		}
-
-		self.PropertyDefinitions.Inherit(parentDefinition.PropertyDefinitions)
-		self.AttributeDefinitions.Inherit(parentDefinition.AttributeDefinitions)
-	} else {
-		self.PropertyDefinitions.Inherit(nil)
-		self.AttributeDefinitions.Inherit(nil)
+	// Validate type compatibility
+	if (self.CapabilityType != nil) && (parentDefinition.CapabilityType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.CapabilityType, self.CapabilityType) {
+		self.Context.ReportIncompatibleType(self.CapabilityType, parentDefinition.CapabilityType)
+		return
 	}
+
+	if ((self.Description == nil) || ((self.CapabilityType != nil) && (self.Description == self.CapabilityType.Description))) && (parentDefinition.Description != nil) {
+		self.Description = parentDefinition.Description
+	}
+	if (self.CapabilityTypeName == nil) && (parentDefinition.CapabilityTypeName != nil) {
+		self.CapabilityTypeName = parentDefinition.CapabilityTypeName
+	}
+	if (self.ValidSourceNodeTypeNames == nil) && (parentDefinition.ValidSourceNodeTypeNames != nil) {
+		self.ValidSourceNodeTypeNames = parentDefinition.ValidSourceNodeTypeNames
+	}
+	if (self.Occurrences == nil) && (parentDefinition.Occurrences != nil) {
+		self.Occurrences = parentDefinition.Occurrences
+	}
+	if (self.CapabilityType == nil) && (parentDefinition.CapabilityType != nil) {
+		self.CapabilityType = parentDefinition.CapabilityType
+	}
+	if (self.ValidSourceNodeTypes == nil) && (parentDefinition.ValidSourceNodeTypes != nil) {
+		self.ValidSourceNodeTypes = parentDefinition.ValidSourceNodeTypes
+	}
+
+	self.PropertyDefinitions.Inherit(parentDefinition.PropertyDefinitions)
+	self.AttributeDefinitions.Inherit(parentDefinition.AttributeDefinitions)
+}
+
+// tosca.Renderable interface
+func (self *CapabilityDefinition) Render() {
+	log.Infof("{render} capability definition: %s", self.Name)
 
 	if self.CapabilityTypeName == nil {
 		// Avoid reporting more than once
@@ -120,8 +122,6 @@ func (self CapabilityDefinitions) Inherit(parentDefinitions CapabilityDefinition
 			if definition != parentDefinition {
 				definition.Inherit(parentDefinition)
 			}
-		} else {
-			definition.Inherit(nil)
 		}
 	}
 }

@@ -1,6 +1,7 @@
 tosca_definitions_version: tosca_simple_yaml_1_3
 
 imports:
+
 - data.yaml
 
 capability_types:
@@ -20,7 +21,7 @@ capability_types:
           Name must be unique within a namespace. Is required when creating resources, although some
           resources may allow a client to request the generation of an appropriate name
           automatically. Name is primarily intended for creation idempotence and configuration
-          definition. Cannot be updated. 
+          definition. Cannot be updated.
         type: string
         required: false
       generateName:
@@ -34,7 +35,7 @@ capability_types:
           - instead, it will either return 201 Created or 500 with Reason ServerTimeout indicating a
           unique name could not be found in the time allotted, and the client should retry
           (optionally after the time indicated in the Retry-After header). Applied only if Name is
-          not specified. 
+          not specified.
         type: string
         required: false
       namespace:
@@ -48,7 +49,7 @@ capability_types:
       labels:
         description: >-
           Map of string keys and values that can be used to organize and categorize (scope and
-          select) objects. May match selectors of replication controllers and services. 
+          select) objects. May match selectors of replication controllers and services.
         type: map
         entry_schema: string
         required: false
@@ -58,7 +59,7 @@ capability_types:
         description: >-
           Annotations is an unstructured key value map stored with a resource that may be set by
           external tools to store and retrieve arbitrary metadata. They are not queryable and should
-          be preserved when modifying objects. 
+          be preserved when modifying objects.
         type: map
         entry_schema: string # TODO
         required: false
@@ -134,7 +135,7 @@ capability_types:
           CreationTimestamp is a timestamp representing the server time when this object was
           created. It is not guaranteed to be set in happens-before order across separate
           operations. Clients may not set this value. It is represented in RFC3339 form and is in
-          UTC. Populated by the system. Read-only. Null for lists. 
+          UTC. Populated by the system. Read-only. Null for lists.
         type: timestamp
       deletionTimestamp:
         description: >-
@@ -152,7 +153,7 @@ capability_types:
           partitions, this object may still exist after this timestamp, until an administrator or
           automated process can determine the resource is fully terminated. If not set, graceful
           deletion of the object has not been requested. Populated by the system when a graceful
-          deletion is requested. Read-only. 
+          deletion is requested. Read-only.
         type: timestamp
       deletionGracePeriodSeconds:
         description: >-

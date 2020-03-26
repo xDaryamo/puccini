@@ -11,7 +11,7 @@ import (
 //
 
 type NotificationDefinition struct {
-	*Entity `name:"operation definition"`
+	*Entity `name:"notification definition"`
 	Name    string
 
 	Description    *string                  `read:"description"`
@@ -48,13 +48,13 @@ func (self *NotificationDefinition) GetKey() string {
 }
 
 func (self *NotificationDefinition) Inherit(parentDefinition *NotificationDefinition) {
-	if parentDefinition != nil {
-		if (self.Description == nil) && (parentDefinition.Description != nil) {
-			self.Description = parentDefinition.Description
-		}
+	log.Infof("{inherit} notification definition: %s", self.Name)
 
-		self.Outputs.Inherit(parentDefinition.Outputs)
+	if (self.Description == nil) && (parentDefinition.Description != nil) {
+		self.Description = parentDefinition.Description
 	}
+
+	self.Outputs.Inherit(parentDefinition.Outputs)
 }
 
 //
@@ -75,8 +75,6 @@ func (self NotificationDefinitions) Inherit(parentDefinitions NotificationDefini
 			if definition != parentDefinition {
 				definition.Inherit(parentDefinition)
 			}
-		} else {
-			definition.Inherit(nil)
 		}
 	}
 }

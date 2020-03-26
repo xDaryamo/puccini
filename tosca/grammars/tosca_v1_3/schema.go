@@ -16,6 +16,8 @@ type Schema struct {
 	ConstraintClauses ConstraintClauses `read:"constraints,[]ConstraintClause"`
 
 	DataType *DataType `lookup:"type,DataTypeName" json:"-" yaml:"-"`
+
+	rendered bool
 }
 
 func NewSchema(context *tosca.Context) *Schema {
@@ -37,6 +39,21 @@ func ReadSchema(context *tosca.Context) interface{} {
 	return self
 }
 
+// tosca.Renderable interface
+func (self *Schema) Render() {
+	log.Info("{render} schema")
+
+	if self.rendered {
+		// Avoid rendering more than once (can happen if we were called from Schema.GetConstraints)
+		return
+	}
+	self.rendered = true
+
+	if self.DataType != nil {
+		self.ConstraintClauses.Render(self.DataType)
+	}
+}
+
 func (self *Schema) LookupDataType() bool {
 	if self.DataTypeName != nil {
 		dataTypeName := *self.DataTypeName
@@ -51,11 +68,12 @@ func (self *Schema) LookupDataType() bool {
 	return false
 }
 
-func (self *Schema) RenderConstraints() ConstraintClauses {
-	var constraints ConstraintClauses
+func (self *Schema) GetConstraints() ConstraintClauses {
+	self.Render()
 	if self.DataType != nil {
-		constraints = append(constraints, self.DataType.ConstraintClauses...)
-		self.ConstraintClauses.RenderAndAppend(&constraints, self.DataType)
+		self.DataType.ConstraintClauses.Render(self.DataType)
+		return self.DataType.ConstraintClauses.Append(self.ConstraintClauses)
+	} else {
+		return self.ConstraintClauses
 	}
-	return constraints
 }

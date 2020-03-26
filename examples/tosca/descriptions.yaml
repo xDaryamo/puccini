@@ -28,7 +28,6 @@ node_types:
         description: Cost in US dollars
 
   SuperServer:
-    # If you don't specify a description then it will be inherited
     derived_from: Server
     properties:
       memory_configurations:
@@ -66,7 +65,6 @@ topology_template:
         cost: 1200.0
   
     super:
-      # If you don't specify a description then it will be taken from the type
       type: SuperServer
       properties:
         cost: 2200.0

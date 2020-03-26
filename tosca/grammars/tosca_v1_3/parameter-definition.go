@@ -32,6 +32,8 @@ func ReadParameterDefinition(context *tosca.Context) interface{} {
 }
 
 func (self *ParameterDefinition) Render(kind string) {
+	log.Infof("{render} parameter definition: %s", self.Name)
+
 	// TODO: what to do if there is no "type"?
 
 	if self.Value == nil {

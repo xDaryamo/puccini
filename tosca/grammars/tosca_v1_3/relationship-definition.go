@@ -54,24 +54,27 @@ func (self *RelationshipDefinition) NewDefaultAssignment(context *tosca.Context)
 }
 
 func (self *RelationshipDefinition) Inherit(parentDefinition *RelationshipDefinition) {
-	if parentDefinition != nil {
-		if (self.RelationshipTypeName == nil) && (parentDefinition.RelationshipTypeName != nil) {
-			self.RelationshipTypeName = parentDefinition.RelationshipTypeName
-		}
-		if (self.RelationshipType == nil) && (parentDefinition.RelationshipType != nil) {
-			self.RelationshipType = parentDefinition.RelationshipType
-		}
+	log.Info("{inherit} relationship definition")
 
-		// Validate type compatibility
-		if (self.RelationshipType != nil) && (parentDefinition.RelationshipType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.RelationshipType, self.RelationshipType) {
-			self.Context.ReportIncompatibleType(self.RelationshipType, parentDefinition.RelationshipType)
-			return
-		}
-
-		self.InterfaceDefinitions.Inherit(parentDefinition.InterfaceDefinitions)
-	} else {
-		self.InterfaceDefinitions.Inherit(nil)
+	if (self.RelationshipTypeName == nil) && (parentDefinition.RelationshipTypeName != nil) {
+		self.RelationshipTypeName = parentDefinition.RelationshipTypeName
 	}
+	if (self.RelationshipType == nil) && (parentDefinition.RelationshipType != nil) {
+		self.RelationshipType = parentDefinition.RelationshipType
+	}
+
+	// Validate type compatibility
+	if (self.RelationshipType != nil) && (parentDefinition.RelationshipType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.RelationshipType, self.RelationshipType) {
+		self.Context.ReportIncompatibleType(self.RelationshipType, parentDefinition.RelationshipType)
+		return
+	}
+
+	self.InterfaceDefinitions.Inherit(parentDefinition.InterfaceDefinitions)
+}
+
+// tosca.Renderable interface
+func (self *RelationshipDefinition) Render() {
+	log.Info("{render} relationship definition")
 
 	if self.RelationshipTypeName == nil {
 		// Avoid reporting more than once

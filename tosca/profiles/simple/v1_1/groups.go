@@ -7,6 +7,7 @@ func init() {
 tosca_definitions_version: tosca_simple_yaml_1_1
 
 imports:
+
 - interfaces.yaml
 
 group_types:

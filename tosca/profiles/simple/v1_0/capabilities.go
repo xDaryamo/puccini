@@ -25,7 +25,6 @@ capability_types:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       citation_location: 5.4.2
-      role: feature
     description: >-
       The Node capability indicates the base capabilities of a TOSCA Node Type.
     derived_from: tosca.capabilities.Root

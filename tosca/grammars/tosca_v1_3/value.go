@@ -26,7 +26,7 @@ type Value struct {
 
 	ConstraintClauses ConstraintClauses
 	Description       *string
-	Type              string
+	TypeName          string
 
 	rendered bool
 }
@@ -87,10 +87,14 @@ func (self *Value) RenderDataType(dataTypeName string) {
 
 func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefinition, bare bool, allowNil bool) {
 	if self.rendered {
-		// Avoid rendering more than once (can happen if we were copied from definition "default")
+		// Avoid rendering more than once (can happen if we were copied from PropertyDefinition.Default)
 		return
 	}
 	self.rendered = true
+
+	if definition != nil {
+		definition.Render()
+	}
 
 	if !bare {
 		if self.Description == nil {
@@ -102,11 +106,13 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 		}
 	}
 
-	self.Type = tosca.GetCanonicalName(dataType)
+	self.TypeName = tosca.GetCanonicalName(dataType)
 
 	dataType.Complete(self.Context)
 	if !bare {
-		dataType.ConstraintClauses.RenderAndAppend(&self.ConstraintClauses, dataType)
+		self.ConstraintClauses.Render(dataType)
+		dataType.ConstraintClauses.Render(dataType)
+		self.ConstraintClauses = dataType.ConstraintClauses.Append(self.ConstraintClauses)
 	}
 
 	if _, ok := self.Context.Data.(*tosca.FunctionCall); ok {
@@ -118,8 +124,8 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 	}
 
 	// Internal types
-	if internalTypeName, ok := dataType.GetInternalTypeName(); ok {
-		if typeValidator, ok := ard.TypeValidators[internalTypeName]; ok {
+	if internalTypeName, typeValidator, reader, ok := dataType.GetInternal(); ok {
+		if typeValidator != nil {
 			if self.Context.Data == nil {
 				// Nil data only happens when an attribute is added despite not having a
 				// "default" value; we will give it a valid zero value instead
@@ -167,9 +173,9 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 					}
 
 					entryDataType := definition.EntrySchema.DataType
-					entryConstraints := definition.EntrySchema.RenderConstraints()
+					entryConstraints := definition.EntrySchema.GetConstraints()
 
-					if dataType.Name == "!!seq" {
+					if internalTypeName == "!!seq" {
 						slice := self.Context.Data.(ard.List)
 
 						valueList := NewValueList(definition, len(slice), self.Description, entryConstraints)
@@ -182,12 +188,12 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 						self.Context.Data = valueList
 					} else { // "!!map"
 						if (definition == nil) || (definition.KeySchema == nil) {
-							// TODO: check if this is reported elsewhere
+							// This problem is reported in AttributeDefinition.Complete()
 							return
 						}
 
 						keyDataType := definition.KeySchema.DataType
-						keyConstraints := definition.KeySchema.RenderConstraints()
+						keyConstraints := definition.KeySchema.GetConstraints()
 
 						valueMap := NewValueMap(definition, self.Description, keyConstraints, entryConstraints)
 
@@ -212,15 +218,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 			}
 		} else {
 			// Special types
-			if read, ok := self.Context.Grammar.Readers[internalTypeName]; ok {
-				self.Context.Data = read(self.Context)
-			} else {
-				// Avoid reporting more than once
-				if !dataType.typeProblemReported {
-					dataType.Context.ReportUnsupportedType()
-					dataType.typeProblemReported = true
-				}
-			}
+			self.Context.Data = reader(self.Context)
 		}
 
 		if comparer, ok := dataType.GetMetadataValue("puccini.comparer"); ok {
@@ -269,8 +267,11 @@ func (self *Value) RenderProperty(dataType *DataType, definition *PropertyDefini
 	if definition == nil {
 		self.RenderAttribute(dataType, nil, false, false)
 	} else {
+		self.ConstraintClauses.Render(dataType)
+		definition.ConstraintClauses.Render(definition.DataType)
+		self.ConstraintClauses = definition.ConstraintClauses.Append(self.ConstraintClauses)
 		self.RenderAttribute(dataType, definition.AttributeDefinition, false, false)
-		definition.ConstraintClauses.RenderAndAppend(&self.ConstraintClauses, dataType)
+		//definition.ConstraintClauses.Prepend(&self.ConstraintClauses, dataType)
 	}
 }
 
@@ -287,7 +288,7 @@ func (self *Value) Normalize() normal.Constrainable {
 	case ard.Map:
 		// This is for complex types (the "map" type is a ValueMap, below)
 		normalMap := normal.NewMap()
-		normalMap.Type = self.Type
+		normalMap.Type = self.TypeName
 		for key, value := range data {
 			if v, ok := value.(*Value); ok {
 				normalMap.Put(key, v.Normalize())
@@ -309,7 +310,7 @@ func (self *Value) Normalize() normal.Constrainable {
 
 	default:
 		value := normal.NewValue(data)
-		value.Type = self.Type
+		value.Type = self.TypeName
 		normalConstrainable = value
 	}
 

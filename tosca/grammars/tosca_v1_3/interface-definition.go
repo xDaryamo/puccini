@@ -50,26 +50,29 @@ func (self *InterfaceDefinition) GetKey() string {
 }
 
 func (self *InterfaceDefinition) Inherit(parentDefinition *InterfaceDefinition) {
-	if parentDefinition != nil {
-		if (self.InterfaceTypeName == nil) && (parentDefinition.InterfaceTypeName != nil) {
-			self.InterfaceTypeName = parentDefinition.InterfaceTypeName
-		}
-		if (self.InterfaceType == nil) && (parentDefinition.InterfaceType != nil) {
-			self.InterfaceType = parentDefinition.InterfaceType
-		}
+	log.Infof("{inherit} interface definition: %s", self.Name)
 
-		// Validate type compatibility
-		if (self.InterfaceType != nil) && (parentDefinition.InterfaceType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.InterfaceType, self.InterfaceType) {
-			self.Context.ReportIncompatibleType(self.InterfaceType, parentDefinition.InterfaceType)
-			return
-		}
-
-		self.InputDefinitions.Inherit(parentDefinition.InputDefinitions)
-		self.OperationDefinitions.Inherit(parentDefinition.OperationDefinitions)
-	} else {
-		self.InputDefinitions.Inherit(nil)
-		self.OperationDefinitions.Inherit(nil)
+	// Validate type compatibility
+	if (self.InterfaceType != nil) && (parentDefinition.InterfaceType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.InterfaceType, self.InterfaceType) {
+		self.Context.ReportIncompatibleType(self.InterfaceType, parentDefinition.InterfaceType)
+		return
 	}
+
+	if (self.InterfaceTypeName == nil) && (parentDefinition.InterfaceTypeName != nil) {
+		self.InterfaceTypeName = parentDefinition.InterfaceTypeName
+	}
+	if (self.InterfaceType == nil) && (parentDefinition.InterfaceType != nil) {
+		self.InterfaceType = parentDefinition.InterfaceType
+	}
+
+	self.InputDefinitions.Inherit(parentDefinition.InputDefinitions)
+	self.OperationDefinitions.Inherit(parentDefinition.OperationDefinitions)
+	self.NotificationDefinitions.Inherit(parentDefinition.NotificationDefinitions)
+}
+
+// tosca.Renderable interface
+func (self *InterfaceDefinition) Render() {
+	log.Infof("{render} interface definition: %s", self.Name)
 
 	if self.InterfaceTypeName == nil {
 		// Avoid reporting more than once
@@ -98,8 +101,6 @@ func (self InterfaceDefinitions) Inherit(parentDefinitions InterfaceDefinitions)
 			if definition != parentDefinition {
 				definition.Inherit(parentDefinition)
 			}
-		} else {
-			definition.Inherit(nil)
 		}
 	}
 }

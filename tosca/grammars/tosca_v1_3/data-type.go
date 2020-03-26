@@ -24,11 +24,9 @@ type DataType struct {
 	*Type `name:"data type"`
 
 	PropertyDefinitions PropertyDefinitions `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
-	ConstraintClauses   ConstraintClauses   `read:"constraints,[]ConstraintClause" inherit:"constraints,Parent"`
+	ConstraintClauses   ConstraintClauses   `read:"constraints,[]ConstraintClause"`
 
 	Parent *DataType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
-
-	typeProblemReported bool
 }
 
 func NewDataType(context *tosca.Context) *DataType {
@@ -65,16 +63,48 @@ func (self *DataType) Inherit() {
 		return
 	}
 
+	if self.Parent.ConstraintClauses != nil {
+		self.ConstraintClauses = self.Parent.ConstraintClauses.Append(self.ConstraintClauses)
+	}
+
 	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
 }
 
+// tosca.Renderable interface
+func (self *DataType) Render() {
+	log.Infof("{render} data type: %s", self.Name)
+
+	self.ConstraintClauses.Render(self)
+
+	if internalTypeName, ok := self.GetInternalTypeName(); ok {
+		if _, ok := ard.TypeValidators[internalTypeName]; !ok {
+			if _, ok := self.Context.Grammar.Readers[internalTypeName]; !ok {
+				self.Context.ReportUnsupportedType()
+			}
+		}
+	}
+}
+
 func (self *DataType) GetInternalTypeName() (string, bool) {
-	typeName, ok := self.GetMetadataValue("puccini.type")
-	if !ok && (self.Parent != nil) {
+	if typeName, ok := self.GetMetadataValue("puccini.type"); ok {
+		return typeName, ok
+	} else if self.Parent != nil {
 		// The internal type metadata is inherited
 		return self.Parent.GetInternalTypeName()
+	} else {
+		return "", false
 	}
-	return typeName, ok
+}
+
+func (self *DataType) GetInternal() (string, ard.TypeValidator, tosca.Reader, bool) {
+	if internalTypeName, ok := self.GetInternalTypeName(); ok {
+		if typeValidator, ok := ard.TypeValidators[internalTypeName]; ok {
+			return internalTypeName, typeValidator, nil, true
+		} else if reader, ok := self.Context.Grammar.Readers[internalTypeName]; ok {
+			return internalTypeName, nil, reader, true
+		}
+	}
+	return "", nil, nil, false
 }
 
 // Note that this may change the data (if it's a map), but that should be fine, because we intend

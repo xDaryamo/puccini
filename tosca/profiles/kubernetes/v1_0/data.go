@@ -233,7 +233,7 @@ data_types:
           resourceRequirements of an init container are taken into account during scheduling by
           finding the highest request/limit for each resource type, and then using the max of of
           that value or the sum of the normal containers. Limits are applied to init containers in a
-          similar fashion. Init containers cannot currently be added or removed. Cannot be updated. 
+          similar fashion. Init containers cannot currently be added or removed. Cannot be updated.
         type: list
         entry_schema: Container
         required: false
@@ -241,7 +241,7 @@ data_types:
         description: >-
           List of volumes that can be mounted by containers belonging to the pod.
         type: list
-        entry_schema: Volume 
+        entry_schema: Volume
         required: false
 
       # Scheduling
@@ -293,7 +293,7 @@ data_types:
       restartPolicy:
         description: >-
           Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default
-          to Always. 
+          to Always.
         type: string
         default: Always
         constraints:
@@ -397,7 +397,7 @@ data_types:
         required: false
       serviceAccountName:
         description: >-
-          ServiceAccountName is the name of the ServiceAccount to use to run this pod. 
+          ServiceAccountName is the name of the ServiceAccount to use to run this pod.
         type: string
         required: false
       automountServiceAccountToken:
@@ -512,7 +512,7 @@ data_types:
           environment. If a variable cannot be resolved, the reference in the input string will be
           unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME).
           Escaped references will never be expanded, regardless of whether the variable exists or
-          not. Cannot be updated. 
+          not. Cannot be updated.
         type: list
         entry_schema: string
         required: false
@@ -554,7 +554,7 @@ data_types:
       livenessProbe:
         description: >-
           Periodic probe of container liveness. Container will be restarted if the probe fails.
-          Cannot be updated. 
+          Cannot be updated.
         type: string # TODO
         required: false
       readinessProbe:
@@ -685,7 +685,7 @@ data_types:
           are the most preferred.
         type: string # TODO
         required: false
-      requiredDuringSchedulingIgnoredDuringExecution:      
+      requiredDuringSchedulingIgnoredDuringExecution:
         description: >-
           If the anti-affinity requirements specified by this field are not met at scheduling time,
           the pod will not be scheduled onto the node. If the anti-affinity requirements specified

@@ -54,11 +54,9 @@ func (self *OperationDefinition) GetKey() string {
 }
 
 func (self *OperationDefinition) Inherit(parentDefinition *OperationDefinition) {
-	if parentDefinition != nil {
-		self.InputDefinitions.Inherit(parentDefinition.InputDefinitions)
-	} else {
-		self.InputDefinitions.Inherit(nil)
-	}
+	log.Infof("{inherit} operation definition: %s", self.Name)
+
+	self.InputDefinitions.Inherit(parentDefinition.InputDefinitions)
 }
 
 //
@@ -79,8 +77,6 @@ func (self OperationDefinitions) Inherit(parentDefinitions OperationDefinitions)
 			if definition != parentDefinition {
 				definition.Inherit(parentDefinition)
 			}
-		} else {
-			definition.Inherit(nil)
 		}
 	}
 }

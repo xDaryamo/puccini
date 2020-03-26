@@ -1,6 +1,7 @@
 package cloudify_v1_3
 
 import (
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -17,8 +18,6 @@ type DataType struct {
 	PropertyDefinitions PropertyDefinitions `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
 
 	Parent *DataType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
-
-	typeProblemReported bool
 }
 
 func NewDataType(context *tosca.Context) *DataType {
@@ -58,6 +57,18 @@ func (self *DataType) Inherit() {
 	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
 }
 
+// tosca.Renderable interface
+func (self *DataType) Render() {
+	log.Infof("{render} data type: %s", self.Name)
+
+	if internalTypeName, ok := self.GetInternalTypeName(); ok {
+		if _, ok := ard.TypeValidators[internalTypeName]; !ok {
+			if _, ok := self.Context.Grammar.Readers[internalTypeName]; !ok {
+				self.Context.ReportUnsupportedType()
+			}
+		}
+	}
+}
 func (self *DataType) GetInternalTypeName() (string, bool) {
 	switch self.Name {
 	case "boolean":
@@ -74,6 +85,17 @@ func (self *DataType) GetInternalTypeName() (string, bool) {
 		return "!!map", true
 	}
 	return "", false
+}
+
+func (self *DataType) GetInternal() (string, ard.TypeValidator, tosca.Reader, bool) {
+	if internalTypeName, ok := self.GetInternalTypeName(); ok {
+		if typeValidator, ok := ard.TypeValidators[internalTypeName]; ok {
+			return internalTypeName, typeValidator, nil, true
+		} else if reader, ok := self.Context.Grammar.Readers[internalTypeName]; ok {
+			return internalTypeName, nil, reader, true
+		}
+	}
+	return "", nil, nil, false
 }
 
 //

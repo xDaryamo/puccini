@@ -27,7 +27,7 @@ type AttributeDefinition struct {
 
 	DataType *DataType `lookup:"type,DataTypeName" json:"-" yaml:"-"`
 
-	typeMissingProblemReported bool
+	rendered bool
 }
 
 func NewAttributeDefinition(context *tosca.Context) *AttributeDefinition {
@@ -50,39 +50,46 @@ func (self *AttributeDefinition) GetKey() string {
 }
 
 func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) {
-	if parentDefinition != nil {
-		if ((self.Description == nil) || ((self.DataType != nil) && (self.Description == self.DataType.Description))) && (parentDefinition.Description != nil) {
-			self.Description = parentDefinition.Description
-		}
-		if (self.DataTypeName == nil) && (parentDefinition.DataTypeName != nil) {
-			self.DataTypeName = parentDefinition.DataTypeName
-		}
-		if (self.EntrySchema == nil) && (parentDefinition.EntrySchema != nil) {
-			self.EntrySchema = parentDefinition.EntrySchema
-		}
-		if (self.Default == nil) && (parentDefinition.Default != nil) {
-			self.Default = parentDefinition.Default
-		}
-		if (self.Status == nil) && (parentDefinition.Status != nil) {
-			self.Status = parentDefinition.Status
-		}
-		if (self.DataType == nil) && (parentDefinition.DataType != nil) {
-			self.DataType = parentDefinition.DataType
-		}
+	log.Infof("{inherit} attribute definition: %s", self.Name)
 
-		// Validate type compatibility
-		if (self.DataType != nil) && (parentDefinition.DataType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.DataType, self.DataType) {
-			self.Context.ReportIncompatibleType(self.DataType, parentDefinition.DataType)
-			return
-		}
+	// Validate type compatibility
+	if (self.DataType != nil) && (parentDefinition.DataType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.DataType, self.DataType) {
+		self.Context.ReportIncompatibleType(self.DataType, parentDefinition.DataType)
+		return
 	}
 
+	if ((self.Description == nil) || ((self.DataType != nil) && (self.Description == self.DataType.Description))) && (parentDefinition.Description != nil) {
+		self.Description = parentDefinition.Description
+	}
+	if (self.DataTypeName == nil) && (parentDefinition.DataTypeName != nil) {
+		self.DataTypeName = parentDefinition.DataTypeName
+	}
+	if (self.EntrySchema == nil) && (parentDefinition.EntrySchema != nil) {
+		self.EntrySchema = parentDefinition.EntrySchema
+	}
+	if (self.Default == nil) && (parentDefinition.Default != nil) {
+		self.Default = parentDefinition.Default
+	}
+	if (self.Status == nil) && (parentDefinition.Status != nil) {
+		self.Status = parentDefinition.Status
+	}
+	if (self.DataType == nil) && (parentDefinition.DataType != nil) {
+		self.DataType = parentDefinition.DataType
+	}
+}
+
+// tosca.Renderable interface
+func (self *AttributeDefinition) Render() {
+	log.Infof("{render} attribute definition: %s", self.Name)
+
+	if self.rendered {
+		// Avoid rendering more than once (can happen if we were called from Value.RenderAttribute)
+		return
+	}
+	self.rendered = true
+
 	if self.DataTypeName == nil {
-		// Avoid reporting more than once
-		if !self.typeMissingProblemReported {
-			self.Context.FieldChild("type", nil).ReportFieldMissing()
-			self.typeMissingProblemReported = true
-		}
+		self.Context.FieldChild("type", nil).ReportFieldMissing()
 		return
 	}
 
@@ -120,16 +127,17 @@ func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) 
 type AttributeDefinitions map[string]*AttributeDefinition
 
 func (self AttributeDefinitions) Inherit(parentDefinitions AttributeDefinitions) {
+	for name, definition := range parentDefinitions {
+		if _, ok := self[name]; !ok {
+			self[name] = definition
+		}
+	}
+
 	for name, definition := range self {
-		if parentDefinitions != nil {
-			if parentDefinition, ok := parentDefinitions[name]; ok {
-				if definition != parentDefinition {
-					definition.Inherit(parentDefinition)
-				}
-				continue
+		if parentDefinition, ok := parentDefinitions[name]; ok {
+			if definition != parentDefinition {
+				definition.Inherit(parentDefinition)
 			}
 		}
-
-		definition.Inherit(nil)
 	}
 }

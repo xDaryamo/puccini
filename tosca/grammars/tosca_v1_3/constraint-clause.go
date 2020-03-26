@@ -128,15 +128,31 @@ func (self *ConstraintClause) IsNativeArgument(index uint) bool {
 
 type ConstraintClauses []*ConstraintClause
 
-func (self ConstraintClauses) RenderAndAppend(constraints *ConstraintClauses, dataType *DataType) {
-	for _, constraintClause := range self {
-		if (constraintClause.DataType != nil) && (constraintClause.DataType != dataType) {
-			panic("constraint clause cannot be used with different data type")
-		}
-		constraintClause.DataType = dataType
-		*constraints = append(*constraints, constraintClause)
+func (self ConstraintClauses) Append(constraints ConstraintClauses) ConstraintClauses {
+	var r ConstraintClauses
+	length := len(self)
+	if length > 0 {
+		r = make(ConstraintClauses, length)
+		copy(r, self)
+	}
+	return append(r, constraints...)
+}
+
+func (self ConstraintClauses) Render(dataType *DataType) {
+	for _, constraint := range self {
+		constraint.DataType = dataType
 	}
 }
+
+/*
+func (self ConstraintClauses) Validate(dataType *DataType) {
+	for _, constraintClause := range self {
+		if (constraintClause.DataType != nil) && (constraintClause.DataType != dataType) {
+			panic(fmt.Sprintf("constraint clause for data type \"%s\" cannot be used with data type \"%s\"", constraintClause.DataType.Name, dataType.Name))
+		}
+	}
+}
+*/
 
 func (self ConstraintClauses) Normalize(context *tosca.Context) normal.FunctionCalls {
 	var normalFunctionCalls normal.FunctionCalls

@@ -9,6 +9,7 @@ import (
 
 	"github.com/beevik/etree"
 	"github.com/tebeka/atexit"
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/common"
 	formatpkg "github.com/tliron/puccini/common/format"
 	"github.com/tliron/puccini/common/terminal"
@@ -57,6 +58,19 @@ func (entry *PucciniAPI) Sprintf(format string, args ...interface{}) string {
 
 func (entry *PucciniAPI) JoinFilePath(elements ...string) string {
 	return filepath.Join(elements...)
+}
+
+func (entry *PucciniAPI) ValidateType(value interface{}, type_ string) (bool, error) {
+	// Special case whereby an integer stored as a float type has been optimized to an integer type
+	if (type_ == "!!float") && ard.IsInteger(value) {
+		return true, nil
+	}
+
+	if validate, ok := ard.TypeValidators[type_]; ok {
+		return validate(value), nil
+	} else {
+		return false, fmt.Errorf("unsupported type: %s", type_)
+	}
 }
 
 func (entry *PucciniAPI) ValidateFormat(code string, format string) error {

@@ -33,14 +33,12 @@ func (self *PropertyDefinition) GetKey() string {
 }
 
 func (self *PropertyDefinition) Inherit(parentDefinition *PropertyDefinition) {
-	if parentDefinition != nil {
-		self.ParameterDefinition.Inherit(parentDefinition.ParameterDefinition)
+	log.Infof("{inherit} property definition: %s", self.Name)
 
-		if (self.Required == nil) && (parentDefinition.Required != nil) {
-			self.Required = parentDefinition.Required
-		}
-	} else {
-		self.ParameterDefinition.Inherit(nil)
+	self.ParameterDefinition.Inherit(parentDefinition.ParameterDefinition)
+
+	if (self.Required == nil) && (parentDefinition.Required != nil) {
+		self.Required = parentDefinition.Required
 	}
 }
 
@@ -63,15 +61,10 @@ func (self PropertyDefinitions) Inherit(parentDefinitions PropertyDefinitions) {
 	}
 
 	for name, definition := range self {
-		if parentDefinitions != nil {
-			if parentDefinition, ok := parentDefinitions[name]; ok {
-				if definition != parentDefinition {
-					definition.Inherit(parentDefinition)
-				}
-				continue
+		if parentDefinition, ok := parentDefinitions[name]; ok {
+			if definition != parentDefinition {
+				definition.Inherit(parentDefinition)
 			}
 		}
-
-		definition.Inherit(nil)
 	}
 }

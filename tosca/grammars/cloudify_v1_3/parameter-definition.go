@@ -39,26 +39,31 @@ func (self *ParameterDefinition) GetKey() string {
 }
 
 func (self *ParameterDefinition) Inherit(parentDefinition *ParameterDefinition) {
-	if parentDefinition != nil {
-		if ((self.Description == nil) || ((self.DataType != nil) && (self.Description == self.DataType.Description))) && (parentDefinition.Description != nil) {
-			self.Description = parentDefinition.Description
-		}
-		if (self.DataTypeName == nil) && (parentDefinition.DataTypeName != nil) {
-			self.DataTypeName = parentDefinition.DataTypeName
-		}
-		if (self.Default == nil) && (parentDefinition.Default != nil) {
-			self.Default = parentDefinition.Default
-		}
-		if (self.DataType == nil) && (parentDefinition.DataType != nil) {
-			self.DataType = parentDefinition.DataType
-		}
+	log.Infof("{inherit} parameter definition: %s", self.Name)
 
-		// Validate type compatibility
-		if (self.DataType != nil) && (parentDefinition.DataType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.DataType, self.DataType) {
-			self.Context.ReportIncompatibleType(self.DataType, parentDefinition.DataType)
-			return
-		}
+	// Validate type compatibility
+	if (self.DataType != nil) && (parentDefinition.DataType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.DataType, self.DataType) {
+		self.Context.ReportIncompatibleType(self.DataType, parentDefinition.DataType)
+		return
 	}
+
+	if ((self.Description == nil) || ((self.DataType != nil) && (self.Description == self.DataType.Description))) && (parentDefinition.Description != nil) {
+		self.Description = parentDefinition.Description
+	}
+	if (self.DataTypeName == nil) && (parentDefinition.DataTypeName != nil) {
+		self.DataTypeName = parentDefinition.DataTypeName
+	}
+	if (self.Default == nil) && (parentDefinition.Default != nil) {
+		self.Default = parentDefinition.Default
+	}
+	if (self.DataType == nil) && (parentDefinition.DataType != nil) {
+		self.DataType = parentDefinition.DataType
+	}
+}
+
+// tosca.Renderable interface
+func (self *ParameterDefinition) Render() {
+	log.Infof("{render} parameter definition: %s", self.Name)
 
 	if self.DataType == nil {
 		return
@@ -84,15 +89,10 @@ func (self ParameterDefinitions) Inherit(parentDefinitions ParameterDefinitions)
 	}
 
 	for name, definition := range self {
-		if parentDefinitions != nil {
-			if parentDefinition, ok := parentDefinitions[name]; ok {
-				if definition != parentDefinition {
-					definition.Inherit(parentDefinition)
-				}
-				continue
+		if parentDefinition, ok := parentDefinitions[name]; ok {
+			if definition != parentDefinition {
+				definition.Inherit(parentDefinition)
 			}
 		}
-
-		definition.Inherit(nil)
 	}
 }

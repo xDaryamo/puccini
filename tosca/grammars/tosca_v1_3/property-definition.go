@@ -32,18 +32,24 @@ func ReadPropertyDefinition(context *tosca.Context) interface{} {
 }
 
 func (self *PropertyDefinition) Inherit(parentDefinition *PropertyDefinition) {
-	if parentDefinition != nil {
-		self.AttributeDefinition.Inherit(parentDefinition.AttributeDefinition)
+	log.Infof("{inherit} property definition: %s", self.Name)
 
-		if (self.Required == nil) && (parentDefinition.Required != nil) {
-			self.Required = parentDefinition.Required
-		}
-		if (self.ConstraintClauses == nil) && (parentDefinition.ConstraintClauses != nil) {
-			self.ConstraintClauses = parentDefinition.ConstraintClauses
-		}
-	} else {
-		self.AttributeDefinition.Inherit(nil)
+	self.AttributeDefinition.Inherit(parentDefinition.AttributeDefinition)
+
+	if (self.Required == nil) && (parentDefinition.Required != nil) {
+		self.Required = parentDefinition.Required
 	}
+	if parentDefinition.ConstraintClauses != nil {
+		self.ConstraintClauses = parentDefinition.ConstraintClauses.Append(self.ConstraintClauses)
+	}
+}
+
+// tosca.Renderable interface
+func (self *PropertyDefinition) Render() {
+	log.Infof("{render} property definition: %s", self.Name)
+
+	self.AttributeDefinition.Render()
+	self.ConstraintClauses.Render(self.DataType)
 }
 
 func (self *PropertyDefinition) IsRequired() bool {
@@ -65,15 +71,10 @@ func (self PropertyDefinitions) Inherit(parentDefinitions PropertyDefinitions) {
 	}
 
 	for name, definition := range self {
-		if parentDefinitions != nil {
-			if parentDefinition, ok := parentDefinitions[name]; ok {
-				if definition != parentDefinition {
-					definition.Inherit(parentDefinition)
-				}
-				continue
+		if parentDefinition, ok := parentDefinitions[name]; ok {
+			if definition != parentDefinition {
+				definition.Inherit(parentDefinition)
 			}
 		}
-
-		definition.Inherit(nil)
 	}
 }

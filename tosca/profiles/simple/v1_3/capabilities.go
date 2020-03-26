@@ -7,6 +7,7 @@ func init() {
 tosca_definitions_version: tosca_simple_yaml_1_3
 
 imports:
+
 - data.yaml
 
 capability_types:
@@ -25,7 +26,6 @@ capability_types:
       normative: 'true'
       citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
       citation_location: 5.5.2
-      role: feature
     description: >-
       The Node capability indicates the base capabilities of a TOSCA Node Type.
     derived_from: tosca.capabilities.Root
