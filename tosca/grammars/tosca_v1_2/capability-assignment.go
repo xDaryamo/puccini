@@ -15,10 +15,7 @@ import (
 
 // tosca.Reader signature
 func ReadCapabilityAssignment(context *tosca.Context) interface{} {
-	if context.ReadOverrides == nil {
-		context.ReadOverrides = make(map[string]string)
-	}
-	context.ReadOverrides["Occurrences"] = ""
+	context.SetReadTag("Occurrences", "")
 
 	return tosca_v1_3.ReadCapabilityAssignment(context)
 }

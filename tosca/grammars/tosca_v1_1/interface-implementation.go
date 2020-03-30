@@ -14,11 +14,8 @@ import (
 
 // tosca.Reader signature
 func ReadInterfaceImplementation(context *tosca.Context) interface{} {
-	if context.ReadOverrides == nil {
-		context.ReadOverrides = make(map[string]string)
-	}
-	context.ReadOverrides["Timeout"] = ""
-	context.ReadOverrides["OperationHost"] = ""
+	context.SetReadTag("Timeout", "")
+	context.SetReadTag("OperationHost", "")
 
 	return tosca_v1_3.ReadInterfaceImplementation(context)
 }

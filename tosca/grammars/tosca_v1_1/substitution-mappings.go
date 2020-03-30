@@ -14,11 +14,8 @@ import (
 
 // tosca.Reader signature
 func ReadSubstitutionMappings(context *tosca.Context) interface{} {
-	if context.ReadOverrides == nil {
-		context.ReadOverrides = make(map[string]string)
-	}
-	context.ReadOverrides["PropertyMappings"] = ""
-	context.ReadOverrides["InterfaceMappings"] = ""
+	context.SetReadTag("PropertyMappings", "")
+	context.SetReadTag("InterfaceMappings", "")
 
 	return tosca_v1_2.ReadSubstitutionMappings(context)
 }

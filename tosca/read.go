@@ -42,8 +42,8 @@ func (self *Context) ReadFields(entityPtr interface{}) []string {
 	tags := reflection.GetFieldTagsForValue(entity, "read")
 
 	// Read tag overrides
-	if self.ReadOverrides != nil {
-		for fieldName, tag := range self.ReadOverrides {
+	if self.ReadTagOverrides != nil {
+		for fieldName, tag := range self.ReadTagOverrides {
 			if tag != "" {
 				tags[fieldName] = tag
 			} else {

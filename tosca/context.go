@@ -61,7 +61,7 @@ type Context struct {
 	Problems           *problems.Problems
 	Quirks             Quirks
 	Grammar            *Grammar
-	ReadOverrides      map[string]string
+	ReadTagOverrides   map[string]string
 }
 
 func NewContext(quirks Quirks) *Context {
@@ -89,24 +89,6 @@ func (self *Context) NewImportContext(url urlpkg.URL) *Context {
 	}
 }
 
-func (self *Context) Clone(data interface{}) *Context {
-	return &Context{
-		Parent:             self.Parent,
-		Name:               self.Name,
-		Path:               self.Path,
-		URL:                self.URL,
-		Data:               data,
-		Locator:            self.Locator,
-		CanonicalNamespace: self.CanonicalNamespace,
-		Namespace:          self.Namespace,
-		ScriptletNamespace: self.ScriptletNamespace,
-		Hierarchy:          self.Hierarchy,
-		Problems:           self.Problems,
-		Quirks:             self.Quirks,
-		Grammar:            self.Grammar,
-	}
-}
-
 func (self *Context) GetAncestor(generation int) *Context {
 	if generation == 0 {
 		return self
@@ -128,6 +110,26 @@ func (self *Context) GetCanonicalNamespace() *string {
 	return nil
 }
 
+func (self *Context) HasQuirk(quirk Quirk) bool {
+	return self.Quirks.Has(quirk)
+}
+
+func (self *Context) SetReadTag(fieldName string, tag string) {
+	if self.ReadTagOverrides == nil {
+		self.ReadTagOverrides = make(map[string]string)
+	}
+	self.ReadTagOverrides[fieldName] = tag
+}
+
+func (self *Context) GetLocation() (int, int) {
+	if self.Locator != nil {
+		if row, column, ok := self.Locator.Locate(self.Path...); ok {
+			return row, column
+		}
+	}
+	return -1, -1
+}
+
 func (self *Context) Is(typeNames ...string) bool {
 	for _, typeName := range typeNames {
 		if typeValidator, ok := ard.TypeValidators[typeName]; ok {
@@ -141,22 +143,27 @@ func (self *Context) Is(typeNames ...string) bool {
 	return false
 }
 
-func (self *Context) HasQuirk(quirk Quirk) bool {
-	return self.Quirks.Has(quirk)
-}
-
-func (self *Context) GetLocation() (int, int) {
-	if self.Locator != nil {
-		if row, column, ok := self.Locator.Locate(self.Path...); ok {
-			return row, column
-		}
-	}
-	return -1, -1
-}
-
 //
 // Child contexts
 //
+
+func (self *Context) Clone(data interface{}) *Context {
+	return &Context{
+		Parent:             self.Parent,
+		Name:               self.Name,
+		Path:               self.Path,
+		URL:                self.URL,
+		Data:               data,
+		Locator:            self.Locator,
+		CanonicalNamespace: self.CanonicalNamespace,
+		Namespace:          self.Namespace,
+		ScriptletNamespace: self.ScriptletNamespace,
+		Hierarchy:          self.Hierarchy,
+		Problems:           self.Problems,
+		Quirks:             self.Quirks,
+		Grammar:            self.Grammar,
+	}
+}
 
 func (self *Context) FieldChild(name interface{}, data interface{}) *Context {
 	nameString := yamlkeys.KeyString(name) // complex keys would be stringified

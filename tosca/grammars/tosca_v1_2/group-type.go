@@ -15,10 +15,7 @@ import (
 
 // tosca.Reader signature
 func ReadGroupType(context *tosca.Context) interface{} {
-	if context.ReadOverrides == nil {
-		context.ReadOverrides = make(map[string]string)
-	}
-	context.ReadOverrides["InterfaceDefinitions"] = "interfaces,InterfaceDefinition"
+	context.SetReadTag("InterfaceDefinitions", "interfaces,InterfaceDefinition")
 
 	return tosca_v1_3.ReadGroupType(context)
 }

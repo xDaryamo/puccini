@@ -15,11 +15,8 @@ import (
 
 // tosca.Reader signature
 func ReadInterfaceAssignment(context *tosca.Context) interface{} {
-	if context.ReadOverrides == nil {
-		context.ReadOverrides = make(map[string]string)
-	}
-	context.ReadOverrides["Operations"] = "?,OperationAssignment"
-	context.ReadOverrides["Notifications"] = ""
+	context.SetReadTag("Operations", "?,OperationAssignment")
+	context.SetReadTag("Notifications", "")
 
 	self := tosca_v1_3.NewInterfaceAssignment(context)
 	context.ReadFields(self)

@@ -13,10 +13,7 @@ import (
 
 // tosca.Reader signature
 func ReadPolicyType(context *tosca.Context) interface{} {
-	if context.ReadOverrides == nil {
-		context.ReadOverrides = make(map[string]string)
-	}
-	context.ReadOverrides["TriggerDefinitions"] = ""
+	context.SetReadTag("TriggerDefinitions", "")
 
 	return tosca_v1_3.ReadPolicyType(context)
 }
