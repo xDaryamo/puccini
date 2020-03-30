@@ -58,7 +58,15 @@ tosca.traverseValues = function(traverser) {
 				var artifact = nodeTemplate.artifacts[artifactName];
 				tosca.traverseObjectValues(traverser, artifact.properties, vertex);
 				if (artifact.credential !== null)
-					artifact.credential = traverser(artifact.credential, vertex);
+					try {
+						artifact.credential = traverser(artifact.credential, vertex);
+					} catch (x) {
+						if ((typeof problems !== 'undefined') && x.value && x.value.error)
+							// Unwrap Go error
+							problems.reportError(x.value);
+						else
+							throw x;
+					}
 			}
 
 			for (var e = 0, l = vertex.edgesOut.length; e < l; e++) {
@@ -95,5 +103,13 @@ tosca.traverseInterfaceValues = function(traverser, interfaces, site, source, ta
 
 tosca.traverseObjectValues = function(traverser, o, site, source, target) {
 	for (var k in o)
-		o[k] = traverser(o[k], site, source, target);
+		try {
+			o[k] = traverser(o[k], site, source, target);
+		} catch (x) {
+			if ((typeof problems !== 'undefined') && x.value && x.value.error)
+				// Unwrap Go error
+				problems.reportError(x.value);
+			else
+				throw x;
+		}
 };

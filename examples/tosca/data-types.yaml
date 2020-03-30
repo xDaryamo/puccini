@@ -237,6 +237,7 @@ topology_template:
             "key2": [1, 2, 3]
           }
         xml:
+          # Constraints are applied *after* functions are called
           concat:
           - |
             <tag1>value</tag1>

@@ -13,8 +13,8 @@ function validate(v, format) {
 	try {
 		puccini.validateFormat(v, format);
 	} catch (x) {
-		if (x && x.value && x.value.error)
-			// Wrapped Go error
+		if (x.value && x.value.error)
+			// Unwrap Go error
 			return x.value.error();
 		else
 			throw x;
