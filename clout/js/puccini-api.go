@@ -60,7 +60,7 @@ func (entry *PucciniAPI) JoinFilePath(elements ...string) string {
 	return filepath.Join(elements...)
 }
 
-func (entry *PucciniAPI) ValidateType(value interface{}, type_ string) (bool, error) {
+func (entry *PucciniAPI) IsType(value interface{}, type_ string) (bool, error) {
 	// Special case whereby an integer stored as a float type has been optimized to an integer type
 	if (type_ == "!!float") && ard.IsInteger(value) {
 		return true, nil

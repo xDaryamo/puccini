@@ -9,7 +9,6 @@ tosca_definitions_version: tosca_simple_yaml_1_0
 metadata:
 
   puccini.scriptlet.import|tosca.comparer.version: internal:/tosca/simple/1.3/js/comparers/version.js
-  puccini.scriptlet.import|tosca.constraint._primitive: internal:/tosca/simple/1.3/js/constraints/_primitive.js
 
 data_types:
 
@@ -20,26 +19,18 @@ data_types:
   boolean:
     metadata:
       puccini.type: '!!bool'
-    constraints:
-    - _primitive: '!!bool'
 
   integer:
     metadata:
       puccini.type: '!!int'
-    constraints:
-    - _primitive: '!!int'
 
   float:
     metadata:
       puccini.type: '!!float'
-    constraints:
-    - _primitive: '!!float'
 
   string:
     metadata:
       puccini.type: '!!str'
-    constraints:
-    - _primitive: '!!str'
 
   timestamp:
     metadata:

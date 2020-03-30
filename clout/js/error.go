@@ -61,12 +61,19 @@ func (self *Error) Signature() string {
 
 // error interface
 func (self *Error) Error() string {
-	r := fmt.Sprintf("%s: call to %s failed", self.FunctionCall.Path, self.Signature())
+	r := fmt.Sprintf("%s: ", self.FunctionCall.Path)
 	if self.Message != "" {
-		r += fmt.Sprintf(", %s", self.Message)
+		r += fmt.Sprintf("%s in call to %s", self.Message, self.Signature())
+	} else {
+		r += fmt.Sprintf("call to %s failed", self.Signature())
 	}
 	if self.Cause != nil {
-		r += fmt.Sprintf(" because %s", self.Cause.Error())
+		if jsError, ok := self.Cause.(*Error); ok {
+			message, _, _, _ := jsError.Problem()
+			r += fmt.Sprintf(" because %s", message)
+		} else {
+			r += fmt.Sprintf(" because %s", self.Cause.Error())
+		}
 	}
 	return r
 }
@@ -78,16 +85,18 @@ func (self *Error) String() string {
 
 // tosca.problems.Problematic interface
 func (self *Error) Problem() (string, string, int, int) {
-	r := fmt.Sprintf("%s: call to %s failed", terminal.ColorPath(self.FunctionCall.Path), terminal.ColorName(self.Signature()))
+	r := fmt.Sprintf("%s: ", terminal.ColorPath(self.FunctionCall.Path))
 	if self.Message != "" {
-		r += fmt.Sprintf(", %s", self.Message)
+		r += fmt.Sprintf("%s in call to %s", self.Message, terminal.ColorName(self.Signature()))
+	} else {
+		r += fmt.Sprintf("call to %s failed", terminal.ColorName(self.Signature()))
 	}
 	if self.Cause != nil {
 		if jsError, ok := self.Cause.(*Error); ok {
 			message, _, _, _ := jsError.Problem()
-			r += fmt.Sprintf(" because %s", message)
+			r += fmt.Sprintf(" because %s", terminal.ColorError(message))
 		} else {
-			r += fmt.Sprintf(" because %s", self.Cause.Error())
+			r += fmt.Sprintf(" because %s", terminal.ColorError(self.Cause.Error()))
 		}
 	}
 	return r, self.FunctionCall.URL, self.FunctionCall.Row, self.FunctionCall.Column

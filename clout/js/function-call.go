@@ -1,6 +1,7 @@
 package js
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -110,7 +111,7 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.Strin
 func (self *FunctionCall) Signature(arguments []interface{}) string {
 	s := make([]string, len(arguments))
 	for index, argument := range arguments {
-		s[index], _ = format.EncodeYAML(argument, "", false)
+		s[index] = encodeArgument(argument)
 	}
 	return fmt.Sprintf("%s(%s)", self.Name, strings.Join(s, ","))
 }
@@ -171,17 +172,36 @@ func (self *FunctionCall) Validate(value interface{}, errorWhenInvalid bool) (bo
 		return false, self.WrapError(arguments, err)
 	}
 
-	if valid, ok := r.(bool); ok {
-		if !valid {
-			if errorWhenInvalid {
-				return false, self.NewError(arguments, "", nil)
-			} else {
-				return false, nil
-			}
+	switch valid := r.(type) {
+	case bool:
+		if valid {
+			return true, nil
 		}
-	} else {
-		return false, self.NewError(arguments, "\"validate\" did not return a bool", nil)
+	case string:
+		return false, self.NewError(arguments, valid, nil)
+	default:
+		return false, self.WrapError(arguments, errors.New("\"validate\" must return a bool or a string"))
 	}
 
-	return true, nil
+	if errorWhenInvalid {
+		return false, self.NewError(arguments, "", nil)
+	} else {
+		return false, nil
+	}
+}
+
+// Utils
+
+func encodeArgument(argument interface{}) string {
+	var encodedArgument string
+	switch argument.(type) {
+	case ard.Map, ard.List:
+		encodedArgument, _ := format.EncodeYAML(argument, "", false)
+		encodedArgument = encodedArgument[:len(encodedArgument)-1]
+	default:
+		encodedArgument = fmt.Sprintf("%s", argument)
+	}
+	encodedArgument = strings.ReplaceAll(encodedArgument, "\n", "¶")
+	encodedArgument = strings.ReplaceAll(encodedArgument, "\"", "\\\"")
+	return "\"" + encodedArgument + "\""
 }
