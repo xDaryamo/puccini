@@ -85,7 +85,7 @@ func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefiniti
 		self.TargetNodeType = parentDefinition.TargetNodeType
 	}
 
-	if self.RelationshipDefinition != parentDefinition.RelationshipDefinition {
+	if (self.RelationshipDefinition != nil) && (parentDefinition.RelationshipDefinition != nil) && (self.RelationshipDefinition != parentDefinition.RelationshipDefinition) {
 		self.RelationshipDefinition.Inherit(parentDefinition.RelationshipDefinition)
 	}
 }

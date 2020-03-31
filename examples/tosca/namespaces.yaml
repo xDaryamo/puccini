@@ -11,8 +11,8 @@ imports:
 - imports/nginx.yaml
 
 # Use the long notation of import to specify "namespace_prefix" 
-- file: imports/mongodb.yaml
-  namespace_prefix: mongodb
+- namespace_prefix: mongodb
+  file: imports/mongodb.yaml
 
 # The optional "namespace" keyword specifies the canonical namespace for the types declared here
 # (In Puccini it appears only in the compiled Clout output with a "::" separator)
