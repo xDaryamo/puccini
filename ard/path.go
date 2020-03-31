@@ -10,9 +10,10 @@ import (
 //
 
 const (
-	FieldPathType = iota
-	MapPathType   = iota
-	ListPathType  = iota
+	FieldPathType         = iota
+	MapPathType           = iota
+	ListPathType          = iota
+	SequencedListPathType = iota
 )
 
 type PathElement struct {
@@ -32,6 +33,10 @@ func NewListPathElement(index int) PathElement {
 	return PathElement{ListPathType, index}
 }
 
+func NewSequencedListPathElement(index int) PathElement {
+	return PathElement{SequencedListPathType, index}
+}
+
 //
 // Path
 //
@@ -40,7 +45,7 @@ type Path []PathElement
 
 func (self Path) Append(element PathElement) Path {
 	length := len(self)
-	path := make(Path, length+1, length+1)
+	path := make(Path, length+1)
 	copy(path, self)
 	path[length] = element
 	return path
@@ -56,6 +61,10 @@ func (self Path) AppendMap(name string) Path {
 
 func (self Path) AppendList(index int) Path {
 	return self.Append(NewListPathElement(index))
+}
+
+func (self Path) AppendSequencedList(index int) Path {
+	return self.Append(NewSequencedListPathElement(index))
 }
 
 // fmt.Stringer interface
@@ -79,6 +88,10 @@ func (self Path) String() string {
 		case ListPathType:
 			value := element.Value.(int)
 			path = fmt.Sprintf("%s[%d]", path, value)
+
+		case SequencedListPathType:
+			value := element.Value.(int)
+			path = fmt.Sprintf("%s{%d}", path, value)
 		}
 	}
 

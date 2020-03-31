@@ -252,7 +252,7 @@ func (self *Context) SequencedListChild(index int, name string, data interface{}
 	return &Context{
 		Parent:             self,
 		Name:               name,
-		Path:               self.Path.AppendList(index),
+		Path:               self.Path.AppendSequencedList(index),
 		URL:                self.URL,
 		Data:               data,
 		Locator:            self.Locator,

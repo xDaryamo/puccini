@@ -53,7 +53,7 @@ func ReadRequirementAssignment(context *tosca.Context) interface{} {
 }
 
 func NewDefaultRequirementAssignment(index int, definition *RequirementDefinition, context *tosca.Context) *RequirementAssignment {
-	context = context.ListChild(index, nil)
+	context = context.SequencedListChild(index, definition.Name, nil)
 	context.Name = definition.Name
 	self := NewRequirementAssignment(context)
 	self.TargetNodeTemplateNameOrTypeName = definition.TargetNodeTypeName

@@ -214,6 +214,18 @@ func FindYAMLNode(node *yaml.Node, path ...PathElement) *yaml.Node {
 			if index < len(node.Content) {
 				return FindYAMLNode(node.Content[index], path[1:]...)
 			}
+
+		case SequencedListPathType:
+			index := pathElement.Value.(int)
+			if index < len(node.Content) {
+				content := node.Content[index]
+				if (content.Kind == yaml.MappingNode) && (len(content.Content) == 2) {
+					// Content is a slice of pairs of key-followed-by-value
+					return FindYAMLNode(content.Content[1], path[1:]...)
+				} else {
+					return content
+				}
+			}
 		}
 	}
 
