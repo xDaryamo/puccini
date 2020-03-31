@@ -56,8 +56,7 @@ func (self *Group) Render() {
 	self.Interfaces.Render(self.GroupType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
 
 	// Validate members
-	// (Note we are checking for MemberNodeTypeNames and not MemberNodeTypes, because the latter will never be nil)
-	if self.GroupType.MemberNodeTypeNames != nil {
+	if len(self.GroupType.MemberNodeTypes) > 0 {
 		for index, nodeTemplate := range self.MemberNodeTemplates {
 			compatible := false
 			for _, nodeType := range self.GroupType.MemberNodeTypes {

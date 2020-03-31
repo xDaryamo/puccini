@@ -61,30 +61,36 @@ func (self *Policy) Render() {
 	self.Properties.RenderProperties(self.PolicyType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
 
 	// Validate targets
-	for index, nodeTemplate := range self.TargetNodeTemplates {
-		compatible := false
-		for _, nodeType := range self.PolicyType.TargetNodeTypes {
-			if self.Context.Hierarchy.IsCompatible(nodeType, nodeTemplate.NodeType) {
-				compatible = true
-				break
+
+	if len(self.PolicyType.TargetNodeTypes) > 0 {
+		for index, nodeTemplate := range self.TargetNodeTemplates {
+			compatible := false
+			for _, nodeType := range self.PolicyType.TargetNodeTypes {
+				if self.Context.Hierarchy.IsCompatible(nodeType, nodeTemplate.NodeType) {
+					compatible = true
+					break
+				}
 			}
-		}
-		if !compatible {
-			childContext := self.Context.FieldChild("targets", nil).ListChild(index, nil)
-			childContext.ReportIncompatible(nodeTemplate.Name, "policy", "target")
+			if !compatible {
+				childContext := self.Context.FieldChild("targets", nil).ListChild(index, nil)
+				childContext.ReportIncompatible(nodeTemplate.Name, "policy", "target")
+			}
 		}
 	}
-	for index, group := range self.TargetGroups {
-		compatible := false
-		for _, groupType := range self.PolicyType.TargetGroupTypes {
-			if self.Context.Hierarchy.IsCompatible(groupType, group.GroupType) {
-				compatible = true
-				break
+
+	if len(self.PolicyType.TargetGroupTypes) > 0 {
+		for index, group := range self.TargetGroups {
+			compatible := false
+			for _, groupType := range self.PolicyType.TargetGroupTypes {
+				if self.Context.Hierarchy.IsCompatible(groupType, group.GroupType) {
+					compatible = true
+					break
+				}
 			}
-		}
-		if !compatible {
-			childContext := self.Context.FieldChild("targets", nil).ListChild(index, nil)
-			childContext.ReportIncompatible(group.Name, "policy", "target")
+			if !compatible {
+				childContext := self.Context.FieldChild("targets", nil).ListChild(index, nil)
+				childContext.ReportIncompatible(group.Name, "policy", "target")
+			}
 		}
 	}
 }
