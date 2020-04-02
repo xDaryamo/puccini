@@ -212,7 +212,6 @@ func (self *Context) FieldChildren() []*Context {
 
 func (self *Context) MapChild(name interface{}, data interface{}) *Context {
 	nameString := strings.ReplaceAll(yamlkeys.KeyString(name), "\n", "¶") // complex keys would be stringified
-
 	return &Context{
 		Parent:             self,
 		Name:               nameString,

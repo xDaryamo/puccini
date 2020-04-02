@@ -51,7 +51,7 @@ func (self *Problem) String() string {
 		}
 		r = r + " "
 	}
-	r = r + self.Message
+	r = r + strings.ReplaceAll(self.Message, "\n", "¶")
 	return r
 }
 

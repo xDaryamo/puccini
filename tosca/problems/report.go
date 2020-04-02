@@ -2,13 +2,9 @@ package problems
 
 import (
 	"fmt"
-	"strings"
 )
 
 func (self *Problems) ReportInSection(skip int, message string, section string, row int, column int) bool {
-	// We want our reports to fit in one line
-	message = strings.ReplaceAll(message, "\n", "¶")
-
 	return self.Append(NewProblem(message, section, row, column, skip+1))
 }
 

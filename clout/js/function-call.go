@@ -195,13 +195,20 @@ func (self *FunctionCall) Validate(value interface{}, errorWhenInvalid bool) (bo
 func encodeArgument(argument interface{}) string {
 	var encodedArgument string
 	switch argument.(type) {
-	case ard.Map, ard.List:
-		encodedArgument, _ := format.EncodeYAML(argument, "", false)
-		encodedArgument = encodedArgument[:len(encodedArgument)-1]
+	case int64, int32, int16, int8, int, uint64, uint32, uint16, uint8, uint:
+		return fmt.Sprintf("%d", argument)
+	case float64, float32:
+		return fmt.Sprintf("%g", argument)
+	case bool:
+		return fmt.Sprintf("%t", argument)
+	case ard.Map, ard.StringMap, ard.List:
+		encodedArgument, _ = format.EncodeYAML(argument, "", false)
+		encodedArgument = strings.TrimSuffix(encodedArgument, "\n")
 	default:
 		encodedArgument = fmt.Sprintf("%s", argument)
 	}
+
 	encodedArgument = strings.ReplaceAll(encodedArgument, "\n", "¶")
 	encodedArgument = strings.ReplaceAll(encodedArgument, "\"", "\\\"")
-	return "\"" + encodedArgument + "\""
+	return fmt.Sprintf("\"%s\"", encodedArgument)
 }

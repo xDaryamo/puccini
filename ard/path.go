@@ -2,6 +2,7 @@ package ard
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -67,6 +68,8 @@ func (self Path) AppendSequencedList(index int) Path {
 	return self.Append(NewSequencedListPathElement(index))
 }
 
+var fieldPathElementEscapeRe = regexp.MustCompile(`([\".\[\]{}])`)
+
 // fmt.Stringer interface
 func (self Path) String() string {
 	var path string
@@ -74,7 +77,7 @@ func (self Path) String() string {
 	for _, element := range self {
 		switch element.Type {
 		case FieldPathType:
-			value := escapeQuotes(element.Value.(string))
+			value := fieldPathElementEscapeRe.ReplaceAllString(element.Value.(string), "\\$1")
 			if path == "" {
 				path = value
 			} else {
@@ -82,7 +85,7 @@ func (self Path) String() string {
 			}
 
 		case MapPathType:
-			value := escapeQuotes(element.Value.(string))
+			value := strings.ReplaceAll(element.Value.(string), "\"", "\\\"")
 			path = fmt.Sprintf("%s[\"%s\"]", path, value)
 
 		case ListPathType:
@@ -96,8 +99,4 @@ func (self Path) String() string {
 	}
 
 	return path
-}
-
-func escapeQuotes(s string) string {
-	return strings.Replace(s, "\"", "\\\"", -1)
 }
