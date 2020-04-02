@@ -57,7 +57,7 @@ func (self *DataType) Inherit() {
 	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *DataType) Render() {
 	log.Infof("{render} data type: %s", self.Name)
 

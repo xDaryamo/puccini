@@ -70,7 +70,7 @@ func ReadConstraintClause(context *tosca.Context) interface{} {
 			operator := yamlkeys.KeyString(key)
 
 			scriptletName := "tosca.constraint." + operator
-			scriptlet, ok := context.ScriptletNamespace[scriptletName]
+			scriptlet, ok := context.ScriptletNamespace.Lookup(scriptletName)
 			if !ok {
 				context.Clone(operator).ReportValueMalformed("constraint clause", "unsupported operator")
 				return self

@@ -2,16 +2,12 @@ package parser
 
 import (
 	"errors"
-	"sync"
 
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/problems"
 	urlpkg "github.com/tliron/puccini/url"
 )
-
-// TODO: this is a brute-force method to avoid race conditions
-var parserLock sync.Mutex
 
 func Parse(url string, quirks tosca.Quirks, inputs map[string]interface{}) (*normal.ServiceTemplate, *problems.Problems, error) {
 	context := NewContext(quirks)
@@ -20,9 +16,6 @@ func Parse(url string, quirks tosca.Quirks, inputs map[string]interface{}) (*nor
 	if err != nil {
 		return nil, nil, err
 	}
-
-	parserLock.Lock()
-	defer parserLock.Unlock()
 
 	// Phase 1: Read
 	ok := context.ReadRoot(url_)

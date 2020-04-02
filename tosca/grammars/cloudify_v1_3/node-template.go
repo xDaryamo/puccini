@@ -43,7 +43,7 @@ func ReadNodeTemplate(context *tosca.Context) interface{} {
 	return self
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *NodeTemplate) Render() {
 	log.Infof("{render} node template: %s", self.Name)
 

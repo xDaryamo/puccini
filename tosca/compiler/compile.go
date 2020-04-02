@@ -4,6 +4,7 @@ import (
 	"github.com/tliron/puccini/ard"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/common"
+	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
 
@@ -11,14 +12,21 @@ func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cl
 	clout := cloutpkg.NewClout()
 
 	metadata := make(ard.StringMap)
-	for name, scriptlet := range serviceTemplate.ScriptletNamespace {
-		scriptlet, err := scriptlet.Read()
-		if err != nil {
-			return nil, err
+	var err error = nil
+	serviceTemplate.ScriptletNamespace.Range(func(name string, scriptlet *tosca.Scriptlet) bool {
+		if scriptlet_, err_ := scriptlet.Read(); err == nil {
+			if err_ = ard.StringMapPutNested(metadata, name, scriptlet_); err_ != nil {
+				err = err_
+				return false
+			}
+		} else {
+			err = err_
+			return false
 		}
-		if err = ard.StringMapPutNested(metadata, name, scriptlet); err != nil {
-			return nil, err
-		}
+		return true
+	})
+	if err != nil {
+		return nil, err
 	}
 	clout.Metadata["puccini-js"] = metadata
 
@@ -266,7 +274,6 @@ func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cl
 	}
 
 	// Normalize
-	var err error
 	clout, err = clout.Normalize()
 	if err != nil {
 		return clout, err

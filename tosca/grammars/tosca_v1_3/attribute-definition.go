@@ -78,7 +78,7 @@ func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) 
 	}
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *AttributeDefinition) Render() {
 	log.Infof("{render} attribute definition: %s", self.Name)
 

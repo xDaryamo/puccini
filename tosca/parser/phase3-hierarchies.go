@@ -23,7 +23,7 @@ func (self *Unit) MergeHierarchies(hierarchyContext tosca.HierarchyContext, work
 		}
 
 		log.Infof("{hierarchies} create: %s", context.URL.String())
-		hierarchy := tosca.NewHierarchy(self.EntityPtr, hierarchyContext)
+		hierarchy := tosca.NewHierarchyFor(self.EntityPtr, hierarchyContext)
 		context.Hierarchy.Merge(hierarchy, hierarchyContext)
 		context.Hierarchy.AddTo(self.EntityPtr)
 	}
@@ -34,7 +34,7 @@ func (self *Unit) MergeHierarchies(hierarchyContext tosca.HierarchyContext, work
 func (self *Context) PrintHierarchies(indent int) {
 	for _, import_ := range self.Units {
 		context := import_.GetContext()
-		if len(context.Hierarchy.Children) > 0 {
+		if !context.Hierarchy.Empty() {
 			terminal.PrintIndent(indent)
 			fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorValue(context.URL.String()))
 			context.Hierarchy.Print(indent)

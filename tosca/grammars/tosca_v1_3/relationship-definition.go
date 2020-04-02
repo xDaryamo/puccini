@@ -72,7 +72,7 @@ func (self *RelationshipDefinition) Inherit(parentDefinition *RelationshipDefini
 	self.InterfaceDefinitions.Inherit(parentDefinition.InterfaceDefinitions)
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *RelationshipDefinition) Render() {
 	log.Info("{render} relationship definition")
 

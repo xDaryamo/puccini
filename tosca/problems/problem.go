@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"sort"
 	"strings"
+	"sync"
 
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/common/format"
@@ -90,22 +91,29 @@ func (self ProblemSlice) Less(i, j int) bool {
 //
 
 type Problems struct {
-	Problems ProblemSlice
+	problems ProblemSlice
+	lock     sync.RWMutex `yaml:"-"`
 }
 
 func (self *Problems) Empty() bool {
-	return len(self.Problems) == 0
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	return len(self.problems) == 0
 }
 
 func (self *Problems) Append(problem *Problem) bool {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
 	// Avoid duplicates
-	for _, problem_ := range self.Problems {
+	for _, problem_ := range self.problems {
 		if problem.Equals(problem_) {
 			return false
 		}
 	}
 
-	self.Problems = append(self.Problems, problem)
+	self.problems = append(self.problems, problem)
 	return true
 }
 
@@ -116,7 +124,9 @@ func (self *Problems) Merge(problems *Problems) bool {
 	}
 
 	merged := false
-	for _, problem := range problems.Problems {
+	problems.lock.RLock()
+	defer problems.lock.RUnlock()
+	for _, problem := range problems.problems {
 		if self.Append(problem) {
 			merged = true
 		}
@@ -137,6 +147,9 @@ func (self *Problems) String() string {
 }
 
 func (self *Problems) ARD() (ard.Map, error) {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
 	if s, err := format.EncodeYAML(self, " ", false); err == nil {
 		map_, _, err := ard.ReadYAML(strings.NewReader(s), false)
 		return map_, err
@@ -146,11 +159,13 @@ func (self *Problems) ARD() (ard.Map, error) {
 }
 
 func (self *Problems) Write(writer io.Writer, pretty bool, locate bool) bool {
-	length := len(self.Problems)
+	length := len(self.problems)
 	if length > 0 {
 		// Sort
 		problems := make(ProblemSlice, length)
-		copy(problems, self.Problems)
+		self.lock.RLock()
+		copy(problems, self.problems)
+		self.lock.RUnlock()
 		sort.Sort(problems)
 
 		if pretty {

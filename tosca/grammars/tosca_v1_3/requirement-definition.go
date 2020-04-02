@@ -90,7 +90,7 @@ func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefiniti
 	}
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self RequirementDefinition) Render() {
 	log.Infof("{render} requirement definition: %s", self.Name)
 

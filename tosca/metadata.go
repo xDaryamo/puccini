@@ -4,9 +4,10 @@ package tosca
 // HasMetadata
 //
 
+// Must be thread-safe!
 type HasMetadata interface {
 	GetDescription() (string, bool)
-	GetMetadata() (map[string]string, bool)
+	GetMetadata() (map[string]string, bool) // should return a copy
 	SetMetadata(name string, value string) bool
 }
 

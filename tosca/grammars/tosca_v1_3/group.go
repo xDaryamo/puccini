@@ -44,7 +44,7 @@ func ReadGroup(context *tosca.Context) interface{} {
 	return self
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *Group) Render() {
 	log.Infof("{render} group: %s", self.Name)
 

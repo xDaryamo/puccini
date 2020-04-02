@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/reflection"
 )
@@ -62,6 +63,10 @@ func (self *InheritContext) NewExecutor(entityPtr interface{}) Executor {
 		defer task.Done()
 
 		log.Infof("{inheritance} inherit: %s", task.Name)
+
+		lock := common.GetLock(entityPtr)
+		lock.Lock()
+		defer lock.Unlock()
 
 		for _, inheritField := range self.InheritFields.Get(entityPtr) {
 			inheritField.Inherit()

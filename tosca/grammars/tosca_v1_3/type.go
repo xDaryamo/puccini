@@ -1,6 +1,8 @@
 package tosca_v1_3
 
 import (
+	"sync"
+
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -20,6 +22,8 @@ type Type struct {
 	Version     *Version `read:"version,version"`
 	Metadata    Metadata `read:"metadata,!Metadata"`
 	Description *string  `read:"description"`
+
+	metadataLock sync.RWMutex
 }
 
 func NewType(context *tosca.Context) *Type {
@@ -31,6 +35,9 @@ func NewType(context *tosca.Context) *Type {
 
 // tosca.HasMetadata interface
 func (self *Type) GetDescription() (string, bool) {
+	self.metadataLock.RLock()
+	defer self.metadataLock.RUnlock()
+
 	if self.Description != nil {
 		return *self.Description, true
 	}
@@ -39,6 +46,9 @@ func (self *Type) GetDescription() (string, bool) {
 
 // tosca.HasMetadata interface
 func (self *Type) GetMetadata() (map[string]string, bool) {
+	self.metadataLock.RLock()
+	defer self.metadataLock.RUnlock()
+
 	metadata := make(map[string]string)
 	if self.Metadata != nil {
 		for key, value := range self.Metadata {
@@ -50,6 +60,9 @@ func (self *Type) GetMetadata() (map[string]string, bool) {
 
 // tosca.HasMetadata interface
 func (self *Type) SetMetadata(name string, value string) bool {
+	self.metadataLock.Lock()
+	defer self.metadataLock.Unlock()
+
 	self.Metadata[name] = value
 	return true
 }

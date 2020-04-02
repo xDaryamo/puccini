@@ -37,7 +37,7 @@ func ReadAttributeMapping(context *tosca.Context) interface{} {
 	return self
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *AttributeMapping) Render() {
 	log.Info("{render} attribute mapping")
 

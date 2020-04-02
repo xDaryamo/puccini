@@ -70,7 +70,7 @@ func (self *GroupType) Inherit() {
 	// So we will do that check in the rendering phase, below
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *GroupType) Render() {
 	log.Infof("{render} group type: %s", self.Name)
 

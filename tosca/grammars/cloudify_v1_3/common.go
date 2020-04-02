@@ -9,7 +9,7 @@ var log = logging.MustGetLogger("grammars.cloudify_v1_3")
 
 var Grammar = tosca.NewGrammar()
 
-var DefaultScriptletNamespace = make(tosca.ScriptletNamespace)
+var DefaultScriptletNamespace = tosca.NewScriptletNamespace()
 
 func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "cloudify_dsl_1_3", "/cloudify/5.0.5/profile.yaml")

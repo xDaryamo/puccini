@@ -42,7 +42,7 @@ func (self *TriggerDefinition) GetKey() string {
 	return self.Name
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *TriggerDefinition) Render() {
 	log.Infof("{render} trigger definition: %s", self.Name)
 	if self.Schedule != nil {

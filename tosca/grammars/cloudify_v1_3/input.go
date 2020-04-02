@@ -46,7 +46,7 @@ func (self *Input) Normalize(context *tosca.Context) normal.Constrainable {
 	return value.Normalize()
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *Input) Render() {
 	log.Infof("{render} input", self.Name)
 

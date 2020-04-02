@@ -58,8 +58,8 @@ func NewUnit(entityPtr interface{}, container *Unit, nameTransformer tosca.NameT
 
 func (self *Unit) AddImport(import_ *Unit) {
 	self.importsLock.Lock()
+	defer self.importsLock.Unlock()
 	self.Imports = append(self.Imports, import_)
-	self.importsLock.Unlock()
 }
 
 func (self *Unit) GetContext() *tosca.Context {

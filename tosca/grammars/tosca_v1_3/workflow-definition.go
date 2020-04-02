@@ -45,7 +45,7 @@ func (self *WorkflowDefinition) GetKey() string {
 	return self.Name
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *WorkflowDefinition) Render() {
 	log.Infof("{render} workflow definition: %s", self.Name)
 

@@ -40,7 +40,7 @@ func ReadMeta(reader io.Reader) (*Meta, error) {
 		return nil, err
 	}
 
-	self := &Meta{}
+	self := new(Meta)
 
 	for name, value := range map_ {
 		var err error

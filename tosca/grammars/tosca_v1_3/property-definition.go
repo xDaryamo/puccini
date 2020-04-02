@@ -44,7 +44,7 @@ func (self *PropertyDefinition) Inherit(parentDefinition *PropertyDefinition) {
 	}
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *PropertyDefinition) Render() {
 	log.Infof("{render} property definition: %s", self.Name)
 

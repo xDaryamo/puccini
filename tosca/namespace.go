@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"sync"
 
 	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/reflection"
@@ -16,36 +17,72 @@ type NameTransformer = func(string, interface{}) []string
 // Namespace
 //
 
-type Namespace map[reflect.Type]map[string]interface{}
+type Namespace struct {
+	namespace map[reflect.Type]map[string]interface{}
+	lock      sync.RWMutex
+}
+
+func NewNamespace() *Namespace {
+	return &Namespace{
+		namespace: make(map[reflect.Type]map[string]interface{}),
+	}
+}
 
 // From "namespace" tags
-func NewNamespace(entityPtr interface{}) Namespace {
-	namespace := make(Namespace)
+func NewNamespaceFor(entityPtr interface{}) *Namespace {
+	self := NewNamespace()
 
 	reflection.Traverse(entityPtr, func(entityPtr interface{}) bool {
 		for _, field := range reflection.GetTaggedFields(entityPtr, "namespace") {
 			if field.Kind() != reflect.String {
 				panic(fmt.Sprintf("\"namespace\" tag can only be used on \"string\" field in struct: %T", entityPtr))
 			}
-			namespace.Set(field.String(), entityPtr)
+			self.set(field.String(), entityPtr)
 		}
 		return true
 	})
 
-	return namespace
+	return self
 }
 
-func (self Namespace) Lookup(name string) (interface{}, bool) {
-	for _, forType := range self {
+func (self *Namespace) Empty() bool {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	return len(self.namespace) == 0
+}
+
+func (self *Namespace) Range(f func(interface{}, interface{}) bool) {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	for _, forType := range self.namespace {
+		for _, entityPtr := range forType {
+			if !f(forType, entityPtr) {
+				return
+			}
+		}
+	}
+}
+
+func (self *Namespace) Lookup(name string) (interface{}, bool) {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	for _, forType := range self.namespace {
 		if entityPtr, ok := forType[name]; ok {
 			return entityPtr, true
 		}
 	}
+
 	return nil, false
 }
 
-func (self Namespace) LookupForType(name string, type_ reflect.Type) (interface{}, bool) {
-	if forType, ok := self[type_]; ok {
+func (self *Namespace) LookupForType(name string, type_ reflect.Type) (interface{}, bool) {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	if forType, ok := self.namespace[type_]; ok {
 		entityPtr, ok := forType[name]
 		return entityPtr, ok
 	} else {
@@ -54,12 +91,19 @@ func (self Namespace) LookupForType(name string, type_ reflect.Type) (interface{
 }
 
 // If the name has already been set returns existing entityPtr, true
-func (self Namespace) Set(name string, entityPtr interface{}) (interface{}, bool) {
+func (self *Namespace) Set(name string, entityPtr interface{}) (interface{}, bool) {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	return self.set(name, entityPtr)
+}
+
+func (self *Namespace) set(name string, entityPtr interface{}) (interface{}, bool) {
 	type_ := reflect.TypeOf(entityPtr)
-	forType, ok := self[type_]
+	forType, ok := self.namespace[type_]
 	if !ok {
 		forType = make(map[string]interface{})
-		self[type_] = forType
+		self.namespace[type_] = forType
 	}
 
 	if existing, ok := forType[name]; ok {
@@ -77,8 +121,18 @@ func (self Namespace) Set(name string, entityPtr interface{}) (interface{}, bool
 	return nil, false
 }
 
-func (self Namespace) Merge(namespace Namespace, nameTransformer NameTransformer) {
-	for type_, forType := range namespace {
+func (self *Namespace) Merge(namespace *Namespace, nameTransformer NameTransformer) {
+	if self == namespace {
+		return
+	}
+
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	namespace.lock.RLock()
+	defer namespace.lock.RUnlock()
+
+	for type_, forType := range namespace.namespace {
 		for name, entityPtr := range forType {
 			var names []string
 
@@ -89,8 +143,7 @@ func (self Namespace) Merge(namespace Namespace, nameTransformer NameTransformer
 			}
 
 			for _, name = range names {
-				existing, exists := self.Set(name, entityPtr)
-				if exists {
+				if existing, exists := self.set(name, entityPtr); exists {
 					GetContext(entityPtr).ReportNameAmbiguous(type_.Elem(), name, entityPtr, existing)
 				}
 			}
@@ -100,17 +153,20 @@ func (self Namespace) Merge(namespace Namespace, nameTransformer NameTransformer
 
 // Print
 
-func (self Namespace) Print(indent int) {
+func (self *Namespace) Print(indent int) {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
 	// Sort type names
 	var types TypesByName
-	for type_ := range self {
+	for type_ := range self.namespace {
 		types = append(types, type_)
 	}
 	sort.Sort(types)
 
 	nameIndent := indent + 1
 	for _, type_ := range types {
-		forType := self[type_]
+		forType := self.namespace[type_]
 		terminal.PrintIndent(indent)
 		fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorTypeName(type_.Elem().String()))
 

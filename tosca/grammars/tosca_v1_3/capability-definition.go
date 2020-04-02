@@ -91,7 +91,7 @@ func (self *CapabilityDefinition) Inherit(parentDefinition *CapabilityDefinition
 	self.AttributeDefinitions.Inherit(parentDefinition.AttributeDefinitions)
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *CapabilityDefinition) Render() {
 	log.Infof("{render} capability definition: %s", self.Name)
 

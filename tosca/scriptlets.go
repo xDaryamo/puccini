@@ -3,6 +3,7 @@ package tosca
 import (
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/tliron/puccini/clout/js"
 	urlpkg "github.com/tliron/puccini/url"
@@ -11,20 +12,17 @@ import (
 func (self *Context) ImportScriptlet(name string, path string) {
 	var nativeArgumentIndexes []uint
 	name, nativeArgumentIndexes = parseScriptletName(name)
-	self.ScriptletNamespace[name] = &Scriptlet{
+	self.ScriptletNamespace.Set(name, &Scriptlet{
 		Origin:                self.URL.Origin(),
 		Path:                  path,
 		NativeArgumentIndexes: nativeArgumentIndexes,
-	}
+	})
 }
 
 func (self *Context) EmbedScriptlet(name string, scriptlet string) {
 	var nativeArgumentIndexes []uint
 	name, nativeArgumentIndexes = parseScriptletName(name)
-	self.ScriptletNamespace[name] = &Scriptlet{
-		Scriptlet:             js.CleanupScriptlet(scriptlet),
-		NativeArgumentIndexes: nativeArgumentIndexes,
-	}
+	self.ScriptletNamespace.RegisterScriptlet(name, scriptlet, nativeArgumentIndexes)
 }
 
 func parseScriptletName(name string) (string, []uint) {
@@ -82,16 +80,51 @@ func (self *Scriptlet) Read() (string, error) {
 // ScriptletNamespace
 //
 
-type ScriptletNamespace map[string]*Scriptlet
+type ScriptletNamespace struct {
+	namespace map[string]*Scriptlet
+	lock      sync.RWMutex
+}
 
-func (self ScriptletNamespace) RegisterScriptlet(name string, scriptlet string, nativeArgumentIndexes []uint) {
-	self[name] = &Scriptlet{
-		Scriptlet:             js.CleanupScriptlet(scriptlet),
-		NativeArgumentIndexes: nativeArgumentIndexes,
+func NewScriptletNamespace() *ScriptletNamespace {
+	return &ScriptletNamespace{
+		namespace: make(map[string]*Scriptlet),
 	}
 }
 
-func (self ScriptletNamespace) RegisterScriptlets(scriptlets map[string]string, nativeArgumentIndexes map[string][]uint, ignore ...string) {
+func (self *ScriptletNamespace) Range(f func(string, *Scriptlet) bool) {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	for name, scriptlet := range self.namespace {
+		if !f(name, scriptlet) {
+			return
+		}
+	}
+}
+
+func (self *ScriptletNamespace) Lookup(name string) (*Scriptlet, bool) {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	scriptlet, ok := self.namespace[name]
+	return scriptlet, ok
+}
+
+func (self *ScriptletNamespace) Set(name string, scriptlet *Scriptlet) {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	self.namespace[name] = scriptlet
+}
+
+func (self *ScriptletNamespace) RegisterScriptlet(name string, scriptlet string, nativeArgumentIndexes []uint) {
+	self.Set(name, &Scriptlet{
+		Scriptlet:             js.CleanupScriptlet(scriptlet),
+		NativeArgumentIndexes: nativeArgumentIndexes,
+	})
+}
+
+func (self *ScriptletNamespace) RegisterScriptlets(scriptlets map[string]string, nativeArgumentIndexes map[string][]uint, ignore ...string) {
 	for name, scriptlet := range scriptlets {
 		var ignore_ bool
 		for _, ignore__ := range ignore {
@@ -109,8 +142,18 @@ func (self ScriptletNamespace) RegisterScriptlets(scriptlets map[string]string, 
 	}
 }
 
-func (self ScriptletNamespace) Merge(from ScriptletNamespace) {
-	for name, scriptlet := range from {
-		self[name] = scriptlet
+func (self *ScriptletNamespace) Merge(namespace *ScriptletNamespace) {
+	if self == namespace {
+		return
+	}
+
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	namespace.lock.RLock()
+	defer namespace.lock.RUnlock()
+
+	for name, scriptlet := range namespace.namespace {
+		self.namespace[name] = scriptlet
 	}
 }

@@ -40,7 +40,7 @@ func ReadRequirementMapping(context *tosca.Context) interface{} {
 	return self
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *RequirementMapping) Render() {
 	log.Info("{render} requirement mapping")
 

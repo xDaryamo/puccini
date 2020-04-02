@@ -39,7 +39,7 @@ func ReadSchema(context *tosca.Context) interface{} {
 	return self
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *Schema) Render() {
 	log.Info("{render} schema")
 

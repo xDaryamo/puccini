@@ -24,7 +24,7 @@ func (self *Unit) MergeNamespaces(work *ContextualWork) {
 		}
 
 		log.Infof("{namespaces} create: %s", context.URL.String())
-		namespace := tosca.NewNamespace(self.EntityPtr)
+		namespace := tosca.NewNamespaceFor(self.EntityPtr)
 		context.Namespace.Merge(namespace, nil)
 	}
 }
@@ -35,7 +35,7 @@ func (self *Context) PrintNamespaces(indent int) {
 	childIndent := indent + 1
 	for _, import_ := range self.Units {
 		context := import_.GetContext()
-		if len(context.Namespace) > 0 {
+		if !context.Namespace.Empty() {
 			terminal.PrintIndent(indent)
 			fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorValue(context.URL.String()))
 			context.Namespace.Print(childIndent)

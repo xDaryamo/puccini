@@ -42,7 +42,7 @@ func ReadConditionDefinition(context *tosca.Context) interface{} {
 		for key, value := range map_ {
 			operator := yamlkeys.KeyString(key)
 
-			script, ok := context.ScriptletNamespace[operator]
+			script, ok := context.ScriptletNamespace.Lookup(operator)
 			if !ok {
 				context.Clone(operator).ReportValueMalformed("condition definition", "unsupported operator")
 				return self

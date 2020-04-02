@@ -2,6 +2,7 @@ package tosca
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/tliron/puccini/ard"
@@ -55,8 +56,8 @@ type Context struct {
 	Data               interface{} // ARD
 	Locator            ard.Locator
 	CanonicalNamespace *string
-	Namespace          Namespace
-	ScriptletNamespace ScriptletNamespace
+	Namespace          *Namespace
+	ScriptletNamespace *ScriptletNamespace
 	Hierarchy          *Hierarchy
 	Problems           *problems.Problems
 	Quirks             Quirks
@@ -66,10 +67,10 @@ type Context struct {
 
 func NewContext(quirks Quirks) *Context {
 	return &Context{
-		Namespace:          make(Namespace),
-		ScriptletNamespace: make(ScriptletNamespace),
-		Hierarchy:          &Hierarchy{},
-		Problems:           &problems.Problems{},
+		Namespace:          NewNamespace(),
+		ScriptletNamespace: NewScriptletNamespace(),
+		Hierarchy:          NewHierarchy(),
+		Problems:           new(problems.Problems),
 		Quirks:             quirks,
 	}
 }
@@ -80,9 +81,9 @@ func (self *Context) NewImportContext(url urlpkg.URL) *Context {
 		Path:               self.Path,
 		URL:                url,
 		CanonicalNamespace: self.CanonicalNamespace,
-		Namespace:          make(Namespace),
-		ScriptletNamespace: make(ScriptletNamespace),
-		Hierarchy:          &Hierarchy{},
+		Namespace:          NewNamespace(),
+		ScriptletNamespace: NewScriptletNamespace(),
+		Hierarchy:          NewHierarchy(),
 		Problems:           self.Problems,
 		Quirks:             self.Quirks,
 		Grammar:            self.Grammar,
@@ -232,7 +233,7 @@ func (self *Context) MapChild(name interface{}, data interface{}) *Context {
 func (self *Context) ListChild(index int, data interface{}) *Context {
 	return &Context{
 		Parent:             self,
-		Name:               fmt.Sprintf("%d", index),
+		Name:               strconv.FormatInt(int64(index), 10),
 		Path:               self.Path.AppendList(index),
 		URL:                self.URL,
 		Data:               data,

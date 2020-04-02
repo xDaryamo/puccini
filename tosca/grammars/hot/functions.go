@@ -58,7 +58,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 		name := yamlkeys.KeyString(key)
 
 		scriptletName := "tosca.function." + name
-		_, ok := context.ScriptletNamespace[scriptletName]
+		_, ok := context.ScriptletNamespace.Lookup(scriptletName)
 		if !ok {
 			// Not a function call, despite having the right data structure
 			return false

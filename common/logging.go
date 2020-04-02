@@ -18,7 +18,6 @@ var colorFormatter = logging.MustStringFormatter(
 const logFileWritePermissions = 0600
 
 func ConfigureLogging(verbosity int, path *string) {
-	os.Getpid()
 	var backend *logging.LogBackend
 	if path != nil {
 		if file, err := os.OpenFile(*path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, logFileWritePermissions); err == nil {

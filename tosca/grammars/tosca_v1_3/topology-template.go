@@ -83,7 +83,7 @@ func (self *TopologyTemplate) SetInputs(inputs map[string]interface{}) {
 	}
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *TopologyTemplate) Render() {
 	log.Info("{render} topology template")
 

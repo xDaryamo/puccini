@@ -60,7 +60,7 @@ func (self *NodeTemplate) PreRead() {
 	CopyTemplate(self.Context)
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *NodeTemplate) Render() {
 	if self.rendered {
 		// Avoid rendering more than once (can happen if we were called from PropertyMapping etc. Render)

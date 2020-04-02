@@ -9,7 +9,7 @@ var log = logging.MustGetLogger("grammars.hot")
 
 var Grammar = tosca.NewGrammar()
 
-var DefaultScriptletNamespace = make(tosca.ScriptletNamespace)
+var DefaultScriptletNamespace = tosca.NewScriptletNamespace()
 
 func init() {
 	Grammar.RegisterVersion("heat_template_version", "train", "") // not mentioned in spec, but probably supported

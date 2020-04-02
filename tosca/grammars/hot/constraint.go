@@ -59,7 +59,7 @@ func ReadConstraint(context *tosca.Context) interface{} {
 			}
 
 			scriptletName := "tosca.constraint." + operator
-			if _, ok := context.ScriptletNamespace[scriptletName]; !ok {
+			if _, ok := context.ScriptletNamespace.Lookup(scriptletName); !ok {
 				context.Clone(operator).ReportValueMalformed("constraint", "unsupported operator")
 				return self
 			}

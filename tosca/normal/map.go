@@ -22,7 +22,7 @@ type Map struct {
 }
 
 func NewMap() *Map {
-	return &Map{}
+	return new(Map)
 }
 
 // Constrainable interface

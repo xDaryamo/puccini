@@ -67,7 +67,7 @@ func (self *PolicyType) Inherit() {
 	// So we will do that check in the rendering phase, below
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *PolicyType) Render() {
 	log.Infof("{render} policy type: %s", self.Name)
 

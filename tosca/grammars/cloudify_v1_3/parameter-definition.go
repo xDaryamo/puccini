@@ -61,7 +61,7 @@ func (self *ParameterDefinition) Inherit(parentDefinition *ParameterDefinition) 
 	}
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *ParameterDefinition) Render() {
 	log.Infof("{render} parameter definition: %s", self.Name)
 

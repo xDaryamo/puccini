@@ -40,7 +40,7 @@ func ReadCapabilityMapping(context *tosca.Context) interface{} {
 	return self
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *CapabilityMapping) Render() {
 	log.Info("{render} capability mapping")
 

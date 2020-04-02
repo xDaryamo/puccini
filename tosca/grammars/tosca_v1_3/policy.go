@@ -50,7 +50,7 @@ func (self *Policy) GetKey() string {
 	return self.Name
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *Policy) Render() {
 	log.Infof("{render} policy: %s", self.Name)
 

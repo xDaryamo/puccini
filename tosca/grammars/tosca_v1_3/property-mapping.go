@@ -39,7 +39,7 @@ func ReadPropertyMapping(context *tosca.Context) interface{} {
 	return self
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *PropertyMapping) Render() {
 	log.Info("{render} property mapping")
 

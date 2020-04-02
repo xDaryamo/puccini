@@ -40,7 +40,7 @@ func ReadRepository(context *tosca.Context) interface{} {
 	return self
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *Repository) Render() {
 	log.Infof("{render} repository: %s", self.Name)
 	if self.Credential != nil {

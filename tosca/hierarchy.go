@@ -5,7 +5,9 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"sync"
 
+	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/reflection"
 )
@@ -37,9 +39,10 @@ func GetParent(entityPtr interface{}) (interface{}, bool) {
 //
 
 type Hierarchy struct {
-	EntityPtr interface{}
-	Parent    *Hierarchy
-	Children  []*Hierarchy
+	entityPtr interface{}
+	parent    *Hierarchy
+	children  []*Hierarchy
+	lock      *sync.RWMutex // shared recursively with children
 }
 
 // Keeps track of failed types
@@ -47,43 +50,100 @@ type HierarchyContext map[interface{}]bool
 
 type HierarchyDescendants []interface{}
 
-func NewHierarchy(entityPtr interface{}, hierarchyContext HierarchyContext) *Hierarchy {
-	hierarchy := &Hierarchy{}
+func NewHierarchy() *Hierarchy {
+	return &Hierarchy{
+		lock: new(sync.RWMutex),
+	}
+}
+
+func NewHierarchyFor(entityPtr interface{}, hierarchyContext HierarchyContext) *Hierarchy {
+	self := NewHierarchy()
+
 	reflection.Traverse(entityPtr, func(entityPtr interface{}) bool {
 		if parentPtr, ok := GetParent(entityPtr); ok {
-			hierarchy.Add(entityPtr, parentPtr, hierarchyContext, HierarchyDescendants{})
+			self.add(entityPtr, parentPtr, hierarchyContext, HierarchyDescendants{})
 		}
 		return true
 	})
-	return hierarchy
+
+	return self
+}
+
+func (self *Hierarchy) Empty() bool {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	return len(self.children) == 0
 }
 
 func (self *Hierarchy) Root() *Hierarchy {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	return self.root()
+}
+
+func (self *Hierarchy) root() *Hierarchy {
 	for self != nil {
-		if self.Parent == nil {
+		if self.parent == nil {
 			return self
 		}
-		self = self.Parent
+		self = self.parent
 	}
+
 	panic("bad hierarchy")
 }
 
 func (self *Hierarchy) GetContext() *Context {
-	return GetContext(self.EntityPtr)
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	return self.getContext()
+}
+
+func (self *Hierarchy) getContext() *Context {
+	return GetContext(self.entityPtr)
+}
+
+func (self *Hierarchy) Range(f func(interface{}, interface{}) bool) {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	hierarchy_ := self
+	for (hierarchy_ != nil) && (hierarchy_.entityPtr != nil) {
+		parent := hierarchy_.parent
+
+		if parent != nil {
+			if !f(hierarchy_.entityPtr, parent.entityPtr) {
+				return
+			}
+		} else if !f(hierarchy_.entityPtr, nil) {
+			return
+		}
+
+		hierarchy_ = parent
+	}
 }
 
 func (self *Hierarchy) Find(entityPtr interface{}) (*Hierarchy, bool) {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	return self.find(entityPtr)
+}
+
+func (self *Hierarchy) find(entityPtr interface{}) (*Hierarchy, bool) {
 	if entityPtr == nil {
 		return nil, false
 	}
 
-	if self.EntityPtr == entityPtr {
+	if self.entityPtr == entityPtr {
 		return self, true
 	}
 
-	for _, child := range self.Children {
-		if node, ok := child.Find(entityPtr); ok {
-			return node, true
+	for _, child := range self.children {
+		if found, ok := child.find(entityPtr); ok {
+			return found, true
 		}
 	}
 
@@ -91,20 +151,26 @@ func (self *Hierarchy) Find(entityPtr interface{}) (*Hierarchy, bool) {
 }
 
 func (self *Hierarchy) Lookup(name string, type_ reflect.Type) (*Hierarchy, bool) {
-	ourType := reflect.TypeOf(self.EntityPtr) == type_
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	return self.lookup(name, type_)
+}
+
+func (self *Hierarchy) lookup(name string, type_ reflect.Type) (*Hierarchy, bool) {
+	ourType := reflect.TypeOf(self.entityPtr) == type_
 
 	if ourType {
-		if self.GetContext().Name == name {
+		if self.getContext().Name == name {
 			return self, true
 		}
 	}
 
 	// Recurse only if in our type or in the root node
-	if ourType || (self.Parent == nil) {
-		for _, child := range self.Children {
-			node, ok := child.Lookup(name, type_)
-			if ok {
-				return node, true
+	if ourType || (self.parent == nil) {
+		for _, child := range self.children {
+			if found, ok := child.lookup(name, type_); ok {
+				return found, true
 			}
 		}
 	}
@@ -118,34 +184,40 @@ func (self *Hierarchy) IsCompatible(baseEntityPtr interface{}, entityPtr interfa
 		return true
 	}
 
-	if baseNode, ok := self.Find(baseEntityPtr); ok {
-		_, ok = baseNode.Find(entityPtr)
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
+	if baseNode, ok := self.find(baseEntityPtr); ok {
+		_, ok = baseNode.find(entityPtr)
 		return ok
 	}
 
 	return false
 }
 
-func (self *Hierarchy) Add(entityPtr interface{}, parentPtr interface{}, hierarchyContext HierarchyContext, descendants HierarchyDescendants) (*Hierarchy, bool) {
+func (self *Hierarchy) add(entityPtr interface{}, parentPtr interface{}, hierarchyContext HierarchyContext, descendants HierarchyDescendants) (*Hierarchy, bool) {
 	// Several imports may try to add the same entity to their hierarchies, so let's avoid multiple problem reports
 	_, alreadyFailed := hierarchyContext[entityPtr]
 	if alreadyFailed {
 		return nil, false
 	}
 
-	root := self.Root()
+	root := self.root()
 
 	// Have we already added this entity?
-	if found, ok := root.Find(entityPtr); ok {
+	if found, ok := root.find(entityPtr); ok {
 		return found, true
 	}
 
-	node := &Hierarchy{EntityPtr: entityPtr}
+	child := &Hierarchy{
+		entityPtr: entityPtr,
+		lock:      self.lock,
+	}
 
 	if parentPtr == nil {
 		// We are a root node
-		root.AddChild(node)
-		return node, true
+		root.addChild(child)
+		return child, true
 	}
 
 	context := GetContext(entityPtr)
@@ -165,7 +237,7 @@ func (self *Hierarchy) Add(entityPtr interface{}, parentPtr interface{}, hierarc
 	}
 
 	// Make sure parent node has been added first (recursively)
-	parentNode, ok := self.Add(parentPtr, grandparentPtr, hierarchyContext, append(descendants, entityPtr))
+	parentNode, ok := self.add(parentPtr, grandparentPtr, hierarchyContext, append(descendants, entityPtr))
 	if !ok {
 		// Check if we already reported a failure (one report is enough)
 		_, alreadyFailed := hierarchyContext[entityPtr]
@@ -177,63 +249,83 @@ func (self *Hierarchy) Add(entityPtr interface{}, parentPtr interface{}, hierarc
 	}
 
 	// Add ourself to parent node
-	parentNode.AddChild(node)
+	parentNode.addChild(child)
 
-	return node, true
+	return child, true
 }
 
-func (self *Hierarchy) Merge(node *Hierarchy, hierarchyContext HierarchyContext) {
-	if node == nil {
+func (self *Hierarchy) Merge(hierarchy *Hierarchy, hierarchyContext HierarchyContext) {
+	if (hierarchy == nil) || (self == hierarchy) {
 		return
 	}
 
-	if node.EntityPtr != nil {
-		if parentPtr, ok := GetParent(node.EntityPtr); ok {
-			self.Add(node.EntityPtr, parentPtr, hierarchyContext, HierarchyDescendants{})
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	if self.lock != hierarchy.lock {
+		hierarchy.lock.RLock()
+		defer hierarchy.lock.RUnlock()
+	}
+
+	self.merge(hierarchy, hierarchyContext)
+}
+
+func (self *Hierarchy) merge(hierarchy *Hierarchy, hierarchyContext HierarchyContext) {
+	if hierarchy.entityPtr != nil {
+		if parentPtr, ok := GetParent(hierarchy.entityPtr); ok {
+			self.add(hierarchy.entityPtr, parentPtr, hierarchyContext, HierarchyDescendants{})
 		}
 	}
 
-	for _, child := range node.Children {
-		self.Merge(child, hierarchyContext)
+	for _, child := range hierarchy.children {
+		self.merge(child, hierarchyContext)
 	}
 }
 
-func (self *Hierarchy) AddChild(node *Hierarchy) {
-	node.Parent = self
-	self.Children = append(self.Children, node)
+func (self *Hierarchy) addChild(hierarchy *Hierarchy) {
+	hierarchy.parent = self
+	self.children = append(self.children, hierarchy)
 }
 
 // Into "hierarchy" tags
 func (self *Hierarchy) AddTo(entityPtr interface{}) {
+	self.lock.RLock()
+	defer self.lock.RUnlock()
+
 	for _, field := range reflection.GetTaggedFields(entityPtr, "hierarchy") {
 		type_ := field.Type()
 		if reflection.IsSliceOfPtrToStruct(type_) {
 			type_ = type_.Elem()
-			self.AddTypeTo(field, type_)
+			self.addTypeTo(field, type_)
 		}
 	}
 }
 
-func (self *Hierarchy) AddTypeTo(field reflect.Value, type_ reflect.Type) {
-	if reflect.TypeOf(self.EntityPtr) == type_ {
+func (self *Hierarchy) addTypeTo(field reflect.Value, type_ reflect.Type) {
+	lock := common.GetLock(self.entityPtr)
+	lock.Lock()
+
+	if reflect.TypeOf(self.entityPtr) == type_ {
 		// Don't add if it's already there
 		found := false
 		length := field.Len()
 		for i := 0; i < length; i++ {
 			element := field.Index(i)
-			if element.Interface() == self.EntityPtr {
+			if element.Interface() == self.entityPtr {
 				found = true
 				break
 			}
 		}
 
 		if !found {
-			field.Set(reflect.Append(field, reflect.ValueOf(self.EntityPtr)))
+			field.Set(reflect.Append(field, reflect.ValueOf(self.entityPtr)))
 		}
 	}
 
-	for _, child := range self.Children {
-		child.AddTypeTo(field, type_)
+	lock.Unlock()
+
+	for _, child := range self.children {
+		child.addTypeTo(field, type_)
 	}
 }
 
@@ -248,15 +340,20 @@ func (self *Hierarchy) Print(indent int) {
 }
 
 func (self *Hierarchy) PrintChildren(indent int, treePrefix terminal.TreePrefix) {
-	length := len(self.Children)
+	length := len(self.children)
 	last := length - 1
 
 	// Sort
-	hierarchy := Hierarchy{Children: make([]*Hierarchy, length)}
-	copy(hierarchy.Children, self.Children)
+	self.lock.RLock()
+	hierarchy := Hierarchy{
+		children: make([]*Hierarchy, length),
+		lock:     self.lock,
+	}
+	copy(hierarchy.children, self.children)
+	self.lock.RUnlock()
 	sort.Sort(hierarchy)
 
-	for i, child := range hierarchy.Children {
+	for i, child := range hierarchy.children {
 		isLast := i == last
 		child.PrintChild(indent, treePrefix, isLast)
 		child.PrintChildren(indent, append(treePrefix, isLast))
@@ -265,7 +362,7 @@ func (self *Hierarchy) PrintChildren(indent int, treePrefix terminal.TreePrefix)
 
 func (self *Hierarchy) PrintChild(indent int, treePrefix terminal.TreePrefix, last bool) {
 	treePrefix.Print(indent, last)
-	if self.EntityPtr != nil {
+	if self.entityPtr != nil {
 		fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorTypeName(self.GetContext().Name))
 	}
 }
@@ -273,15 +370,15 @@ func (self *Hierarchy) PrintChild(indent int, treePrefix terminal.TreePrefix, la
 // sort.Interface
 
 func (self Hierarchy) Len() int {
-	return len(self.Children)
+	return len(self.children)
 }
 
 func (self Hierarchy) Swap(i, j int) {
-	self.Children[i], self.Children[j] = self.Children[j], self.Children[i]
+	self.children[i], self.children[j] = self.children[j], self.children[i]
 }
 
 func (self Hierarchy) Less(i, j int) bool {
-	iName := self.Children[i].GetContext().Name
-	jName := self.Children[j].GetContext().Name
+	iName := self.children[i].GetContext().Name
+	jName := self.children[j].GetContext().Name
 	return strings.Compare(iName, jName) < 0
 }

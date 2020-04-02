@@ -38,7 +38,7 @@ func ReadRelationshipAssignment(context *tosca.Context) interface{} {
 	return self
 }
 
-// tosca.Renderable interface
+// parser.Renderable interface
 func (self *RelationshipAssignment) Render() {
 	log.Info("{render} relationship")
 
