@@ -44,16 +44,16 @@ func ReadInterfaceImplementation(context *tosca.Context) interface{} {
 
 func (self *InterfaceImplementation) Render(definition *InterfaceImplementation) {
 	if definition != nil {
-		if (self.Primary != nil) && (definition.Primary != nil) {
+		if (self.Primary == nil) && (definition.Primary != nil) {
 			self.Primary = definition.Primary
 		}
-		if (self.Dependencies != nil) && (definition.Dependencies != nil) {
+		if (self.Dependencies == nil) && (definition.Dependencies != nil) {
 			self.Dependencies = definition.Dependencies
 		}
-		if (self.Timeout != nil) && (definition.Timeout != nil) {
+		if (self.Timeout == nil) && (definition.Timeout != nil) {
 			self.Timeout = definition.Timeout
 		}
-		if (self.OperationHost != nil) && (definition.OperationHost != nil) {
+		if (self.OperationHost == nil) && (definition.OperationHost != nil) {
 			self.OperationHost = definition.OperationHost
 		}
 	}
