@@ -34,7 +34,7 @@ func NewImport(context *tosca.Context) *Import {
 }
 
 // tosca.Reader signature
-func ReadImport(context *tosca.Context) interface{} {
+func ReadImport(context *tosca.Context) tosca.EntityPtr {
 	self := NewImport(context)
 
 	if context.Is("!!map") {
@@ -91,7 +91,7 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 }
 
 func newImportNameTransformer(prefix *string, appendShortCutnames bool) tosca.NameTransformer {
-	return func(name string, entityPtr interface{}) []string {
+	return func(name string, entityPtr tosca.EntityPtr) []string {
 		var names []string
 
 		if metadata, ok := tosca.GetMetadata(entityPtr); ok {
@@ -115,7 +115,7 @@ func newImportNameTransformer(prefix *string, appendShortCutnames bool) tosca.Na
 	}
 }
 
-func appendNormativeNames(entityPtr interface{}, names []string, name string, prefix string, appendShortcut bool) []string {
+func appendNormativeNames(entityPtr tosca.EntityPtr, names []string, name string, prefix string, appendShortcut bool) []string {
 	if !strings.HasPrefix(name, prefix+".") {
 		return names
 	}

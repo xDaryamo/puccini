@@ -27,7 +27,7 @@ func NewPropertyMapping(context *tosca.Context) *PropertyMapping {
 }
 
 // tosca.Reader signature
-func ReadPropertyMapping(context *tosca.Context) interface{} {
+func ReadPropertyMapping(context *tosca.Context) tosca.EntityPtr {
 	self := NewPropertyMapping(context)
 	if context.ValidateType("!!seq") {
 		strings := context.ReadStringListFixed(2)

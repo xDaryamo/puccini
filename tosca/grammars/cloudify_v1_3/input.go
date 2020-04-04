@@ -26,7 +26,7 @@ func NewInput(context *tosca.Context) *Input {
 }
 
 // tosca.Reader signature
-func ReadInput(context *tosca.Context) interface{} {
+func ReadInput(context *tosca.Context) tosca.EntityPtr {
 	self := NewInput(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

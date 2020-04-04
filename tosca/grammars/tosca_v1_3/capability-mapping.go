@@ -29,7 +29,7 @@ func NewCapabilityMapping(context *tosca.Context) *CapabilityMapping {
 }
 
 // tosca.Reader signature
-func ReadCapabilityMapping(context *tosca.Context) interface{} {
+func ReadCapabilityMapping(context *tosca.Context) tosca.EntityPtr {
 	self := NewCapabilityMapping(context)
 
 	if strings := context.ReadStringListFixed(2); strings != nil {

@@ -1,6 +1,7 @@
 package normal
 
 import (
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -13,11 +14,11 @@ type Value struct {
 	Description string        `json:"$description,omitempty" yaml:"$description,omitempty"`
 	Constraints FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
 
-	Value interface{} `json:"$value" yaml:"$value"`
-	Type  string      `json:"$type,omitempty" yaml:"$type,omitempty"`
+	Value ard.Value `json:"$value" yaml:"$value"`
+	Type  string    `json:"$type,omitempty" yaml:"$type,omitempty"`
 }
 
-func NewValue(value interface{}) *Value {
+func NewValue(value ard.Value) *Value {
 	return &Value{Value: value}
 }
 

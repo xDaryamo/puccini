@@ -34,14 +34,14 @@ func NewPolicyType(context *tosca.Context) *PolicyType {
 }
 
 // tosca.Reader signature
-func ReadPolicyType(context *tosca.Context) interface{} {
+func ReadPolicyType(context *tosca.Context) tosca.EntityPtr {
 	self := NewPolicyType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
 // tosca.Hierarchical interface
-func (self *PolicyType) GetParent() interface{} {
+func (self *PolicyType) GetParent() tosca.EntityPtr {
 	return self.Parent
 }
 

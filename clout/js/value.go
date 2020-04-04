@@ -11,11 +11,11 @@ import (
 type Value struct {
 	Notation ard.StringMap `json:"-" yaml:"-"`
 
-	Data        interface{} `json:"data" yaml:"data"`
+	Data        interface{} `json:"data" yaml:"data"` // List, Map, or ard.Value
 	Constraints Constraints `json:"constraints,omitempty" yaml:"constraints,omitempty"`
 }
 
-func (self *CloutContext) NewValue(data interface{}, notation ard.StringMap, functionCallContext FunctionCallContext) (*Value, error) {
+func (self *CloutContext) NewValue(data ard.Value, notation ard.StringMap, functionCallContext FunctionCallContext) (*Value, error) {
 	value := Value{
 		Data:     data,
 		Notation: notation,
@@ -58,7 +58,7 @@ func (self *CloutContext) NewValueForMap(list ard.List, notation ard.StringMap, 
 }
 
 // Coercible interface
-func (self *Value) Coerce() (interface{}, error) {
+func (self *Value) Coerce() (ard.Value, error) {
 	data := self.Data
 
 	var err error
@@ -83,6 +83,6 @@ func (self *Value) SetConstraints(constraints Constraints) {
 }
 
 // Coercible interface
-func (self *Value) Unwrap() interface{} {
+func (self *Value) Unwrap() ard.Value {
 	return self.Notation
 }

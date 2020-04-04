@@ -7,11 +7,11 @@ import (
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/common/format"
+	"github.com/tliron/puccini/common/problems"
 	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
-	"github.com/tliron/puccini/tosca/problems"
 )
 
 //export Compile

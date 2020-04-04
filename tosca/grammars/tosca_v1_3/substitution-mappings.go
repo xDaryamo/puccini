@@ -33,7 +33,7 @@ func NewSubstitutionMappings(context *tosca.Context) *SubstitutionMappings {
 }
 
 // tosca.Reader signature
-func ReadSubstitutionMappings(context *tosca.Context) interface{} {
+func ReadSubstitutionMappings(context *tosca.Context) tosca.EntityPtr {
 	if context.HasQuirk(tosca.QuirkSubstitutionMappingsRequirementsList) {
 		context.SetReadTag("RequirementMappings", "requirements,{}RequirementMapping")
 	}

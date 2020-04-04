@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/tosca/problems"
+	"github.com/tliron/puccini/common/problems"
 	urlpkg "github.com/tliron/puccini/url"
 	"github.com/tliron/yamlkeys"
 )
@@ -20,7 +20,7 @@ type Contextual interface {
 }
 
 // From Contextual interface
-func GetContext(entityPtr interface{}) *Context {
+func GetContext(entityPtr EntityPtr) *Context {
 	if contextual, ok := entityPtr.(Contextual); ok {
 		return contextual.GetContext()
 	} else {
@@ -28,7 +28,7 @@ func GetContext(entityPtr interface{}) *Context {
 	}
 }
 
-func GetCanonicalName(entityPtr interface{}) string {
+func GetCanonicalName(entityPtr EntityPtr) string {
 	if metadata, ok := GetMetadata(entityPtr); ok {
 		if canonicalName, ok := metadata["canonical_name"]; ok {
 			return canonicalName
@@ -53,7 +53,7 @@ type Context struct {
 	Name               string
 	Path               ard.Path
 	URL                urlpkg.URL
-	Data               interface{} // ARD
+	Data               ard.Value
 	Locator            ard.Locator
 	CanonicalNamespace *string
 	Namespace          *Namespace
@@ -148,7 +148,7 @@ func (self *Context) Is(typeNames ...string) bool {
 // Child contexts
 //
 
-func (self *Context) Clone(data interface{}) *Context {
+func (self *Context) Clone(data ard.Value) *Context {
 	return &Context{
 		Parent:             self.Parent,
 		Name:               self.Name,
@@ -166,7 +166,7 @@ func (self *Context) Clone(data interface{}) *Context {
 	}
 }
 
-func (self *Context) FieldChild(name interface{}, data interface{}) *Context {
+func (self *Context) FieldChild(name ard.Value, data ard.Value) *Context {
 	nameString := yamlkeys.KeyString(name) // complex keys would be stringified
 	return &Context{
 		Parent:             self,
@@ -211,7 +211,7 @@ func (self *Context) FieldChildren() []*Context {
 	return children
 }
 
-func (self *Context) MapChild(name interface{}, data interface{}) *Context {
+func (self *Context) MapChild(name ard.Value, data ard.Value) *Context {
 	nameString := strings.ReplaceAll(yamlkeys.KeyString(name), "\n", "¶") // complex keys would be stringified
 	return &Context{
 		Parent:             self,
@@ -230,7 +230,7 @@ func (self *Context) MapChild(name interface{}, data interface{}) *Context {
 	}
 }
 
-func (self *Context) ListChild(index int, data interface{}) *Context {
+func (self *Context) ListChild(index int, data ard.Value) *Context {
 	return &Context{
 		Parent:             self,
 		Name:               strconv.FormatInt(int64(index), 10),
@@ -248,7 +248,7 @@ func (self *Context) ListChild(index int, data interface{}) *Context {
 	}
 }
 
-func (self *Context) SequencedListChild(index int, name string, data interface{}) *Context {
+func (self *Context) SequencedListChild(index int, name string, data ard.Value) *Context {
 	return &Context{
 		Parent:             self,
 		Name:               name,

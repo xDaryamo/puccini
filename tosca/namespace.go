@@ -7,32 +7,32 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/tliron/puccini/common/reflection"
 	"github.com/tliron/puccini/common/terminal"
-	"github.com/tliron/puccini/tosca/reflection"
 )
 
-type NameTransformer = func(string, interface{}) []string
+type NameTransformer = func(string, EntityPtr) []string
 
 //
 // Namespace
 //
 
 type Namespace struct {
-	namespace map[reflect.Type]map[string]interface{}
+	namespace map[reflect.Type]map[string]EntityPtr
 	lock      sync.RWMutex
 }
 
 func NewNamespace() *Namespace {
 	return &Namespace{
-		namespace: make(map[reflect.Type]map[string]interface{}),
+		namespace: make(map[reflect.Type]map[string]EntityPtr),
 	}
 }
 
 // From "namespace" tags
-func NewNamespaceFor(entityPtr interface{}) *Namespace {
+func NewNamespaceFor(entityPtr EntityPtr) *Namespace {
 	self := NewNamespace()
 
-	reflection.Traverse(entityPtr, func(entityPtr interface{}) bool {
+	reflection.Traverse(entityPtr, func(entityPtr EntityPtr) bool {
 		for _, field := range reflection.GetTaggedFields(entityPtr, "namespace") {
 			if field.Kind() != reflect.String {
 				panic(fmt.Sprintf("\"namespace\" tag can only be used on \"string\" field in struct: %T", entityPtr))
@@ -52,7 +52,7 @@ func (self *Namespace) Empty() bool {
 	return len(self.namespace) == 0
 }
 
-func (self *Namespace) Range(f func(interface{}, interface{}) bool) {
+func (self *Namespace) Range(f func(EntityPtr, EntityPtr) bool) {
 	self.lock.RLock()
 	defer self.lock.RUnlock()
 
@@ -65,7 +65,7 @@ func (self *Namespace) Range(f func(interface{}, interface{}) bool) {
 	}
 }
 
-func (self *Namespace) Lookup(name string) (interface{}, bool) {
+func (self *Namespace) Lookup(name string) (EntityPtr, bool) {
 	self.lock.RLock()
 	defer self.lock.RUnlock()
 
@@ -78,7 +78,7 @@ func (self *Namespace) Lookup(name string) (interface{}, bool) {
 	return nil, false
 }
 
-func (self *Namespace) LookupForType(name string, type_ reflect.Type) (interface{}, bool) {
+func (self *Namespace) LookupForType(name string, type_ reflect.Type) (EntityPtr, bool) {
 	self.lock.RLock()
 	defer self.lock.RUnlock()
 
@@ -91,18 +91,18 @@ func (self *Namespace) LookupForType(name string, type_ reflect.Type) (interface
 }
 
 // If the name has already been set returns existing entityPtr, true
-func (self *Namespace) Set(name string, entityPtr interface{}) (interface{}, bool) {
+func (self *Namespace) Set(name string, entityPtr EntityPtr) (EntityPtr, bool) {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
 	return self.set(name, entityPtr)
 }
 
-func (self *Namespace) set(name string, entityPtr interface{}) (interface{}, bool) {
+func (self *Namespace) set(name string, entityPtr EntityPtr) (EntityPtr, bool) {
 	type_ := reflect.TypeOf(entityPtr)
 	forType, ok := self.namespace[type_]
 	if !ok {
-		forType = make(map[string]interface{})
+		forType = make(map[string]EntityPtr)
 		self.namespace[type_] = forType
 	}
 

@@ -30,7 +30,7 @@ func NewCapabilityFilter(context *tosca.Context) *CapabilityFilter {
 }
 
 // tosca.Reader signature
-func ReadCapabilityFilter(context *tosca.Context) interface{} {
+func ReadCapabilityFilter(context *tosca.Context) tosca.EntityPtr {
 	self := NewCapabilityFilter(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

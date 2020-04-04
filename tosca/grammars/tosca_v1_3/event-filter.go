@@ -28,7 +28,7 @@ func NewEventFilter(context *tosca.Context) *EventFilter {
 }
 
 // tosca.Reader signature
-func ReadEventFilter(context *tosca.Context) interface{} {
+func ReadEventFilter(context *tosca.Context) tosca.EntityPtr {
 	self := NewEventFilter(context)
 	context.ReadFields(self)
 	return self

@@ -27,7 +27,7 @@ func NewPolicyTriggerType(context *tosca.Context) *PolicyTriggerType {
 }
 
 // tosca.Reader signature
-func ReadPolicyTriggerType(context *tosca.Context) interface{} {
+func ReadPolicyTriggerType(context *tosca.Context) tosca.EntityPtr {
 	self := NewPolicyTriggerType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
@@ -36,7 +36,7 @@ func ReadPolicyTriggerType(context *tosca.Context) interface{} {
 var policyTriggerTypeRoot *PolicyTriggerType
 
 // tosca.Hierarchical interface
-func (self *PolicyTriggerType) GetParent() interface{} {
+func (self *PolicyTriggerType) GetParent() tosca.EntityPtr {
 	return policyTriggerTypeRoot
 }
 

@@ -13,7 +13,7 @@ import (
 //
 
 // tosca.Reader signature
-func ReadSubstitutionMappings(context *tosca.Context) interface{} {
+func ReadSubstitutionMappings(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("PropertyMappings", "")
 	context.SetReadTag("InterfaceMappings", "")
 

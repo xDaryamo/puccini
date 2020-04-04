@@ -36,7 +36,7 @@ func NewRelationshipAssignment(context *tosca.Context) *RelationshipAssignment {
 }
 
 // tosca.Reader signature
-func ReadRelationshipAssignment(context *tosca.Context) interface{} {
+func ReadRelationshipAssignment(context *tosca.Context) tosca.EntityPtr {
 	self := NewRelationshipAssignment(context)
 
 	if context.Is("!!map") {

@@ -39,7 +39,7 @@ func NewRelationshipTemplate(context *tosca.Context) *RelationshipTemplate {
 }
 
 // tosca.Reader signature
-func ReadRelationshipTemplate(context *tosca.Context) interface{} {
+func ReadRelationshipTemplate(context *tosca.Context) tosca.EntityPtr {
 	self := NewRelationshipTemplate(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

@@ -32,7 +32,7 @@ func (self *NoEntity) GetContext() *tosca.Context {
 //
 
 type Unit struct {
-	EntityPtr       interface{}
+	EntityPtr       tosca.EntityPtr
 	Container       *Unit
 	Imports         Units
 	NameTransformer tosca.NameTransformer
@@ -44,7 +44,7 @@ func NewUnitNoEntity(toscaContext *tosca.Context, container *Unit, nameTransform
 	return NewUnit(NewNoEntity(toscaContext), container, nameTransformer)
 }
 
-func NewUnit(entityPtr interface{}, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
+func NewUnit(entityPtr tosca.EntityPtr, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
 	self := Unit{
 		EntityPtr:       entityPtr,
 		Container:       container,

@@ -108,7 +108,7 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.Strin
 	return &functionCall, nil
 }
 
-func (self *FunctionCall) Signature(arguments []interface{}) string {
+func (self *FunctionCall) Signature(arguments []ard.Value) string {
 	s := make([]string, len(arguments))
 	for index, argument := range arguments {
 		s[index] = encodeArgument(argument)
@@ -117,7 +117,7 @@ func (self *FunctionCall) Signature(arguments []interface{}) string {
 }
 
 // Coercible interface
-func (self *FunctionCall) Coerce() (interface{}, error) {
+func (self *FunctionCall) Coerce() (ard.Value, error) {
 	arguments, err := self.CoerceArguments()
 	if err != nil {
 		return nil, err
@@ -141,12 +141,12 @@ func (self *FunctionCall) SetConstraints(constraints Constraints) {
 }
 
 // Coercible interface
-func (self *FunctionCall) Unwrap() interface{} {
+func (self *FunctionCall) Unwrap() ard.Value {
 	return self.Notation
 }
 
-func (self *FunctionCall) CoerceArguments() ([]interface{}, error) {
-	arguments := make([]interface{}, len(self.Arguments))
+func (self *FunctionCall) CoerceArguments() ([]ard.Value, error) {
+	arguments := make([]ard.Value, len(self.Arguments))
 	for index, argument := range self.Arguments {
 		var err error
 		if arguments[index], err = argument.Coerce(); err != nil {
@@ -156,14 +156,14 @@ func (self *FunctionCall) CoerceArguments() ([]interface{}, error) {
 	return arguments, nil
 }
 
-func (self *FunctionCall) Validate(value interface{}, errorWhenInvalid bool) (bool, error) {
+func (self *FunctionCall) Validate(value ard.Value, errorWhenInvalid bool) (bool, error) {
 	arguments, err := self.CoerceArguments()
 	if err != nil {
 		return false, err
 	}
 
 	// Prepend value to be first argument
-	arguments = append([]interface{}{value}, arguments...)
+	arguments = append([]ard.Value{value}, arguments...)
 
 	log.Infof("{validate} %s %s", self.Path, self.Signature(arguments))
 
@@ -192,7 +192,7 @@ func (self *FunctionCall) Validate(value interface{}, errorWhenInvalid bool) (bo
 
 // Utils
 
-func encodeArgument(argument interface{}) string {
+func encodeArgument(argument ard.Value) string {
 	var encodedArgument string
 	switch argument.(type) {
 	case int64, int32, int16, int8, int, uint64, uint32, uint16, uint8, uint:

@@ -5,8 +5,6 @@ import (
 	"github.com/tliron/puccini/puccini-tosca/commands"
 )
 
-var BuildCommit string
-
 func main() {
 	commands.Execute()
 	atexit.Exit(0)

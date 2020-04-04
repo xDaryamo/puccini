@@ -56,7 +56,7 @@ func NewConstraintClause(context *tosca.Context) *ConstraintClause {
 }
 
 // tosca.Reader signature
-func ReadConstraintClause(context *tosca.Context) interface{} {
+func ReadConstraintClause(context *tosca.Context) tosca.EntityPtr {
 	self := NewConstraintClause(context)
 
 	if context.ValidateType("!!map") {

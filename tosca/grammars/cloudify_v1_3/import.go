@@ -25,7 +25,7 @@ func NewImport(context *tosca.Context) *Import {
 }
 
 // tosca.Reader signature
-func ReadImport(context *tosca.Context) interface{} {
+func ReadImport(context *tosca.Context) tosca.EntityPtr {
 	self := NewImport(context)
 	self.File = context.ReadString()
 	return self
@@ -63,7 +63,7 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 }
 
 func newImportNameTransformer(prefix string) tosca.NameTransformer {
-	return func(name string, entityPtr interface{}) []string {
+	return func(name string, entityPtr tosca.EntityPtr) []string {
 		var names []string
 
 		// Prefixed name

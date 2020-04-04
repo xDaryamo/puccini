@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/tliron/puccini/common/terminal"
+	"github.com/tliron/puccini/tosca"
 )
 
 type Executor func(task *Task)
@@ -23,7 +24,7 @@ type Task struct {
 
 type Tasks map[*Task]bool
 
-type TasksForEntities map[interface{}]*Task
+type TasksForEntities map[tosca.EntityPtr]*Task
 
 func NewTask(name string) *Task {
 	return &Task{Name: name, Parents: make(Tasks), Dependencies: make(Tasks)}

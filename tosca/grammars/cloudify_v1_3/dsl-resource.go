@@ -22,7 +22,7 @@ func NewDSLResource(context *tosca.Context) *DSLResource {
 }
 
 // tosca.Reader signature
-func ReadDSLResource(context *tosca.Context) interface{} {
+func ReadDSLResource(context *tosca.Context) tosca.EntityPtr {
 	self := NewDSLResource(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

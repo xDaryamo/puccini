@@ -38,7 +38,7 @@ func NewInterfaceDefinition(context *tosca.Context) *InterfaceDefinition {
 }
 
 // tosca.Reader signature
-func ReadInterfaceDefinition(context *tosca.Context) interface{} {
+func ReadInterfaceDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewInterfaceDefinition(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

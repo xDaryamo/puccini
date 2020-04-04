@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/tliron/puccini/common/problems"
 	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars"
-	"github.com/tliron/puccini/tosca/problems"
 )
 
 type Context struct {
@@ -34,7 +34,7 @@ func (self *Context) GetProblems() *problems.Problems {
 	return self.Root.GetContext().Problems
 }
 
-func (self *Context) AddUnit(entityPtr interface{}, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
+func (self *Context) AddUnit(entityPtr tosca.EntityPtr, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
 	unit := NewUnit(entityPtr, container, nameTransformer)
 
 	if container != nil {

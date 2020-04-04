@@ -5,8 +5,8 @@ import (
 	"reflect"
 
 	"github.com/tliron/puccini/ard"
+	"github.com/tliron/puccini/common/problems"
 	"github.com/tliron/puccini/common/terminal"
-	"github.com/tliron/puccini/tosca/problems"
 	urlpkg "github.com/tliron/puccini/url"
 )
 
@@ -128,7 +128,7 @@ func (self *Context) ReportDuplicateMapKey(key string) bool {
 // Namespaces
 //
 
-func (self *Context) ReportNameAmbiguous(type_ reflect.Type, name string, entityPtrs ...interface{}) bool {
+func (self *Context) ReportNameAmbiguous(type_ reflect.Type, name string, entityPtrs ...EntityPtr) bool {
 	url := make([]string, len(entityPtrs))
 	for i, entityPtr := range entityPtrs {
 		url[i] = GetContext(entityPtr).URL.String()
@@ -148,11 +148,11 @@ func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) bool {
 // Inheritance
 //
 
-func (self *Context) ReportInheritanceLoop(parentType interface{}) bool {
+func (self *Context) ReportInheritanceLoop(parentType EntityPtr) bool {
 	return self.ReportPathf(1, "inheritance loop by deriving from \"%s\"", terminal.ColorTypeName(GetCanonicalName(parentType)))
 }
 
-func (self *Context) ReportTypeIncomplete(parentType interface{}) bool {
+func (self *Context) ReportTypeIncomplete(parentType EntityPtr) bool {
 	return self.ReportPathf(1, "deriving from incomplete type \"%s\"", terminal.ColorTypeName(GetCanonicalName(parentType)))
 }
 
@@ -168,13 +168,13 @@ func (self *Context) ReportUnknown(kind string) bool {
 	return self.ReportPathf(1, "unknown %s: %s", kind, self.FormatBadData())
 }
 
-func (self *Context) ReportReferenceNotFound(kind string, entityPtr interface{}) bool {
+func (self *Context) ReportReferenceNotFound(kind string, entityPtr EntityPtr) bool {
 	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
 	name := GetContext(entityPtr).Name
 	return self.ReportPathf(1, "unknown %s reference in %s \"%s\": %s", kind, typeName, terminal.ColorName(name), self.FormatBadData())
 }
 
-func (self *Context) ReportReferenceAmbiguous(kind string, entityPtr interface{}) bool {
+func (self *Context) ReportReferenceAmbiguous(kind string, entityPtr EntityPtr) bool {
 	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
 	name := GetContext(entityPtr).Name
 	return self.ReportPathf(1, "ambiguous %s in %s \"%s\": %s", kind, typeName, terminal.ColorName(name), self.FormatBadData())
@@ -200,11 +200,11 @@ func (self *Context) ReportUnsupportedType() bool {
 	return self.ReportPathf(1, "unsupported puccini.type \"%s\"", terminal.ColorError(self.Name))
 }
 
-func (self *Context) ReportIncompatibleType(type_ interface{}, parentType interface{}) bool {
+func (self *Context) ReportIncompatibleType(type_ EntityPtr, parentType EntityPtr) bool {
 	return self.ReportPathf(1, "type \"%s\" must be derived from type \"%s\"", terminal.ColorTypeName(GetCanonicalName(type_)), terminal.ColorTypeName(GetCanonicalName(parentType)))
 }
 
-func (self *Context) ReportIncompatibleTypeInSet(type_ interface{}) bool {
+func (self *Context) ReportIncompatibleTypeInSet(type_ EntityPtr) bool {
 	return self.ReportPathf(1, "type \"%s\" must be derived from one of the types in the parent set", terminal.ColorTypeName(GetCanonicalName(type_)))
 }
 

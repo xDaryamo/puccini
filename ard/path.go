@@ -19,7 +19,7 @@ const (
 
 type PathElement struct {
 	Type  int
-	Value interface{} // string for FieldPathType and MapPathType, int for ListPathType
+	Value interface{} // string for FieldPathType and MapPathType, int for ListPathType and SequencedListPathType
 }
 
 func NewFieldPathElement(name string) PathElement {

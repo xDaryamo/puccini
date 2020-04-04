@@ -26,7 +26,7 @@ func (self *CloutContext) NewMap(list ard.List, keyConstraints Constraints, valu
 	return map_, nil
 }
 
-func (self Map) Coerce() (interface{}, error) {
+func (self Map) Coerce() (ard.Value, error) {
 	value := make(ard.StringMap)
 
 	for _, entry := range self {

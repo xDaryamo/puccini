@@ -40,7 +40,7 @@ func NewCapabilityDefinition(context *tosca.Context) *CapabilityDefinition {
 }
 
 // tosca.Reader signature
-func ReadCapabilityDefinition(context *tosca.Context) interface{} {
+func ReadCapabilityDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewCapabilityDefinition(context)
 
 	if context.Is("!!map") {

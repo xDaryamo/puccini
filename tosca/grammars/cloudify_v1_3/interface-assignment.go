@@ -27,7 +27,7 @@ func NewInterfaceAssignment(context *tosca.Context) *InterfaceAssignment {
 }
 
 // tosca.Reader signature
-func ReadInterfaceAssignment(context *tosca.Context) interface{} {
+func ReadInterfaceAssignment(context *tosca.Context) tosca.EntityPtr {
 	self := NewInterfaceAssignment(context)
 	context.ReadFields(self)
 	return self

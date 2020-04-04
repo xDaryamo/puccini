@@ -7,22 +7,10 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-//
-// Map
-//
-
-// Note: This is just a convenient alias, *not* a type. An extra type would ensure more strictness but
-// would make life more complicated than it needs to be. That said, if we *do* want to make this into a
-// type, we need to make sure not to add any methods to the type, otherwise the goja JavaScript engine
-// will treat it as a host object instead of a regular JavaScript dict object.
-type Map = map[interface{}]interface{}
-
-type StringMap = map[string]interface{}
-
 // Ensure data adheres to the ARD map type
 // E.g. JSON decoding uses map[string]interface{} instead of map[interface{}]interface{}
 
-func EnsureMaps(map_ interface{}) Map {
+func EnsureMaps(map_ Value) Map {
 	value, _ := ToMaps(map_)
 	if map_, ok := value.(Map); ok {
 		return map_
@@ -31,7 +19,7 @@ func EnsureMaps(map_ interface{}) Map {
 	}
 }
 
-func ToMaps(value interface{}) (interface{}, bool) {
+func ToMaps(value Value) (Value, bool) {
 	changed := false
 
 	switch value_ := value.(type) {
@@ -70,7 +58,7 @@ func ToMap(stringMap StringMap) Map {
 // Ensure data adheres to map[string]interface{}
 // E.g. JSON encoding does not support map[interface{}]interface{}
 
-func EnsureStringMaps(map_ interface{}) StringMap {
+func EnsureStringMaps(map_ Value) StringMap {
 	value, _ := ToStringMaps(map_)
 	if stringMap, ok := value.(StringMap); ok {
 		return stringMap
@@ -79,7 +67,7 @@ func EnsureStringMaps(map_ interface{}) StringMap {
 	}
 }
 
-func ToStringMaps(value interface{}) (interface{}, bool) {
+func ToStringMaps(value Value) (Value, bool) {
 	changed := false
 
 	switch value_ := value.(type) {

@@ -32,7 +32,7 @@ func NewRelationshipDefinition(context *tosca.Context) *RelationshipDefinition {
 }
 
 // tosca.Reader signature
-func ReadRelationshipDefinition(context *tosca.Context) interface{} {
+func ReadRelationshipDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewRelationshipDefinition(context)
 
 	if context.Is("!!map") {

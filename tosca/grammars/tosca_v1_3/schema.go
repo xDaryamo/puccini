@@ -25,7 +25,7 @@ func NewSchema(context *tosca.Context) *Schema {
 }
 
 // tosca.Reader signature
-func ReadSchema(context *tosca.Context) interface{} {
+func ReadSchema(context *tosca.Context) tosca.EntityPtr {
 	self := NewSchema(context)
 
 	if context.Is("!!map") {

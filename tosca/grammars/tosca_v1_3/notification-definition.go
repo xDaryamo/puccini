@@ -28,7 +28,7 @@ func NewNotificationDefinition(context *tosca.Context) *NotificationDefinition {
 }
 
 // tosca.Reader signature
-func ReadNotificationDefinition(context *tosca.Context) interface{} {
+func ReadNotificationDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewNotificationDefinition(context)
 
 	if context.Is("!!map") {

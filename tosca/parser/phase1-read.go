@@ -6,10 +6,10 @@ import (
 	"sync"
 
 	"github.com/tliron/puccini/ard"
+	"github.com/tliron/puccini/common/reflection"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/csar"
 	"github.com/tliron/puccini/tosca/grammars"
-	"github.com/tliron/puccini/tosca/reflection"
 	urlpkg "github.com/tliron/puccini/url"
 	"github.com/tliron/yamlkeys"
 )

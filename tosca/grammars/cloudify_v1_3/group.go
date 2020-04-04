@@ -30,7 +30,7 @@ func NewGroup(context *tosca.Context) *Group {
 }
 
 // tosca.Reader signature
-func ReadGroup(context *tosca.Context) interface{} {
+func ReadGroup(context *tosca.Context) tosca.EntityPtr {
 	self := NewGroup(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

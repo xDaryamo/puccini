@@ -22,7 +22,7 @@ type Range struct {
 }
 
 // tosca.Reader signature
-func ReadRange(context *tosca.Context) interface{} {
+func ReadRange(context *tosca.Context) tosca.EntityPtr {
 	var self Range
 
 	if !context.ValidateType("!!seq") {
@@ -96,7 +96,7 @@ func NewRangeEntity(context *tosca.Context) *RangeEntity {
 }
 
 // tosca.Reader signature
-func ReadRangeEntity(context *tosca.Context) interface{} {
+func ReadRangeEntity(context *tosca.Context) tosca.EntityPtr {
 	self := NewRangeEntity(context)
 	self.Range = ReadRange(context).(*Range)
 	return self

@@ -14,7 +14,7 @@ import (
 //
 
 // tosca.Reader signature
-func ReadGroup(context *tosca.Context) interface{} {
+func ReadGroup(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("Interfaces", "interfaces,InterfaceAssignment")
 
 	return tosca_v1_3.ReadGroup(context)

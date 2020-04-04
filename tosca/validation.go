@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/tosca/reflection"
+	"github.com/tliron/puccini/common/reflection"
 )
 
 func (self *Context) ValidateUnsupportedFields(keys []string) {
@@ -34,7 +34,7 @@ func (self *Context) ValidateType(requiredTypeNames ...string) bool {
 }
 
 // From "require" tags
-func ValidateRequiredFields(entityPtr interface{}) bool {
+func ValidateRequiredFields(entityPtr EntityPtr) bool {
 	context := GetContext(entityPtr)
 	entity := reflect.ValueOf(entityPtr).Elem()
 	for fieldName, tag := range reflection.GetFieldTagsForValue(entity, "require") {

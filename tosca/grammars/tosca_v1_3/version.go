@@ -35,7 +35,7 @@ type Version struct {
 }
 
 // tosca.Reader signature
-func ReadVersion(context *tosca.Context) interface{} {
+func ReadVersion(context *tosca.Context) tosca.EntityPtr {
 	var self Version
 
 	if context.Is("!!str") {

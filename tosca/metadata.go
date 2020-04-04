@@ -12,7 +12,7 @@ type HasMetadata interface {
 }
 
 // From HasMetadata interface
-func GetDescription(entityPtr interface{}) (string, bool) {
+func GetDescription(entityPtr EntityPtr) (string, bool) {
 	if hasMetadata, ok := entityPtr.(HasMetadata); ok {
 		return hasMetadata.GetDescription()
 	}
@@ -20,7 +20,7 @@ func GetDescription(entityPtr interface{}) (string, bool) {
 }
 
 // From HasMetadata interface
-func GetMetadata(entityPtr interface{}) (map[string]string, bool) {
+func GetMetadata(entityPtr EntityPtr) (map[string]string, bool) {
 	if hasMetadata, ok := entityPtr.(HasMetadata); ok {
 		return hasMetadata.GetMetadata()
 	}
@@ -28,7 +28,7 @@ func GetMetadata(entityPtr interface{}) (map[string]string, bool) {
 }
 
 // From HasMetadata interface
-func SetMetadata(entityPtr interface{}, name string, value string) bool {
+func SetMetadata(entityPtr EntityPtr, name string, value string) bool {
 	if hasMetadata, ok := entityPtr.(HasMetadata); ok {
 		hasMetadata.SetMetadata(name, value)
 		return true

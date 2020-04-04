@@ -27,7 +27,7 @@ func CopyTemplate(context *tosca.Context) {
 	}
 }
 
-func CopyAndMerge(target interface{}, source interface{}, copiedNames []string, targets ard.Map) (interface{}, bool) {
+func CopyAndMerge(target ard.Value, source ard.Value, copiedNames []string, targets ard.Map) (ard.Value, bool) {
 	target = ard.Copy(target)
 
 	if targetMap, ok := target.(ard.Map); ok {

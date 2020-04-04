@@ -36,7 +36,7 @@ func NewWorkflowActivityDefinition(context *tosca.Context) *WorkflowActivityDefi
 }
 
 // tosca.Reader signature
-func ReadWorkflowActivityDefinition(context *tosca.Context) interface{} {
+func ReadWorkflowActivityDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewWorkflowActivityDefinition(context)
 
 	if context.ValidateType("!!map") {

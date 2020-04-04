@@ -1,6 +1,7 @@
 package tosca_v1_3
 
 import (
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
@@ -38,7 +39,7 @@ func NewTopologyTemplate(context *tosca.Context) *TopologyTemplate {
 }
 
 // tosca.Reader signature
-func ReadTopologyTemplate(context *tosca.Context) interface{} {
+func ReadTopologyTemplate(context *tosca.Context) tosca.EntityPtr {
 	self := NewTopologyTemplate(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
@@ -55,7 +56,7 @@ func (self *TopologyTemplate) GetNodeTemplatesOfType(nodeType *NodeType) []*Node
 }
 
 // parser.HasInputs interface
-func (self *TopologyTemplate) SetInputs(inputs map[string]interface{}) {
+func (self *TopologyTemplate) SetInputs(inputs map[string]ard.Value) {
 	context := self.Context.FieldChild("inputs", nil)
 	for name, data := range inputs {
 		childContext := context.MapChild(name, data)

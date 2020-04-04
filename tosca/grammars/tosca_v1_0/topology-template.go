@@ -12,7 +12,7 @@ import (
 //
 
 // tosca.Reader signature
-func ReadTopologyTemplate(context *tosca.Context) interface{} {
+func ReadTopologyTemplate(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("WorkflowDefinitions", "")
 
 	return tosca_v1_3.ReadTopologyTemplate(context)

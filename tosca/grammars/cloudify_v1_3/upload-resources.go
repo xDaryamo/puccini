@@ -26,7 +26,7 @@ func NewUploadResources(context *tosca.Context) *UploadResources {
 }
 
 // tosca.Reader signature
-func ReadUploadResources(context *tosca.Context) interface{} {
+func ReadUploadResources(context *tosca.Context) tosca.EntityPtr {
 	self := NewUploadResources(context)
 
 	context.ValidateUnsupportedFields(context.ReadFields(self))

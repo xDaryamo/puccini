@@ -4,11 +4,11 @@ import (
 	"reflect"
 )
 
-func GetTaggedFields(entityPtr interface{}, name string) []reflect.Value {
+func GetTaggedFields(structPtr interface{}, name string) []reflect.Value {
 	var fields []reflect.Value
-	entity := reflect.ValueOf(entityPtr).Elem()
-	for fieldName := range GetFieldTagsForValue(entity, name) {
-		field := entity.FieldByName(fieldName)
+	value := reflect.ValueOf(structPtr).Elem()
+	for fieldName := range GetFieldTagsForValue(value, name) {
+		field := value.FieldByName(fieldName)
 		fields = append(fields, field)
 	}
 	return fields

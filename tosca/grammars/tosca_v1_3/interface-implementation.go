@@ -28,7 +28,7 @@ func NewInterfaceImplementation(context *tosca.Context) *InterfaceImplementation
 }
 
 // tosca.Reader signature
-func ReadInterfaceImplementation(context *tosca.Context) interface{} {
+func ReadInterfaceImplementation(context *tosca.Context) tosca.EntityPtr {
 	self := NewInterfaceImplementation(context)
 
 	if context.Is("!!map") {

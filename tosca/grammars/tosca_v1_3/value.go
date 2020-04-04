@@ -39,7 +39,7 @@ func NewValue(context *tosca.Context) *Value {
 }
 
 // tosca.Reader signature
-func ReadValue(context *tosca.Context) interface{} {
+func ReadValue(context *tosca.Context) tosca.EntityPtr {
 	ToFunctionCall(context)
 	return NewValue(context)
 }
@@ -47,7 +47,7 @@ func ReadValue(context *tosca.Context) interface{} {
 // tosca.Reader signature
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.12.2.2
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.11.2.2
-func ReadAttributeValue(context *tosca.Context) interface{} {
+func ReadAttributeValue(context *tosca.Context) tosca.EntityPtr {
 	self := NewValue(context)
 
 	// Unpack long notation

@@ -30,7 +30,7 @@ func NewNodeFilter(context *tosca.Context) *NodeFilter {
 }
 
 // tosca.Reader signature
-func ReadNodeFilter(context *tosca.Context) interface{} {
+func ReadNodeFilter(context *tosca.Context) tosca.EntityPtr {
 	self := NewNodeFilter(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

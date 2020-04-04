@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+type EntityPtr = interface{}
+
 // From "name" tag
 func GetEntityTypeName(type_ reflect.Type) string {
 	fields := type_.NumField()
@@ -49,7 +51,7 @@ type Mappable interface {
 }
 
 // From Mappable interface
-func GetKey(entityPtr interface{}) string {
+func GetKey(entityPtr EntityPtr) string {
 	mappable, ok := entityPtr.(Mappable)
 	if !ok {
 		panic(fmt.Sprintf("entity does not implement \"Mappable\" interface: %T", entityPtr))

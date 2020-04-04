@@ -27,7 +27,7 @@ func NewNotificationOutput(context *tosca.Context) *NotificationOutput {
 }
 
 // tosca.Reader signature
-func ReadNotificationOutput(context *tosca.Context) interface{} {
+func ReadNotificationOutput(context *tosca.Context) tosca.EntityPtr {
 	self := NewNotificationOutput(context)
 
 	if strings := context.ReadStringListFixed(2); strings != nil {

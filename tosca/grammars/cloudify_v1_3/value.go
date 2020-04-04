@@ -29,7 +29,7 @@ func NewValue(context *tosca.Context) *Value {
 }
 
 // tosca.Reader signature
-func ReadValue(context *tosca.Context) interface{} {
+func ReadValue(context *tosca.Context) tosca.EntityPtr {
 	ToFunctionCalls(context)
 	return NewValue(context)
 }
@@ -171,7 +171,7 @@ func (self *Value) Normalize() normal.Constrainable {
 
 type Values map[string]*Value
 
-func (self Values) SetIfNil(context *tosca.Context, key string, data interface{}) {
+func (self Values) SetIfNil(context *tosca.Context, key string, data ard.Value) {
 	if _, ok := self[key]; !ok {
 		self[key] = NewValue(context.MapChild(key, data))
 	}

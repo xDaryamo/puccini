@@ -6,9 +6,9 @@ import (
 
 var locks sync.Map
 
-func GetLock(entityPtr interface{}) *sync.RWMutex {
+func GetLock(pointer interface{}) *sync.RWMutex {
 	lock := new(sync.RWMutex)
-	if existing, loaded := locks.LoadOrStore(entityPtr, lock); loaded {
+	if existing, loaded := locks.LoadOrStore(pointer, lock); loaded {
 		return existing.(*sync.RWMutex)
 	} else {
 		return lock

@@ -11,12 +11,12 @@ import (
 //
 
 type Coercible interface {
-	Coerce() (interface{}, error)
+	Coerce() (ard.Value, error)
 	SetConstraints(Constraints)
-	Unwrap() interface{}
+	Unwrap() ard.Value
 }
 
-func (self *CloutContext) NewCoercible(data interface{}, functionCallContext FunctionCallContext) (Coercible, error) {
+func (self *CloutContext) NewCoercible(data ard.Value, functionCallContext FunctionCallContext) (Coercible, error) {
 	if notation, ok := data.(ard.StringMap); ok {
 		if data, ok := notation["$value"]; ok {
 			return self.NewValue(data, notation, functionCallContext)

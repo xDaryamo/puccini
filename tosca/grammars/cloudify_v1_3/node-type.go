@@ -28,14 +28,14 @@ func NewNodeType(context *tosca.Context) *NodeType {
 }
 
 // tosca.Reader signature
-func ReadNodeType(context *tosca.Context) interface{} {
+func ReadNodeType(context *tosca.Context) tosca.EntityPtr {
 	self := NewNodeType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
 // tosca.Hierarchical interface
-func (self *NodeType) GetParent() interface{} {
+func (self *NodeType) GetParent() tosca.EntityPtr {
 	return self.Parent
 }
 

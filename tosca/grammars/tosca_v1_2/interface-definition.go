@@ -14,7 +14,7 @@ import (
 //
 
 // tosca.Reader signature
-func ReadInterfaceDefinition(context *tosca.Context) interface{} {
+func ReadInterfaceDefinition(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("OperationDefinitions", "?,OperationDefinition")
 	context.SetReadTag("NotificationDefinitions", "")
 

@@ -25,7 +25,7 @@ func (self *CloutContext) NewList(list ard.List, entryConstraints Constraints, f
 	return list_, nil
 }
 
-func (self List) Coerce() (interface{}, error) {
+func (self List) Coerce() (ard.Value, error) {
 	value := make(ard.List, len(self))
 
 	for index, coercible := range self {

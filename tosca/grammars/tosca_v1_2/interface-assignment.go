@@ -14,7 +14,7 @@ import (
 //
 
 // tosca.Reader signature
-func ReadInterfaceAssignment(context *tosca.Context) interface{} {
+func ReadInterfaceAssignment(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("Operations", "?,OperationAssignment")
 	context.SetReadTag("Notifications", "")
 

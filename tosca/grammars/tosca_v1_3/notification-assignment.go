@@ -29,7 +29,7 @@ func NewNotificationAssignment(context *tosca.Context) *NotificationAssignment {
 }
 
 // tosca.Reader signature
-func ReadNotificationAssignment(context *tosca.Context) interface{} {
+func ReadNotificationAssignment(context *tosca.Context) tosca.EntityPtr {
 	self := NewNotificationAssignment(context)
 
 	if context.Is("!!map") {

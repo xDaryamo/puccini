@@ -29,7 +29,7 @@ func NewWorkflow(context *tosca.Context) *Workflow {
 }
 
 // tosca.Reader signature
-func ReadWorkflow(context *tosca.Context) interface{} {
+func ReadWorkflow(context *tosca.Context) tosca.EntityPtr {
 	self := NewWorkflow(context)
 
 	if context.Is("!!map") {

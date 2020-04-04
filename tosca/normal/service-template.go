@@ -1,8 +1,8 @@
 package normal
 
 import (
+	"github.com/tliron/puccini/common/reflection"
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/reflection"
 )
 
 //
@@ -36,10 +36,10 @@ func NewServiceTemplate() *ServiceTemplate {
 }
 
 // From Normalizable interface
-func NormalizeServiceTemplate(entityPtr interface{}) (*ServiceTemplate, bool) {
+func NormalizeServiceTemplate(entityPtr tosca.EntityPtr) (*ServiceTemplate, bool) {
 	var s *ServiceTemplate
 
-	reflection.Traverse(entityPtr, func(entityPtr interface{}) bool {
+	reflection.Traverse(entityPtr, func(entityPtr tosca.EntityPtr) bool {
 		if normalizable, ok := entityPtr.(Normalizable); ok {
 			s = normalizable.NormalizeServiceTemplate()
 

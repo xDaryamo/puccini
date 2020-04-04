@@ -3,9 +3,11 @@ package format
 import (
 	"fmt"
 	"strings"
+
+	"github.com/tliron/puccini/ard"
 )
 
-func Decode(code string, format string) (interface{}, error) {
+func Decode(code string, format string) (ard.Value, error) {
 	switch format {
 	case "yaml", "":
 		return DecodeYAML(code)
@@ -16,10 +18,10 @@ func Decode(code string, format string) (interface{}, error) {
 	}
 }
 
-func DecodeYAML(code string) (interface{}, error) {
+func DecodeYAML(code string) (ard.Value, error) {
 	return ReadYAML(strings.NewReader(code))
 }
 
-func DecodeJSON(code string) (interface{}, error) {
+func DecodeJSON(code string) (ard.Value, error) {
 	return ReadJSON(strings.NewReader(code))
 }

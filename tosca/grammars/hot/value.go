@@ -27,7 +27,7 @@ func NewValue(context *tosca.Context) *Value {
 }
 
 // tosca.Reader signature
-func ReadValue(context *tosca.Context) interface{} {
+func ReadValue(context *tosca.Context) tosca.EntityPtr {
 	ToFunctionCalls(context)
 	return NewValue(context)
 }

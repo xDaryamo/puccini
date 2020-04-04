@@ -13,7 +13,7 @@ import (
 //
 
 // tosca.Reader signature
-func ReadInterfaceImplementation(context *tosca.Context) interface{} {
+func ReadInterfaceImplementation(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("Timeout", "")
 	context.SetReadTag("OperationHost", "")
 

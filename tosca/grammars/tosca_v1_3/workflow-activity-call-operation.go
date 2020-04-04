@@ -32,7 +32,7 @@ func NewWorkflowActivityCallOperation(context *tosca.Context) *WorkflowActivityC
 }
 
 // tosca.Reader signature
-func ReadWorkflowActivityCallOperation(context *tosca.Context) interface{} {
+func ReadWorkflowActivityCallOperation(context *tosca.Context) tosca.EntityPtr {
 	self := NewWorkflowActivityCallOperation(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

@@ -31,14 +31,14 @@ func NewArtifactType(context *tosca.Context) *ArtifactType {
 }
 
 // tosca.Reader signature
-func ReadArtifactType(context *tosca.Context) interface{} {
+func ReadArtifactType(context *tosca.Context) tosca.EntityPtr {
 	self := NewArtifactType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
 // tosca.Hierarchical interface
-func (self *ArtifactType) GetParent() interface{} {
+func (self *ArtifactType) GetParent() tosca.EntityPtr {
 	return self.Parent
 }
 

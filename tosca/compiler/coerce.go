@@ -3,7 +3,7 @@ package compiler
 import (
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
-	problemspkg "github.com/tliron/puccini/tosca/problems"
+	problemspkg "github.com/tliron/puccini/common/problems"
 )
 
 func Coerce(clout *cloutpkg.Clout, problems *problemspkg.Problems, format string, strict bool, allowTimestamps bool, pretty bool) {

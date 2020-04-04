@@ -33,7 +33,7 @@ func NewOperationAssignment(context *tosca.Context) *OperationAssignment {
 }
 
 // tosca.Reader signature
-func ReadOperationAssignment(context *tosca.Context) interface{} {
+func ReadOperationAssignment(context *tosca.Context) tosca.EntityPtr {
 	self := NewOperationAssignment(context)
 
 	if context.Is("!!map") {

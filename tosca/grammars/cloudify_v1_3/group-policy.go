@@ -29,7 +29,7 @@ func NewGroupPolicy(context *tosca.Context) *GroupPolicy {
 }
 
 // tosca.Reader signature
-func ReadGroupPolicy(context *tosca.Context) interface{} {
+func ReadGroupPolicy(context *tosca.Context) tosca.EntityPtr {
 	self := NewGroupPolicy(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

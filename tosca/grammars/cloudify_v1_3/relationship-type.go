@@ -30,14 +30,14 @@ func NewRelationshipType(context *tosca.Context) *RelationshipType {
 }
 
 // tosca.Reader signature
-func ReadRelationshipType(context *tosca.Context) interface{} {
+func ReadRelationshipType(context *tosca.Context) tosca.EntityPtr {
 	self := NewRelationshipType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
 // tosca.Hierarchical interface
-func (self *RelationshipType) GetParent() interface{} {
+func (self *RelationshipType) GetParent() tosca.EntityPtr {
 	return self.Parent
 }
 

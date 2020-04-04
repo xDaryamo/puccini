@@ -14,7 +14,7 @@ import (
 //
 
 // tosca.Reader signature
-func ReadArtifactDefinition(context *tosca.Context) interface{} {
+func ReadArtifactDefinition(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("ArtifactVersion", "")
 	context.SetReadTag("ChecksumAlgorithm", "")
 	context.SetReadTag("Checksum", "")

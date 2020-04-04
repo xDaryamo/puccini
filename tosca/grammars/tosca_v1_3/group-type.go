@@ -37,14 +37,14 @@ func NewGroupType(context *tosca.Context) *GroupType {
 }
 
 // tosca.Reader signature
-func ReadGroupType(context *tosca.Context) interface{} {
+func ReadGroupType(context *tosca.Context) tosca.EntityPtr {
 	self := NewGroupType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
 // tosca.Hierarchical interface
-func (self *GroupType) GetParent() interface{} {
+func (self *GroupType) GetParent() tosca.EntityPtr {
 	return self.Parent
 }
 

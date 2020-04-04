@@ -1,6 +1,6 @@
 package ard
 
-func Copy(value interface{}) interface{} {
+func Copy(value Value) Value {
 	switch value_ := value.(type) {
 	case Map:
 		map_ := make(Map)

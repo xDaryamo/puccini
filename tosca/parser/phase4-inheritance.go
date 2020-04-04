@@ -6,13 +6,13 @@ import (
 	"strings"
 
 	"github.com/tliron/puccini/common"
+	"github.com/tliron/puccini/common/reflection"
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/reflection"
 )
 
 func (self *Context) GetInheritTasks() Tasks {
 	inheritContext := NewInheritContext()
-	self.Traverse("inherit", func(entityPtr interface{}) bool {
+	self.Traverse("inherit", func(entityPtr tosca.EntityPtr) bool {
 		inheritContext.GetInheritTask(entityPtr)
 		return true
 	})
@@ -33,7 +33,7 @@ func NewInheritContext() *InheritContext {
 	return &InheritContext{make(Tasks), make(TasksForEntities), make(InheritFields)}
 }
 
-func (self *InheritContext) GetInheritTask(entityPtr interface{}) *Task {
+func (self *InheritContext) GetInheritTask(entityPtr tosca.EntityPtr) *Task {
 	task, ok := self.TasksForEntities[entityPtr]
 	if !ok {
 		path := tosca.GetContext(entityPtr).Path.String()
@@ -58,7 +58,7 @@ func (self *InheritContext) GetInheritTask(entityPtr interface{}) *Task {
 	return task
 }
 
-func (self *InheritContext) NewExecutor(entityPtr interface{}) Executor {
+func (self *InheritContext) NewExecutor(entityPtr tosca.EntityPtr) Executor {
 	return func(task *Task) {
 		defer task.Done()
 
@@ -79,8 +79,8 @@ func (self *InheritContext) NewExecutor(entityPtr interface{}) Executor {
 	}
 }
 
-func (self *InheritContext) GetDependencies(entityPtr interface{}) map[interface{}]bool {
-	dependencies := make(map[interface{}]bool)
+func (self *InheritContext) GetDependencies(entityPtr tosca.EntityPtr) map[tosca.EntityPtr]bool {
+	dependencies := make(map[tosca.EntityPtr]bool)
 
 	// From "inherit" tags
 	for _, inheritField := range self.InheritFields.Get(entityPtr) {
@@ -131,7 +131,7 @@ func (self *InheritContext) GetDependencies(entityPtr interface{}) map[interface
 
 type InheritField struct {
 	Entity        reflect.Value
-	FromEntityPtr interface{}
+	FromEntityPtr tosca.EntityPtr
 	Key           string
 	Field         reflect.Value
 	FromField     reflect.Value
@@ -286,10 +286,10 @@ func getSliceElementIndexForKey(slice reflect.Value, key string) (int, bool) {
 // InheritFields
 //
 
-type InheritFields map[interface{}][]*InheritField
+type InheritFields map[tosca.EntityPtr][]*InheritField
 
 // From "inherit" tags
-func NewInheritFields(entityPtr interface{}) []*InheritField {
+func NewInheritFields(entityPtr tosca.EntityPtr) []*InheritField {
 	var inheritFields []*InheritField
 
 	entity := reflect.ValueOf(entityPtr).Elem()
@@ -310,7 +310,7 @@ func NewInheritFields(entityPtr interface{}) []*InheritField {
 }
 
 // Cache these, because we call twice for each entity
-func (self InheritFields) Get(entityPtr interface{}) []*InheritField {
+func (self InheritFields) Get(entityPtr tosca.EntityPtr) []*InheritField {
 	inheritFields, ok := self[entityPtr]
 	if !ok {
 		inheritFields = NewInheritFields(entityPtr)

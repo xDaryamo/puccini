@@ -155,7 +155,7 @@ var ScalarUnitSizeMeasures = ScalarUnitMeasures{
 }
 
 // tosca.Reader signature
-func ReadScalarUnitSize(context *tosca.Context) interface{} {
+func ReadScalarUnitSize(context *tosca.Context) tosca.EntityPtr {
 	return ReadScalarUnit(context, "scalar-unit.size", "B", "byte", "bytes", ScalarUnitSizeRE, ScalarUnitSizeMeasures, true, false)
 }
 
@@ -183,7 +183,7 @@ var ScalarUnitTimeMeasures = ScalarUnitMeasures{
 }
 
 // tosca.Reader signature
-func ReadScalarUnitTime(context *tosca.Context) interface{} {
+func ReadScalarUnitTime(context *tosca.Context) tosca.EntityPtr {
 	return ReadScalarUnit(context, "scalar-unit.time", "s", "second", "seconds", ScalarUnitTimeRE, ScalarUnitTimeMeasures, false, false)
 }
 
@@ -208,7 +208,7 @@ var ScalarUnitFrequencyMeasures = ScalarUnitMeasures{
 }
 
 // tosca.Reader signature
-func ReadScalarUnitFrequency(context *tosca.Context) interface{} {
+func ReadScalarUnitFrequency(context *tosca.Context) tosca.EntityPtr {
 	return ReadScalarUnit(context, "scalar-unit.frequency", "Hz", "Hz", "Hz", ScalarUnitFrequencyRE, ScalarUnitFrequencyMeasures, false, false)
 }
 
@@ -245,6 +245,6 @@ var ScalarUnitBitrateMeasures = ScalarUnitMeasures{
 }
 
 // tosca.Reader signature
-func ReadScalarUnitBitrate(context *tosca.Context) interface{} {
+func ReadScalarUnitBitrate(context *tosca.Context) tosca.EntityPtr {
 	return ReadScalarUnit(context, "scalar-unit.bitrate", "bps", "bps", "bps", ScalarUnitBitrateRE, ScalarUnitBitrateMeasures, false, true)
 }

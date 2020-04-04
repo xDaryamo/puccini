@@ -13,7 +13,7 @@ import (
 type Metadata map[string]string
 
 // tosca.Reader signature
-func ReadMetadata(context *tosca.Context) interface{} {
+func ReadMetadata(context *tosca.Context) tosca.EntityPtr {
 	var self Metadata
 
 	if context.Is("!!map") {

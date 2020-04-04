@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/tliron/puccini/common"
+	"github.com/tliron/puccini/common/reflection"
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/reflection"
 )
 
 func (self *Context) LookupNames() {
@@ -15,7 +15,7 @@ func (self *Context) LookupNames() {
 }
 
 // From "lookup" tags
-func LookupFields(entityPtr interface{}) bool {
+func LookupFields(entityPtr tosca.EntityPtr) bool {
 	lock := common.GetLock(entityPtr)
 	lock.Lock()
 	defer lock.Unlock()
@@ -118,7 +118,7 @@ func parseLookupTag(tag string) (string, string, bool) {
 	return lookupFieldKey, lookupFieldName, report
 }
 
-func panicLookupTag(entityPtr interface{}) {
+func panicLookupTag(entityPtr tosca.EntityPtr) {
 	panic(fmt.Sprintf("\"lookup\" tag refers to a field that is not of type \"*string\" or \"*[]string\" in struct %T", entityPtr))
 }
 

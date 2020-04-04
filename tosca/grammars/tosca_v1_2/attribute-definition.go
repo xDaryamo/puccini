@@ -14,7 +14,7 @@ import (
 //
 
 // tosca.Reader signature
-func ReadAttributeDefinition(context *tosca.Context) interface{} {
+func ReadAttributeDefinition(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("Metadata", "")
 	context.SetReadTag("KeySchema", "")
 

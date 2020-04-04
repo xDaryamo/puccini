@@ -39,7 +39,7 @@ func NewPolicy(context *tosca.Context) *Policy {
 }
 
 // tosca.Reader signature
-func ReadPolicy(context *tosca.Context) interface{} {
+func ReadPolicy(context *tosca.Context) tosca.EntityPtr {
 	self := NewPolicy(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

@@ -3,13 +3,14 @@ package parser
 import (
 	"errors"
 
+	"github.com/tliron/puccini/ard"
+	"github.com/tliron/puccini/common/problems"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
-	"github.com/tliron/puccini/tosca/problems"
 	urlpkg "github.com/tliron/puccini/url"
 )
 
-func Parse(url string, quirks tosca.Quirks, inputs map[string]interface{}) (*normal.ServiceTemplate, *problems.Problems, error) {
+func Parse(url string, quirks tosca.Quirks, inputs map[string]ard.Value) (*normal.ServiceTemplate, *problems.Problems, error) {
 	context := NewContext(quirks)
 
 	url_, err := urlpkg.NewValidURL(url, nil)

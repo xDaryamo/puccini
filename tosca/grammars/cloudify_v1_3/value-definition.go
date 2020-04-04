@@ -28,7 +28,7 @@ func NewValueDefinition(context *tosca.Context) *ValueDefinition {
 }
 
 // tosca.Reader signature
-func ReadValueDefinition(context *tosca.Context) interface{} {
+func ReadValueDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewValueDefinition(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

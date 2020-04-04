@@ -34,7 +34,7 @@ func NewPlugin(context *tosca.Context) *Plugin {
 }
 
 // tosca.Reader signature
-func ReadPlugin(context *tosca.Context) interface{} {
+func ReadPlugin(context *tosca.Context) tosca.EntityPtr {
 	self := NewPlugin(context)
 
 	context.ValidateUnsupportedFields(context.ReadFields(self))

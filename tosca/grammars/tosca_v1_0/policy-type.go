@@ -12,7 +12,7 @@ import (
 //
 
 // tosca.Reader signature
-func ReadPolicyType(context *tosca.Context) interface{} {
+func ReadPolicyType(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("TriggerDefinitions", "")
 
 	return tosca_v1_3.ReadPolicyType(context)

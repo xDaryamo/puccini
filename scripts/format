@@ -10,6 +10,8 @@ gofmt -w -s -e \
 	"$ROOT/clout/js" \
 	"$ROOT/common" \
 	"$ROOT/common/format" \
+	"$ROOT/common/problems" \
+	"$ROOT/common/reflection" \
 	"$ROOT/common/terminal" \
 	"$ROOT/puccini-js" \
 	"$ROOT/puccini-js/commands" \
@@ -27,7 +29,6 @@ gofmt -w -s -e \
 	"$ROOT/tosca/grammars/tosca_v1_3" \
 	"$ROOT/tosca/normal" \
 	"$ROOT/tosca/parser" \
-	"$ROOT/tosca/problems" \
 	"$ROOT/tosca/profiles" \
 	"$ROOT/tosca/profiles/bpmn/v1_0" \
 	"$ROOT/tosca/profiles/cloudify/v5_0_5" \
@@ -40,6 +41,5 @@ gofmt -w -s -e \
 	"$ROOT/tosca/profiles/simple/v1_2" \
 	"$ROOT/tosca/profiles/simple/v1_3" \
 	"$ROOT/tosca/profiles/simple-for-nfv/v1_0" \
-	"$ROOT/tosca/reflection" \
 	"$ROOT/url" \
 	"$ROOT/version"

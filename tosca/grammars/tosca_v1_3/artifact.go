@@ -24,7 +24,7 @@ func NewArtifact(context *tosca.Context) *Artifact {
 }
 
 // tosca.Reader signature
-func ReadArtifact(context *tosca.Context) interface{} {
+func ReadArtifact(context *tosca.Context) tosca.EntityPtr {
 	self := NewArtifact(context)
 	self.ArtifactDefinition = ReadArtifactDefinition(context).(*ArtifactDefinition)
 	return self

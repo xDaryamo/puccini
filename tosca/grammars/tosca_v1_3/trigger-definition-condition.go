@@ -22,7 +22,7 @@ func NewTriggerDefinitionCondition(context *tosca.Context) *TriggerDefinitionCon
 }
 
 // tosca.Reader signature
-func ReadTriggerDefinitionCondition(context *tosca.Context) interface{} {
+func ReadTriggerDefinitionCondition(context *tosca.Context) tosca.EntityPtr {
 	self := NewTriggerDefinitionCondition(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

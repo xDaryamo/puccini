@@ -27,7 +27,7 @@ func NewGroupPolicyTrigger(context *tosca.Context) *GroupPolicyTrigger {
 }
 
 // tosca.Reader signature
-func ReadGroupPolicyTrigger(context *tosca.Context) interface{} {
+func ReadGroupPolicyTrigger(context *tosca.Context) tosca.EntityPtr {
 	self := NewGroupPolicyTrigger(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

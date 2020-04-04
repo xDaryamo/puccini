@@ -49,7 +49,7 @@ func NewNodeTemplate(context *tosca.Context) *NodeTemplate {
 }
 
 // tosca.Reader signature
-func ReadNodeTemplate(context *tosca.Context) interface{} {
+func ReadNodeTemplate(context *tosca.Context) tosca.EntityPtr {
 	self := NewNodeTemplate(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

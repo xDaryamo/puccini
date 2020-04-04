@@ -33,14 +33,14 @@ func NewCapabilityType(context *tosca.Context) *CapabilityType {
 }
 
 // tosca.Reader signature
-func ReadCapabilityType(context *tosca.Context) interface{} {
+func ReadCapabilityType(context *tosca.Context) tosca.EntityPtr {
 	self := NewCapabilityType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
 // tosca.Hierarchical interface
-func (self *CapabilityType) GetParent() interface{} {
+func (self *CapabilityType) GetParent() tosca.EntityPtr {
 	return self.Parent
 }
 

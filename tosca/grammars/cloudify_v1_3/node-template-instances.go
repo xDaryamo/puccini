@@ -21,7 +21,7 @@ func NewNodeTemplateInstances(context *tosca.Context) *NodeTemplateInstances {
 }
 
 // tosca.Reader signature
-func ReadNodeTemplateInstances(context *tosca.Context) interface{} {
+func ReadNodeTemplateInstances(context *tosca.Context) tosca.EntityPtr {
 	self := NewNodeTemplateInstances(context)
 
 	context.ValidateUnsupportedFields(context.ReadFields(self))

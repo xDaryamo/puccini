@@ -3,15 +3,15 @@ package parser
 import (
 	"sync"
 
+	"github.com/tliron/puccini/common/reflection"
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/reflection"
 )
 
 func (self *Context) Traverse(phase string, traverse reflection.Traverser) {
 	work := make(EntityWork)
 	var traversed tosca.EntityPtrs
 
-	traverseWrapper := func(entityPtr interface{}) bool {
+	traverseWrapper := func(entityPtr tosca.EntityPtr) bool {
 		if work.Start(phase, entityPtr) {
 			return false
 		}
@@ -31,7 +31,7 @@ func (self *Context) Traverse(phase string, traverse reflection.Traverser) {
 	reflection.Traverse(self.Root.EntityPtr, traverseWrapper)
 
 	// Types
-	self.Root.GetContext().Namespace.Range(func(forType interface{}, entityPtr interface{}) bool {
+	self.Root.GetContext().Namespace.Range(func(forType tosca.EntityPtr, entityPtr tosca.EntityPtr) bool {
 		reflection.Traverse(entityPtr, traverseWrapper)
 		return true
 	})
@@ -41,9 +41,9 @@ func (self *Context) Traverse(phase string, traverse reflection.Traverser) {
 // EntityWork
 //
 
-type EntityWork map[interface{}]bool
+type EntityWork map[tosca.EntityPtr]bool
 
-func (self EntityWork) Start(phase string, entityPtr interface{}) bool {
+func (self EntityWork) Start(phase string, entityPtr tosca.EntityPtr) bool {
 	if _, ok := self[entityPtr]; ok {
 		log.Debugf("{%s} skip: %s", phase, tosca.GetContext(entityPtr).Path)
 		return true

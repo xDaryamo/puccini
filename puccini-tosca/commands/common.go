@@ -5,8 +5,8 @@ import (
 	"github.com/tebeka/atexit"
 	"github.com/tliron/puccini/common"
 	formatpkg "github.com/tliron/puccini/common/format"
+	problemspkg "github.com/tliron/puccini/common/problems"
 	"github.com/tliron/puccini/common/terminal"
-	problemspkg "github.com/tliron/puccini/tosca/problems"
 )
 
 var log = logging.MustGetLogger("puccini-tosca")

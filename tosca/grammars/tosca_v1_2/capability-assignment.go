@@ -14,7 +14,7 @@ import (
 //
 
 // tosca.Reader signature
-func ReadCapabilityAssignment(context *tosca.Context) interface{} {
+func ReadCapabilityAssignment(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("Occurrences", "")
 
 	return tosca_v1_3.ReadCapabilityAssignment(context)

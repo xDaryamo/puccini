@@ -35,7 +35,7 @@ func NewParameter(context *tosca.Context) *Parameter {
 }
 
 // tosca.Reader signature
-func ReadParameter(context *tosca.Context) interface{} {
+func ReadParameter(context *tosca.Context) tosca.EntityPtr {
 	self := NewParameter(context)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self)))
 

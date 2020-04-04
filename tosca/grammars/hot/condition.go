@@ -27,7 +27,7 @@ func NewCondition(context *tosca.Context) *Condition {
 }
 
 // tosca.Reader signature
-func ReadCondition(context *tosca.Context) interface{} {
+func ReadCondition(context *tosca.Context) tosca.EntityPtr {
 	self := NewCondition(context)
 
 	if context.Is("!!map") {

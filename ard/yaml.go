@@ -8,14 +8,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func ToYAMLDocumentNode(value interface{}, verbose bool) *yaml.Node {
+func ToYAMLDocumentNode(value Value, verbose bool) *yaml.Node {
 	var node yaml.Node
 	node.Kind = yaml.DocumentNode
 	node.Content = []*yaml.Node{ToYAMLNode(value, verbose)}
 	return &node
 }
 
-func ToYAMLNode(value interface{}, verbose bool) *yaml.Node {
+func ToYAMLNode(value Value, verbose bool) *yaml.Node {
 	// See: https://yaml.org/type/
 
 	var node yaml.Node

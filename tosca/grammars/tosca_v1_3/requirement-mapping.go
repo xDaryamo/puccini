@@ -29,7 +29,7 @@ func NewRequirementMapping(context *tosca.Context) *RequirementMapping {
 }
 
 // tosca.Reader signature
-func ReadRequirementMapping(context *tosca.Context) interface{} {
+func ReadRequirementMapping(context *tosca.Context) tosca.EntityPtr {
 	self := NewRequirementMapping(context)
 
 	if strings := context.ReadStringListFixed(2); strings != nil {

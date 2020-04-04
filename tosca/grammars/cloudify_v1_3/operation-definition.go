@@ -30,7 +30,7 @@ func NewOperationDefinition(context *tosca.Context) *OperationDefinition {
 }
 
 // tosca.Reader signature
-func ReadOperationDefinition(context *tosca.Context) interface{} {
+func ReadOperationDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewOperationDefinition(context)
 
 	if context.Is("!!map") {

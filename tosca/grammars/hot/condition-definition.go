@@ -29,7 +29,7 @@ func NewConditionDefinition(context *tosca.Context) *ConditionDefinition {
 }
 
 // tosca.Reader signature
-func ReadConditionDefinition(context *tosca.Context) interface{} {
+func ReadConditionDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewConditionDefinition(context)
 
 	if context.ValidateType("!!map") {

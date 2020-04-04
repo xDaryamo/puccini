@@ -36,7 +36,7 @@ func NewRequirementDefinition(context *tosca.Context) *RequirementDefinition {
 }
 
 // tosca.Reader signature
-func ReadRequirementDefinition(context *tosca.Context) interface{} {
+func ReadRequirementDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewRequirementDefinition(context)
 
 	if context.Is("!!map") {

@@ -7,16 +7,16 @@ import (
 type Traverser func(interface{}) bool
 
 // Ignore fields tagged with "traverse:ignore" or "lookup"
-func Traverse(entityPtr interface{}, traverse Traverser) {
-	if !traverse(entityPtr) {
+func Traverse(object interface{}, traverse Traverser) {
+	if !traverse(object) {
 		return
 	}
 
-	if !IsPtrToStruct(reflect.TypeOf(entityPtr)) {
+	if !IsPtrToStruct(reflect.TypeOf(object)) {
 		return
 	}
 
-	value := reflect.ValueOf(entityPtr).Elem()
+	value := reflect.ValueOf(object).Elem()
 
 	for _, structField := range GetStructFields(value.Type()) {
 		// Has traverse:"ignore" tag?

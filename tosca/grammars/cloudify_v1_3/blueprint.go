@@ -3,6 +3,7 @@ package cloudify_v1_3
 import (
 	"fmt"
 
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/yamlkeys"
@@ -26,7 +27,7 @@ func NewBlueprint(context *tosca.Context) *Blueprint {
 }
 
 // tosca.Reader signature
-func ReadBlueprint(context *tosca.Context) interface{} {
+func ReadBlueprint(context *tosca.Context) tosca.EntityPtr {
 	self := NewBlueprint(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
@@ -34,7 +35,7 @@ func ReadBlueprint(context *tosca.Context) interface{} {
 }
 
 // parser.HasInputs interface
-func (self *Blueprint) SetInputs(inputs map[string]interface{}) {
+func (self *Blueprint) SetInputs(inputs map[string]ard.Value) {
 	context := self.Context.FieldChild("inputs", nil)
 	for name, data := range inputs {
 		childContext := context.MapChild(name, data)

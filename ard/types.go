@@ -5,10 +5,26 @@ import (
 	"time"
 )
 
+type Value = interface{}
+
+// Note: This is just a convenient alias, *not* a type. An extra type would ensure more strictness but
+// would make life more complicated than it needs to be. That said, if we *do* want to make this into a
+// type, we need to make sure not to add any methods to the type, otherwise the goja JavaScript engine
+// will treat it as a host object instead of a regular JavaScript dict object.
+type List = []Value
+
+// Note: This is just a convenient alias, *not* a type. An extra type would ensure more strictness but
+// would make life more complicated than it needs to be. That said, if we *do* want to make this into a
+// type, we need to make sure not to add any methods to the type, otherwise the goja JavaScript engine
+// will treat it as a host object instead of a regular JavaScript dict object.
+type Map = map[Value]Value
+
+type StringMap = map[string]Value
+
 // We will use YAML schema names:
 // https://yaml.org/spec/1.2/spec.html#Schema
 
-type TypeValidator = func(interface{}) bool
+type TypeValidator = func(Value) bool
 
 var TypeValidators = map[string]TypeValidator{
 	// Failsafe schema: https://yaml.org/spec/1.2/spec.html#id2802346
@@ -25,7 +41,7 @@ var TypeValidators = map[string]TypeValidator{
 	"!!timestamp": IsTime,
 }
 
-func TypeName(value interface{}) string {
+func TypeName(value Value) string {
 	switch value.(type) {
 	case Map:
 		return "!!map"
@@ -46,7 +62,7 @@ func TypeName(value interface{}) string {
 	}
 }
 
-var TypeZeroes = map[string]interface{}{
+var TypeZeroes = map[string]Value{
 	"!!map":       make(Map),
 	"!!seq":       List{},
 	"!!str":       "",
@@ -57,31 +73,31 @@ var TypeZeroes = map[string]interface{}{
 }
 
 // Map = map[interface{}]interface{}
-func IsMap(value interface{}) bool {
+func IsMap(value Value) bool {
 	_, ok := value.(Map)
 	return ok
 }
 
 // List = []interface{}
-func IsList(value interface{}) bool {
+func IsList(value Value) bool {
 	_, ok := value.(List)
 	return ok
 }
 
 // string
-func IsString(value interface{}) bool {
+func IsString(value Value) bool {
 	_, ok := value.(string)
 	return ok
 }
 
 // bool
-func IsBool(value interface{}) bool {
+func IsBool(value Value) bool {
 	_, ok := value.(bool)
 	return ok
 }
 
 // int64, int32, int16, int8, int, uint64, uint32, uint16, uint8, uint
-func IsInteger(value interface{}) bool {
+func IsInteger(value Value) bool {
 	switch value.(type) {
 	case int64, int32, int16, int8, int, uint64, uint32, uint16, uint8, uint:
 		return true
@@ -90,7 +106,7 @@ func IsInteger(value interface{}) bool {
 }
 
 // float64, float32
-func IsFloat(value interface{}) bool {
+func IsFloat(value Value) bool {
 	switch value.(type) {
 	case float64, float32:
 		return true
@@ -99,7 +115,7 @@ func IsFloat(value interface{}) bool {
 }
 
 // time.Time
-func IsTime(value interface{}) bool {
+func IsTime(value Value) bool {
 	_, ok := value.(time.Time)
 	return ok
 }

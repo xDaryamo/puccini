@@ -35,7 +35,7 @@ func NewCapabilityAssignment(context *tosca.Context) *CapabilityAssignment {
 }
 
 // tosca.Reader signature
-func ReadCapabilityAssignment(context *tosca.Context) interface{} {
+func ReadCapabilityAssignment(context *tosca.Context) tosca.EntityPtr {
 	self := NewCapabilityAssignment(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

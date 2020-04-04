@@ -26,7 +26,7 @@ func NewAttributeMapping(context *tosca.Context) *AttributeMapping {
 }
 
 // tosca.Reader signature
-func ReadAttributeMapping(context *tosca.Context) interface{} {
+func ReadAttributeMapping(context *tosca.Context) tosca.EntityPtr {
 	self := NewAttributeMapping(context)
 
 	if strings := context.ReadStringListFixed(2); strings != nil {

@@ -9,7 +9,7 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-func Read(reader io.Reader, format string) (interface{}, error) {
+func Read(reader io.Reader, format string) (ard.Value, error) {
 	switch format {
 	case "yaml", "":
 		return ReadYAML(reader)
@@ -20,12 +20,12 @@ func Read(reader io.Reader, format string) (interface{}, error) {
 	}
 }
 
-func ReadYAML(reader io.Reader) (interface{}, error) {
+func ReadYAML(reader io.Reader) (ard.Value, error) {
 	return yamlkeys.Decode(reader)
 }
 
-func ReadJSON(reader io.Reader) (interface{}, error) {
-	var data interface{}
+func ReadJSON(reader io.Reader) (ard.Value, error) {
+	var data ard.Value
 	decoder := json.NewDecoder(reader)
 	if err := decoder.Decode(&data); err == nil {
 		data, _ = ard.ToMaps(data)

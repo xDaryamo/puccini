@@ -47,7 +47,7 @@ type Timestamp struct {
 }
 
 // tosca.Reader signature
-func ReadTimestamp(context *tosca.Context) interface{} {
+func ReadTimestamp(context *tosca.Context) tosca.EntityPtr {
 	var self Timestamp
 
 	if context.Is("!!str") {

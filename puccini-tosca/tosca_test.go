@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	cloutpkg "github.com/tliron/puccini/clout"
+	problemspkg "github.com/tliron/puccini/common/problems"
 	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
-	problemspkg "github.com/tliron/puccini/tosca/problems"
 )
 
 func TestParse(t *testing.T) {

@@ -11,11 +11,11 @@ import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/common"
 	formatpkg "github.com/tliron/puccini/common/format"
+	problemspkg "github.com/tliron/puccini/common/problems"
 	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
-	problemspkg "github.com/tliron/puccini/tosca/problems"
 	urlpkg "github.com/tliron/puccini/url"
 	"github.com/tliron/yamlkeys"
 )

@@ -53,7 +53,7 @@ func NewResource(context *tosca.Context) *Resource {
 }
 
 // tosca.Reader signature
-func ReadResource(context *tosca.Context) interface{} {
+func ReadResource(context *tosca.Context) tosca.EntityPtr {
 	self := NewResource(context)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self)))
 

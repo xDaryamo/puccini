@@ -14,7 +14,7 @@ import (
 //
 
 // tosca.Reader signature
-func ReadServiceTemplate(context *tosca.Context) interface{} {
+func ReadServiceTemplate(context *tosca.Context) tosca.EntityPtr {
 	self := tosca_v1_3.NewServiceTemplate(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))

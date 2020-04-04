@@ -1,6 +1,7 @@
 package tosca_v1_3
 
 import (
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
@@ -29,10 +30,10 @@ func NewPropertyFilter(context *tosca.Context) *PropertyFilter {
 }
 
 // tosca.Reader signature
-func ReadPropertyFilter(context *tosca.Context) interface{} {
+func ReadPropertyFilter(context *tosca.Context) tosca.EntityPtr {
 	self := NewPropertyFilter(context)
 
-	context.ReadListItems(ReadConstraintClause, func(item interface{}) {
+	context.ReadListItems(ReadConstraintClause, func(item ard.Value) {
 		self.ConstraintClauses = append(self.ConstraintClauses, item.(*ConstraintClause))
 	})
 

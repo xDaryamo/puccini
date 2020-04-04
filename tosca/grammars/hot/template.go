@@ -47,7 +47,7 @@ func NewTemplate(context *tosca.Context) *Template {
 }
 
 // tosca.Reader signature
-func ReadTemplate(context *tosca.Context) interface{} {
+func ReadTemplate(context *tosca.Context) tosca.EntityPtr {
 	self := NewTemplate(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 
@@ -88,7 +88,7 @@ func (self *Template) GetImportSpecs() []*tosca.ImportSpec {
 }
 
 // parser.HasInputs interface
-func (self *Template) SetInputs(inputs map[string]interface{}) {
+func (self *Template) SetInputs(inputs map[string]ard.Value) {
 	context := self.Context.FieldChild("parameters", nil)
 	for name, data := range inputs {
 		childContext := context.MapChild(name, data)

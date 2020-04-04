@@ -47,7 +47,7 @@ func NewArtifactDefinition(context *tosca.Context) *ArtifactDefinition {
 }
 
 // tosca.Reader signature
-func ReadArtifactDefinition(context *tosca.Context) interface{} {
+func ReadArtifactDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewArtifactDefinition(context)
 
 	if context.Is("!!map") {

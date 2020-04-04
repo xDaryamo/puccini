@@ -3,6 +3,7 @@ package cloudify_v1_3
 import (
 	"strings"
 
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -12,11 +13,11 @@ import (
 // Note: not in spec
 //
 
-type Metadata map[string]interface{}
+type Metadata map[string]ard.Value
 
 // tosca.Reader signature
-func ReadMetadata(context *tosca.Context) interface{} {
-	var self map[string]interface{}
+func ReadMetadata(context *tosca.Context) tosca.EntityPtr {
+	var self map[string]ard.Value
 
 	if context.ValidateType("!!map") {
 		metadata := context.ReadStringMap()

@@ -34,7 +34,7 @@ func NewRepository(context *tosca.Context) *Repository {
 }
 
 // tosca.Reader signature
-func ReadRepository(context *tosca.Context) interface{} {
+func ReadRepository(context *tosca.Context) tosca.EntityPtr {
 	self := NewRepository(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

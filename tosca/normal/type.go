@@ -40,7 +40,7 @@ func NewTypes(names ...string) Types {
 func GetHierarchyTypes(hierarchy *tosca.Hierarchy) Types {
 	types := make(Types)
 
-	hierarchy.Range(func(entityPtr interface{}, parentEntityPtr interface{}) bool {
+	hierarchy.Range(func(entityPtr tosca.EntityPtr, parentEntityPtr tosca.EntityPtr) bool {
 		type_ := NewType(tosca.GetCanonicalName(entityPtr))
 
 		if parentEntityPtr != nil {
@@ -66,7 +66,7 @@ func GetHierarchyTypes(hierarchy *tosca.Hierarchy) Types {
 	return types
 }
 
-func GetTypes(hierarchy *tosca.Hierarchy, entityPtr interface{}) (Types, bool) {
+func GetTypes(hierarchy *tosca.Hierarchy, entityPtr tosca.EntityPtr) (Types, bool) {
 	if childHierarchy, ok := hierarchy.Find(entityPtr); ok {
 		return GetHierarchyTypes(childHierarchy), true
 	}

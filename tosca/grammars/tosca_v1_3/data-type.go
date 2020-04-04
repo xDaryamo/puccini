@@ -37,14 +37,14 @@ func NewDataType(context *tosca.Context) *DataType {
 }
 
 // tosca.Reader signature
-func ReadDataType(context *tosca.Context) interface{} {
+func ReadDataType(context *tosca.Context) tosca.EntityPtr {
 	self := NewDataType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
 // tosca.Hierarchical interface
-func (self *DataType) GetParent() interface{} {
+func (self *DataType) GetParent() tosca.EntityPtr {
 	return self.Parent
 }
 
@@ -120,7 +120,7 @@ func (self *DataType) Complete(context *tosca.Context) {
 	for key, definition := range self.PropertyDefinitions {
 		childContext := context.MapChild(key, nil)
 
-		var data interface{}
+		var data ard.Value
 		if data, ok = map_[key]; ok {
 			childContext.Data = data
 		} else if definition.Default != nil {

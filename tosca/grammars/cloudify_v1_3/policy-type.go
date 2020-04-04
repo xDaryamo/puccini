@@ -26,18 +26,18 @@ func NewPolicyType(context *tosca.Context) *PolicyType {
 	}
 }
 
-var policyTypeRoot *PolicyType
-
-// tosca.Hierarchical interface
-func (self *PolicyType) GetParent() interface{} {
-	return policyTypeRoot
-}
-
 // tosca.Reader signature
-func ReadPolicyType(context *tosca.Context) interface{} {
+func ReadPolicyType(context *tosca.Context) tosca.EntityPtr {
 	self := NewPolicyType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
+}
+
+var policyTypeRoot *PolicyType
+
+// tosca.Hierarchical interface
+func (self *PolicyType) GetParent() tosca.EntityPtr {
+	return policyTypeRoot
 }
 
 //

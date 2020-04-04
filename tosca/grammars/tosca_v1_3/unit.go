@@ -39,7 +39,7 @@ func NewUnit(context *tosca.Context) *Unit {
 }
 
 // tosca.Reader signature
-func ReadUnit(context *tosca.Context) interface{} {
+func ReadUnit(context *tosca.Context) tosca.EntityPtr {
 	self := NewUnit(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))

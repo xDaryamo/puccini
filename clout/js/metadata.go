@@ -22,7 +22,7 @@ func GetMetadata(clout *cloutpkg.Clout) (ard.StringMap, error) {
 	return m, nil
 }
 
-func GetMetadataSection(name string, clout *cloutpkg.Clout) (interface{}, error) {
+func GetMetadataSection(name string, clout *cloutpkg.Clout) (ard.Value, error) {
 	segments, final, err := parseScriptletName(name)
 	if err != nil {
 		return nil, err

@@ -1,6 +1,7 @@
 package hot
 
 import (
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -11,7 +12,7 @@ import (
 type Data struct {
 	*Entity `name:"data"`
 
-	Data interface{}
+	Data ard.Value
 }
 
 func NewData(context *tosca.Context) *Data {
@@ -22,6 +23,6 @@ func NewData(context *tosca.Context) *Data {
 }
 
 // tosca.Reader signature
-func ReadData(context *tosca.Context) interface{} {
+func ReadData(context *tosca.Context) tosca.EntityPtr {
 	return NewData(context)
 }

@@ -1,7 +1,9 @@
 package parser
 
 import (
-	"github.com/tliron/puccini/tosca/reflection"
+	"github.com/tliron/puccini/ard"
+	"github.com/tliron/puccini/common/reflection"
+	"github.com/tliron/puccini/tosca"
 )
 
 //
@@ -9,16 +11,16 @@ import (
 //
 
 type HasInputs interface {
-	SetInputs(map[string]interface{})
+	SetInputs(map[string]ard.Value)
 }
 
 // From HasInputs interface
-func SetInputs(entityPtr interface{}, inputs map[string]interface{}) {
+func SetInputs(entityPtr tosca.EntityPtr, inputs map[string]ard.Value) {
 	if inputs == nil {
 		return
 	}
 
-	reflection.Traverse(entityPtr, func(entityPtr interface{}) bool {
+	reflection.Traverse(entityPtr, func(entityPtr tosca.EntityPtr) bool {
 		if hasInputs, ok := entityPtr.(HasInputs); ok {
 			hasInputs.SetInputs(inputs)
 

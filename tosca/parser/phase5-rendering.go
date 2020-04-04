@@ -2,8 +2,8 @@ package parser
 
 import (
 	"github.com/tliron/puccini/common"
+	"github.com/tliron/puccini/common/reflection"
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/reflection"
 )
 
 func (self *Context) Render() tosca.EntityPtrs {
@@ -19,10 +19,10 @@ type Renderable interface {
 }
 
 // From Renderable interface
-func Render(entityPtr interface{}) tosca.EntityPtrs {
+func Render(entityPtr tosca.EntityPtr) tosca.EntityPtrs {
 	var entityPtrs tosca.EntityPtrs
 
-	reflection.Traverse(entityPtr, func(entityPtr interface{}) bool {
+	reflection.Traverse(entityPtr, func(entityPtr tosca.EntityPtr) bool {
 		if renderable, ok := entityPtr.(Renderable); ok {
 			lock := common.GetLock(entityPtr)
 			lock.Lock()

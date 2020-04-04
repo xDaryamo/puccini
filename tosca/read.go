@@ -6,11 +6,11 @@ import (
 	"strings"
 
 	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/tosca/reflection"
+	"github.com/tliron/puccini/common/reflection"
 	"github.com/tliron/yamlkeys"
 )
 
-type Reader = func(*Context) interface{}
+type Reader = func(*Context) EntityPtr
 
 type Readers map[string]Reader
 
@@ -27,7 +27,7 @@ const (
 )
 
 // From "read" tags
-func (self *Context) ReadFields(entityPtr interface{}) []string {
+func (self *Context) ReadFields(entityPtr EntityPtr) []string {
 	if preReadable, ok := entityPtr.(PreReadable); ok {
 		preReadable.PreRead()
 	}
@@ -425,7 +425,7 @@ func (self *Context) ReadBoolean() *bool {
 	return nil
 }
 
-type Processor = func(interface{})
+type Processor = func(ard.Value)
 
 func (self *Context) ReadMapItems(read Reader, process Processor) bool {
 	if self.ValidateType("!!map") {

@@ -28,7 +28,7 @@ func NewWorkflowPreconditionDefinition(context *tosca.Context) *WorkflowPrecondi
 }
 
 // tosca.Reader signature
-func ReadWorkflowPreconditionDefinition(context *tosca.Context) interface{} {
+func ReadWorkflowPreconditionDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewWorkflowPreconditionDefinition(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

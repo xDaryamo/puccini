@@ -34,7 +34,7 @@ func NewWorkflowDefinition(context *tosca.Context) *WorkflowDefinition {
 }
 
 // tosca.Reader signature
-func ReadWorkflowDefinition(context *tosca.Context) interface{} {
+func ReadWorkflowDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewWorkflowDefinition(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
