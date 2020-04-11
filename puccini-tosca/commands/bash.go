@@ -5,5 +5,5 @@ import (
 )
 
 func init() {
-	rootCommand.AddCommand(common.NewBashCompletionCommand("puccini-tosca", rootCommand))
+	rootCommand.AddCommand(common.NewBashCompletionCommand(toolName, rootCommand))
 }

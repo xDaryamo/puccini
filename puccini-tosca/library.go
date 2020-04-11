@@ -12,6 +12,7 @@ import (
 	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 //export Compile
@@ -23,12 +24,18 @@ func Compile(url *C.char) *C.char {
 
 	var inputs map[string]interface{}
 
+	var url_ urlpkg.URL
 	var serviceTemplate *normal.ServiceTemplate
 	var clout *cloutpkg.Clout
 	var problems *problems.Problems
 	var err error
 
-	if serviceTemplate, problems, err = parser.Parse(C.GoString(url), nil, inputs); err != nil {
+	if url_, err = urlpkg.NewValidURL(C.GoString(url), nil); err != nil {
+		//t.Errorf("%s\n%s", err.Error(), p)
+		return nil
+	}
+
+	if serviceTemplate, problems, err = parser.Parse(url_, nil, inputs); err != nil {
 		//t.Errorf("%s\n%s", err.Error(), p)
 		return nil
 	}

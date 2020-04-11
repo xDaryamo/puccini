@@ -5,5 +5,5 @@ import (
 )
 
 func init() {
-	rootCommand.AddCommand(common.NewBashCompletionCommand("puccini-js", rootCommand))
+	rootCommand.AddCommand(common.NewBashCompletionCommand(toolName, rootCommand))
 }

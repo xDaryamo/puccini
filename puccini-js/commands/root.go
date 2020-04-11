@@ -26,7 +26,7 @@ func init() {
 }
 
 var rootCommand = &cobra.Command{
-	Use:   "puccini-js",
+	Use:   toolName,
 	Short: "JavaScript processor for Clout",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if colorize {

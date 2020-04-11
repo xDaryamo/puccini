@@ -5,5 +5,5 @@ import (
 )
 
 func init() {
-	rootCommand.AddCommand(version.NewCommand("puccini-tosca"))
+	rootCommand.AddCommand(version.NewCommand(toolName))
 }

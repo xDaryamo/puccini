@@ -9,7 +9,9 @@ import (
 	"github.com/tliron/puccini/common/terminal"
 )
 
-var log = logging.MustGetLogger("puccini-tosca")
+const toolName = "puccini-tosca"
+
+var log = logging.MustGetLogger(toolName)
 
 func FailOnProblems(problems *problemspkg.Problems) {
 	if !problems.Empty() {

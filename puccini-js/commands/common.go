@@ -8,7 +8,9 @@ import (
 	urlpkg "github.com/tliron/puccini/url"
 )
 
-var log = logging.MustGetLogger("puccini-js")
+const toolName = "puccini-js"
+
+var log = logging.MustGetLogger(toolName)
 
 var output string
 

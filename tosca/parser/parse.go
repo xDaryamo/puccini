@@ -10,16 +10,11 @@ import (
 	urlpkg "github.com/tliron/puccini/url"
 )
 
-func Parse(url string, quirks tosca.Quirks, inputs map[string]ard.Value) (*normal.ServiceTemplate, *problems.Problems, error) {
+func Parse(url urlpkg.URL, quirks tosca.Quirks, inputs map[string]ard.Value) (*normal.ServiceTemplate, *problems.Problems, error) {
 	context := NewContext(quirks)
 
-	url_, err := urlpkg.NewValidURL(url, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
 	// Phase 1: Read
-	ok := context.ReadRoot(url_)
+	ok := context.ReadRoot(url)
 
 	problems := context.GetProblems()
 

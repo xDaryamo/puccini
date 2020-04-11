@@ -20,3 +20,5 @@ function build () {
 
 build puccini-tosca
 build puccini-js
+
+cp "$ROOT/puccini-csar" "$GOPATH/bin/"

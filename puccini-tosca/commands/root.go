@@ -30,7 +30,7 @@ func init() {
 }
 
 var rootCommand = &cobra.Command{
-	Use:   "puccini-tosca",
+	Use:   toolName,
 	Short: "TOSCA frontend for Clout",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if colorize {
