@@ -1,7 +1,7 @@
 package tosca_v1_3
 
 import (
-	"path/filepath"
+	"strings"
 
 	"github.com/tliron/puccini/tosca"
 	urlpkg "github.com/tliron/puccini/url"
@@ -87,11 +87,13 @@ func (self *ArtifactDefinition) GetExtension() string {
 	if self.File == nil {
 		return ""
 	}
-	extension := filepath.Ext(*self.File)
-	if extension == "" {
+	file := *self.File
+	if dot := strings.Index(file, "."); dot != -1 {
+		// Note: filepath.Ext will return the last extension only
+		return file[dot+1:]
+	} else {
 		return ""
 	}
-	return extension[1:]
 }
 
 // tosca.Mappable interface
