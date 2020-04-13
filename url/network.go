@@ -79,7 +79,7 @@ func (self *NetworkURL) Key() string {
 }
 
 // URL interface
-func (self *NetworkURL) Open() (io.Reader, error) {
+func (self *NetworkURL) Open() (io.ReadCloser, error) {
 	if response, err := http.Get(self.String_); err == nil {
 		if response.StatusCode == http.StatusOK {
 			return response.Body, nil

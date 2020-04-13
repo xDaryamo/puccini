@@ -99,6 +99,6 @@ func (self *InternalURL) Key() string {
 }
 
 // URL interface
-func (self *InternalURL) Open() (io.Reader, error) {
-	return strings.NewReader(self.Content), nil
+func (self *InternalURL) Open() (io.ReadCloser, error) {
+	return ioutil.NopCloser(strings.NewReader(self.Content)), nil
 }

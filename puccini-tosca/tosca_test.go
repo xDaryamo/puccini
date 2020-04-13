@@ -10,6 +10,7 @@ import (
 	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 func TestParse(t *testing.T) {
@@ -70,7 +71,13 @@ func testCompile(t *testing.T, url string, inputs map[string]interface{}) {
 		var problems *problemspkg.Problems
 		var err error
 
-		if serviceTemplate, problems, err = parser.Parse(fmt.Sprintf("%s/examples/%s", ROOT, url), nil, inputs); err != nil {
+		url_, err := urlpkg.NewURL(fmt.Sprintf("%s/examples/%s", ROOT, url))
+		if err != nil {
+			t.Errorf("%s", err.Error())
+			return
+		}
+
+		if serviceTemplate, problems, err = parser.Parse(url_, nil, inputs); err != nil {
 			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))
 			return
 		}

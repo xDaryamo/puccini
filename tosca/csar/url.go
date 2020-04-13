@@ -3,7 +3,6 @@ package csar
 import (
 	"archive/zip"
 	"fmt"
-	"io"
 	"path/filepath"
 	"strings"
 
@@ -11,25 +10,7 @@ import (
 )
 
 func GetRootURL(csarUrl urlpkg.URL) (urlpkg.URL, error) {
-	var csarFileUrl *urlpkg.FileURL
-	switch url := csarUrl.(type) {
-	case *urlpkg.FileURL:
-		csarFileUrl = url
-
-	case *urlpkg.NetworkURL:
-		if file, err := urlpkg.Download(url, "puccini-*.csar"); err == nil {
-			if csarFileUrl, err = urlpkg.NewValidFileURL(file.Name()); err != nil {
-				return nil, err
-			}
-		} else {
-			return nil, err
-		}
-
-	default:
-		return nil, fmt.Errorf("can't open CSAR URL: %s", csarUrl.String())
-	}
-
-	metaUrl, err := urlpkg.NewValidZipURL("/TOSCA-Metadata/TOSCA.meta", csarFileUrl)
+	metaUrl, err := urlpkg.NewValidZipURL("/TOSCA-Metadata/TOSCA.meta", csarUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -38,9 +19,7 @@ func GetRootURL(csarUrl urlpkg.URL) (urlpkg.URL, error) {
 	if err != nil {
 		return nil, err
 	}
-	if closer, ok := reader.(io.Closer); ok {
-		defer closer.Close()
-	}
+	defer reader.Close()
 
 	meta, err := ReadMeta(reader)
 	if err != nil {
@@ -49,19 +28,19 @@ func GetRootURL(csarUrl urlpkg.URL) (urlpkg.URL, error) {
 
 	if meta.EntryDefinitions != "" {
 		// Use entry point in TOSCA.meta
-		return urlpkg.NewValidZipURL(meta.EntryDefinitions, csarFileUrl)
+		return urlpkg.NewValidZipURL(meta.EntryDefinitions, csarUrl)
 	}
 
-	// Find entry point in root of zip
+	// No meta entry point, so find it in root of zip
 
-	archiveReader, err := zip.OpenReader(csarFileUrl.Path)
+	archiveReader, archivePath, err := urlpkg.OpenZipFromURL(csarUrl)
 	if err != nil {
 		return nil, err
 	}
 	defer archiveReader.Close()
 
 	var found *zip.File
-	for _, file := range archiveReader.File {
+	for _, file := range archiveReader.ZipReader.File {
 		dir, path := filepath.Split(file.Name)
 		if (dir == "") && (strings.HasSuffix(path, ".yaml") || strings.HasSuffix(path, ".yml")) {
 			if found != nil {
@@ -72,8 +51,10 @@ func GetRootURL(csarUrl urlpkg.URL) (urlpkg.URL, error) {
 	}
 
 	if found == nil {
-		return nil, fmt.Errorf("CSAR does not contain a service template: %s", csarUrl.String())
+		return nil, fmt.Errorf("CSAR does not have a service template: %s", csarUrl.String())
 	}
 
-	return urlpkg.NewValidZipURL(found.Name, csarFileUrl)
+	url := urlpkg.NewZipURL(found.Name, csarUrl)
+	url.ArchivePath = archivePath
+	return url, nil
 }

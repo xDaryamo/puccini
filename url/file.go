@@ -71,7 +71,7 @@ func (self *FileURL) Key() string {
 }
 
 // URL interface
-func (self *FileURL) Open() (io.Reader, error) {
+func (self *FileURL) Open() (io.ReadCloser, error) {
 	if reader, err := os.Open(self.Path); err == nil {
 		return reader, nil
 	} else {

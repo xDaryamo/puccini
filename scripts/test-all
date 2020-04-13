@@ -4,17 +4,29 @@ set -e
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 . "$HERE/_env"
 
+echo 'test...'
 "$HERE/test"
+echo 'build-library...'
 "$HERE/build-library"
+echo 'test-js...'
 "$HERE/test-js"
+echo 'test-https...'
 "$HERE/test-https"
+echo 'test-csar...'
 "$HERE/test-csar"
+echo 'test-csar-http...'
 "$HERE/test-csar-http"
+echo 'test-zip...'
 "$HERE/test-zip"
+echo 'test-zip-http...'
 "$HERE/test-zip-http"
+echo 'test-wasm...'
 "$HERE/test-wasm"
+echo 'test-java...'
 "$HERE/test-java"
+echo 'test-python...'
 "$HERE/test-python"
+echo 'test-ruby...'
 "$HERE/test-ruby"
 
 echo done!

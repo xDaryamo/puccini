@@ -12,10 +12,7 @@ import (
 
 func ReadFromURL(url urlpkg.URL, locate bool) (Map, Locator, error) {
 	if reader, err := url.Open(); err == nil {
-		if closer, ok := reader.(io.Closer); ok {
-			defer closer.Close()
-		}
-
+		defer reader.Close()
 		return Read(reader, url.Format(), locate)
 	} else {
 		return nil, nil, err

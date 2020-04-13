@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"io"
 	"sort"
 	"strings"
 
@@ -197,9 +196,7 @@ func ParseInputs() {
 		common.FailOnError(err)
 		reader, err := url.Open()
 		common.FailOnError(err)
-		if closer, ok := reader.(io.Closer); ok {
-			defer closer.Close()
-		}
+		defer reader.Close()
 		data, err := formatpkg.ReadYAML(reader)
 		common.FailOnError(err)
 		if map_, ok := data.(ard.Map); ok {

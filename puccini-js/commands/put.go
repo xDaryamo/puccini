@@ -34,7 +34,7 @@ var putCommand = &cobra.Command{
 		url, err := urlpkg.NewValidURL(jsUrl, nil)
 		common.FailOnError(err)
 
-		scriptlet, err := urlpkg.Read(url)
+		scriptlet, err := urlpkg.ReadToString(url)
 		common.FailOnError(err)
 
 		err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)

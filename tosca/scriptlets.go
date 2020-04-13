@@ -65,7 +65,7 @@ func (self *Scriptlet) Read() (string, error) {
 			return "", err
 		}
 
-		scriptlet, err := urlpkg.Read(url)
+		scriptlet, err := urlpkg.ReadToString(url)
 		if err != nil {
 			return "", err
 		}

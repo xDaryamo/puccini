@@ -20,7 +20,7 @@ type URL interface {
 	Origin() URL    // base dir, is not necessarily a valid URL
 	Relative(path string) URL
 	Key() string // for maps
-	Open() (io.Reader, error)
+	Open() (io.ReadCloser, error)
 }
 
 func NewURL(url string) (URL, error) {
@@ -37,10 +37,13 @@ func NewURL(url string) (URL, error) {
 			return NewInternalURL(url[9:]), nil
 
 		case "zip":
-			return NewZipURLFromURL(url)
+			return ParseZipURL(url)
 
 		case "file":
 			return NewFileURL(neturl.Path), nil
+
+		case "docker":
+			return NewDockerURL(neturl), nil
 
 		case "":
 			return NewFileURL(url), nil
@@ -65,11 +68,14 @@ func NewValidURL(url string, origins []URL) (URL, error) {
 			return NewValidInternalURL(url[9:])
 
 		case "zip":
-			return NewValidZipURLFromURL(url)
+			return ParseValidZipURL(url)
 
 		case "file":
 			// They're rarely used, but relative "file:" URLs are possible
 			return newRelativeURL(neturl.Path, origins, true)
+
+		case "docker":
+			return NewValidDockerURL(neturl)
 
 		case "":
 			return newRelativeURL(url, origins, false)

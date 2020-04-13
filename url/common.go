@@ -14,17 +14,31 @@ import (
 
 var log = logging.MustGetLogger("url")
 
-func Read(url URL) (string, error) {
+func ReadToString(url URL) (string, error) {
 	if reader, err := url.Open(); err == nil {
-		if closer, ok := reader.(io.Closer); ok {
-			defer closer.Close()
-		}
-
+		defer reader.Close()
 		buffer, err := ioutil.ReadAll(reader)
 		return common.BytesToString(buffer), err
 	} else {
 		return "", err
 	}
+}
+
+func ReaderSize(reader io.Reader) (int64, error) {
+	var size int64 = 0
+
+	buffer := make([]byte, 1024)
+	for {
+		if count, err := reader.Read(buffer); err == nil {
+			size += int64(count)
+		} else if err == io.EOF {
+			break
+		} else {
+			return 0, err
+		}
+	}
+
+	return size, nil
 }
 
 func GetFormat(path string) string {
@@ -39,9 +53,19 @@ func GetFormat(path string) string {
 	return extension
 }
 
+func Size(url URL) (int64, error) {
+	if reader, err := url.Open(); err == nil {
+		defer reader.Close()
+		return ReaderSize(reader)
+	} else {
+		return 0, err
+	}
+}
+
 func DownloadTo(url URL, path string) error {
 	if writer, err := os.Create(path); err == nil {
 		if reader, err := url.Open(); err == nil {
+			defer reader.Close()
 			log.Infof("downloading from \"%s\" to file \"%s\"", url.String(), path)
 			if _, err = io.Copy(writer, reader); err == nil {
 				return nil
@@ -60,6 +84,7 @@ func Download(url URL, temporaryPathPattern string) (*os.File, error) {
 	if file, err := ioutil.TempFile("", temporaryPathPattern); err == nil {
 		path := file.Name()
 		if reader, err := url.Open(); err == nil {
+			defer reader.Close()
 			log.Infof("downloading from \"%s\" to temporary file \"%s\"", url.String(), path)
 			if _, err = io.Copy(file, reader); err == nil {
 				atexit.Register(func() {
@@ -68,11 +93,11 @@ func Download(url URL, temporaryPathPattern string) (*os.File, error) {
 				})
 				return file, nil
 			} else {
-				defer os.Remove(path)
+				os.Remove(path)
 				return nil, err
 			}
 		} else {
-			defer os.Remove(path)
+			os.Remove(path)
 			return nil, err
 		}
 	} else {

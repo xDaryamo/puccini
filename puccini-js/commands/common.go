@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"io"
-
 	"github.com/op/go-logging"
 	"github.com/tliron/puccini/clout"
 	urlpkg "github.com/tliron/puccini/url"
@@ -29,10 +27,7 @@ func ReadClout(path string) (*clout.Clout, error) {
 	}
 
 	if reader, err := url.Open(); err == nil {
-		if closer, ok := reader.(io.Closer); ok {
-			defer closer.Close()
-		}
-
+		defer reader.Close()
 		return clout.Read(reader, url.Format())
 	} else {
 		return nil, err
