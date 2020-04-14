@@ -21,6 +21,7 @@ type URL interface {
 	Relative(path string) URL
 	Key() string // for maps
 	Open() (io.ReadCloser, error)
+	Release() error
 }
 
 func NewURL(url string) (URL, error) {

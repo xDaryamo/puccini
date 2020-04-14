@@ -88,19 +88,31 @@ func Download(url URL, temporaryPathPattern string) (*os.File, error) {
 			log.Infof("downloading from \"%s\" to temporary file \"%s\"", url.String(), path)
 			if _, err = io.Copy(file, reader); err == nil {
 				atexit.Register(func() {
-					log.Infof("deleting temporary file \"%s\"", path)
-					os.Remove(path)
+					DeleteTemporaryFile(path)
 				})
 				return file, nil
 			} else {
-				os.Remove(path)
+				DeleteTemporaryFile(path)
 				return nil, err
 			}
 		} else {
-			os.Remove(path)
+			DeleteTemporaryFile(path)
 			return nil, err
 		}
 	} else {
 		return nil, err
+	}
+}
+
+func DeleteTemporaryFile(path string) error {
+	if err := os.Remove(path); err == nil {
+		log.Infof("deleted temporary file \"%s\"", path)
+		return nil
+	} else if os.IsNotExist(err) {
+		log.Infof("temporary file already deleted \"%s\"", path)
+		return nil
+	} else {
+		log.Errorf("could not delete temporary file \"%s\": %s", path, err.Error())
+		return err
 	}
 }

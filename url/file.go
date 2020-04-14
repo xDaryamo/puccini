@@ -79,6 +79,11 @@ func (self *FileURL) Open() (io.ReadCloser, error) {
 	}
 }
 
+// URL interface
+func (self *FileURL) Release() error {
+	return nil
+}
+
 func isValidFile(path string) bool {
 	if info, err := os.Stat(path); err == nil {
 		return info.Mode().IsRegular()

@@ -91,3 +91,8 @@ func (self *NetworkURL) Open() (io.ReadCloser, error) {
 		return nil, err
 	}
 }
+
+// URL interface
+func (self *NetworkURL) Release() error {
+	return nil
+}

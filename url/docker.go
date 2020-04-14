@@ -89,6 +89,11 @@ func (self *DockerURL) Open() (io.ReadCloser, error) {
 	return pipeReader, nil
 }
 
+// URL interface
+func (self *DockerURL) Release() error {
+	return nil
+}
+
 func (self *DockerURL) WriteTarball(writer io.Writer) error {
 	url := fmt.Sprintf("%s%s", self.URL.Host, self.URL.Path)
 	if tag, err := namepkg.NewTag(url); err == nil {

@@ -90,6 +90,7 @@ func Exec(scriptletName string, clout *cloutpkg.Clout) error {
 		// Try loading JavaScript from path or URL
 		url, err := urlpkg.NewValidURL(scriptletName, nil)
 		common.FailOnError(err)
+		defer url.Release()
 
 		scriptlet, err = urlpkg.ReadToString(url)
 		common.FailOnError(err)

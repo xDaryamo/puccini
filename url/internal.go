@@ -102,3 +102,8 @@ func (self *InternalURL) Key() string {
 func (self *InternalURL) Open() (io.ReadCloser, error) {
 	return ioutil.NopCloser(strings.NewReader(self.Content)), nil
 }
+
+// URL interface
+func (self *InternalURL) Release() error {
+	return nil
+}

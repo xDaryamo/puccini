@@ -83,7 +83,7 @@ func (self *Error) String() string {
 	return self.Error()
 }
 
-// tosca.problems.Problematic interface
+// problems.Problematic interface
 func (self *Error) Problem() (string, string, int, int) {
 	r := fmt.Sprintf("%s: ", terminal.ColorPath(self.FunctionCall.Path))
 	if self.Message != "" {

@@ -10,40 +10,46 @@ import (
 )
 
 func GetRootURL(csarUrl urlpkg.URL) (urlpkg.URL, error) {
-	metaUrl, err := urlpkg.NewValidZipURL("/TOSCA-Metadata/TOSCA.meta", csarUrl)
+	entryUrl, err := urlpkg.NewValidZipURL("TOSCA-Metadata/TOSCA.meta", csarUrl)
 	if err != nil {
 		return nil, err
 	}
 
-	reader, err := metaUrl.Open()
+	entryReader, err := entryUrl.Open()
 	if err != nil {
+		entryUrl.Release()
 		return nil, err
 	}
-	defer reader.Close()
+	defer entryReader.Close()
 
-	meta, err := ReadMeta(reader)
+	meta, err := ReadMeta(entryReader)
 	if err != nil {
+		entryUrl.Release()
 		return nil, err
 	}
 
+	// Attempt to use entry point in TOSCA.meta
 	if meta.EntryDefinitions != "" {
-		// Use entry point in TOSCA.meta
-		return urlpkg.NewValidZipURL(meta.EntryDefinitions, csarUrl)
+		// Repurpose entryUrl
+		entryUrl.Path = strings.TrimLeft(meta.EntryDefinitions, "/")
+		return entryUrl, nil
 	}
 
-	// No meta entry point, so find it in root of zip
+	// No entry point in TOSCA.meta, so attempt to find it in root of archive
 
-	archiveReader, archivePath, err := urlpkg.OpenZipFromURL(csarUrl)
+	archiveReader, err := entryUrl.OpenArchive()
 	if err != nil {
+		entryUrl.Release()
 		return nil, err
 	}
 	defer archiveReader.Close()
 
 	var found *zip.File
-	for _, file := range archiveReader.ZipReader.File {
+	for _, file := range archiveReader.Reader.File {
 		dir, path := filepath.Split(file.Name)
 		if (dir == "") && (strings.HasSuffix(path, ".yaml") || strings.HasSuffix(path, ".yml")) {
 			if found != nil {
+				entryUrl.Release()
 				return nil, fmt.Errorf("CSAR has more than one potential service template: %s", csarUrl.String())
 			}
 			found = file
@@ -51,10 +57,11 @@ func GetRootURL(csarUrl urlpkg.URL) (urlpkg.URL, error) {
 	}
 
 	if found == nil {
+		entryUrl.Release()
 		return nil, fmt.Errorf("CSAR does not have a service template: %s", csarUrl.String())
 	}
 
-	url := urlpkg.NewZipURL(found.Name, csarUrl)
-	url.ArchivePath = archivePath
-	return url, nil
+	// Repurpose entryUrl
+	entryUrl.Path = strings.TrimLeft(found.Name, "/")
+	return entryUrl, nil
 }

@@ -34,6 +34,7 @@ func Compile(url *C.char) *C.char {
 		//t.Errorf("%s\n%s", err.Error(), p)
 		return nil
 	}
+	defer url_.Release()
 
 	if serviceTemplate, problems, err = parser.Parse(url_, nil, inputs); err != nil {
 		//t.Errorf("%s\n%s", err.Error(), p)

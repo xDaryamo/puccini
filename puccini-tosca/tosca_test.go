@@ -76,6 +76,7 @@ func testCompile(t *testing.T, url string, inputs map[string]interface{}) {
 			t.Errorf("%s", err.Error())
 			return
 		}
+		defer url_.Release()
 
 		if serviceTemplate, problems, err = parser.Parse(url_, nil, inputs); err != nil {
 			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))

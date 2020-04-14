@@ -4,10 +4,10 @@ import (
 	"archive/zip"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	pathpkg "path"
 	"strings"
+	"sync"
 )
 
 // Note: we *must* use the "path" package rather than "filepath" to ensure consistency with Windows
@@ -15,42 +15,66 @@ import (
 //
 // ZipURL
 //
+// Inspired by Java's JarURLConnection:
+// https://docs.oracle.com/javase/8/docs/api/java/net/JarURLConnection.html
+//
 
 type ZipURL struct {
 	Path        string
 	ArchiveURL  URL
 	ArchivePath string
+
+	release bool
+	lock    sync.Mutex // for ArchivePath and release
 }
 
 func NewZipURL(path string, archiveUrl URL) *ZipURL {
-	return &ZipURL{path, archiveUrl, ""}
+	// Must be absolute
+	path = strings.TrimLeft(path, "/")
+
+	return &ZipURL{
+		Path:       path,
+		ArchiveURL: archiveUrl,
+	}
 }
 
-func NewValidZipURL(path string, archiveURL URL) (*ZipURL, error) {
-	if archiveReader, archivePath, err := OpenZipFromURL(archiveURL); err == nil {
-		defer archiveReader.Close()
+func NewValidZipURL(path string, archiveUrl URL) (*ZipURL, error) {
+	if reader, err := OpenZipFromURL(archiveUrl); err == nil {
+		defer reader.Close()
 
-		if strings.HasPrefix(path, "/") {
-			// Must be absolute
-			path = path[1:]
-		}
+		// Must be absolute
+		path = strings.TrimLeft(path, "/")
 
-		for _, file := range archiveReader.ZipReader.File {
+		for _, file := range reader.Reader.File {
 			if path == file.Name {
-				self := NewZipURL(path, archiveURL)
-				self.ArchivePath = archivePath
+				self := NewZipURL(path, archiveUrl)
+				self.ArchivePath = reader.File.Name()
+				self.release = true
 				return self, nil
 			}
 		}
 
-		return nil, fmt.Errorf("path not found in zip: %s", path)
+		return nil, fmt.Errorf("path \"%s\" not found in zip: %s", path, archiveUrl.String())
 	} else {
 		return nil, err
 	}
 }
 
 func NewValidRelativeZipURL(path string, origin *ZipURL) (*ZipURL, error) {
-	return NewValidZipURL(pathpkg.Join(origin.Path, path), origin.ArchiveURL)
+	self := origin.Relative(path).(*ZipURL)
+	if reader, err := self.OpenArchive(); err == nil {
+		for _, file := range reader.Reader.File {
+			if self.Path == file.Name {
+				// The origin will own the temporary file
+				self.ArchivePath = reader.File.Name()
+				return self, nil
+			}
+		}
+
+		return nil, fmt.Errorf("path \"%s\" not found in zip: %s", path, self.ArchiveURL.String())
+	} else {
+		return nil, err
+	}
 }
 
 func ParseZipURL(url string) (*ZipURL, error) {
@@ -67,8 +91,8 @@ func ParseZipURL(url string) (*ZipURL, error) {
 
 func ParseValidZipURL(url string) (*ZipURL, error) {
 	if archive, path, err := parseZipURL(url); err == nil {
-		if archiveUrl, err := NewURL(archive); err == nil {
-			return NewValidZipURL(path, archiveUrl)
+		if zipUrl, err := NewURL(archive); err == nil {
+			return NewValidZipURL(path, zipUrl)
 		} else {
 			return nil, err
 		}
@@ -90,12 +114,26 @@ func (self *ZipURL) Format() string {
 
 // URL interface
 func (self *ZipURL) Origin() URL {
-	return &ZipURL{pathpkg.Dir(self.Path), self.ArchiveURL, self.ArchivePath}
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	return &ZipURL{
+		Path:        pathpkg.Dir(self.Path),
+		ArchiveURL:  self.ArchiveURL,
+		ArchivePath: self.ArchivePath,
+	}
 }
 
 // URL interface
 func (self *ZipURL) Relative(path string) URL {
-	return &ZipURL{pathpkg.Join(self.Path, path), self.ArchiveURL, self.ArchivePath}
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	return &ZipURL{
+		Path:        pathpkg.Join(self.Path, path),
+		ArchiveURL:  self.ArchiveURL,
+		ArchivePath: self.ArchivePath,
+	}
 }
 
 // URL interface
@@ -105,57 +143,84 @@ func (self *ZipURL) Key() string {
 
 // URL interface
 func (self *ZipURL) Open() (io.ReadCloser, error) {
-	if zipReadCloser, err := self.OpenArchive(); err == nil {
-		for _, file := range zipReadCloser.ZipReader.File {
+	if archiveReader, err := self.OpenArchive(); err == nil {
+		for _, file := range archiveReader.Reader.File {
 			if self.Path == file.Name {
-				if fileReader, err := file.Open(); err == nil {
-					return NewZipFileReadCloser(fileReader, zipReadCloser), nil
+				if entryReader, err := file.Open(); err == nil {
+					return NewZipEntryReader(entryReader, archiveReader), nil
 				} else {
-					zipReadCloser.Close()
+					archiveReader.Close()
 					return nil, err
 				}
 			}
 		}
 
-		zipReadCloser.Close()
-		return nil, fmt.Errorf("path not found in zip: %s", self.Path)
+		archiveReader.Close()
+		return nil, fmt.Errorf("path \"%s\" not found in archive: %s", self.Path, self.ArchiveURL.String())
 	} else {
 		return nil, err
 	}
 }
 
-func (self *ZipURL) OpenArchive() (*ZipReadCloser, error) {
-	if self.ArchivePath != "" {
-		return OpenZipFromPath(self.ArchivePath)
+// URL interface
+func (self *ZipURL) Release() error {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	if self.release && (self.ArchivePath != "") {
+		err := DeleteTemporaryFile(self.ArchivePath)
+		self.ArchivePath = ""
+		self.release = false
+		return err
 	} else {
-		var zipReadCloser *ZipReadCloser
-		var err error
-		if zipReadCloser, self.ArchivePath, err = OpenZipFromURL(self.ArchiveURL); err == nil {
-			return zipReadCloser, nil
+		return nil
+	}
+}
+
+func (self *ZipURL) OpenArchive() (*ZipReader, error) {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	if self.ArchivePath != "" {
+		// Use cached path
+		if file, err := os.Open(self.ArchivePath); err == nil {
+			return OpenZipFromFile(file)
+		} else if os.IsNotExist(err) {
+			// Cached file was deleted, so we will re-fetch it below
+			self.ArchivePath = ""
 		} else {
 			return nil, err
 		}
 	}
+
+	if reader, err := OpenZipFromURL(self.ArchiveURL); err == nil {
+		// Cache the file path
+		self.ArchivePath = reader.File.Name()
+		self.release = true
+		return reader, nil
+	} else {
+		return nil, err
+	}
 }
 
 //
-// ZipReadCloser
+// ZipReader
 //
 
-type ZipReadCloser struct {
-	ZipReader *zip.Reader
-	Closer    io.Closer
+type ZipReader struct {
+	Reader *zip.Reader
+	File   *os.File
 }
 
-func NewZipReadCloser(zipReader *zip.Reader, closer io.Closer) *ZipReadCloser {
-	return &ZipReadCloser{zipReader, closer}
+func NewZipReader(reader *zip.Reader, file *os.File) *ZipReader {
+	return &ZipReader{reader, file}
 }
 
-func OpenZipFromFile(file *os.File) (*ZipReadCloser, error) {
+func OpenZipFromFile(file *os.File) (*ZipReader, error) {
 	if stat, err := file.Stat(); err == nil {
 		size := stat.Size()
-		if zipReader, err := zip.NewReader(file, size); err == nil {
-			return NewZipReadCloser(zipReader, file), nil
+		if reader, err := zip.NewReader(file, size); err == nil {
+			return NewZipReader(reader, file), nil
 		} else {
 			return nil, err
 		}
@@ -164,62 +229,47 @@ func OpenZipFromFile(file *os.File) (*ZipReadCloser, error) {
 	}
 }
 
-func OpenZipFromPath(path string) (*ZipReadCloser, error) {
-	if file, err := os.Open(path); err == nil {
-		return OpenZipFromFile(file)
-	} else {
-		return nil, err
-	}
-}
-
-func OpenZipFromURL(url URL) (*ZipReadCloser, string, error) {
+func OpenZipFromURL(url URL) (*ZipReader, error) {
 	var file *os.File
+	var err error
 	if fileUrl, ok := url.(*FileURL); ok {
 		// No need to download file URLs
-		var err error
 		if file, err = os.Open(fileUrl.Path); err != nil {
-			return nil, "", err
+			return nil, err
 		}
-	} else {
-		var err error
-		if file, err = Download(url, "puccini-*.zip"); err != nil {
-			return nil, "", err
-		}
+	} else if file, err = Download(url, "puccini-*.zip"); err != nil {
+		return nil, err
 	}
 
-	if zipReadCloser, err := OpenZipFromFile(file); err == nil {
-		return zipReadCloser, file.Name(), nil
-	} else {
-		return nil, "", err
-	}
+	return OpenZipFromFile(file)
 }
 
 // io.Closer interface
-func (self *ZipReadCloser) Close() error {
-	return self.Closer.Close()
+func (self *ZipReader) Close() error {
+	return self.File.Close()
 }
 
 //
-// ZipFileReadCloser
+// ZipEntryReader
 //
 
-type ZipFileReadCloser struct {
-	FileReader    io.ReadCloser
-	ArchiveReader *ZipReadCloser
+type ZipEntryReader struct {
+	EntryReader   io.ReadCloser
+	ArchiveReader *ZipReader
 }
 
-func NewZipFileReadCloser(fileReader io.ReadCloser, archiveReader *ZipReadCloser) *ZipFileReadCloser {
-	return &ZipFileReadCloser{fileReader, archiveReader}
+func NewZipEntryReader(entryReader io.ReadCloser, archiveReader *ZipReader) *ZipEntryReader {
+	return &ZipEntryReader{entryReader, archiveReader}
 }
 
 // io.Reader interface
-func (self *ZipFileReadCloser) Read(p []byte) (n int, err error) {
-	return self.FileReader.Read(p)
+func (self *ZipEntryReader) Read(p []byte) (n int, err error) {
+	return self.EntryReader.Read(p)
 }
 
 // io.Closer interface
-func (self *ZipFileReadCloser) Close() error {
-	err1 := self.FileReader.Close()
+func (self *ZipEntryReader) Close() error {
+	err1 := self.EntryReader.Close()
 	err2 := self.ArchiveReader.Close()
 	if err1 != nil {
 		return err1
@@ -228,44 +278,16 @@ func (self *ZipFileReadCloser) Close() error {
 	}
 }
 
-// See: https://stackoverflow.com/a/40206454
-
-type unbufferedReaderAt struct {
-	R io.Reader
-	N int64
-}
-
-func NewUnbufferedReaderAt(r io.Reader) io.ReaderAt {
-	return &unbufferedReaderAt{R: r}
-}
-
-func (u *unbufferedReaderAt) ReadAt(p []byte, off int64) (n int, err error) {
-	if off < u.N {
-		return 0, fmt.Errorf("invalid offset: %d < %d", off, u.N)
-	}
-	diff := off - u.N
-	written, err := io.CopyN(ioutil.Discard, u.R, diff)
-	u.N += written
-	if err != nil {
-		return 0, err
-	}
-
-	n, err = u.R.Read(p)
-	u.N += int64(n)
-	return
-}
-
 // Utils
 
 func parseZipURL(url string) (string, string, error) {
-	if !strings.HasPrefix(url, "zip:") {
+	if strings.HasPrefix(url, "zip:") {
+		if split := strings.Split(url[4:], "!"); len(split) == 2 {
+			return split[0], split[1], nil
+		} else {
+			return "", "", fmt.Errorf("malformed \"zip:\" URL: %s", url)
+		}
+	} else {
 		return "", "", fmt.Errorf("not a \"zip:\" URL: %s", url)
 	}
-
-	split := strings.Split(url[4:], "!")
-	if len(split) != 2 {
-		return "", "", fmt.Errorf("malformed \"zip:\" URL: %s", url)
-	}
-
-	return split[0], split[1], nil
 }

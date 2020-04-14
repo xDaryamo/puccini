@@ -73,6 +73,7 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 		url_, err = urlpkg.NewValidURL(url, nil)
 	}
 	common.FailOnError(err)
+	defer url_.Release()
 
 	context := parser.NewContext(tosca.NewQuirks(quirks...))
 	var problems *problemspkg.Problems

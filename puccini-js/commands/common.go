@@ -25,6 +25,7 @@ func ReadClout(path string) (*clout.Clout, error) {
 			return nil, err
 		}
 	}
+	defer url.Release()
 
 	if reader, err := url.Open(); err == nil {
 		defer reader.Close()
