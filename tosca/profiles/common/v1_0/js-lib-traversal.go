@@ -1,3 +1,9 @@
+// This file was auto-generated from a YAML file
+
+package v1_0
+
+func init() {
+	Profile["/tosca/common/1.0/js/lib/traversal.js"] = `
 
 clout.exec('tosca.lib.utils');
 
@@ -12,25 +18,6 @@ tosca.unwrapCoercibles = function() {
 tosca.coerce = function() {
 	tosca.toCoercibles();
 	tosca.traverseValues(clout.coerce);
-};
-
-tosca.addHistory = function(description) {
-	var metadata = clout.metadata;
-	if (metadata === undefined)
-		metadata = clout.metadata = {};
-	var pucciniTosca = metadata['puccini-tosca'];
-	if (pucciniTosca === undefined)
-		pucciniTosca = metadata['puccini-tosca'] = {};
-	var history = pucciniTosca.history;
-	if (history === undefined)
-		history = [];
-	else
-		history = history.slice(0);
-	history.push({
-		timestamp: puccini.timestamp(),
-		description: description
-	});
-	pucciniTosca.history = history;
 };
 
 tosca.traverseValues = function(traverser) {
@@ -113,3 +100,5 @@ tosca.traverseObjectValues = function(traverser, o, site, source, target) {
 				throw x;
 		}
 };
+`
+}

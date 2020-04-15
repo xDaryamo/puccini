@@ -5,7 +5,7 @@ package v1_0
 func init() {
 	Profile["/tosca/common/1.0/js/resolve.js"] = `
 
-clout.exec('tosca.lib.coerce');
+clout.exec('tosca.lib.traversal');
 
 // Remove existing relationships
 var nodeTemplateVertexes = [];

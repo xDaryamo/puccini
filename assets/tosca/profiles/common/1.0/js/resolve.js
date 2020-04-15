@@ -1,5 +1,5 @@
 
-clout.exec('tosca.lib.coerce');
+clout.exec('tosca.lib.traversal');
 
 // Remove existing relationships
 var nodeTemplateVertexes = [];

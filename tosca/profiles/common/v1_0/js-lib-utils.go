@@ -29,6 +29,25 @@ tosca.isNodeTemplate = function(vertex, typeName) {
 	return false;
 };
 
+tosca.addHistory = function(description) {
+	var metadata = clout.metadata;
+	if (metadata === undefined)
+		metadata = clout.metadata = {};
+	var pucciniTosca = metadata['puccini-tosca'];
+	if (pucciniTosca === undefined)
+		pucciniTosca = metadata['puccini-tosca'] = {};
+	var history = pucciniTosca.history;
+	if (history === undefined)
+		history = [];
+	else
+		history = history.slice(0);
+	history.push({
+		timestamp: puccini.timestamp(),
+		description: description
+	});
+	pucciniTosca.history = history;
+};
+
 tosca.getNestedValue = function(singular, plural, args) {
 	args = Array.prototype.slice.call(args);
 	var length = args.length;

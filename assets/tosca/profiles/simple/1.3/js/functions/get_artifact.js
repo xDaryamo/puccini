@@ -4,6 +4,14 @@
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 4.8.1
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 4.8.1
 
-function evaluate() {
-	return 'TODO';
+clout.exec('tosca.lib.utils');
+
+function evaluate(entity, artifactName, location, remove) {
+	if (arguments.length < 2)
+		throw 'must have at least 2 arguments';
+	var nodeTemplate = tosca.getModelableEntity(entity);
+	if (!nodeTemplate.artifacts || !(artifactName in nodeTemplate.artifacts))
+		throw puccini.sprintf('artifact "%s" not found in "%s"', artifactName, nodeTemplate.name);
+	var artifact = nodeTemplate.artifacts[artifactName];
+	return artifact.$artifact;
 }
