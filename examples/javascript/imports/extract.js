@@ -1,6 +1,6 @@
-// This scriptlet extract all artifacts to the output directory
+// This scriptlet extracts all artifacts to the output directory
 
-clout.exec('tosca.utils');
+clout.exec('tosca.lib.traversal');
 
 tosca.coerce();
 

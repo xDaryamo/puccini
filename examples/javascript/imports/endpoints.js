@@ -2,7 +2,7 @@
 
 // "clout.exec" is used to execute other scriptlets in the Clout file
 // (it's essentially like an import)
-clout.exec('tosca.utils');
+clout.exec('tosca.lib.traversal');
 
 // "tosca.coerce" calls all intrinsic functions and validates all constraints
 tosca.coerce();
@@ -22,14 +22,14 @@ for (var v in clout.vertexes) {
 		var capability = nodeTemplate.capabilities[c];
 
 		// We'll skip capabilities that do not inherit from Endpoint
-		if (!('tosca.capabilities.Endpoint' in capability.types))
+		if (!('tosca::Endpoint' in capability.types))
 			continue;
 
 		// Add endpoint to the report
 		endpoints.push({
-			name : nodeTemplate.name + '.' + c,
-			protocol : capability.properties.protocol,
-			port : capability.properties.port,
+			name: nodeTemplate.name + '.' + c,
+			protocol: capability.properties.protocol,
+			port: capability.properties.port,
 		});
 	}
 }

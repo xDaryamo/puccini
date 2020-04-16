@@ -1,7 +1,7 @@
 tosca_definitions_version: tosca_simple_yaml_1_3
 
 # To execute the scriptlet and extract artifacts to a specific directory:
-#   puccini-tosca compile examples/javascript/artifacts.yaml | puccini-js exec extract --output=work
+#   puccini-tosca compile examples/javascript/artifacts.yaml --exec=extract --output=work
 
 # See also: examples/tosca/artifacts.yaml
 

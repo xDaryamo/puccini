@@ -1,0 +1,39 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+# Compare these two runs:
+#   puccini-tosca compile examples/javascript/define.yaml --coerce
+#   puccini-tosca compile examples/javascript/define.yaml --exec=define
+
+# Also see: exec.yaml, functions.yaml
+
+metadata:
+
+  template_name: JavaScript Define Example
+  template_author: Puccini
+
+  # In the functions.yaml example we saw how to define functions declaratively
+  # Here we will do it programmatically
+  puccini.scriptlet.import|define: imports/define.js
+
+node_types:
+
+  Switch:
+    properties:
+      port:
+        type: integer
+
+topology_template:
+
+  inputs:
+
+    port:
+      type: integer
+      default: 80
+
+  node_templates:
+
+    host:
+      type: Switch
+      properties:
+        # We will be redefining this function in define.js to double the value
+        port: { get_input: port }

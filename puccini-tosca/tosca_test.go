@@ -38,6 +38,7 @@ func TestParse(t *testing.T) {
 	testCompile(t, "tosca/legacy/tosca_1_2.yaml", nil)
 	testCompile(t, "javascript/artifacts.yaml", nil)
 	testCompile(t, "javascript/constraints.yaml", nil)
+	testCompile(t, "javascript/define.yaml", nil)
 	testCompile(t, "javascript/exec.yaml", nil)
 	testCompile(t, "javascript/functions.yaml", nil)
 	testCompile(t, "kubernetes/bookinfo/bookinfo-simple.yaml", nil)
