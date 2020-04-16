@@ -39,6 +39,18 @@ func (self *CloutContext) Exec(scriptletName string) error {
 	return UnwrapException(err)
 }
 
+func (self *CloutContext) ExecAll(scriptletBaseName string) error {
+	if scriptletNames, err := GetScriptletNames(scriptletBaseName, self.Clout); err == nil {
+		for _, scriptletName := range scriptletNames {
+			if err := self.Exec(scriptletName); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func (self *CloutContext) NewRuntime(apis map[string]interface{}) *goja.Runtime {
 	return self.Context.NewCloutRuntime(self.Clout, apis)
 }

@@ -34,6 +34,10 @@ func (self *CloutAPI) Exec(scriptletName string) error {
 	return self.cloutContext.Exec(scriptletName)
 }
 
+func (self *CloutAPI) ExecAll(scriptletBaseName string) error {
+	return self.cloutContext.ExecAll(scriptletBaseName)
+}
+
 func (self *CloutAPI) Call(scriptletName string, functionName string, arguments []interface{}) (interface{}, error) {
 	return self.cloutContext.CallFunction(scriptletName, functionName, arguments, FunctionCallContext{})
 }
@@ -85,12 +89,6 @@ func (self *CloutAPI) Unwrap(value interface{}) interface{} {
 	}
 
 	return value
-}
-
-func (self *CloutAPI) GetPlugins(name string) []goja.Value {
-	plugins, err := GetPlugins(name, self.cloutContext)
-	self.cloutContext.Context.FailOnError(err)
-	return plugins
 }
 
 // json.Marshaler interface
