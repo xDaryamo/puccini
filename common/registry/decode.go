@@ -2,11 +2,12 @@ package registry
 
 import (
 	"archive/tar"
-	"compress/gzip"
 	"errors"
 	"io"
 	"strings"
 	"sync"
+
+	gzip "github.com/klauspost/pgzip"
 )
 
 //
