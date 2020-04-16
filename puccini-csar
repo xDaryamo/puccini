@@ -133,4 +133,4 @@ Entry-Definitions: $ENTRY_DEFINITIONS
 Other-Definitions: $OTHER_DEFINITIONS
 EOT
 
-zip -9 --recurse-paths "$CSAR" . > /dev/null
+zip -0 --recurse-paths "$CSAR" . > /dev/null

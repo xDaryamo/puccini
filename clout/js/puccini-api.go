@@ -1,11 +1,14 @@
 package js
 
 import (
+	"encoding/base64"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/beevik/etree"
 	"github.com/tebeka/atexit"
@@ -140,6 +143,35 @@ func (self *PucciniAPI) Download(sourceUrl string, targetPath string) error {
 	} else {
 		return err
 	}
+}
+
+func (self *PucciniAPI) LoadString(url string) (string, error) {
+	if url_, err := urlpkg.NewValidURL(url, nil); err == nil {
+		return urlpkg.ReadToString(url_)
+	} else {
+		return "", err
+	}
+}
+
+func (self *PucciniAPI) Btoa(from []byte) (string, error) {
+	var builder strings.Builder
+	encoder := base64.NewEncoder(base64.StdEncoding, &builder)
+	if _, err := encoder.Write(from); err == nil {
+		if err := encoder.Close(); err == nil {
+			return builder.String(), nil
+		} else {
+			return "", err
+		}
+	} else {
+		return "", err
+	}
+}
+
+func (self *PucciniAPI) Atob(from string) ([]byte, error) {
+	// Note: if you need a string in JavaScript: String.fromCharCode.apply(null, puccini.atob(...))
+	reader := strings.NewReader(from)
+	decoder := base64.NewDecoder(base64.StdEncoding, reader)
+	return ioutil.ReadAll(decoder)
 }
 
 func (self *PucciniAPI) Fail(message string) {
