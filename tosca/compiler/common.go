@@ -4,6 +4,6 @@ import (
 	"github.com/op/go-logging"
 )
 
-var log = logging.MustGetLogger("compiler")
+var log = logging.MustGetLogger("puccini.compiler")
 
 const VERSION = "1.0"

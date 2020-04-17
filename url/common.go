@@ -12,7 +12,7 @@ import (
 	"github.com/tliron/puccini/common"
 )
 
-var log = logging.MustGetLogger("url")
+var log = logging.MustGetLogger("puccini.url")
 
 func ReadToString(url URL) (string, error) {
 	if reader, err := url.Open(); err == nil {

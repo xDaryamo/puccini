@@ -4,4 +4,4 @@ import (
 	"github.com/op/go-logging"
 )
 
-var log = logging.MustGetLogger("parser")
+var log = logging.MustGetLogger("puccini.parser")

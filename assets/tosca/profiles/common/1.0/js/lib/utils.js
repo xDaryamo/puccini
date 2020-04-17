@@ -23,6 +23,39 @@ tosca.isNodeTemplate = function(vertex, typeName) {
 	return false;
 };
 
+tosca.getPolicyTargets = function(vertex) {
+	var targets = [];
+
+	function addTarget(target) {
+		for (var t = 0, l = targets.length; t < l; t++)
+			if (targets[t].name === target.name)
+				return;
+		targets.push(target);
+	}
+
+	for (var e = 0, l = vertex.edgesOut.length; e < l; e++) {
+		var edge = vertex.edgesOut[e];
+		if (tosca.isTosca(edge, 'NodeTemplateTarget'))
+			targets.push(clout.vertexes[edge.targetID].properties);
+		else if (tosca.isTosca(edge, 'GroupTarget')) {
+			var members = tosca.getGroupMembers(clout.vertexes[edge.targetID]);
+			for (var m = 0, ll = members.length; m < ll; m++)
+				addTarget(members[m])
+		}
+	}
+	return targets;
+};
+
+tosca.getGroupMembers = function(vertex) {
+	var members = [];
+	for (var e = 0, l = vertex.edgesOut.length; e < l; e++) {
+		var edge = vertex.edgesOut[e];
+		if (tosca.isTosca(edge, 'Member'))
+			members.push(clout.vertexes[edge.targetID].properties);
+	}
+	return members;
+};
+
 tosca.addHistory = function(description) {
 	var metadata = clout.metadata;
 	if (metadata === undefined)

@@ -4,4 +4,4 @@ import (
 	"github.com/op/go-logging"
 )
 
-var log = logging.MustGetLogger("js")
+var log = logging.MustGetLogger("puccini.js")

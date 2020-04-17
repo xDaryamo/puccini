@@ -174,6 +174,10 @@ func (self *PucciniAPI) Atob(from string) ([]byte, error) {
 	return ioutil.ReadAll(decoder)
 }
 
+func (self *PucciniAPI) DeepCopy(value ard.Value) ard.Value {
+	return ard.Copy(value)
+}
+
 func (self *PucciniAPI) Fail(message string) {
 	if !self.context.Quiet {
 		fmt.Fprintln(self.Stderr, terminal.ColorError(message))

@@ -6,7 +6,7 @@ import (
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
 )
 
-var log = logging.MustGetLogger("grammars.tosca_v1_2")
+var log = logging.MustGetLogger("puccini.grammars.tosca_v1_2")
 
 var Grammar = tosca.NewGrammar()
 

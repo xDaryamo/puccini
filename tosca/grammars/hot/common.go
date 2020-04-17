@@ -5,7 +5,7 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-var log = logging.MustGetLogger("grammars.hot")
+var log = logging.MustGetLogger("puccini.grammars.hot")
 
 var Grammar = tosca.NewGrammar()
 
