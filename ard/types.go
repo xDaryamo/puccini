@@ -38,6 +38,7 @@ var TypeValidators = map[string]TypeValidator{
 	"!!float": IsFloat,
 
 	// Other schemas: https://yaml.org/spec/1.2/spec.html#id2805770
+	"!!null":      IsNull,
 	"!!timestamp": IsTime,
 }
 
@@ -55,6 +56,8 @@ func TypeName(value Value) string {
 		return "!!int"
 	case float64, float32:
 		return "!!float"
+	case nil:
+		return "!!null"
 	case time.Time:
 		return "!!timestamp"
 	default:
@@ -69,7 +72,8 @@ var TypeZeroes = map[string]Value{
 	"!!bool":      false,
 	"!!int":       int(0),       // YAML parser returns int
 	"!!float":     float64(0.0), // YAML parser returns float64
-	"!!timestamp": time.Time{},  // YAML parser returns time.Time
+	"!!null":      nil,
+	"!!timestamp": time.Time{}, // YAML parser returns time.Time
 }
 
 // Map = map[interface{}]interface{}
@@ -112,6 +116,10 @@ func IsFloat(value Value) bool {
 		return true
 	}
 	return false
+}
+
+func IsNull(value Value) bool {
+	return value == nil
 }
 
 // time.Time

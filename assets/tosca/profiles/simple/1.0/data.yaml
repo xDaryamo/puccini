@@ -26,6 +26,10 @@ data_types:
     metadata:
       puccini.type: '!!str'
 
+  'null':
+    metadata:
+      puccini.type: '!!null'
+
   timestamp:
     metadata:
       puccini.type: timestamp

@@ -14,7 +14,7 @@ for (var vertexId in clout.vertexes) {
 	if (tosca.isNodeTemplate(vertex)) {
 		nodeTemplateVertexes.push(vertex);
 		for (var e = 0, l = vertex.edgesOut.length; e < l; e++) {
-			edge = vertex.edgesOut[e];
+			var edge = vertex.edgesOut[e];
 			if (tosca.isTosca(edge, 'Relationship'))
 				edge.remove();
 		}

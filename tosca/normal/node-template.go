@@ -21,9 +21,6 @@ type NodeTemplate struct {
 	Capabilities Capabilities   `json:"capabilities" yaml:"capabilities"`
 	Interfaces   Interfaces     `json:"interfaces" yaml:"interfaces"`
 	Artifacts    Artifacts      `json:"artifacts" yaml:"artifacts"`
-
-	Policies []*Policy `json:"-" yaml:"-"`
-	Groups   []*Group  `json:"-" yaml:"-"`
 }
 
 func (self *ServiceTemplate) NewNodeTemplate(name string) *NodeTemplate {
@@ -38,8 +35,6 @@ func (self *ServiceTemplate) NewNodeTemplate(name string) *NodeTemplate {
 		Capabilities:    make(Capabilities),
 		Interfaces:      make(Interfaces),
 		Artifacts:       make(Artifacts),
-		Policies:        make([]*Policy, 0),
-		Groups:          make([]*Group, 0),
 	}
 	self.NodeTemplates[name] = nodeTemplate
 	return nodeTemplate

@@ -103,6 +103,7 @@ func ToStringMap(map_ Map) StringMap {
 	return stringMap
 }
 
+// TODO: use Node instead
 func StringMapPutNested(map_ StringMap, key string, value string) error {
 	path := strings.Split(key, ".")
 	last := len(path) - 1

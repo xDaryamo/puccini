@@ -13,8 +13,7 @@ type Group struct {
 	Properties  Constrainables `json:"properties" yaml:"properties"`
 	Interfaces  Interfaces     `json:"interfaces" yaml:"interfaces"`
 
-	Members  []*NodeTemplate `json:"-" yaml:"-"`
-	Policies []*Policy       `json:"-" yaml:"-"`
+	Members []*NodeTemplate `json:"-" yaml:"-"`
 }
 
 func (self *ServiceTemplate) NewGroup(name string) *Group {
@@ -25,7 +24,6 @@ func (self *ServiceTemplate) NewGroup(name string) *Group {
 		Properties:      make(Constrainables),
 		Interfaces:      make(Interfaces),
 		Members:         make([]*NodeTemplate, 0),
-		Policies:        make([]*Policy, 0),
 	}
 	self.Groups[name] = group
 	return group
