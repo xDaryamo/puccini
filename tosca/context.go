@@ -84,7 +84,7 @@ func (self *Context) NewImportContext(url urlpkg.URL) *Context {
 		Namespace:          NewNamespace(),
 		ScriptletNamespace: NewScriptletNamespace(),
 		Hierarchy:          NewHierarchy(),
-		Problems:           self.Problems,
+		Problems:           new(problems.Problems),
 		Quirks:             self.Quirks,
 		Grammar:            self.Grammar,
 	}
