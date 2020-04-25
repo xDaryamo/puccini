@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/common/reflection"
 	"github.com/tliron/puccini/tosca"
 )
@@ -16,10 +15,6 @@ func (self *Context) LookupNames() {
 
 // From "lookup" tags
 func LookupFields(entityPtr tosca.EntityPtr) bool {
-	lock := common.GetLock(entityPtr)
-	lock.Lock()
-	defer lock.Unlock()
-
 	lookupProblems := make(LookupProblems)
 
 	context := tosca.GetContext(entityPtr)

@@ -2,17 +2,24 @@ package reflection
 
 import (
 	"reflect"
+
+	"github.com/tliron/puccini/common"
 )
 
 type Traverser func(interface{}) bool
 
 // Ignore fields tagged with "traverse:ignore" or "lookup"
 func Traverse(object interface{}, traverse Traverser) {
+	lock := common.GetLock(object)
+	lock.Lock()
+
 	if !traverse(object) {
+		lock.Unlock()
 		return
 	}
 
 	if !IsPtrToStruct(reflect.TypeOf(object)) {
+		lock.Unlock()
 		return
 	}
 
@@ -34,20 +41,28 @@ func Traverse(object interface{}, traverse Traverser) {
 		fieldType := field.Type()
 		if IsPtrToStruct(fieldType) && !field.IsNil() {
 			// Compatible with *interface{}
+			lock.Unlock()
 			Traverse(field.Interface(), traverse)
+			lock.Lock()
 		} else if IsSliceOfPtrToStruct(fieldType) {
 			// Compatible with []*interface{}
 			length := field.Len()
 			for index := 0; index < length; index++ {
 				element := field.Index(index)
+				lock.Unlock()
 				Traverse(element.Interface(), traverse)
+				lock.Lock()
 			}
 		} else if IsMapOfStringToPtrToStruct(fieldType) {
 			// Compatible with map[string]*interface{}
 			for _, mapKey := range field.MapKeys() {
 				element := field.MapIndex(mapKey)
+				lock.Unlock()
 				Traverse(element.Interface(), traverse)
+				lock.Lock()
 			}
 		}
 	}
+
+	lock.Unlock()
 }

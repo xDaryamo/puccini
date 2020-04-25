@@ -7,7 +7,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/common/reflection"
 	"github.com/tliron/puccini/common/terminal"
 )
@@ -302,9 +301,6 @@ func (self *Hierarchy) AddTo(entityPtr EntityPtr) {
 }
 
 func (self *Hierarchy) addTypeTo(field reflect.Value, type_ reflect.Type) {
-	lock := common.GetLock(self.entityPtr)
-	lock.Lock()
-
 	if reflect.TypeOf(self.entityPtr) == type_ {
 		// Don't add if it's already there
 		found := false
@@ -321,8 +317,6 @@ func (self *Hierarchy) addTypeTo(field reflect.Value, type_ reflect.Type) {
 			field.Set(reflect.Append(field, reflect.ValueOf(self.entityPtr)))
 		}
 	}
-
-	lock.Unlock()
 
 	for _, child := range self.children {
 		child.addTypeTo(field, type_)
