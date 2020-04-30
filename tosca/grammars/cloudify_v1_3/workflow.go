@@ -44,7 +44,7 @@ func ReadWorkflow(context *tosca.Context) tosca.EntityPtr {
 }
 
 func (self *Workflow) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Workflow {
-	log.Infof("{normalize} workflow: %s", self.Name)
+	log.Debugf("{normalize} workflow: %s", self.Name)
 
 	normalWorkflow := normalServiceTemplate.NewWorkflow(self.Name)
 

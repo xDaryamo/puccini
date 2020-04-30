@@ -39,7 +39,7 @@ func ReadInterfaceMapping(context *tosca.Context) tosca.EntityPtr {
 
 // parser.Renderable interface
 func (self *InterfaceMapping) Render() {
-	log.Info("{render} interface mapping")
+	log.Debug("{render} interface mapping")
 
 	if (self.NodeTemplate == nil) || (self.InterfaceName == nil) {
 		return

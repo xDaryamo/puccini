@@ -64,7 +64,7 @@ function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 	var name = requirement.name;
 
 	if (isSubstituted(sourceNodeTemplate.name, name)) {
-		puccini.log.infof('{resolve} %s: skipping because in substitution mappings', path)
+		puccini.log.debugf('{resolve} %s: skipping because in substitution mappings', path)
 		return;
 	}
 
@@ -107,7 +107,7 @@ function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 				chosen = candidate;
 		}
 
-	puccini.log.infof('{resolve} %s: satisfied "%s" with capability "%s" in node template "%s"', path, name, chosen.capabilityName, chosen.nodeTemplateName);
+	puccini.log.debugf('{resolve} %s: satisfied "%s" with capability "%s" in node template "%s"', path, name, chosen.capabilityName, chosen.nodeTemplateName);
 	addRelationship(sourceVertex, requirement, chosen.vertex, chosen.capabilityName);
 }
 

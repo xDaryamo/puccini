@@ -62,7 +62,7 @@ func (self *InheritContext) NewExecutor(entityPtr tosca.EntityPtr) Executor {
 	return func(task *Task) {
 		defer task.Done()
 
-		log.Infof("{inheritance} inherit: %s", task.Name)
+		log.Debugf("{inheritance} inherit: %s", task.Name)
 
 		lock := common.GetLock(entityPtr)
 		lock.Lock()

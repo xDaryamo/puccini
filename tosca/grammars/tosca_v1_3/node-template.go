@@ -68,7 +68,7 @@ func (self *NodeTemplate) Render() {
 	}
 	self.rendered = true
 
-	log.Infof("{render} node template: %s", self.Name)
+	log.Debugf("{render} node template: %s", self.Name)
 
 	if self.NodeType == nil {
 		return
@@ -83,7 +83,7 @@ func (self *NodeTemplate) Render() {
 }
 
 func (self *NodeTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.NodeTemplate {
-	log.Infof("{normalize} node template: %s", self.Name)
+	log.Debugf("{normalize} node template: %s", self.Name)
 
 	normalNodeTemplate := normalServiceTemplate.NewNodeTemplate(self.Name)
 

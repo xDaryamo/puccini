@@ -10,17 +10,19 @@ import (
 // PathElement
 //
 
-const (
-	FieldPathType         = iota
-	MapPathType           = iota
-	ListPathType          = iota
-	SequencedListPathType = iota
-)
-
 type PathElement struct {
-	Type  int
+	Type  PathElementType
 	Value interface{} // string for FieldPathType and MapPathType, int for ListPathType and SequencedListPathType
 }
+
+type PathElementType uint8
+
+const (
+	FieldPathType = iota
+	MapPathType
+	ListPathType
+	SequencedListPathType
+)
 
 func NewFieldPathElement(name string) PathElement {
 	return PathElement{FieldPathType, name}

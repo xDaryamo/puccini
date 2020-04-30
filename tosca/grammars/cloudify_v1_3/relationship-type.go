@@ -43,7 +43,7 @@ func (self *RelationshipType) GetParent() tosca.EntityPtr {
 
 // tosca.Inherits interface
 func (self *RelationshipType) Inherit() {
-	log.Infof("{inherit} relationship type: %s", self.Name)
+	log.Debugf("{inherit} relationship type: %s", self.Name)
 
 	if self.Parent == nil {
 		return

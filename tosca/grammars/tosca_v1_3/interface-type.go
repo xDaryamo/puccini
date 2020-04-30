@@ -46,7 +46,7 @@ func (self *InterfaceType) GetParent() tosca.EntityPtr {
 
 // tosca.Inherits interface
 func (self *InterfaceType) Inherit() {
-	log.Infof("{inherit} interface type: %s", self.Name)
+	log.Debugf("{inherit} interface type: %s", self.Name)
 
 	if self.Parent == nil {
 		return

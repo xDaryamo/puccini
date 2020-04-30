@@ -102,7 +102,7 @@ func (self *Template) SetInputs(inputs map[string]ard.Value) {
 
 // normal.Normalizable interface
 func (self *Template) NormalizeServiceTemplate() *normal.ServiceTemplate {
-	log.Info("{normalize} template")
+	log.Debug("{normalize} template")
 
 	normalServiceTemplate := normal.NewServiceTemplate()
 

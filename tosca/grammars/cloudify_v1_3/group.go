@@ -40,7 +40,7 @@ var groupTypeName = "cloudify.Group"
 var groupTypes = normal.NewTypes(groupTypeName)
 
 func (self *Group) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Group {
-	log.Infof("{normalize} group: %s", self.Name)
+	log.Debugf("{normalize} group: %s", self.Name)
 
 	normalGroup := normalServiceTemplate.NewGroup(self.Name)
 	normalGroup.Types = groupTypes

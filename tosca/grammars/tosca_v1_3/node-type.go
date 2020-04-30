@@ -52,7 +52,7 @@ func (self *NodeType) GetParent() tosca.EntityPtr {
 
 // tosca.Inherits interface
 func (self *NodeType) Inherit() {
-	log.Infof("{inherit} node type: %s", self.Name)
+	log.Debugf("{inherit} node type: %s", self.Name)
 
 	if self.Parent == nil {
 		return

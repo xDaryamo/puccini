@@ -54,7 +54,7 @@ func (self *OperationDefinition) GetKey() string {
 }
 
 func (self *OperationDefinition) Inherit(parentDefinition *OperationDefinition) {
-	log.Infof("{inherit} operation definition: %s", self.Name)
+	log.Debugf("{inherit} operation definition: %s", self.Name)
 
 	self.InputDefinitions.Inherit(parentDefinition.InputDefinitions)
 }

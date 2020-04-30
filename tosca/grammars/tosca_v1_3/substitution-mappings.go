@@ -55,7 +55,7 @@ func (self *SubstitutionMappings) IsRequirementMapped(nodeTemplate *NodeTemplate
 }
 
 func (self *SubstitutionMappings) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Substitution {
-	log.Info("{normalize} substitution mappings")
+	log.Debug("{normalize} substitution mappings")
 
 	if self.NodeType == nil {
 		return nil

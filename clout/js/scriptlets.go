@@ -49,7 +49,7 @@ func GetScriptletNames(baseName string, clout *cloutpkg.Clout) ([]string, error)
 	}
 
 	list := make([]string, 0, len(scriptlets))
-	for name, _ := range scriptlets {
+	for name := range scriptlets {
 		list = append(list, fmt.Sprintf("%s.%s", baseName, name))
 	}
 

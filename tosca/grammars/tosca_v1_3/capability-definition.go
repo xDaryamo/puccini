@@ -60,7 +60,7 @@ func (self *CapabilityDefinition) GetKey() string {
 }
 
 func (self *CapabilityDefinition) Inherit(parentDefinition *CapabilityDefinition) {
-	log.Infof("{inherit} capability definition: %s", self.Name)
+	log.Debugf("{inherit} capability definition: %s", self.Name)
 
 	// Validate type compatibility
 	if (self.CapabilityType != nil) && (parentDefinition.CapabilityType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.CapabilityType, self.CapabilityType) {
@@ -93,7 +93,7 @@ func (self *CapabilityDefinition) Inherit(parentDefinition *CapabilityDefinition
 
 // parser.Renderable interface
 func (self *CapabilityDefinition) Render() {
-	log.Infof("{render} capability definition: %s", self.Name)
+	log.Debugf("{render} capability definition: %s", self.Name)
 
 	if self.CapabilityTypeName == nil {
 		// Avoid reporting more than once

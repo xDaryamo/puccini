@@ -44,7 +44,7 @@ func (self *ArtifactType) GetParent() tosca.EntityPtr {
 
 // tosca.Inherits interface
 func (self *ArtifactType) Inherit() {
-	log.Infof("{inherit} artifact type: %s", self.Name)
+	log.Debugf("{inherit} artifact type: %s", self.Name)
 
 	if self.Parent == nil {
 		return

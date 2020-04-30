@@ -39,7 +39,7 @@ func ReadPolicy(context *tosca.Context) tosca.EntityPtr {
 }
 
 func (self *Policy) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Policy {
-	log.Infof("{normalize} policy: %s", self.Name)
+	log.Debugf("{normalize} policy: %s", self.Name)
 
 	normalPolicy := normalServiceTemplate.NewPolicy(self.Name)
 

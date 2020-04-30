@@ -48,7 +48,7 @@ func (self *NotificationDefinition) GetKey() string {
 }
 
 func (self *NotificationDefinition) Inherit(parentDefinition *NotificationDefinition) {
-	log.Infof("{inherit} notification definition: %s", self.Name)
+	log.Debugf("{inherit} notification definition: %s", self.Name)
 
 	if (self.Description == nil) && (parentDefinition.Description != nil) {
 		self.Description = parentDefinition.Description

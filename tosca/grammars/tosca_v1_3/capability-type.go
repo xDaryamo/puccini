@@ -46,7 +46,7 @@ func (self *CapabilityType) GetParent() tosca.EntityPtr {
 
 // tosca.Inherits interface
 func (self *CapabilityType) Inherit() {
-	log.Infof("{inherit} capability type: %s", self.Name)
+	log.Debugf("{inherit} capability type: %s", self.Name)
 
 	if self.Parent == nil {
 		return

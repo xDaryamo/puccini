@@ -47,13 +47,13 @@ func (self *WorkflowDefinition) GetKey() string {
 
 // parser.Renderable interface
 func (self *WorkflowDefinition) Render() {
-	log.Infof("{render} workflow definition: %s", self.Name)
+	log.Debugf("{render} workflow definition: %s", self.Name)
 
 	self.StepDefinitions.Render()
 }
 
 func (self *WorkflowDefinition) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Workflow {
-	log.Infof("{normalize} workflow definition: %s", self.Name)
+	log.Debugf("{normalize} workflow definition: %s", self.Name)
 
 	normalWorkflow := normalServiceTemplate.NewWorkflow(self.Name)
 

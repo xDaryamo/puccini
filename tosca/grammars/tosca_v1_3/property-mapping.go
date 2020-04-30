@@ -41,7 +41,7 @@ func ReadPropertyMapping(context *tosca.Context) tosca.EntityPtr {
 
 // parser.Renderable interface
 func (self *PropertyMapping) Render() {
-	log.Info("{render} property mapping")
+	log.Debug("{render} property mapping")
 
 	if (self.NodeTemplate == nil) || (self.PropertyName == nil) {
 		return

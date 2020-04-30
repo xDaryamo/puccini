@@ -114,7 +114,7 @@ func (self Tasks) Drain() {
 		return
 	}
 
-	log.Infof("{tasks} starting %d tasks", len(self))
+	log.Debugf("{tasks} starting %d tasks", len(self))
 
 	for true {
 		task, ok := self.FindIndependent()

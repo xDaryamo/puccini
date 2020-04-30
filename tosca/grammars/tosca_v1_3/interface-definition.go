@@ -50,7 +50,7 @@ func (self *InterfaceDefinition) GetKey() string {
 }
 
 func (self *InterfaceDefinition) Inherit(parentDefinition *InterfaceDefinition) {
-	log.Infof("{inherit} interface definition: %s", self.Name)
+	log.Debugf("{inherit} interface definition: %s", self.Name)
 
 	// Validate type compatibility
 	if (self.InterfaceType != nil) && (parentDefinition.InterfaceType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.InterfaceType, self.InterfaceType) {
@@ -72,7 +72,7 @@ func (self *InterfaceDefinition) Inherit(parentDefinition *InterfaceDefinition) 
 
 // parser.Renderable interface
 func (self *InterfaceDefinition) Render() {
-	log.Infof("{render} interface definition: %s", self.Name)
+	log.Debugf("{render} interface definition: %s", self.Name)
 
 	if self.InterfaceTypeName == nil {
 		// Avoid reporting more than once

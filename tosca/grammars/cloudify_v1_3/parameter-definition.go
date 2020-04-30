@@ -39,7 +39,7 @@ func (self *ParameterDefinition) GetKey() string {
 }
 
 func (self *ParameterDefinition) Inherit(parentDefinition *ParameterDefinition) {
-	log.Infof("{inherit} parameter definition: %s", self.Name)
+	log.Debugf("{inherit} parameter definition: %s", self.Name)
 
 	// Validate type compatibility
 	if (self.DataType != nil) && (parentDefinition.DataType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.DataType, self.DataType) {
@@ -63,7 +63,7 @@ func (self *ParameterDefinition) Inherit(parentDefinition *ParameterDefinition) 
 
 // parser.Renderable interface
 func (self *ParameterDefinition) Render() {
-	log.Infof("{render} parameter definition: %s", self.Name)
+	log.Debugf("{render} parameter definition: %s", self.Name)
 
 	if self.DataType == nil {
 		return

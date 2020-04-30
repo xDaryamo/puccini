@@ -85,7 +85,7 @@ var capabilityTypes = normal.NewTypes(capabilityTypeName)
 var relationshipTypes = normal.NewTypes("DependsOn")
 
 func (self *Resource) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.NodeTemplate {
-	log.Infof("{normalize} resource: %s", self.Name)
+	log.Debugf("{normalize} resource: %s", self.Name)
 
 	normalNodeTemplate := normalServiceTemplate.NewNodeTemplate(self.Name)
 
@@ -101,7 +101,7 @@ func (self *Resource) Normalize(normalServiceTemplate *normal.ServiceTemplate) *
 }
 
 func (self *Resource) NormalizeDependencies(normalServiceTemplate *normal.ServiceTemplate) {
-	log.Infof("{normalize} resource dependencies: %s", self.Name)
+	log.Debugf("{normalize} resource dependencies: %s", self.Name)
 
 	normalNodeTemplate := normalServiceTemplate.NodeTemplates[self.Name]
 	path := self.Context.FieldChild("depends_on", nil).Path.String()

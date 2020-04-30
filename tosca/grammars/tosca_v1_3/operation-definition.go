@@ -53,7 +53,7 @@ func (self *OperationDefinition) GetKey() string {
 }
 
 func (self *OperationDefinition) Inherit(parentDefinition *OperationDefinition) {
-	log.Infof("{inherit} operation definition: %s", self.Name)
+	log.Debugf("{inherit} operation definition: %s", self.Name)
 
 	if (self.Description == nil) && (parentDefinition.Description != nil) {
 		self.Description = parentDefinition.Description

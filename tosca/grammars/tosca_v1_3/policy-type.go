@@ -47,7 +47,7 @@ func (self *PolicyType) GetParent() tosca.EntityPtr {
 
 // tosca.Inherits interface
 func (self *PolicyType) Inherit() {
-	log.Infof("{inherit} policy type: %s", self.Name)
+	log.Debugf("{inherit} policy type: %s", self.Name)
 
 	if self.Parent == nil {
 		return
@@ -69,7 +69,7 @@ func (self *PolicyType) Inherit() {
 
 // parser.Renderable interface
 func (self *PolicyType) Render() {
-	log.Infof("{render} policy type: %s", self.Name)
+	log.Debugf("{render} policy type: %s", self.Name)
 
 	// (Note we are checking for TargetNodeTypeOrGroupTypeNames and not TargetNodeTypes/TargetGroupTypes, because the latter will never be nil)
 	if (self.Parent == nil) || (self.Parent.TargetNodeTypeOrGroupTypeNames == nil) {

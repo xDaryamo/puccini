@@ -71,7 +71,7 @@ func (self *Artifact) Copy(definition *ArtifactDefinition) {
 }
 
 func (self *Artifact) DoRender() {
-	log.Infof("{render} artifact: %s", self.Name)
+	log.Debugf("{render} artifact: %s", self.Name)
 
 	if self.File == nil {
 		self.Context.FieldChild("file", nil).ReportFieldMissing()

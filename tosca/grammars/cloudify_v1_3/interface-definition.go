@@ -38,7 +38,7 @@ func (self *InterfaceDefinition) GetKey() string {
 }
 
 func (self *InterfaceDefinition) Inherit(parentDefinition *InterfaceDefinition) {
-	log.Infof("{inherit} interface definition: %s", self.Name)
+	log.Debugf("{inherit} interface definition: %s", self.Name)
 
 	self.OperationDefinitions.Inherit(parentDefinition.OperationDefinitions)
 }

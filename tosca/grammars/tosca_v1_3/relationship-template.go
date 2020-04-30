@@ -52,7 +52,7 @@ func (self *RelationshipTemplate) PreRead() {
 
 // parser.Renderable interface
 func (self *RelationshipTemplate) Render() {
-	log.Infof("{render} relationship template: %s", self.Name)
+	log.Debugf("{render} relationship template: %s", self.Name)
 
 	if self.RelationshipType == nil {
 		return

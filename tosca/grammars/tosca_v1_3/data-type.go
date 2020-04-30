@@ -50,7 +50,7 @@ func (self *DataType) GetParent() tosca.EntityPtr {
 
 // tosca.Inherits interface
 func (self *DataType) Inherit() {
-	log.Infof("{inherit} data type: %s", self.Name)
+	log.Debugf("{inherit} data type: %s", self.Name)
 
 	if _, ok := self.GetInternalTypeName(); ok && (len(self.PropertyDefinitions) > 0) {
 		// Doesn't make sense to be an internal type (non-complex) and also have properties (complex)
@@ -72,7 +72,7 @@ func (self *DataType) Inherit() {
 
 // parser.Renderable interface
 func (self *DataType) Render() {
-	log.Infof("{render} data type: %s", self.Name)
+	log.Debugf("{render} data type: %s", self.Name)
 
 	self.ConstraintClauses.Render(self)
 
