@@ -33,6 +33,7 @@ var putCommand = &cobra.Command{
 
 		url, err := urlpkg.NewValidURL(jsUrl, nil)
 		common.FailOnError(err)
+		defer url.Release()
 
 		scriptlet, err := urlpkg.ReadToString(url)
 		common.FailOnError(err)

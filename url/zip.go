@@ -20,12 +20,12 @@ import (
 //
 
 type ZipURL struct {
-	Path        string
-	ArchiveURL  URL
-	ArchivePath string
+	Path       string
+	ArchiveURL URL
 
-	release bool
-	lock    sync.Mutex // for ArchivePath and release
+	archivePath   string
+	deleteArchive bool
+	lock          sync.Mutex // for archivePath and release
 }
 
 func NewZipURL(path string, archiveUrl URL) *ZipURL {
@@ -39,7 +39,7 @@ func NewZipURL(path string, archiveUrl URL) *ZipURL {
 }
 
 func NewValidZipURL(path string, archiveUrl URL) (*ZipURL, error) {
-	if reader, err := OpenZipFromURL(archiveUrl); err == nil {
+	if reader, downloaded, err := OpenZipFromURL(archiveUrl); err == nil {
 		defer reader.Close()
 
 		// Must be absolute
@@ -48,10 +48,16 @@ func NewValidZipURL(path string, archiveUrl URL) (*ZipURL, error) {
 		for _, file := range reader.Reader.File {
 			if path == file.Name {
 				self := NewZipURL(path, archiveUrl)
-				self.ArchivePath = reader.File.Name()
-				self.release = true
+				self.archivePath = reader.File.Name()
+				if downloaded {
+					self.deleteArchive = true
+				}
 				return self, nil
 			}
+		}
+
+		if downloaded {
+			DeleteTemporaryFile(reader.File.Name())
 		}
 
 		return nil, fmt.Errorf("path \"%s\" not found in zip: %s", path, archiveUrl.String())
@@ -66,7 +72,7 @@ func NewValidRelativeZipURL(path string, origin *ZipURL) (*ZipURL, error) {
 		for _, file := range reader.Reader.File {
 			if self.Path == file.Name {
 				// The origin will own the temporary file
-				self.ArchivePath = reader.File.Name()
+				self.archivePath = reader.File.Name()
 				return self, nil
 			}
 		}
@@ -117,10 +123,11 @@ func (self *ZipURL) Origin() URL {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
+	// Note: deleteArchive is *not* copied over
 	return &ZipURL{
 		Path:        pathpkg.Dir(self.Path),
 		ArchiveURL:  self.ArchiveURL,
-		ArchivePath: self.ArchivePath,
+		archivePath: self.archivePath,
 	}
 }
 
@@ -129,10 +136,11 @@ func (self *ZipURL) Relative(path string) URL {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
+	// Note: deleteArchive is *not* copied over
 	return &ZipURL{
 		Path:        pathpkg.Join(self.Path, path),
 		ArchiveURL:  self.ArchiveURL,
-		ArchivePath: self.ArchivePath,
+		archivePath: self.archivePath,
 	}
 }
 
@@ -167,36 +175,40 @@ func (self *ZipURL) Release() error {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
-	if self.release && (self.ArchivePath != "") {
-		err := DeleteTemporaryFile(self.ArchivePath)
-		self.ArchivePath = ""
-		self.release = false
-		return err
-	} else {
-		return nil
+	var err error
+	if self.deleteArchive {
+		if self.archivePath != "" {
+			err = DeleteTemporaryFile(self.archivePath)
+			self.archivePath = ""
+		}
+		self.deleteArchive = false
 	}
+	return err
 }
 
 func (self *ZipURL) OpenArchive() (*ZipReader, error) {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
-	if self.ArchivePath != "" {
+	if self.archivePath != "" {
 		// Use cached path
-		if file, err := os.Open(self.ArchivePath); err == nil {
+		if file, err := os.Open(self.archivePath); err == nil {
 			return OpenZipFromFile(file)
 		} else if os.IsNotExist(err) {
 			// Cached file was deleted, so we will re-fetch it below
-			self.ArchivePath = ""
+			self.archivePath = ""
+			self.deleteArchive = false
 		} else {
 			return nil, err
 		}
 	}
 
-	if reader, err := OpenZipFromURL(self.ArchiveURL); err == nil {
+	if reader, downloaded, err := OpenZipFromURL(self.ArchiveURL); err == nil {
 		// Cache the file path
-		self.ArchivePath = reader.File.Name()
-		self.release = true
+		self.archivePath = reader.File.Name()
+		if downloaded {
+			self.deleteArchive = true
+		}
 		return reader, nil
 	} else {
 		return nil, err
@@ -229,19 +241,30 @@ func OpenZipFromFile(file *os.File) (*ZipReader, error) {
 	}
 }
 
-func OpenZipFromURL(url URL) (*ZipReader, error) {
+func OpenZipFromURL(url URL) (*ZipReader, bool, error) {
 	var file *os.File
 	var err error
+	downloaded := false
+
 	if fileUrl, ok := url.(*FileURL); ok {
 		// No need to download file URLs
 		if file, err = os.Open(fileUrl.Path); err != nil {
-			return nil, err
+			return nil, false, err
 		}
-	} else if file, err = Download(url, "puccini-*.zip"); err != nil {
-		return nil, err
+	} else if file, err = Download(url, "puccini-*.zip"); err == nil {
+		downloaded = true
+	} else {
+		return nil, false, err
 	}
 
-	return OpenZipFromFile(file)
+	if reader, err := OpenZipFromFile(file); err == nil {
+		return reader, downloaded, nil
+	} else {
+		if downloaded {
+			DeleteTemporaryFile(file.Name())
+		}
+		return nil, false, err
+	}
 }
 
 // io.Closer interface

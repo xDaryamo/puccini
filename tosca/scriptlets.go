@@ -64,6 +64,7 @@ func (self *Scriptlet) Read() (string, error) {
 		if err != nil {
 			return "", err
 		}
+		defer url.Release()
 
 		scriptlet, err := urlpkg.ReadToString(url)
 		if err != nil {

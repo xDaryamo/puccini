@@ -19,8 +19,9 @@ import (
 //
 
 type DockerURL struct {
-	URL     *neturlpkg.URL
-	String_ string `json:"string" yaml:"string"`
+	URL *neturlpkg.URL
+
+	string_ string
 }
 
 func NewDockerURL(neturl *neturlpkg.URL) *DockerURL {
@@ -71,7 +72,7 @@ func (self *DockerURL) Relative(path string) URL {
 
 // URL interface
 func (self *DockerURL) Key() string {
-	return self.String_
+	return self.string_
 }
 
 // URL interface

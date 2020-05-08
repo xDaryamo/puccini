@@ -15,8 +15,9 @@ import (
 //
 
 type NetworkURL struct {
-	URL     *neturlpkg.URL
-	String_ string `json:"string" yaml:"string"`
+	URL *neturlpkg.URL
+
+	string_ string
 }
 
 func NewNetworkURL(neturl *neturlpkg.URL) *NetworkURL {
@@ -54,7 +55,12 @@ func (self *NetworkURL) String() string {
 
 // URL interface
 func (self *NetworkURL) Format() string {
-	return GetFormat(self.URL.Path)
+	format := self.URL.Query().Get("format")
+	if format != "" {
+		return format
+	} else {
+		return GetFormat(self.URL.Path)
+	}
 }
 
 // URL interface
@@ -75,12 +81,12 @@ func (self *NetworkURL) Relative(path string) URL {
 
 // URL interface
 func (self *NetworkURL) Key() string {
-	return self.String_
+	return self.string_
 }
 
 // URL interface
 func (self *NetworkURL) Open() (io.ReadCloser, error) {
-	if response, err := http.Get(self.String_); err == nil {
+	if response, err := http.Get(self.string_); err == nil {
 		if response.StatusCode == http.StatusOK {
 			return response.Body, nil
 		} else {

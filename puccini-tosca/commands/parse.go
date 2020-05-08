@@ -76,6 +76,7 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 	defer url_.Release()
 
 	context := parser.NewContext(tosca.NewQuirks(quirks...))
+	defer context.Release()
 	var problems *problemspkg.Problems
 
 	// Phase 1: Read
@@ -195,6 +196,7 @@ func ParseInputs() {
 		log.Infof("load inputs from \"%s\"", inputsUrl)
 		url, err := urlpkg.NewValidURL(inputsUrl, nil)
 		common.FailOnError(err)
+		defer url.Release()
 		reader, err := url.Open()
 		common.FailOnError(err)
 		defer reader.Close()

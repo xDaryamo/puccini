@@ -34,6 +34,12 @@ func (self *Context) GetProblems() *problems.Problems {
 	return self.Root.GetContext().Problems
 }
 
+func (self *Context) Release() {
+	for _, unit := range self.Units {
+		unit.GetContext().Release()
+	}
+}
+
 func (self *Context) AddUnit(entityPtr tosca.EntityPtr, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
 	unit := NewUnit(entityPtr, container, nameTransformer)
 
