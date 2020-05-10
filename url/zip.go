@@ -7,7 +7,6 @@ import (
 	"os"
 	pathpkg "path"
 	"strings"
-	"sync"
 )
 
 // Note: we *must* use the "path" package rather than "filepath" to ensure consistency with Windows
@@ -22,10 +21,6 @@ import (
 type ZipURL struct {
 	Path       string
 	ArchiveURL URL
-
-	archivePath   string
-	deleteArchive bool
-	lock          sync.Mutex // for archivePath and release
 }
 
 func NewZipURL(path string, archiveUrl URL) *ZipURL {
@@ -39,25 +34,14 @@ func NewZipURL(path string, archiveUrl URL) *ZipURL {
 }
 
 func NewValidZipURL(path string, archiveUrl URL) (*ZipURL, error) {
-	if reader, downloaded, err := OpenZipFromURL(archiveUrl); err == nil {
+	self := NewZipURL(path, archiveUrl)
+	if reader, err := self.OpenArchive(); err == nil {
 		defer reader.Close()
 
-		// Must be absolute
-		path = strings.TrimLeft(path, "/")
-
 		for _, file := range reader.Reader.File {
-			if path == file.Name {
-				self := NewZipURL(path, archiveUrl)
-				self.archivePath = reader.File.Name()
-				if downloaded {
-					self.deleteArchive = true
-				}
+			if self.Path == file.Name {
 				return self, nil
 			}
-		}
-
-		if downloaded {
-			DeleteTemporaryFile(reader.File.Name())
 		}
 
 		return nil, fmt.Errorf("path \"%s\" not found in zip: %s", path, archiveUrl.String())
@@ -71,8 +55,6 @@ func NewValidRelativeZipURL(path string, origin *ZipURL) (*ZipURL, error) {
 	if reader, err := self.OpenArchive(); err == nil {
 		for _, file := range reader.Reader.File {
 			if self.Path == file.Name {
-				// The origin will own the temporary file
-				self.archivePath = reader.File.Name()
 				return self, nil
 			}
 		}
@@ -83,9 +65,9 @@ func NewValidRelativeZipURL(path string, origin *ZipURL) (*ZipURL, error) {
 	}
 }
 
-func ParseZipURL(url string) (*ZipURL, error) {
+func ParseZipURL(url string, context *Context) (*ZipURL, error) {
 	if archive, path, err := parseZipURL(url); err == nil {
-		if archiveUrl, err := NewURL(archive); err == nil {
+		if archiveUrl, err := NewURL(archive, context); err == nil {
 			return NewZipURL(path, archiveUrl), nil
 		} else {
 			return nil, err
@@ -95,9 +77,9 @@ func ParseZipURL(url string) (*ZipURL, error) {
 	}
 }
 
-func ParseValidZipURL(url string) (*ZipURL, error) {
+func ParseValidZipURL(url string, context *Context) (*ZipURL, error) {
 	if archive, path, err := parseZipURL(url); err == nil {
-		if zipUrl, err := NewURL(archive); err == nil {
+		if zipUrl, err := NewURL(archive, context); err == nil {
 			return NewValidZipURL(path, zipUrl)
 		} else {
 			return nil, err
@@ -120,27 +102,19 @@ func (self *ZipURL) Format() string {
 
 // URL interface
 func (self *ZipURL) Origin() URL {
-	self.lock.Lock()
-	defer self.lock.Unlock()
-
 	// Note: deleteArchive is *not* copied over
 	return &ZipURL{
-		Path:        pathpkg.Dir(self.Path),
-		ArchiveURL:  self.ArchiveURL,
-		archivePath: self.archivePath,
+		Path:       pathpkg.Dir(self.Path),
+		ArchiveURL: self.ArchiveURL,
 	}
 }
 
 // URL interface
 func (self *ZipURL) Relative(path string) URL {
-	self.lock.Lock()
-	defer self.lock.Unlock()
-
 	// Note: deleteArchive is *not* copied over
 	return &ZipURL{
-		Path:        pathpkg.Join(self.Path, path),
-		ArchiveURL:  self.ArchiveURL,
-		archivePath: self.archivePath,
+		Path:       pathpkg.Join(self.Path, path),
+		ArchiveURL: self.ArchiveURL,
 	}
 }
 
@@ -171,45 +145,13 @@ func (self *ZipURL) Open() (io.ReadCloser, error) {
 }
 
 // URL interface
-func (self *ZipURL) Release() error {
-	self.lock.Lock()
-	defer self.lock.Unlock()
-
-	var err error
-	if self.deleteArchive {
-		if self.archivePath != "" {
-			err = DeleteTemporaryFile(self.archivePath)
-			self.archivePath = ""
-		}
-		self.deleteArchive = false
-	}
-	return err
+func (self *ZipURL) Context() *Context {
+	return self.ArchiveURL.Context()
 }
 
 func (self *ZipURL) OpenArchive() (*ZipReader, error) {
-	self.lock.Lock()
-	defer self.lock.Unlock()
-
-	if self.archivePath != "" {
-		// Use cached path
-		if file, err := os.Open(self.archivePath); err == nil {
-			return OpenZipFromFile(file)
-		} else if os.IsNotExist(err) {
-			// Cached file was deleted, so we will re-fetch it below
-			self.archivePath = ""
-			self.deleteArchive = false
-		} else {
-			return nil, err
-		}
-	}
-
-	if reader, downloaded, err := OpenZipFromURL(self.ArchiveURL); err == nil {
-		// Cache the file path
-		self.archivePath = reader.File.Name()
-		if downloaded {
-			self.deleteArchive = true
-		}
-		return reader, nil
+	if file, err := self.ArchiveURL.Context().Open(self.ArchiveURL); err == nil {
+		return OpenZipFromFile(file)
 	} else {
 		return nil, err
 	}
@@ -226,45 +168,6 @@ type ZipReader struct {
 
 func NewZipReader(reader *zip.Reader, file *os.File) *ZipReader {
 	return &ZipReader{reader, file}
-}
-
-func OpenZipFromFile(file *os.File) (*ZipReader, error) {
-	if stat, err := file.Stat(); err == nil {
-		size := stat.Size()
-		if reader, err := zip.NewReader(file, size); err == nil {
-			return NewZipReader(reader, file), nil
-		} else {
-			return nil, err
-		}
-	} else {
-		return nil, err
-	}
-}
-
-func OpenZipFromURL(url URL) (*ZipReader, bool, error) {
-	var file *os.File
-	var err error
-	downloaded := false
-
-	if fileUrl, ok := url.(*FileURL); ok {
-		// No need to download file URLs
-		if file, err = os.Open(fileUrl.Path); err != nil {
-			return nil, false, err
-		}
-	} else if file, err = Download(url, "puccini-*.zip"); err == nil {
-		downloaded = true
-	} else {
-		return nil, false, err
-	}
-
-	if reader, err := OpenZipFromFile(file); err == nil {
-		return reader, downloaded, nil
-	} else {
-		if downloaded {
-			DeleteTemporaryFile(file.Name())
-		}
-		return nil, false, err
-	}
 }
 
 // io.Closer interface
@@ -302,6 +205,19 @@ func (self *ZipEntryReader) Close() error {
 }
 
 // Utils
+
+func OpenZipFromFile(file *os.File) (*ZipReader, error) {
+	if stat, err := file.Stat(); err == nil {
+		size := stat.Size()
+		if reader, err := zip.NewReader(file, size); err == nil {
+			return NewZipReader(reader, file), nil
+		} else {
+			return nil, err
+		}
+	} else {
+		return nil, err
+	}
+}
 
 func parseZipURL(url string) (string, string, error) {
 	if strings.HasPrefix(url, "zip:") {

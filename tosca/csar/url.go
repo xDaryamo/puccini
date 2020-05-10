@@ -17,14 +17,12 @@ func GetRootURL(csarUrl urlpkg.URL) (urlpkg.URL, error) {
 
 	entryReader, err := entryUrl.Open()
 	if err != nil {
-		entryUrl.Release()
 		return nil, err
 	}
 	defer entryReader.Close()
 
 	meta, err := ReadMeta(entryReader)
 	if err != nil {
-		entryUrl.Release()
 		return nil, err
 	}
 
@@ -39,7 +37,6 @@ func GetRootURL(csarUrl urlpkg.URL) (urlpkg.URL, error) {
 
 	archiveReader, err := entryUrl.OpenArchive()
 	if err != nil {
-		entryUrl.Release()
 		return nil, err
 	}
 	defer archiveReader.Close()
@@ -49,7 +46,6 @@ func GetRootURL(csarUrl urlpkg.URL) (urlpkg.URL, error) {
 		dir, path := filepath.Split(file.Name)
 		if (dir == "") && (strings.HasSuffix(path, ".yaml") || strings.HasSuffix(path, ".yml")) {
 			if found != nil {
-				entryUrl.Release()
 				return nil, fmt.Errorf("CSAR has more than one potential service template: %s", csarUrl.String())
 			}
 			found = file
@@ -57,7 +53,6 @@ func GetRootURL(csarUrl urlpkg.URL) (urlpkg.URL, error) {
 	}
 
 	if found == nil {
-		entryUrl.Release()
 		return nil, fmt.Errorf("CSAR does not have a service template: %s", csarUrl.String())
 	}
 

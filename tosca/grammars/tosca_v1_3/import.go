@@ -65,6 +65,7 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 	}
 
 	var origins []urlpkg.URL
+	var urlContext *urlpkg.Context
 
 	if repository != nil {
 		repositoryUrl := repository.GetURL()
@@ -74,11 +75,14 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 		}
 
 		origins = []urlpkg.URL{repositoryUrl}
+		urlContext = repositoryUrl.Context()
 	} else {
-		origins = []urlpkg.URL{self.Context.URL.Origin()}
+		origin := self.Context.URL.Origin()
+		origins = []urlpkg.URL{origin}
+		urlContext = origin.Context()
 	}
 
-	url, err := urlpkg.NewValidURL(*self.File, origins)
+	url, err := urlpkg.NewValidURL(*self.File, origins, urlContext)
 	if err != nil {
 		self.Context.ReportError(err)
 		return nil, false

@@ -13,11 +13,14 @@ var log = logging.MustGetLogger(toolName)
 var output string
 
 func ReadClout(path string) (*clout.Clout, error) {
+	urlContext := urlpkg.NewContext()
+	defer urlContext.Release()
+
 	var url urlpkg.URL
 
 	var err error
 	if path != "" {
-		if url, err = urlpkg.NewValidURL(path, nil); err != nil {
+		if url, err = urlpkg.NewValidURL(path, nil, urlContext); err != nil {
 			return nil, err
 		}
 	} else {
@@ -25,7 +28,6 @@ func ReadClout(path string) (*clout.Clout, error) {
 			return nil, err
 		}
 	}
-	defer url.Release()
 
 	if reader, err := url.Open(); err == nil {
 		defer reader.Close()

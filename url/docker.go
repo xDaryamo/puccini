@@ -22,20 +22,29 @@ type DockerURL struct {
 	URL *neturlpkg.URL
 
 	string_ string
+	context *Context
 }
 
-func NewDockerURL(neturl *neturlpkg.URL) *DockerURL {
-	return &DockerURL{neturl, neturl.String()}
+func NewDockerURL(neturl *neturlpkg.URL, context *Context) *DockerURL {
+	if context == nil {
+		context = NewContext()
+	}
+
+	return &DockerURL{
+		URL:     neturl,
+		string_: neturl.String(),
+		context: context,
+	}
 }
 
-func NewValidDockerURL(neturl *neturlpkg.URL) (*DockerURL, error) {
+func NewValidDockerURL(neturl *neturlpkg.URL, context *Context) (*DockerURL, error) {
 	if (neturl.Scheme != "docker") && (neturl.Scheme != "") {
 		return nil, fmt.Errorf("not a docker URL: %s", neturl.String())
 	}
 
 	// TODO
 
-	return NewDockerURL(neturl), nil
+	return NewDockerURL(neturl, context), nil
 }
 
 // URL interface
@@ -64,7 +73,7 @@ func (self *DockerURL) Origin() URL {
 // URL interface
 func (self *DockerURL) Relative(path string) URL {
 	if neturl, err := neturlpkg.Parse(path); err == nil {
-		return NewDockerURL(self.URL.ResolveReference(neturl))
+		return NewDockerURL(self.URL.ResolveReference(neturl), self.context)
 	} else {
 		return nil
 	}
@@ -91,8 +100,8 @@ func (self *DockerURL) Open() (io.ReadCloser, error) {
 }
 
 // URL interface
-func (self *DockerURL) Release() error {
-	return nil
+func (self *DockerURL) Context() *Context {
+	return self.context
 }
 
 func (self *DockerURL) WriteTarball(writer io.Writer) error {
@@ -112,7 +121,7 @@ func (self *DockerURL) WriteLayer(writer io.Writer) error {
 	pipeReader, pipeWriter := io.Pipe()
 
 	go func() {
-		if err := self.WriteTarball(pipeWriter); err != nil {
+		if err := self.WriteTarball(pipeWriter); err == nil {
 			pipeWriter.Close()
 		} else {
 			pipeWriter.CloseWithError(err)

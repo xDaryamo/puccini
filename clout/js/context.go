@@ -11,6 +11,7 @@ import (
 	"github.com/tebeka/atexit"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/common/terminal"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 //
@@ -28,11 +29,12 @@ type Context struct {
 	Stdout          io.Writer
 	Stderr          io.Writer
 	Stdin           io.Writer
+	URLContext      *urlpkg.Context
 
 	programCache sync.Map
 }
 
-func NewContext(name string, logger *logging.Logger, quiet bool, format string, strict bool, allowTimestamps bool, pretty bool, output string) *Context {
+func NewContext(name string, logger *logging.Logger, quiet bool, format string, strict bool, allowTimestamps bool, pretty bool, output string, urlContext *urlpkg.Context) *Context {
 	return &Context{
 		Quiet:           quiet,
 		Format:          format,
@@ -44,6 +46,7 @@ func NewContext(name string, logger *logging.Logger, quiet bool, format string, 
 		Stdout:          terminal.Stdout,
 		Stderr:          terminal.Stderr,
 		Stdin:           os.Stdin,
+		URLContext:      urlContext,
 	}
 }
 

@@ -138,8 +138,7 @@ func (self *PucciniAPI) Exec(name string, arguments ...string) (string, error) {
 }
 
 func (self *PucciniAPI) Download(sourceUrl string, targetPath string) error {
-	if sourceUrl_, err := urlpkg.NewValidURL(sourceUrl, nil); err == nil {
-		defer sourceUrl_.Release()
+	if sourceUrl_, err := urlpkg.NewValidURL(sourceUrl, nil, self.context.URLContext); err == nil {
 		return urlpkg.DownloadTo(sourceUrl_, targetPath)
 	} else {
 		return err
@@ -147,8 +146,7 @@ func (self *PucciniAPI) Download(sourceUrl string, targetPath string) error {
 }
 
 func (self *PucciniAPI) LoadString(url string) (string, error) {
-	if url_, err := urlpkg.NewValidURL(url, nil); err == nil {
-		defer url_.Release()
+	if url_, err := urlpkg.NewValidURL(url, nil, self.context.URLContext); err == nil {
 		return urlpkg.ReadToString(url_)
 	} else {
 		return "", err

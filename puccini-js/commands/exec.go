@@ -33,11 +33,13 @@ var execCommand = &cobra.Command{
 		// Try loading JavaScript from Clout
 		scriptlet, err := js.GetScriptlet(scriptletName, clout)
 
+		urlContext := urlpkg.NewContext()
+		defer urlContext.Release()
+
 		if err != nil {
 			// Try loading JavaScript from path or URL
-			url, err := urlpkg.NewValidURL(scriptletName, nil)
+			url, err := urlpkg.NewValidURL(scriptletName, nil, urlContext)
 			common.FailOnError(err)
-			defer url.Release()
 
 			scriptlet, err = urlpkg.ReadToString(url)
 			common.FailOnError(err)
@@ -46,13 +48,13 @@ var execCommand = &cobra.Command{
 			common.FailOnError(err)
 		}
 
-		err = Exec(scriptletName, scriptlet, clout)
+		err = Exec(scriptletName, scriptlet, clout, urlContext)
 		common.FailOnError(err)
 	},
 }
 
-func Exec(scriptletName string, scriptlet string, clout *cloutpkg.Clout) error {
-	jsContext := js.NewContext(scriptletName, log, terminal.Quiet, format, strict, timestamps, pretty, output)
+func Exec(scriptletName string, scriptlet string, clout *cloutpkg.Clout, urlContext *urlpkg.Context) error {
+	jsContext := js.NewContext(scriptletName, log, terminal.Quiet, format, strict, timestamps, pretty, output, urlContext)
 
 	program, err := jsContext.GetProgram(scriptletName, scriptlet)
 	if err != nil {

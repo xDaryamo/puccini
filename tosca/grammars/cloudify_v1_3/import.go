@@ -51,8 +51,9 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 		file = s[1]
 	}
 
-	var origins = []urlpkg.URL{self.Context.URL.Origin()}
-	url, err := urlpkg.NewValidURL(file, origins)
+	origin := self.Context.URL.Origin()
+	var origins = []urlpkg.URL{origin}
+	url, err := urlpkg.NewValidURL(file, origins, origin.Context())
 	if err != nil {
 		self.Context.ReportError(err)
 		return nil, false

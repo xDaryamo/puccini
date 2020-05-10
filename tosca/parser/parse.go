@@ -12,7 +12,6 @@ import (
 
 func Parse(url urlpkg.URL, quirks tosca.Quirks, inputs map[string]ard.Value) (*normal.ServiceTemplate, *problems.Problems, error) {
 	context := NewContext(quirks)
-	defer context.Release()
 
 	// Phase 1: Read
 	ok := context.ReadRoot(url)

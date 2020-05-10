@@ -90,10 +90,6 @@ func (self *Context) NewImportContext(url urlpkg.URL) *Context {
 	}
 }
 
-func (self *Context) Release() error {
-	return self.URL.Release()
-}
-
 func (self *Context) GetAncestor(generation int) *Context {
 	if generation == 0 {
 		return self

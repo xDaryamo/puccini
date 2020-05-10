@@ -70,6 +70,7 @@ func DownloadTo(url URL, path string) error {
 			if _, err = io.Copy(writer, reader); err == nil {
 				return nil
 			} else {
+				log.Warningf("failed to download from \"%s\"", url.String())
 				return err
 			}
 		} else {
@@ -92,6 +93,7 @@ func Download(url URL, temporaryPathPattern string) (*os.File, error) {
 				})
 				return file, nil
 			} else {
+				log.Warningf("failed to download from \"%s\"", url.String())
 				DeleteTemporaryFile(path)
 				return nil, err
 			}

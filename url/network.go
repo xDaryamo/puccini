@@ -18,18 +18,35 @@ type NetworkURL struct {
 	URL *neturlpkg.URL
 
 	string_ string
+	context *Context
 }
 
-func NewNetworkURL(neturl *neturlpkg.URL) *NetworkURL {
-	return &NetworkURL{neturl, neturl.String()}
+func NewNetworkURL(neturl *neturlpkg.URL, context *Context) *NetworkURL {
+	if context == nil {
+		context = NewContext()
+	}
+
+	return &NetworkURL{
+		URL:     neturl,
+		string_: neturl.String(),
+		context: context,
+	}
 }
 
-func NewValidNetworkURL(neturl *neturlpkg.URL) (*NetworkURL, error) {
+func NewValidNetworkURL(neturl *neturlpkg.URL, context *Context) (*NetworkURL, error) {
 	string_ := neturl.String()
 	if response, err := http.Get(string_); err == nil {
 		response.Body.Close()
 		if response.StatusCode == http.StatusOK {
-			return &NetworkURL{neturl, string_}, nil
+			if context == nil {
+				context = NewContext()
+			}
+
+			return &NetworkURL{
+				URL:     neturl,
+				string_: string_,
+				context: context,
+			}, nil
 		} else {
 			return nil, fmt.Errorf("HTTP status: %s", response.Status)
 		}
@@ -41,7 +58,7 @@ func NewValidNetworkURL(neturl *neturlpkg.URL) (*NetworkURL, error) {
 func NewValidRelativeNetworkURL(path string, origin *NetworkURL) (*NetworkURL, error) {
 	if neturl, err := neturlpkg.Parse(path); err == nil {
 		neturl = origin.URL.ResolveReference(neturl)
-		return NewValidNetworkURL(neturl)
+		return NewValidNetworkURL(neturl, origin.context)
 	} else {
 		return nil, err
 	}
@@ -73,7 +90,7 @@ func (self *NetworkURL) Origin() URL {
 // URL interface
 func (self *NetworkURL) Relative(path string) URL {
 	if neturl, err := neturlpkg.Parse(path); err == nil {
-		return NewNetworkURL(self.URL.ResolveReference(neturl))
+		return NewNetworkURL(self.URL.ResolveReference(neturl), self.context)
 	} else {
 		return nil
 	}
@@ -99,6 +116,6 @@ func (self *NetworkURL) Open() (io.ReadCloser, error) {
 }
 
 // URL interface
-func (self *NetworkURL) Release() error {
-	return nil
+func (self *NetworkURL) Context() *Context {
+	return self.context
 }

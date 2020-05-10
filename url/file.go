@@ -13,13 +13,22 @@ import (
 
 type FileURL struct {
 	Path string
+
+	context *Context
 }
 
-func NewFileURL(path string) *FileURL {
-	return &FileURL{path}
+func NewFileURL(path string, context *Context) *FileURL {
+	if context == nil {
+		context = NewContext()
+	}
+
+	return &FileURL{
+		Path:    path,
+		context: context,
+	}
 }
 
-func NewValidFileURL(path string) (*FileURL, error) {
+func NewValidFileURL(path string, context *Context) (*FileURL, error) {
 	if filepath.IsAbs(path) {
 		path = filepath.Clean(path)
 	} else {
@@ -37,11 +46,11 @@ func NewValidFileURL(path string) (*FileURL, error) {
 		return nil, err
 	}
 
-	return NewFileURL(path), nil
+	return NewFileURL(path, context), nil
 }
 
 func NewValidRelativeFileURL(path string, origin *FileURL) (*FileURL, error) {
-	return NewValidFileURL(filepath.Join(origin.Path, path))
+	return NewValidFileURL(filepath.Join(origin.Path, path), origin.context)
 }
 
 // URL interface
@@ -57,12 +66,15 @@ func (self *FileURL) Format() string {
 
 // URL interface
 func (self *FileURL) Origin() URL {
-	return &FileURL{filepath.Dir(self.Path)}
+	return &FileURL{
+		Path:    filepath.Dir(self.Path),
+		context: self.context,
+	}
 }
 
 // URL interface
 func (self *FileURL) Relative(path string) URL {
-	return NewFileURL(filepath.Join(self.Path, path))
+	return NewFileURL(filepath.Join(self.Path, path), self.context)
 }
 
 // URL interface
@@ -80,8 +92,8 @@ func (self *FileURL) Open() (io.ReadCloser, error) {
 }
 
 // URL interface
-func (self *FileURL) Release() error {
-	return nil
+func (self *FileURL) Context() *Context {
+	return self.context
 }
 
 func isValidFile(path string) bool {

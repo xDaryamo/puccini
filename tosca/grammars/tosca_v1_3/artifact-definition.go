@@ -2,6 +2,7 @@ package tosca_v1_3
 
 import (
 	"strings"
+	"sync"
 
 	"github.com/tliron/puccini/tosca"
 	urlpkg "github.com/tliron/puccini/url"
@@ -36,6 +37,10 @@ type ArtifactDefinition struct {
 
 	ArtifactType *ArtifactType `lookup:"type,ArtifactTypeName" json:"-" yaml:"-"`
 	Repository   *Repository   `lookup:"repository,RepositoryName" json:"-" yaml:"-"`
+
+	url                urlpkg.URL
+	urlProblemReported bool
+	lock               sync.Mutex
 }
 
 func NewArtifactDefinition(context *tosca.Context) *ArtifactDefinition {
@@ -67,20 +72,30 @@ func (self *ArtifactDefinition) GetURL() urlpkg.URL {
 		return nil
 	}
 
-	if self.Repository != nil {
-		if url := self.Repository.GetURL(); url != nil {
-			return url.Relative(*self.File)
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	if self.url == nil {
+		if self.Repository != nil {
+			if url := self.Repository.GetURL(); url != nil {
+				self.url = url.Relative(*self.File)
+			}
+		} else {
+			var err error
+			origin := self.Context.URL.Origin()
+			origins := []urlpkg.URL{origin}
+			self.url, err = urlpkg.NewValidURL(*self.File, origins, origin.Context())
+			if err != nil {
+				// Avoid reporting more than once
+				if !self.urlProblemReported {
+					self.Context.ReportError(err)
+					self.urlProblemReported = true
+				}
+			}
 		}
 	}
 
-	if self.Context.URL != nil {
-		return self.Context.URL.Origin().Relative(*self.File)
-	} else if url, err := urlpkg.NewURL(*self.File); err == nil {
-		return url
-	} else {
-		self.Context.ReportError(err)
-		return nil
-	}
+	return self.url
 }
 
 func (self *ArtifactDefinition) GetExtension() string {

@@ -45,6 +45,7 @@ func Compile(url string) {
 	// Parse
 	context, s := Parse(url)
 	problems := context.GetProblems()
+	urlContext := context.Root.GetContext().URL.Context()
 
 	// Compile
 	clout, err := compiler.Compile(s, timestamps)
@@ -52,18 +53,18 @@ func Compile(url string) {
 
 	// Resolve
 	if resolve {
-		compiler.Resolve(clout, problems, format, strict, timestamps, pretty)
+		compiler.Resolve(clout, problems, urlContext, format, strict, timestamps, pretty)
 		FailOnProblems(problems)
 	}
 
 	// Coerce
 	if coerce {
-		compiler.Coerce(clout, problems, format, strict, timestamps, pretty)
+		compiler.Coerce(clout, problems, urlContext, format, strict, timestamps, pretty)
 		FailOnProblems(problems)
 	}
 
 	if exec != "" {
-		err = Exec(exec, clout)
+		err = Exec(exec, clout, urlContext)
 		common.FailOnError(err)
 	} else if !terminal.Quiet || (output != "") {
 		if strict {
@@ -77,7 +78,7 @@ func Compile(url string) {
 	}
 }
 
-func Exec(scriptletName string, clout *cloutpkg.Clout) error {
+func Exec(scriptletName string, clout *cloutpkg.Clout, urlContext *urlpkg.Context) error {
 	clout, err := clout.Normalize()
 	if err != nil {
 		return err
@@ -87,10 +88,12 @@ func Exec(scriptletName string, clout *cloutpkg.Clout) error {
 	scriptlet, err := js.GetScriptlet(scriptletName, clout)
 
 	if err != nil {
+		urlContext := urlpkg.NewContext()
+		defer urlContext.Release()
+
 		// Try loading JavaScript from path or URL
-		url, err := urlpkg.NewValidURL(scriptletName, nil)
+		url, err := urlpkg.NewValidURL(scriptletName, nil, urlContext)
 		common.FailOnError(err)
-		defer url.Release()
 
 		scriptlet, err = urlpkg.ReadToString(url)
 		common.FailOnError(err)
@@ -99,7 +102,7 @@ func Exec(scriptletName string, clout *cloutpkg.Clout) error {
 		common.FailOnError(err)
 	}
 
-	jsContext := js.NewContext(scriptletName, log, terminal.Quiet, format, strict, timestamps, pretty, output)
+	jsContext := js.NewContext(scriptletName, log, terminal.Quiet, format, strict, timestamps, pretty, output, urlContext)
 
 	program, err := jsContext.GetProgram(scriptletName, scriptlet)
 	if err != nil {

@@ -30,11 +30,13 @@ func Compile(url *C.char) *C.char {
 	var problems *problems.Problems
 	var err error
 
-	if url_, err = urlpkg.NewValidURL(C.GoString(url), nil); err != nil {
+	urlContext := urlpkg.NewContext()
+	defer urlContext.Release()
+
+	if url_, err = urlpkg.NewValidURL(C.GoString(url), nil, urlContext); err != nil {
 		//t.Errorf("%s\n%s", err.Error(), p)
 		return nil
 	}
-	defer url_.Release()
 
 	if serviceTemplate, problems, err = parser.Parse(url_, nil, inputs); err != nil {
 		//t.Errorf("%s\n%s", err.Error(), p)
@@ -46,13 +48,13 @@ func Compile(url *C.char) *C.char {
 		return nil
 	}
 
-	compiler.Resolve(clout, problems, "yaml", true, true, false)
+	compiler.Resolve(clout, problems, urlContext, "yaml", true, true, false)
 	if !problems.Empty() {
 		//t.Errorf("%s", p)
 		return nil
 	}
 
-	compiler.Coerce(clout, problems, "yaml", true, true, false)
+	compiler.Coerce(clout, problems, urlContext, "yaml", true, true, false)
 	if !problems.Empty() {
 		//t.Errorf("%s", p)
 		return nil

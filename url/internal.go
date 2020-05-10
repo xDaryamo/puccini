@@ -36,7 +36,7 @@ func ReadToInternalURL(path string, reader io.Reader) (*InternalURL, error) {
 	} else {
 		return nil, err
 	}
-	return NewValidInternalURL(path)
+	return NewValidInternalURL(path, nil)
 }
 
 func ReadToInternalURLFromStdin(format string) (*InternalURL, error) {
@@ -54,22 +54,40 @@ func ReadToInternalURLFromStdin(format string) (*InternalURL, error) {
 type InternalURL struct {
 	Path    string
 	Content string
+
+	context *Context
 }
 
-func NewInternalURL(path string) *InternalURL {
-	return &InternalURL{path, ""}
+func NewInternalURL(path string, context *Context) *InternalURL {
+	if context == nil {
+		context = NewContext()
+	}
+
+	return &InternalURL{
+		Path:    path,
+		Content: "",
+		context: context,
+	}
 }
 
-func NewValidInternalURL(path string) (*InternalURL, error) {
+func NewValidInternalURL(path string, context *Context) (*InternalURL, error) {
 	if content, ok := internal.Load(path); ok {
-		return &InternalURL{path, content.(string)}, nil
+		if context == nil {
+			context = NewContext()
+		}
+
+		return &InternalURL{
+			Path:    path,
+			Content: content.(string),
+			context: context,
+		}, nil
 	} else {
 		return nil, fmt.Errorf("internal URL not found: %s", path)
 	}
 }
 
 func NewValidRelativeInternalURL(path string, origin *InternalURL) (*InternalURL, error) {
-	return NewValidInternalURL(pathpkg.Join(origin.Path, path))
+	return NewValidInternalURL(pathpkg.Join(origin.Path, path), origin.context)
 }
 
 // URL interface
@@ -85,12 +103,16 @@ func (self *InternalURL) Format() string {
 
 // URL interface
 func (self *InternalURL) Origin() URL {
-	return &InternalURL{pathpkg.Dir(self.Path), ""}
+	return &InternalURL{
+		Path:    pathpkg.Dir(self.Path),
+		Content: "",
+		context: self.context,
+	}
 }
 
 // URL interface
 func (self *InternalURL) Relative(path string) URL {
-	return NewInternalURL(pathpkg.Join(self.Path, path))
+	return NewInternalURL(pathpkg.Join(self.Path, path), self.context)
 }
 
 // URL interface
@@ -104,6 +126,6 @@ func (self *InternalURL) Open() (io.ReadCloser, error) {
 }
 
 // URL interface
-func (self *InternalURL) Release() error {
-	return nil
+func (self *InternalURL) Context() *Context {
+	return self.context
 }

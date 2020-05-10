@@ -1,8 +1,10 @@
 package tosca_v1_3
 
 import (
+	"sync"
+
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/puccini/url"
 )
 
 //
@@ -22,8 +24,9 @@ type Repository struct {
 	URL         *string `read:"url" required:"url"`
 	Credential  *Value  `read:"credential,Value"` // tosca:Credential
 
-	url                url.URL
+	url                urlpkg.URL
 	urlProblemReported bool
+	lock               sync.Mutex
 }
 
 func NewRepository(context *tosca.Context) *Repository {
@@ -48,10 +51,15 @@ func (self *Repository) Render() {
 	}
 }
 
-func (self *Repository) GetURL() url.URL {
+func (self *Repository) GetURL() urlpkg.URL {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
 	if (self.url == nil) && (self.URL != nil) {
 		var err error
-		self.url, err = url.NewURL(*self.URL)
+		origin := self.Context.URL.Origin()
+		origins := []urlpkg.URL{origin}
+		self.url, err = urlpkg.NewValidURL(*self.URL, origins, origin.Context())
 		if err != nil {
 			// Avoid reporting more than once
 			if !self.urlProblemReported {

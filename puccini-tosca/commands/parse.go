@@ -63,6 +63,9 @@ var parseCommand = &cobra.Command{
 func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 	ParseInputs()
 
+	urlContext := urlpkg.NewContext()
+	defer urlContext.Release()
+
 	var url_ urlpkg.URL
 	var err error
 	if url == "" {
@@ -70,13 +73,12 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 		url_, err = urlpkg.ReadToInternalURLFromStdin("yaml")
 	} else {
 		log.Infof("parsing \"%s\"", url)
-		url_, err = urlpkg.NewValidURL(url, nil)
+		url_, err = urlpkg.NewValidURL(url, nil, urlContext)
 	}
 	common.FailOnError(err)
-	defer url_.Release()
 
 	context := parser.NewContext(tosca.NewQuirks(quirks...))
-	defer context.Release()
+
 	var problems *problemspkg.Problems
 
 	// Phase 1: Read
@@ -194,9 +196,12 @@ func ToPrintPhase(phase uint) bool {
 func ParseInputs() {
 	if inputsUrl != "" {
 		log.Infof("load inputs from \"%s\"", inputsUrl)
-		url, err := urlpkg.NewValidURL(inputsUrl, nil)
+
+		urlContext := urlpkg.NewContext()
+		defer urlContext.Release()
+
+		url, err := urlpkg.NewValidURL(inputsUrl, nil, urlContext)
 		common.FailOnError(err)
-		defer url.Release()
 		reader, err := url.Open()
 		common.FailOnError(err)
 		defer reader.Close()

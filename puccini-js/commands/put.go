@@ -31,9 +31,11 @@ var putCommand = &cobra.Command{
 		clout, err := ReadClout(cloutPath)
 		common.FailOnError(err)
 
-		url, err := urlpkg.NewValidURL(jsUrl, nil)
+		urlContext := urlpkg.NewContext()
+		defer urlContext.Release()
+
+		url, err := urlpkg.NewValidURL(jsUrl, nil, urlContext)
 		common.FailOnError(err)
-		defer url.Release()
 
 		scriptlet, err := urlpkg.ReadToString(url)
 		common.FailOnError(err)

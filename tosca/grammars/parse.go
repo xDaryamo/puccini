@@ -73,7 +73,7 @@ func GetImplicitImportSpec(context *tosca.Context) (*tosca.ImportSpec, bool) {
 	if versionContext, version := DetectVersion(context); version != nil {
 		if paths, ok := ImplicitProfilePaths[versionContext.Name]; ok {
 			if path, ok := paths[*version]; ok {
-				if url, err := urlpkg.NewValidInternalURL(path); err == nil {
+				if url, err := urlpkg.NewValidInternalURL(path, nil); err == nil {
 					return &tosca.ImportSpec{url, nil, true}, true
 				} else {
 					context.ReportError(err)

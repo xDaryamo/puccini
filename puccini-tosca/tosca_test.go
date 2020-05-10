@@ -63,7 +63,7 @@ func init() {
 
 func testCompile(t *testing.T, url string, inputs map[string]interface{}) {
 	t.Run(url, func(t *testing.T) {
-		// Running the tests in parallel is not for speed;
+		// Running the tests in parallel is not just for speed;
 		// it actually helps us to find concurrency bugs
 		t.Parallel()
 
@@ -72,12 +72,14 @@ func testCompile(t *testing.T, url string, inputs map[string]interface{}) {
 		var problems *problemspkg.Problems
 		var err error
 
-		url_, err := urlpkg.NewURL(fmt.Sprintf("%s/examples/%s", ROOT, url))
+		urlContext := urlpkg.NewContext()
+		defer urlContext.Release()
+
+		url_, err := urlpkg.NewURL(fmt.Sprintf("%s/examples/%s", ROOT, url), urlContext)
 		if err != nil {
 			t.Errorf("%s", err.Error())
 			return
 		}
-		defer url_.Release()
 
 		if serviceTemplate, problems, err = parser.Parse(url_, nil, inputs); err != nil {
 			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))
@@ -89,13 +91,13 @@ func testCompile(t *testing.T, url string, inputs map[string]interface{}) {
 			return
 		}
 
-		compiler.Resolve(clout, problems, "yaml", false, true, true)
+		compiler.Resolve(clout, problems, urlContext, "yaml", false, true, true)
 		if !problems.Empty() {
 			t.Errorf("%s", problems.ToString(true))
 			return
 		}
 
-		compiler.Coerce(clout, problems, "yaml", false, true, true)
+		compiler.Coerce(clout, problems, urlContext, "yaml", false, true, true)
 		if !problems.Empty() {
 			t.Errorf("%s", problems.ToString(true))
 			return

@@ -138,7 +138,7 @@ func (self *Problems) Merge(problems *Problems) bool {
 func (self *Problems) ToString(locate bool) string {
 	var writer strings.Builder
 	self.Write(&writer, false, locate)
-	return writer.String()
+	return strings.TrimRight(writer.String(), "\n")
 }
 
 // fmt.Stringer interface

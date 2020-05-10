@@ -56,15 +56,19 @@ type Scriptlet struct {
 func (self *Scriptlet) Read() (string, error) {
 	if self.Path != "" {
 		var origins []urlpkg.URL
+		var urlContext *urlpkg.Context
 		if self.Origin != nil {
 			origins = []urlpkg.URL{self.Origin}
+			urlContext = self.Origin.Context()
+		} else {
+			urlContext = urlpkg.NewContext()
+			defer urlContext.Release()
 		}
 
-		url, err := urlpkg.NewValidURL(self.Path, origins)
+		url, err := urlpkg.NewValidURL(self.Path, origins, urlContext)
 		if err != nil {
 			return "", err
 		}
-		defer url.Release()
 
 		scriptlet, err := urlpkg.ReadToString(url)
 		if err != nil {
