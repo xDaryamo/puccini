@@ -13,11 +13,14 @@ for (var vertexId in clout.vertexes) {
 	var vertex = clout.vertexes[vertexId];
 	if (tosca.isNodeTemplate(vertex)) {
 		nodeTemplateVertexes.push(vertex);
+		var remove = [];
 		for (var e = 0, l = vertex.edgesOut.length; e < l; e++) {
 			var edge = vertex.edgesOut[e];
 			if (tosca.isTosca(edge, 'Relationship'))
-				edge.remove();
+				remove.push(edge);
 		}
+		for (var e = 0, l = remove.length; e < l; e++) 
+			remove[e].remove();
 	}
 }
 
