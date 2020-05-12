@@ -38,6 +38,11 @@ func Traverse(object interface{}, traverse Traverser) {
 		}
 
 		field := value.FieldByName(structField.Name)
+		if !field.CanInterface() {
+			// Ignore unexported fields
+			continue
+		}
+
 		fieldType := field.Type()
 		if IsPtrToStruct(fieldType) && !field.IsNil() {
 			// Compatible with *interface{}

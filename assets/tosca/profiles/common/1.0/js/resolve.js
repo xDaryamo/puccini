@@ -13,7 +13,7 @@ for (var vertexId in clout.vertexes) {
 			if (tosca.isTosca(edge, 'Relationship'))
 				remove.push(edge);
 		}
-		for (var e = 0, l = remove.length; e < l; e++) 
+		for (var e = 0, l = remove.length; e < l; e++)
 			remove[e].remove();
 	}
 }
