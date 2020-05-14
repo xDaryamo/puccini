@@ -176,7 +176,7 @@ topology_template:
           capability: Socket
           node_filter:
             capabilities:
-              emergency:
+            - emergency:
                 properties:
                   frequency:
                   - greater_than: 100 # 100 hz

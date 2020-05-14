@@ -36,18 +36,18 @@ func ReadCapabilityFilter(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
-func (self *CapabilityFilter) GetKey() string {
-	return self.Name
-}
-
 func (self CapabilityFilter) Normalize(normalRequirement *normal.Requirement) normal.FunctionCallMap {
 	if len(self.PropertyFilters) == 0 {
 		return nil
 	}
 
-	normalFunctionCallMap := make(normal.FunctionCallMap)
-	normalRequirement.CapabilityPropertyConstraints[self.Name] = normalFunctionCallMap
+	var normalFunctionCallMap normal.FunctionCallMap
+	var ok bool
+	if normalFunctionCallMap, ok = normalRequirement.CapabilityPropertyConstraints[self.Name]; !ok {
+		normalFunctionCallMap = make(normal.FunctionCallMap)
+		normalRequirement.CapabilityPropertyConstraints[self.Name] = normalFunctionCallMap
+	}
+
 	self.PropertyFilters.Normalize(normalFunctionCallMap)
 
 	return normalFunctionCallMap
@@ -57,7 +57,7 @@ func (self CapabilityFilter) Normalize(normalRequirement *normal.Requirement) no
 // CapabilityFilters
 //
 
-type CapabilityFilters map[string]*CapabilityFilter
+type CapabilityFilters []*CapabilityFilter
 
 func (self CapabilityFilters) Normalize(normalRequirement *normal.Requirement) {
 	for _, capabilityFilter := range self {

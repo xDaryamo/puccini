@@ -13,7 +13,7 @@ inherited node type does not break the contract of the base node type.
 Coding Principles
 -----------------
 
-There are over 60 different entity types in TOSCA 1.2. Writing custom code for each, even with
+There are over 60 different entity types in TOSCA 1.3. Writing custom code for each, even with
 reusable utility functions, would quickly become a maintenance nightmare, not only for fixing bugs
 but also for supporting future versions of TOSCA.
 
