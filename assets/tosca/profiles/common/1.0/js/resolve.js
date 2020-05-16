@@ -224,7 +224,7 @@ function gatherCandidateCapabilities(requirement, candidateNodeTemplates) {
 
 function addRelationship(sourceVertex, requirement, targetVertex, capabilityName) {
 	var edge = sourceVertex.newEdgeTo(targetVertex);
-	edge.metadata['puccini-tosca'] = {
+	edge.metadata['puccini'] = {
 		version: '1.0',
 		kind: 'Relationship'
 	};

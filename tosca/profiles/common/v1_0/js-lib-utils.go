@@ -10,7 +10,7 @@ var tosca = {};
 tosca.isTosca = function(o, kind) {
 	if (o.metadata === undefined)
 		return false;
-	o = o.metadata['puccini-tosca'];
+	o = o.metadata['puccini'];
 	if (o === undefined)
 		return false;
 	if (o.version !== '1.0')
@@ -66,10 +66,7 @@ tosca.addHistory = function(description) {
 	var metadata = clout.metadata;
 	if (metadata === undefined)
 		metadata = clout.metadata = {};
-	var pucciniTosca = metadata['puccini-tosca'];
-	if (pucciniTosca === undefined)
-		pucciniTosca = metadata['puccini-tosca'] = {};
-	var history = pucciniTosca.history;
+	var history = metadata.history;
 	if (history === undefined)
 		history = [];
 	else
@@ -78,7 +75,7 @@ tosca.addHistory = function(description) {
 		timestamp: puccini.timestamp(),
 		description: description
 	});
-	pucciniTosca.history = history;
+	metadata.history = history;
 };
 
 tosca.getNestedValue = function(singular, plural, args) {

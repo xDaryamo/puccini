@@ -15,7 +15,7 @@ func CleanupScriptlet(scriptlet string) string {
 }
 
 func GetScriptlet(name string, clout *cloutpkg.Clout) (string, error) {
-	section, err := GetMetadataSection(name, clout)
+	section, err := GetScriptletsMetadataSection(name, clout)
 	if err != nil {
 		return "", err
 	}
@@ -29,7 +29,7 @@ func GetScriptlet(name string, clout *cloutpkg.Clout) (string, error) {
 }
 
 func SetScriptlet(name string, scriptlet string, clout *cloutpkg.Clout) error {
-	metadata, err := GetMetadata(clout)
+	metadata, err := GetScriptletsMetadata(clout)
 	if err != nil {
 		return err
 	}
@@ -38,7 +38,7 @@ func SetScriptlet(name string, scriptlet string, clout *cloutpkg.Clout) error {
 }
 
 func GetScriptletNames(baseName string, clout *cloutpkg.Clout) ([]string, error) {
-	section, err := GetMetadataSection(baseName, clout)
+	section, err := GetScriptletsMetadataSection(baseName, clout)
 	if err != nil {
 		return nil, err
 	}

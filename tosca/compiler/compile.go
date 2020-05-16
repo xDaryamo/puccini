@@ -11,11 +11,14 @@ import (
 func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cloutpkg.Clout, error) {
 	clout := cloutpkg.NewClout()
 
-	metadata := make(ard.StringMap)
+	puccini := make(ard.StringMap)
+	puccini["version"] = VERSION
+
+	scriptlets := make(ard.StringMap)
 	var err error = nil
 	serviceTemplate.ScriptletNamespace.Range(func(name string, scriptlet *tosca.Scriptlet) bool {
 		if scriptlet_, err_ := scriptlet.Read(); err == nil {
-			if err_ = ard.StringMapPutNested(metadata, name, scriptlet_); err_ != nil {
+			if err_ = ard.StringMapPutNested(scriptlets, name, scriptlet_); err_ != nil {
 				err = err_
 				return false
 			}
@@ -28,17 +31,15 @@ func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cl
 	if err != nil {
 		return nil, err
 	}
-	clout.Metadata["puccini-js"] = metadata
+	puccini["scriptlets"] = scriptlets
+
+	clout.Metadata["puccini"] = puccini
 
 	history := ard.List{ard.StringMap{
 		"timestamp":   common.Timestamp(!allowTimestamps),
 		"description": "compile",
 	}}
-
-	metadata = make(ard.StringMap)
-	metadata["version"] = VERSION
-	metadata["history"] = history
-	clout.Metadata["puccini-tosca"] = metadata
+	clout.Metadata["history"] = history
 
 	tosca := make(ard.StringMap)
 	tosca["description"] = serviceTemplate.Description
@@ -288,5 +289,5 @@ func SetMetadata(entity cloutpkg.Entity, kind string) {
 	metadata := make(ard.StringMap)
 	metadata["version"] = VERSION
 	metadata["kind"] = kind
-	entity.GetMetadata()["puccini-tosca"] = metadata
+	entity.GetMetadata()["puccini"] = metadata
 }

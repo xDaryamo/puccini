@@ -8,27 +8,22 @@ import (
 	cloutpkg "github.com/tliron/puccini/clout"
 )
 
-func GetMetadata(clout *cloutpkg.Clout) (ard.StringMap, error) {
-	metadata, ok := clout.Metadata["puccini-js"]
-	if !ok {
-		return nil, errors.New("no \"puccini-js\" metadata in Clout")
+func GetScriptletsMetadata(clout *cloutpkg.Clout) (ard.StringMap, error) {
+	// TODO: check that version=1.0
+	if scriptlets, ok := ard.NewNode(clout.Metadata).Get("puccini").Get("scriptlets").StringMap(false); ok {
+		return scriptlets, nil
+	} else {
+		return nil, errors.New("no \"puccini.scriptlets\" metadata in Clout")
 	}
-
-	m, ok := metadata.(ard.StringMap)
-	if !ok {
-		return nil, errors.New("malformed \"puccini-js\" metadata in Clout")
-	}
-
-	return m, nil
 }
 
-func GetMetadataSection(name string, clout *cloutpkg.Clout) (ard.Value, error) {
+func GetScriptletsMetadataSection(name string, clout *cloutpkg.Clout) (ard.Value, error) {
 	segments, final, err := parseScriptletName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	metadata, err := GetMetadata(clout)
+	metadata, err := GetScriptletsMetadata(clout)
 	if err != nil {
 		return nil, err
 	}
