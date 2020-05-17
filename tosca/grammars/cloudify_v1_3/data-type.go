@@ -3,6 +3,7 @@ package cloudify_v1_3
 import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -96,6 +97,15 @@ func (self *DataType) GetInternal() (string, ard.TypeValidator, tosca.Reader, bo
 		}
 	}
 	return "", nil, nil, false
+}
+
+func (self *DataType) GetTypeInformation() *normal.TypeInformation {
+	information := normal.NewTypeInformation()
+	information.Name = tosca.GetCanonicalName(self)
+	if self.Description != nil {
+		information.Description = *self.Description
+	}
+	return information
 }
 
 //

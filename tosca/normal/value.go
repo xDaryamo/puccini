@@ -11,11 +11,10 @@ import (
 
 type Value struct {
 	Key         Constrainable `json:"$key,omitempty" yaml:"$key,omitempty"`
-	Description string        `json:"$description,omitempty" yaml:"$description,omitempty"`
+	Information *Information  `json:"$information,omitempty" yaml:"$information,omitempty"`
 	Constraints FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
 
 	Value ard.Value `json:"$value" yaml:"$value"`
-	Type  string    `json:"$type,omitempty" yaml:"$type,omitempty"`
 }
 
 func NewValue(value ard.Value) *Value {
@@ -28,8 +27,8 @@ func (self *Value) SetKey(key Constrainable) {
 }
 
 // Constrainable interface
-func (self *Value) SetDescription(description string) {
-	self.Description = description
+func (self *Value) SetInformation(information *Information) {
+	self.Information = CopyInformation(information)
 }
 
 // Constrainable interface

@@ -1,5 +1,9 @@
 package tosca
 
+import (
+	"strings"
+)
+
 //
 // HasMetadata
 //
@@ -34,4 +38,16 @@ func SetMetadata(entityPtr EntityPtr, name string, value string) bool {
 		return true
 	}
 	return false
+}
+
+func GetValueMetadata(metadata map[string]string) map[string]string {
+	valueMetadata := make(map[string]string)
+	if metadata != nil {
+		for key, value := range metadata {
+			if strings.HasPrefix(key, "puccini.information:") {
+				valueMetadata[key[20:]] = value
+			}
+		}
+	}
+	return valueMetadata
 }

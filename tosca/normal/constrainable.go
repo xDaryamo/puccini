@@ -10,7 +10,7 @@ import (
 
 type Constrainable interface {
 	SetKey(Constrainable)
-	SetDescription(string)
+	SetInformation(*Information)
 	AddConstraint(*tosca.FunctionCall)
 }
 

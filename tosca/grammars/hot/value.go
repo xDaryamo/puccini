@@ -17,12 +17,15 @@ type Value struct {
 
 	Constraints Constraints
 	Description *string
+
+	information *normal.Information
 }
 
 func NewValue(context *tosca.Context) *Value {
 	return &Value{
-		Entity: NewEntity(context),
-		Name:   context.Name,
+		Entity:      NewEntity(context),
+		Name:        context.Name,
+		information: normal.NewInformation(),
 	}
 }
 
@@ -68,11 +71,13 @@ func (self *Value) Normalize() normal.Constrainable {
 		normalConstrainable = normal.NewValue(data)
 	}
 
-	self.Constraints.Normalize(self.Context, normalConstrainable)
-
 	if self.Description != nil {
-		normalConstrainable.SetDescription(*self.Description)
+		self.information.Description = *self.Description
 	}
+
+	normalConstrainable.SetInformation(self.information)
+
+	self.Constraints.Normalize(self.Context, normalConstrainable)
 
 	return normalConstrainable
 }

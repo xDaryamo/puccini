@@ -26,15 +26,16 @@ type Value struct {
 
 	ConstraintClauses ConstraintClauses
 	Description       *string
-	TypeName          string
 
-	rendered bool
+	information *normal.Information
+	rendered    bool
 }
 
 func NewValue(context *tosca.Context) *Value {
 	return &Value{
-		Entity: NewEntity(context),
-		Name:   context.Name,
+		Entity:      NewEntity(context),
+		Name:        context.Name,
+		information: normal.NewInformation(),
 	}
 }
 
@@ -97,16 +98,18 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 	}
 
 	if !bare {
-		if self.Description == nil {
-			if (definition != nil) && (definition.Description != nil) {
-				self.Description = definition.Description
-			} else {
-				self.Description = dataType.Description
-			}
+		if self.Description != nil {
+			self.information.Description = *self.Description
+		}
+
+		if definition != nil {
+			self.information.Definition = definition.GetTypeInformation()
+		}
+
+		if dataType != nil {
+			self.information.Type = dataType.GetTypeInformation()
 		}
 	}
-
-	self.TypeName = tosca.GetCanonicalName(dataType)
 
 	dataType.Complete(self.Context)
 	if !bare {
@@ -172,13 +175,17 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 						return
 					}
 
-					entryDataType := definition.EntrySchema.DataType
-					entryConstraints := definition.EntrySchema.GetConstraints()
-
 					if internalTypeName == "!!seq" {
-						slice := self.Context.Data.(ard.List)
+						// Information
+						entryDataType := definition.EntrySchema.DataType
+						entryConstraints := definition.EntrySchema.GetConstraints()
+						self.information.Entry = entryDataType.GetTypeInformation()
+						if definition.EntrySchema.Description != nil {
+							self.information.Entry.SchemaDescription = *definition.EntrySchema.Description
+						}
 
-						valueList := NewValueList(definition, len(slice), self.Description, entryConstraints)
+						slice := self.Context.Data.(ard.List)
+						valueList := NewValueList(definition, len(slice), entryConstraints)
 
 						for index, data := range slice {
 							value := ReadAndRenderBareAttribute(self.Context.ListChild(index, data), entryDataType)
@@ -187,15 +194,26 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 
 						self.Context.Data = valueList
 					} else { // "!!map"
-						if (definition == nil) || (definition.KeySchema == nil) {
-							// This problem is reported in AttributeDefinition.Complete()
+						if definition.KeySchema == nil {
+							// This problem is reported in AttributeDefinition.Complete
 							return
 						}
 
+						// Information
 						keyDataType := definition.KeySchema.DataType
 						keyConstraints := definition.KeySchema.GetConstraints()
+						self.information.Key = keyDataType.GetTypeInformation()
+						if definition.KeySchema.Description != nil {
+							self.information.Key.SchemaDescription = *definition.KeySchema.Description
+						}
+						valueDataType := definition.EntrySchema.DataType
+						valueConstraints := definition.EntrySchema.GetConstraints()
+						self.information.Value = valueDataType.GetTypeInformation()
+						if definition.EntrySchema.Description != nil {
+							self.information.Value.SchemaDescription = *definition.EntrySchema.Description
+						}
 
-						valueMap := NewValueMap(definition, self.Description, keyConstraints, entryConstraints)
+						valueMap := NewValueMap(definition, keyConstraints, valueConstraints)
 
 						for key, data := range self.Context.Data.(ard.Map) {
 							// Complex keys are stringified for the purpose of the contexts
@@ -205,7 +223,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 							key = ReadAndRenderBareAttribute(keyContext, keyDataType)
 
 							context := self.Context.MapChild(key, data)
-							value := ReadAndRenderBareAttribute(context, entryDataType)
+							value := ReadAndRenderBareAttribute(context, valueDataType)
 							value.ConstraintClauses = ConstraintClauses{}
 							valueMap.Put(key, value)
 						}
@@ -254,10 +272,15 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 				if definition.DataType != nil {
 					value.RenderProperty(definition.DataType, definition)
 				}
-			} else {
-				if definition.IsRequired() {
-					self.Context.MapChild(key, data).ReportPropertyRequired("property")
+
+				// Grab information
+				if value.information != nil {
+					if !value.information.Empty() {
+						self.information.Properties[key] = value.information
+					}
 				}
+			} else if definition.IsRequired() {
+				self.Context.MapChild(key, data).ReportPropertyRequired("property")
 			}
 		}
 	}
@@ -282,16 +305,19 @@ func ReadAndRenderBareAttribute(context *tosca.Context, dataType *DataType) *Val
 }
 
 func (self *Value) Normalize() normal.Constrainable {
+	return self.normalize(true)
+}
+
+func (self *Value) normalize(withInformation bool) normal.Constrainable {
 	var normalConstrainable normal.Constrainable
 
 	switch data := self.Context.Data.(type) {
 	case ard.Map:
 		// This is for complex types (the "map" type is a ValueMap, below)
 		normalMap := normal.NewMap()
-		normalMap.Type = self.TypeName
 		for key, value := range data {
 			if v, ok := value.(*Value); ok {
-				normalMap.Put(key, v.Normalize())
+				normalMap.Put(key, v.normalize(false))
 			} else {
 				normalMap.Put(key, normal.NewValue(value))
 			}
@@ -310,15 +336,14 @@ func (self *Value) Normalize() normal.Constrainable {
 
 	default:
 		value := normal.NewValue(data)
-		value.Type = self.TypeName
 		normalConstrainable = value
 	}
 
-	self.ConstraintClauses.NormalizeConstrainable(self.Context, normalConstrainable)
-
-	if self.Description != nil {
-		normalConstrainable.SetDescription(*self.Description)
+	if withInformation {
+		normalConstrainable.SetInformation(self.information)
 	}
+
+	self.ConstraintClauses.NormalizeConstrainable(self.Context, normalConstrainable)
 
 	return normalConstrainable
 }
@@ -397,16 +422,12 @@ func (self Values) Normalize(normalConstrainables normal.Constrainables) {
 //
 
 type ValueList struct {
-	Description      *string
-	EntryDescription *string
 	EntryConstraints ConstraintClauses
 	Slice            []interface{}
 }
 
-func NewValueList(definition *AttributeDefinition, length int, description *string, entryConstraints ConstraintClauses) *ValueList {
+func NewValueList(definition *AttributeDefinition, length int, entryConstraints ConstraintClauses) *ValueList {
 	return &ValueList{
-		Description:      description,
-		EntryDescription: definition.EntrySchema.Description,
 		EntryConstraints: entryConstraints,
 		Slice:            make([]interface{}, length),
 	}
@@ -419,18 +440,11 @@ func (self *ValueList) Set(index int, value interface{}) {
 func (self *ValueList) Normalize(context *tosca.Context) *normal.List {
 	normalList := normal.NewList(len(self.Slice))
 
-	if self.Description != nil {
-		normalList.Description = *self.Description
-	}
-	if self.EntryDescription != nil {
-		normalList.EntryDescription = *self.EntryDescription
-	}
-
 	self.EntryConstraints.NormalizeListEntries(context, normalList)
 
 	for index, value := range self.Slice {
 		if v, ok := value.(*Value); ok {
-			normalList.Set(index, v.Normalize())
+			normalList.Set(index, v.normalize(false))
 		} else {
 			normalList.Set(index, normal.NewValue(value))
 		}
@@ -444,25 +458,15 @@ func (self *ValueList) Normalize(context *tosca.Context) *normal.List {
 //
 
 type ValueMap struct {
-	Description      *string
-	KeyDescription   *string
-	EntryDescription *string
 	KeyConstraints   ConstraintClauses
-	EntryConstraints ConstraintClauses
+	ValueConstraints ConstraintClauses
 	Map              ard.Map
 }
 
-func NewValueMap(definition *AttributeDefinition, description *string, keyConstraints ConstraintClauses, entryConstraints ConstraintClauses) *ValueMap {
-	var keyDescription *string
-	if definition.KeySchema != nil {
-		keyDescription = definition.KeySchema.Description
-	}
+func NewValueMap(definition *AttributeDefinition, keyConstraints ConstraintClauses, valueConstraints ConstraintClauses) *ValueMap {
 	return &ValueMap{
-		Description:      description,
-		KeyDescription:   keyDescription,
-		EntryDescription: definition.EntrySchema.Description,
 		KeyConstraints:   keyConstraints,
-		EntryConstraints: entryConstraints,
+		ValueConstraints: valueConstraints,
 		Map:              make(ard.Map),
 	}
 }
@@ -474,25 +478,15 @@ func (self *ValueMap) Put(key interface{}, value interface{}) {
 func (self *ValueMap) Normalize(context *tosca.Context) *normal.Map {
 	normalMap := normal.NewMap()
 
-	if self.Description != nil {
-		normalMap.Description = *self.Description
-	}
-	if self.KeyDescription != nil {
-		normalMap.KeyDescription = *self.KeyDescription
-	}
-	if self.EntryDescription != nil {
-		normalMap.ValueDescription = *self.EntryDescription
-	}
-
 	self.KeyConstraints.NormalizeMapKeys(context, normalMap)
-	self.EntryConstraints.NormalizeMapValues(context, normalMap)
+	self.ValueConstraints.NormalizeMapValues(context, normalMap)
 
 	for key, value := range self.Map {
 		if k, ok := key.(*Value); ok {
-			key = k.Normalize()
+			key = k.normalize(false)
 		}
 		if v, ok := value.(*Value); ok {
-			normalMap.Put(key, v.Normalize())
+			normalMap.Put(key, v.normalize(false))
 		} else {
 			normalMap.Put(key, normal.NewValue(value))
 		}

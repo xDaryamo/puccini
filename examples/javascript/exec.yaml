@@ -10,7 +10,7 @@ metadata:
   template_name: JavaScript Exec Example
   template_author: Puccini
 
-  puccini.scriptlet.import|endpoints: imports/endpoints.js
+  puccini.scriptlet.import:endpoints: imports/endpoints.js
 
 topology_template:
 

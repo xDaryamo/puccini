@@ -13,7 +13,7 @@ metadata:
 
   # In the functions.yaml example we saw how to define functions declaratively
   # Here we will do it programmatically
-  puccini.scriptlet.import|define: imports/define.js
+  puccini.scriptlet.import:define: imports/define.js
 
 node_types:
 

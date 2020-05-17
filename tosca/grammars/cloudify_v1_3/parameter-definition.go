@@ -2,6 +2,7 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -73,6 +74,14 @@ func (self *ParameterDefinition) Render() {
 		// The "default" value must be a valid value of the type
 		self.Default.RenderParameter(self.DataType, self, false, false)
 	}
+}
+
+func (self *ParameterDefinition) GetTypeInformation() *normal.TypeInformation {
+	information := normal.NewTypeInformation()
+	if self.Description != nil {
+		information.Description = *self.Description
+	}
+	return information
 }
 
 //

@@ -1,10 +1,11 @@
 package tosca_v1_3
 
 import (
+	"reflect"
+
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
-
-	"reflect"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 type HasComparer interface {
@@ -136,6 +137,16 @@ func (self *DataType) Complete(context *tosca.Context) {
 			definition.DataType.Complete(childContext)
 		}
 	}
+}
+
+func (self *DataType) GetTypeInformation() *normal.TypeInformation {
+	information := normal.NewTypeInformation()
+	information.Name = tosca.GetCanonicalName(self)
+	information.Metadata = tosca.GetValueMetadata(self.Metadata)
+	if self.Description != nil {
+		information.Description = *self.Description
+	}
+	return information
 }
 
 func GetDataType(context *tosca.Context, name string) (*DataType, bool) {

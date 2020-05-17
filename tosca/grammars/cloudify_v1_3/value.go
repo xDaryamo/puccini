@@ -16,15 +16,16 @@ type Value struct {
 	Name    string
 
 	Description *string
-	TypeName    string
 
-	rendered bool
+	information *normal.Information
+	rendered    bool
 }
 
 func NewValue(context *tosca.Context) *Value {
 	return &Value{
-		Entity: NewEntity(context),
-		Name:   context.Name,
+		Entity:      NewEntity(context),
+		Name:        context.Name,
+		information: normal.NewInformation(),
 	}
 }
 
@@ -54,13 +55,17 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 	}
 	self.rendered = true
 
-	if (definition != nil) && (definition.Description != nil) {
-		self.Description = definition.Description
-	} else {
-		self.Description = dataType.Description
+	if self.Description != nil {
+		self.information.Description = *self.Description
 	}
 
-	self.TypeName = tosca.GetCanonicalName(dataType)
+	if definition != nil {
+		self.information.Definition = definition.GetTypeInformation()
+	}
+
+	if dataType != nil {
+		self.information.Type = dataType.GetTypeInformation()
+	}
 
 	if _, ok := self.Context.Data.(*tosca.FunctionCall); ok {
 		return
@@ -125,26 +130,29 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 }
 
 func (self *Value) Normalize() normal.Constrainable {
+	return self.normalize(true)
+}
+
+func (self *Value) normalize(withInformation bool) normal.Constrainable {
 	var normalConstrainable normal.Constrainable
 
 	switch data := self.Context.Data.(type) {
 	case ard.List:
 		normalList := normal.NewList(len(data))
 		for index, value := range data {
-			normalList.Set(index, NewValue(self.Context.ListChild(index, value)).Normalize())
+			normalList.Set(index, NewValue(self.Context.ListChild(index, value)).normalize(false))
 		}
 		normalConstrainable = normalList
 
 	case ard.Map:
 		normalMap := normal.NewMap()
-		normalMap.Type = self.TypeName
 		for key, value := range data {
 			if _, ok := key.(string); !ok {
 				// Cloudify DSL does not support complex keys
 				self.Context.MapChild(key, yamlkeys.KeyData(key)).ReportValueWrongType("!!str")
 			}
 			name := yamlkeys.KeyString(key)
-			normalMap.Put(name, NewValue(self.Context.MapChild(name, value)).Normalize())
+			normalMap.Put(name, NewValue(self.Context.MapChild(name, value)).normalize(false))
 		}
 		normalConstrainable = normalMap
 
@@ -154,12 +162,11 @@ func (self *Value) Normalize() normal.Constrainable {
 
 	default:
 		value := normal.NewValue(data)
-		value.Type = self.TypeName
 		normalConstrainable = value
 	}
 
-	if self.Description != nil {
-		normalConstrainable.SetDescription(*self.Description)
+	if withInformation {
+		normalConstrainable.SetInformation(self.information)
 	}
 
 	return normalConstrainable

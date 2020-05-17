@@ -10,7 +10,7 @@ metadata:
   template_name: JavaScript Artifacts Example
   template_author: Puccini
 
-  puccini.scriptlet.import|extract: imports/extract.js
+  puccini.scriptlet.import:extract: imports/extract.js
 
 topology_template:
 

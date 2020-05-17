@@ -8,7 +8,7 @@ tosca_definitions_version: tosca_simple_yaml_1_0
 
 metadata:
 
-  puccini.scriptlet.import|tosca.comparer.version: internal:/tosca/simple/1.3/js/comparers/version.js
+  puccini.scriptlet.import:tosca.comparer.version: internal:/tosca/simple/1.3/js/comparers/version.js
 
 data_types:
 

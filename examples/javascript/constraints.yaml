@@ -10,13 +10,13 @@ metadata:
   template_name: JavaScript Constraints Example
   template_author: Puccini
 
-  # Use metadata prefixed with "puccini.scriptlet|tosca.constraint."
+  # Use metadata prefixed with "puccini.scriptlet:tosca.constraint."
   # Your code must provide a global function named "validate"
   # The first argument is always the value to validate
   # Return "true" if valid
   # If invalid, can return "false" or a string explaining the reason it is invalid
   # (Note that this is different from "throw", which should be used for errors)
-  puccini.scriptlet|tosca.constraint.multiple_of: |-
+  puccini.scriptlet:tosca.constraint.multiple_of: |-
     function validate(value, multiple) {
       if (arguments.length !== 2)
         throw 'must have 1 argument';

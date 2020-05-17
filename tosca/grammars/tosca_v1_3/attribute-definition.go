@@ -2,6 +2,7 @@ package tosca_v1_3
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -118,6 +119,15 @@ func (self *AttributeDefinition) Render() {
 		// The "default" value must be a valid value of the type
 		self.Default.RenderAttribute(self.DataType, self, false, false)
 	}
+}
+
+func (self *AttributeDefinition) GetTypeInformation() *normal.TypeInformation {
+	information := normal.NewTypeInformation()
+	information.Metadata = tosca.GetValueMetadata(self.Metadata)
+	if self.Description != nil {
+		information.Description = *self.Description
+	}
+	return information
 }
 
 //

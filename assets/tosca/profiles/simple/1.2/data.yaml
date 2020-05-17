@@ -2,8 +2,8 @@ tosca_definitions_version: tosca_simple_yaml_1_2
 
 metadata:
 
-  puccini.scriptlet.import|tosca.comparer.version: internal:/tosca/simple/1.3/js/comparers/version.js
-  puccini.scriptlet.import|tosca.constraint._format: internal:/tosca/simple/1.3/js/constraints/_format.js
+  puccini.scriptlet.import:tosca.comparer.version: internal:/tosca/simple/1.3/js/comparers/version.js
+  puccini.scriptlet.import:tosca.constraint._format: internal:/tosca/simple/1.3/js/constraints/_format.js
 
 data_types:
 

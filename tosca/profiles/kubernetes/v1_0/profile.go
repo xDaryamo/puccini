@@ -8,8 +8,8 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 metadata:
 
-  puccini.scriptlet.import|kubernetes.generate: js/generate.js
-  puccini.scriptlet.import|kubernetes.update: js/update.js
+  puccini.scriptlet.import:kubernetes.generate: js/generate.js
+  puccini.scriptlet.import:kubernetes.update: js/update.js
 
 namespace: kubernetes
 

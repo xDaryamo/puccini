@@ -9,16 +9,14 @@ import (
 //
 
 type Map struct {
-	Key              Constrainable `json:"$key,omitempty" yaml:"$key,omitempty"`
-	Description      string        `json:"$description,omitempty" yaml:"$description,omitempty"`
-	Constraints      FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
-	KeyDescription   string        `json:"$keyDescription,omitempty" yaml:"$keyDescription,omitempty"`
+	Key         Constrainable `json:"$key,omitempty" yaml:"$key,omitempty"`
+	Information *Information  `json:"$information,omitempty" yaml:"$information,omitempty"`
+	Constraints FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
+
 	KeyConstraints   FunctionCalls `json:"$keyConstraints,omitempty" yaml:"$keyConstraints,omitempty"`
-	ValueDescription string        `json:"$valueDescription,omitempty" yaml:"$valueDescription,omitempty"`
 	ValueConstraints FunctionCalls `json:"$valueConstraints,omitempty" yaml:"$valueConstraints,omitempty"`
 
 	Entries ConstrainableList `json:"$map" yaml:"$map"`
-	Type    string            `json:"$type,omitempty" yaml:"$type,omitempty"`
 }
 
 func NewMap() *Map {
@@ -31,8 +29,8 @@ func (self *Map) SetKey(key Constrainable) {
 }
 
 // Constrainable interface
-func (self *Map) SetDescription(description string) {
-	self.Description = description
+func (self *Map) SetInformation(information *Information) {
+	self.Information = CopyInformation(information)
 }
 
 // Constrainable interface
