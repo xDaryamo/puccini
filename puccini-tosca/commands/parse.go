@@ -85,6 +85,7 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 	if stopAtPhase >= 1 {
 		ok := context.ReadRoot(url_)
 
+		context.MergeProblems()
 		problems = context.GetProblems()
 		FailOnProblems(problems)
 
@@ -171,6 +172,7 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 		}
 	}
 
+	context.MergeProblems()
 	FailOnProblems(problems)
 
 	// Normalize

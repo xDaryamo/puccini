@@ -10,11 +10,11 @@ import (
 )
 
 func (self *Context) LookupNames() {
-	self.Traverse("lookup", LookupFields)
+	self.Traverse("lookup", self.LookupFields)
 }
 
 // From "lookup" tags
-func LookupFields(entityPtr tosca.EntityPtr) bool {
+func (self *Context) LookupFields(entityPtr tosca.EntityPtr) bool {
 	lookupProblems := make(LookupProblems)
 
 	context := tosca.GetContext(entityPtr)

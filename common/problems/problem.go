@@ -91,15 +91,16 @@ func (self ProblemSlice) Less(i, j int) bool {
 //
 
 type Problems struct {
-	problems ProblemSlice
-	lock     sync.RWMutex `yaml:"-"`
+	Problems ProblemSlice
+
+	lock sync.RWMutex `yaml:"-"`
 }
 
 func (self *Problems) Empty() bool {
 	self.lock.RLock()
 	defer self.lock.RUnlock()
 
-	return len(self.problems) == 0
+	return len(self.Problems) == 0
 }
 
 func (self *Problems) Append(problem *Problem) bool {
@@ -107,13 +108,13 @@ func (self *Problems) Append(problem *Problem) bool {
 	defer self.lock.Unlock()
 
 	// Avoid duplicates
-	for _, problem_ := range self.problems {
+	for _, problem_ := range self.Problems {
 		if problem.Equals(problem_) {
 			return false
 		}
 	}
 
-	self.problems = append(self.problems, problem)
+	self.Problems = append(self.Problems, problem)
 	return true
 }
 
@@ -126,7 +127,7 @@ func (self *Problems) Merge(problems *Problems) bool {
 	merged := false
 	problems.lock.RLock()
 	defer problems.lock.RUnlock()
-	for _, problem := range problems.problems {
+	for _, problem := range problems.Problems {
 		if self.Append(problem) {
 			merged = true
 		}
@@ -159,12 +160,12 @@ func (self *Problems) ARD() (ard.Map, error) {
 }
 
 func (self *Problems) Write(writer io.Writer, pretty bool, locate bool) bool {
-	length := len(self.problems)
+	length := len(self.Problems)
 	if length > 0 {
 		// Sort
 		problems := make(ProblemSlice, length)
 		self.lock.RLock()
-		copy(problems, self.problems)
+		copy(problems, self.Problems)
 		self.lock.RUnlock()
 		sort.Sort(problems)
 

@@ -16,45 +16,36 @@ func Parse(url urlpkg.URL, quirks tosca.Quirks, inputs map[string]ard.Value) (*n
 	// Phase 1: Read
 	ok := context.ReadRoot(url)
 
+	context.MergeProblems()
 	problems := context.GetProblems()
 
 	if !problems.Empty() {
-		return nil, problems, errors.New("phase 1: read")
+		return nil, problems, errors.New("read problems")
 	}
 
 	if !ok {
-		return nil, nil, errors.New("phase 1: read")
+		return nil, nil, errors.New("read error")
 	}
 
 	// Phase 2: Namespaces
 	context.AddNamespaces()
-	if !problems.Empty() {
-		return nil, problems, errors.New("phase 2.1: namespaces")
-	}
 	context.LookupNames()
-	if !problems.Empty() {
-		return nil, problems, errors.New("phase 2.2: namespaces lookup")
-	}
 
 	// Phase 3: Hierarchies
 	context.AddHierarchies()
-	if !problems.Empty() {
-		return nil, problems, errors.New("phase 3: hierarchies")
-	}
 
 	// Phase 4: Inheritance
 	tasks := context.GetInheritTasks()
 	tasks.Drain()
-	if !problems.Empty() {
-		return nil, problems, errors.New("phase 4: inheritance")
-	}
 
 	SetInputs(context.Root.EntityPtr, inputs)
 
 	// Phase 5: Rendering
 	context.Render()
+
+	context.MergeProblems()
 	if !problems.Empty() {
-		return nil, problems, errors.New("phase 5: rendering")
+		return nil, problems, errors.New("parsing problems")
 	}
 
 	// Normalize

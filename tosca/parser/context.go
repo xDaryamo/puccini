@@ -34,6 +34,13 @@ func (self *Context) GetProblems() *problems.Problems {
 	return self.Root.GetContext().Problems
 }
 
+func (self *Context) MergeProblems() {
+	// Note: This coul happens many times, but because problems are de-duped, everything is OK :)
+	for _, unit := range self.Units {
+		self.GetProblems().Merge(unit.GetContext().Problems)
+	}
+}
+
 func (self *Context) AddUnit(entityPtr tosca.EntityPtr, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
 	unit := NewUnit(entityPtr, container, nameTransformer)
 
@@ -46,12 +53,6 @@ func (self *Context) AddUnit(entityPtr tosca.EntityPtr, container *Unit, nameTra
 				return unit
 			}
 		}
-
-		// Merge problems into container
-		// Note: This happens every time the same unit is imported,
-		// so it could be that that problems are merged multiple times,
-		// but because problems are de-duped, everything is OK :)
-		container.GetContext().Problems.Merge(unit.GetContext().Problems)
 	}
 
 	self.unitsLock.Lock()

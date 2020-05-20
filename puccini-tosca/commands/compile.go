@@ -43,12 +43,12 @@ var compileCommand = &cobra.Command{
 
 func Compile(url string) {
 	// Parse
-	context, s := Parse(url)
+	context, serviceTemplate := Parse(url)
 	problems := context.GetProblems()
 	urlContext := context.Root.GetContext().URL.Context()
 
 	// Compile
-	clout, err := compiler.Compile(s, timestamps)
+	clout, err := compiler.Compile(serviceTemplate, timestamps)
 	common.FailOnError(err)
 
 	// Resolve

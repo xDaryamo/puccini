@@ -13,5 +13,7 @@ function evaluate(entity, artifactName, location, remove) {
 	if (!nodeTemplate.artifacts || !(artifactName in nodeTemplate.artifacts))
 		throw puccini.sprintf('artifact "%s" not found in "%s"', artifactName, nodeTemplate.name);
 	var artifact = nodeTemplate.artifacts[artifactName];
+	if (artifact.$artifact === undefined)
+		return artifact.sourcePath;
 	return artifact.$artifact;
 }
