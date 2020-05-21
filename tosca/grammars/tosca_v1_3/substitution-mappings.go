@@ -63,7 +63,7 @@ func (self *SubstitutionMappings) Normalize(normalServiceTemplate *normal.Servic
 
 	normalSubstitution := normalServiceTemplate.NewSubstitution()
 
-	normalSubstitution.Type = self.NodeType.Name
+	normalSubstitution.Type = tosca.GetCanonicalName(self.NodeType)
 
 	if metadata, ok := self.NodeType.GetMetadata(); ok {
 		normalSubstitution.TypeMetadata = metadata
