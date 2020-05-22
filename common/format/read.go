@@ -24,6 +24,10 @@ func ReadYAML(reader io.Reader) (ard.Value, error) {
 	return yamlkeys.Decode(reader)
 }
 
+func ReadAllYAML(reader io.Reader) (ard.List, error) {
+	return yamlkeys.DecodeAll(reader)
+}
+
 func ReadJSON(reader io.Reader) (ard.Value, error) {
 	var data ard.Value
 	decoder := json.NewDecoder(reader)

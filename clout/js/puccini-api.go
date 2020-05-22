@@ -88,6 +88,15 @@ func (self *PucciniAPI) NewXMLDocument() *etree.Document {
 	return etree.NewDocument()
 }
 
+func (self *PucciniAPI) Decode(code string, format string, all bool) (ard.Value, error) {
+	if value, err := formatpkg.Decode(code, format, all); err == nil {
+		value, _ = ard.ToStringMaps(value)
+		return value, nil
+	} else {
+		return nil, err
+	}
+}
+
 func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool) {
 	output := self.context.Output
 	if path != "" {
@@ -132,6 +141,8 @@ func (self *PucciniAPI) Exec(name string, arguments ...string) (string, error) {
 	cmd := exec.Command(name, arguments...)
 	if out, err := cmd.Output(); err == nil {
 		return common.BytesToString(out), nil
+	} else if err_, ok := err.(*exec.ExitError); ok {
+		return "", fmt.Errorf("%s\n%s", err_.Error(), common.BytesToString(err_.Stderr))
 	} else {
 		return "", err
 	}

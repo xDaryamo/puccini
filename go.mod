@@ -8,10 +8,10 @@ require (
 	github.com/dop251/goja v0.0.0-20200414142002-77e84ffb8c65
 	github.com/fatih/color v1.9.0
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
-	github.com/google/go-containerregistry v0.0.0-20200430153450-5cbd060f5c92
+	github.com/google/go-containerregistry v0.0.0-20200521151920-a873a21aff23
 	github.com/hokaccha/go-prettyjson v0.0.0-20190818114111-108c894c2c0e
-	github.com/klauspost/compress v1.10.5 // indirect
-	github.com/klauspost/pgzip v1.2.3
+	github.com/klauspost/compress v1.10.6 // indirect
+	github.com/klauspost/pgzip v1.2.4
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7
 	github.com/segmentio/ksuid v1.0.2
 	github.com/spf13/cobra v1.0.0

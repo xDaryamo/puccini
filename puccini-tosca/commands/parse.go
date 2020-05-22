@@ -207,14 +207,16 @@ func ParseInputs() {
 		reader, err := url.Open()
 		common.FailOnError(err)
 		defer reader.Close()
-		data, err := formatpkg.ReadYAML(reader)
+		data, err := formatpkg.ReadAllYAML(reader)
 		common.FailOnError(err)
-		if map_, ok := data.(ard.Map); ok {
-			for key, value := range map_ {
-				inputValues[yamlkeys.KeyString(key)] = value
+		for _, data_ := range data {
+			if map_, ok := data_.(ard.Map); ok {
+				for key, value := range map_ {
+					inputValues[yamlkeys.KeyString(key)] = value
+				}
+			} else {
+				common.Failf("malformed inputs in \"%s\"", inputsUrl)
 			}
-		} else {
-			common.Failf("malformed inputs in \"%s\"", inputsUrl)
 		}
 	}
 

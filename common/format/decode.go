@@ -7,10 +7,14 @@ import (
 	"github.com/tliron/puccini/ard"
 )
 
-func Decode(code string, format string) (ard.Value, error) {
+func Decode(code string, format string, all bool) (ard.Value, error) {
 	switch format {
 	case "yaml", "":
-		return DecodeYAML(code)
+		if all {
+			return DecodeAllYAML(code)
+		} else {
+			return DecodeYAML(code)
+		}
 	case "json":
 		return DecodeJSON(code)
 	default:
@@ -20,6 +24,10 @@ func Decode(code string, format string) (ard.Value, error) {
 
 func DecodeYAML(code string) (ard.Value, error) {
 	return ReadYAML(strings.NewReader(code))
+}
+
+func DecodeAllYAML(code string) (ard.List, error) {
+	return ReadAllYAML(strings.NewReader(code))
 }
 
 func DecodeJSON(code string) (ard.Value, error) {
