@@ -78,9 +78,9 @@ Puccini allows for the inclusion of JavaScript scriptlets in its Clout output (i
 section), as an option for self-contained orchestration integration. How do TOSCA, Clout,
 JavaScript, and cloud infrastructures all fit together in Puccini? Consider this: with a single
 command line you can take a TOSCA service template, compile it with **puccini-tosca**, execute
-JavaScript to generate Kubernetes specifications, then pipe those to
+JavaScript to generate Kubernetes manifests, then pipe those to
 [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/), which will upload the
-specifications to a running Kubernetes cluster in order to be scheduled. Like so:
+manifests to a running Kubernetes cluster in order to be scheduled. Like so:
 
      puccini-tosca compile my-app.yaml --exec=kubernetes.generate | kubectl apply -f -
 

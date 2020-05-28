@@ -99,7 +99,7 @@ func newImportNameTransformer(prefix *string, appendShortCutnames bool) tosca.Na
 		var names []string
 
 		if metadata, ok := tosca.GetMetadata(entityPtr); ok {
-			if normative, ok := metadata["normative"]; ok {
+			if normative, ok := metadata["puccini.normative"]; ok {
 				if normative == "true" {
 					// Reserved "tosca." names also get shorthand and prefixed names
 					names = appendNormativeNames(entityPtr, names, name, "tosca", appendShortCutnames)

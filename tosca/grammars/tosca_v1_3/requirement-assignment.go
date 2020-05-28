@@ -24,6 +24,7 @@ type RequirementAssignment struct {
 	TargetNodeTemplateNameOrTypeName *string                 `read:"node"`
 	TargetNodeFilter                 *NodeFilter             `read:"node_filter,NodeFilter"`
 	Relationship                     *RelationshipAssignment `read:"relationship,RelationshipAssignment"`
+	Occurrences                      *RangeEntity            `read:"occurrences,RangeEntity"` // introduced in TOSCA 1.3
 
 	TargetCapabilityType *CapabilityType `lookup:"capability,?TargetCapabilityNameOrTypeName" json:"-" yaml:"-"`
 	TargetNodeTemplate   *NodeTemplate   `lookup:"node,TargetNodeTemplateNameOrTypeName" json:"-" yaml:"-"`
@@ -110,6 +111,10 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalN
 type RequirementAssignments []*RequirementAssignment
 
 func (self *RequirementAssignments) Render(definitions RequirementDefinitions, context *tosca.Context) {
+	// TODO: currently have no idea what to do with "occurrences" keyword in the requirement
+	// assignment, because we interpret "occurrences" in the definition to mean how many times
+	// it would be assigned
+
 	for key, definition := range definitions {
 		if definition.Occurrences == nil {
 			// The TOSCA spec says that occurrences has an "implied default of [1,1]"

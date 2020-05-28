@@ -10,18 +10,18 @@ policy_types:
 
   tosca.policies.Root:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.10.1
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
+      specification.location: 5.10.1
     description: >-
       This is the default (root) TOSCA Policy Type definition that all other TOSCA base Policy Types
       derive from.
 
   tosca.policies.Placement:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.10.2
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
+      specification.location: 5.10.2
     description: >-
       This is the default (root) TOSCA Policy Type definition that is used to govern placement of
       TOSCA nodes or groups of nodes.
@@ -29,9 +29,9 @@ policy_types:
 
   tosca.policies.Scaling:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.10.3
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
+      specification.location: 5.10.3
     description: >-
       This is the default (root) TOSCA Policy Type definition that is used to govern scaling of
       TOSCA nodes or groups of nodes.
@@ -39,9 +39,9 @@ policy_types:
 
   tosca.policies.Update:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.10.4
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
+      specification.location: 5.10.4
     description: >-
       This is the default (root) TOSCA Policy Type definition that is used to govern update of TOSCA
       nodes or groups of nodes.
@@ -49,9 +49,9 @@ policy_types:
 
   tosca.policies.Performance:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.10.5
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
+      specification.location: 5.10.5
     description: >-
       This is the default (root) TOSCA Policy Type definition that is used to declare performance
       requirements for TOSCA nodes or groups of nodes.

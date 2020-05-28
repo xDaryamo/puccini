@@ -15,9 +15,9 @@ relationship_types:
 
   tosca.relationships.Root:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.7.1
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.7.1
     description: >-
       This is the default (root) TOSCA Relationship Type definition that all other TOSCA
       Relationship Types derive from.
@@ -45,9 +45,9 @@ relationship_types:
 
   tosca.relationships.DependsOn:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.7.2
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.7.2
     description: >-
       This type represents a general dependency relationship between two nodes.
     derived_from: tosca.relationships.Root
@@ -55,9 +55,9 @@ relationship_types:
 
   tosca.relationships.HostedOn:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.7.3
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.7.3
       role: host
     description: >-
       This type represents a hosting relationship between two nodes.
@@ -66,9 +66,9 @@ relationship_types:
 
   tosca.relationships.ConnectsTo:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.7.4
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.7.4
     description: >-
       This type represents a network connection relationship between two nodes.
     derived_from: tosca.relationships.Root
@@ -80,9 +80,9 @@ relationship_types:
 
   tosca.relationships.AttachesTo:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.7.5
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.7.5
     description: >-
       This type represents an attachment relationship between two nodes. For example, an AttachesTo
       relationship type would be used for attaching a storage node to a Compute node.
@@ -112,9 +112,9 @@ relationship_types:
 
   tosca.relationships.RoutesTo:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.7.6
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.7.6
     description: >-
       This type represents an intentional network routing between two Endpoints in different
       networks.
@@ -127,9 +127,9 @@ relationship_types:
 
   tosca.relationships.network.LinksTo:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 8.5.4
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 8.5.4
     description: >-
       This relationship type represents an association relationship between Port and Network node
       types.
@@ -138,9 +138,9 @@ relationship_types:
 
   tosca.relationships.network.BindsTo:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 8.5.5
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 8.5.5
     description: >-
       This type represents a network association relationship between Port and Compute node types.
     derived_from: tosca.relationships.DependsOn

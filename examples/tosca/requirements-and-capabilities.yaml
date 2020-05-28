@@ -231,7 +231,7 @@ topology_template:
       capabilities:
         main:
           properties:
-            standard: People's Repbulic of China
+            standard: People's Republic of China
             voltage: 220.0
             frequency: 50 hz
         aux:

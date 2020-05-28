@@ -12,6 +12,7 @@ TOOL=$(basename "$0")
 TOSCA_META_FILE_VERSION=${TOSCA_META_FILE_VERSION:-1.1}
 CSAR_VERSION=${CSAR_VERSION:-1.1}
 CREATED_BY=${CREATED_BY:-$TOOL}
+ZIP_LEVEL=${ZIP_LEVEL:-0}
 
 if [ "$#" -lt 1 ]; then
 cat << EOT
@@ -43,6 +44,7 @@ Other supported environment variables:
     CSAR_VERSION
     CREATED_BY
     OTHER_DEFINITIONS
+    ZIP_LEVEL
 
 EOT
 	exit 1
@@ -73,7 +75,7 @@ fi
 # Zip
 
 pushd "$ROOT" > /dev/null
-zip -9 --recurse-paths "$CSAR" . > /dev/null
+zip "-$ZIP_LEVEL" --recurse-paths "$CSAR" . > /dev/null
 popd > /dev/null
 
 # Entry-Definitions
@@ -133,4 +135,4 @@ Entry-Definitions: $ENTRY_DEFINITIONS
 Other-Definitions: $OTHER_DEFINITIONS
 EOT
 
-zip -0 --recurse-paths "$CSAR" . > /dev/null
+zip "-$ZIP_LEVEL" --recurse-paths "$CSAR" . > /dev/null

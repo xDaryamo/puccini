@@ -43,20 +43,20 @@ data_types:
     metadata:
       puccini.type: version
       puccini.comparer: tosca.comparer.version
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 3.2.2
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 3.2.2
 
   range:
     metadata:
       puccini.type: range
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 3.2.3
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 3.2.3
 
   tosca.datatypes.json:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.3.2
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.3.2
     # ERRATUM: typo
     description: >-
       The json type is a TOSCA data Type used to define a string that contains data in the
@@ -67,9 +67,9 @@ data_types:
 
   tosca.datatypes.xml:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.3.4
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.3.4
     # ERRATUM: typo
     description: >-
       The xml type is a TOSCA data Type used to define a string that contains data in the
@@ -85,14 +85,14 @@ data_types:
   list:
     metadata:
       puccini.type: '!!seq'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 3.2.4
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 3.2.4
 
   map:
     metadata:
       puccini.type: '!!map'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 3.2.5
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 3.2.5
 
   #
   # Scalar
@@ -101,26 +101,26 @@ data_types:
   scalar-unit.size:
     metadata:
       puccini.type: scalar-unit.size
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 3.2.6.4
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 3.2.6.4
 
   scalar-unit.time:
     metadata:
       puccini.type: scalar-unit.time
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 3.2.6.5
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 3.2.6.5
 
   scalar-unit.frequency:
     metadata:
       puccini.type: scalar-unit.frequency
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 3.2.6.6
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 3.2.6.6
 
   scalar-unit.bitrate:
     metadata:
       puccini.type: scalar-unit.bitrate
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 3.2.6.7
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 3.2.6.7
 
   #
   # Complex
@@ -128,18 +128,18 @@ data_types:
 
   tosca.datatypes.Root:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.3.1
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.3.1
     description: >-
       This is the default (root) TOSCA Root Type definition that all complex TOSCA Data Types derive
       from.
 
   tosca.datatypes.Credential:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.3.6
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.3.6
     description: >-
       The Credential type is a complex TOSCA data Type used when describing authorization
       credentials used to access network accessible resources.
@@ -175,9 +175,9 @@ data_types:
 
   tosca.datatypes.TimeInterval:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.3.7
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.3.7
     description: >-
       The TimeInterval type is a complex TOSCA data Type used when describing a period of time using
       the YAML ISO 8601 format to declare the start and end times.
@@ -190,9 +190,9 @@ data_types:
 
   tosca.datatypes.network.NetworkInfo:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.3.8
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.3.8
     description: >-
       The Network type is a complex TOSCA data type used to describe logical network information.
     derived_from: tosca.datatypes.Root
@@ -217,9 +217,9 @@ data_types:
 
   tosca.datatypes.network.PortInfo:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.3.9
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.3.9
     description: >-
       The PortInfo type is a complex TOSCA data type used to describe network port information.
     derived_from: tosca.datatypes.Root
@@ -254,9 +254,9 @@ data_types:
 
   tosca.datatypes.network.PortDef:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.3.10
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.3.10
     description: >-
       The PortDef type is a TOSCA data Type used to define a network port.
     derived_from: integer
@@ -265,9 +265,9 @@ data_types:
 
   tosca.datatypes.network.PortSpec:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
-      citation_location: 5.3.11
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+      specification.location: 5.3.11
     description: >-
       The PortSpec type is a complex TOSCA data Type used when describing port specifications for a
       network connection.

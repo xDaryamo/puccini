@@ -10,18 +10,18 @@ artifact_types:
 
   tosca.artifacts.Root:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.3.1
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
+      specification.location: 5.3.1
     description: >-
       This is the default (root) TOSCA Artifact Type definition that all other TOSCA base Artifact
       Types derive from.
 
   tosca.artifacts.File:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.3.2
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
+      specification.location: 5.3.2
     description: >-
       This artifact type is used when an artifact definition needs to have its associated file
       simply treated as a file and no special handling/handlers are invoked (i.e., it is not treated
@@ -34,9 +34,9 @@ artifact_types:
 
   tosca.artifacts.Deployment:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.3.3.1
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
+      specification.location: 5.3.3.1
     description: >-
       This artifact type represents the parent type for all deployment artifacts in TOSCA. This
       class of artifacts typically represents a binary packaging of an application or service that
@@ -45,9 +45,9 @@ artifact_types:
 
   tosca.artifacts.Deployment.Image:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.3.3.3
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
+      specification.location: 5.3.3.3
     description: >-
       This artifact type represents a parent type for any "image" which is an opaque packaging of a
       TOSCA Node's deployment (whether real or virtual) whose contents are typically already
@@ -57,9 +57,9 @@ artifact_types:
 
   tosca.artifacts.Deployment.Image.VM:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.3.3.4
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
+      specification.location: 5.3.3.4
     description: >-
       This artifact represents the parent type for all Virtual Machine (VM) image and container
       formatted deployment artifacts. These images contain a stateful capture of a machine (e.g.,
@@ -74,9 +74,9 @@ artifact_types:
 
   tosca.artifacts.Implementation:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.3.4.1
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
+      specification.location: 5.3.4.1
     description: >-
       This artifact type represents the parent type for all implementation artifacts in TOSCA. These
       artifacts are used to implement operations of TOSCA interfaces either directly (e.g., scripts)
@@ -85,9 +85,9 @@ artifact_types:
 
   tosca.artifacts.Implementation.Bash:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.3.4.3
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
+      specification.location: 5.3.4.3
     description: >-
       This artifact type represents a Bash script type that contains Bash commands that can be
       executed on the Unix Bash shell.
@@ -97,9 +97,9 @@ artifact_types:
 
   tosca.artifacts.Implementation.Python:
     metadata:
-      normative: 'true'
-      citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
-      citation_location: 5.3.4.4
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
+      specification.location: 5.3.4.4
     description: >-
       This artifact type represents a Python file that contains Python language constructs that can
       be executed within a Python interpreter.
