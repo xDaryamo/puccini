@@ -19,6 +19,7 @@ import (
 //
 
 type Context struct {
+	Arguments       map[string]string
 	Quiet           bool
 	Format          string
 	Strict          bool
@@ -34,8 +35,13 @@ type Context struct {
 	programCache sync.Map
 }
 
-func NewContext(name string, logger *logging.Logger, quiet bool, format string, strict bool, allowTimestamps bool, pretty bool, output string, urlContext *urlpkg.Context) *Context {
+func NewContext(name string, logger *logging.Logger, arguments map[string]string, quiet bool, format string, strict bool, allowTimestamps bool, pretty bool, output string, urlContext *urlpkg.Context) *Context {
+	if arguments == nil {
+		arguments = make(map[string]string)
+	}
+
 	return &Context{
+		Arguments:       arguments,
 		Quiet:           quiet,
 		Format:          format,
 		Strict:          strict,

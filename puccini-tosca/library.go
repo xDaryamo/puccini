@@ -48,13 +48,13 @@ func Compile(url *C.char) *C.char {
 		return nil
 	}
 
-	compiler.Resolve(clout, problems, urlContext, "yaml", true, true, false)
+	compiler.Resolve(clout, problems, urlContext, true, "yaml", true, true, false)
 	if !problems.Empty() {
 		//t.Errorf("%s", p)
 		return nil
 	}
 
-	compiler.Coerce(clout, problems, urlContext, "yaml", true, true, false)
+	compiler.Coerce(clout, problems, urlContext, true, "yaml", true, true, false)
 	if !problems.Empty() {
 		//t.Errorf("%s", p)
 		return nil

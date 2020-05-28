@@ -24,6 +24,7 @@ import (
 //
 
 type PucciniAPI struct {
+	Arguments       map[string]string
 	Log             *Log
 	Stdout          io.Writer
 	Stderr          io.Writer
@@ -43,6 +44,7 @@ func (self *Context) NewPucciniAPI() *PucciniAPI {
 		format = "yaml"
 	}
 	return &PucciniAPI{
+		Arguments:       self.Arguments,
 		Log:             self.Log,
 		Stdout:          self.Stdout,
 		Stdin:           self.Stdin,
@@ -55,15 +57,15 @@ func (self *Context) NewPucciniAPI() *PucciniAPI {
 	}
 }
 
-func (entry *PucciniAPI) Sprintf(format string, args ...interface{}) string {
+func (self *PucciniAPI) Sprintf(format string, args ...interface{}) string {
 	return fmt.Sprintf(format, args...)
 }
 
-func (entry *PucciniAPI) JoinFilePath(elements ...string) string {
+func (self *PucciniAPI) JoinFilePath(elements ...string) string {
 	return filepath.Join(elements...)
 }
 
-func (entry *PucciniAPI) IsType(value ard.Value, type_ string) (bool, error) {
+func (self *PucciniAPI) IsType(value ard.Value, type_ string) (bool, error) {
 	// Special case whereby an integer stored as a float type has been optimized to an integer type
 	if (type_ == "!!float") && ard.IsInteger(value) {
 		return true, nil
@@ -76,7 +78,7 @@ func (entry *PucciniAPI) IsType(value ard.Value, type_ string) (bool, error) {
 	}
 }
 
-func (entry *PucciniAPI) ValidateFormat(code string, format string) error {
+func (self *PucciniAPI) ValidateFormat(code string, format string) error {
 	return formatpkg.Validate(code, format)
 }
 

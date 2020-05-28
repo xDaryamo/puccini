@@ -91,13 +91,13 @@ func testCompile(t *testing.T, url string, inputs map[string]interface{}) {
 			return
 		}
 
-		compiler.Resolve(clout, problems, urlContext, "yaml", false, true, true)
+		compiler.Resolve(clout, problems, urlContext, true, "yaml", false, true, true)
 		if !problems.Empty() {
 			t.Errorf("%s", problems.ToString(true))
 			return
 		}
 
-		compiler.Coerce(clout, problems, urlContext, "yaml", false, true, true)
+		compiler.Coerce(clout, problems, urlContext, true, "yaml", false, true, true)
 		if !problems.Empty() {
 			t.Errorf("%s", problems.ToString(true))
 			return

@@ -15,15 +15,17 @@ var output string
 var resolve bool
 var coerce bool
 var exec string
+var arguments map[string]string
 
 func init() {
 	rootCommand.AddCommand(compileCommand)
-	compileCommand.Flags().StringArrayVarP(&inputs, "input", "i", []string{}, "specify an input (name=YAML)")
-	compileCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL")
+	compileCommand.Flags().StringToStringVarP(&inputs, "input", "i", nil, "specify input (format is name=value)")
+	compileCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
 	compileCommand.Flags().StringVarP(&output, "output", "o", "", "output Clout to file (default is stdout)")
 	compileCommand.Flags().BoolVarP(&resolve, "resolve", "r", true, "resolves the topology (attempts to satisfy all requirements with capabilities)")
 	compileCommand.Flags().BoolVarP(&coerce, "coerce", "c", false, "coerces all values (calls functions and applies constraints)")
 	compileCommand.Flags().StringVarP(&exec, "exec", "e", "", "execute JavaScript scriptlet")
+	compileCommand.Flags().StringToStringVarP(&arguments, "argument", "a", nil, "used with --exec to specify a scriptlet argument (format is key=value")
 }
 
 var compileCommand = &cobra.Command{
@@ -53,18 +55,18 @@ func Compile(url string) {
 
 	// Resolve
 	if resolve {
-		compiler.Resolve(clout, problems, urlContext, format, strict, timestamps, pretty)
+		compiler.Resolve(clout, problems, urlContext, true, format, strict, timestamps, pretty)
 		FailOnProblems(problems)
 	}
 
 	// Coerce
 	if coerce {
-		compiler.Coerce(clout, problems, urlContext, format, strict, timestamps, pretty)
+		compiler.Coerce(clout, problems, urlContext, true, format, strict, timestamps, pretty)
 		FailOnProblems(problems)
 	}
 
 	if exec != "" {
-		err = Exec(exec, clout, urlContext)
+		err = Exec(exec, arguments, clout, urlContext)
 		common.FailOnError(err)
 	} else if !terminal.Quiet || (output != "") {
 		if strict {
@@ -78,7 +80,7 @@ func Compile(url string) {
 	}
 }
 
-func Exec(scriptletName string, clout *cloutpkg.Clout, urlContext *urlpkg.Context) error {
+func Exec(scriptletName string, arguments map[string]string, clout *cloutpkg.Clout, urlContext *urlpkg.Context) error {
 	clout, err := clout.Normalize()
 	if err != nil {
 		return err
@@ -102,7 +104,7 @@ func Exec(scriptletName string, clout *cloutpkg.Clout, urlContext *urlpkg.Contex
 		common.FailOnError(err)
 	}
 
-	jsContext := js.NewContext(scriptletName, log, terminal.Quiet, format, strict, timestamps, pretty, output, urlContext)
+	jsContext := js.NewContext(scriptletName, log, arguments, terminal.Quiet, format, strict, timestamps, pretty, output, urlContext)
 
 	program, err := jsContext.GetProgram(scriptletName, scriptlet)
 	if err != nil {

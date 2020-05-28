@@ -52,8 +52,8 @@ for (var v = 0, l = nodeTemplateVertexes.length; v < l; v++) {
 
 tosca.unwrapCoercibles();
 
-tosca.addHistory('resolve');
-
+if (puccini.arguments.history !== 'false')
+	tosca.addHistory('resolve');
 puccini.write(clout)
 
 function resolve(sourceVertex, sourceNodeTemplate, requirement) {

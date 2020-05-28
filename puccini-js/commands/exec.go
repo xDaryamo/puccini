@@ -9,9 +9,12 @@ import (
 	urlpkg "github.com/tliron/puccini/url"
 )
 
+var arguments map[string]string
+
 func init() {
 	rootCommand.AddCommand(execCommand)
 	execCommand.Flags().StringVarP(&output, "output", "o", "", "output to file or directory (default is stdout)")
+	execCommand.Flags().StringToStringVarP(&arguments, "argument", "a", nil, "specify a scriptlet argument (format is key=value")
 }
 
 var execCommand = &cobra.Command{
@@ -54,7 +57,7 @@ var execCommand = &cobra.Command{
 }
 
 func Exec(scriptletName string, scriptlet string, clout *cloutpkg.Clout, urlContext *urlpkg.Context) error {
-	jsContext := js.NewContext(scriptletName, log, terminal.Quiet, format, strict, timestamps, pretty, output, urlContext)
+	jsContext := js.NewContext(scriptletName, log, arguments, terminal.Quiet, format, strict, timestamps, pretty, output, urlContext)
 
 	program, err := jsContext.GetProgram(scriptletName, scriptlet)
 	if err != nil {

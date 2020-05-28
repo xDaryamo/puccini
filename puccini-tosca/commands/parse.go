@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 	"sort"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/tebeka/atexit"
@@ -19,7 +18,7 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-var inputs []string
+var inputs map[string]string
 var inputsUrl string
 var stopAtPhase uint32
 var dumpPhases []uint
@@ -29,7 +28,7 @@ var inputValues = make(map[string]interface{})
 
 func init() {
 	rootCommand.AddCommand(parseCommand)
-	parseCommand.Flags().StringArrayVarP(&inputs, "input", "i", []string{}, "specify an input (name=YAML)")
+	parseCommand.Flags().StringToStringVarP(&inputs, "input", "i", nil, "specify input (format is name=value)")
 	parseCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
 	parseCommand.Flags().Uint32VarP(&stopAtPhase, "stop", "s", 5, "parser phase at which to end")
 	parseCommand.Flags().UintSliceVarP(&dumpPhases, "dump", "d", nil, "dump phase internals")
@@ -220,13 +219,9 @@ func ParseInputs() {
 		}
 	}
 
-	for _, input := range inputs {
-		s := strings.SplitN(input, "=", 2)
-		if len(s) != 2 {
-			common.Failf("malformed input: %s", input)
-		}
-		value, err := formatpkg.DecodeYAML(s[1])
+	for name, input := range inputs {
+		value, err := formatpkg.DecodeYAML(input)
 		common.FailOnError(err)
-		inputValues[s[0]] = value
+		inputValues[name] = value
 	}
 }

@@ -8,7 +8,8 @@ func init() {
 clout.exec('tosca.lib.traversal');
 
 tosca.coerce();
-tosca.addHistory('coerce');
+if (puccini.arguments.history !== 'false')
+	tosca.addHistory('coerce');
 puccini.write(clout);
 `
 }
