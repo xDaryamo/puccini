@@ -191,6 +191,10 @@ func (self *PucciniAPI) DeepCopy(value ard.Value) ard.Value {
 	return ard.Copy(value)
 }
 
+func (self *PucciniAPI) DeepEquals(a ard.Value, b ard.Value) bool {
+	return ard.Equals(a, b)
+}
+
 func (self *PucciniAPI) Fail(message string) {
 	if !self.context.Quiet {
 		fmt.Fprintln(self.Stderr, terminal.ColorError(message))

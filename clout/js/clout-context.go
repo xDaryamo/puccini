@@ -40,7 +40,7 @@ func (self *CloutContext) Exec(scriptletName string) error {
 }
 
 func (self *CloutContext) ExecAll(scriptletBaseName string) error {
-	if scriptletNames, err := GetScriptletNames(scriptletBaseName, self.Clout); err == nil {
+	if scriptletNames, err := GetScriptletNamesInSection(scriptletBaseName, self.Clout); err == nil {
 		for _, scriptletName := range scriptletNames {
 			if err := self.Exec(scriptletName); err != nil {
 				return err

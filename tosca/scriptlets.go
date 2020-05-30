@@ -30,7 +30,7 @@ func parseScriptletName(name string) (string, []uint) {
 	// Notation example: my_constraint(0,1)
 	var nativeArgumentIndexes []uint
 	if parenthesis := strings.Index(name, "("); parenthesis != -1 {
-		// We actually just assume an open paranthesis
+		// We actually just assume an open parenthesis
 		split := strings.Split(name[parenthesis+1:len(name)-1], ",")
 		name = name[:parenthesis]
 		for _, s := range split {
@@ -75,7 +75,7 @@ func (self *Scriptlet) Read() (string, error) {
 			return "", err
 		}
 
-		return js.CleanupScriptlet(scriptlet), nil
+		return scriptlet, nil
 	}
 
 	return self.Scriptlet, nil

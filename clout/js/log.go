@@ -23,22 +23,29 @@ func NewLog(logger *logging.Logger, name string) *Log {
 	}
 }
 
-func (self *Log) Errorf(f string, args ...interface{}) {
-	self.logger.Errorf(self.Prefix+f, args...)
+func (self *Log) Errorf(format string, args ...interface{}) {
+	self.logger.Errorf("%s"+format, self.prefixedArgs(args)...)
 }
 
-func (self *Log) Warningf(f string, args ...interface{}) {
-	self.logger.Warningf(self.Prefix+f, args...)
+func (self *Log) Warningf(format string, args ...interface{}) {
+	self.logger.Warningf("%s"+format, self.prefixedArgs(args)...)
 }
 
-func (self *Log) Noticef(f string, args ...interface{}) {
-	self.logger.Noticef(self.Prefix+f, args...)
+func (self *Log) Noticef(format string, args ...interface{}) {
+	self.logger.Noticef("%s"+format, self.prefixedArgs(args)...)
 }
 
-func (self *Log) Infof(f string, args ...interface{}) {
-	self.logger.Infof(self.Prefix+f, args...)
+func (self *Log) Infof(format string, args ...interface{}) {
+	self.logger.Infof("%s"+format, self.prefixedArgs(args)...)
 }
 
-func (self *Log) Debugf(f string, args ...interface{}) {
-	self.logger.Debugf(self.Prefix+f, args...)
+func (self *Log) Debugf(format string, args ...interface{}) {
+	self.logger.Debugf("%s"+format, self.prefixedArgs(args)...)
+}
+
+func (self *Log) prefixedArgs(args []interface{}) []interface{} {
+	args = append(args, nil)
+	copy(args[1:], args)
+	args[0] = self.Prefix
+	return args
 }
