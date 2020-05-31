@@ -45,4 +45,5 @@ topology_template:
 
     instance_ip:
       description: The IP address of the deployed instance
+      type: string
       value: { get_attribute: [ my_instance, accessIPv4 ] }

@@ -34,7 +34,9 @@ func ReadParameterDefinition(context *tosca.Context) tosca.EntityPtr {
 func (self *ParameterDefinition) Render(kind string) {
 	log.Debugf("{render} parameter definition: %s", self.Name)
 
-	// TODO: what to do if there is no "type"?
+	if self.DataTypeName == nil {
+		self.Context.FieldChild("type", nil).ReportFieldMissing()
+	}
 
 	if self.Value == nil {
 		self.Value = self.Default
