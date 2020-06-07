@@ -35,7 +35,7 @@ func (self *Context) GetProblems() *problems.Problems {
 }
 
 func (self *Context) MergeProblems() {
-	// Note: This coul happens many times, but because problems are de-duped, everything is OK :)
+	// Note: This could happen many times, but because problems are de-duped, everything is OK :)
 	for _, unit := range self.Units {
 		self.GetProblems().Merge(unit.GetContext().Problems)
 	}
@@ -46,7 +46,7 @@ func (self *Context) AddUnit(entityPtr tosca.EntityPtr, container *Unit, nameTra
 
 	if container != nil {
 		containerContext := container.GetContext()
-		if !containerContext.HasQuirk(tosca.QuirkImportsImperssive) {
+		if !containerContext.HasQuirk(tosca.QuirkImportsPermissive) {
 			unitContext := unit.GetContext()
 			if !grammars.CompatibleGrammars(containerContext, unitContext) {
 				containerContext.ReportImportIncompatible(unitContext.URL)

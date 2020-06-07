@@ -19,7 +19,6 @@ import (
 type ServiceTemplate struct {
 	*Unit `name:"service template"`
 
-	Description      *string           `read:"description"`
 	TopologyTemplate *TopologyTemplate `read:"topology_template,TopologyTemplate"`
 }
 

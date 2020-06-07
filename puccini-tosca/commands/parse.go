@@ -71,7 +71,7 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 		log.Infof("parsing stdin", url)
 		url_, err = urlpkg.ReadToInternalURLFromStdin("yaml")
 	} else {
-		log.Infof("parsing \"%s\"", url)
+		log.Infof("parsing %q", url)
 		url_, err = urlpkg.NewValidURL(url, nil, urlContext)
 	}
 	common.FailOnError(err)
@@ -161,7 +161,7 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 	if filter != "" {
 		entityPtrs := context.Gather(filter)
 		if len(entityPtrs) == 0 {
-			common.Failf("No paths found matching filter: \"%s\"\n", filter)
+			common.Failf("No paths found matching filter: %q\n", filter)
 		} else if !terminal.Quiet {
 			for _, entityPtr := range entityPtrs {
 				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorPath(tosca.GetContext(entityPtr).Path.String()))
@@ -196,7 +196,7 @@ func ToPrintPhase(phase uint) bool {
 
 func ParseInputs() {
 	if inputsUrl != "" {
-		log.Infof("load inputs from \"%s\"", inputsUrl)
+		log.Infof("load inputs from %q", inputsUrl)
 
 		urlContext := urlpkg.NewContext()
 		defer urlContext.Release()
@@ -214,7 +214,7 @@ func ParseInputs() {
 					inputValues[yamlkeys.KeyString(key)] = value
 				}
 			} else {
-				common.Failf("malformed inputs in \"%s\"", inputsUrl)
+				common.Failf("malformed inputs in %q", inputsUrl)
 			}
 		}
 	}

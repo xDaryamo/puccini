@@ -23,6 +23,30 @@ tosca.isNodeTemplate = function(vertex, typeName) {
 	return false;
 };
 
+tosca.setOutputValue = function(name, value) {
+	if (clout.properties.tosca === undefined)
+		return false;
+	var output = clout.properties.tosca.outputs[name];
+	if (output === undefined)
+		return false;
+
+	if (output.$information && output.$information.type)
+		switch (output.$information.type.name) {
+		case 'boolean':
+			value = (value === 'true');
+			break;
+		case 'integer':
+			value = parseInt(value);
+			break;
+		case 'float':
+			value = parseFloat(value);
+			break;
+		}
+
+	output.$value = value;
+	return true;
+};
+
 tosca.getPolicyTargets = function(vertex) {
 	var targets = [];
 

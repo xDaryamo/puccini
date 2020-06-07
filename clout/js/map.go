@@ -71,7 +71,7 @@ func (self *CloutContext) NewMapEntry(data interface{}, keyConstraints Constrain
 				return entry, err
 			}
 		} else {
-			return entry, fmt.Errorf("malformed map entry, no \"$key\": %v", map_)
+			return entry, fmt.Errorf("malformed map entry, no \"$key\": %+v", map_)
 		}
 	} else {
 		return entry, fmt.Errorf("malformed map entry, not a map: %T", data)

@@ -55,7 +55,7 @@ func (self *Clout) Resolve() error {
 		return errors.New("no Clout \"Version\"")
 	}
 	if self.Version != Version {
-		return fmt.Errorf("unsupported Clout version: \"%s\"", self.Version)
+		return fmt.Errorf("unsupported Clout version: %q", self.Version)
 	}
 
 	for key, v := range self.Vertexes {
@@ -65,7 +65,7 @@ func (self *Clout) Resolve() error {
 		for _, e := range v.EdgesOut {
 			var ok bool
 			if e.Target, ok = self.Vertexes[e.TargetID]; !ok {
-				return fmt.Errorf("could not resolve Clout, bad TargetID: \"%s\"", e.TargetID)
+				return fmt.Errorf("could not resolve Clout, bad TargetID: %q", e.TargetID)
 			}
 
 			e.Source = v

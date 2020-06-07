@@ -3,7 +3,6 @@ package ard
 import (
 	"fmt"
 	"regexp"
-	"strings"
 )
 
 //
@@ -87,8 +86,8 @@ func (self Path) String() string {
 			}
 
 		case MapPathType:
-			value := strings.ReplaceAll(element.Value.(string), "\"", "\\\"")
-			path = fmt.Sprintf("%s[\"%s\"]", path, value)
+			value := element.Value.(string)
+			path = fmt.Sprintf("%s[%q]", path, value)
 
 		case ListPathType:
 			value := element.Value.(int)

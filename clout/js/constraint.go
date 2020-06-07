@@ -19,7 +19,7 @@ func (self *CloutContext) NewConstraints(list ard.List, functionCallContext Func
 		if coercible, err := self.NewCoercible(element, functionCallContext); err == nil {
 			var ok bool
 			if constraints[index], ok = coercible.(*FunctionCall); !ok {
-				return nil, fmt.Errorf("malformed constraint, not a function call: %v", element)
+				return nil, fmt.Errorf("malformed constraint, not a function call: %+v", element)
 			}
 		} else {
 			return nil, err
@@ -34,7 +34,7 @@ func (self *CloutContext) NewConstraintsFromNotation(notation ard.StringMap, nam
 		if list, ok := data.(ard.List); ok {
 			return self.NewConstraints(list, functionCallContext)
 		} else {
-			return nil, fmt.Errorf("malformed \"%s\", not a list: %T", name, data)
+			return nil, fmt.Errorf("malformed %q, not a list: %T", name, data)
 		}
 	} else {
 		return nil, nil

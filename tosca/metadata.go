@@ -40,14 +40,14 @@ func SetMetadata(entityPtr EntityPtr, name string, value string) bool {
 	return false
 }
 
-func GetValueMetadata(metadata map[string]string) map[string]string {
-	valueMetadata := make(map[string]string)
+func GetInformationMetadata(metadata map[string]string) map[string]string {
+	informationMetadata := make(map[string]string)
 	if metadata != nil {
 		for key, value := range metadata {
 			if strings.HasPrefix(key, "puccini.information:") {
-				valueMetadata[key[20:]] = value
+				informationMetadata[key[20:]] = value
 			}
 		}
 	}
-	return valueMetadata
+	return informationMetadata
 }

@@ -121,7 +121,7 @@ func parseMeta(reader io.Reader) (map[string]string, error) {
 func requireMeta(data map[string]string, names ...string) error {
 	for _, name := range names {
 		if _, ok := data[name]; !ok {
-			return fmt.Errorf("TOSCA.meta does not contain required \"%s\"", name)
+			return fmt.Errorf("TOSCA.meta does not contain required %q", name)
 		}
 	}
 	return nil

@@ -66,11 +66,11 @@ func DownloadTo(url URL, path string) error {
 	if writer, err := os.Create(path); err == nil {
 		if reader, err := url.Open(); err == nil {
 			defer reader.Close()
-			log.Infof("downloading from \"%s\" to file \"%s\"", url.String(), path)
+			log.Infof("downloading from %q to file %q", url.String(), path)
 			if _, err = io.Copy(writer, reader); err == nil {
 				return nil
 			} else {
-				log.Warningf("failed to download from \"%s\"", url.String())
+				log.Warningf("failed to download from %q", url.String())
 				return err
 			}
 		} else {
@@ -86,14 +86,14 @@ func Download(url URL, temporaryPathPattern string) (*os.File, error) {
 		path := file.Name()
 		if reader, err := url.Open(); err == nil {
 			defer reader.Close()
-			log.Infof("downloading from \"%s\" to temporary file \"%s\"", url.String(), path)
+			log.Infof("downloading from %q to temporary file %q", url.String(), path)
 			if _, err = io.Copy(file, reader); err == nil {
 				atexit.Register(func() {
 					DeleteTemporaryFile(path)
 				})
 				return file, nil
 			} else {
-				log.Warningf("failed to download from \"%s\"", url.String())
+				log.Warningf("failed to download from %q", url.String())
 				DeleteTemporaryFile(path)
 				return nil, err
 			}
@@ -108,13 +108,13 @@ func Download(url URL, temporaryPathPattern string) (*os.File, error) {
 
 func DeleteTemporaryFile(path string) error {
 	if err := os.Remove(path); err == nil {
-		log.Infof("deleted temporary file \"%s\"", path)
+		log.Infof("deleted temporary file %q", path)
 		return nil
 	} else if os.IsNotExist(err) {
-		log.Infof("temporary file already deleted \"%s\"", path)
+		log.Infof("temporary file already deleted %q", path)
 		return nil
 	} else {
-		log.Errorf("could not delete temporary file \"%s\": %s", path, err.Error())
+		log.Errorf("could not delete temporary file %q: %s", path, err.Error())
 		return err
 	}
 }

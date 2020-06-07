@@ -148,7 +148,7 @@ func (self ConstraintClauses) Render(dataType *DataType) {
 func (self ConstraintClauses) Validate(dataType *DataType) {
 	for _, constraintClause := range self {
 		if (constraintClause.DataType != nil) && (constraintClause.DataType != dataType) {
-			panic(fmt.Sprintf("constraint clause for data type \"%s\" cannot be used with data type \"%s\"", constraintClause.DataType.Name, dataType.Name))
+			panic(fmt.Sprintf("constraint clause for data type %q cannot be used with data type %q", constraintClause.DataType.Name, dataType.Name))
 		}
 	}
 }

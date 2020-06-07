@@ -39,7 +39,7 @@ func (self *CloutContext) NewCoercible(data ard.Value, functionCallContext Funct
 				return nil, fmt.Errorf("malformed \"$functionCall\", not a map: %T", data)
 			}
 		} else {
-			return nil, fmt.Errorf("not a coercible, doesn't have \"$value\", \"$list\", \"$map\", or \"$functionCall\": %v", data)
+			return nil, fmt.Errorf("not a coercible, doesn't have \"$value\", \"$list\", \"$map\", or \"$functionCall\": %+v", data)
 		}
 	} else {
 		return nil, fmt.Errorf("malformed coercible, not a map: %T", data)

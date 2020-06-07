@@ -68,12 +68,12 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 	// Read entityPtr
 	read, ok := toscaContext.Grammar.Readers[readerName]
 	if !ok {
-		panic(fmt.Sprintf("grammar does not support reader \"%s\"", readerName))
+		panic(fmt.Sprintf("grammar does not support reader %q", readerName))
 	}
 	entityPtr := read(toscaContext)
 	if entityPtr == nil {
 		// Even if there are problems, the reader should return an entityPtr
-		panic(fmt.Sprintf("reader \"%s\" returned a non-entity: %T", reflection.GetFunctionName(read), entityPtr))
+		panic(fmt.Sprintf("reader %q returned a non-entity: %T", reflection.GetFunctionName(read), entityPtr))
 	}
 
 	// Validate required fields
@@ -92,8 +92,10 @@ func (self *Context) goReadImports(container *Unit) {
 	}
 
 	// Implicit import
-	if implicitImportSpec, ok := grammars.GetImplicitImportSpec(container.GetContext()); ok {
-		importSpecs = append(importSpecs, implicitImportSpec)
+	if !container.GetContext().HasQuirk(tosca.QuirkImportsImplicitDisable) {
+		if implicitImportSpec, ok := grammars.GetImplicitImportSpec(container.GetContext()); ok {
+			importSpecs = append(importSpecs, implicitImportSpec)
+		}
 	}
 
 	for _, importSpec := range importSpecs {

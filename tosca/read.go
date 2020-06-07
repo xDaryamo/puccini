@@ -49,7 +49,7 @@ func (self *Context) ReadFields(entityPtr EntityPtr) []string {
 			} else {
 				// Empty tag means delete
 				if _, ok := tags[fieldName]; !ok {
-					panic(fmt.Sprintf("unknown read field: \"%s\"", fieldName))
+					panic(fmt.Sprintf("unknown read field: %q", fieldName))
 				}
 				delete(tags, fieldName)
 			}

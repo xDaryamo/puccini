@@ -22,6 +22,7 @@ type Unit struct {
 	ToscaDefinitionsVersion *string           `read:"tosca_definitions_version" require:"tosca_definitions_version"`
 	Namespace               *string           `read:"namespace"` // introduced in TOSCA 1.2
 	Metadata                Metadata          `read:"metadata,!Metadata"`
+	Description             *string           `read:"description"`
 	Repositories            Repositories      `read:"repositories,Repository"`
 	Imports                 Imports           `read:"imports,[]Import"`
 	ArtifactTypes           ArtifactTypes     `read:"artifact_types,ArtifactType" hierarchy:""`

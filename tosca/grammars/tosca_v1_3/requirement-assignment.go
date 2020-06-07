@@ -141,7 +141,7 @@ func (self *RequirementAssignments) Render(definitions RequirementDefinitions, c
 			}
 
 			if !definition.Occurrences.Range.InRange(count) {
-				context.ReportNotInRange(fmt.Sprintf("number of requirement \"%s\" assignments", definition.Name), count, definition.Occurrences.Range.Lower, definition.Occurrences.Range.Upper)
+				context.ReportNotInRange(fmt.Sprintf("number of requirement %q assignments", definition.Name), count, definition.Occurrences.Range.Lower, definition.Occurrences.Range.Upper)
 			}
 		}
 	}

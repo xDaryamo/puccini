@@ -159,7 +159,7 @@ func (self *InheritField) Inherit() {
 		} else if reflection.IsMapOfStringToPtrToStruct(fieldType) {
 			self.InheritStructsFromMap()
 		} else {
-			panic(fmt.Sprintf("\"inherit\" tag's field type \"%s\" is not supported in struct: %T", fieldType, self.Entity.Interface()))
+			panic(fmt.Sprintf("\"inherit\" tag's field type %q is not supported in struct: %T", fieldType, self.Entity.Interface()))
 		}
 	}
 }

@@ -142,7 +142,7 @@ func (self *DataType) Complete(context *tosca.Context) {
 func (self *DataType) GetTypeInformation() *normal.TypeInformation {
 	information := normal.NewTypeInformation()
 	information.Name = tosca.GetCanonicalName(self)
-	information.Metadata = tosca.GetValueMetadata(self.Metadata)
+	information.Metadata = tosca.GetInformationMetadata(self.Metadata)
 	if self.Description != nil {
 		information.Description = *self.Description
 	}

@@ -37,6 +37,20 @@ func NewNamespaceFor(entityPtr EntityPtr) *Namespace {
 			if field.Kind() != reflect.String {
 				panic(fmt.Sprintf("\"namespace\" tag can only be used on \"string\" field in struct: %T", entityPtr))
 			}
+
+			if context := GetContext(entityPtr); context != nil {
+				if context.HasQuirk(QuirkNamespaceNormativeIgnore) {
+					// Do not add normative types to the namespace
+					if metadata, ok := GetMetadata(entityPtr); ok {
+						if normative, ok := metadata["puccini.normative"]; ok {
+							if normative == "true" {
+								continue
+							}
+						}
+					}
+				}
+			}
+
 			self.set(field.String(), entityPtr)
 		}
 		return true
@@ -98,29 +112,6 @@ func (self *Namespace) Set(name string, entityPtr EntityPtr) (EntityPtr, bool) {
 	return self.set(name, entityPtr)
 }
 
-func (self *Namespace) set(name string, entityPtr EntityPtr) (EntityPtr, bool) {
-	type_ := reflect.TypeOf(entityPtr)
-	forType, ok := self.namespace[type_]
-	if !ok {
-		forType = make(map[string]EntityPtr)
-		self.namespace[type_] = forType
-	}
-
-	if existing, ok := forType[name]; ok {
-		if existing != entityPtr {
-			// We are trying to give the name to a different entity
-			return existing, true
-		}
-
-		// We already have this entity at this name, and that's fine
-		return nil, false
-	}
-
-	forType[name] = entityPtr
-
-	return nil, false
-}
-
 func (self *Namespace) Merge(namespace *Namespace, nameTransformer NameTransformer) {
 	if self == namespace {
 		return
@@ -149,6 +140,29 @@ func (self *Namespace) Merge(namespace *Namespace, nameTransformer NameTransform
 			}
 		}
 	}
+}
+
+func (self *Namespace) set(name string, entityPtr EntityPtr) (EntityPtr, bool) {
+	type_ := reflect.TypeOf(entityPtr)
+	forType, ok := self.namespace[type_]
+	if !ok {
+		forType = make(map[string]EntityPtr)
+		self.namespace[type_] = forType
+	}
+
+	if existing, ok := forType[name]; ok {
+		if existing != entityPtr {
+			// We are trying to give the name to a different entity
+			return existing, true
+		}
+
+		// We already have this entity at this name, and that's fine
+		return nil, false
+	}
+
+	forType[name] = entityPtr
+
+	return nil, false
 }
 
 // Print

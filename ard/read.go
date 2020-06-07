@@ -27,7 +27,7 @@ func Read(reader io.Reader, format string, locate bool) (Map, Locator, error) {
 		return ReadJSON(reader, locate)
 	// TODO: support "xml" via a custom schema
 	default:
-		return nil, nil, fmt.Errorf("unsupported format: \"%s\"", format)
+		return nil, nil, fmt.Errorf("unsupported format: %q", format)
 	}
 }
 

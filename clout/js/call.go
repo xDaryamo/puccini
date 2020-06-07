@@ -9,12 +9,12 @@ import (
 func CallFunction(runtime *goja.Runtime, functionName string, arguments []interface{}) (interface{}, error) {
 	value := runtime.Get(functionName)
 	if value == nil {
-		return nil, fmt.Errorf("scriptlet does not have a \"%s\" function", functionName)
+		return nil, fmt.Errorf("scriptlet does not have a %q function", functionName)
 	}
 
 	function, ok := goja.AssertFunction(value)
 	if !ok {
-		return nil, fmt.Errorf("scriptlet has a \"%s\" variable but it's not a function", functionName)
+		return nil, fmt.Errorf("scriptlet has a %q variable but it's not a function", functionName)
 	}
 
 	values := make([]goja.Value, len(arguments))

@@ -57,7 +57,7 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.Strin
 			return nil, fmt.Errorf("malformed function call, \"name\" not a string: %T", data)
 		}
 	} else {
-		return nil, fmt.Errorf("malformed function call, no \"name\": %v", map_)
+		return nil, fmt.Errorf("malformed function call, no \"name\": %+v", map_)
 	}
 
 	if data, ok := map_["arguments"]; ok {
@@ -73,7 +73,7 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.Strin
 			return nil, fmt.Errorf("malformed function call, \"arguments\" not a list: %T", data)
 		}
 	} else {
-		return nil, fmt.Errorf("malformed function call, no \"arguments\": %v", map_)
+		return nil, fmt.Errorf("malformed function call, no \"arguments\": %+v", map_)
 	}
 
 	if data, ok := map_["path"]; ok {
@@ -210,5 +210,5 @@ func encodeArgument(argument ard.Value) string {
 
 	encodedArgument = strings.ReplaceAll(encodedArgument, "\n", "¶")
 	encodedArgument = strings.ReplaceAll(encodedArgument, "\"", "\\\"")
-	return fmt.Sprintf("\"%s\"", encodedArgument)
+	return fmt.Sprintf("%q", encodedArgument)
 }

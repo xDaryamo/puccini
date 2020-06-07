@@ -6,9 +6,13 @@ package tosca
 
 type Quirk string
 
+// In TOSCA 1.0-1.3 the Simple Profile is implicitly imported by default. This quirk will disable
+// implicit imports.
+const QuirkImportsImplicitDisable Quirk = "imports.implicit.disable"
+
 // By default Puccini will report an error if a unit imports another
 // unit with an incompatible grammar. This quirk will disable the check.
-const QuirkImportsImperssive Quirk = "imports.permissive"
+const QuirkImportsPermissive Quirk = "imports.permissive"
 
 // By default Puccini is strict about "string"-typed values
 // and will consider integers, floats, and boolean values to be problems. This quirk will accept
@@ -17,6 +21,9 @@ const QuirkImportsImperssive Quirk = "imports.permissive"
 // *not* be identical to the YAML source code. For example, `1.0000` in YAML (a float) would become
 // the string `1` in TOSCA.
 const QuirkDataTypesStringPermissive Quirk = "data_types.string.permissive"
+
+// This will ignore any type that is has the "puccini.normative: 'true'" metadata.
+const QuirkNamespaceNormativeIgnore Quirk = "namespace.normative.ignore"
 
 // In TOSCA 1.0-1.3 all the normative types have long
 // names, such as "tosca.nodes.Compute", prefixed names ("tosca:Compute"), and also short names

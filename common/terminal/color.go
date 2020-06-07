@@ -1,6 +1,8 @@
 package terminal
 
 import (
+	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/fatih/color"
@@ -8,10 +10,29 @@ import (
 
 var colorize = false
 
-func EnableColor() {
+func EnableColor(force bool) {
+	if force {
+		color.NoColor = false
+	}
+	if color.NoColor {
+		return
+	}
 	colorize = true
 	Stdout = color.Output
 	Stderr = color.Error
+}
+
+func ProcessColorizeFlag(colorize string) error {
+	if colorize == "force" {
+		EnableColor(true)
+	} else if colorize_, err := strconv.ParseBool(colorize); err == nil {
+		if colorize_ {
+			EnableColor(false)
+		}
+	} else {
+		return fmt.Errorf("\"--colorize\" must be boolean or \"force\": %s", colorize)
+	}
+	return nil
 }
 
 type Colorizer = func(name string) string

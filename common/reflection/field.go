@@ -52,10 +52,10 @@ var structFieldsCache sync.Map
 func GetReferredField(entity reflect.Value, referenceFieldName string, referredFieldName string) (reflect.Value, reflect.Value, bool) {
 	referenceField := entity.FieldByName(referenceFieldName)
 	if !referenceField.IsValid() {
-		panic(fmt.Sprintf("tag refers to unknown field \"%s\" in struct: %s", referenceFieldName, entity.Type()))
+		panic(fmt.Sprintf("tag refers to unknown field %q in struct: %s", referenceFieldName, entity.Type()))
 	}
 	if referenceField.Type().Kind() != reflect.Ptr {
-		panic(fmt.Sprintf("tag refers to non-pointer field \"%s\" in struct: %s", referenceFieldName, entity.Type()))
+		panic(fmt.Sprintf("tag refers to non-pointer field %q in struct: %s", referenceFieldName, entity.Type()))
 	}
 
 	if referenceField.IsNil() {
@@ -66,7 +66,7 @@ func GetReferredField(entity reflect.Value, referenceFieldName string, referredF
 	referredField := referenceField.Elem().FieldByName(referredFieldName)
 
 	if !referredField.IsValid() {
-		panic(fmt.Sprintf("tag's field name \"%s\" not found in the entity referred to by \"%s\" in struct: %s", referredFieldName, referenceFieldName, entity.Type()))
+		panic(fmt.Sprintf("tag's field name %q not found in the entity referred to by %q in struct: %s", referredFieldName, referenceFieldName, entity.Type()))
 	}
 
 	return referenceField, referredField, true

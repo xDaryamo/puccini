@@ -123,7 +123,7 @@ func (self *AttributeDefinition) Render() {
 
 func (self *AttributeDefinition) GetTypeInformation() *normal.TypeInformation {
 	information := normal.NewTypeInformation()
-	information.Metadata = tosca.GetValueMetadata(self.Metadata)
+	information.Metadata = tosca.GetInformationMetadata(self.Metadata)
 	if self.Description != nil {
 		information.Description = *self.Description
 	}

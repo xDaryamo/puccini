@@ -9,7 +9,7 @@ import (
 var logTo string
 var verbose int
 var format string
-var colorize bool
+var colorize string
 var strict bool
 var timestamps bool
 var pretty bool
@@ -19,7 +19,7 @@ func init() {
 	rootCommand.PersistentFlags().StringVarP(&logTo, "log", "l", "", "log to file (defaults to stderr)")
 	rootCommand.PersistentFlags().CountVarP(&verbose, "verbose", "v", "add a log verbosity level (can be used twice)")
 	rootCommand.PersistentFlags().StringVarP(&format, "format", "f", "", "force output format (\"yaml\", \"json\", or \"xml\")")
-	rootCommand.PersistentFlags().BoolVarP(&colorize, "colorize", "z", true, "colorize output")
+	rootCommand.PersistentFlags().StringVarP(&colorize, "colorize", "z", "true", "colorize output (boolean or \"force\"")
 	rootCommand.PersistentFlags().BoolVarP(&strict, "strict", "y", false, "strict output (for \"YAML\" format only)")
 	rootCommand.PersistentFlags().BoolVarP(&timestamps, "timestamps", "w", true, "allow timestamps (for \"YAML\" format only)")
 	rootCommand.PersistentFlags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
@@ -29,9 +29,8 @@ var rootCommand = &cobra.Command{
 	Use:   toolName,
 	Short: "JavaScript processor for Clout",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		if colorize {
-			terminal.EnableColor()
-		}
+		err := terminal.ProcessColorizeFlag(colorize)
+		common.FailOnError(err)
 		if logTo == "" {
 			if terminal.Quiet {
 				verbose = -4

@@ -44,7 +44,7 @@ func NewValidZipURL(path string, archiveUrl URL) (*ZipURL, error) {
 			}
 		}
 
-		return nil, fmt.Errorf("path \"%s\" not found in zip: %s", path, archiveUrl.String())
+		return nil, fmt.Errorf("path %q not found in zip: %s", path, archiveUrl.String())
 	} else {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func NewValidRelativeZipURL(path string, origin *ZipURL) (*ZipURL, error) {
 			}
 		}
 
-		return nil, fmt.Errorf("path \"%s\" not found in zip: %s", path, self.ArchiveURL.String())
+		return nil, fmt.Errorf("path %q not found in zip: %s", path, self.ArchiveURL.String())
 	} else {
 		return nil, err
 	}
@@ -138,7 +138,7 @@ func (self *ZipURL) Open() (io.ReadCloser, error) {
 		}
 
 		archiveReader.Close()
-		return nil, fmt.Errorf("path \"%s\" not found in archive: %s", self.Path, self.ArchiveURL.String())
+		return nil, fmt.Errorf("path %q not found in archive: %s", self.Path, self.ArchiveURL.String())
 	} else {
 		return nil, err
 	}

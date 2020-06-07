@@ -4,6 +4,9 @@ Puccini TOSCA Quirks
 These are activated via the `--quirk/-x` switch for
 [**puccini-tosca**](../../puccini-tosca/):
 
+* **imports.implicit.disable**: In TOSCA 1.0-1.3 the Simple Profile is implicitly imported by
+  default. This quirk will disable implicit imports.
+
 * **imports.permissive**: By default Puccini will report an error if a unit imports another
   unit with an incompatible grammar. This quirk will disable the check.
 
@@ -13,6 +16,9 @@ These are activated via the `--quirk/-x` switch for
   and integers for the TOSCA "version" primitive type. Note that string conversions may very well
   *not* be identical to the YAML source code. For example, `1.0000` in YAML (a float) would become
   the string `1` in TOSCA.
+
+* **namespace.normative.ignore**: This will ignore any type that is has the
+  "puccini.normative: true" metadata.
 
 * **namespace.normative.shortcuts.disable**: In TOSCA 1.0-1.3 all the normative types have long
   names, such as "tosca.nodes.Compute", prefixed names ("tosca:Compute"), and also short names

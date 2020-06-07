@@ -102,7 +102,7 @@ func newImportNameTransformer(prefix *string, appendShortCutnames bool) tosca.Na
 			if normative, ok := metadata["puccini.normative"]; ok {
 				if normative == "true" {
 					// Reserved "tosca." names also get shorthand and prefixed names
-					names = appendNormativeNames(entityPtr, names, name, "tosca", appendShortCutnames)
+					names = getNormativeNames(entityPtr, names, name, "tosca", appendShortCutnames)
 				}
 			}
 		}
@@ -119,7 +119,7 @@ func newImportNameTransformer(prefix *string, appendShortCutnames bool) tosca.Na
 	}
 }
 
-func appendNormativeNames(entityPtr tosca.EntityPtr, names []string, name string, prefix string, appendShortcut bool) []string {
+func getNormativeNames(entityPtr tosca.EntityPtr, names []string, name string, prefix string, appendShortcut bool) []string {
 	if !strings.HasPrefix(name, prefix+".") {
 		return names
 	}
