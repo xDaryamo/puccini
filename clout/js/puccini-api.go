@@ -150,6 +150,20 @@ func (self *PucciniAPI) Exec(name string, arguments ...string) (string, error) {
 	}
 }
 
+func (self *PucciniAPI) TemporaryFile(pattern string, directory string) (string, error) {
+	if file, err := ioutil.TempFile(directory, pattern); err == nil {
+		name := file.Name()
+		os.Remove(name)
+		return name, nil
+	} else {
+		return "", err
+	}
+}
+
+func (self *PucciniAPI) TemporaryDirectory(pattern string, directory string) (string, error) {
+	return ioutil.TempDir(directory, pattern)
+}
+
 func (self *PucciniAPI) Download(sourceUrl string, targetPath string) error {
 	if sourceUrl_, err := urlpkg.NewValidURL(sourceUrl, nil, self.context.URLContext); err == nil {
 		return urlpkg.DownloadTo(sourceUrl_, targetPath)
