@@ -1,4 +1,4 @@
-puccini-js
+puccini-clout
 ==========
 
 `exec`

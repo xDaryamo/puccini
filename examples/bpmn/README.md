@@ -52,7 +52,7 @@ represents an end event within a control loop.
 
 To generate the BPMN:
 
-    puccini-tosca compile open-loop.yaml | puccini-js exec bpmn.generate -o open-loop.bpmn2
+    puccini-tosca compile open-loop.yaml | puccini-clout exec bpmn.generate -o open-loop.bpmn2
 
 Also included is [`open-loop-design.bpmn2`](open-loop-with-diagram.bpmn2), which is the same file
 with added diagram information so that it would appear more nicely in a BPMN GUI. We used the

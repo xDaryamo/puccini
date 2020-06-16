@@ -101,7 +101,7 @@ via the `--resolve/-r` switch:
 Topology resolution can be applied after compilation on an existing Clout via the embedded
 **tosca.resolve** JavaScript:
 
-    cat clout.yaml | puccini-js exec tosca.resolve
+    cat clout.yaml | puccini-clout exec tosca.resolve
     
 Read more about resolution [here](../tosca/compiler/RESOLUTION.md).
 
@@ -110,9 +110,9 @@ Read more about resolution [here](../tosca/compiler/RESOLUTION.md).
 TOSCA functions and constraints are embedded in the Clout (as stubs) and are intended to be executed
 when necessary. Thus they not called during compilation, unless they are needed for topology
 resolution. If you want to call all of them and see the evaluated results, pipe the Clout through
-**puccini-js** and execute the embedded **tosca.coerce** JavaScript: 
+**puccini-clout** and execute the embedded **tosca.coerce** JavaScript: 
 
-    cat clout.yaml | puccini-js exec tosca.coerce
+    cat clout.yaml | puccini-clout exec tosca.coerce
 
 Values can be re-coerced later according to changing attributes and other external factors.
 

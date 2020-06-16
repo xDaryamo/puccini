@@ -14,8 +14,8 @@ gofmt -w -s -e \
 	"$ROOT/common/reflection" \
 	"$ROOT/common/registry" \
 	"$ROOT/common/terminal" \
-	"$ROOT/puccini-js" \
-	"$ROOT/puccini-js/commands" \
+	"$ROOT/puccini-clout" \
+	"$ROOT/puccini-clout/commands" \
 	"$ROOT/puccini-tosca" \
 	"$ROOT/puccini-tosca/commands" \
 	"$ROOT/tosca" \

@@ -15,4 +15,4 @@ fi
 
 mkdir --parents "$USER_DIR/completions"
 puccini-tosca bash > "$USER_DIR/completions/puccini-tosca"
-puccini-js bash > "$USER_DIR/completions/puccini-js"
+puccini-clout bash > "$USER_DIR/completions/puccini-clout"

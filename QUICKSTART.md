@@ -25,7 +25,7 @@ Give it some time to start, and then access the dashboard from your web browser:
 
 Now compile and apply the demo application's TOSCA:
 
-    puccini-tosca compile examples/kubernetes/bookinfo/bookinfo-simple.yaml | puccini-js exec kubernetes.generate | kubectl apply -f -
+    puccini-tosca compile examples/kubernetes/bookinfo/bookinfo-simple.yaml | puccini-clout exec kubernetes.generate | kubectl apply -f -
 
 On the dashboard you'll see the pods coming up. When they're finally up, forward a port from the
 frontend pod so that we can access it via your browser.

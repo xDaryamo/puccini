@@ -6,7 +6,7 @@ import (
 	urlpkg "github.com/tliron/puccini/url"
 )
 
-const toolName = "puccini-js"
+const toolName = "puccini-clout"
 
 var log = logging.MustGetLogger(toolName)
 

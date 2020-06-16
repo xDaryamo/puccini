@@ -17,9 +17,9 @@ builds:
   - -X 'github.com/tliron/puccini/version.GitRevision={{.Env.REVISION}}'
   - -X 'github.com/tliron/puccini/version.Timestamp={{.Env.TIMESTAMP}}'
 
-- id: puccini-js
-  main: ./puccini-js
-  binary: puccini-js
+- id: puccini-clout
+  main: ./puccini-clout
+  binary: puccini-clout
   goarch:
   - amd64
   - wasm

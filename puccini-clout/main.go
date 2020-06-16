@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/tebeka/atexit"
-	"github.com/tliron/puccini/puccini-js/commands"
+	"github.com/tliron/puccini/puccini-clout/commands"
 )
 
 func main() {

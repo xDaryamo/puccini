@@ -7,4 +7,4 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 "$HERE/build"
 
 puccini-tosca compile "$ROOT/examples/kubernetes/bookinfo/bookinfo-simple.yaml" "$@" | \
-puccini-js exec kubernetes.generate
+puccini-clout exec kubernetes.generate
