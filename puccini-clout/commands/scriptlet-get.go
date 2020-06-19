@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	rootCommand.AddCommand(getCommand)
+	scriptletCommand.AddCommand(getCommand)
 	getCommand.Flags().StringVarP(&output, "output", "o", "", "output to file (default is stdout)")
 }
 

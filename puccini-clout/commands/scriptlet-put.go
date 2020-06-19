@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	rootCommand.AddCommand(putCommand)
+	scriptletCommand.AddCommand(putCommand)
 	putCommand.Flags().StringVarP(&output, "output", "o", "", "output Clout to file (default is stdout)")
 }
 

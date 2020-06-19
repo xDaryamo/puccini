@@ -17,7 +17,7 @@ function c () {
 mkdir --parents "$HERE/data/"
 
 puccini-tosca compile "$HERE/../kubernetes/bookinfo/bookinfo-simple.yaml" | \
-puccini-clout exec "$HERE/neo4j.js" \
+puccini-clout scriptlet exec "$HERE/neo4j.js" \
 	> "$HERE/data/bookinfo-simple.json"
 
 c --data '{"statements": [{"statement": "MATCH (n) DETACH DELETE n"}]}'

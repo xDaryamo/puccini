@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	rootCommand.AddCommand(listCommand)
+	scriptletCommand.AddCommand(listCommand)
 }
 
 var listCommand = &cobra.Command{

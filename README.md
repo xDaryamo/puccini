@@ -86,8 +86,8 @@ manifests to a running Kubernetes cluster in order to be scheduled. Like so:
 
 Et voilà, your abstract architectural design became a running deployment.
 
-Note that **puccini-clout** is *not* a requirement for your toolchain. You can process and consume the
-Clout output with your own tools.
+Note that **puccini-clout** is *not* a requirement for your toolchain. You can process and consume
+the Clout output with your own tools.
 
 ### Standalone Parser
 
@@ -109,9 +109,9 @@ that enable alternative behaviors based on differing interpretations of the spec
 ### Compiler
 
 The TOSCA-to-Clout compiler's main role is to take the parsed data structure and dump it into
-Clout. The next step in the toolchain (which could be **puccini-clout**) would then connect the Clout
-to your orchestration systems: deploying to your platforms, on-boarding to a service catalog, etc.
-Thusly Clout functions as an "intermediate representation" (IR) for TOSCA.
+Clout. The next step in the toolchain (which could be **puccini-clout**) would then connect the
+Clout to your orchestration systems: deploying to your platforms, on-boarding to a service catalog,
+etc. Thusly Clout functions as an "intermediate representation" (IR) for TOSCA.
 
 By default the compiler also performs [topology resolution](tosca/compiler/RESOLUTION.md), which
 attempts to satisfy requirements with capabilities, thus creating the relationships (Clout edges)
@@ -125,7 +125,7 @@ You can graphically visualize the compiled TOSCA in a dynamic web page. A one-li
     puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml --exec=assets/tosca/profiles/common/1.0/js/visualize.js > /tmp/puccini.html && xdg-open /tmp/puccini.html
 
 The visualization scriptlet is not embedded by default into the Clout, but can be manually added via
-`puccini-clout put` (see below) for added portability.
+`puccini-clout scriptlet put` (see below) for added portability.
 
 
 puccini-clout
@@ -150,7 +150,7 @@ on-the-fly.
 For convenience, execution functionality is included in **puccini-tosca** via the `--exec` switch.
 These two commands are equivalent:
 
-    puccini-tosca compile my-app.yaml | puccini-clout exec my.scriptlet
+    puccini-tosca compile my-app.yaml | puccini-clout scriptlet exec my.scriptlet
     puccini-tosca compile my-app.yaml --exec=my.scriptlet
 
 ### TOSCA Functions and Constraints
@@ -161,7 +161,7 @@ independently of its TOSCA source. The Clout lives on its own. The function call
 "stubs" that can be "coerced" into their evaluated values. This is done via the the
 **tosca.coerce** scriptlet:
 
-    puccini-clout exec tosca.coerce my-clout.yaml
+    puccini-clout scriptlet exec tosca.coerce my-clout.yaml
 
 For convenience, this functionality is included in **puccini-tosca** via the `--coerce` switch.
 The following is identical to the above:
@@ -189,7 +189,7 @@ functions but also applies the constraints.
 
 Putting it all together, let's refresh a Clout:
 
-    puccini-clout exec kubernetes.update my-clout.yaml | puccini-clout exec tosca.coerce > coerced-clout.yaml
+    puccini-clout scriptlet exec kubernetes.update my-clout.yaml | puccini-clout scriptlet exec tosca.coerce > coerced-clout.yaml
 
 ### TOSCA Operations, Notifications, Policy Triggers, and Workflows
 
@@ -355,7 +355,7 @@ Nothing is stopping you. You can pipe the input and output to and from the text 
 choice at any point in the toolchain. Here's an example using
 [gomplate](https://github.com/hairyhenderson/gomplate):
 
-    puccini-tosca compile my-app.yaml | gomplate | puccini-clout exec kubernetes.generate
+    puccini-tosca compile my-app.yaml | gomplate | puccini-clout scriptlet exec kubernetes.generate
 
 Your TOSCA `my-app.yaml` can then include template expressions, such as:
 

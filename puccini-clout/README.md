@@ -1,8 +1,8 @@
 puccini-clout
-==========
+=============
 
-`exec`
-------
+`scriptlet exec`
+----------------
 
 Execute a JavaScript scriptlet embedded in a Clout. The optional input is a filesystem path or URL
 to a Clout file. If no input is provided will attempt to read YAML from stdin. By default the output
@@ -16,18 +16,18 @@ The default format for output is YAML, but you can switch to JSON or XML using `
 that Clout in JSON may lose some type information (e.g. JSON doesn't distinguish between an integer
 and a float).
 
-`list`
-------
+`scriptlet list`
+----------------
 
 Lists all available JavaScript scriptlets in the Clout.
 
-`get`
------
+`scriptlet get`
+---------------
 
 Prints out JavaScript scriptlet source code extracted from the Clout.
 
-`put`
------
+`scriptlet put`
+---------------
 
 Embeds/replaces JavaScript scriptlets in the Clout and outputs a new Clout. This can be used to add
 scriptlets "on the fly" via piping (e.g. to add a plugin).

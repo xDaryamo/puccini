@@ -26,8 +26,8 @@ introduced in Go 1.11. See the files `go.mod` and `go.sum`.
 --------------------------------------------------
 
 Installs bash completion scripts for the current user, for the current build of Puccini. This allows
-you to press TAB to complete commands starting with `puccini-tosca`, `puccini-clout`, etc. You will
-need to reload your bash shell to see the effect. `exec bash` may work.
+you to press TAB to complete commands starting with `puccini-tosca`, `puccini-clout`, etc. You will need
+to reload your bash shell to see the effect. `exec bash` may work.
 
 [embed](embed)
 --------------

@@ -12,14 +12,14 @@ import (
 var arguments map[string]string
 
 func init() {
-	rootCommand.AddCommand(execCommand)
+	scriptletCommand.AddCommand(execCommand)
 	execCommand.Flags().StringVarP(&output, "output", "o", "", "output to file or directory (default is stdout)")
 	execCommand.Flags().StringToStringVarP(&arguments, "argument", "a", nil, "specify a scriptlet argument (format is key=value")
 }
 
 var execCommand = &cobra.Command{
 	Use:   "exec [NAME or JavaScript PATH or URL] [[Clout PATH or URL]]",
-	Short: "Execute JavaScript scriptlet in Clout",
+	Short: "Execute JavaScript scriptlet on Clout",
 	Long:  ``,
 	Args:  cobra.RangeArgs(1, 2),
 	Run: func(cmd *cobra.Command, args []string) {

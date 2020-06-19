@@ -13,7 +13,7 @@ function c () {
 mkdir --parents "$HERE/data/"
 
 puccini-tosca compile "$HERE/../kubernetes/bookinfo/bookinfo-simple.yaml" | \
-puccini-clout exec "$HERE/dgraph.js" \
+puccini-clout scriptlet exec "$HERE/dgraph.js" \
 	> "$HERE/data/bookinfo-simple.json"
 
 c alter --data '{"drop_all": true}'
