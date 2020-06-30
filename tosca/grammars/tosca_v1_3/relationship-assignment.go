@@ -50,42 +50,50 @@ func ReadRelationshipAssignment(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-func (self *RelationshipAssignment) GetType() *RelationshipType {
+func (self *RelationshipAssignment) GetType(definition *RelationshipDefinition) *RelationshipType {
 	if self.RelationshipTemplate != nil {
 		return self.RelationshipTemplate.RelationshipType
 	} else if self.RelationshipType != nil {
 		return self.RelationshipType
+	} else if definition != nil {
+		return definition.RelationshipType
 	} else {
 		return nil
 	}
 }
 
 func (self *RelationshipAssignment) Render(definition *RelationshipDefinition) {
+	relationshipType := self.GetType(definition)
+	if relationshipType == nil {
+		self.Context.ReportUndeclared("relationship")
+		return
+	}
+
 	if definition != nil {
 		// We will consider the "interfaces" at the definition to take priority over those at the type
 		self.Interfaces.Render(definition.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
 
 		// Validate type compatibility
-		relationshipType := self.GetType()
-		if (relationshipType != nil) && (definition.RelationshipType != nil) && !self.Context.Hierarchy.IsCompatible(definition.RelationshipType, relationshipType) {
+		if (definition.RelationshipType != nil) && !self.Context.Hierarchy.IsCompatible(definition.RelationshipType, relationshipType) {
 			self.Context.ReportIncompatibleType(relationshipType, definition.RelationshipType)
 			return
 		}
 	}
 
-	if self.RelationshipType != nil {
-		self.Properties.RenderProperties(self.RelationshipType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
-		self.Attributes.RenderAttributes(self.RelationshipType.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
-		self.Interfaces.Render(self.RelationshipType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
-	} else if self.RelationshipTemplate != nil {
+	if self.RelationshipTemplate != nil {
+		self.RelationshipTemplate.Render()
 		self.Properties.CopyUnassigned(self.RelationshipTemplate.Properties)
 		self.Attributes.CopyUnassigned(self.RelationshipTemplate.Attributes)
 		self.Interfaces.CopyUnassigned(self.RelationshipTemplate.Interfaces)
+	} else {
+		self.Properties.RenderProperties(self.RelationshipType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
+		self.Attributes.RenderAttributes(self.RelationshipType.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
+		self.Interfaces.Render(self.RelationshipType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
 	}
 }
 
-func (self *RelationshipAssignment) Normalize(normalRelationship *normal.Relationship) {
-	relationshipType := self.GetType()
+func (self *RelationshipAssignment) Normalize(definition *RelationshipDefinition, normalRelationship *normal.Relationship) {
+	relationshipType := self.GetType(definition)
 	if (self.RelationshipTemplate != nil) && (self.RelationshipTemplate.Description != nil) {
 		normalRelationship.Description = *self.RelationshipTemplate.Description
 	} else if (relationshipType != nil) && (relationshipType.Description != nil) {
@@ -98,5 +106,5 @@ func (self *RelationshipAssignment) Normalize(normalRelationship *normal.Relatio
 
 	self.Properties.Normalize(normalRelationship.Properties)
 	self.Attributes.Normalize(normalRelationship.Attributes)
-	self.Interfaces.NormalizeForRelationship(self, normalRelationship)
+	self.Interfaces.NormalizeForRelationship(self, definition, normalRelationship)
 }

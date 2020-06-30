@@ -98,7 +98,11 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalN
 	}
 
 	if self.Relationship != nil {
-		self.Relationship.Normalize(normalRequirement.NewRelationship())
+		if definition, ok := self.GetDefinition(nodeTemplate); ok {
+			self.Relationship.Normalize(definition.RelationshipDefinition, normalRequirement.NewRelationship())
+		} else {
+			self.Relationship.Normalize(nil, normalRequirement.NewRelationship())
+		}
 	}
 
 	return normalRequirement

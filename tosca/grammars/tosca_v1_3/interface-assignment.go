@@ -61,8 +61,8 @@ func (self *InterfaceAssignment) GetDefinitionForGroup(group *Group) (*Interface
 	return definition, ok
 }
 
-func (self *InterfaceAssignment) GetDefinitionForRelationship(relationship *RelationshipAssignment) (*InterfaceDefinition, bool) {
-	relationshipType := relationship.GetType()
+func (self *InterfaceAssignment) GetDefinitionForRelationship(relationship *RelationshipAssignment, relationshipDefinition *RelationshipDefinition) (*InterfaceDefinition, bool) {
+	relationshipType := relationship.GetType(relationshipDefinition)
 	if relationshipType == nil {
 		return nil, false
 	}
@@ -144,9 +144,9 @@ func (self InterfaceAssignments) NormalizeForGroup(group *Group, normalGroup *no
 	}
 }
 
-func (self InterfaceAssignments) NormalizeForRelationship(relationship *RelationshipAssignment, normalRelationship *normal.Relationship) {
+func (self InterfaceAssignments) NormalizeForRelationship(relationship *RelationshipAssignment, relationshipDefinition *RelationshipDefinition, normalRelationship *normal.Relationship) {
 	for key, interface_ := range self {
-		if definition, ok := interface_.GetDefinitionForRelationship(relationship); ok {
+		if definition, ok := interface_.GetDefinitionForRelationship(relationship, relationshipDefinition); ok {
 			interface_.Normalize(normalRelationship.NewInterface(key), definition)
 		}
 	}

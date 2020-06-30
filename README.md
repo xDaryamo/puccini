@@ -14,7 +14,7 @@ Check out this [live demo of Puccini TOSCA running in a browser](https://web.puc
 
 And then head to the [quickstart guide](QUICKSTART.md).
 
-Note that Puccini is intentionally not an orchestrator. This is a "BYOO" kind of establishment
+Note that Puccini is intentionally *not* an orchestrator. This is a "BYOO" kind of establishment
 ("Bring Your Own Orchestrator"). If you are looking for a comprehensive TOSCA orchestrator for
 [Kubernetes](https://kubernetes.io/) based on Puccini, check out sister project,
 [Turandot](https://turandot.puccini.cloud/). Also included in Puccini are examples for using

@@ -26,6 +26,8 @@ type RelationshipTemplate struct {
 
 	CopyRelationshipTemplate *RelationshipTemplate `lookup:"copy,CopyRelationshipTemplateName" json:"-" yaml:"-"`
 	RelationshipType         *RelationshipType     `lookup:"type,RelationshipTypeName" json:"-" yaml:"-"`
+
+	rendered bool
 }
 
 func NewRelationshipTemplate(context *tosca.Context) *RelationshipTemplate {
@@ -52,6 +54,12 @@ func (self *RelationshipTemplate) PreRead() {
 
 // parser.Renderable interface
 func (self *RelationshipTemplate) Render() {
+	if self.rendered {
+		// Avoid rendering more than once (can happen if we were called from RelationshipAssignment.Render)
+		return
+	}
+	self.rendered = true
+
 	log.Debugf("{render} relationship template: %s", self.Name)
 
 	if self.RelationshipType == nil {
