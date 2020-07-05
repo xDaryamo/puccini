@@ -1,6 +1,7 @@
 package cloudify_v1_3
 
 import (
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -36,7 +37,7 @@ func ReadUploadResources(context *tosca.Context) tosca.EntityPtr {
 		childContext := parametersContext.MapChild(key, value.Context.Data)
 		switch key {
 		case "fetch_timeout":
-			childContext.ValidateType("!!int")
+			childContext.ValidateType(ard.TypeInteger)
 		default:
 			childContext.ReportFieldUnsupported()
 		}

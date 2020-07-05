@@ -30,11 +30,11 @@ func IsParameterTypeValid(type_ string) bool {
 func (self *Value) ValidateParameterType(type_ string) bool {
 	switch type_ {
 	case "boolean":
-		return self.Context.ValidateType("!!bool")
+		return self.Context.ValidateType(ard.TypeBoolean)
 	case "comma_delimited_list":
-		if self.Context.ValidateType("!!seq") {
+		if self.Context.ValidateType(ard.TypeList) {
 			for index, e := range self.Context.Data.(ard.List) {
-				if !self.Context.ListChild(index, e).ValidateType("!!str") {
+				if !self.Context.ListChild(index, e).ValidateType(ard.TypeString) {
 					return false
 				}
 			}
@@ -43,11 +43,11 @@ func (self *Value) ValidateParameterType(type_ string) bool {
 			return false
 		}
 	case "json":
-		return self.Context.ValidateType("!!map", "!!seq")
+		return self.Context.ValidateType(ard.TypeMap, ard.TypeList)
 	case "number":
-		return self.Context.ValidateType("!!int", "!!float")
+		return self.Context.ValidateType(ard.TypeInteger, ard.TypeFloat)
 	case "string":
-		return self.Context.ValidateType("!!str")
+		return self.Context.ValidateType(ard.TypeString)
 	default:
 		panic("unsupported parameter type")
 	}

@@ -59,7 +59,7 @@ func NewConstraintClause(context *tosca.Context) *ConstraintClause {
 func ReadConstraintClause(context *tosca.Context) tosca.EntityPtr {
 	self := NewConstraintClause(context)
 
-	if context.ValidateType("!!map") {
+	if context.ValidateType(ard.TypeMap) {
 		map_ := context.Data.(ard.Map)
 		if len(map_) != 1 {
 			context.ReportValueMalformed("constraint clause", "map length not 1")

@@ -57,10 +57,10 @@ func ReadTemplate(context *tosca.Context) tosca.EntityPtr {
 			heatTemplateVersionContext.Data = data.Format("2006-01-02")
 		}
 
-		if heatTemplateVersionContext.Is("!!str") {
+		if heatTemplateVersionContext.Is(ard.TypeString) {
 			self.HeatTemplateVersion = heatTemplateVersionContext.ReadString()
 		} else {
-			heatTemplateVersionContext.ReportValueWrongType("!!str", "!!timestamp")
+			heatTemplateVersionContext.ReportValueWrongType(ard.TypeString, ard.TypeTimestamp)
 		}
 	} else {
 		context.FieldChild("heat_template_version", nil).ReportFieldMissing()

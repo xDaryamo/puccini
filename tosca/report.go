@@ -64,8 +64,12 @@ func (self *Context) FormatBadData() string {
 	return terminal.ColorError(fmt.Sprintf("%+v", self.Data))
 }
 
-func (self *Context) ReportValueWrongType(requiredTypeNames ...string) bool {
-	return self.ReportPathf(1, "%q instead of %s", terminal.ColorTypeName(ard.TypeName(self.Data)), terminal.ColoredOptions(requiredTypeNames, terminal.ColorTypeName))
+func (self *Context) ReportValueWrongType(requiredTypeNames ...ard.TypeName) bool {
+	typeNames := make([]string, len(requiredTypeNames))
+	for index, typeName := range requiredTypeNames {
+		typeNames[index] = string(typeName)
+	}
+	return self.ReportPathf(1, "%q instead of %s", terminal.ColorTypeName(string(ard.GetTypeName(self.Data))), terminal.ColoredOptions(typeNames, terminal.ColorTypeName))
 }
 
 func (self *Context) ReportValueWrongFormat(format string) bool {

@@ -1,6 +1,7 @@
 package tosca_v1_3
 
 import (
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -28,10 +29,10 @@ func NewSchema(context *tosca.Context) *Schema {
 func ReadSchema(context *tosca.Context) tosca.EntityPtr {
 	self := NewSchema(context)
 
-	if context.Is("!!map") {
+	if context.Is(ard.TypeMap) {
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
-	} else if context.ValidateType("!!map", "!!str") {
+	} else if context.ValidateType(ard.TypeMap, ard.TypeString) {
 		// Short notation
 		self.DataTypeName = context.FieldChild("type", context.Data).ReadString()
 	}

@@ -1,6 +1,7 @@
 package cloudify_v1_3
 
 import (
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -34,11 +35,11 @@ func (self *NodeTemplateCapability) ValidateScalableProperties(instances *NodeTe
 	for key, value := range self.Properties {
 		switch key {
 		case "default_instances":
-			value.Context.ValidateType("!!int")
+			value.Context.ValidateType(ard.TypeInteger)
 		case "min_instances":
-			value.Context.ValidateType("!!int")
+			value.Context.ValidateType(ard.TypeInteger)
 		case "max_instances":
-			value.Context.ValidateType("!!int", "!!str")
+			value.Context.ValidateType(ard.TypeInteger, ard.TypeString)
 		default:
 			value.Context.ReportFieldUnsupported()
 		}

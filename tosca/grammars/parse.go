@@ -3,6 +3,7 @@ package grammars
 import (
 	"time"
 
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	urlpkg "github.com/tliron/puccini/url"
 )
@@ -47,7 +48,7 @@ func DetectVersion(context *tosca.Context) (*tosca.Context, *string) {
 			if keyword == "heat_template_version" {
 				// Hack to allow HOT to use YAML !!timestamp values
 
-				if versionContext.Is("!!str") {
+				if versionContext.Is(ard.TypeString) {
 					return versionContext, versionContext.ReadString()
 				}
 
@@ -57,9 +58,9 @@ func DetectVersion(context *tosca.Context) (*tosca.Context, *string) {
 					return versionContext, versionContext.ReadString()
 				}
 
-				versionContext.ReportValueWrongType("!!str", "!!timestamp")
+				versionContext.ReportValueWrongType(ard.TypeString, ard.TypeTimestamp)
 			} else {
-				if versionContext.ValidateType("!!str") {
+				if versionContext.ValidateType(ard.TypeString) {
 					return versionContext, versionContext.ReadString()
 				}
 			}

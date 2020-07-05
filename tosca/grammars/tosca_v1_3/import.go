@@ -5,6 +5,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	urlpkg "github.com/tliron/puccini/url"
 )
@@ -37,10 +38,10 @@ func NewImport(context *tosca.Context) *Import {
 func ReadImport(context *tosca.Context) tosca.EntityPtr {
 	self := NewImport(context)
 
-	if context.Is("!!map") {
+	if context.Is(ard.TypeMap) {
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
-	} else if context.ValidateType("!!map", "!!str") {
+	} else if context.ValidateType(ard.TypeMap, ard.TypeString) {
 		// Short notation
 		self.File = context.FieldChild("file", context.Data).ReadString()
 	}

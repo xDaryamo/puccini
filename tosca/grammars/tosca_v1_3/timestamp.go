@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -50,7 +51,7 @@ type Timestamp struct {
 func ReadTimestamp(context *tosca.Context) tosca.EntityPtr {
 	var self Timestamp
 
-	if context.Is("!!str") {
+	if context.Is(ard.TypeString) {
 		self.OriginalString = *context.ReadString()
 		matches := TimestampShortRE.FindStringSubmatch(self.OriginalString)
 		length := len(matches)
@@ -161,7 +162,7 @@ func ReadTimestamp(context *tosca.Context) tosca.EntityPtr {
 		if !valid {
 			return &self
 		}
-	} else if context.Is("!!timestamp") {
+	} else if context.Is(ard.TypeTimestamp) {
 		// Note: OriginalString will be empty because it is not preserved by our parsing methods
 		time := context.Data.(time.Time)
 		_, tzSeconds := time.Zone()
@@ -182,7 +183,7 @@ func ReadTimestamp(context *tosca.Context) tosca.EntityPtr {
 		self.TZHour = uint32(tzSeconds / 3600)
 		self.TZMinute = uint32((tzSeconds % 3600) / 60)
 	} else {
-		context.ReportValueWrongType("!!str", "!!timestamp")
+		context.ReportValueWrongType(ard.TypeString, ard.TypeTimestamp)
 		return &self
 	}
 

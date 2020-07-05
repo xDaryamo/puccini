@@ -79,33 +79,33 @@ func (self *DataType) Render() {
 
 	if internalTypeName, ok := self.GetInternalTypeName(); ok {
 		if _, ok := ard.TypeValidators[internalTypeName]; !ok {
-			if _, ok := self.Context.Grammar.Readers[internalTypeName]; !ok {
+			if _, ok := self.Context.Grammar.Readers[string(internalTypeName)]; !ok {
 				self.Context.ReportUnsupportedType()
 			}
 		}
 	}
 }
 
-func (self *DataType) GetInternalTypeName() (string, bool) {
+func (self *DataType) GetInternalTypeName() (ard.TypeName, bool) {
 	if typeName, ok := self.GetMetadataValue("puccini.type"); ok {
-		return typeName, ok
+		return ard.TypeName(typeName), ok
 	} else if self.Parent != nil {
 		// The internal type metadata is inherited
 		return self.Parent.GetInternalTypeName()
 	} else {
-		return "", false
+		return ard.NoType, false
 	}
 }
 
-func (self *DataType) GetInternal() (string, ard.TypeValidator, tosca.Reader, bool) {
+func (self *DataType) GetInternal() (ard.TypeName, ard.TypeValidator, tosca.Reader, bool) {
 	if internalTypeName, ok := self.GetInternalTypeName(); ok {
 		if typeValidator, ok := ard.TypeValidators[internalTypeName]; ok {
 			return internalTypeName, typeValidator, nil, true
-		} else if reader, ok := self.Context.Grammar.Readers[internalTypeName]; ok {
+		} else if reader, ok := self.Context.Grammar.Readers[string(internalTypeName)]; ok {
 			return internalTypeName, nil, reader, true
 		}
 	}
-	return "", nil, nil, false
+	return ard.NoType, nil, nil, false
 }
 
 // Note that this may change the data (if it's a map), but that should be fine, because we intend

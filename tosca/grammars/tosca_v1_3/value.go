@@ -2,8 +2,6 @@ package tosca_v1_3
 
 import (
 	"fmt"
-	"strconv"
-	"time"
 
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
@@ -52,7 +50,7 @@ func ReadAttributeValue(context *tosca.Context) tosca.EntityPtr {
 	self := NewValue(context)
 
 	// Unpack long notation
-	if context.Is("!!map") {
+	if context.Is(ard.TypeMap) {
 		map_ := context.Data.(ard.Map)
 		if len(map_) == 2 {
 			if description, ok := map_["description"]; ok {
@@ -132,36 +130,15 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 			if self.Context.Data == nil {
 				// Nil data only happens when an attribute is added despite not having a
 				// "default" value; we will give it a valid zero value instead
-				self.Context.Data = ard.TypeZeroes[internalTypeName]
+				if self.Context.Data, ok = ScalarUnitTypeZeroes[internalTypeName]; !ok {
+					if self.Context.Data, ok = ard.TypeZeroes[internalTypeName]; !ok {
+						panic(fmt.Sprintf("unsupported internal type name: %s", internalTypeName))
+					}
+				}
 			}
 
-			if (internalTypeName == "!!str") && self.Context.HasQuirk(tosca.QuirkDataTypesStringPermissive) {
-				switch data := self.Context.Data.(type) {
-				case bool:
-					self.Context.Data = strconv.FormatBool(data)
-				case int64:
-					self.Context.Data = strconv.FormatInt(data, 10)
-				case int32:
-					self.Context.Data = strconv.FormatInt(int64(data), 10)
-				case int8:
-					self.Context.Data = strconv.FormatInt(int64(data), 10)
-				case int:
-					self.Context.Data = strconv.FormatInt(int64(data), 10)
-				case uint64:
-					self.Context.Data = strconv.FormatUint(data, 10)
-				case uint32:
-					self.Context.Data = strconv.FormatUint(uint64(data), 10)
-				case uint8:
-					self.Context.Data = strconv.FormatUint(uint64(data), 10)
-				case uint:
-					self.Context.Data = strconv.FormatUint(uint64(data), 10)
-				case float64:
-					self.Context.Data = strconv.FormatFloat(data, 'g', -1, 64)
-				case float32:
-					self.Context.Data = strconv.FormatFloat(float64(data), 'g', -1, 32)
-				case time.Time:
-					self.Context.Data = data.String()
-				}
+			if (internalTypeName == ard.TypeString) && self.Context.HasQuirk(tosca.QuirkDataTypesStringPermissive) {
+				self.Context.Data = ard.ValueToString(self.Context.Data)
 			}
 
 			// Primitive types
@@ -169,13 +146,13 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 				// Render list and map elements according to entry schema
 				// (The entry schema may also have additional constraints)
 				switch internalTypeName {
-				case "!!seq", "!!map":
+				case ard.TypeList, ard.TypeMap:
 					if (definition == nil) || (definition.EntrySchema == nil) || (definition.EntrySchema.DataType == nil) {
 						// This problem is reported in AttributeDefinition.Render
 						return
 					}
 
-					if internalTypeName == "!!seq" {
+					if internalTypeName == ard.TypeList {
 						// Information
 						entryDataType := definition.EntrySchema.DataType
 						entryConstraints := definition.EntrySchema.GetConstraints()
@@ -193,7 +170,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 						}
 
 						self.Context.Data = valueList
-					} else { // "!!map"
+					} else { // ard.TypeMap
 						if definition.KeySchema == nil {
 							// This problem is reported in AttributeDefinition.Complete
 							return
@@ -246,7 +223,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 				panic(fmt.Sprintf("type has \"puccini.comparer\" metadata but does not support HasComparer interface: %T", self.Context.Data))
 			}
 		}
-	} else if self.Context.ValidateType("!!map") {
+	} else if self.Context.ValidateType(ard.TypeMap) {
 		// Complex data types
 
 		map_ := self.Context.Data.(ard.Map)

@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -38,11 +39,11 @@ type Version struct {
 func ReadVersion(context *tosca.Context) tosca.EntityPtr {
 	var self Version
 
-	if context.Is("!!str") {
+	if context.Is(ard.TypeString) {
 		self.OriginalString = *context.ReadString()
 		self.CanonicalString = self.OriginalString
 	} else if context.HasQuirk(tosca.QuirkDataTypesStringPermissive) {
-		if context.Is("!!float") {
+		if context.Is(ard.TypeFloat) {
 			value := *context.ReadFloat()
 			self.OriginalString = strconv.FormatFloat(value, 'g', -1, 64)
 			if strings.Index(self.CanonicalString, "e") == -1 {
@@ -53,17 +54,17 @@ func ReadVersion(context *tosca.Context) tosca.EntityPtr {
 				// Assume minor version is 0
 				self.CanonicalString += ".0"
 			}
-		} else if context.Is("!!int") {
+		} else if context.Is(ard.TypeInteger) {
 			value := *context.ReadInteger()
 			// Assume minor version is 0
 			self.OriginalString = strconv.FormatInt(value, 10) + ".0"
 			self.CanonicalString = self.OriginalString
 		} else {
-			context.ReportValueWrongType("!!str", "!!float", "!!int")
+			context.ReportValueWrongType(ard.TypeString, ard.TypeFloat, ard.TypeInteger)
 			return &self
 		}
 	} else {
-		context.ReportValueWrongType("!!str")
+		context.ReportValueWrongType(ard.TypeString)
 		return &self
 	}
 

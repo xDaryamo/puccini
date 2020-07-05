@@ -1,6 +1,7 @@
 package tosca_v1_3
 
 import (
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -24,7 +25,7 @@ func NewConditionClause(context *tosca.Context) *ConditionClause {
 func ReadConditionClause(context *tosca.Context) tosca.EntityPtr {
 	self := NewConditionClause(context)
 
-	if context.ValidateType("!!map") {
+	if context.ValidateType(ard.TypeMap) {
 		for _, childContext := range context.FieldChildren() {
 			if !self.readField(childContext) {
 				childContext.ReportFieldUnsupported()

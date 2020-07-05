@@ -43,13 +43,13 @@ func ReadTriggerDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewTriggerDefinition(context)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "action"))
 
-	if context.Is("!!map") {
+	if context.Is(ard.TypeMap) {
 		map_ := context.Data.(ard.Map)
 		childContext := context.FieldChild("action", nil)
 		var ok bool
 		if childContext.Data, ok = map_["action"]; ok {
-			if childContext.ValidateType("!!map", "!!str") {
-				if childContext.Is("!!map") {
+			if childContext.ValidateType(ard.TypeMap, ard.TypeString) {
+				if childContext.Is(ard.TypeMap) {
 					// Note that OperationDefinition can also be a string, but there is no way
 					// for us to differentiate between that and a workflow ID, so we support only
 					// the long notation

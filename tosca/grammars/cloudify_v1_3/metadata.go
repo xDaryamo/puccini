@@ -19,7 +19,7 @@ type Metadata map[string]ard.Value
 func ReadMetadata(context *tosca.Context) tosca.EntityPtr {
 	var self map[string]ard.Value
 
-	if context.ValidateType("!!map") {
+	if context.ValidateType(ard.TypeMap) {
 		metadata := context.ReadStringMap()
 		if metadata != nil {
 			self = *metadata
@@ -33,14 +33,14 @@ func ReadMetadata(context *tosca.Context) tosca.EntityPtr {
 					context.ImportScriptlet(key[25:], v)
 					delete(self, key)
 				} else {
-					context.MapChild(key, value).ReportValueWrongType("!!str")
+					context.MapChild(key, value).ReportValueWrongType(ard.TypeString)
 				}
 			} else if strings.HasPrefix(key, "puccini.scriptlet:") {
 				if v, ok := value.(string); ok {
 					context.EmbedScriptlet(key[18:], v)
 					delete(self, key)
 				} else {
-					context.MapChild(key, value).ReportValueWrongType("!!str")
+					context.MapChild(key, value).ReportValueWrongType(ard.TypeString)
 				}
 			}
 		}

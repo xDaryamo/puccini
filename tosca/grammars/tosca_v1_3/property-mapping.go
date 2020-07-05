@@ -1,6 +1,7 @@
 package tosca_v1_3
 
 import (
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -29,7 +30,7 @@ func NewPropertyMapping(context *tosca.Context) *PropertyMapping {
 // tosca.Reader signature
 func ReadPropertyMapping(context *tosca.Context) tosca.EntityPtr {
 	self := NewPropertyMapping(context)
-	if context.ValidateType("!!seq") {
+	if context.ValidateType(ard.TypeList) {
 		strings := context.ReadStringListFixed(2)
 		if strings != nil {
 			self.NodeTemplateName = &(*strings)[0]

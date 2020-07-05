@@ -5,7 +5,6 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/common/reflection"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/csar"
@@ -52,7 +51,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 
 	// Read ARD
 	var err error
-	if toscaContext.Data, toscaContext.Locator, err = ard.ReadFromURL(toscaContext.URL, true); err != nil {
+	if toscaContext.Data, toscaContext.Locator, err = urlpkg.ReadARD(toscaContext.URL, true); err != nil {
 		if decodeError, ok := err.(*yamlkeys.DecodeError); ok {
 			err = NewYAMLDecodeError(decodeError)
 		}

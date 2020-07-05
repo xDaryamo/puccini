@@ -8,8 +8,16 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
+
+var ScalarUnitTypeZeroes = map[ard.TypeName]ard.Value{
+	"scalar-unit.size":      int(0),
+	"scalar-unit.time":      float64(0.0),
+	"scalar-unit.frequency": float64(0.0),
+	"scalar-unit.bitrate":   float64(0.0),
+}
 
 //
 // ScalarUnit
@@ -35,7 +43,7 @@ func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, c
 		canonicalUnitPlural:   canonicalUnitPlural,
 	}
 
-	if !context.ValidateType("!!str") {
+	if !context.ValidateType(ard.TypeString) {
 		return &self
 	}
 

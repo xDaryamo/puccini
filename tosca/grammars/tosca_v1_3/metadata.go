@@ -3,6 +3,7 @@ package tosca_v1_3
 import (
 	"strings"
 
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -16,7 +17,7 @@ type Metadata map[string]string
 func ReadMetadata(context *tosca.Context) tosca.EntityPtr {
 	var self Metadata
 
-	if context.Is("!!map") {
+	if context.Is(ard.TypeMap) {
 		metadata := context.ReadStringStringMap()
 		if metadata != nil {
 			self = *metadata

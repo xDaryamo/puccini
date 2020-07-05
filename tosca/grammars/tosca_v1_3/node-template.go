@@ -62,13 +62,13 @@ func (self *NodeTemplate) PreRead() {
 
 // parser.Renderable interface
 func (self *NodeTemplate) Render() {
+	log.Debugf("{render} node template: %s", self.Name)
+
 	if self.rendered {
 		// Avoid rendering more than once (can happen if we were called from PropertyMapping etc. Render)
 		return
 	}
 	self.rendered = true
-
-	log.Debugf("{render} node template: %s", self.Name)
 
 	if self.NodeType == nil {
 		return

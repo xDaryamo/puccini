@@ -5,75 +5,83 @@ import (
 	"time"
 )
 
-type Value = interface{}
+//
+// TypeName
+//
 
-// Note: This is just a convenient alias, *not* a type. An extra type would ensure more strictness but
-// would make life more complicated than it needs to be. That said, if we *do* want to make this into a
-// type, we need to make sure not to add any methods to the type, otherwise the goja JavaScript engine
-// will treat it as a host object instead of a regular JavaScript dict object.
-type List = []Value
+type TypeName string
 
-// Note: This is just a convenient alias, *not* a type. An extra type would ensure more strictness but
-// would make life more complicated than it needs to be. That said, if we *do* want to make this into a
-// type, we need to make sure not to add any methods to the type, otherwise the goja JavaScript engine
-// will treat it as a host object instead of a regular JavaScript dict object.
-type Map = map[Value]Value
+const (
+	NoType TypeName = ""
 
-type StringMap = map[string]Value
-
-// We will use YAML schema names:
-// https://yaml.org/spec/1.2/spec.html#Schema
-
-type TypeValidator = func(Value) bool
-
-var TypeValidators = map[string]TypeValidator{
 	// Failsafe schema: https://yaml.org/spec/1.2/spec.html#id2802346
-	"!!map": IsMap,
-	"!!seq": IsList,
-	"!!str": IsString,
+	TypeMap    TypeName = "ard.map"
+	TypeList   TypeName = "ard.list"
+	TypeString TypeName = "ard.string"
 
 	// JSON schema: https://yaml.org/spec/1.2/spec.html#id2803231
-	"!!bool":  IsBool,
-	"!!int":   IsInteger,
-	"!!float": IsFloat,
+	TypeBoolean TypeName = "ard.boolean"
+	TypeInteger TypeName = "ard.integer"
+	TypeFloat   TypeName = "ard.float"
 
 	// Other schemas: https://yaml.org/spec/1.2/spec.html#id2805770
-	"!!null":      IsNull,
-	"!!timestamp": IsTime,
-}
+	TypeNull      TypeName = "ard.null"
+	TypeTimestamp TypeName = "ard.timestamp"
+)
 
-func TypeName(value Value) string {
+func GetTypeName(value Value) TypeName {
 	switch value.(type) {
 	case Map:
-		return "!!map"
+		return TypeMap
 	case List:
-		return "!!seq"
+		return TypeList
 	case string:
-		return "!!str"
+		return TypeString
 	case bool:
-		return "!!bool"
-	case int64, int32, int16, int8, int:
-		return "!!int"
+		return TypeBoolean
+	case int64, int32, int16, int8, int, uint64, uint32, uint16, uint8, uint:
+		return TypeInteger
 	case float64, float32:
-		return "!!float"
+		return TypeFloat
 	case nil:
-		return "!!null"
+		return TypeNull
 	case time.Time:
-		return "!!timestamp"
+		return TypeTimestamp
 	default:
-		return fmt.Sprintf("%T", value)
+		return TypeName(fmt.Sprintf("%T", value))
 	}
 }
 
-var TypeZeroes = map[string]Value{
-	"!!map":       make(Map),
-	"!!seq":       List{},
-	"!!str":       "",
-	"!!bool":      false,
-	"!!int":       int(0),       // YAML parser returns int
-	"!!float":     float64(0.0), // YAML parser returns float64
-	"!!null":      nil,
-	"!!timestamp": time.Time{}, // YAML parser returns time.Time
+//
+// TypeZeroes
+//
+
+var TypeZeroes = map[TypeName]Value{
+	TypeMap:       make(Map),
+	TypeList:      List{},
+	TypeString:    "",
+	TypeBoolean:   false,
+	TypeInteger:   int(0),       // YAML parser returns int
+	TypeFloat:     float64(0.0), // YAML parser returns float64
+	TypeNull:      nil,
+	TypeTimestamp: time.Time{}, // YAML parser returns time.Time
+}
+
+//
+// TypeValidator
+//
+
+type TypeValidator = func(Value) bool
+
+var TypeValidators = map[TypeName]TypeValidator{
+	TypeMap:       IsMap,
+	TypeList:      IsList,
+	TypeString:    IsString,
+	TypeBoolean:   IsBoolean,
+	TypeInteger:   IsInteger,
+	TypeFloat:     IsFloat,
+	TypeNull:      IsNull,
+	TypeTimestamp: IsTimestamp,
 }
 
 // Map = map[interface{}]interface{}
@@ -95,7 +103,7 @@ func IsString(value Value) bool {
 }
 
 // bool
-func IsBool(value Value) bool {
+func IsBoolean(value Value) bool {
 	_, ok := value.(bool)
 	return ok
 }
@@ -123,7 +131,7 @@ func IsNull(value Value) bool {
 }
 
 // time.Time
-func IsTime(value Value) bool {
+func IsTimestamp(value Value) bool {
 	_, ok := value.(time.Time)
 	return ok
 }

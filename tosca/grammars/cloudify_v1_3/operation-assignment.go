@@ -1,6 +1,7 @@
 package cloudify_v1_3
 
 import (
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
@@ -34,10 +35,10 @@ func NewOperationAssignment(context *tosca.Context) *OperationAssignment {
 func ReadOperationAssignment(context *tosca.Context) tosca.EntityPtr {
 	self := NewOperationAssignment(context)
 
-	if context.Is("!!map") {
+	if context.Is(ard.TypeMap) {
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
-	} else if context.ValidateType("!!map", "!!str") {
+	} else if context.ValidateType(ard.TypeMap, ard.TypeString) {
 		// Short notation
 		self.Implementation = context.FieldChild("implementation", context.Data).ReadString()
 	}

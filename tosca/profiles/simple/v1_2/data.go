@@ -19,23 +19,23 @@ data_types:
 
   boolean:
     metadata:
-      puccini.type: '!!bool'
+      puccini.type: ard.boolean
 
   integer:
     metadata:
-      puccini.type: '!!int'
+      puccini.type: ard.integer
 
   float:
     metadata:
-      puccini.type: '!!float'
+      puccini.type: ard.float
 
   string:
     metadata:
-      puccini.type: '!!str'
+      puccini.type: ard.string
 
   'null':
     metadata:
-      puccini.type: '!!null'
+      puccini.type: ard.null
 
   timestamp:
     metadata:
@@ -90,13 +90,13 @@ data_types:
 
   list:
     metadata:
-      puccini.type: '!!seq'
+      puccini.type: ard.list
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 3.2.4
 
   map:
     metadata:
-      puccini.type: '!!map'
+      puccini.type: ard.map
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 3.2.5
 

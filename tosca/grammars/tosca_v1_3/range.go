@@ -25,7 +25,7 @@ type Range struct {
 func ReadRange(context *tosca.Context) tosca.EntityPtr {
 	var self Range
 
-	if !context.ValidateType("!!seq") {
+	if !context.ValidateType(ard.TypeList) {
 		return &self
 	}
 
@@ -37,7 +37,7 @@ func ReadRange(context *tosca.Context) tosca.EntityPtr {
 
 	lowerContext := context.ListChild(0, list[0])
 	lowerOk := false
-	if lowerContext.ValidateType("!!int") {
+	if lowerContext.ValidateType(ard.TypeInteger) {
 		lowerInt := *lowerContext.ReadInteger()
 		if lowerInt < 0 {
 			context.ReportValueMalformed("range", "lower bound negative")
@@ -49,8 +49,8 @@ func ReadRange(context *tosca.Context) tosca.EntityPtr {
 
 	upperContext := context.ListChild(1, list[1])
 	upperOk := false
-	if upperContext.ValidateType("!!int", "!!str") {
-		if upperContext.Is("!!int") {
+	if upperContext.ValidateType(ard.TypeInteger, ard.TypeString) {
+		if upperContext.Is(ard.TypeInteger) {
 			upperInt := *upperContext.ReadInteger()
 			if upperInt < 0 {
 				context.ReportValueMalformed("range", "upper bound negative")

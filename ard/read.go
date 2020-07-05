@@ -5,19 +5,9 @@ import (
 	"fmt"
 	"io"
 
-	urlpkg "github.com/tliron/puccini/url"
 	"github.com/tliron/yamlkeys"
 	"gopkg.in/yaml.v3"
 )
-
-func ReadFromURL(url urlpkg.URL, locate bool) (Map, Locator, error) {
-	if reader, err := url.Open(); err == nil {
-		defer reader.Close()
-		return Read(reader, url.Format(), locate)
-	} else {
-		return nil, nil, err
-	}
-}
 
 func Read(reader io.Reader, format string, locate bool) (Map, Locator, error) {
 	switch format {

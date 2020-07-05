@@ -63,7 +63,7 @@ func (self *TopologyTemplate) SetInputs(inputs map[string]ard.Value) {
 		if definition, ok := self.InputParameterDefinitions[name]; ok {
 			if definition.DataType != nil {
 				if internalTypeName, ok := definition.DataType.GetInternalTypeName(); ok {
-					if internalTypeName == "!!int" {
+					if internalTypeName == ard.TypeInteger {
 						// In JSON, everything is a float
 						// But we want to support inputs coming from JSON
 						// So we'll auto-convert

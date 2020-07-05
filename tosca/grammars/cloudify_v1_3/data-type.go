@@ -64,39 +64,40 @@ func (self *DataType) Render() {
 
 	if internalTypeName, ok := self.GetInternalTypeName(); ok {
 		if _, ok := ard.TypeValidators[internalTypeName]; !ok {
-			if _, ok := self.Context.Grammar.Readers[internalTypeName]; !ok {
+			if _, ok := self.Context.Grammar.Readers[string(internalTypeName)]; !ok {
 				self.Context.ReportUnsupportedType()
 			}
 		}
 	}
 }
-func (self *DataType) GetInternalTypeName() (string, bool) {
+func (self *DataType) GetInternalTypeName() (ard.TypeName, bool) {
 	switch self.Name {
 	case "boolean":
-		return "!!bool", true
+		return ard.TypeBoolean, true
 	case "integer":
-		return "!!int", true
+		return ard.TypeInteger, true
 	case "float":
-		return "!!float", true
+		return ard.TypeFloat, true
 	case "string":
-		return "!!str", true
+		return ard.TypeString, true
 	case "list":
-		return "!!seq", true
+		return ard.TypeList, true
 	case "dict":
-		return "!!map", true
+		return ard.TypeMap, true
+	default:
+		return ard.NoType, false
 	}
-	return "", false
 }
 
-func (self *DataType) GetInternal() (string, ard.TypeValidator, tosca.Reader, bool) {
+func (self *DataType) GetInternal() (ard.TypeName, ard.TypeValidator, tosca.Reader, bool) {
 	if internalTypeName, ok := self.GetInternalTypeName(); ok {
 		if typeValidator, ok := ard.TypeValidators[internalTypeName]; ok {
 			return internalTypeName, typeValidator, nil, true
-		} else if reader, ok := self.Context.Grammar.Readers[internalTypeName]; ok {
+		} else if reader, ok := self.Context.Grammar.Readers[string(internalTypeName)]; ok {
 			return internalTypeName, nil, reader, true
 		}
 	}
-	return "", nil, nil, false
+	return ard.NoType, nil, nil, false
 }
 
 func (self *DataType) GetTypeInformation() *normal.TypeInformation {

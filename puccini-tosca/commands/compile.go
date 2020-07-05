@@ -97,7 +97,7 @@ func Exec(scriptletName string, arguments map[string]string, clout *cloutpkg.Clo
 		url, err := urlpkg.NewValidURL(scriptletName, nil, urlContext)
 		common.FailOnError(err)
 
-		scriptlet, err = urlpkg.ReadToString(url)
+		scriptlet, err = urlpkg.ReadString(url)
 		common.FailOnError(err)
 
 		err = js.SetScriptlet(exec, js.CleanupScriptlet(scriptlet), clout)

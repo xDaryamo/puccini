@@ -8,7 +8,7 @@ import (
 )
 
 func (self *Context) ValidateUnsupportedFields(keys []string) {
-	if !self.Is("!!map") {
+	if !self.Is(ard.TypeMap) {
 		return
 	}
 	for key := range self.Data.(ard.Map) {
@@ -25,7 +25,7 @@ func (self *Context) ValidateUnsupportedFields(keys []string) {
 	}
 }
 
-func (self *Context) ValidateType(requiredTypeNames ...string) bool {
+func (self *Context) ValidateType(requiredTypeNames ...ard.TypeName) bool {
 	is := self.Is(requiredTypeNames...)
 	if !is {
 		self.ReportValueWrongType(requiredTypeNames...)

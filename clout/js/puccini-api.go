@@ -71,7 +71,7 @@ func (self *PucciniAPI) IsType(value ard.Value, type_ string) (bool, error) {
 		return true, nil
 	}
 
-	if validate, ok := ard.TypeValidators[type_]; ok {
+	if validate, ok := ard.TypeValidators[ard.TypeName(type_)]; ok {
 		return validate(value), nil
 	} else {
 		return false, fmt.Errorf("unsupported type: %s", type_)
@@ -174,7 +174,7 @@ func (self *PucciniAPI) Download(sourceUrl string, targetPath string) error {
 
 func (self *PucciniAPI) LoadString(url string) (string, error) {
 	if url_, err := urlpkg.NewValidURL(url, nil, self.context.URLContext); err == nil {
-		return urlpkg.ReadToString(url_)
+		return urlpkg.ReadString(url_)
 	} else {
 		return "", err
 	}

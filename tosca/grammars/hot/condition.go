@@ -30,7 +30,7 @@ func NewCondition(context *tosca.Context) *Condition {
 func ReadCondition(context *tosca.Context) tosca.EntityPtr {
 	self := NewCondition(context)
 
-	if context.Is("!!map") {
+	if context.Is(ard.TypeMap) {
 		map_ := context.Data.(ard.Map)
 		if len(map_) != 1 {
 			context.ReportValueMalformed("condition", "map length not 1")
@@ -59,9 +59,9 @@ func ReadCondition(context *tosca.Context) tosca.EntityPtr {
 			// We have only one key
 			break
 		}
-	} else if context.Is("!!str") {
+	} else if context.Is(ard.TypeString) {
 		self.DefinitionName = context.ReadString()
-	} else if context.ValidateType("!!map", "!!str", "!!bool") {
+	} else if context.ValidateType(ard.TypeMap, ard.TypeString, ard.TypeBoolean) {
 		self.Value = context.ReadBoolean()
 	}
 

@@ -131,7 +131,7 @@ func (self *Context) GetLocation() (int, int) {
 	return -1, -1
 }
 
-func (self *Context) Is(typeNames ...string) bool {
+func (self *Context) Is(typeNames ...ard.TypeName) bool {
 	for _, typeName := range typeNames {
 		if typeValidator, ok := ard.TypeValidators[typeName]; ok {
 			if typeValidator(self.Data) {
@@ -186,7 +186,7 @@ func (self *Context) FieldChild(name ard.Value, data ard.Value) *Context {
 }
 
 func (self *Context) GetFieldChild(name string) (*Context, bool) {
-	if self.ValidateType("!!map") {
+	if self.ValidateType(ard.TypeMap) {
 		if data, ok := self.Data.(ard.Map)[name]; ok {
 			return self.FieldChild(name, data), true
 		}

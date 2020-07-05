@@ -56,7 +56,7 @@ func (self *Value) Normalize() normal.Constrainable {
 		for key, value := range data {
 			if _, ok := key.(string); !ok {
 				// HOT does not support complex keys
-				self.Context.MapChild(key, yamlkeys.KeyData(key)).ReportValueWrongType("!!str")
+				self.Context.MapChild(key, yamlkeys.KeyData(key)).ReportValueWrongType(ard.TypeString)
 			}
 			name := yamlkeys.KeyString(key)
 			normalMap.Put(name, NewValue(self.Context.MapChild(name, value)).Normalize())

@@ -1,6 +1,8 @@
 package cloudify_v1_3
 
 import (
+	"fmt"
+
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
@@ -83,7 +85,9 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 			if self.Context.Data == nil {
 				// Nil data only happens when a parameter is added despite not having a
 				// "default" value; we will give it a valid zero value instead
-				self.Context.Data = ard.TypeZeroes[internalTypeName]
+				if self.Context.Data, ok = ard.TypeZeroes[internalTypeName]; !ok {
+					panic(fmt.Sprintf("unsupported internal type name: %s", internalTypeName))
+				}
 			}
 
 			// Primitive types
@@ -94,7 +98,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 			// Special types
 			self.Context.Data = reader(self.Context)
 		}
-	} else if self.Context.ValidateType("!!map") {
+	} else if self.Context.ValidateType(ard.TypeMap) {
 		// Complex data types
 
 		map_ := self.Context.Data.(ard.Map)
@@ -149,7 +153,7 @@ func (self *Value) normalize(withInformation bool) normal.Constrainable {
 		for key, value := range data {
 			if _, ok := key.(string); !ok {
 				// Cloudify DSL does not support complex keys
-				self.Context.MapChild(key, yamlkeys.KeyData(key)).ReportValueWrongType("!!str")
+				self.Context.MapChild(key, yamlkeys.KeyData(key)).ReportValueWrongType(ard.TypeString)
 			}
 			name := yamlkeys.KeyString(key)
 			normalMap.Put(name, NewValue(self.Context.MapChild(name, value)).normalize(false))

@@ -4,17 +4,16 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/op/go-logging"
 	"github.com/tebeka/atexit"
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/common"
 )
 
 var log = logging.MustGetLogger("puccini.url")
 
-func ReadToString(url URL) (string, error) {
+func ReadString(url URL) (string, error) {
 	if reader, err := url.Open(); err == nil {
 		defer reader.Close()
 		buffer, err := ioutil.ReadAll(reader)
@@ -24,39 +23,19 @@ func ReadToString(url URL) (string, error) {
 	}
 }
 
-func ReaderSize(reader io.Reader) (int64, error) {
-	var size int64 = 0
-
-	buffer := make([]byte, 1024)
-	for {
-		if count, err := reader.Read(buffer); err == nil {
-			size += int64(count)
-		} else if err == io.EOF {
-			break
-		} else {
-			return 0, err
-		}
+func ReadARD(url URL, locate bool) (ard.Map, ard.Locator, error) {
+	if reader, err := url.Open(); err == nil {
+		defer reader.Close()
+		return ard.Read(reader, url.Format(), locate)
+	} else {
+		return nil, nil, err
 	}
-
-	return size, nil
-}
-
-func GetFormat(path string) string {
-	extension := filepath.Ext(path)
-	if extension == "" {
-		return ""
-	}
-	extension = strings.ToLower(extension[1:])
-	if extension == "yml" {
-		extension = "yaml"
-	}
-	return extension
 }
 
 func Size(url URL) (int64, error) {
 	if reader, err := url.Open(); err == nil {
 		defer reader.Close()
-		return ReaderSize(reader)
+		return common.ReaderSize(reader)
 	} else {
 		return 0, err
 	}
@@ -103,18 +82,5 @@ func Download(url URL, temporaryPathPattern string) (*os.File, error) {
 		}
 	} else {
 		return nil, err
-	}
-}
-
-func DeleteTemporaryFile(path string) error {
-	if err := os.Remove(path); err == nil {
-		log.Infof("deleted temporary file %q", path)
-		return nil
-	} else if os.IsNotExist(err) {
-		log.Infof("temporary file already deleted %q", path)
-		return nil
-	} else {
-		log.Errorf("could not delete temporary file %q: %s", path, err.Error())
-		return err
 	}
 }

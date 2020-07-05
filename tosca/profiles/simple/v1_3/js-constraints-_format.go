@@ -8,7 +8,7 @@ func init() {
 function validate(v, format) {
 	if (arguments.length !== 2)
 		throw 'must have 1 argument';
-	if (!puccini.isType(v, '!!str'))
+	if (!puccini.isType(v, 'ard.string'))
 		return 'not a string';
 	try {
 		puccini.validateFormat(v, format);

@@ -3,6 +3,7 @@ package tosca_v1_3
 import (
 	"fmt"
 
+	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
@@ -42,10 +43,10 @@ func NewRequirementAssignment(context *tosca.Context) *RequirementAssignment {
 func ReadRequirementAssignment(context *tosca.Context) tosca.EntityPtr {
 	self := NewRequirementAssignment(context)
 
-	if context.Is("!!map") {
+	if context.Is(ard.TypeMap) {
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
-	} else if context.ValidateType("!!map", "!!str") {
+	} else if context.ValidateType(ard.TypeMap, ard.TypeString) {
 		// Short notation
 		self.TargetNodeTemplateNameOrTypeName = context.FieldChild("node", context.Data).ReadString()
 	}
