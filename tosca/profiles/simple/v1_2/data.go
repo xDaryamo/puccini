@@ -50,13 +50,13 @@ data_types:
       puccini.type: version
       puccini.comparer: tosca.comparer.version
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
-      specification.location: 3.2.2
+      specification.location: 3.3.2
 
   range:
     metadata:
       puccini.type: range
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
-      specification.location: 3.2.3
+      specification.location: 3.3.3
 
   tosca.datatypes.json:
     metadata:
@@ -92,13 +92,13 @@ data_types:
     metadata:
       puccini.type: ard.list
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
-      specification.location: 3.2.4
+      specification.location: 3.3.4
 
   map:
     metadata:
       puccini.type: ard.map
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
-      specification.location: 3.2.5
+      specification.location: 3.3.5
 
   #
   # Scalar
@@ -108,19 +108,19 @@ data_types:
     metadata:
       puccini.type: scalar-unit.size
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
-      specification.location: 3.2.6.4
+      specification.location: 3.3.6.4
 
   scalar-unit.time:
     metadata:
       puccini.type: scalar-unit.time
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
-      specification.location: 3.2.6.5
+      specification.location: 3.3.6.5
 
   scalar-unit.frequency:
     metadata:
       puccini.type: scalar-unit.frequency
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
-      specification.location: 3.2.6.6
+      specification.location: 3.3.6.6
 
   #
   # Complex
