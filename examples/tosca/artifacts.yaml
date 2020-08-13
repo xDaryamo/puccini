@@ -13,7 +13,7 @@ metadata:
 repositories:
 
   centos:
-    url: https://cloud.centos.org/centos/7/images/
+    url: https://cloud.centos.org/centos/8/x86_64/images/
     credential:
       user: puccini
       token: puccini123
@@ -46,7 +46,7 @@ node_types:
         # Without a repository, path is relative to this file's location, even if it's within a CSAR
         repository: centos
         # The extension must match our definition at the artifact type
-        file: CentOS-7-x86_64-GenericCloud-1804_02.qcow2
+        file: CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2
         properties:
           os: CentOS
           version: '7.0'

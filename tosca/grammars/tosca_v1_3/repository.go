@@ -56,11 +56,9 @@ func (self *Repository) GetURL() urlpkg.URL {
 	defer self.lock.Unlock()
 
 	if (self.url == nil) && (self.URL != nil) {
-		var err error
 		origin := self.Context.URL.Origin()
-		origins := []urlpkg.URL{origin}
-		self.url, err = urlpkg.NewValidURL(*self.URL, origins, origin.Context())
-		if err != nil {
+		var err error
+		if self.url, err = urlpkg.NewURL(*self.URL, origin.Context()); err != nil {
 			// Avoid reporting more than once
 			if !self.urlProblemReported {
 				self.Context.ReportError(err)
@@ -69,7 +67,7 @@ func (self *Repository) GetURL() urlpkg.URL {
 		}
 	}
 
-	return self.url
+	return nil
 }
 
 //

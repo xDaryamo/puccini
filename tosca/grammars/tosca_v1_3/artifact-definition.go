@@ -1,6 +1,7 @@
 package tosca_v1_3
 
 import (
+	//"fmt"
 	"strings"
 	"sync"
 
@@ -82,11 +83,10 @@ func (self *ArtifactDefinition) GetURL() urlpkg.URL {
 				self.url = url.Relative(*self.File)
 			}
 		} else {
-			var err error
 			origin := self.Context.URL.Origin()
 			origins := []urlpkg.URL{origin}
-			self.url, err = urlpkg.NewValidURL(*self.File, origins, origin.Context())
-			if err != nil {
+			var err error
+			if self.url, err = urlpkg.NewValidURL(*self.File, origins, origin.Context()); err != nil {
 				// Avoid reporting more than once
 				if !self.urlProblemReported {
 					self.Context.ReportError(err)

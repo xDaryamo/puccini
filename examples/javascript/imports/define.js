@@ -17,7 +17,7 @@ function evaluate(input) {
 }
 
 // The "clout.define" API accepts the scriptlet source code as text
-// So our little trick here is to define the function above and then "stringify" it here
+// So our little trick is to define the function above and then "stringify" it here
 clout.define('tosca.function.get_input', "clout.exec('tosca.lib.utils');\n" + evaluate);
 
 tosca.coerce();
