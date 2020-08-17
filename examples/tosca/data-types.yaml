@@ -55,9 +55,7 @@ node_types:
         type: scalar-unit.frequency
       scalar_unit_bitrate:
         type: scalar-unit.bitrate
-      timestamp1:
-        type: timestamp
-      timestamp2:
+      timestamp:
         type: timestamp
       version:
         type: version
@@ -213,13 +211,15 @@ topology_template:
         # Gibps, Mibps, etc. are also supported for multiples of 1024
         scalar_unit_bitrate: 1.23 KiBps
 
-        # "timestamp" follows YAML 1.1's format, which is a subset of ISO8601:
-        # http://yaml.org/type/timestamp.html
-        timestamp1: '1975-09-15 12:34:56.7 +2'
+        # "timestamp" is a string formatted according to ISO 8601:
+        timestamp: '1975-09-15 12:34:56.7 +2'
 
-        # Note that you can also use the YAML timestamp type directly:
+        # Note that some YAML environments may support a !!timestamp type:
+        # http://yaml.org/type/timestamp.html
+        # Normally Puccini will not allow it, but it could be enabled via a quirk:
+        # puccini-tosca compile --quirk=data_types.string.permissive
         # (In this case the YAML parser parses the timestamp, not Puccini's TOSCA parser)
-        timestamp2: !!timestamp 1975-09-15t12:34:56.7+02:00
+        #timestamp: !!timestamp 1975-09-15t12:34:56.7+02:00
 
         # The version structure in TOSCA is very specific and might not fit your needs
         # This example has all fields: major.minor.fix.qualifier-build

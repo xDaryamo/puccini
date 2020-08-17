@@ -162,8 +162,8 @@ func ReadTimestamp(context *tosca.Context) tosca.EntityPtr {
 		if !valid {
 			return &self
 		}
-	} else if context.Is(ard.TypeTimestamp) {
-		// Note: OriginalString will be empty because it is not preserved by our parsing methods
+	} else if context.HasQuirk(tosca.QuirkDataTypesTimestampPermissive) && context.Is(ard.TypeTimestamp) {
+		// Note: OriginalString will be empty because it is not preserved by our YAML parser
 		time := context.Data.(time.Time)
 		_, tzSeconds := time.Zone()
 
@@ -183,7 +183,11 @@ func ReadTimestamp(context *tosca.Context) tosca.EntityPtr {
 		self.TZHour = uint32(tzSeconds / 3600)
 		self.TZMinute = uint32((tzSeconds % 3600) / 60)
 	} else {
-		context.ReportValueWrongType(ard.TypeString, ard.TypeTimestamp)
+		if context.HasQuirk(tosca.QuirkDataTypesTimestampPermissive) {
+			context.ReportValueWrongType(ard.TypeString, ard.TypeTimestamp)
+		} else {
+			context.ReportValueWrongType(ard.TypeString)
+		}
 		return &self
 	}
 

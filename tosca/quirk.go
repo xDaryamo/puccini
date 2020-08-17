@@ -18,9 +18,15 @@ const QuirkImportsPermissive Quirk = "imports.permissive"
 // and will consider integers, floats, and boolean values to be problems. This quirk will accept
 // such values and convert them as sensibly as possible to strings. This includes accepting floats
 // and integers for the TOSCA "version" primitive type. Note that string conversions may very well
-// *not* be identical to the YAML source code. For example, `1.0000` in YAML (a float) would become
+// *not* be identical to the literal YAML. For example, `1.0000` in YAML (a float) would become
 // the string `1` in TOSCA.
 const QuirkDataTypesStringPermissive Quirk = "data_types.string.permissive"
+
+// By default Puccini requires all "timestamp" values to be
+// specified as strings in the ISO 8601 format. However, some YAML environments may support the
+// optional !!timestamp type. This quirk will allow such values. Note that such values will not have
+// the "$originalString" key, because the literal YAML is not preserved by the YAML parser.
+const QuirkDataTypesTimestampPermissive Quirk = "data_types.timestamp.permissive"
 
 // This will ignore any type that is has the "puccini.normative: 'true'" metadata.
 const QuirkNamespaceNormativeIgnore Quirk = "namespace.normative.ignore"

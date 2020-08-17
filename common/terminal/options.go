@@ -1,6 +1,7 @@
 package terminal
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -26,9 +27,7 @@ func ColoredOptions(options []string, colorizer Colorizer) string {
 	var writer strings.Builder
 	penultimate := len(options) - 2
 	for index, option := range options {
-		writer.WriteString("\"")
-		writer.WriteString(colorizer(option))
-		writer.WriteString("\"")
+		writer.WriteString(colorizer(fmt.Sprintf("%q", option)))
 		if index == penultimate {
 			if penultimate > 0 {
 				writer.WriteString(", or ")

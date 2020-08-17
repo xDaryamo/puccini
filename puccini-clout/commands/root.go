@@ -21,7 +21,7 @@ func init() {
 	rootCommand.PersistentFlags().StringVarP(&format, "format", "f", "", "force output format (\"yaml\", \"json\", or \"xml\")")
 	rootCommand.PersistentFlags().StringVarP(&colorize, "colorize", "z", "true", "colorize output (boolean or \"force\")")
 	rootCommand.PersistentFlags().BoolVarP(&strict, "strict", "y", false, "strict output (for \"YAML\" format only)")
-	rootCommand.PersistentFlags().BoolVarP(&timestamps, "timestamps", "w", true, "allow timestamps (for \"YAML\" format only)")
+	rootCommand.PersistentFlags().BoolVarP(&timestamps, "timestamps", "w", false, "use !!timestamp type (for \"YAML\" format)")
 	rootCommand.PersistentFlags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
 }
 
