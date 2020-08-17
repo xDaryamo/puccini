@@ -7,7 +7,7 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 "$HERE/build-wasm"
 
 if ! command -v node > /dev/null 2>&1; then
-	echo 'Node.js must be installed'
+	m 'Node.js must be installed' "$RED"
 	exit 1
 fi
 

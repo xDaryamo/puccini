@@ -19,7 +19,7 @@ function build () {
 			-X '$MODULE/version.GitRevision=$REVISION' \
 			-X '$MODULE/version.Timestamp=$TIMESTAMP'"
 	popd > /dev/null
-	echo "built $WASM"
+	m "built $WASM"
 }
 
 build puccini-tosca

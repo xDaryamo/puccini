@@ -3,6 +3,7 @@ set -e
 
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 ROOT=$(readlink --canonicalize "$HERE/..")
+. "$HERE/_env"
 
 function header () {
 	local DEST=$1
@@ -57,7 +58,7 @@ EOT
 EOT
 	done
 
-	echo "embedded in $DEST_DIR"
+	m "embedded in $DEST_DIR"
 }
 
 profile tosca/profiles/common tosca/common 1.0

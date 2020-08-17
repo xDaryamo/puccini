@@ -8,7 +8,7 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 
 # -count=1 is the idiomatic way to disable test caching
 
-echo 'testing...'
+m 'testing...'
 
 ROOT=$ROOT \
 go test -count=1 -timeout=10s "$MODULE/puccini-tosca" "$@"

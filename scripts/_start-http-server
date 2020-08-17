@@ -6,7 +6,7 @@ popd > /dev/null
 
 sleep 1
 if ! kill -0 "$HTTP_SERVER_PID" 2> /dev/null; then
-	echo 'Cannot start web server'
+	m 'Cannot start web server' "$RED"
 	exit 1
 fi
 
