@@ -10,6 +10,7 @@ import (
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_1"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_2"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 	_ "github.com/tliron/puccini/tosca/profiles"
 )
 
@@ -18,6 +19,7 @@ func init() {
 	initGrammar(&tosca_v1_1.Grammar)
 	initGrammar(&tosca_v1_2.Grammar)
 	initGrammar(&tosca_v1_3.Grammar)
+	initGrammar(&tosca_v2_0.Grammar)
 	initGrammar(&cloudify_v1_3.Grammar)
 	initGrammar(&hot.Grammar)
 }

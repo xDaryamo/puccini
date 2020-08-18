@@ -13,7 +13,7 @@ import (
 type GroupPolicyTrigger struct {
 	*Entity `name:"group policy trigger"`
 
-	PolicyTriggerTypeName *string `read:"type" require:"type"`
+	PolicyTriggerTypeName *string `read:"type" require:""`
 	Parameters            Values  `read:"parameters,Value"`
 
 	PolicyTriggerType *PolicyTriggerType `lookup:"type,PolicyTriggerTypeName" json:"-" yaml:"-"`

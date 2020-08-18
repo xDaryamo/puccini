@@ -1,0 +1,3 @@
+
+function compare(a, b) {
+}

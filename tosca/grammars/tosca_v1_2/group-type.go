@@ -2,7 +2,7 @@ package tosca_v1_2
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 )
 
 //
@@ -17,5 +17,5 @@ import (
 func ReadGroupType(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("InterfaceDefinitions", "interfaces,InterfaceDefinition")
 
-	return tosca_v1_3.ReadGroupType(context)
+	return tosca_v2_0.ReadGroupType(context)
 }

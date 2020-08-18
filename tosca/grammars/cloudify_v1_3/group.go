@@ -15,7 +15,7 @@ type Group struct {
 	*Entity `name:"group"`
 	Name    string `namespace:""`
 
-	MemberNodeTemplateNames *[]string     `read:"members" require:"members"`
+	MemberNodeTemplateNames *[]string     `read:"members" require:""`
 	Policies                GroupPolicies `read:"policies,GroupPolicy"`
 
 	MemberNodeTemplates NodeTemplates `lookup:"members,MemberNodeTemplateNames" json:"-" yaml:"-"`

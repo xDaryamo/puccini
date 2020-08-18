@@ -3,7 +3,7 @@ package tosca_v1_2
 import (
 	"github.com/tliron/puccini/ard"
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 	"github.com/tliron/puccini/tosca/normal"
 )
 
@@ -17,23 +17,23 @@ import (
 // Note: The TOSCA 1.1 spec is mangled, we will jump right to 1.2 here
 
 type TriggerDefinition struct {
-	*tosca_v1_3.Entity `name:"trigger definition" json:"-" yaml:"-"`
+	*tosca_v2_0.Entity `name:"trigger definition" json:"-" yaml:"-"`
 	Name               string
 
 	Description     *string                                `read:"description"`
 	Event           *string                                `read:"event_type"`
-	Schedule        *tosca_v1_3.Value                      `read:"schedule,Value"` // tosca:TimeInterval
-	TargetFilter    *tosca_v1_3.EventFilter                `read:"target_filter,EventFilter"`
-	Condition       *tosca_v1_3.TriggerDefinitionCondition `read:"condition,TriggerDefinitionCondition"`
-	OperationAction *tosca_v1_3.OperationDefinition
+	Schedule        *tosca_v2_0.Value                      `read:"schedule,Value"` // tosca:TimeInterval
+	TargetFilter    *tosca_v2_0.EventFilter                `read:"target_filter,EventFilter"`
+	Condition       *tosca_v2_0.TriggerDefinitionCondition `read:"condition,TriggerDefinitionCondition"`
+	OperationAction *tosca_v2_0.OperationDefinition
 	WorkflowAction  *string
 
-	WorkflowDefinition *tosca_v1_3.WorkflowDefinition `lookup:"action,WorkflowAction"`
+	WorkflowDefinition *tosca_v2_0.WorkflowDefinition `lookup:"action,WorkflowAction"`
 }
 
 func NewTriggerDefinition(context *tosca.Context) *TriggerDefinition {
 	return &TriggerDefinition{
-		Entity: tosca_v1_3.NewEntity(context),
+		Entity: tosca_v2_0.NewEntity(context),
 		Name:   context.Name,
 	}
 }
@@ -53,7 +53,7 @@ func ReadTriggerDefinition(context *tosca.Context) tosca.EntityPtr {
 					// Note that OperationDefinition can also be a string, but there is no way
 					// for us to differentiate between that and a workflow ID, so we support only
 					// the long notation
-					self.OperationAction = tosca_v1_3.ReadOperationDefinition(childContext).(*tosca_v1_3.OperationDefinition)
+					self.OperationAction = tosca_v2_0.ReadOperationDefinition(childContext).(*tosca_v2_0.OperationDefinition)
 				} else {
 					self.WorkflowAction = childContext.ReadString()
 				}

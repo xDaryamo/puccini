@@ -2,13 +2,11 @@ package tosca_v1_3
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 )
 
 //
 // ServiceTemplate
-//
-// See Unit
 //
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.10
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.10
@@ -16,43 +14,15 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.9
 //
 
-type ServiceTemplate struct {
-	*Unit `name:"service template"`
-
-	TopologyTemplate *TopologyTemplate `read:"topology_template,TopologyTemplate"`
-}
-
-func NewServiceTemplate(context *tosca.Context) *ServiceTemplate {
-	return &ServiceTemplate{Unit: NewUnit(context)}
-}
-
 // tosca.Reader signature
 func ReadServiceTemplate(context *tosca.Context) tosca.EntityPtr {
-	self := NewServiceTemplate(context)
+	context.SetReadTag("Profile", "namespace")
+
+	self := tosca_v2_0.NewServiceTemplate(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
-	if self.Namespace != nil {
-		context.CanonicalNamespace = self.Namespace
+	if self.Profile != nil {
+		context.CanonicalNamespace = self.Profile
 	}
 	return self
-}
-
-// normal.Normalizable interface
-func (self *ServiceTemplate) NormalizeServiceTemplate() *normal.ServiceTemplate {
-	log.Debug("{normalize} service template")
-
-	normalServiceTemplate := normal.NewServiceTemplate()
-
-	if self.Description != nil {
-		normalServiceTemplate.Description = *self.Description
-	}
-
-	normalServiceTemplate.ScriptletNamespace = self.Context.ScriptletNamespace
-
-	self.Unit.Normalize(normalServiceTemplate)
-	if self.TopologyTemplate != nil {
-		self.TopologyTemplate.Normalize(normalServiceTemplate)
-	}
-
-	return normalServiceTemplate
 }

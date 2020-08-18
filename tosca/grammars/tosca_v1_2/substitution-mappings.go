@@ -2,7 +2,7 @@ package tosca_v1_2
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 )
 
 //
@@ -18,5 +18,5 @@ func ReadSubstitutionMappings(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("AttributeMappings", "")
 	context.SetReadTag("SubstitutionFilter", "")
 
-	return tosca_v1_3.ReadSubstitutionMappings(context)
+	return tosca_v2_0.ReadSubstitutionMappings(context)
 }

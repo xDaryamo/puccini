@@ -15,7 +15,7 @@ type NodeTemplate struct {
 	*Entity `name:"node template"`
 	Name    string `namespace:""`
 
-	NodeTypeName  *string                  `read:"type" require:"type"`
+	NodeTypeName  *string                  `read:"type" require:""`
 	Properties    Values                   `read:"properties,Value"`
 	Instances     *NodeTemplateInstances   `read:"instances,NodeTemplateInstances"` // deprecated in Cloudify DSL 1.3
 	Interfaces    InterfaceAssignments     `read:"interfaces,InterfaceAssignment"`

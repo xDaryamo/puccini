@@ -2,7 +2,7 @@ package tosca_v1_2
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 )
 
 //
@@ -18,5 +18,5 @@ func ReadAttributeDefinition(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("Metadata", "")
 	context.SetReadTag("KeySchema", "")
 
-	return tosca_v1_3.ReadAttributeDefinition(context)
+	return tosca_v2_0.ReadAttributeDefinition(context)
 }

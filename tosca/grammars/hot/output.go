@@ -16,7 +16,7 @@ type Output struct {
 	Name    string `namespace:""`
 
 	Description *string    `read:"description"`
-	Value       *Value     `read:"value,Value" require:"value"`
+	Value       *Value     `read:"value,Value" require:""`
 	Condition   *Condition `read:"condition,Condition"`
 }
 

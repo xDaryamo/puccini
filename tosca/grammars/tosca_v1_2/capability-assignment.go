@@ -2,7 +2,7 @@ package tosca_v1_2
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 )
 
 //
@@ -17,5 +17,5 @@ import (
 func ReadCapabilityAssignment(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("Occurrences", "")
 
-	return tosca_v1_3.ReadCapabilityAssignment(context)
+	return tosca_v2_0.ReadCapabilityAssignment(context)
 }

@@ -61,6 +61,9 @@ as well as the more limited grammars of
 and
 [OpenStack Heat HOT 2018-08-31](https://docs.openstack.org/heat/stein/template_guide/hot_guide.html).
 
+Puccini is also following the progress on
+[TOSCA 2.0](http://docs.oasis-open.org/tosca/TOSCA/v2.0/TOSCA-v2.0.html).
+
 All these dialects are supported as straightforward YAML files, in the file system or hosted on
 URLs, as well as packaged in
 [CSAR files](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html#_Toc302251718).

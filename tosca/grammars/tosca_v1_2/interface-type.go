@@ -2,7 +2,7 @@ package tosca_v1_2
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 )
 
 //
@@ -18,7 +18,7 @@ func ReadInterfaceType(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("OperationDefinitions", "?,OperationDefinition")
 	context.SetReadTag("NotificationDefinitions", "")
 
-	self := tosca_v1_3.NewInterfaceType(context)
+	self := tosca_v2_0.NewInterfaceType(context)
 	context.ReadFields(self)
 	return self
 }

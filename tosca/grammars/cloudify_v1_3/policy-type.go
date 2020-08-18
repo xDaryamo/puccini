@@ -14,7 +14,7 @@ type PolicyType struct {
 	*Entity `name:"policy type"`
 	Name    string `namespace:""`
 
-	Source              *string             `read:"source" require:"source"`
+	Source              *string             `read:"source" require:""`
 	PropertyDefinitions PropertyDefinitions `read:"properties,PropertyDefinition"`
 }
 

@@ -2,7 +2,7 @@ package tosca_v1_0
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 )
 
 //
@@ -15,5 +15,5 @@ import (
 func ReadTopologyTemplate(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("WorkflowDefinitions", "")
 
-	return tosca_v1_3.ReadTopologyTemplate(context)
+	return tosca_v2_0.ReadTopologyTemplate(context)
 }

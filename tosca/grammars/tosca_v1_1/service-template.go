@@ -2,7 +2,7 @@ package tosca_v1_1
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 )
 
 //
@@ -14,7 +14,9 @@ import (
 
 // tosca.Reader signature
 func ReadServiceTemplate(context *tosca.Context) tosca.EntityPtr {
-	self := tosca_v1_3.NewServiceTemplate(context)
+	context.SetReadTag("Profile", "")
+
+	self := tosca_v2_0.NewServiceTemplate(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
 	return self

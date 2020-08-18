@@ -2,7 +2,7 @@ package tosca_v1_1
 
 import (
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
+	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 )
 
 //
@@ -17,5 +17,5 @@ func ReadInterfaceImplementation(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("Timeout", "")
 	context.SetReadTag("OperationHost", "")
 
-	return tosca_v1_3.ReadInterfaceImplementation(context)
+	return tosca_v2_0.ReadInterfaceImplementation(context)
 }

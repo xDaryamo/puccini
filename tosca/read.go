@@ -467,3 +467,15 @@ func (self *Context) ReadSequencedListItems(read Reader, process Processor) bool
 	}
 	return false
 }
+
+// Utils
+
+func getReadTagKey(entity reflect.Value, fieldName string) (string, bool) {
+	if structField, ok := entity.Type().FieldByName(fieldName); ok {
+		if tag, ok := structField.Tag.Lookup("read"); ok {
+			t := strings.Split(tag, ",")
+			return t[0], true
+		}
+	}
+	return "", false
+}

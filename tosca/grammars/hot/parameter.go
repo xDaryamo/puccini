@@ -15,7 +15,7 @@ type Parameter struct {
 	*Entity `name:"parameter"`
 	Name    string `namespace:""`
 
-	Type        *string     `read:"type" require:"type"`
+	Type        *string     `read:"type" require:""`
 	Label       *string     `read:"label"`
 	Description *string     `read:"description"`
 	Default     *Value      `read:"default,Value"`

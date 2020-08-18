@@ -13,7 +13,7 @@ import (
 type GroupPolicy struct {
 	*Entity `name:"group policy"`
 
-	PolicyTypeName *string             `read:"type" require:"type"`
+	PolicyTypeName *string             `read:"type" require:""`
 	Properties     Values              `read:"properties,Value"`
 	Triggers       GroupPolicyTriggers `read:"triggers,GroupPolicyTrigger"`
 

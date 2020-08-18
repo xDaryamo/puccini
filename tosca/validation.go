@@ -40,6 +40,11 @@ func ValidateRequiredFields(entityPtr EntityPtr) bool {
 	for fieldName, tag := range reflection.GetFieldTagsForValue(entity, "require") {
 		field := entity.FieldByName(fieldName)
 		if reflection.IsNil(field) {
+			/// Try to use the "read" tag for the problem report
+			if readTag, ok := getReadTagKey(entity, fieldName); ok {
+				tag = readTag
+			}
+
 			context.FieldChild(tag, nil).ReportFieldMissing()
 		}
 	}

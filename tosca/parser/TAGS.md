@@ -44,6 +44,8 @@ syntax in node\_template.)
 
 Read phase. Reports a problem if the key is not in the ARD. (Works in combination with "read" tag.)
 
+The "key" value is optional. If not provided it will be read from the "read" tag.
+
 ### namespace:""
 
 Namespace phase. By using this tag you are specifying that this entity should be registered on the
