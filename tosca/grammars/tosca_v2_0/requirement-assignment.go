@@ -84,11 +84,13 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalN
 		normalRequirement.CapabilityName = self.TargetCapabilityNameOrTypeName
 	}
 
+	if self.TargetNodeTemplate != nil {
+		normalRequirement.NodeTemplate, _ = normalNodeTemplate.ServiceTemplate.NodeTemplates[self.TargetNodeTemplate.Name]
+	}
+
 	if self.TargetNodeType != nil {
 		name := tosca.GetCanonicalName(self.TargetNodeType)
 		normalRequirement.NodeTypeName = &name
-	} else if self.TargetNodeTemplate != nil {
-		normalRequirement.NodeTemplate, _ = normalNodeTemplate.ServiceTemplate.NodeTemplates[self.TargetNodeTemplate.Name]
 	}
 
 	if nodeTemplate.RequirementTargetsNodeFilter != nil {
