@@ -12,11 +12,11 @@ import (
 
 	"github.com/beevik/etree"
 	"github.com/tebeka/atexit"
-	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/common"
-	formatpkg "github.com/tliron/puccini/common/format"
-	"github.com/tliron/puccini/common/terminal"
-	urlpkg "github.com/tliron/puccini/url"
+	"github.com/tliron/kutil/ard"
+	formatpkg "github.com/tliron/kutil/format"
+	"github.com/tliron/kutil/terminal"
+	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/kutil/util"
 )
 
 //
@@ -83,7 +83,7 @@ func (self *PucciniAPI) ValidateFormat(code string, format string) error {
 }
 
 func (self *PucciniAPI) Timestamp() ard.Value {
-	return common.Timestamp(!self.AllowTimestamps)
+	return util.Timestamp(!self.AllowTimestamps)
 }
 
 func (self *PucciniAPI) NewXMLDocument() *etree.Document {
@@ -142,9 +142,9 @@ func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool)
 func (self *PucciniAPI) Exec(name string, arguments ...string) (string, error) {
 	cmd := exec.Command(name, arguments...)
 	if out, err := cmd.Output(); err == nil {
-		return common.BytesToString(out), nil
+		return util.BytesToString(out), nil
 	} else if err_, ok := err.(*exec.ExitError); ok {
-		return "", fmt.Errorf("%s\n%s", err_.Error(), common.BytesToString(err_.Stderr))
+		return "", fmt.Errorf("%s\n%s", err_.Error(), util.BytesToString(err_.Stderr))
 	} else {
 		return "", err
 	}

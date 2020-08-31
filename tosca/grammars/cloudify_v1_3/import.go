@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/puccini/tosca"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 //

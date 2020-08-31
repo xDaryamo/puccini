@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/tliron/puccini/ard"
+	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 )
 

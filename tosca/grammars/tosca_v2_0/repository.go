@@ -3,8 +3,8 @@ package tosca_v2_0
 import (
 	"sync"
 
+	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/puccini/tosca"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 //

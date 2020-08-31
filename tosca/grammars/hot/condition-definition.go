@@ -1,7 +1,7 @@
 package hot
 
 import (
-	"github.com/tliron/puccini/ard"
+	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/yamlkeys"
 )

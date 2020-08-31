@@ -4,20 +4,20 @@ import (
 	"C"
 	"bytes"
 
+	"github.com/tliron/kutil/format"
+	"github.com/tliron/kutil/problems"
+	"github.com/tliron/kutil/terminal"
+	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
-	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/common/format"
-	"github.com/tliron/puccini/common/problems"
-	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 //export Compile
 func Compile(url *C.char) *C.char {
-	common.ConfigureLogging(0, nil)
+	util.ConfigureLogging(0, nil)
 
 	buffer := bytes.NewBuffer(nil)
 	terminal.Stdout = buffer

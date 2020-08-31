@@ -3,10 +3,10 @@ package commands
 import (
 	"github.com/op/go-logging"
 	"github.com/tebeka/atexit"
-	"github.com/tliron/puccini/common"
-	formatpkg "github.com/tliron/puccini/common/format"
-	problemspkg "github.com/tliron/puccini/common/problems"
-	"github.com/tliron/puccini/common/terminal"
+	formatpkg "github.com/tliron/kutil/format"
+	problemspkg "github.com/tliron/kutil/problems"
+	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/util"
 )
 
 const toolName = "puccini-tosca"
@@ -19,7 +19,7 @@ func FailOnProblems(problems *problemspkg.Problems) {
 			if problemsFormat != "" {
 				if strict {
 					ard, err := problems.ARD()
-					common.FailOnError(err)
+					util.FailOnError(err)
 					formatpkg.Print(ard, problemsFormat, terminal.Stderr, strict, pretty)
 				} else {
 					formatpkg.Print(problems, problemsFormat, terminal.Stderr, strict, pretty)

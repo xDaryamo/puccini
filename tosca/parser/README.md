@@ -42,7 +42,7 @@ This first phase validates syntax. Higher level grammar is validated in subseque
     * Files/URLs not found
     * I/O errors
     * Textual decoding errors
-2. Parse YAML to [ARD](../../ard/README.md)
+2. Parse YAML to [ARD](https://github.com/tliron/kutil/tree/master/ard/)
     * YAML parsing errors
 3. Parse ARD to TOSCA data structures, normalizing all short notations to their full form
     * Required fields not set

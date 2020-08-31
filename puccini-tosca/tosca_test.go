@@ -5,12 +5,12 @@ import (
 	"os"
 	"testing"
 
+	problemspkg "github.com/tliron/kutil/problems"
+	urlpkg "github.com/tliron/kutil/url"
 	cloutpkg "github.com/tliron/puccini/clout"
-	problemspkg "github.com/tliron/puccini/common/problems"
 	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 func TestParse(t *testing.T) {

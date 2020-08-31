@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/common/problems"
-	"github.com/tliron/puccini/common/terminal"
-	urlpkg "github.com/tliron/puccini/url"
+	"github.com/tliron/kutil/ard"
+	"github.com/tliron/kutil/problems"
+	"github.com/tliron/kutil/terminal"
+	urlpkg "github.com/tliron/kutil/url"
 )
 
 //

@@ -1,7 +1,7 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/ard"
+	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 )
 

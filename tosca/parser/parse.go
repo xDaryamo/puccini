@@ -3,11 +3,11 @@ package parser
 import (
 	"errors"
 
-	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/common/problems"
+	"github.com/tliron/kutil/ard"
+	"github.com/tliron/kutil/problems"
+	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 func Parse(url urlpkg.URL, quirks tosca.Quirks, inputs map[string]ard.Value) (*normal.ServiceTemplate, *problems.Problems, error) {

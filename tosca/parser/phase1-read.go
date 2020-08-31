@@ -5,11 +5,11 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/tliron/puccini/common/reflection"
+	"github.com/tliron/kutil/reflection"
+	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/csar"
 	"github.com/tliron/puccini/tosca/grammars"
-	urlpkg "github.com/tliron/puccini/url"
 	"github.com/tliron/yamlkeys"
 )
 

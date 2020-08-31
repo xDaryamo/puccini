@@ -5,11 +5,11 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/tliron/puccini/ard"
+	"github.com/tliron/kutil/ard"
+	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
-	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/common/terminal"
 )
 
 func init() {
@@ -28,7 +28,7 @@ var listCommand = &cobra.Command{
 		}
 
 		clout, err := ReadClout(path)
-		common.FailOnError(err)
+		util.FailOnError(err)
 
 		List(clout)
 	},
@@ -36,7 +36,7 @@ var listCommand = &cobra.Command{
 
 func List(clout *cloutpkg.Clout) {
 	metadata, err := js.GetScriptletsMetadata(clout)
-	common.FailOnError(err)
+	util.FailOnError(err)
 
 	ListValue(metadata, nil)
 }

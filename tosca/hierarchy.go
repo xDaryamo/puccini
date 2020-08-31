@@ -7,8 +7,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/tliron/puccini/common/reflection"
-	"github.com/tliron/puccini/common/terminal"
+	"github.com/tliron/kutil/reflection"
+	"github.com/tliron/kutil/terminal"
 )
 
 //

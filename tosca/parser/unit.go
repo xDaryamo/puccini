@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/tliron/puccini/common/terminal"
+	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/puccini/tosca"
 )
 

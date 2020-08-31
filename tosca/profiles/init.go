@@ -14,7 +14,7 @@ import (
 	simple_v1_2 "github.com/tliron/puccini/tosca/profiles/simple/v1_2"
 	simple_v1_3 "github.com/tliron/puccini/tosca/profiles/simple/v1_3"
 
-	"github.com/tliron/puccini/url"
+	"github.com/tliron/kutil/url"
 )
 
 func init() {

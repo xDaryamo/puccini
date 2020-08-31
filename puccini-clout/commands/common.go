@@ -2,8 +2,8 @@ package commands
 
 import (
 	"github.com/op/go-logging"
+	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/puccini/clout"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 const toolName = "puccini-clout"

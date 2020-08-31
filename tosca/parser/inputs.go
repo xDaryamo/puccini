@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/common/reflection"
+	"github.com/tliron/kutil/ard"
+	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/puccini/tosca"
 )
 

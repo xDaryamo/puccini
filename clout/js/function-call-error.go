@@ -3,7 +3,7 @@ package js
 import (
 	"fmt"
 
-	"github.com/tliron/puccini/common/terminal"
+	"github.com/tliron/kutil/terminal"
 )
 
 //

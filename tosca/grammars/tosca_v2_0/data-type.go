@@ -3,7 +3,7 @@ package tosca_v2_0
 import (
 	"reflect"
 
-	"github.com/tliron/puccini/ard"
+	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )

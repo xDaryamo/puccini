@@ -3,8 +3,8 @@ package tosca
 import (
 	"reflect"
 
-	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/common/reflection"
+	"github.com/tliron/kutil/ard"
+	"github.com/tliron/kutil/reflection"
 )
 
 func (self *Context) ValidateUnsupportedFields(keys []string) {

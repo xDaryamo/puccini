@@ -2,10 +2,10 @@ package commands
 
 import (
 	"github.com/spf13/cobra"
+	formatpkg "github.com/tliron/kutil/format"
+	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/clout/js"
-	"github.com/tliron/puccini/common"
-	formatpkg "github.com/tliron/puccini/common/format"
-	"github.com/tliron/puccini/common/terminal"
 )
 
 func init() {
@@ -27,14 +27,14 @@ var getCommand = &cobra.Command{
 		}
 
 		clout, err := ReadClout(path)
-		common.FailOnError(err)
+		util.FailOnError(err)
 
 		scriptlet, err := js.GetScriptlet(scriptletName, clout)
-		common.FailOnError(err)
+		util.FailOnError(err)
 
 		if !terminal.Quiet {
 			err = formatpkg.WriteOrPrint(scriptlet, format, terminal.Stdout, strict, pretty, output)
-			common.FailOnError(err)
+			util.FailOnError(err)
 		}
 	},
 }

@@ -2,11 +2,11 @@ package commands
 
 import (
 	"github.com/spf13/cobra"
+	formatpkg "github.com/tliron/kutil/format"
+	"github.com/tliron/kutil/terminal"
+	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/clout/js"
-	"github.com/tliron/puccini/common"
-	formatpkg "github.com/tliron/puccini/common/format"
-	"github.com/tliron/puccini/common/terminal"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 func init() {
@@ -29,21 +29,21 @@ var putCommand = &cobra.Command{
 		}
 
 		clout, err := ReadClout(cloutPath)
-		common.FailOnError(err)
+		util.FailOnError(err)
 
 		urlContext := urlpkg.NewContext()
 		defer urlContext.Release()
 
 		url, err := urlpkg.NewValidURL(jsUrl, nil, urlContext)
-		common.FailOnError(err)
+		util.FailOnError(err)
 
 		scriptlet, err := urlpkg.ReadString(url)
-		common.FailOnError(err)
+		util.FailOnError(err)
 
 		err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)
-		common.FailOnError(err)
+		util.FailOnError(err)
 
 		err = formatpkg.WriteOrPrint(clout, format, terminal.Stdout, strict, pretty, output)
-		common.FailOnError(err)
+		util.FailOnError(err)
 	},
 }

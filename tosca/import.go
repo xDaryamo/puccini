@@ -1,7 +1,7 @@
 package tosca
 
 import (
-	"github.com/tliron/puccini/url"
+	"github.com/tliron/kutil/url"
 )
 
 //

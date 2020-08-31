@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	urlpkg "github.com/tliron/puccini/url"
+	urlpkg "github.com/tliron/kutil/url"
 )
 
 func GetRootURL(csarUrl urlpkg.URL) (urlpkg.URL, error) {

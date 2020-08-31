@@ -2,8 +2,8 @@ package commands
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/common/terminal"
+	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/util"
 )
 
 var logTo string
@@ -34,19 +34,19 @@ var rootCommand = &cobra.Command{
 	Short: "TOSCA frontend for Clout",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		err := terminal.ProcessColorizeFlag(colorize)
-		common.FailOnError(err)
+		util.FailOnError(err)
 		if logTo == "" {
 			if terminal.Quiet {
 				verbose = -4
 			}
-			common.ConfigureLogging(verbose, nil)
+			util.ConfigureLogging(verbose, nil)
 		} else {
-			common.ConfigureLogging(verbose, &logTo)
+			util.ConfigureLogging(verbose, &logTo)
 		}
 	},
 }
 
 func Execute() {
 	err := rootCommand.Execute()
-	common.FailOnError(err)
+	util.FailOnError(err)
 }

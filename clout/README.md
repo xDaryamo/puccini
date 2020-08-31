@@ -4,7 +4,8 @@ Clout: Cloud Topology ("clou-" + "t") Representation Language
 File Format
 -----------
 
-Clout is ["agnostic raw data"](../ard/) that can be stored as YAML/JSON/XML/etc.
+Clout is ["agnostic raw data"](https://github.com/tliron/kutil/tree/master/ard/) that can be stored
+as YAML/JSON/XML/etc.
 
 ### `version` (string)
 

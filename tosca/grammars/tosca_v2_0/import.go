@@ -5,9 +5,9 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/tliron/puccini/ard"
+	"github.com/tliron/kutil/ard"
+	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/puccini/tosca"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 //

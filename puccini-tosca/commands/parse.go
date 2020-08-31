@@ -6,15 +6,15 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/tebeka/atexit"
-	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/common"
-	formatpkg "github.com/tliron/puccini/common/format"
-	problemspkg "github.com/tliron/puccini/common/problems"
-	"github.com/tliron/puccini/common/terminal"
+	"github.com/tliron/kutil/ard"
+	formatpkg "github.com/tliron/kutil/format"
+	problemspkg "github.com/tliron/kutil/problems"
+	"github.com/tliron/kutil/terminal"
+	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
-	urlpkg "github.com/tliron/puccini/url"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -74,7 +74,7 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 		log.Infof("parsing %q", url)
 		url_, err = urlpkg.NewValidURL(url, nil, urlContext)
 	}
-	common.FailOnError(err)
+	util.FailOnError(err)
 
 	context := parser.NewContext(tosca.NewQuirks(quirks...))
 
@@ -153,7 +153,7 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 			for _, entityPtr := range entityPtrs {
 				fmt.Fprintf(terminal.Stdout, "%s:\n", terminal.ColorPath(tosca.GetContext(entityPtr).Path.String()))
 				err = formatpkg.Print(entityPtr, format, terminal.Stdout, strict, pretty)
-				common.FailOnError(err)
+				util.FailOnError(err)
 			}
 		}
 	}
@@ -161,12 +161,12 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 	if filter != "" {
 		entityPtrs := context.Gather(filter)
 		if len(entityPtrs) == 0 {
-			common.Failf("No paths found matching filter: %q\n", filter)
+			util.Failf("No paths found matching filter: %q\n", filter)
 		} else if !terminal.Quiet {
 			for _, entityPtr := range entityPtrs {
 				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorPath(tosca.GetContext(entityPtr).Path.String()))
 				err = formatpkg.Print(entityPtr, format, terminal.Stdout, strict, pretty)
-				common.FailOnError(err)
+				util.FailOnError(err)
 			}
 		}
 	}
@@ -178,7 +178,7 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 	if serviceTemplate, ok := normal.NormalizeServiceTemplate(context.Root.EntityPtr); ok {
 		return context, serviceTemplate
 	} else {
-		common.Fail("grammar does not support normalization")
+		util.Fail("grammar does not support normalization")
 		return context, nil
 	}
 }
@@ -202,26 +202,26 @@ func ParseInputs() {
 		defer urlContext.Release()
 
 		url, err := urlpkg.NewValidURL(inputsUrl, nil, urlContext)
-		common.FailOnError(err)
+		util.FailOnError(err)
 		reader, err := url.Open()
-		common.FailOnError(err)
+		util.FailOnError(err)
 		defer reader.Close()
 		data, err := formatpkg.ReadAllYAML(reader)
-		common.FailOnError(err)
+		util.FailOnError(err)
 		for _, data_ := range data {
 			if map_, ok := data_.(ard.Map); ok {
 				for key, value := range map_ {
 					inputValues[yamlkeys.KeyString(key)] = value
 				}
 			} else {
-				common.Failf("malformed inputs in %q", inputsUrl)
+				util.Failf("malformed inputs in %q", inputsUrl)
 			}
 		}
 	}
 
 	for name, input := range inputs {
 		value, err := formatpkg.DecodeYAML(input)
-		common.FailOnError(err)
+		util.FailOnError(err)
 		inputValues[name] = value
 	}
 }

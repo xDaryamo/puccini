@@ -2,11 +2,11 @@ package commands
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/tliron/kutil/terminal"
+	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
-	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/common/terminal"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 var arguments map[string]string
@@ -31,7 +31,7 @@ var execCommand = &cobra.Command{
 		}
 
 		clout, err := ReadClout(path)
-		common.FailOnError(err)
+		util.FailOnError(err)
 
 		// Try loading JavaScript from Clout
 		scriptlet, err := js.GetScriptlet(scriptletName, clout)
@@ -42,17 +42,17 @@ var execCommand = &cobra.Command{
 		if err != nil {
 			// Try loading JavaScript from path or URL
 			url, err := urlpkg.NewValidURL(scriptletName, nil, urlContext)
-			common.FailOnError(err)
+			util.FailOnError(err)
 
 			scriptlet, err = urlpkg.ReadString(url)
-			common.FailOnError(err)
+			util.FailOnError(err)
 
 			err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)
-			common.FailOnError(err)
+			util.FailOnError(err)
 		}
 
 		err = Exec(scriptletName, scriptlet, clout, urlContext)
-		common.FailOnError(err)
+		util.FailOnError(err)
 	},
 }
 

@@ -2,13 +2,13 @@ package commands
 
 import (
 	"github.com/spf13/cobra"
+	formatpkg "github.com/tliron/kutil/format"
+	"github.com/tliron/kutil/terminal"
+	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
-	"github.com/tliron/puccini/common"
-	formatpkg "github.com/tliron/puccini/common/format"
-	"github.com/tliron/puccini/common/terminal"
 	"github.com/tliron/puccini/tosca/compiler"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 var output string
@@ -51,7 +51,7 @@ func Compile(url string) {
 
 	// Compile
 	clout, err := compiler.Compile(serviceTemplate, timestamps)
-	common.FailOnError(err)
+	util.FailOnError(err)
 
 	// Resolve
 	if resolve {
@@ -67,16 +67,16 @@ func Compile(url string) {
 
 	if exec != "" {
 		err = Exec(exec, arguments, clout, urlContext)
-		common.FailOnError(err)
+		util.FailOnError(err)
 	} else if !terminal.Quiet || (output != "") {
 		if strict {
 			ard, err := clout.ARD()
-			common.FailOnError(err)
+			util.FailOnError(err)
 			err = formatpkg.WriteOrPrint(ard, format, terminal.Stdout, strict, pretty, output)
 		} else {
 			err = formatpkg.WriteOrPrint(clout, format, terminal.Stdout, strict, pretty, output)
 		}
-		common.FailOnError(err)
+		util.FailOnError(err)
 	}
 }
 
@@ -95,13 +95,13 @@ func Exec(scriptletName string, arguments map[string]string, clout *cloutpkg.Clo
 
 		// Try loading JavaScript from path or URL
 		url, err := urlpkg.NewValidURL(scriptletName, nil, urlContext)
-		common.FailOnError(err)
+		util.FailOnError(err)
 
 		scriptlet, err = urlpkg.ReadString(url)
-		common.FailOnError(err)
+		util.FailOnError(err)
 
 		err = js.SetScriptlet(exec, js.CleanupScriptlet(scriptlet), clout)
-		common.FailOnError(err)
+		util.FailOnError(err)
 	}
 
 	jsContext := js.NewContext(scriptletName, log, arguments, terminal.Quiet, format, strict, timestamps, pretty, output, urlContext)

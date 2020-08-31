@@ -1,10 +1,10 @@
 package compiler
 
 import (
+	problemspkg "github.com/tliron/kutil/problems"
+	urlpkg "github.com/tliron/kutil/url"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
-	problemspkg "github.com/tliron/puccini/common/problems"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 func Coerce(clout *cloutpkg.Clout, problems *problemspkg.Problems, urlContext *urlpkg.Context, history bool, format string, strict bool, allowTimestamps bool, pretty bool) {

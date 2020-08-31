@@ -5,8 +5,8 @@ import (
 	"strings"
 	"sync"
 
+	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/puccini/clout/js"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 func (self *Context) ImportScriptlet(name string, path string) {

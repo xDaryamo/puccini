@@ -1,9 +1,9 @@
 package commands
 
 import (
-	"github.com/tliron/puccini/common"
+	"github.com/tliron/kutil/cobra"
 )
 
 func init() {
-	rootCommand.AddCommand(common.NewBashCompletionCommand(toolName, rootCommand))
+	rootCommand.AddCommand(cobra.NewBashCompletionCommand(toolName, rootCommand))
 }

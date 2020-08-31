@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/common/reflection"
+	"github.com/tliron/kutil/reflection"
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -64,7 +64,7 @@ func (self *InheritContext) NewExecutor(entityPtr tosca.EntityPtr) Executor {
 
 		log.Debugf("{inheritance} inherit: %s", task.Name)
 
-		lock := common.GetLock(entityPtr)
+		lock := util.GetLock(entityPtr)
 		lock.Lock()
 		defer lock.Unlock()
 

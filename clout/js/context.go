@@ -9,9 +9,9 @@ import (
 	"github.com/dop251/goja"
 	"github.com/op/go-logging"
 	"github.com/tebeka/atexit"
+	"github.com/tliron/kutil/terminal"
+	urlpkg "github.com/tliron/kutil/url"
 	cloutpkg "github.com/tliron/puccini/clout"
-	"github.com/tliron/puccini/common/terminal"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 //

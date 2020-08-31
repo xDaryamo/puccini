@@ -1,9 +1,9 @@
 package compiler
 
 import (
-	"github.com/tliron/puccini/ard"
+	"github.com/tliron/kutil/ard"
+	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
-	"github.com/tliron/puccini/common"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
@@ -36,7 +36,7 @@ func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cl
 	clout.Metadata["puccini"] = puccini
 
 	history := ard.List{ard.StringMap{
-		"timestamp":   common.Timestamp(!allowTimestamps),
+		"timestamp":   util.Timestamp(!allowTimestamps),
 		"description": "compile",
 	}}
 	clout.Metadata["history"] = history

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/tliron/puccini/ard"
+	"github.com/tliron/kutil/ard"
 )
 
 func Decode(map_ ard.Map) (*Clout, error) {

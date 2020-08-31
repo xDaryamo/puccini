@@ -3,7 +3,7 @@ package parser
 import (
 	"sync"
 
-	"github.com/tliron/puccini/common/reflection"
+	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/puccini/tosca"
 )
 

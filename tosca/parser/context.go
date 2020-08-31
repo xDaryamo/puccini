@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/tliron/puccini/common/problems"
-	"github.com/tliron/puccini/common/terminal"
+	"github.com/tliron/kutil/problems"
+	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars"
 )

@@ -7,8 +7,8 @@ import (
 
 	"strings"
 
-	"github.com/tliron/puccini/ard"
-	"github.com/tliron/puccini/common/format"
+	"github.com/tliron/kutil/ard"
+	"github.com/tliron/kutil/format"
 )
 
 const Version = "1.0"

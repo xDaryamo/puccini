@@ -15,9 +15,9 @@ function build () {
 	GOOS=js GOARCH=wasm go build \
 		-o "$WASM" \
 		-ldflags " \
-			-X '$MODULE/version.GitVersion=$VERSION' \
-			-X '$MODULE/version.GitRevision=$REVISION' \
-			-X '$MODULE/version.Timestamp=$TIMESTAMP'"
+			-X 'github.com/tliron/kutil/version.GitVersion=$VERSION' \
+			-X 'github.com/tliron/kutil/version.GitRevision=$REVISION' \
+			-X 'github.com/tliron/kutil/version.Timestamp=$TIMESTAMP'"
 	popd > /dev/null
 	m "built $WASM"
 }

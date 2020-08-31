@@ -1,7 +1,7 @@
 package tosca_v1_2
 
 import (
-	"github.com/tliron/puccini/ard"
+	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 	"github.com/tliron/puccini/tosca/normal"
