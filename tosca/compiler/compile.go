@@ -59,6 +59,7 @@ func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cl
 
 		SetMetadata(vertex, "NodeTemplate")
 		vertex.Properties["name"] = nodeTemplate.Name
+		vertex.Properties["metadata"] = nodeTemplate.Metadata
 		vertex.Properties["description"] = nodeTemplate.Description
 		vertex.Properties["types"] = nodeTemplate.Types
 		vertex.Properties["directives"] = nodeTemplate.Directives
@@ -80,6 +81,7 @@ func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cl
 
 		SetMetadata(vertex, "Group")
 		vertex.Properties["name"] = group.Name
+		vertex.Properties["metadata"] = group.Metadata
 		vertex.Properties["description"] = group.Description
 		vertex.Properties["types"] = group.Types
 		vertex.Properties["properties"] = group.Properties
@@ -187,6 +189,7 @@ func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cl
 
 		SetMetadata(vertex, "Policy")
 		vertex.Properties["name"] = policy.Name
+		vertex.Properties["metadata"] = policy.Metadata
 		vertex.Properties["description"] = policy.Description
 		vertex.Properties["types"] = policy.Types
 		vertex.Properties["properties"] = policy.Properties

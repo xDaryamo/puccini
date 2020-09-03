@@ -34,7 +34,10 @@ topology_template:
 
     server:
       type: Server
-      # Node templates don't have metadata, but you can assign a list of string directives
+      # The metadata for the node template is distinct from that of the node type
+      metadata:
+        galactic.planet: Venus
+      # You can also assign a list of string directives to node templates
       # The only "normative" directive mentioned in the TOSCA spec is "substitutable"
       # (See: substitution-mapping-client.yaml) 
       directives:

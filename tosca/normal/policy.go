@@ -8,7 +8,7 @@ type Policy struct {
 	ServiceTemplate *ServiceTemplate `json:"-" yaml:"-"`
 	Name            string           `json:"-" yaml:"-"`
 
-	Metadata    map[string]string `json:"metadata,omitempty" yaml:"metadata,omitempty"`
+	Metadata    map[string]string `json:"metadata" yaml:"metadata"`
 	Description string            `json:"description" yaml:"description"`
 	Types       Types             `json:"types" yaml:"types"`
 	Properties  Constrainables    `json:"properties" yaml:"properties"`

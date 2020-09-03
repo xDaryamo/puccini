@@ -256,6 +256,9 @@ topology_template:
     # "default" values to properties, attributes, and interface inputs/outputs
     smart_plug:
       type: SuperSmartPlug
+      # The metadata for the relationship template is distinct from that of the relationship type
+      metadata:
+        galaxy.planet: Jupiter
       properties:
         vendor: Electric Stuff International
         failsafe: false
