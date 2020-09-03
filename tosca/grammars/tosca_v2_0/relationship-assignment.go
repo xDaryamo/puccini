@@ -95,13 +95,11 @@ func (self *RelationshipAssignment) Render(definition *RelationshipDefinition) {
 }
 
 func (self *RelationshipAssignment) Normalize(definition *RelationshipDefinition, normalRelationship *normal.Relationship) {
-	relationshipType := self.GetType(definition)
-	if (self.RelationshipTemplate != nil) && (self.RelationshipTemplate.Description != nil) {
-		normalRelationship.Description = *self.RelationshipTemplate.Description
-	} else if (relationshipType != nil) && (relationshipType.Description != nil) {
-		normalRelationship.Description = *relationshipType.Description
+	if self.RelationshipTemplate != nil {
+		self.RelationshipTemplate.Normalize(normalRelationship)
 	}
 
+	relationshipType := self.GetType(definition)
 	if types, ok := normal.GetTypes(self.Context.Hierarchy, relationshipType); ok {
 		normalRelationship.Types = types
 	}

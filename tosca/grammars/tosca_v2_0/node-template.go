@@ -22,6 +22,7 @@ type NodeTemplate struct {
 	Directives                   *[]string              `read:"directives"`
 	CopyNodeTemplateName         *string                `read:"copy"`
 	NodeTypeName                 *string                `read:"type" require:""`
+	Metadata                     Metadata               `read:"metadata,Metadata"` // introduced in TOSCA 1.1
 	Description                  *string                `read:"description"`
 	Properties                   Values                 `read:"properties,Value"`
 	Attributes                   Values                 `read:"attributes,AttributeValue"`
@@ -87,6 +88,8 @@ func (self *NodeTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplat
 	log.Debugf("{normalize} node template: %s", self.Name)
 
 	normalNodeTemplate := normalServiceTemplate.NewNodeTemplate(self.Name)
+
+	normalNodeTemplate.Metadata = self.Metadata
 
 	if self.Description != nil {
 		normalNodeTemplate.Description = *self.Description

@@ -20,6 +20,7 @@ type Policy struct {
 	Name    string `namespace:""`
 
 	PolicyTypeName                 *string            `read:"type" require:""`
+	Metadata                       Metadata           `read:"metadata,Metadata"` // introduced in TOSCA 1.1
 	Description                    *string            `read:"description"`
 	Properties                     Values             `read:"properties,Value"`
 	TargetNodeTemplateOrGroupNames *[]string          `read:"targets"`
@@ -100,6 +101,8 @@ func (self *Policy) Normalize(normalServiceTemplate *normal.ServiceTemplate) *no
 	log.Debugf("{normalize} policy: %s", self.Name)
 
 	normalPolicy := normalServiceTemplate.NewPolicy(self.Name)
+
+	normalPolicy.Metadata = self.Metadata
 
 	if self.Description != nil {
 		normalPolicy.Description = *self.Description

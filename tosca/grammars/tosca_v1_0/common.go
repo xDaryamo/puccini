@@ -31,7 +31,7 @@ func init() {
 	Grammar.RegisterReader("CapabilityType", tosca_v2_0.ReadCapabilityType)
 	Grammar.RegisterReader("ConstraintClause", tosca_v2_0.ReadConstraintClause)
 	Grammar.RegisterReader("DataType", tosca_v2_0.ReadDataType)
-	Grammar.RegisterReader("Group", tosca_v1_2.ReadGroup)                             // 1.2
+	Grammar.RegisterReader("Group", ReadGroup)                                        // override
 	Grammar.RegisterReader("GroupType", tosca_v1_2.ReadGroupType)                     // 1.2
 	Grammar.RegisterReader("Import", tosca_v1_3.ReadImport)                           /// 1.3
 	Grammar.RegisterReader("InterfaceAssignment", tosca_v1_2.ReadInterfaceAssignment) // 1.2
@@ -39,7 +39,7 @@ func init() {
 	Grammar.RegisterReader("InterfaceType", tosca_v1_2.ReadInterfaceType)             // 1.2
 	Grammar.RegisterReader("Metadata", tosca_v2_0.ReadMetadata)
 	Grammar.RegisterReader("NodeFilter", tosca_v2_0.ReadNodeFilter)
-	Grammar.RegisterReader("NodeTemplate", tosca_v2_0.ReadNodeTemplate)
+	Grammar.RegisterReader("NodeTemplate", ReadNodeTemplate) // override
 	Grammar.RegisterReader("NodeType", tosca_v2_0.ReadNodeType)
 	Grammar.RegisterReader("OperationAssignment", tosca_v2_0.ReadOperationAssignment)
 	Grammar.RegisterReader("OperationDefinition", tosca_v2_0.ReadOperationDefinition)
@@ -53,7 +53,7 @@ func init() {
 	Grammar.RegisterReader("RangeEntity", tosca_v2_0.ReadRangeEntity)
 	Grammar.RegisterReader("RelationshipAssignment", tosca_v2_0.ReadRelationshipAssignment)
 	Grammar.RegisterReader("RelationshipDefinition", tosca_v2_0.ReadRelationshipDefinition)
-	Grammar.RegisterReader("RelationshipTemplate", tosca_v2_0.ReadRelationshipTemplate)
+	Grammar.RegisterReader("RelationshipTemplate", ReadRelationshipTemplate) // override
 	Grammar.RegisterReader("RelationshipType", tosca_v2_0.ReadRelationshipType)
 	Grammar.RegisterReader("Repository", tosca_v2_0.ReadRepository)
 	Grammar.RegisterReader("RequirementAssignment", tosca_v1_2.ReadRequirementAssignment) // 1.2

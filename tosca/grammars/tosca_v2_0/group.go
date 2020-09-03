@@ -20,6 +20,7 @@ type Group struct {
 	Name    string `namespace:""`
 
 	GroupTypeName           *string              `read:"type" require:""`
+	Metadata                Metadata             `read:"metadata,Metadata"` // introduced in TOSCA 1.1
 	Description             *string              `read:"description"`
 	Properties              Values               `read:"properties,Value"`
 	Interfaces              InterfaceAssignments // removed in TOSCA 1.3
@@ -78,6 +79,8 @@ func (self *Group) Normalize(normalServiceTemplate *normal.ServiceTemplate) *nor
 	log.Debugf("{normalize} group: %s", self.Name)
 
 	normalGroup := normalServiceTemplate.NewGroup(self.Name)
+
+	normalGroup.Metadata = self.Metadata
 
 	if self.Description != nil {
 		normalGroup.Description = *self.Description

@@ -2,6 +2,7 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -20,6 +21,7 @@ type RelationshipTemplate struct {
 
 	CopyRelationshipTemplateName *string              `read:"copy"`
 	RelationshipTypeName         *string              `read:"type" require:""`
+	Metadata                     Metadata             `read:"metadata,Metadata"` // introduced in TOSCA 1.1
 	Description                  *string              `read:"description"`
 	Properties                   Values               `read:"properties,Value"`
 	Attributes                   Values               `read:"attributes,AttributeValue"`
@@ -70,6 +72,14 @@ func (self *RelationshipTemplate) Render() {
 	self.Properties.RenderProperties(self.RelationshipType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
 	self.Attributes.RenderAttributes(self.RelationshipType.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
 	self.Interfaces.Render(self.RelationshipType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
+}
+
+func (self *RelationshipTemplate) Normalize(normalRelationship *normal.Relationship) {
+	normalRelationship.Metadata = self.Metadata
+
+	if self.Description != nil {
+		normalRelationship.Description = *self.Description
+	}
 }
 
 //

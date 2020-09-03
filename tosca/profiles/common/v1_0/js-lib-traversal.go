@@ -144,5 +144,6 @@ function copyAndPush(array) {
 	for (var i = 1, l = arguments.length; i < l; i++)
 		array_.push(arguments[i]);
 	return array_;
-}`
+}
+`
 }

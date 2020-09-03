@@ -6,15 +6,14 @@ import (
 )
 
 //
-// Policy
+// NodeTemplate
 //
-// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.7.6
+// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.7.3
 //
 
 // tosca.Reader signature
-func ReadPolicy(context *tosca.Context) tosca.EntityPtr {
+func ReadNodeTemplate(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("Metadata", "")
-	context.SetReadTag("TriggerDefinitions", "")
 
-	return tosca_v2_0.ReadPolicy(context)
+	return tosca_v2_0.ReadNodeTemplate(context)
 }

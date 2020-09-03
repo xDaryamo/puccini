@@ -43,7 +43,7 @@ func (self *CloutAPI) Call(scriptletName string, functionName string, arguments 
 }
 
 func (self *CloutAPI) Define(scriptletName string, scriptlet string) error {
-	return SetScriptlet(scriptletName, scriptlet, self.Clout)
+	return SetScriptlet(scriptletName, CleanupScriptlet(scriptlet), self.Clout)
 }
 
 func (self *CloutAPI) NewCoercible(value goja.Value, site interface{}, source interface{}, target interface{}) (Coercible, error) {

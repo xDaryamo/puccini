@@ -9,7 +9,7 @@ import (
 )
 
 func CleanupScriptlet(scriptlet string) string {
-	scriptlet = strings.Trim(scriptlet, " \t\n")
+	scriptlet = strings.TrimSpace(scriptlet)
 	scriptlet = strings.Replace(scriptlet, "\t", "  ", -1)
 	return scriptlet
 }

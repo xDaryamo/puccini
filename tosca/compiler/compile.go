@@ -4,6 +4,7 @@ import (
 	"github.com/tliron/kutil/ard"
 	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
+	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
@@ -18,7 +19,7 @@ func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cl
 	var err error = nil
 	serviceTemplate.ScriptletNamespace.Range(func(name string, scriptlet *tosca.Scriptlet) bool {
 		if scriptlet_, err_ := scriptlet.Read(); err == nil {
-			if err_ = ard.StringMapPutNested(scriptlets, name, scriptlet_); err_ != nil {
+			if err_ = ard.StringMapPutNested(scriptlets, name, js.CleanupScriptlet(scriptlet_)); err_ != nil {
 				err = err_
 				return false
 			}

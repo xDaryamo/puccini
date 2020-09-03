@@ -12,21 +12,23 @@ type NodeTemplate struct {
 	ServiceTemplate *ServiceTemplate `json:"-" yaml:"-"`
 	Name            string           `json:"-" yaml:"-"`
 
-	Description  string         `json:"description" yaml:"description"`
-	Types        Types          `json:"types" yaml:"types"`
-	Directives   []string       `json:"directives" yaml:"directives"`
-	Properties   Constrainables `json:"properties" yaml:"properties"`
-	Attributes   Constrainables `json:"attributes" yaml:"attributes"`
-	Requirements Requirements   `json:"requirements" yaml:"requirements"`
-	Capabilities Capabilities   `json:"capabilities" yaml:"capabilities"`
-	Interfaces   Interfaces     `json:"interfaces" yaml:"interfaces"`
-	Artifacts    Artifacts      `json:"artifacts" yaml:"artifacts"`
+	Metadata     map[string]string `json:"metadata,omitempty" yaml:"metadata,omitempty"`
+	Description  string            `json:"description" yaml:"description"`
+	Types        Types             `json:"types" yaml:"types"`
+	Directives   []string          `json:"directives" yaml:"directives"`
+	Properties   Constrainables    `json:"properties" yaml:"properties"`
+	Attributes   Constrainables    `json:"attributes" yaml:"attributes"`
+	Requirements Requirements      `json:"requirements" yaml:"requirements"`
+	Capabilities Capabilities      `json:"capabilities" yaml:"capabilities"`
+	Interfaces   Interfaces        `json:"interfaces" yaml:"interfaces"`
+	Artifacts    Artifacts         `json:"artifacts" yaml:"artifacts"`
 }
 
 func (self *ServiceTemplate) NewNodeTemplate(name string) *NodeTemplate {
 	nodeTemplate := &NodeTemplate{
 		ServiceTemplate: self,
 		Name:            name,
+		Metadata:        make(map[string]string),
 		Types:           make(Types),
 		Directives:      make([]string, 0),
 		Properties:      make(Constrainables),
