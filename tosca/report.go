@@ -3,6 +3,7 @@ package tosca
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/tliron/kutil/ard"
 	"github.com/tliron/kutil/problems"
@@ -64,12 +65,12 @@ func (self *Context) FormatBadData() string {
 	return terminal.ColorError(fmt.Sprintf("%+v", self.Data))
 }
 
-func (self *Context) ReportValueWrongType(requiredTypeNames ...ard.TypeName) bool {
-	typeNames := make([]string, len(requiredTypeNames))
-	for index, typeName := range requiredTypeNames {
-		typeNames[index] = string(typeName)
-	}
-	return self.ReportPathf(1, "%s instead of %s", terminal.ColorTypeName(quote(ard.GetTypeName(self.Data))), terminal.ColoredOptions(typeNames, terminal.ColorTypeName))
+func (self *Context) ReportValueWrongType(allowedTypeNames ...ard.TypeName) bool {
+	return self.ReportPathf(1, "%s instead of %s", terminal.ColorTypeName(quote(ardGetTypeName(self.Data))), terminal.ColoredOptions(ardTypeNamesToStrings(allowedTypeNames), terminal.ColorTypeName))
+}
+
+func (self *Context) ReportAspectWrongType(aspect string, value ard.Value, allowedTypeNames ...ard.TypeName) bool {
+	return self.ReportPathf(1, "%s is %s instead of %s", aspect, terminal.ColorTypeName(quote(ardGetTypeName(value))), terminal.ColoredOptions(ardTypeNamesToStrings(allowedTypeNames), terminal.ColorTypeName))
 }
 
 func (self *Context) ReportValueWrongFormat(format string) bool {
@@ -133,19 +134,11 @@ func (self *Context) ReportDuplicateMapKey(key string) bool {
 //
 
 func (self *Context) ReportNameAmbiguous(type_ reflect.Type, name string, entityPtrs ...EntityPtr) bool {
-	url := make([]string, len(entityPtrs))
-	for i, entityPtr := range entityPtrs {
-		url[i] = GetContext(entityPtr).URL.String()
-	}
-	return self.Reportf(1, "ambiguous %s name %s, can be in %s", GetEntityTypeName(type_), terminal.ColorName(quote(name)), terminal.ColoredOptions(url, terminal.ColorValue))
+	return self.Reportf(1, "ambiguous %s name %s, can be in %s", GetEntityTypeName(type_), terminal.ColorName(quote(name)), terminal.ColoredOptions(urlsOfEntityPtrs(entityPtrs), terminal.ColorValue))
 }
 
 func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) bool {
-	var entityTypeNames []string
-	for _, type_ := range types {
-		entityTypeNames = append(entityTypeNames, GetEntityTypeName(type_))
-	}
-	return self.ReportPathf(1, "reference to unknown %s: %s", terminal.Options(entityTypeNames), self.FormatBadData())
+	return self.ReportPathf(1, "reference to unknown %s: %s", terminal.Options(entityTypeNamesOfTypes(types)), self.FormatBadData())
 }
 
 //
@@ -232,4 +225,40 @@ func (self *Context) ReportCopyLoop(name string) bool {
 
 func quote(value interface{}) string {
 	return fmt.Sprintf("%q", value)
+}
+
+func ardTypeNameToString(typeName ard.TypeName) string {
+	typeName_ := string(typeName)
+	if strings.HasPrefix(typeName_, "ard.") {
+		typeName_ = typeName_[4:]
+	}
+	return typeName_
+}
+
+func ardTypeNamesToStrings(typeNames []ard.TypeName) []string {
+	strings_ := make([]string, len(typeNames))
+	for index, typeName := range typeNames {
+		strings_[index] = ardTypeNameToString(typeName)
+	}
+	return strings_
+}
+
+func ardGetTypeName(value ard.Value) string {
+	return ardTypeNameToString(ard.GetTypeName(value))
+}
+
+func urlsOfEntityPtrs(entityPtrs []EntityPtr) []string {
+	urls := make([]string, len(entityPtrs))
+	for index, entityPtr := range entityPtrs {
+		urls[index] = GetContext(entityPtr).URL.String()
+	}
+	return urls
+}
+
+func entityTypeNamesOfTypes(types []reflect.Type) []string {
+	entityTypeNames := make([]string, len(types))
+	for index, type_ := range types {
+		entityTypeNames[index] = GetEntityTypeName(type_)
+	}
+	return entityTypeNames
 }

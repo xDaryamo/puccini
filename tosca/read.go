@@ -358,29 +358,55 @@ func (self *Context) ReadStringListFixed(length int) *[]string {
 
 func (self *Context) ReadStringMap() *map[string]interface{} {
 	if self.ValidateType(ard.TypeMap) {
-		strings := make(map[string]interface{})
+		map_ := make(map[string]interface{})
 		for key, data := range self.Data.(ard.Map) {
-			strings[yamlkeys.KeyString(key)] = data
+			var ok bool
+			var key_ string
+			if key_, ok = key.(string); ok {
+			} else if self.HasQuirk(QuirkDataTypesStringPermissive) {
+				key_ = ard.ValueToString(data)
+			} else {
+				self.MapChild(key, data).ReportAspectWrongType("map key", key, ard.TypeString)
+				continue
+			}
+
+			map_[key_] = data
 		}
-		return &strings
+		return &map_
+	} else {
+		return nil
 	}
-	return nil
 }
 
 func (self *Context) ReadStringStringMap() *map[string]string {
 	if self.ValidateType(ard.TypeMap) {
-		strings := make(map[string]string)
+		map_ := make(map[string]string)
 		for key, data := range self.Data.(ard.Map) {
-			if string, ok := data.(string); ok {
-				strings[yamlkeys.KeyString(key)] = string
+			var ok bool
+			var key_ string
+			if key_, ok = key.(string); ok {
+			} else if self.HasQuirk(QuirkDataTypesStringPermissive) {
+				key_ = ard.ValueToString(data)
+			} else {
+				self.MapChild(key, data).ReportAspectWrongType("map key", key, ard.TypeString)
+				continue
+			}
+
+			var data_ string
+			if data_, ok = data.(string); ok {
+			} else if self.HasQuirk(QuirkDataTypesStringPermissive) {
+				data_ = ard.ValueToString(data)
 			} else {
 				self.MapChild(key, data).ReportValueWrongType(ard.TypeString)
 				continue
 			}
+
+			map_[key_] = data_
 		}
-		return &strings
+		return &map_
+	} else {
+		return nil
 	}
-	return nil
 }
 
 func (self *Context) ReadInteger() *int64 {
