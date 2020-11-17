@@ -12,5 +12,5 @@ require (
 	github.com/spf13/cobra v1.1.1
 	github.com/tebeka/atexit v0.3.0
 	github.com/tliron/kutil v0.1.6
-	github.com/tliron/yamlkeys v1.3.4
+	github.com/tliron/yamlkeys v1.3.5
 )

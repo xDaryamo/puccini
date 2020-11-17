@@ -73,6 +73,11 @@ func (self *Value) GetKey() string {
 	return self.Name
 }
 
+// fmt.Stringer interface
+func (self *Value) String() string {
+	return yamlkeys.KeyString(self.Context.Data)
+}
+
 func (self *Value) RenderDataType(dataTypeName string) {
 	if e, ok := self.Context.Namespace.Lookup(dataTypeName); ok {
 		if dataType, ok := e.(*DataType); ok {

@@ -27,6 +27,8 @@ type DataType struct {
 
 	PropertyDefinitions PropertyDefinitions `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
 	ConstraintClauses   ConstraintClauses   `read:"constraints,[]ConstraintClause"`
+	KeySchema           *Schema             `read:"key_schema,Schema"`   // introduced in TOSCA 1.3
+	EntrySchema         *Schema             `read:"entry_schema,Schema"` // introduced in TOSCA 1.3
 
 	Parent *DataType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
 }

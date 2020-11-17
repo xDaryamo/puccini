@@ -1,6 +1,7 @@
 package tosca_v2_0
 
 import (
+	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
@@ -60,11 +61,14 @@ func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) 
 		return
 	}
 
-	if ((self.Description == nil) || ((self.DataType != nil) && (self.Description == self.DataType.Description))) && (parentDefinition.Description != nil) {
+	if (self.Description == nil) && (parentDefinition.Description != nil) {
 		self.Description = parentDefinition.Description
 	}
 	if (self.DataTypeName == nil) && (parentDefinition.DataTypeName != nil) {
 		self.DataTypeName = parentDefinition.DataTypeName
+	}
+	if (self.KeySchema == nil) && (parentDefinition.KeySchema != nil) {
+		self.KeySchema = parentDefinition.KeySchema
 	}
 	if (self.EntrySchema == nil) && (parentDefinition.EntrySchema != nil) {
 		self.EntrySchema = parentDefinition.EntrySchema
@@ -99,19 +103,31 @@ func (self *AttributeDefinition) Render() {
 		return
 	}
 
-	switch self.DataType.Name {
-	case "list", "map":
-		// Make sure we have an entry schema
-		if (self.EntrySchema == nil) || (self.EntrySchema.DataType == nil) {
-			self.Context.ReportMissingEntrySchema(self.DataType.Name)
-			return
-		}
+	if internalTypeName, _, _, ok := self.DataType.GetInternal(); ok {
+		switch internalTypeName {
+		case ard.TypeList, ard.TypeMap:
+			if self.EntrySchema == nil {
+				self.EntrySchema = self.DataType.EntrySchema
+			}
 
-		if (self.DataType.Name == "map") && (self.KeySchema == nil) {
-			// Default to "string" for key schema
-			self.KeySchema = ReadSchema(self.Context.FieldChild("key_schema", "string")).(*Schema)
-			if !self.KeySchema.LookupDataType() {
+			// Make sure we have an entry schema
+			if (self.EntrySchema == nil) || (self.EntrySchema.DataType == nil) {
+				self.Context.ReportMissingEntrySchema(self.DataType.Name)
 				return
+			}
+
+			if internalTypeName == ard.TypeMap {
+				if self.KeySchema == nil {
+					self.KeySchema = self.DataType.KeySchema
+				}
+
+				if self.KeySchema == nil {
+					// Default to "string" for key schema
+					self.KeySchema = ReadSchema(self.Context.FieldChild("key_schema", "string")).(*Schema)
+					if !self.KeySchema.LookupDataType() {
+						return
+					}
+				}
 			}
 		}
 	}

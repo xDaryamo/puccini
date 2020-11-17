@@ -30,7 +30,7 @@ func init() {
 	Grammar.RegisterReader("CapabilityMapping", tosca_v2_0.ReadCapabilityMapping)
 	Grammar.RegisterReader("CapabilityType", tosca_v2_0.ReadCapabilityType)
 	Grammar.RegisterReader("ConstraintClause", tosca_v2_0.ReadConstraintClause)
-	Grammar.RegisterReader("DataType", tosca_v2_0.ReadDataType)
+	Grammar.RegisterReader("DataType", tosca_v1_2.ReadDataType)                       // 1.2
 	Grammar.RegisterReader("Group", ReadGroup)                                        // override
 	Grammar.RegisterReader("GroupType", tosca_v1_2.ReadGroupType)                     // 1.2
 	Grammar.RegisterReader("Import", tosca_v1_3.ReadImport)                           /// 1.3

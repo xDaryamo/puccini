@@ -48,7 +48,7 @@ func (self *ParameterDefinition) Inherit(parentDefinition *ParameterDefinition) 
 		return
 	}
 
-	if ((self.Description == nil) || ((self.DataType != nil) && (self.Description == self.DataType.Description))) && (parentDefinition.Description != nil) {
+	if (self.Description == nil) && (parentDefinition.Description != nil) {
 		self.Description = parentDefinition.Description
 	}
 	if (self.DataTypeName == nil) && (parentDefinition.DataTypeName != nil) {

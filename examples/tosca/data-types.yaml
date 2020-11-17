@@ -112,6 +112,10 @@ node_types:
         constraints:
         - in_range: [ 1.2.3.beta-3, 1.2.3.beta-5 ]
 
+      # Custom map
+      time_map:
+        type: TimeMap
+
       # In Puccini you can also create your own custom constraints
       # See: examples/javascript/constraints.yaml
 
@@ -135,7 +139,6 @@ data_types:
         type: Nested
 
   Nested:
-    # (Just to demonstrate, we won't derive from Root for this type; there's nothing there to inherit anyway)
     properties:
       nested_float:
         type: float
@@ -152,6 +155,12 @@ data_types:
     description: Lowercase string
     constraints:
     - pattern: '[a-z]*'
+
+  TimeMap:
+    derived_from: map
+    # You can only use entry_schema if you derive from map or list
+    # And you can only use key_schema if you derive from map
+    entry_schema: scalar-unit.time
 
 topology_template:
 
@@ -239,7 +248,7 @@ topology_template:
         json: |-
           {
             "key1": "value",
-            "key2": [1, 2, 3]
+            "key2": [ 1, 2, 3 ]
           }
         xml:
           # Constraints are applied *after* functions are called
@@ -271,3 +280,8 @@ topology_template:
 
         # Constraints: 1.2.3.beta-3 <= x <= 1.2.3.beta-5
         constrained_version: 1.2.3.beta-4
+
+        # Custom map
+        time_map:
+          first: 100 s
+          second: 200 s
