@@ -103,7 +103,7 @@ func (self *AttributeDefinition) Render() {
 		return
 	}
 
-	if internalTypeName, _, _, ok := self.DataType.GetInternal(); ok {
+	if internalTypeName, ok := self.DataType.GetInternalTypeName(); ok {
 		switch internalTypeName {
 		case ard.TypeList, ard.TypeMap:
 			if self.EntrySchema == nil {

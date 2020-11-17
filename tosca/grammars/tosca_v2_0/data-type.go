@@ -67,6 +67,12 @@ func (self *DataType) Inherit() {
 		return
 	}
 
+	if (self.KeySchema == nil) && (self.Parent.KeySchema != nil) {
+		self.KeySchema = self.Parent.KeySchema
+	}
+	if (self.EntrySchema == nil) && (self.Parent.EntrySchema != nil) {
+		self.EntrySchema = self.Parent.EntrySchema
+	}
 	if self.Parent.ConstraintClauses != nil {
 		self.ConstraintClauses = self.Parent.ConstraintClauses.Append(self.ConstraintClauses)
 	}
