@@ -19,14 +19,14 @@ type NotificationAssignment struct {
 
 	Description    *string                  `read:"description"`
 	Implementation *InterfaceImplementation `read:"implementation,InterfaceImplementation"`
-	Outputs        NotificationOutputs      `read:"outputs,NotificationOutput"`
+	Outputs        OutputMappings           `read:"outputs,OutputMapping"`
 }
 
 func NewNotificationAssignment(context *tosca.Context) *NotificationAssignment {
 	return &NotificationAssignment{
 		Entity:  NewEntity(context),
 		Name:    context.Name,
-		Outputs: make(NotificationOutputs),
+		Outputs: make(OutputMappings),
 	}
 }
 

@@ -46,9 +46,9 @@ func init() {
 	Grammar.RegisterReader("NodeType", tosca_v2_0.ReadNodeType)
 	Grammar.RegisterReader("NotificationAssignment", tosca_v2_0.ReadNotificationAssignment) // introduced in TOSCA 1.3
 	Grammar.RegisterReader("NotificationDefinition", tosca_v2_0.ReadNotificationDefinition) // introduced in TOSCA 1.3
-	Grammar.RegisterReader("NotificationOutput", tosca_v2_0.ReadNotificationOutput)         // introduced in TOSCA 1.3
 	Grammar.RegisterReader("OperationAssignment", tosca_v2_0.ReadOperationAssignment)
 	Grammar.RegisterReader("OperationDefinition", tosca_v2_0.ReadOperationDefinition)
+	Grammar.RegisterReader("OutputMapping", tosca_v2_0.ReadOutputMapping) // introduced in TOSCA 1.3
 	Grammar.RegisterReader("InterfaceImplementation", tosca_v2_0.ReadInterfaceImplementation)
 	Grammar.RegisterReader("ParameterDefinition", tosca_v2_0.ReadParameterDefinition)
 	Grammar.RegisterReader("Policy", tosca_v2_0.ReadPolicy)

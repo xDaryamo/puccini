@@ -41,8 +41,8 @@ func init() {
 	Grammar.RegisterReader("NodeFilter", tosca_v2_0.ReadNodeFilter)
 	Grammar.RegisterReader("NodeTemplate", ReadNodeTemplate) // override
 	Grammar.RegisterReader("NodeType", tosca_v2_0.ReadNodeType)
-	Grammar.RegisterReader("OperationAssignment", tosca_v2_0.ReadOperationAssignment)
-	Grammar.RegisterReader("OperationDefinition", tosca_v2_0.ReadOperationDefinition)
+	Grammar.RegisterReader("OperationAssignment", tosca_v1_2.ReadOperationAssignment)         // 1.2
+	Grammar.RegisterReader("OperationDefinition", tosca_v1_2.ReadOperationDefinition)         // 1.2
 	Grammar.RegisterReader("InterfaceImplementation", tosca_v1_1.ReadInterfaceImplementation) // 1.1
 	Grammar.RegisterReader("ParameterDefinition", tosca_v2_0.ReadParameterDefinition)
 	Grammar.RegisterReader("Policy", ReadPolicy)                                    // override

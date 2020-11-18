@@ -18,14 +18,14 @@ type NotificationDefinition struct {
 
 	Description    *string                  `read:"description"`
 	Implementation *InterfaceImplementation `read:"implementation,InterfaceImplementation"`
-	Outputs        NotificationOutputs      `read:"outputs,NotificationOutput"`
+	Outputs        OutputMappings           `read:"outputs,OutputMapping"`
 }
 
 func NewNotificationDefinition(context *tosca.Context) *NotificationDefinition {
 	return &NotificationDefinition{
 		Entity:  NewEntity(context),
 		Name:    context.Name,
-		Outputs: make(NotificationOutputs),
+		Outputs: make(OutputMappings),
 	}
 }
 
