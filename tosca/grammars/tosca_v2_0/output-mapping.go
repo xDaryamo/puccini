@@ -43,6 +43,23 @@ func (self *OutputMapping) GetKey() string {
 	return self.Name
 }
 
+func (self *OutputMapping) Normalize(name string, normalNodeTemplate *normal.NodeTemplate, normalAttributeMappings normal.AttributeMappings) {
+	if (self.NodeTemplateName == nil) || (self.AttributeName == nil) {
+		return
+	}
+
+	nodeTemplateName := *self.NodeTemplateName
+	if nodeTemplateName == "SELF" {
+		normalAttributeMappings[name] = normalNodeTemplate.NewAttributeMapping(*self.AttributeName)
+	} else {
+		if normalOutputNodeTemplate, ok := normalNodeTemplate.ServiceTemplate.NodeTemplates[nodeTemplateName]; ok {
+			normalAttributeMappings[name] = normalOutputNodeTemplate.NewAttributeMapping(*self.AttributeName)
+		} else {
+			self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")
+		}
+	}
+}
+
 //
 // OutputMappings
 //
@@ -67,14 +84,6 @@ func (self OutputMappings) Inherit(parent OutputMappings) {
 
 func (self OutputMappings) Normalize(normalNodeTemplate *normal.NodeTemplate, normalAttributeMappings normal.AttributeMappings) {
 	for name, outputMapping := range self {
-		nodeTemplateName := *outputMapping.NodeTemplateName
-
-		if nodeTemplateName == "SELF" {
-			normalAttributeMappings[name] = normalNodeTemplate.NewAttributeMapping(*outputMapping.AttributeName)
-		} else {
-			if normalOutputNodeTemplate, ok := normalNodeTemplate.ServiceTemplate.NodeTemplates[nodeTemplateName]; ok {
-				normalAttributeMappings[name] = normalOutputNodeTemplate.NewAttributeMapping(*outputMapping.AttributeName)
-			}
-		}
+		outputMapping.Normalize(name, normalNodeTemplate, normalAttributeMappings)
 	}
 }
