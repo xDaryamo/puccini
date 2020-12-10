@@ -4,3 +4,20 @@ metadata:
 
   template_name: TOSCA 2.0 Example
   template_author: Puccini
+
+node_types:
+
+  DataNode:
+    properties:
+      bytes:
+        # Base64-encoded data
+        type: bytes
+
+topology_template:
+
+  node_templates:
+
+    data:
+      type: DataNode
+      properties:
+        bytes: UHVjY2luaQ==
