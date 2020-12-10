@@ -41,7 +41,13 @@ func (self *Context) MergeProblems() {
 	}
 }
 
-func (self *Context) AddUnit(entityPtr tosca.EntityPtr, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
+func (self *Context) AddUnit(unit *Unit) {
+	self.unitsLock.Lock()
+	self.Units = append(self.Units, unit)
+	self.unitsLock.Unlock()
+}
+
+func (self *Context) AddImportUnit(entityPtr tosca.EntityPtr, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
 	unit := NewUnit(entityPtr, container, nameTransformer)
 
 	if container != nil {
@@ -55,9 +61,7 @@ func (self *Context) AddUnit(entityPtr tosca.EntityPtr, container *Unit, nameTra
 		}
 	}
 
-	self.unitsLock.Lock()
-	self.Units = append(self.Units, unit)
-	self.unitsLock.Unlock()
+	self.AddUnit(unit)
 
 	self.goReadImports(unit)
 

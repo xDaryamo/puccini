@@ -23,6 +23,7 @@ func init() {
 	Grammar.RegisterReader("AttributeDefinition", ReadAttributeDefinition)
 	Grammar.RegisterReader("AttributeMapping", ReadAttributeMapping) // introduced in TOSCA 1.3
 	Grammar.RegisterReader("AttributeValue", ReadAttributeValue)
+	Grammar.RegisterReader("bytes", ReadBytes) // introduced in TOSCA 2.0
 	Grammar.RegisterReader("CapabilityAssignment", ReadCapabilityAssignment)
 	Grammar.RegisterReader("CapabilityDefinition", ReadCapabilityDefinition)
 	Grammar.RegisterReader("CapabilityFilter", ReadCapabilityFilter)

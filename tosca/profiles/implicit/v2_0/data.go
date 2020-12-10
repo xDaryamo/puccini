@@ -21,37 +21,37 @@ data_types:
     metadata:
       puccini.type: ard.boolean
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   integer:
     metadata:
       puccini.type: ard.integer
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   float:
     metadata:
       puccini.type: ard.float
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   string:
     metadata:
       puccini.type: ard.string
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   bytes:
     metadata:
       puccini.type: bytes
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   nil:
     metadata:
       puccini.type: ard.null
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   #
   # Special
@@ -62,25 +62,25 @@ data_types:
       puccini.type: version
       puccini.comparer: tosca.comparer.version
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   timestamp:
     metadata:
       puccini.type: timestamp
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   range:
     metadata:
       puccini.type: range
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   tosca.datatypes.json?:
     metadata:
       puccini.normative: 'true'
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
     # ERRATUM: typo
     description: >-
       The json type is a TOSCA data Type used to define a string that contains data in the
@@ -93,7 +93,7 @@ data_types:
     metadata:
       puccini.normative: 'true'
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
     # ERRATUM: typo
     description: >-
       The xml type is a TOSCA data Type used to define a string that contains data in the
@@ -110,25 +110,25 @@ data_types:
     metadata:
       puccini.type: scalar-unit.size
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   scalar-unit.time:
     metadata:
       puccini.type: scalar-unit.time
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   scalar-unit.frequency:
     metadata:
       puccini.type: scalar-unit.frequency
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   scalar-unit.bitrate:
     metadata:
       puccini.type: scalar-unit.bitrate
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   #
   # Collections
@@ -138,12 +138,12 @@ data_types:
     metadata:
       puccini.type: ard.list
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 
   map:
     metadata:
       puccini.type: ard.map
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: ?
+      specification.location: '?'
 `
 }

@@ -45,7 +45,9 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 		var err error
 		if toscaContext.URL, err = csar.GetRootURL(toscaContext.URL); err != nil {
 			toscaContext.ReportError(err)
-			return NewUnitNoEntity(toscaContext, container, nameTransformer), false
+			unit := NewUnitNoEntity(toscaContext, container, nameTransformer)
+			self.AddUnit(unit)
+			return unit, false
 		}
 	}
 
@@ -56,12 +58,16 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 			err = NewYAMLDecodeError(decodeError)
 		}
 		toscaContext.ReportError(err)
-		return NewUnitNoEntity(toscaContext, container, nameTransformer), false
+		unit := NewUnitNoEntity(toscaContext, container, nameTransformer)
+		self.AddUnit(unit)
+		return unit, false
 	}
 
 	// Detect grammar
 	if !grammars.Detect(toscaContext) {
-		return NewUnitNoEntity(toscaContext, container, nameTransformer), false
+		unit := NewUnitNoEntity(toscaContext, container, nameTransformer)
+		self.AddUnit(unit)
+		return unit, false
 	}
 
 	// Read entityPtr
@@ -80,10 +86,10 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 
 	readCache.Store(toscaContext.URL.Key(), entityPtr)
 
-	return self.AddUnit(entityPtr, container, nameTransformer), true
+	return self.AddImportUnit(entityPtr, container, nameTransformer), true
 }
 
-// From Importer interface
+// From tosca.Importer interface
 func (self *Context) goReadImports(container *Unit) {
 	var importSpecs []*tosca.ImportSpec
 	if importer, ok := container.EntityPtr.(tosca.Importer); ok {
@@ -129,7 +135,7 @@ func (self *Context) goReadImports(container *Unit) {
 			default: // entityPtr
 				// Cache hit
 				log.Debugf("{read} cache hit: %s", key)
-				self.AddUnit(cached, container, importSpec.NameTransformer)
+				self.AddImportUnit(cached, container, importSpec.NameTransformer)
 			}
 		} else {
 			importToscaContext := container.GetContext().NewImportContext(importSpec.URL)
@@ -153,7 +159,7 @@ func (self *Context) waitForPromise(promise Promise, key string, container *Unit
 		default: // entityPtr
 			// Cache hit
 			log.Debugf("{read} promise kept: %s", key)
-			self.AddUnit(cached, container, nameTransformer)
+			self.AddImportUnit(cached, container, nameTransformer)
 		}
 	} else {
 		log.Debugf("{read} promise broken (empty): %s", key)

@@ -96,8 +96,10 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 		if ToPrintPhase(1) {
 			if len(dumpPhases) > 1 {
 				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorHeading("Imports"))
+				context.PrintImports(1)
+			} else {
+				context.PrintImports(0)
 			}
-			context.PrintImports(1)
 		}
 	}
 
@@ -108,8 +110,10 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 		if ToPrintPhase(2) {
 			if len(dumpPhases) > 1 {
 				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorHeading("Namespaces"))
+				context.PrintNamespaces(1)
+			} else {
+				context.PrintNamespaces(0)
 			}
-			context.PrintNamespaces(1)
 		}
 	}
 
@@ -119,8 +123,10 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 		if ToPrintPhase(3) {
 			if len(dumpPhases) > 1 {
 				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorHeading("Hierarchies"))
+				context.PrintHierarchies(1)
+			} else {
+				context.PrintHierarchies(0)
 			}
-			context.PrintHierarchies(1)
 		}
 	}
 
@@ -130,8 +136,10 @@ func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
 		if ToPrintPhase(4) {
 			if len(dumpPhases) > 1 {
 				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorHeading("Inheritance Tasks"))
+				tasks.Print(1)
+			} else {
+				tasks.Print(0)
 			}
-			tasks.Print(1)
 		}
 		tasks.Drain()
 	}
