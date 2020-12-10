@@ -13,9 +13,9 @@ builds:
   - windows
   - js
   ldflags:
-  - -X 'github.com/tliron/puccini/version.GitVersion={{.Env.VERSION}}'
-  - -X 'github.com/tliron/puccini/version.GitRevision={{.Env.REVISION}}'
-  - -X 'github.com/tliron/puccini/version.Timestamp={{.Env.TIMESTAMP}}'
+  - -X 'github.com/tliron/kutil/version.GitVersion={{.Env.VERSION}}'
+  - -X 'github.com/tliron/kutil/version.GitRevision={{.Env.REVISION}}'
+  - -X 'github.com/tliron/kutil/version.Timestamp={{.Env.TIMESTAMP}}'
 
 - id: puccini-clout
   main: ./puccini-clout
@@ -29,9 +29,9 @@ builds:
   - windows
   - js
   ldflags:
-  - -X 'github.com/tliron/puccini/version.GitVersion={{.Env.VERSION}}'
-  - -X 'github.com/tliron/puccini/version.GitRevision={{.Env.REVISION}}'
-  - -X 'github.com/tliron/puccini/version.Timestamp={{.Env.TIMESTAMP}}'
+  - -X 'github.com/tliron/kutil/version.GitVersion={{.Env.VERSION}}'
+  - -X 'github.com/tliron/kutil/version.GitRevision={{.Env.REVISION}}'
+  - -X 'github.com/tliron/kutil/version.Timestamp={{.Env.TIMESTAMP}}'
 
 nfpms:
 
