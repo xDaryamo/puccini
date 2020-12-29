@@ -8,8 +8,8 @@ tosca_definitions_version: tosca_2_0
 
 metadata:
 
-  puccini.scriptlet.import:tosca.comparer.version: internal:/tosca/implicit/2.0/js/comparers/version.js
-  puccini.scriptlet.import:tosca.constraint._format: internal:/tosca/implicit/2.0/js/constraints/_format.js
+  puccini.scriptlet.import:tosca.comparer.version: js/comparers/version.js
+  puccini.scriptlet.import:tosca.constraint._format: js/constraints/_format.js
 
 data_types:
 
