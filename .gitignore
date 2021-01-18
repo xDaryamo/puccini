@@ -3,5 +3,7 @@
 
 dist/
 docs/html/
+work/
+playbooks/
 
 __pycache__/
