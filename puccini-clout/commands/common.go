@@ -24,7 +24,7 @@ func ReadClout(path string) (*clout.Clout, error) {
 			return nil, err
 		}
 	} else {
-		if url, err = urlpkg.ReadToInternalURLFromStdin("yaml"); err != nil {
+		if url, err = urlpkg.ReadToInternalURLFromStdin(inputFormat); err != nil {
 			return nil, err
 		}
 	}

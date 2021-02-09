@@ -22,8 +22,8 @@ type Context struct {
 	unitsLock sync.Mutex
 }
 
-func NewContext(quirks tosca.Quirks) Context {
-	return Context{
+func NewContext(quirks tosca.Quirks) *Context {
+	return &Context{
 		Quirks:          quirks,
 		NamespacesWork:  NewContextualWork("namespaces"),
 		HierarchiesWork: NewContextualWork("hierarchies"),

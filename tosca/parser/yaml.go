@@ -24,6 +24,6 @@ func (self *YAMLDecodeError) Error() string {
 }
 
 // problems.Problematic interface
-func (self *YAMLDecodeError) Problem() (string, string, int, int) {
-	return fmt.Sprintf("malformed YAML, %s", self.DecodeError.Message), "", self.DecodeError.Line, self.DecodeError.Column
+func (self *YAMLDecodeError) Problem() (string, string, string, int, int) {
+	return "", "", fmt.Sprintf("malformed YAML, %s", self.DecodeError.Message), self.DecodeError.Line, self.DecodeError.Column
 }

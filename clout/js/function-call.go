@@ -89,13 +89,13 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.Strin
 	}
 
 	if data, ok := map_["row"]; ok {
-		if functionCall.Row, ok = data.(int); !ok {
+		if functionCall.Row, ok = asInt(data); !ok {
 			return nil, fmt.Errorf("malformed function call, \"row\" not an integer: %T", data)
 		}
 	}
 
 	if data, ok := map_["column"]; ok {
-		if functionCall.Column, ok = data.(int); !ok {
+		if functionCall.Column, ok = asInt(data); !ok {
 			return nil, fmt.Errorf("malformed function call, \"column\" not an integer: %T", data)
 		}
 	}
@@ -211,4 +211,14 @@ func encodeArgument(argument ard.Value) string {
 	encodedArgument = strings.ReplaceAll(encodedArgument, "\n", "¶")
 	encodedArgument = strings.ReplaceAll(encodedArgument, "\"", "\\\"")
 	return fmt.Sprintf("%q", encodedArgument)
+}
+
+func asInt(value interface{}) (int, bool) {
+	switch value_ := value.(type) {
+	case int64:
+		return int(value_), true
+	case int:
+		return value_, true
+	}
+	return 0, false
 }

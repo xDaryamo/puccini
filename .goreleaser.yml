@@ -42,8 +42,9 @@ nfpms:
   maintainer: Tal Liron <tal.liron@gmail.com>
   description: Deliberately stateless cloud topology management and deployment tools based on TOSCA.
   license: Apache 2.0
-  files:
-    puccini-csar: /usr/local/bin/puccini-csar
+  contents:
+  - src: puccini-csar
+    dst: /usr/local/bin/puccini-csar
 
 archives:
 

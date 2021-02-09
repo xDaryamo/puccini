@@ -59,7 +59,7 @@ var parseCommand = &cobra.Command{
 	},
 }
 
-func Parse(url string) (parser.Context, *normal.ServiceTemplate) {
+func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 	ParseInputs()
 
 	urlContext := urlpkg.NewContext()

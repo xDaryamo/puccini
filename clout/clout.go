@@ -18,10 +18,10 @@ const Version = "1.0"
 //
 
 type Clout struct {
-	Version    string        `yaml:"version"`
-	Metadata   ard.StringMap `yaml:"metadata"`
-	Properties ard.StringMap `yaml:"properties"`
-	Vertexes   Vertexes      `yaml:"vertexes"`
+	Version    string        `json:"version" yaml:"version"`
+	Metadata   ard.StringMap `json:"metadata" yaml:"metadata"`
+	Properties ard.StringMap `json:"properties" yaml:"properties" `
+	Vertexes   Vertexes      `json:"vertexes" yaml:"vertexes"`
 }
 
 func NewClout() *Clout {

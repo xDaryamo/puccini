@@ -101,8 +101,8 @@ github.com/docker/go-connections v0.4.0/go.mod h1:Gbd7IOopHjR8Iph03tsViu4nIes5Xh
 github.com/docker/go-units v0.4.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
 github.com/docker/spdystream v0.0.0-20160310174837-449fdfce4d96/go.mod h1:Qh8CwZgvJUkLughtfhJv5dyTYa91l1fOUCrgjqmcifM=
 github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815/go.mod h1:WwZ+bS3ebgob9U8Nd0kOddGdZWjyMGR8Wziv+TBNwSE=
-github.com/dop251/goja v0.0.0-20210125133538-084ecb42b053 h1:P/Zgv8DHendjUAKG3QvnK411dlcByFZsG7KWpIyZ40s=
-github.com/dop251/goja v0.0.0-20210125133538-084ecb42b053/go.mod h1:Mw6PkjjMXWbTj+nnj4s3QPXq1jaT0s5pC0iFD4+BOAA=
+github.com/dop251/goja v0.0.0-20210126164150-f5884268f0c0 h1:6zmaq2NhOm//MNgxDPXoLiWS1c/WTPxqqeUAQFrZRbQ=
+github.com/dop251/goja v0.0.0-20210126164150-f5884268f0c0/go.mod h1:Mw6PkjjMXWbTj+nnj4s3QPXq1jaT0s5pC0iFD4+BOAA=
 github.com/dustin/go-humanize v0.0.0-20171111073723-bb3d318650d4/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
 github.com/elazarl/goproxy v0.0.0-20180725130230-947c36da3153/go.mod h1:/Zj4wYkgs4iZTTu3o/KG3Itv/qCCa8VVMlb3i9OVuzc=
@@ -386,8 +386,8 @@ github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69rRypqCw=
 github.com/tebeka/atexit v0.3.0 h1:jleL99H7Ywt80oJKR+VWmJNnezcCOG0CuzcN3CIpsdI=
 github.com/tebeka/atexit v0.3.0/go.mod h1:WJmSUSmMT7WoR7etUOaGBVXk+f5/ZJ+67qwuedq7Fbs=
-github.com/tliron/kutil v0.1.14 h1:JlHOX2/t9eA/Hh1oLIYhMjapyqIEU5myNzHqblplKo0=
-github.com/tliron/kutil v0.1.14/go.mod h1:gk242wC+QybWx8sT4P5ns5/cGUQQCIUSyTVMkqhYsIw=
+github.com/tliron/kutil v0.1.17 h1:sB6SNFkU1QOpGpIuVBmMW0MTnFnGQsg/Qa8aVcQbGT8=
+github.com/tliron/kutil v0.1.17/go.mod h1:gk242wC+QybWx8sT4P5ns5/cGUQQCIUSyTVMkqhYsIw=
 github.com/tliron/yamlkeys v1.3.5 h1:zfNwrtxNP9pyj2UJV8SgLj6jUP4bsHwFtBByZyIg4AM=
 github.com/tliron/yamlkeys v1.3.5/go.mod h1:8kJ1A/1s3p/I3MQUAbtv72dPEyQGoh0ZkQp0UAkABBo=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20170815181823-89b8d40f7ca8/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=

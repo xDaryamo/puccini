@@ -15,29 +15,29 @@ import (
 // Context
 //
 
-func (self *Context) ReportInSection(skip int, message string, row int, column int) bool {
+func (self *Context) ReportURL(skip int, item string, message string, row int, column int) bool {
 	if self.URL != nil {
-		return self.Problems.ReportInSection(skip+1, message, self.URL.String(), row, column)
+		return self.Problems.ReportFull(skip+1, self.URL.String(), item, message, row, column)
 	} else {
-		return self.Problems.Report(skip+1, message)
+		return self.Problems.Report(skip+1, item, message)
 	}
 }
 
-func (self *Context) Report(skip int, message string) bool {
+func (self *Context) Report(skip int, item string, message string) bool {
 	row, column := self.GetLocation()
-	return self.ReportInSection(skip+1, message, row, column)
+	return self.ReportURL(skip+1, item, message, row, column)
 }
 
 func (self *Context) Reportf(skip int, f string, arg ...interface{}) bool {
-	return self.Report(skip+1, fmt.Sprintf(f, arg...))
+	return self.Report(skip+1, "", fmt.Sprintf(f, arg...))
 }
 
 func (self *Context) ReportPath(skip int, message string) bool {
 	path := self.Path.String()
 	if path != "" {
-		message = fmt.Sprintf("%s: %s", terminal.ColorPath(path), message)
+		path = terminal.ColorPath(path)
 	}
-	return self.Report(skip+1, message)
+	return self.Report(skip+1, path, message)
 }
 
 func (self *Context) ReportPathf(skip int, f string, arg ...interface{}) bool {
@@ -45,8 +45,9 @@ func (self *Context) ReportPathf(skip int, f string, arg ...interface{}) bool {
 }
 
 func (self *Context) ReportProblematic(skip int, problematic problems.Problematic) bool {
-	message, _, row, column := problematic.Problem()
-	return self.ReportInSection(skip+1, message, row, column)
+	// Note: we are ignoring the problem's section and using the URL instead
+	_, item, message, row, column := problematic.Problem()
+	return self.ReportURL(skip+1, item, message, row, column)
 }
 
 func (self *Context) ReportError(err error) bool {
