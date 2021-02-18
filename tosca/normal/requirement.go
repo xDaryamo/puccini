@@ -19,16 +19,16 @@ type Requirement struct {
 	NodeTemplatePropertyConstraints FunctionCallMap
 	CapabilityPropertyConstraints   FunctionCallMapMap
 	Relationship                    *Relationship
-	Path                            string
+	Location                        *Location
 }
 
-func (self *NodeTemplate) NewRequirement(name string, path string) *Requirement {
+func (self *NodeTemplate) NewRequirement(name string, location *Location) *Requirement {
 	requirement := &Requirement{
 		SourceNodeTemplate:              self,
 		Name:                            name,
 		NodeTemplatePropertyConstraints: make(FunctionCallMap),
 		CapabilityPropertyConstraints:   make(FunctionCallMapMap),
-		Path:                            path,
+		Location:                        location,
 	}
 	self.Requirements = append(self.Requirements, requirement)
 	return requirement
@@ -43,7 +43,7 @@ type MarshalableRequirement struct {
 	NodeTemplatePropertyConstraints FunctionCallMap    `json:"nodeTemplatePropertyConstraints" yaml:"nodeTemplatePropertyConstraints"`
 	CapabilityPropertyConstraints   FunctionCallMapMap `json:"capabilityPropertyConstraints" yaml:"capabilityPropertyConstraints"`
 	Relationship                    *Relationship      `json:"relationship" yaml:"relationship"`
-	Path                            string             `json:"path" yaml:"path"`
+	Location                        *Location          `json:"location" yaml:"location"`
 }
 
 func (self *Requirement) Marshalable() interface{} {
@@ -73,7 +73,7 @@ func (self *Requirement) Marshalable() interface{} {
 		NodeTemplatePropertyConstraints: self.NodeTemplatePropertyConstraints,
 		CapabilityPropertyConstraints:   self.CapabilityPropertyConstraints,
 		Relationship:                    self.Relationship,
-		Path:                            self.Path,
+		Location:                        self.Location,
 	}
 }
 

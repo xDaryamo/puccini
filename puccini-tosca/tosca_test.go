@@ -82,7 +82,7 @@ func testCompile(t *testing.T, url string, inputs map[string]interface{}) {
 			return
 		}
 
-		if serviceTemplate, problems, err = parser.Parse(url_, nil, inputs); err != nil {
+		if _, serviceTemplate, problems, err = parser.Parse(url_, nil, inputs); err != nil {
 			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))
 			return
 		}

@@ -52,7 +52,7 @@ for (var v = 0, l = nodeTemplateVertexes.length; v < l; v++) {
 		var relationshipCount = countRelationships(vertex, capabilityName);
 		var minRelationshipCount = capability.minRelationshipCount;
 		if (relationshipCount < minRelationshipCount)
-			notEnoughRelationships(nodeTemplate.name, capabilityName, relationshipCount, minRelationshipCount)
+			notEnoughRelationships(capability.location, relationshipCount, minRelationshipCount)
 	}
 }
 
@@ -63,23 +63,23 @@ if (puccini.arguments.history !== 'false')
 puccini.write(clout)
 
 function resolve(sourceVertex, sourceNodeTemplate, requirement) {
-	var path = requirement.path;
+	var location = requirement.location;
 	var name = requirement.name;
 
 	if (isSubstituted(sourceNodeTemplate.name, name)) {
-		puccini.log.debugf('{resolve} %s: skipping because in substitution mappings', path)
+		puccini.log.debugf('{resolve} %s: skipping because in substitution mappings', location)
 		return;
 	}
 
 	var candidates = gatherCandidateNodeTemplates(sourceVertex, requirement);
 	if (candidates.length === 0) {
-		unsatisfied(path, name, 'there are no candidate node templates');
+		unsatisfied(location, name, 'there are no candidate node templates');
 		return;
 	}
 
 	candidates = gatherCandidateCapabilities(requirement, candidates);
 	if (candidates.length === 0) {
-		unsatisfied(path, name, 'no candidate node template provides required capability');
+		unsatisfied(location, name, 'no candidate node template provides required capability');
 		return;
 	}
 
@@ -110,7 +110,7 @@ function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 				chosen = candidate;
 		}
 
-	puccini.log.debugf('{resolve} %s: satisfied "%s" with capability "%s" in node template "%s"', path, name, chosen.capabilityName, chosen.nodeTemplateName);
+	puccini.log.debugf('{resolve} %s: satisfied "%s" with capability "%s" in node template "%s"', location, name, chosen.capabilityName, chosen.nodeTemplateName);
 	addRelationship(sourceVertex, requirement, chosen.vertex, chosen.capabilityName);
 }
 
@@ -324,18 +324,18 @@ function isMaxCountGreater(a, b) {
 	return a > b;
 }
 
-function unsatisfied(path, name, message) {
+function unsatisfied(location, name, message) {
 	if (typeof problems === 'undefined')
-		throw puccini.sprintf('%s: could not satisfy "%s" because %s', path, name, message);
+		throw puccini.sprintf('%s: could not satisfy "%s" because %s', location.path, name, message);
 	else
-		problems.reportf(11, '%s: could not satisfy "%s" because %s', path, name, message);
+		problems.reportFull(11, 'Resolution', location.path, puccini.sprintf('could not satisfy "%s" because %s', name, message), location.row, location.column);
 }
 
-function notEnoughRelationships(nodeTemplateName, capabilityName, relationshipCount, minRelationshipCount) {
+function notEnoughRelationships(location, relationshipCount, minRelationshipCount) {
 	if (typeof problems === 'undefined')
-		throw puccini.sprintf('capability "%s" of node template "%s" does not have enough relationships: %d < %d', capabilityName, nodeTemplateName, relationshipCount, minRelationshipCount);
+		throw puccini.sprintf('%s: not enough relationships: %d < %d', location.path, relationshipCount, minRelationshipCount);
 	else
-		problems.reportf(11, 'capability "%s" of node template "%s" does not have enough relationships: %d < %d', capabilityName, nodeTemplateName, relationshipCount, minRelationshipCount);
+		problems.reportFull(11, 'Resolution', location.path, puccini.sprintf('not enough relationships: %d < %d', relationshipCount, minRelationshipCount), location.row, location.column);
 }
 `
 }

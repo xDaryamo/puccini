@@ -95,7 +95,8 @@ func (self *Resource) Normalize(normalServiceTemplate *normal.ServiceTemplate) *
 
 	self.Properties.Normalize(normalNodeTemplate.Properties)
 
-	normalNodeTemplate.NewCapability("resource").Types = capabilityTypes
+	capabilityContext := self.Context.FieldChild("capabilities", nil).MapChild("resource", nil)
+	normalNodeTemplate.NewCapability("resource", normal.NewLocationForContext(capabilityContext)).Types = capabilityTypes
 
 	return normalNodeTemplate
 }
@@ -104,10 +105,10 @@ func (self *Resource) NormalizeDependencies(normalServiceTemplate *normal.Servic
 	log.Debugf("{normalize} resource dependencies: %s", self.Name)
 
 	normalNodeTemplate := normalServiceTemplate.NodeTemplates[self.Name]
-	path := self.Context.FieldChild("depends_on", nil).Path.String()
+	requirementsContext := self.Context.FieldChild("requirements", nil)
 
-	for _, resource := range self.DependsOnResources {
-		normalRequirement := normalNodeTemplate.NewRequirement("dependency", path)
+	for index, resource := range self.DependsOnResources {
+		normalRequirement := normalNodeTemplate.NewRequirement("depends_on", normal.NewLocationForContext(requirementsContext.ListChild(index, nil)))
 		normalRequirement.NodeTemplate = normalServiceTemplate.NodeTemplates[resource.Name]
 		normalRequirement.CapabilityTypeName = &capabilityTypeName
 

@@ -75,7 +75,7 @@ func (self *RequirementAssignment) GetDefinition(nodeTemplate *NodeTemplate) (*R
 }
 
 func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalNodeTemplate *normal.NodeTemplate) *normal.Requirement {
-	normalRequirement := normalNodeTemplate.NewRequirement(self.Name, self.Context.Path.String())
+	normalRequirement := normalNodeTemplate.NewRequirement(self.Name, normal.NewLocationForContext(self.Context))
 
 	if self.TargetCapabilityType != nil {
 		name := tosca.GetCanonicalName(self.TargetCapabilityType)

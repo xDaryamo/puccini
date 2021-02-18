@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/beevik/etree"
 	"github.com/tebeka/atexit"
@@ -15,6 +16,7 @@ import (
 	"github.com/tliron/kutil/terminal"
 	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
+	"github.com/tliron/yamlkeys"
 )
 
 //
@@ -89,11 +91,29 @@ func (self *PucciniAPI) NewXMLDocument() *etree.Document {
 }
 
 func (self *PucciniAPI) Decode(code string, format string, all bool) (ard.Value, error) {
-	if value, err := formatpkg.Decode(code, format, all); err == nil {
-		value, _ = ard.ToStringMaps(value)
-		return value, nil
-	} else {
-		return nil, err
+	switch format {
+	case "yaml", "":
+		if all {
+			return yamlkeys.DecodeAll(strings.NewReader(code))
+		} else {
+			map_, _, err := ard.DecodeYAML(code, false)
+			return map_, err
+		}
+
+	case "json":
+		map_, _, err := ard.DecodeJSON(code, false)
+		return map_, err
+
+	case "cjson":
+		map_, _, err := ard.DecodeCompatibleJSON(code, false)
+		return map_, err
+
+	case "xml":
+		map_, _, err := ard.DecodeCompatibleXML(code, false)
+		return map_, err
+
+	default:
+		return nil, fmt.Errorf("unsupported format: %s", format)
 	}
 }
 

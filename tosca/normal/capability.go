@@ -19,9 +19,10 @@ type Capability struct {
 	Attributes           Constrainables
 	MinRelationshipCount uint64
 	MaxRelationshipCount uint64
+	Location             *Location
 }
 
-func (self *NodeTemplate) NewCapability(name string) *Capability {
+func (self *NodeTemplate) NewCapability(name string, location *Location) *Capability {
 	capability := &Capability{
 		NodeTemplate:         self,
 		Name:                 name,
@@ -29,6 +30,7 @@ func (self *NodeTemplate) NewCapability(name string) *Capability {
 		Properties:           make(Constrainables),
 		Attributes:           make(Constrainables),
 		MaxRelationshipCount: math.MaxUint64,
+		Location:             location,
 	}
 	self.Capabilities[name] = capability
 	return capability
@@ -41,6 +43,8 @@ type MarshalableCapability struct {
 	Attributes           Constrainables `json:"attributes" yaml:"attributes"`
 	MinRelationshipCount int64          `json:"minRelationshipCount" yaml:"minRelationshipCount"`
 	MaxRelationshipCount int64          `json:"maxRelationshipCount" yaml:"maxRelationshipCount"`
+	Path                 string         `json:"path" yaml:"path"`
+	Location             *Location      `json:"location" yaml:"location"`
 }
 
 func (self *Capability) Marshalable() interface{} {
@@ -60,6 +64,7 @@ func (self *Capability) Marshalable() interface{} {
 		Attributes:           self.Attributes,
 		MinRelationshipCount: minRelationshipCount,
 		MaxRelationshipCount: maxRelationshipCount,
+		Location:             self.Location,
 	}
 }
 

@@ -58,7 +58,7 @@ func (self *CapabilityAssignment) GetDefinition(nodeTemplate *NodeTemplate) (*Ca
 func (self *CapabilityAssignment) Normalize(normalNodeTemplate *normal.NodeTemplate, definition *CapabilityDefinition) *normal.Capability {
 	log.Debugf("{normalize} capability: %s", self.Name)
 
-	normalCapability := normalNodeTemplate.NewCapability(self.Name)
+	normalCapability := normalNodeTemplate.NewCapability(self.Name, normal.NewLocationForContext(self.Context))
 
 	if definition.Description != nil {
 		normalCapability.Description = *definition.Description

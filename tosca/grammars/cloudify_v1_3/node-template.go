@@ -70,7 +70,8 @@ func (self *NodeTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplat
 	self.Properties.Normalize(normalNodeTemplate.Properties, "")
 	self.Interfaces.NormalizeForNodeTemplate(self, normalNodeTemplate)
 
-	normalCapability := normalNodeTemplate.NewCapability("node")
+	capabilityContext := self.Context.FieldChild("capabilities", nil).MapChild("node", nil)
+	normalCapability := normalNodeTemplate.NewCapability("node", normal.NewLocationForContext(capabilityContext))
 	normalCapability.Types = capabilityTypes
 	for _, capability := range self.Capabilities {
 		capability.Properties.Normalize(normalCapability.Properties, capability.Context.Name+".")

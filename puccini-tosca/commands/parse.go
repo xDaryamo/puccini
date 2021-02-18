@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/tebeka/atexit"
@@ -214,7 +215,7 @@ func ParseInputs() {
 		reader, err := url.Open()
 		util.FailOnError(err)
 		defer reader.Close()
-		data, err := formatpkg.ReadAllYAML(reader)
+		data, err := yamlkeys.DecodeAll(reader)
 		util.FailOnError(err)
 		for _, data_ := range data {
 			if map_, ok := data_.(ard.Map); ok {
@@ -228,7 +229,7 @@ func ParseInputs() {
 	}
 
 	for name, input := range inputs {
-		value, err := formatpkg.DecodeYAML(input)
+		value, err := yamlkeys.Decode(strings.NewReader(input))
 		util.FailOnError(err)
 		inputValues[name] = value
 	}

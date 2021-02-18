@@ -7,7 +7,7 @@ import (
 	"github.com/tliron/kutil/ard"
 )
 
-func Decode(map_ ard.Map) (*Clout, error) {
+func Parse(map_ ard.Map) (*Clout, error) {
 	clout := NewClout()
 
 	if data, ok := map_["version"]; ok {

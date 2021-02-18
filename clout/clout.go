@@ -76,18 +76,19 @@ func (self *Clout) Resolve() error {
 }
 
 func (self *Clout) Normalize() (*Clout, error) {
-	// TODO: there must be a more efficient way to do this
-	if s, err := format.EncodeYAML(self, " ", false); err == nil {
-		return ReadYAML(strings.NewReader(s))
+	// TODO: not very efficient
+	if code, err := format.EncodeYAML(self, " ", false); err == nil {
+		return Read(strings.NewReader(code), "yaml")
 	} else {
 		return nil, err
 	}
 }
 
-func (self *Clout) ARD() (ard.Map, error) {
-	if s, err := format.EncodeYAML(self, " ", false); err == nil {
-		map_, _, err := ard.ReadYAML(strings.NewReader(s), false)
-		return map_, err
+func (self *Clout) ARD() (ard.Value, error) {
+	// TODO: not very efficient
+	if code, err := format.EncodeYAML(self, " ", false); err == nil {
+		value, _, err := ard.DecodeYAML(code, false)
+		return value, err
 	} else {
 		return nil, err
 	}
