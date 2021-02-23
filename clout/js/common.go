@@ -1,7 +1,7 @@
 package js
 
 import (
-	"github.com/op/go-logging"
+	"github.com/tliron/kutil/logging"
 )
 
-var log = logging.MustGetLogger("puccini.js")
+var log = logging.GetLogger("puccini.js")

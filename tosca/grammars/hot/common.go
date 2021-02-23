@@ -1,11 +1,11 @@
 package hot
 
 import (
-	"github.com/op/go-logging"
+	"github.com/tliron/kutil/logging"
 	"github.com/tliron/puccini/tosca"
 )
 
-var log = logging.MustGetLogger("puccini.grammars.hot")
+var log = logging.GetLogger("puccini.grammars.hot")
 
 var Grammar = tosca.NewGrammar()
 

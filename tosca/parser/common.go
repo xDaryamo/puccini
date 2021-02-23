@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"github.com/op/go-logging"
+	"github.com/tliron/kutil/logging"
 )
 
-var log = logging.MustGetLogger("puccini.parser")
+var log = logging.GetLogger("puccini.parser")

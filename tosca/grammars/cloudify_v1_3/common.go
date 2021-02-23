@@ -1,11 +1,11 @@
 package cloudify_v1_3
 
 import (
-	"github.com/op/go-logging"
+	"github.com/tliron/kutil/logging"
 	"github.com/tliron/puccini/tosca"
 )
 
-var log = logging.MustGetLogger("puccini.grammars.cloudify_v1_3")
+var log = logging.GetLogger("puccini.grammars.cloudify_v1_3")
 
 var Grammar = tosca.NewGrammar()
 

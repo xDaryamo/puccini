@@ -25,7 +25,7 @@ import (
 
 type PucciniAPI struct {
 	Arguments       map[string]string
-	Log             *Log
+	Log             *Logger
 	Stdout          io.Writer
 	Stderr          io.Writer
 	Stdin           io.Writer
@@ -94,23 +94,32 @@ func (self *PucciniAPI) Decode(code string, format string, all bool) (ard.Value,
 	switch format {
 	case "yaml", "":
 		if all {
-			return yamlkeys.DecodeAll(strings.NewReader(code))
+			if value, err := yamlkeys.DecodeAll(strings.NewReader(code)); err == nil {
+				value_, _ := ard.MapsToStringMaps(value)
+				return value_, err
+			} else {
+				return nil, err
+			}
 		} else {
-			map_, _, err := ard.DecodeYAML(code, false)
-			return map_, err
+			value, _, err := ard.DecodeYAML(code, false)
+			value, _ = ard.MapsToStringMaps(value)
+			return value, err
 		}
 
 	case "json":
-		map_, _, err := ard.DecodeJSON(code, false)
-		return map_, err
+		value, _, err := ard.DecodeJSON(code, false)
+		value, _ = ard.MapsToStringMaps(value)
+		return value, err
 
 	case "cjson":
-		map_, _, err := ard.DecodeCompatibleJSON(code, false)
-		return map_, err
+		value, _, err := ard.DecodeCompatibleJSON(code, false)
+		value, _ = ard.MapsToStringMaps(value)
+		return value, err
 
 	case "xml":
-		map_, _, err := ard.DecodeCompatibleXML(code, false)
-		return map_, err
+		value, _, err := ard.DecodeCompatibleXML(code, false)
+		value, _ = ard.MapsToStringMaps(value)
+		return value, err
 
 	default:
 		return nil, fmt.Errorf("unsupported format: %s", format)

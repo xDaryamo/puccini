@@ -7,8 +7,8 @@ import (
 	"sync"
 
 	"github.com/dop251/goja"
-	"github.com/op/go-logging"
 	"github.com/tebeka/atexit"
+	"github.com/tliron/kutil/logging"
 	"github.com/tliron/kutil/terminal"
 	urlpkg "github.com/tliron/kutil/url"
 	cloutpkg "github.com/tliron/puccini/clout"
@@ -26,7 +26,7 @@ type Context struct {
 	AllowTimestamps bool
 	Pretty          bool
 	Output          string
-	Log             *Log
+	Log             *Logger
 	Stdout          io.Writer
 	Stderr          io.Writer
 	Stdin           io.Writer
@@ -35,7 +35,7 @@ type Context struct {
 	programCache sync.Map
 }
 
-func NewContext(name string, logger *logging.Logger, arguments map[string]string, quiet bool, format string, strict bool, allowTimestamps bool, pretty bool, output string, urlContext *urlpkg.Context) *Context {
+func NewContext(name string, logger logging.Logger, arguments map[string]string, quiet bool, format string, strict bool, allowTimestamps bool, pretty bool, output string, urlContext *urlpkg.Context) *Context {
 	if arguments == nil {
 		arguments = make(map[string]string)
 	}
@@ -48,7 +48,7 @@ func NewContext(name string, logger *logging.Logger, arguments map[string]string
 		AllowTimestamps: allowTimestamps,
 		Pretty:          pretty,
 		Output:          output,
-		Log:             NewLog(logger, name),
+		Log:             NewLogger(logger, name),
 		Stdout:          terminal.Stdout,
 		Stderr:          terminal.Stderr,
 		Stdin:           os.Stdin,

@@ -5,10 +5,11 @@ import (
 	"bytes"
 
 	"github.com/tliron/kutil/format"
+	"github.com/tliron/kutil/logging"
+	_ "github.com/tliron/kutil/logging/simple"
 	"github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
 	urlpkg "github.com/tliron/kutil/url"
-	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
@@ -17,7 +18,7 @@ import (
 
 //export Compile
 func Compile(url *C.char) *C.char {
-	util.ConfigureLogging(0, nil)
+	logging.Configure(0, nil)
 
 	buffer := bytes.NewBuffer(nil)
 	terminal.Stdout = buffer

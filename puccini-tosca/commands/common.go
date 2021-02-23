@@ -1,9 +1,9 @@
 package commands
 
 import (
-	"github.com/op/go-logging"
 	"github.com/tebeka/atexit"
 	formatpkg "github.com/tliron/kutil/format"
+	"github.com/tliron/kutil/logging"
 	problemspkg "github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/util"
@@ -11,7 +11,7 @@ import (
 
 const toolName = "puccini-tosca"
 
-var log = logging.MustGetLogger(toolName)
+var log = logging.GetLogger(toolName)
 
 func FailOnProblems(problems *problemspkg.Problems) {
 	if !problems.Empty() {

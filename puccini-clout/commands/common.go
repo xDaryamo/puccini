@@ -1,14 +1,14 @@
 package commands
 
 import (
-	"github.com/op/go-logging"
+	"github.com/tliron/kutil/logging"
 	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/puccini/clout"
 )
 
 const toolName = "puccini-clout"
 
-var log = logging.MustGetLogger(toolName)
+var log = logging.GetLogger(toolName)
 
 var output string
 

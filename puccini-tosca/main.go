@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/tebeka/atexit"
 	"github.com/tliron/puccini/puccini-tosca/commands"
+
+	_ "github.com/tliron/kutil/logging/simple"
 )
 
 func main() {

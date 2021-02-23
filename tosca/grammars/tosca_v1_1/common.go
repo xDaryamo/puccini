@@ -1,14 +1,14 @@
 package tosca_v1_1
 
 import (
-	"github.com/op/go-logging"
+	"github.com/tliron/kutil/logging"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_2"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 )
 
-var log = logging.MustGetLogger("puccini.grammars.tosca_v1_1")
+var log = logging.GetLogger("puccini.grammars.tosca_v1_1")
 
 var Grammar = tosca.NewGrammar()
 
