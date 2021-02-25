@@ -3,7 +3,6 @@ package js
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -47,6 +46,7 @@ func (self *Context) NewPucciniAPI() *PucciniAPI {
 		Arguments:       self.Arguments,
 		Log:             self.Log,
 		Stdout:          self.Stdout,
+		Stderr:          self.Stderr,
 		Stdin:           self.Stdin,
 		Output:          self.Output,
 		Format:          format,
@@ -121,6 +121,11 @@ func (self *PucciniAPI) Decode(code string, format string, all bool) (ard.Value,
 		value, _ = ard.MapsToStringMaps(value)
 		return value, err
 
+	case "cbor":
+		value, _, err := ard.DecodeCBOR(code, false)
+		value, _ = ard.MapsToStringMaps(value)
+		return value, err
+
 	default:
 		return nil, fmt.Errorf("unsupported format: %s", format)
 	}
@@ -178,7 +183,7 @@ func (self *PucciniAPI) Exec(name string, arguments ...string) (string, error) {
 }
 
 func (self *PucciniAPI) TemporaryFile(pattern string, directory string) (string, error) {
-	if file, err := ioutil.TempFile(directory, pattern); err == nil {
+	if file, err := os.CreateTemp(directory, pattern); err == nil {
 		name := file.Name()
 		os.Remove(name)
 		return name, nil
@@ -188,7 +193,7 @@ func (self *PucciniAPI) TemporaryFile(pattern string, directory string) (string,
 }
 
 func (self *PucciniAPI) TemporaryDirectory(pattern string, directory string) (string, error) {
-	return ioutil.TempDir(directory, pattern)
+	return os.MkdirTemp(directory, pattern)
 }
 
 func (self *PucciniAPI) Download(sourceUrl string, targetPath string) error {

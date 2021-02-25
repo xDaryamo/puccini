@@ -45,7 +45,7 @@ puccini-tosca
 
 ⮕ [Documentation](puccini-tosca/)
 
-Clout frontend for TOSCA. Parses a TOSCA service template and compiles it to Clout (see below).
+A TOSCA processor. Parses a TOSCA service template and compiles it to Clout (see below).
 
 Why TOSCA? It's a high-level language made for modeling and validating cloud topologies using
 reusable and extensible objects. It allows architects to focus on application design and
@@ -64,8 +64,8 @@ and
 Puccini is also following the progress on
 [TOSCA 2.0](http://docs.oasis-open.org/tosca/TOSCA/v2.0/TOSCA-v2.0.html).
 
-All these dialects are supported as straightforward YAML files, in the file system or hosted on
-URLs, as well as packaged in
+The input files can be accessed by URL, on the local file systems or via HTTP/HTTPS, as
+individual files as well as packaged in
 [CSAR files](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html#_Toc302251718).
 Puccini also includes a simple CSAR creation tool, **puccini-csar**.
 
@@ -85,12 +85,9 @@ JavaScript to generate Kubernetes manifests, then pipe those to
 [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/), which will upload the
 manifests to a running Kubernetes cluster in order to be scheduled. Like so:
 
-     puccini-tosca compile my-app.yaml --exec=kubernetes.generate | kubectl apply -f -
+    puccini-tosca compile my-app.yaml --exec=kubernetes.generate | kubectl apply -f -
 
 Et voilà, your abstract architectural design became a running deployment.
-
-Note that **puccini-clout** is *not* a requirement for your toolchain. You can process and consume
-the Clout output with your own tools.
 
 ### Standalone Parser
 
@@ -136,9 +133,9 @@ puccini-clout
 
 ⮕ [Documentation](puccini-clout/)
 
-Simple Clout processor. Can executes JavaScript scriptlets, whether they are in a Clout file (in the
-metadata section) or provided directly. It can evaluate TOSCA functions, apply constraints, execute
-Kubernetes specification generation, translate workflows to BPMN, etc.
+A Clout processor. Can execute JavaScript scriptlets, whether they are in a Clout file (in the
+metadata section) or provided as external files. It can evaluate TOSCA functions, apply constraints,
+execute Kubernetes specification generation, translate workflows to BPMN, etc.
 
 The tool can also be used to add/remove scriptlets by manipulating the metadata section in the
 Clout. 
@@ -155,6 +152,9 @@ These two commands are equivalent:
 
     puccini-tosca compile my-app.yaml | puccini-clout scriptlet exec my.scriptlet
     puccini-tosca compile my-app.yaml --exec=my.scriptlet
+
+Note that **puccini-clout** is *not* a requirement for your toolchain. You can process and consume
+the Clout output with your own tools.
 
 ### TOSCA Functions and Constraints
 
@@ -176,8 +176,6 @@ A useful side benefit of Puccini's implementation is it allows you to extend TOS
 are not part of the TOSCA specification and may be incompatible with other TOSCA implementations.
 
 ### TOSCA Attributes
-
-*WORK IN PROGRESS*
 
 TOSCA attributes (as opposed to properties) represent "live" data in a running deployment. And the
 function `get_attribute` allows other values to make use of this live data. The implication is that

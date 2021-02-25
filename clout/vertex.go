@@ -11,12 +11,12 @@ import (
 //
 
 type Vertex struct {
-	Clout      *Clout        `yaml:"-"`
-	ID         string        `yaml:"-"`
-	Metadata   ard.StringMap `yaml:"metadata"`
-	Properties ard.StringMap `yaml:"properties"`
-	EdgesOut   Edges         `yaml:"edgesOut"`
-	EdgesIn    Edges         `yaml:"-"`
+	Clout      *Clout        `yaml:"-" cbor:"-"`
+	ID         string        `yaml:"-" cbor:"-"`
+	Metadata   ard.StringMap `yaml:"metadata" cbor:"metadata"`
+	Properties ard.StringMap `yaml:"properties" cbor:"properties"`
+	EdgesOut   Edges         `yaml:"edgesOut" cbor:"edgesOut"`
+	EdgesIn    Edges         `yaml:"-" cbor:"-"`
 }
 
 func (self *Clout) NewVertex(id string) *Vertex {

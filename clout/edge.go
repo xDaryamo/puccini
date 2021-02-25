@@ -3,6 +3,7 @@ package clout
 import (
 	"encoding/json"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/tliron/kutil/ard"
 )
 
@@ -57,9 +58,9 @@ func (self *Edge) GetProperties() ard.StringMap {
 }
 
 type MarshalableEdge struct {
-	Metadata   ard.StringMap `yaml:"metadata"`
-	Properties ard.StringMap `yaml:"properties"`
-	TargetID   string        `yaml:"targetID"`
+	Metadata   ard.StringMap `yaml:"metadata" cbor:"metadata"`
+	Properties ard.StringMap `yaml:"properties" cbor:"properties"`
+	TargetID   string        `yaml:"targetID" cbor:"targetID"`
 }
 
 type MarshalableEdgeStringMaps struct {
@@ -111,6 +112,11 @@ func (self *Edge) MarshalYAML() (interface{}, error) {
 	return self.Marshalable(false), nil
 }
 
+// cbor.Marshaler interface
+func (self *Edge) MarshalCBOR() ([]byte, error) {
+	return cbor.Marshal(self.Marshalable(false))
+}
+
 // json.Unmarshaler interface
 func (self *Edge) UnmarshalJSON(data []byte) error {
 	return self.Unmarshal(func(m *MarshalableEdge) error {
@@ -122,6 +128,13 @@ func (self *Edge) UnmarshalJSON(data []byte) error {
 func (self *Edge) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	return self.Unmarshal(func(m *MarshalableEdge) error {
 		return unmarshal(m)
+	})
+}
+
+// cbor.Unmarshaler interface
+func (self *Edge) UnmarshalCBOR(data []byte) error {
+	return self.Unmarshal(func(m *MarshalableEdge) error {
+		return cbor.Unmarshal(data, m)
 	})
 }
 

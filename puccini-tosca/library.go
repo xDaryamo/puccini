@@ -6,7 +6,6 @@ import (
 
 	"github.com/tliron/kutil/format"
 	"github.com/tliron/kutil/logging"
-	_ "github.com/tliron/kutil/logging/simple"
 	"github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
 	urlpkg "github.com/tliron/kutil/url"

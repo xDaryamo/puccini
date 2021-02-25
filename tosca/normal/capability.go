@@ -3,6 +3,8 @@ package normal
 import (
 	"encoding/json"
 	"math"
+
+	"github.com/fxamacker/cbor/v2"
 )
 
 //
@@ -76,6 +78,11 @@ func (self *Capability) MarshalJSON() ([]byte, error) {
 // yaml.Marshaler interface
 func (self *Capability) MarshalYAML() (interface{}, error) {
 	return self.Marshalable(), nil
+}
+
+// cbor.Marshaler interface
+func (self *Capability) MarshalCBOR() ([]byte, error) {
+	return cbor.Marshal(self.Marshalable())
 }
 
 //

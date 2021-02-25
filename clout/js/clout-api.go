@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/dop251/goja"
+	"github.com/fxamacker/cbor/v2"
 	"github.com/tliron/kutil/ard"
 	cloutpkg "github.com/tliron/puccini/clout"
 )
@@ -99,4 +100,9 @@ func (self *CloutAPI) MarshalJSON() ([]byte, error) {
 // yaml.Marshaler interface
 func (self *CloutAPI) MarshalYAML() (interface{}, error) {
 	return self.Clout, nil
+}
+
+// cbor.Marshaler interface
+func (self *CloutAPI) MarshalCBOR() ([]byte, error) {
+	return cbor.Marshal(self.Clout)
 }
