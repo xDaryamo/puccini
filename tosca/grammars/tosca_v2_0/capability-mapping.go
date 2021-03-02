@@ -43,7 +43,7 @@ func ReadCapabilityMapping(context *tosca.Context) tosca.EntityPtr {
 
 // parser.Renderable interface
 func (self *CapabilityMapping) Render() {
-	log.Debug("{render} capability mapping")
+	logRender.Debug("capability mapping")
 
 	if (self.NodeTemplate == nil) || (self.CapabilityName == nil) {
 		return

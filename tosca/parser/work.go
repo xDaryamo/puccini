@@ -3,16 +3,17 @@ package parser
 import (
 	"sync"
 
+	"github.com/tliron/kutil/logging"
 	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/puccini/tosca"
 )
 
-func (self *Context) Traverse(phase string, traverse reflection.Traverser) {
+func (self *Context) Traverse(log logging.Logger, traverse reflection.Traverser) {
 	work := make(EntityWork)
 	var traversed tosca.EntityPtrs
 
 	traverseWrapper := func(entityPtr tosca.EntityPtr) bool {
-		if work.Start(phase, entityPtr) {
+		if work.Start(log, entityPtr) {
 			return false
 		}
 
@@ -43,9 +44,9 @@ func (self *Context) Traverse(phase string, traverse reflection.Traverser) {
 
 type EntityWork map[tosca.EntityPtr]bool
 
-func (self EntityWork) Start(phase string, entityPtr tosca.EntityPtr) bool {
+func (self EntityWork) Start(log logging.Logger, entityPtr tosca.EntityPtr) bool {
 	if _, ok := self[entityPtr]; ok {
-		log.Debugf("{%s} skip: %s", phase, tosca.GetContext(entityPtr).Path)
+		log.Debugf("skip: %s", tosca.GetContext(entityPtr).Path)
 		return true
 	}
 	self[entityPtr] = true
@@ -58,21 +59,23 @@ func (self EntityWork) Start(phase string, entityPtr tosca.EntityPtr) bool {
 
 type ContextualWork struct {
 	sync.Map
-	Phase string
+	Log logging.Logger
 }
 
-func NewContextualWork(phase string) *ContextualWork {
-	return &ContextualWork{Phase: phase}
+func NewContextualWork(log logging.Logger) *ContextualWork {
+	return &ContextualWork{
+		Log: log,
+	}
 }
 
 func (self *ContextualWork) Start(context *tosca.Context) (Promise, bool) {
 	key := context.URL.Key()
 	promise := NewPromise()
 	if existing, loaded := self.LoadOrStore(key, promise); !loaded {
-		log.Debugf("{%s} start: %s", self.Phase, key)
+		self.Log.Debugf("start: %s", key)
 		return promise, true
 	} else {
-		log.Debugf("{%s} wait for: %s", self.Phase, key)
+		self.Log.Debugf("wait for: %s", key)
 		promise = existing.(Promise)
 		promise.Wait()
 		return nil, false

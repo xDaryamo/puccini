@@ -87,14 +87,14 @@ func (self *TopologyTemplate) SetInputs(inputs map[string]ard.Value) {
 
 // parser.Renderable interface
 func (self *TopologyTemplate) Render() {
-	log.Debug("{render} topology template")
+	logRender.Debug("topology template")
 
 	self.InputParameterDefinitions.Render("input definition", self.Context.FieldChild("inputs", nil))
 	self.OutputParameterDefinitions.Render("output definition", self.Context.FieldChild("outputs", nil))
 }
 
 func (self *TopologyTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
-	log.Debug("{normalize} topology template")
+	logNormalize.Debug("topology template")
 
 	if self.Description != nil {
 		// Append to description in service template

@@ -38,7 +38,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 		defer promise.Release()
 	}
 
-	log.Infof("{read} %s: %s", readerName, toscaContext.URL.Key())
+	logRead.Infof("%s: %s", readerName, toscaContext.URL.Key())
 
 	switch toscaContext.URL.Format() {
 	case "csar", "zip":
@@ -128,13 +128,13 @@ func (self *Context) goReadImports(container *Unit) {
 			switch cached_ := cached.(type) {
 			case Promise:
 				// Wait for promise
-				log.Debugf("{read} wait for promise: %s", key)
+				logRead.Debugf("wait for promise: %s", key)
 				self.WaitGroup.Add(1)
 				go self.waitForPromise(cached_, key, container, importSpec.NameTransformer)
 
 			default: // entityPtr
 				// Cache hit
-				log.Debugf("{read} cache hit: %s", key)
+				logRead.Debugf("cache hit: %s", key)
 				self.AddImportUnit(cached, container, importSpec.NameTransformer)
 			}
 		} else {
@@ -154,14 +154,14 @@ func (self *Context) waitForPromise(promise Promise, key string, container *Unit
 	if cached, inCache := readCache.Load(key); inCache {
 		switch cached.(type) {
 		case Promise:
-			log.Debugf("{read} promise broken: %s", key)
+			logRead.Debugf("promise broken: %s", key)
 
 		default: // entityPtr
 			// Cache hit
-			log.Debugf("{read} promise kept: %s", key)
+			logRead.Debugf("promise kept: %s", key)
 			self.AddImportUnit(cached, container, nameTransformer)
 		}
 	} else {
-		log.Debugf("{read} promise broken (empty): %s", key)
+		logRead.Debugf("promise broken (empty): %s", key)
 	}
 }

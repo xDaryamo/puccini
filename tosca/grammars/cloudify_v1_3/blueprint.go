@@ -49,7 +49,7 @@ func (self *Blueprint) SetInputs(inputs map[string]ard.Value) {
 
 // normal.Normalizable interface
 func (self *Blueprint) NormalizeServiceTemplate() *normal.ServiceTemplate {
-	log.Debug("{normalize} blueprint")
+	logNormalize.Debug("blueprint")
 
 	normalServiceTemplate := normal.NewServiceTemplate()
 

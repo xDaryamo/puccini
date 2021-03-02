@@ -12,7 +12,7 @@ func (self *Context) Gather(pattern string) tosca.EntityPtrs {
 
 	re := compileGatherPattern(pattern)
 
-	self.Traverse("gather", func(entityPtr tosca.EntityPtr) bool {
+	self.Traverse(logGather, func(entityPtr tosca.EntityPtr) bool {
 		context := tosca.GetContext(entityPtr)
 
 		if re.MatchString(context.Path.String()) {

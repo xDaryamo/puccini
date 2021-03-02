@@ -53,7 +53,7 @@ func (self *AttributeDefinition) GetKey() string {
 }
 
 func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) {
-	log.Debugf("{inherit} attribute definition: %s", self.Name)
+	logInherit.Debugf("attribute definition: %s", self.Name)
 
 	// Validate type compatibility
 	if (self.DataType != nil) && (parentDefinition.DataType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.DataType, self.DataType) {
@@ -86,7 +86,7 @@ func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) 
 
 // parser.Renderable interface
 func (self *AttributeDefinition) Render() {
-	log.Debugf("{render} attribute definition: %s", self.Name)
+	logRender.Debugf("attribute definition: %s", self.Name)
 
 	if self.rendered {
 		// Avoid rendering more than once (can happen if we were called from Value.RenderAttribute)

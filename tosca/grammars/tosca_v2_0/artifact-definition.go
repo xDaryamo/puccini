@@ -118,7 +118,7 @@ func (self *ArtifactDefinition) GetKey() string {
 }
 
 func (self *ArtifactDefinition) Inherit(parentDefinition *ArtifactDefinition) {
-	log.Debugf("{inherit} artifact definition: %s", self.Name)
+	logInherit.Debugf("artifact definition: %s", self.Name)
 
 	// Validate type compatibility
 	if (self.ArtifactType != nil) && (parentDefinition.ArtifactType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.ArtifactType, self.ArtifactType) {

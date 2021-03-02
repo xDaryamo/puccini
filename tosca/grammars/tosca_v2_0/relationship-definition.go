@@ -56,7 +56,7 @@ func (self *RelationshipDefinition) NewDefaultAssignment(context *tosca.Context)
 }
 
 func (self *RelationshipDefinition) Inherit(parentDefinition *RelationshipDefinition) {
-	log.Debug("{inherit} relationship definition")
+	logInherit.Debug("relationship definition")
 
 	if (self.RelationshipTypeName == nil) && (parentDefinition.RelationshipTypeName != nil) {
 		self.RelationshipTypeName = parentDefinition.RelationshipTypeName
@@ -76,7 +76,7 @@ func (self *RelationshipDefinition) Inherit(parentDefinition *RelationshipDefini
 
 // parser.Renderable interface
 func (self *RelationshipDefinition) Render() {
-	log.Debug("{render} relationship definition")
+	logRender.Debug("relationship definition")
 
 	if self.RelationshipTypeName == nil {
 		// Avoid reporting more than once

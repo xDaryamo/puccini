@@ -12,6 +12,7 @@ import (
 	"github.com/tebeka/atexit"
 	"github.com/tliron/kutil/ard"
 	formatpkg "github.com/tliron/kutil/format"
+	"github.com/tliron/kutil/logging"
 	"github.com/tliron/kutil/terminal"
 	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
@@ -24,7 +25,7 @@ import (
 
 type PucciniAPI struct {
 	Arguments       map[string]string
-	Log             *Logger
+	Log             logging.Logger
 	Stdout          io.Writer
 	Stderr          io.Writer
 	Stdin           io.Writer

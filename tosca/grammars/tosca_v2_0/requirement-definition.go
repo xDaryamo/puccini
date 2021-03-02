@@ -58,7 +58,7 @@ func (self *RequirementDefinition) GetKey() string {
 }
 
 func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefinition) {
-	log.Debugf("{inherit} requirement definition: %s", self.Name)
+	logInherit.Debugf("requirement definition: %s", self.Name)
 
 	// Validate type compatibility
 	if (self.TargetCapabilityType != nil) && (parentDefinition.TargetCapabilityType != nil) && !self.Context.Hierarchy.IsCompatible(parentDefinition.TargetCapabilityType, self.TargetCapabilityType) {
@@ -94,7 +94,7 @@ func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefiniti
 
 // parser.Renderable interface
 func (self RequirementDefinition) Render() {
-	log.Debugf("{render} requirement definition: %s", self.Name)
+	logRender.Debugf("requirement definition: %s", self.Name)
 
 	if self.TargetCapabilityTypeName == nil {
 		// Avoid reporting more than once

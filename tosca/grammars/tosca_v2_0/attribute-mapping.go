@@ -40,7 +40,7 @@ func ReadAttributeMapping(context *tosca.Context) tosca.EntityPtr {
 
 // parser.Renderable interface
 func (self *AttributeMapping) Render() {
-	log.Debug("{render} attribute mapping")
+	logRender.Debug("attribute mapping")
 
 	if (self.NodeTemplate == nil) || (self.AttributeName == nil) {
 		return

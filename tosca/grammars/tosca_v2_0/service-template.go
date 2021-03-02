@@ -40,7 +40,7 @@ func ReadServiceTemplate(context *tosca.Context) tosca.EntityPtr {
 
 // normal.Normalizable interface
 func (self *ServiceTemplate) NormalizeServiceTemplate() *normal.ServiceTemplate {
-	log.Debug("{normalize} service template")
+	logNormalize.Debug("service template")
 
 	normalServiceTemplate := normal.NewServiceTemplate()
 

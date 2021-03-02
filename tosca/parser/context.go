@@ -25,8 +25,8 @@ type Context struct {
 func NewContext(quirks tosca.Quirks) *Context {
 	return &Context{
 		Quirks:          quirks,
-		NamespacesWork:  NewContextualWork("namespaces"),
-		HierarchiesWork: NewContextualWork("hierarchies"),
+		NamespacesWork:  NewContextualWork(logNamespaces),
+		HierarchiesWork: NewContextualWork(logHierarchies),
 	}
 }
 

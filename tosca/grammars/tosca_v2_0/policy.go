@@ -54,7 +54,7 @@ func (self *Policy) GetKey() string {
 
 // parser.Renderable interface
 func (self *Policy) Render() {
-	log.Debugf("{render} policy: %s", self.Name)
+	logRender.Debugf("policy: %s", self.Name)
 
 	if self.PolicyType == nil {
 		return
@@ -98,7 +98,7 @@ func (self *Policy) Render() {
 }
 
 func (self *Policy) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Policy {
-	log.Debugf("{normalize} policy: %s", self.Name)
+	logNormalize.Debugf("policy: %s", self.Name)
 
 	normalPolicy := normalServiceTemplate.NewPolicy(self.Name)
 

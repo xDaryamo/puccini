@@ -33,7 +33,7 @@ func ReadParameterDefinition(context *tosca.Context) tosca.EntityPtr {
 }
 
 func (self *ParameterDefinition) Render(kind string) {
-	log.Debugf("{render} parameter definition: %s", self.Name)
+	logRender.Debugf("parameter definition: %s", self.Name)
 
 	if self.DataTypeName == nil {
 		self.Context.FieldChild("type", nil).ReportFieldMissing()

@@ -78,7 +78,7 @@ func (self *InterfaceAssignment) Render(definition *InterfaceDefinition) {
 }
 
 func (self *InterfaceAssignment) Normalize(normalInterface *normal.Interface, definition *InterfaceDefinition) {
-	log.Debugf("{normalize} interface: %s", self.Name)
+	logNormalize.Debugf("interface: %s", self.Name)
 
 	if (definition.InterfaceType != nil) && (definition.InterfaceType.Description != nil) {
 		normalInterface.Description = *definition.InterfaceType.Description

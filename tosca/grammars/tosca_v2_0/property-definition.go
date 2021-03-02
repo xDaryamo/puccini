@@ -33,7 +33,7 @@ func ReadPropertyDefinition(context *tosca.Context) tosca.EntityPtr {
 }
 
 func (self *PropertyDefinition) Inherit(parentDefinition *PropertyDefinition) {
-	log.Debugf("{inherit} property definition: %s", self.Name)
+	logInherit.Debugf("property definition: %s", self.Name)
 
 	self.AttributeDefinition.Inherit(parentDefinition.AttributeDefinition)
 
@@ -47,7 +47,7 @@ func (self *PropertyDefinition) Inherit(parentDefinition *PropertyDefinition) {
 
 // parser.Renderable interface
 func (self *PropertyDefinition) Render() {
-	log.Debugf("{render} property definition: %s", self.Name)
+	logRender.Debugf("property definition: %s", self.Name)
 
 	self.AttributeDefinition.Render()
 	self.ConstraintClauses.Render(self.DataType)

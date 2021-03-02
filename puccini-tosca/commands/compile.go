@@ -69,13 +69,7 @@ func Compile(url string) {
 		err = Exec(exec, arguments, clout, urlContext)
 		util.FailOnError(err)
 	} else if !terminal.Quiet || (output != "") {
-		ard, err := clout.ARD()
-		util.FailOnError(err)
-		if strict {
-			err = formatpkg.WriteOrPrint(ard, format, terminal.Stdout, strict, pretty, output)
-		} else {
-			err = formatpkg.WriteOrPrint(ard, format, terminal.Stdout, strict, pretty, output)
-		}
+		err = formatpkg.WriteOrPrint(clout, format, terminal.Stdout, strict, pretty, output)
 		util.FailOnError(err)
 	}
 }

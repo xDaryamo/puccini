@@ -48,7 +48,7 @@ func ReadGroup(context *tosca.Context) tosca.EntityPtr {
 
 // parser.Renderable interface
 func (self *Group) Render() {
-	log.Debugf("{render} group: %s", self.Name)
+	logRender.Debugf("group: %s", self.Name)
 
 	if self.GroupType == nil {
 		return
@@ -76,7 +76,7 @@ func (self *Group) Render() {
 }
 
 func (self *Group) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Group {
-	log.Debugf("{normalize} group: %s", self.Name)
+	logNormalize.Debugf("group: %s", self.Name)
 
 	normalGroup := normalServiceTemplate.NewGroup(self.Name)
 

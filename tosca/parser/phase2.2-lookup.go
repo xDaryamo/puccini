@@ -10,7 +10,7 @@ import (
 )
 
 func (self *Context) LookupNames() {
-	self.Traverse("lookup", self.LookupFields)
+	self.Traverse(logLookup, self.LookupFields)
 }
 
 // From "lookup" tags

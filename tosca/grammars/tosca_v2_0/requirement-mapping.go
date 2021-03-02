@@ -43,7 +43,7 @@ func ReadRequirementMapping(context *tosca.Context) tosca.EntityPtr {
 
 // parser.Renderable interface
 func (self *RequirementMapping) Render() {
-	log.Debug("{render} requirement mapping")
+	logRender.Debug("requirement mapping")
 
 	if (self.NodeTemplate == nil) || (self.RequirementName == nil) {
 		return

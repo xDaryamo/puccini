@@ -64,7 +64,7 @@ func (self *NodeTemplate) PreRead() {
 
 // parser.Renderable interface
 func (self *NodeTemplate) Render() {
-	log.Debugf("{render} node template: %s", self.Name)
+	logRender.Debugf("node template: %s", self.Name)
 
 	if self.rendered {
 		// Avoid rendering more than once (can happen if we were called from PropertyMapping etc. Render)
@@ -85,7 +85,7 @@ func (self *NodeTemplate) Render() {
 }
 
 func (self *NodeTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.NodeTemplate {
-	log.Debugf("{normalize} node template: %s", self.Name)
+	logNormalize.Debugf("node template: %s", self.Name)
 
 	normalNodeTemplate := normalServiceTemplate.NewNodeTemplate(self.Name)
 

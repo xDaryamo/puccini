@@ -33,7 +33,7 @@ func (self *PropertyDefinition) GetKey() string {
 }
 
 func (self *PropertyDefinition) Inherit(parentDefinition *PropertyDefinition) {
-	log.Debugf("{inherit} property definition: %s", self.Name)
+	logInherit.Debugf("property definition: %s", self.Name)
 
 	self.ParameterDefinition.Inherit(parentDefinition.ParameterDefinition)
 

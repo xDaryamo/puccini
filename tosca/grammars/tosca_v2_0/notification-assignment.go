@@ -51,7 +51,7 @@ func (self *NotificationAssignment) GetKey() string {
 }
 
 func (self *NotificationAssignment) Normalize(normalInterface *normal.Interface) *normal.Notification {
-	log.Debugf("{normalize} notification: %s", self.Name)
+	logNormalize.Debugf("notification: %s", self.Name)
 
 	normalNotification := normalInterface.NewNotification(self.Name)
 

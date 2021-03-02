@@ -8,6 +8,7 @@ import (
 )
 
 var log = logging.GetLogger("puccini.grammars.tosca_v1_2")
+var logRender = logging.NewSubLogger(log, "render")
 
 var Grammar = tosca.NewGrammar()
 

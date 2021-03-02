@@ -67,7 +67,7 @@ function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 	var name = requirement.name;
 
 	if (isSubstituted(sourceNodeTemplate.name, name)) {
-		puccini.log.debugf('{resolve} %s: skipping because in substitution mappings', location)
+		puccini.log.debugf('%s: skipping because in substitution mappings', location)
 		return;
 	}
 
@@ -110,12 +110,12 @@ function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 				chosen = candidate;
 		}
 
-	puccini.log.debugf('{resolve} %s: satisfied "%s" with capability "%s" in node template "%s"', location, name, chosen.capabilityName, chosen.nodeTemplateName);
+	puccini.log.debugf('%s: satisfied "%s" with capability "%s" in node template "%s"', location.path, name, chosen.capabilityName, chosen.nodeTemplateName);
 	addRelationship(sourceVertex, requirement, chosen.vertex, chosen.capabilityName);
 }
 
 function gatherCandidateNodeTemplates(sourceVertex, requirement) {
-	var path = requirement.path;
+	var path = requirement.location.path;
 	var nodeTemplateName = requirement.nodeTemplateName;
 	var nodeTypeName = requirement.nodeTypeName;
 	var nodeTemplatePropertyConstraints = requirement.nodeTemplatePropertyConstraints;
@@ -128,18 +128,18 @@ function gatherCandidateNodeTemplates(sourceVertex, requirement) {
 		var candidateNodeTemplateName = candidateNodeTemplate.name;
 
 		if ((nodeTemplateName !== '') && (nodeTemplateName !== candidateNodeTemplateName)) {
-			puccini.log.debugf('{resolve} %s: node template "%s" is not named "%s"', path, candidateNodeTemplateName, nodeTemplateName);
+			puccini.log.debugf('%s: node template "%s" is not named "%s"', path, candidateNodeTemplateName, nodeTemplateName);
 			continue;
 		}
 
 		if ((nodeTypeName !== '') && !(nodeTypeName in candidateNodeTemplate.types)) {
-			puccini.log.debugf('{resolve} %s: node template "%s" is not of type "%s"', path, candidateNodeTemplateName, nodeTypeName);
+			puccini.log.debugf('%s: node template "%s" is not of type "%s"', path, candidateNodeTemplateName, nodeTypeName);
 			continue;
 		}
 
 		// Node filter
 		if ((nodeTemplatePropertyConstraints.length !== 0) && !arePropertiesValid(path, sourceVertex, 'node template', candidateNodeTemplateName, candidateNodeTemplate, nodeTemplatePropertyConstraints)) {
-			puccini.log.debugf('{resolve} %s: properties of node template "%s" do not match constraints', path, candidateNodeTemplateName);
+			puccini.log.debugf('%s: properties of node template "%s" do not match constraints', path, candidateNodeTemplateName);
 			continue;
 		}
 
@@ -152,7 +152,7 @@ function gatherCandidateNodeTemplates(sourceVertex, requirement) {
 				var candidateCapability = candidateCapabilities[candidateCapabilityName];
 				var capabilityPropertyConstraints = capabilityPropertyConstraintsMap[candidateCapabilityName];
 				if ((capabilityPropertyConstraints !== undefined) && (capabilityPropertyConstraints.length !== 0) && !arePropertiesValid(path, sourceVertex, 'capability', candidateCapabilityName, candidateCapability, capabilityPropertyConstraints)) {
-					puccini.log.debugf('{resolve} %s: properties of capability "%s" in node template "%s" do not match constraints', path, candidateCapabilityName, candidateNodeTemplateName);
+					puccini.log.debugf('%s: properties of capability "%s" in node template "%s" do not match constraints', path, candidateCapabilityName, candidateNodeTemplateName);
 					valid = false;
 					break;
 				}
@@ -172,7 +172,7 @@ function gatherCandidateNodeTemplates(sourceVertex, requirement) {
 }
 
 function gatherCandidateCapabilities(requirement, candidateNodeTemplates) {
-	var path = requirement.path;
+	var path = requirement.location.path;
 	var capabilityName = requirement.capabilityName;
 	var capabilityTypeName = requirement.capabilityTypeName;
 
@@ -199,20 +199,20 @@ function gatherCandidateCapabilities(requirement, candidateNodeTemplates) {
 			var candidateCapabilityName = candidateCapabilities[cc].name;
 
 			if ((capabilityName !== '') && (capabilityName !== candidateCapabilityName)) {
-				puccini.log.debugf('{resolve} %s: capability "%s" in node template "%s" is not named "%s"', path, candidateCapabilityName, candidateNodeTemplateName, capabilityName);
+				puccini.log.debugf('%s: capability "%s" in node template "%s" is not named "%s"', path, candidateCapabilityName, candidateNodeTemplateName, capabilityName);
 				continue;
 			}
 
 			var candidateCapability = candidateCapabilities[cc].capability;
 
 			if ((capabilityTypeName !== '') && !(capabilityTypeName in candidateCapability.types)) {
-				puccini.log.debugf('{resolve} %s: capability "%s" in node template "%s" is not of type "%s"', path, candidateCapabilityName, candidateNodeTemplateName, capabilityTypeName);
+				puccini.log.debugf('%s: capability "%s" in node template "%s" is not of type "%s"', path, candidateCapabilityName, candidateNodeTemplateName, capabilityTypeName);
 				continue;
 			}
 
 			var maxRelationshipCount = candidateCapability.maxRelationshipCount;
 			if ((maxRelationshipCount !== -1) && (countRelationships(candidateVertex, candidateCapabilityName) === maxRelationshipCount)) {
-				puccini.log.debugf('{resolve} %s: capability "%s" in node template "%s" already has %d relationships, the maximum allowed', path, candidateCapabilityName, candidateNodeTemplateName, maxRelationshipCount);
+				puccini.log.debugf('%s: capability "%s" in node template "%s" already has %d relationships, the maximum allowed', path, candidateCapabilityName, candidateNodeTemplateName, maxRelationshipCount);
 				continue;
 			}
 
@@ -274,7 +274,7 @@ function arePropertiesValid(path, sourceVertex, kind, name, entity, constraintsM
 
 	var properties = entity.properties;
 	for (var propertyName in constraintsMap) {
-		puccini.log.debugf('{resolve} %s: applying constraints to property "%s" of %s "%s"', path, propertyName, kind, name);
+		puccini.log.debugf('%s: applying constraints to property "%s" of %s "%s"', path, propertyName, kind, name);
 
 		var property = properties[propertyName];
 		if (property === undefined) {

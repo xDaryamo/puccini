@@ -56,7 +56,7 @@ func (self *OperationAssignment) GetKey() string {
 }
 
 func (self *OperationAssignment) Normalize(normalInterface *normal.Interface) *normal.Operation {
-	log.Debugf("{normalize} operation: %s", self.Name)
+	logNormalize.Debugf("operation: %s", self.Name)
 
 	normalOperation := normalInterface.NewOperation(self.Name)
 

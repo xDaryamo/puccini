@@ -45,7 +45,7 @@ func ReadNodeTemplate(context *tosca.Context) tosca.EntityPtr {
 
 // parser.Renderable interface
 func (self *NodeTemplate) Render() {
-	log.Debugf("{render} node template: %s", self.Name)
+	logRender.Debugf("node template: %s", self.Name)
 
 	if self.NodeType == nil {
 		return
@@ -59,7 +59,7 @@ var capabilityTypeName = "cloudify.Node"
 var capabilityTypes = normal.NewTypes(capabilityTypeName)
 
 func (self *NodeTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.NodeTemplate {
-	log.Debugf("{normalize} node template: %s", self.Name)
+	logNormalize.Debugf("node template: %s", self.Name)
 
 	normalNodeTemplate := normalServiceTemplate.NewNodeTemplate(self.Name)
 
@@ -81,7 +81,7 @@ func (self *NodeTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplat
 }
 
 func (self *NodeTemplate) NormalizeRelationships(normalServiceTemplate *normal.ServiceTemplate) {
-	log.Debugf("{normalize} node template relationships: %s", self.Name)
+	logNormalize.Debugf("node template relationships: %s", self.Name)
 
 	normalNodeTemplate := normalServiceTemplate.NodeTemplates[self.Name]
 	for _, relationship := range self.Relationships {

@@ -57,7 +57,7 @@ func (self *RelationshipTemplate) PreRead() {
 
 // parser.Renderable interface
 func (self *RelationshipTemplate) Render() {
-	log.Debugf("{render} relationship template: %s", self.Name)
+	logRender.Debugf("relationship template: %s", self.Name)
 
 	if self.rendered {
 		// Avoid rendering more than once (can happen if we were called from RelationshipAssignment.Render)

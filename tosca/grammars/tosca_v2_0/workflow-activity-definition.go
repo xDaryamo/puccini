@@ -110,7 +110,7 @@ func (self *WorkflowActivityDefinition) Render(stepDefinition *WorkflowStepDefin
 }
 
 func (self *WorkflowActivityDefinition) Normalize(normalWorkflowStep *normal.WorkflowStep) *normal.WorkflowActivity {
-	log.Debug("{normalize} workflow activity")
+	logNormalize.Debug("workflow activity")
 
 	normalWorkflowActivity := normalWorkflowStep.NewActivity()
 	if self.DelegateWorkflowDefinition != nil {

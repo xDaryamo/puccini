@@ -12,7 +12,7 @@ import (
 
 func (self *Context) GetInheritTasks() Tasks {
 	inheritContext := NewInheritContext()
-	self.Traverse("inherit", func(entityPtr tosca.EntityPtr) bool {
+	self.Traverse(logInheritance, func(entityPtr tosca.EntityPtr) bool {
 		inheritContext.GetInheritTask(entityPtr)
 		return true
 	})
@@ -51,9 +51,9 @@ func (self *InheritContext) GetInheritTask(entityPtr tosca.EntityPtr) *Task {
 
 		task.Executor = self.NewExecutor(entityPtr)
 
-		log.Debugf("{inheritance} new task: %s (%d)", task.Name, len(task.Dependencies))
+		logInheritance.Debugf("new task: %s (%d)", task.Name, len(task.Dependencies))
 	} else {
-		log.Debugf("{inheritance} task cache hit: %s (%d)", task.Name, len(task.Dependencies))
+		logInheritance.Debugf("task cache hit: %s (%d)", task.Name, len(task.Dependencies))
 	}
 	return task
 }
@@ -62,7 +62,7 @@ func (self *InheritContext) NewExecutor(entityPtr tosca.EntityPtr) Executor {
 	return func(task *Task) {
 		defer task.Done()
 
-		log.Debugf("{inheritance} inherit: %s", task.Name)
+		logInheritance.Debugf("task: %s", task.Name)
 
 		lock := util.GetLock(entityPtr)
 		lock.Lock()
@@ -214,7 +214,7 @@ func (self *InheritField) InheritStructsFromSlice() {
 			key := tosca.GetKey(element.Interface())
 			if ii, ok := getSliceElementIndexForKey(self.Field, key); ok {
 				e := self.Field.Index(ii)
-				log.Debugf("{inheritance} override: %s", tosca.GetContext(e.Interface()).Path)
+				logInheritance.Debugf("override: %s", tosca.GetContext(e.Interface()).Path)
 				continue
 			}
 		}
@@ -264,7 +264,7 @@ func (self *InheritField) InheritStructsFromMap() {
 		e := self.Field.MapIndex(mapKey)
 		if e.IsValid() {
 			// We are overriding this element, so don't inherit it
-			log.Debugf("{inheritance} override: %s", tosca.GetContext(e.Interface()).Path)
+			logInheritance.Debugf("override: %s", tosca.GetContext(e.Interface()).Path)
 		} else {
 			self.Field.SetMapIndex(mapKey, element)
 		}

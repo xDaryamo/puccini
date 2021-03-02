@@ -114,7 +114,7 @@ func (self Tasks) Drain() {
 		return
 	}
 
-	log.Debugf("{tasks} starting %d tasks", len(self))
+	logTasks.Debugf("starting %d tasks", len(self))
 
 	for true {
 		task, ok := self.FindIndependent()
@@ -129,7 +129,7 @@ func (self Tasks) Drain() {
 	}
 
 	if len(self) > 0 {
-		log.Warningf("{tasks} %d tasks not completed", len(self))
+		logTasks.Warningf("%d tasks not completed", len(self))
 	}
 }
 

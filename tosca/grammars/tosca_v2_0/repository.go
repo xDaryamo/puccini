@@ -46,7 +46,7 @@ func ReadRepository(context *tosca.Context) tosca.EntityPtr {
 
 // parser.Renderable interface
 func (self *Repository) Render() {
-	log.Debugf("{render} repository: %s", self.Name)
+	logRender.Debugf("repository: %s", self.Name)
 	if self.Credential != nil {
 		self.Credential.RenderDataType("tosca:Credential")
 	}

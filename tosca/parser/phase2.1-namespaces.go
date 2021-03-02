@@ -23,7 +23,7 @@ func (self *Unit) MergeNamespaces(work *ContextualWork) {
 			context.ScriptletNamespace.Merge(import_.GetContext().ScriptletNamespace)
 		}
 
-		log.Debugf("{namespaces} create: %s", context.URL.String())
+		logNamespaces.Debugf("create: %s", context.URL.String())
 		namespace := tosca.NewNamespaceFor(self.EntityPtr)
 		context.Namespace.Merge(namespace, nil)
 	}

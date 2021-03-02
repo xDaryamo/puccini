@@ -123,7 +123,7 @@ func (self *FunctionCall) Coerce() (ard.Value, error) {
 		return nil, err
 	}
 
-	log.Debugf("{evaluate} %s %s", self.Path, self.Signature(arguments))
+	logEvaluate.Debugf("%s %s", self.Path, self.Signature(arguments))
 
 	r, err := self.CloutContext.CallFunction(self.Name, "evaluate", arguments, self.FunctionCallContext)
 	if err != nil {
@@ -165,7 +165,7 @@ func (self *FunctionCall) Validate(value ard.Value, errorWhenInvalid bool) (bool
 	// Prepend value to be first argument
 	arguments = append([]ard.Value{value}, arguments...)
 
-	log.Debugf("{validate} %s %s", self.Path, self.Signature(arguments))
+	logValidate.Debugf("%s %s", self.Path, self.Signature(arguments))
 
 	r, err := self.CloutContext.CallFunction(self.Name, "validate", arguments, self.FunctionCallContext)
 	if err != nil {

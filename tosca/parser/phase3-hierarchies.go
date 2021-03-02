@@ -22,7 +22,7 @@ func (self *Unit) MergeHierarchies(hierarchyContext tosca.HierarchyContext, work
 			context.Hierarchy.Merge(import_.GetContext().Hierarchy, hierarchyContext)
 		}
 
-		log.Debugf("{hierarchies} create: %s", context.URL.String())
+		logHierarchies.Debugf("create: %s", context.URL.String())
 		hierarchy := tosca.NewHierarchyFor(self.EntityPtr, hierarchyContext)
 		context.Hierarchy.Merge(hierarchy, hierarchyContext)
 		context.Hierarchy.AddTo(self.EntityPtr)
