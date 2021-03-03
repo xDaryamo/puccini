@@ -64,18 +64,18 @@ func (self *Error) String() string {
 
 // problems.Problematic interface
 func (self *Error) Problem() (string, string, string, int, int) {
-	message := fmt.Sprintf("%s: ", terminal.ColorPath(self.FunctionCall.Path))
+	message := fmt.Sprintf("%s: ", terminal.StylePath(self.FunctionCall.Path))
 	if self.Message != "" {
-		message += fmt.Sprintf("%s in call to %s", self.Message, terminal.ColorName(self.Signature()))
+		message += fmt.Sprintf("%s in call to %s", self.Message, terminal.StyleName(self.Signature()))
 	} else {
-		message += fmt.Sprintf("call to %s failed", terminal.ColorName(self.Signature()))
+		message += fmt.Sprintf("call to %s failed", terminal.StyleName(self.Signature()))
 	}
 	if self.Cause != nil {
 		if jsError, ok := self.Cause.(*Error); ok {
 			_, _, message_, _, _ := jsError.Problem()
-			message += fmt.Sprintf(" because %s", terminal.ColorError(message_))
+			message += fmt.Sprintf(" because %s", terminal.StyleError(message_))
 		} else {
-			message += fmt.Sprintf(" because %s", terminal.ColorError(self.Cause.Error()))
+			message += fmt.Sprintf(" because %s", terminal.StyleError(self.Cause.Error()))
 		}
 	}
 	return self.FunctionCall.URL, "", message, self.FunctionCall.Row, self.FunctionCall.Column

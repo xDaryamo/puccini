@@ -357,7 +357,7 @@ func (self *Hierarchy) PrintChildren(indent int, treePrefix terminal.TreePrefix)
 func (self *Hierarchy) PrintChild(indent int, treePrefix terminal.TreePrefix, last bool) {
 	treePrefix.Print(indent, last)
 	if self.entityPtr != nil {
-		fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorTypeName(self.GetContext().Name))
+		fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleTypeName(self.GetContext().Name))
 	}
 }
 

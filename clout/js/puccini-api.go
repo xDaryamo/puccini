@@ -153,13 +153,13 @@ func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool)
 		var skip bool
 		if (err == nil) || os.IsExist(err) {
 			if dontOverwrite {
-				message = terminal.ColorError("skipping:   ")
+				message = terminal.StyleError("skipping:   ")
 				skip = true
 			} else {
-				message = terminal.ColorValue("overwriting:")
+				message = terminal.StyleValue("overwriting:")
 			}
 		} else {
-			message = terminal.ColorHeading("writing:    ")
+			message = terminal.StyleHeading("writing:    ")
 		}
 		if !self.context.Quiet {
 			fmt.Fprintf(self.Stdout, "%s %s\n", message, output)
@@ -234,7 +234,7 @@ func (self *PucciniAPI) DeepEquals(a ard.Value, b ard.Value) bool {
 
 func (self *PucciniAPI) Fail(message string) {
 	if !self.context.Quiet {
-		fmt.Fprintln(self.Stderr, terminal.ColorError(message))
+		fmt.Fprintln(self.Stderr, terminal.StyleError(message))
 	}
 	atexit.Exit(1)
 }

@@ -103,7 +103,7 @@ func (self *Context) Exec(clout *cloutpkg.Clout, scriptletName string, apis map[
 
 func (self *Context) Fail(message string) {
 	if !self.Quiet {
-		fmt.Fprintln(self.Stderr, terminal.ColorError(message))
+		fmt.Fprintln(self.Stderr, terminal.StyleError(message))
 	}
 	atexit.Exit(1)
 }

@@ -72,6 +72,6 @@ func (self *Context) AddImportUnit(entityPtr tosca.EntityPtr, container *Unit, n
 
 func (self *Context) PrintImports(indent int) {
 	terminal.PrintIndent(indent)
-	fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorValue(self.Root.GetContext().URL.String()))
+	fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleValue(self.Root.GetContext().URL.String()))
 	self.Root.PrintImports(indent, terminal.TreePrefix{})
 }

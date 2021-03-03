@@ -37,7 +37,7 @@ func (self *Context) PrintNamespaces(indent int) {
 		context := import_.GetContext()
 		if !context.Namespace.Empty() {
 			terminal.PrintIndent(indent)
-			fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorValue(context.URL.String()))
+			fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleValue(context.URL.String()))
 			context.Namespace.Print(childIndent)
 		}
 	}

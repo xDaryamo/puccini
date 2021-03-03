@@ -86,7 +86,7 @@ func (self *Unit) PrintImports(indent int, treePrefix terminal.TreePrefix) {
 
 func (self *Unit) PrintNode(indent int, treePrefix terminal.TreePrefix, last bool) {
 	treePrefix.Print(indent, last)
-	fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorValue(self.GetContext().URL.String()))
+	fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleValue(self.GetContext().URL.String()))
 }
 
 //

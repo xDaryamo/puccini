@@ -182,7 +182,7 @@ func (self *Namespace) Print(indent int) {
 	for _, type_ := range types {
 		forType := self.namespace[type_]
 		terminal.PrintIndent(indent)
-		fmt.Fprintf(terminal.Stdout, "%s\n", terminal.ColorTypeName(type_.Elem().String()))
+		fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleTypeName(type_.Elem().String()))
 
 		// Sort names
 		names := make([]string, len(forType))
