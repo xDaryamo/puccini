@@ -83,13 +83,3 @@ func (self *Clout) Normalize() (*Clout, error) {
 		return nil, err
 	}
 }
-
-func (self *Clout) ARD() (ard.Value, error) {
-	// TODO: not very efficient
-	if code, err := format.EncodeYAML(self, " ", false); err == nil {
-		value, _, err := ard.DecodeYAML(code, false)
-		return value, err
-	} else {
-		return nil, err
-	}
-}

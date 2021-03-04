@@ -12,7 +12,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
 
 version = os.environ.get('PUCCINI_VERSION', '0.0.0')
 repo = os.environ.get('PUCCINI_REPO', 'https://github.com/tliron/puccini')
-go_version = os.environ.get('PUCCINI_GO_VERSION', '1.15.7')
+go_version = os.environ.get('PUCCINI_GO_VERSION', '1.16')
 root = os.path.abspath(os.path.dirname(__file__)).replace('"', '\\"')
 
 script = '''\

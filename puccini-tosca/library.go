@@ -60,12 +60,7 @@ func Compile(url *C.char) *C.char {
 		return nil
 	}
 
-	ard, err := clout.ARD()
-	if err != nil {
-		return nil
-	}
-
-	format.WriteYAML(ard, buffer, "  ", true)
+	format.WriteYAML(clout, buffer, "  ", true)
 
 	return C.CString(buffer.String())
 }
