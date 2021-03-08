@@ -3,9 +3,12 @@ puccini-tosca
 
 ### Format
 
-The default format for output is YAML, but you can use JSON or XML instead with `--format/-f`. Note
-that Clout in JSON may lose some type information (e.g. JSON doesn't distinguish between an integer
-and a float). XML output uses a bespoke structure for maps and lists.
+The default format for output is YAML, but you can select JSON, XML, or CBOR instead with
+`--format/-f`. Note that Clout in JSON may lose some type information (e.g. JSON doesn't distinguish
+between an integer and a float). For this reason we also support a "compatible JSON" format ("cjson")
+that adds that type information. You would need specialized code to be able to consume this format.
+XML output uses a bespoke structure for maps and lists, which also must be specially consumed.
+(The `puccini-clout` tool supports all these formats as input.)
 
 For YAML you can add the additional `--strict/-y` switch to output a stricter YAML, which adds
 scalar type tags (such as `!!str`, `!!int`, `!!timestamp`) and outputs all strings in double quotes
