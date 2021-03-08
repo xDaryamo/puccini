@@ -7,10 +7,10 @@ import (
 	"sync"
 
 	"github.com/dop251/goja"
-	"github.com/tebeka/atexit"
 	"github.com/tliron/kutil/logging"
 	"github.com/tliron/kutil/terminal"
 	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
 )
 
@@ -105,7 +105,7 @@ func (self *Context) Fail(message string) {
 	if !self.Quiet {
 		fmt.Fprintln(self.Stderr, terminal.StyleError(message))
 	}
-	atexit.Exit(1)
+	util.Exit(1)
 }
 
 func (self *Context) Failf(format string, args ...interface{}) {

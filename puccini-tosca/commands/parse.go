@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/tebeka/atexit"
 	"github.com/tliron/kutil/ard"
 	formatpkg "github.com/tliron/kutil/format"
 	problemspkg "github.com/tliron/kutil/problems"
@@ -91,7 +90,7 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 
 		if !ok {
 			// Stop here if failed to read
-			atexit.Exit(1)
+			util.Exit(1)
 		}
 
 		if ToPrintPhase(1) {

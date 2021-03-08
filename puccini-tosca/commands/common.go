@@ -1,11 +1,11 @@
 package commands
 
 import (
-	"github.com/tebeka/atexit"
 	formatpkg "github.com/tliron/kutil/format"
 	"github.com/tliron/kutil/logging"
 	problemspkg "github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/util"
 )
 
 const toolName = "puccini-tosca"
@@ -21,6 +21,6 @@ func FailOnProblems(problems *problemspkg.Problems) {
 				problems.Print(verbose > 0)
 			}
 		}
-		atexit.Exit(1)
+		util.Exit(1)
 	}
 }

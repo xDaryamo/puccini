@@ -12,7 +12,6 @@ require (
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/segmentio/ksuid v1.0.3
 	github.com/spf13/cobra v1.1.3
-	github.com/tebeka/atexit v0.3.0
-	github.com/tliron/kutil v0.1.21
+	github.com/tliron/kutil v0.1.22
 	github.com/tliron/yamlkeys v1.3.5
 )

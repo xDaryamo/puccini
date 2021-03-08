@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/beevik/etree"
-	"github.com/tebeka/atexit"
 	"github.com/tliron/kutil/ard"
 	formatpkg "github.com/tliron/kutil/format"
 	"github.com/tliron/kutil/logging"
@@ -236,7 +235,7 @@ func (self *PucciniAPI) Fail(message string) {
 	if !self.context.Quiet {
 		fmt.Fprintln(self.Stderr, terminal.StyleError(message))
 	}
-	atexit.Exit(1)
+	util.Exit(1)
 }
 
 func (self *PucciniAPI) Failf(format string, args ...interface{}) {
