@@ -1,4 +1,4 @@
 Puccini
 =======
 
-See `<https://github.com/tliron/puccini>`__.
+See `<https://puccini.cloud>`__.

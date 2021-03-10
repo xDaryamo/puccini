@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Note that installing `puccini` will also install `ruamel.yaml` 
 

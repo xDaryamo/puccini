@@ -16,10 +16,11 @@ And then head to the [quickstart guide](QUICKSTART.md).
 
 Note that Puccini is intentionally *not* an orchestrator. This is a "BYOO" kind of establishment
 ("Bring Your Own Orchestrator"). If you are looking for a comprehensive TOSCA orchestrator for
-[Kubernetes](https://kubernetes.io/) based on Puccini, check out sister project,
-[Turandot](https://turandot.puccini.cloud/). Also included in Puccini are examples for using
-[Ansible](https://www.ansible.com/) and [BPMN2](https://www.omg.org/spec/BPMN/) middleware as
-orchestrators. 
+[Kubernetes](https://kubernetes.io/) based on Puccini, check out our sister project,
+[Turandot](https://turandot.puccini.cloud/).
+
+Also included in Puccini are examples for using [Ansible](examples/ansible/) and
+[BPMN](examples/bpmn/) middleware as orchestrators. 
 
 
 Get It

@@ -7,7 +7,7 @@ go 1.16
 require (
 	github.com/beevik/etree v1.1.0
 	github.com/dlclark/regexp2 v1.4.0 // indirect
-	github.com/dop251/goja v0.0.0-20210227132020-101e13ab2c34
+	github.com/dop251/goja v0.0.0-20210306171345-0b7b48cdabcc
 	github.com/fxamacker/cbor/v2 v2.2.0
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/segmentio/ksuid v1.0.3

@@ -1,0 +1,17 @@
+- name: Hello World from TOSCA
+  hosts: localhost
+  gather_facts: no
+  tasks:
+
+  - name: Compile TOSCA service template
+    tosca:
+      service_template: ../../examples/tosca/requirements-and-capabilities.yaml
+    register: service
+
+  - name: Show LightBulb templates
+    loop: "{{ service.node_templates }}"
+    loop_control:
+      label: "{{ item.name }}"
+    when: "'LightBulb' in item.types"
+    debug:
+      msg: "{{ item }}"

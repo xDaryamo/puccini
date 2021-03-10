@@ -6,10 +6,8 @@ if [ "$EUID" -ne 0 ]; then
 	exit 1
 fi
 
-HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
-
-KUBECTL_VERSION=v1.17.2
-MINIKUBE_VERSION=v1.6.2
+KUBECTL_VERSION=v1.20.4
+MINIKUBE_VERSION=v1.18.1
 OVERWRITE=false
 
 for ARG in "$@"; do

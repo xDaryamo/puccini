@@ -1,6 +1,8 @@
 TOSCA BPMN Profile Examples
 ===========================
 
+Integration with [BPMN](https://www.omg.org/spec/BPMN/) middleware.
+
 Features
 --------
 

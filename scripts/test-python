@@ -7,4 +7,4 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 "$HERE/build-wrapper-python"
 
 . "$ROOT/dist/python-env/bin/activate"
-"$ROOT/examples/python/compile.py" "$ROOT/examples/tosca/data-types.yaml"
+"$ROOT/examples/python/compile.py" "$ROOT/examples/tosca/data-types.yaml" "$@"
