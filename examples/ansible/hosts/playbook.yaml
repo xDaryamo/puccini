@@ -1,0 +1,8 @@
+- name: TOSCA hosts
+  hosts: all
+  gather_facts: no
+  tasks:
+
+  - name: Show hosts
+    debug:
+      msg: "host: {{ inventory_hostname }}, groups: {{ group_names | join(', ') }}"

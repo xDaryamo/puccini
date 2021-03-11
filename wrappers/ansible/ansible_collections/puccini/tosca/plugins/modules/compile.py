@@ -1,3 +1,5 @@
+# https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html
+
 from ansible.module_utils.basic import AnsibleModule
 import puccini.tosca
 
@@ -54,8 +56,8 @@ def run_module():
 
     try:
         clout = puccini.tosca.compile(module.params['service_template'])
-    except Exception as x:
-        module.fail_json(msg=str(x))
+    except Exception as e:
+        module.fail_json(msg=str(e))
 
     if module.params['debug']:
         result['clout'] = clout
@@ -64,7 +66,8 @@ def run_module():
     for vertex in clout['vertexes'].values():
         try:
             if vertex['metadata']['puccini']['kind'] == 'NodeTemplate':
-                result['node_templates'].append(vertex['properties'])
+                node_template = vertex['properties']
+                result['node_templates'].append(node_template)
         except:
             pass
 

@@ -1,7 +1,7 @@
 Ansible Wrapper for Puccini
 ===========================
 
-A "tosca" module for [Ansible](https://www.ansible.com/).
+An [Ansible](https://www.ansible.com/) collection, packaged for Ansible Galaxy.
 
 This relies on the [Python wrapper](../../wrappers/python/), so make sure to install that first.
 

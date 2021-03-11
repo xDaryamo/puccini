@@ -1,0 +1,4 @@
+services:
+- group: servers
+  template: ../../../examples/tosca/artifacts.yaml
+  inputs: {}

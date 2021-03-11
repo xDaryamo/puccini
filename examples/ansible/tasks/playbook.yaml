@@ -1,11 +1,11 @@
-- name: Hello World from TOSCA
+- name: TOSCA tasks
   hosts: localhost
   gather_facts: no
   tasks:
 
   - name: Compile TOSCA service template
-    tosca:
-      service_template: ../../examples/tosca/requirements-and-capabilities.yaml
+    puccini.tosca.compile:
+      service_template: ../../../examples/tosca/requirements-and-capabilities.yaml
     register: service
 
   - name: Show LightBulb templates

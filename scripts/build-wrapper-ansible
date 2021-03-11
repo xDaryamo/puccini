@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
+. "$HERE/_env"
+
+. "$ROOT/dist/python-env/bin/activate"
+
+ansible-galaxy collection build \
+	"$ROOT/wrappers/ansible/ansible_collections/puccini/tosca" \
+	--output-path "$ROOT/dist/ansible-galaxy" \
+	--force
