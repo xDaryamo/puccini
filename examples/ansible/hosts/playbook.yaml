@@ -1,5 +1,5 @@
 - name: TOSCA hosts
-  hosts: all
+  hosts: myservice # matches the service name in "tosca.yaml"
   gather_facts: no
   tasks:
 

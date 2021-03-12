@@ -39,27 +39,47 @@ class InventoryModule(BaseInventoryPlugin):
             raise AnsibleParserError("Unable to add group %s: %s" % ('tosca', to_text(e)))
 
         for service in data.get('services', []):
-            group = service.get('group')
-            if (not group) or (group == 'tosca'):
-                service_group = tosca_group
+            name = service.get('name')
+            if (not name) or (name == 'tosca'):
+                group = tosca_group
             else:
                 try:
-                    service_group = self.inventory.add_group(group)
-                    self.inventory.add_child(tosca_group, service_group)
+                    group = self.inventory.add_group(name)
+                    self.inventory.add_child(tosca_group, group)
                 except AnsibleError as e:
-                    raise AnsibleParserError("Unable to add group %s: %s" % (group, to_text(e)))
+                    raise AnsibleParserError("Unable to add group %s: %s" % (name, to_text(e)))
 
             template = service.get('template')
+            inputs = service.get('inputs', {})
             try:
+                # TODO: inputs
                 clout = puccini.tosca.compile(template)
             except Exception as e:
                 raise AnsibleError('TOSCA compilation error: %s' % to_text(e))
+
+            node_types = service.get('node_types')
+            capability_types = service.get('capability_types')
 
             for vertex in clout['vertexes'].values():
                 try:
                     if vertex['metadata']['puccini']['kind'] == 'NodeTemplate':
                         node_template = vertex['properties']
-                        self.inventory.add_host(node_template['name'], group=service_group)
+                        if _is_allowed(node_template, node_types, capability_types):
+                            self.inventory.add_host(node_template['name'], group=group)
                 except:
                     pass
    
+def _is_allowed(node_template, node_types, capability_types):
+    if node_types:
+        for node_type in node_types:
+            if node_type not in node_template['types']:
+                return False
+
+    if capability_types:
+        for capability in node_template['capabilities'].values():
+            for capability_type in capability_types:
+                if capability_type in capability['types']:
+                    return True
+        return False
+
+    return True

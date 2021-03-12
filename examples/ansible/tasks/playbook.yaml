@@ -5,13 +5,15 @@
 
   - name: Compile TOSCA service template
     puccini.tosca.compile:
-      service_template: ../../../examples/tosca/requirements-and-capabilities.yaml
+      service_template: ../service.yaml
+      inputs: {}
     register: service
 
   - name: Show LightBulb templates
     loop: "{{ service.node_templates }}"
     loop_control:
-      label: "{{ item.name }}"
-    when: "'LightBulb' in item.types"
+      loop_var: node_template
+      label: "{{ node_template.name }}"
+    when: "'tosca::Abstract.Compute' in node_template.types"
     debug:
-      msg: "{{ item }}"
+      msg: "{{ node_template }}"

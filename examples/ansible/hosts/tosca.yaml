@@ -1,4 +1,10 @@
+# This file must be named "tosca.yaml" or "tosca.yml"
 services:
-- group: servers
-  template: ../../../examples/tosca/artifacts.yaml
+- name: myservice # the (optional) group name for this service's hosts
+  template: ../service.yaml
   inputs: {}
+  # (optional) filtering by node and/or capability types
+  #node_types:
+  #- tosca::Abstract.Compute
+  capability_types:
+  - tosca::Container

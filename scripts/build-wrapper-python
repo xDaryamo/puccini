@@ -1,15 +1,16 @@
 #!/bin/bash
 set -e
 
+# Requirements (Fedora)
+# sudo dnf install python3-virtualenv
+
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 . "$HERE/_env"
 
 git_version
 
-# Requirements (Fedora)
-# sudo dnf install python3-virtualenv
-
 # virtualenv
+# (must use "--system-site-packages" so that Ansible can access localhost on SELinux!)
 python3 -m venv --system-site-packages "$ROOT/dist/python-env"
 . "$ROOT/dist/python-env/bin/activate"
 pip install --upgrade pip

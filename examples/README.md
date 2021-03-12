@@ -26,6 +26,7 @@ Wrappers
 * [Java](java/)
 * [Python](python/)
 * [Ruby](ruby/)
+* [Ansible](ansible/)
 
 Storage
 -------

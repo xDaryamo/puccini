@@ -2,15 +2,17 @@
 set -e
 
 # Requirements (Fedora)
-# sudo dnf install python3-libselinux
-# And make sure to create the virtualenv with --system-site-packages!
+# sudo dnf install python3-virtualenv python3-libselinux
 
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 . "$HERE/../../scripts/_env"
 
-"$ROOT/scripts/build-wrapper-python"
-
+# virtualenv
+# (must use "--system-site-packages" so that Ansible can access localhost on SELinux!)
+python3 -m venv --system-site-packages "$ROOT/dist/python-env"
 . "$ROOT/dist/python-env/bin/activate"
+pip install --upgrade pip
+
 pip install \
 	ansible==3.0.0 \
 	os-client-config==2.1.0 \

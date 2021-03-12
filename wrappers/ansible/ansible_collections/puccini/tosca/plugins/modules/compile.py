@@ -41,6 +41,7 @@ node_templates: [...]
 def run_module():
     module_args = dict(
         service_template=dict(type='str', required=True),
+        inputs=dict(type='dict', required=False, default=dict()),
         debug=dict(type='bool', required=False, default=False),
     )
 
@@ -55,6 +56,7 @@ def run_module():
         module.exit_json(**result)
 
     try:
+        # TODO: inputs
         clout = puccini.tosca.compile(module.params['service_template'])
     except Exception as e:
         module.fail_json(msg=str(e))
