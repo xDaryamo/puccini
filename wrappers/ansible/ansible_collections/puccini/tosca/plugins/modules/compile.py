@@ -29,8 +29,9 @@ author:
 
 EXAMPLES = r'''
 - name: Compile TOSCA service template
-  tosca:
+  puccini.tosca.compile:
     service_template: ../../examples/tosca/requirements-and-capabilities.yaml
+    inputs: {}
   register: service
 '''
 
@@ -55,9 +56,10 @@ def run_module():
     if module.check_mode:
         module.exit_json(**result)
 
+    service_template = module.params.get('service_template', '')
+    inputs = module.params.get('inputs', {})
     try:
-        # TODO: inputs
-        clout = puccini.tosca.compile(module.params['service_template'])
+        clout = puccini.tosca.compile(service_template, inputs)
     except Exception as e:
         module.fail_json(msg=str(e))
 
@@ -67,8 +69,8 @@ def run_module():
     result['node_templates'] = []
     for vertex in clout['vertexes'].values():
         try:
-            if vertex['metadata']['puccini']['kind'] == 'NodeTemplate':
-                node_template = vertex['properties']
+            if vertex.get('metadata', {}).get('puccini', {}).get('kind', '') == 'NodeTemplate':
+                node_template = vertex.get('properties', {})
                 result['node_templates'].append(node_template)
         except:
             pass

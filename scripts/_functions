@@ -16,6 +16,7 @@ function m () {
 
 function git_version () {
 	VERSION=$(git -C "$ROOT" describe --tags --always)
+	SHORT_VERSION=$(git -C "$ROOT" describe --tags --always --abbrev=0)
 	REVISION=$(git -C "$ROOT" rev-parse HEAD)
 	TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S %Z")
 	GO_VERSION=$(go version | { read _ _ v _; echo ${v#go}; })

@@ -3,13 +3,17 @@
 #include <stdlib.h>
 
 JNIEXPORT jstring JNICALL Java_cloud_puccini_TOSCA__1Compile
-  (JNIEnv *env, jclass cls, jstring url)
+  (JNIEnv *env, jclass cls, jstring url, jstring inputs)
 {
 	const char *url_ = (*env)->GetStringUTFChars(env, url, 0);
-	char *clout = Compile((char *) url_);
-	(*env)->ReleaseStringUTFChars(env, url, url_);
+	const char *inputs_ = (*env)->GetStringUTFChars(env, inputs, 0);
 
-	jstring r = (*env)->NewStringUTF(env, clout);
-	free(clout);
-	return r;
+	char *result = Compile((char *) url_, (char *) inputs_);
+
+	(*env)->ReleaseStringUTFChars(env, url, url_);
+	(*env)->ReleaseStringUTFChars(env, inputs, inputs_);
+
+	jstring result_ = (*env)->NewStringUTF(env, result);
+	free(result);
+	return result_;
 }

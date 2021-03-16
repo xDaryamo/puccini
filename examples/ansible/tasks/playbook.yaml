@@ -6,10 +6,11 @@
   - name: Compile TOSCA service template
     puccini.tosca.compile:
       service_template: ../service.yaml
-      inputs: {}
+      inputs:
+        ram: 1 gib
     register: service
 
-  - name: Show LightBulb templates
+  - name: Show Compute node templates
     loop: "{{ service.node_templates }}"
     loop_control:
       loop_var: node_template

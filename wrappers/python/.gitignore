@@ -1,3 +1,4 @@
 build/
-.eggs/
+env/
 *.egg-info/
+VERSION

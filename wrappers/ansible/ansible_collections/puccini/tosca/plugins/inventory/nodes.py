@@ -5,7 +5,10 @@ from ansible.errors import AnsibleError, AnsibleParserError
 from ansible.module_utils.common._collections_compat import MutableMapping
 from ansible.module_utils._text import to_text
 from ansible.plugins.inventory import BaseInventoryPlugin
+from ruamel.yaml import YAML
 import puccini.tosca
+
+yaml = YAML()
 
 class InventoryModule(BaseInventoryPlugin):
 
@@ -24,7 +27,10 @@ class InventoryModule(BaseInventoryPlugin):
         super(InventoryModule, self).parse(inventory, loader, path, cache)
 
         try:
-            data = self.loader.load_from_file(path, cache=False)
+            # The built-in loader uses ruamel-incompatible data types
+            #data = self.loader.load_from_file(path, cache=False)
+            with open(path, 'r') as f:
+                data = yaml.load(f)
         except Exception as e:
             raise AnsibleParserError(e)
 
@@ -49,36 +55,41 @@ class InventoryModule(BaseInventoryPlugin):
                 except AnsibleError as e:
                     raise AnsibleParserError("Unable to add group %s: %s" % (name, to_text(e)))
 
-            template = service.get('template')
+            template = service.get('template', '')
             inputs = service.get('inputs', {})
+            self.display.banner('Compiling TOSCA: %s' % template)
             try:
-                # TODO: inputs
-                clout = puccini.tosca.compile(template)
+                clout = puccini.tosca.compile(template, inputs)
+            except puccini.tosca.Problems as e:
+                for problem in e.problems:
+                    self.display.warning(str(problem))
+                raise e
             except Exception as e:
-                raise AnsibleError('TOSCA compilation error: %s' % to_text(e))
+                self.display.warning(str(e))
+                raise e
 
             node_types = service.get('node_types')
             capability_types = service.get('capability_types')
 
-            for vertex in clout['vertexes'].values():
+            for vertex in clout.get('vertexes', {}).values():
                 try:
-                    if vertex['metadata']['puccini']['kind'] == 'NodeTemplate':
+                    if vertex.get('metadata', {}).get('puccini', {}).get('kind', '') == 'NodeTemplate':
                         node_template = vertex['properties']
                         if _is_allowed(node_template, node_types, capability_types):
-                            self.inventory.add_host(node_template['name'], group=group)
+                            self.inventory.add_host(node_template.get('name', ''), group=group)
                 except:
                     pass
    
 def _is_allowed(node_template, node_types, capability_types):
     if node_types:
         for node_type in node_types:
-            if node_type not in node_template['types']:
+            if node_type not in node_template.get('types', {}):
                 return False
 
     if capability_types:
-        for capability in node_template['capabilities'].values():
+        for capability in node_template.get('capabilities', {}).values():
             for capability_type in capability_types:
-                if capability_type in capability['types']:
+                if capability_type in capability.get('types', {}):
                     return True
         return False
 

@@ -2,7 +2,8 @@
 services:
 - name: myservice # the (optional) group name for this service's hosts
   template: ../service.yaml
-  inputs: {}
+  inputs:
+    ram: 1 gib
   # (optional) filtering by node and/or capability types
   #node_types:
   #- tosca::Abstract.Compute

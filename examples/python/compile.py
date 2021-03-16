@@ -13,6 +13,11 @@ if len(sys.argv) <= 1:
 
 url = sys.argv[1]
 
-clout = puccini.tosca.compile(url)
-
-yaml.dump(clout, sys.stdout)
+try:
+    clout = puccini.tosca.compile(url)
+    yaml.dump(clout, sys.stdout)
+except puccini.tosca.Problems as e:
+    print('Problems:', file=sys.stderr)
+    for problem in e.problems:
+        yaml.dump(problem, sys.stderr)
+    sys.exit(1)

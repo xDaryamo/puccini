@@ -1,7 +1,7 @@
 # https://docs.ansible.com/ansible/latest/dev_guide/collections_galaxy_meta.html#collections-galaxy-meta
 namespace: puccini
 name: tosca
-version: 1.0.0
+version: 0.0.1
 readme: README.md
 authors:
 - Puccini
@@ -10,3 +10,7 @@ license: Apache-2.0
 homepage: https://puccini.cloud
 repository: https://github.com/tliron/puccini
 issues: https://github.com/tliron/puccini/issues
+
+description: Deliberately stateless cloud topology management and deployment tools based on TOSCA
+tags:
+- tosca

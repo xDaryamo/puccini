@@ -27,7 +27,7 @@ topology_template:
       # So you *must* specify it in the CLI:
       #   puccini-tosca --input ram=1gib ...
       # (The inputs are in JSON format, which you'll need if you're using a complex data type)
-      default: 1 gib
+      #default: 1 gib
 
   node_templates:
 
