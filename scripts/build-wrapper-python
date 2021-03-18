@@ -9,13 +9,69 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 
 git_version
 
-# virtualenv
-# (must use "--system-site-packages" so that Ansible can access localhost on SELinux!)
-python3 -m venv --system-site-packages "$ROOT/dist/python-env"
-. "$ROOT/dist/python-env/bin/activate"
-pip install --upgrade pip
+VERSION=${SHORT_VERSION:1}$SUFFIX
 
-echo "${VERSION:1}" > "$ROOT/wrappers/python/VERSION"
+rm --force --recursive "$ROOT/dist/python"
+mkdir --parent "$ROOT/dist/python"
 
-PUCCINI_REPO=$ROOT PUCCINI_GO_VERSION=$GO_VERSION \
-pip install "$ROOT/wrappers/python"
+cd "$ROOT/dist/python"
+
+rsync --recursive "$ROOT/wrappers/python"/* .
+rsync "$ROOT/go.mod" "$ROOT/go.sum" puccini/go-source/
+rsync --recursive "$ROOT/tosca" puccini/go-source/
+rsync --recursive "$ROOT/clout" puccini/go-source/
+rsync --recursive "$ROOT/puccini-tosca" puccini/go-source/
+
+echo "__version__ = '$VERSION'" > puccini/__init__.py
+echo -n "$VERSION" > VERSION
+
+if [ "$1" == -i ]; then
+
+    # Install
+
+    rm --recursive --force "$ROOT/dist/python-env"
+    # Must use "--system-site-packages" so that Ansible can access localhost on SELinux
+    python3 -m venv --system-site-packages "$ROOT/dist/python-env"
+    . "$ROOT/dist/python-env/bin/activate"
+    pip install --upgrade pip
+
+    pip install .
+
+elif [ "$1" == -p ]; then
+
+    # Publish
+
+    PYTHON_VERSION=cp39 # CPython 3.9
+    PLATFORM=manylinux1_x86_64 # default is linux_x86_64, which is not widely used
+
+    SDIST=dist/puccini-$VERSION.tar.gz
+    BDIST=dist/puccini-$VERSION-$PYTHON_VERSION-$PYTHON_VERSION-$PLATFORM.whl
+
+    python3 -m venv env
+    . env/bin/activate
+    pip install --upgrade pip
+    pip install wheel twine
+
+    ./setup.py sdist bdist_wheel --plat-name=$PLATFORM
+
+    gpg --detach-sign --armor --yes "$SDIST"
+    gpg --detach-sign --armor --yes "$BDIST"
+
+    # Upload to PyPI
+    twine upload \
+        "$SDIST" \
+        "$SDIST.asc" \
+        "$BDIST" \
+        "$BDIST.asc"
+
+else
+
+    # Build sdist only
+
+    python3 -m venv env
+    . env/bin/activate
+    pip install --upgrade pip
+
+    ./setup.py sdist
+
+fi

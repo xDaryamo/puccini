@@ -1,2 +1,4 @@
-include README.rst
+# For sdist
+
 include VERSION
+graft puccini/go-source

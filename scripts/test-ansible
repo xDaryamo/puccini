@@ -4,7 +4,9 @@ set -e
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 . "$HERE/_env"
 
-SUFFIX=$SUFFIX "$HERE/build-wrapper-python" -i
+SUFFIX=$SUFFIX "$HERE/build-wrapper-ansible"
 . "$ROOT/dist/python-env/bin/activate"
 
-"$ROOT/examples/python/compile.py" "$ROOT/examples/tosca/data-types.yaml" "$@"
+cd "$ROOT/examples/ansible/tasks"
+
+ansible-playbook playbook.yaml
