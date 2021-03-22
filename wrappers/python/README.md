@@ -7,11 +7,11 @@ Puccini's Go code. This is done in-process, so there's no sub-process forking.
 
 Note that we currently only support installation on 64-bit Linux.
 
-The [`setup.py`](setup.py) is designed to fetch what it needs from the Internet: it will fetch a Go
-compiler, fetch the Puccini sources, and then build the shared library. So there are no special
-prerequisites to install it.
+The latest stable version is published on [PyPI](https://pypi.org/project/puccini/). To install:
 
-For example, to install the latest development version via [pip](https://pip.pypa.io/): 
+    pip install puccini
+
+To install the latest development version from GitHub:
 
     pip install git+https://github.com/tliron/puccini#subdirectory=wrappers/python
 
@@ -19,21 +19,10 @@ Or, if you've cloned the repository locally:
 
     pip install wrappers/python/
 
-For testing it's recommended to install in a [virtualenv](https://virtualenv.pypa.io/):
+For testing it's recommended to install in a [virtualenv](https://virtualenv.pypa.io/), e.g.:
 
     python -m venv env
     . env/bin/activate
     pip install git+https://github.com/tliron/puccini#subdirectory=wrappers/python
-
-To build a distribution:
-
-    cd wrappers/python
-    ./setup.py bdist
-
-Or an egg:
-
-    ./setup.py bdist_egg
-
-The output will be in the `dist/` subdirectory here.
 
 Also see: [Python examples](../../examples/python/).
