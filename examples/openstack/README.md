@@ -1,10 +1,24 @@
 TOSCA OpenStack Profile Examples
 ================================
 
+For [OpenStack](https://www.openstack.org/) Puccini can generate
+[Ansible](https://www.ansible.com/) playbooks that rely on the
+[Ansible OpenStack collection](https://docs.ansible.com/ansible/latest/collections/openstack/cloud/index.html).
+Custom operation artifacts, if included, are deployed to the virtual machines and executed.
+
+Effectively, the combination of TOSCA + Ansible provides an equivalent set of features to
+[Heat](https://docs.openstack.org/heat/stein/)/[Mistral](https://docs.openstack.org/mistral/stein/).
+However, Ansible is a general-purpose orchestrator that can do a lot more than Heat. The generated
+playbooks comprise roles that can be imported and used in other playbooks, allowing for custom
+orchestration integrations.
+
+Note that though Puccini can compile HOT directly, we recommend TOSCA because of its much
+richer grammar and features. See the [HOT examples](../hot/).
+
 * [Hello World](hello-world.yaml)
 
 If you have [Ansible](https://www.ansible.com/) installed and configured then you can run something
-like this to deploy: 
+like this to deploy the example: 
 
     puccini-tosca compile examples/openstack/hello-world.yaml --exec=openstack.generate --output=dist/openstack
     cd dist/openstack
@@ -29,7 +43,7 @@ Installing Ansible
 ------------------
 
 Many operating systems have Ansible as a package, but you can install a specific version manually
-in a Python virtual environment. [Here's](install-ansible) our example script.
+in a Python virtual environment. [Here's](scripts/install-ansible) our example script.
 
 
 Configuring for Your OpenStack

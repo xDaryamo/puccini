@@ -11,11 +11,7 @@ func Read(reader io.Reader, format string) (*Clout, error) {
 	if data, _, err := ard.Read(reader, format, false); err == nil {
 		if map_, ok := data.(ard.Map); ok {
 			if clout, err := Parse(map_); err == nil {
-				if err := clout.Resolve(); err == nil {
-					return clout, nil
-				} else {
-					return nil, err
-				}
+				return clout, nil
 			} else {
 				return nil, err
 			}

@@ -18,4 +18,4 @@ function run () {
 	"$WASM_EXEC" "$ROOT/dist/$TOOL.wasm" "${@:2}"
 }
 
-run puccini-tosca compile "$ROOT/examples/kubernetes/bookinfo/bookinfo-simple.yaml" "$@" 
+run puccini-tosca compile "$ROOT/examples/openstack/hello-world.yaml" "$@" 

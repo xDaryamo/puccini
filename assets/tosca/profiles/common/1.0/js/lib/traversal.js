@@ -1,28 +1,36 @@
 
 clout.exec('tosca.lib.utils');
 
-tosca.toCoercibles = function() {
-	tosca.traverseValues(function(data) {
-		return clout.newCoercible(data.value, data.site, data.source, data.target);
+tosca.toCoercibles = function(clout_) {
+	if (!clout_)
+		clout_ = clout;
+	tosca.traverseValues(clout_, function(data) {
+		return clout_.newCoercible(data.value, data.site, data.source, data.target);
 	});
 };
 
-tosca.unwrapCoercibles = function() {
-	tosca.traverseValues(function(data) {
-		return clout.unwrap(data.value);
+tosca.unwrapCoercibles = function(clout_) {
+	if (!clout_)
+		clout_ = clout;
+	tosca.traverseValues(clout_, function(data) {
+		return clout_.unwrap(data.value);
 	});
 };
 
-tosca.coerce = function() {
-	tosca.toCoercibles();
-	tosca.traverseValues(function(data) {
-		return clout.coerce(data.value);
+tosca.coerce = function(clout_) {
+	if (!clout_)
+		clout_ = clout;
+	tosca.toCoercibles(clout_);
+	tosca.traverseValues(clout_, function(data) {
+		return clout_.coerce(data.value);
 	});
 };
 
-tosca.getValueInformation = function() {
+tosca.getValueInformation = function(clout_) {
+	if (!clout_)
+		clout_ = clout;
 	var information = {};
-	tosca.traverseValues(function(data) {
+	tosca.traverseValues(clout_, function(data) {
 		if (data.value.$information)
 			information[data.path.join('.')] = data.value.$information;
 		return data.value;
@@ -30,14 +38,17 @@ tosca.getValueInformation = function() {
 	return information;
 };
 
-tosca.traverseValues = function(traverser) {
-	if (tosca.isTosca(clout)) {
-		tosca.traverseObjectValues(traverser, ['inputs'], clout.properties.tosca.inputs);
-		tosca.traverseObjectValues(traverser, ['outputs'], clout.properties.tosca.outputs);
+tosca.traverseValues = function(clout_, traverser) {
+	if (!clout_)
+		clout_ = clout;
+
+	if (tosca.isTosca(clout_)) {
+		tosca.traverseObjectValues(traverser, ['inputs'], clout_.properties.tosca.inputs);
+		tosca.traverseObjectValues(traverser, ['outputs'], clout_.properties.tosca.outputs);
 	}
 
-	for (var vertexId in clout.vertexes) {
-		var vertex = clout.vertexes[vertexId];
+	for (var vertexId in clout_.vertexes) {
+		var vertex = clout_.vertexes[vertexId];
 		if (!tosca.isTosca(vertex))
 			continue;
 

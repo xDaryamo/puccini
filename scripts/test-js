@@ -6,5 +6,5 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 
 "$HERE/build"
 
-puccini-tosca compile "$ROOT/examples/kubernetes/bookinfo/bookinfo-simple.yaml" "$@" | \
-puccini-clout scriptlet exec kubernetes.generate
+puccini-tosca compile "$ROOT/examples/openstack/hello-world.yaml" "$@" | \
+puccini-clout scriptlet exec tosca.resolve

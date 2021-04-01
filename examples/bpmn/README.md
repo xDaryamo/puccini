@@ -1,7 +1,11 @@
-TOSCA BPMN Profile Examples
-===========================
+TOSCA BPMN Examples
+===================
 
-Integration with [BPMN](https://www.omg.org/spec/BPMN/) middleware.
+Puccini's BPMN profile lets you generate [BPMN2](https://www.omg.org/spec/BPMN/) processes from
+TOSCA workflows and policy triggers. These allow for tight integration with enterprise process
+management (called [OSS/BSS](https://en.wikipedia.org/wiki/OSS/BSS) in the telecommunications
+industry). The generated processes can also be included as sub-processes within larger business
+processes. 
 
 Features
 --------

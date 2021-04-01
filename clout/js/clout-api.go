@@ -3,6 +3,7 @@ package js
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/dop251/goja"
 	"github.com/fxamacker/cbor/v2"
@@ -25,6 +26,28 @@ func (self *Context) NewCloutAPI(clout *cloutpkg.Clout, runtime *goja.Runtime) *
 		clout,
 		self.NewCloutContext(clout, runtime),
 	}
+}
+
+func (self *CloutAPI) Load(data interface{}) (*CloutAPI, error) {
+	var clout *cloutpkg.Clout
+	var err error
+
+	switch data_ := data.(type) {
+	case string:
+		if clout, err = cloutpkg.Load(data_, ""); err != nil {
+			return nil, err
+		}
+
+	case ard.Map:
+		if clout, err = cloutpkg.Parse(data_); err != nil {
+			return nil, err
+		}
+
+	default:
+		return nil, fmt.Errorf("not a URL or clout data: %T", data)
+	}
+
+	return self.cloutContext.Context.NewCloutAPI(clout, self.cloutContext.Runtime), nil
 }
 
 func (self *CloutAPI) NewKey() string {

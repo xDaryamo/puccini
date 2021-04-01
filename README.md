@@ -10,17 +10,20 @@ Deliberately stateless cloud topology management and deployment tools based on
 
 Want to dive in?
 
-Check out this [live demo of Puccini TOSCA running in a browser](https://web.puccini.cloud/).
+Head to the [quickstart guide](QUICKSTART.md).
 
-And then head to the [quickstart guide](QUICKSTART.md).
+Also check out this [live demo of Puccini TOSCA running in a browser](https://web.puccini.cloud/).
 
 Note that Puccini is intentionally *not* an orchestrator. This is a "BYOO" kind of establishment
-("Bring Your Own Orchestrator"). If you are looking for a comprehensive TOSCA orchestrator for
-[Kubernetes](https://kubernetes.io/) based on Puccini, check out our sister project,
-[Turandot](https://turandot.puccini.cloud/).
+("Bring Your Own Orchestrator").
 
-Also included in Puccini are examples for using [Ansible](examples/ansible/) and
-[BPMN](examples/bpmn/) middleware as orchestrators. 
+If you are looking for a comprehensive TOSCA orchestrator for
+[Kubernetes](https://kubernetes.io/) based on Puccini, check out
+[Turandot](https://turandot.puccini.cloud/). Puccini also
+[enables TOSCA for Ansible](examples/ansible/) using custom extensions.
+
+Also included are examples of [generating Ansible playbooks for OpenStack](examples/openstack/)
+as well as [generating BPMN processes](examples/bpmn/) for middleware integration.
 
 
 Get It
@@ -65,40 +68,22 @@ and
 Puccini is also following the progress on
 [TOSCA 2.0](http://docs.oasis-open.org/tosca/TOSCA/v2.0/TOSCA-v2.0.html).
 
-The input files can be accessed by URL, on the local file systems or via HTTP/HTTPS, as
+The TOSCA source can be accessed by URL, on the local file systems or via HTTP/HTTPS, as
 individual files as well as packaged in
 [CSAR files](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html#_Toc302251718).
-Puccini also includes a simple CSAR creation tool, **puccini-csar**.
-
-**puccini-tosca** comes with TOSCA profiles for the
-[Kubernetes](assets/tosca/profiles/kubernetes/1.0/) and
-[OpenStack](assets/tosca/profiles/openstack/1.0/) cloud infrastructures, as well as
-[BPMN processes](assets/tosca/profiles/bpmn/1.0/).
-Profiles include node, capability, relationship, policy, and other types. Also included are detailed
-[examples](examples/) using these profiles to get you started. These profiles would work with any
-TOSCA-compliant product.
-
-Puccini allows for the inclusion of JavaScript scriptlets in its Clout output (in the metadata
-section), as an option for self-contained orchestration integration. How do TOSCA, Clout,
-JavaScript, and cloud infrastructures all fit together in Puccini? Consider this: with a single
-command line you can take a TOSCA service template, compile it with **puccini-tosca**, execute
-JavaScript to generate Kubernetes manifests, then pipe those to
-[kubectl](https://kubernetes.io/docs/reference/kubectl/overview/), which will upload the
-manifests to a running Kubernetes cluster in order to be scheduled. Like so:
-
-    puccini-tosca compile my-app.yaml --exec=kubernetes.generate | kubectl apply -f -
-
-Et voilà, your abstract architectural design became a running deployment.
+Puccini also comes with a simple CSAR creation tool, **puccini-csar**.
 
 ### Standalone Parser
 
 ⮕ [Documentation](tosca/parser/)
 
-Puccini's TOSCA parser is available as an independent Go library. Its 5 phases do normalization,
-validation, inheritance, and assignment of TOSCA's many types and templates, resulting in a
-[flat, serializable data structure](tosca/normal/) that can easily be consumed by your program.
+Puccini's TOSCA parser is also available as an independent Go library. Its 5 phases do
+normalization, validation, inheritance, and assignment of TOSCA's many types and templates, resulting
+in a [flat, serializable data structure](tosca/normal/) that can easily be consumed by your program.
 Validation error messages are precise and useful. It's a very, very fast multi-threaded parser, fast
 enough that it can be usefully embedded in editors and IDEs for validating TOSCA while typing.
+For an example, see the
+[TOSCA Visual Studio Code Extension](https://github.com/tliron/puccini-vscode/).
 
 TOSCA is a complex object-oriented language. We put considerable effort into adhering to every
 aspect of the grammar, especially in regards to value type checking and type inheritance contracts,
@@ -117,16 +102,13 @@ etc. Thusly Clout functions as an "intermediate representation" (IR) for TOSCA.
 By default the compiler also performs [topology resolution](tosca/compiler/RESOLUTION.md), which
 attempts to satisfy requirements with capabilities, thus creating the relationships (Clout edges)
 between node templates. This feature can be turned off in order to add more processing phases
-before final resolution. Resolution is handled via the embedded **tosca.resolve** JavaScript.
+before final resolution. Resolution is handled via the embedded **tosca.resolve** scriptlet.
 
 ### Visualization
 
 You can graphically visualize the compiled TOSCA in a dynamic web page. A one-line example:
 
     puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml --exec=assets/tosca/profiles/common/1.0/js/visualize.js > /tmp/puccini.html && xdg-open /tmp/puccini.html
-
-The visualization scriptlet is not embedded by default into the Clout, but can be manually added via
-`puccini-clout scriptlet put` (see below) for added portability.
 
 
 puccini-clout
@@ -143,98 +125,12 @@ Clout.
 
 Also supported are implementation-specific JavaScript "plugins" that allow you to extend existing
 scriptlet functionality without having to modify it. For example, you can add a plugin for
-Kubernetes to handle custom application needs, such as adding sidecars, routers, loadbalancers, etc.
-Indeed, Istio support is implemented as a plugin. You can also use **puccini-clout** to add plugins
-to the Clout file, either storing them permanently or piping through to add and execute them
-on-the-fly.
-
-For convenience, execution functionality is included in **puccini-tosca** via the `--exec` switch.
-These two commands are equivalent:
-
-    puccini-tosca compile my-app.yaml | puccini-clout scriptlet exec my.scriptlet
-    puccini-tosca compile my-app.yaml --exec=my.scriptlet
+Kubernetes to handle custom application needs, such as adding sidecars, routers, loadbalancers, 
+an Istio service mesh, etc. You can also use **puccini-clout** to add plugins to the Clout file,
+either storing them permanently or piping through to add and execute them on-the-fly.
 
 Note that **puccini-clout** is *not* a requirement for your toolchain. You can process and consume
 the Clout output with your own tools.
-
-### TOSCA Functions and Constraints
-
-These are implemented as JavaScript scriptlets so that they can be embedded into the Clout and then
-be executed by **puccini-clout**, allowing a compiled-from-TOSCA Clout file to be be used
-independently of its TOSCA source. The Clout lives on its own. The function calls are compiled as
-"stubs" that can be "coerced" into their evaluated values. This is done via the the
-**tosca.coerce** scriptlet:
-
-    puccini-clout scriptlet exec tosca.coerce my-clout.yaml
-
-For convenience, this functionality is included in **puccini-tosca** via the `--coerce` switch.
-The following is identical to the above:
-
-    puccini-tosca compile --coerce my-clout.yaml
-
-A useful side benefit of Puccini's implementation is it allows you to extend TOSCA by
-[adding your own functions/constraints](examples/javascript/). Obviously, such custom functions
-are not part of the TOSCA specification and may be incompatible with other TOSCA implementations.
-
-### TOSCA Attributes
-
-TOSCA attributes (as opposed to properties) represent "live" data in a running deployment. And the
-function `get_attribute` allows other values to make use of this live data. The implication is that
-the Clout should be updated to reflect changes to attribute. But also, attribute definitions
-in TOSCA allow you to define constraints on attributes, so we must also make sure that the new
-incoming data complies with them before allowing the change to occur.
-
-Our solution has two steps. As an example, let's look at Kubernetes. First, we have JavaScript
-(**kubernetes.update**) that extracts these attributes from a Kubernetes cluster (by calling
-**kubectl**) and updates the Clout. Second, we run **tosca.coerce**, which not only calls TOSCA
-functions but also applies the constraints.
-
-Putting it all together, let's refresh a Clout:
-
-    puccini-clout scriptlet exec kubernetes.update my-clout.yaml | puccini-clout scriptlet exec tosca.coerce > coerced-clout.yaml
-
-### TOSCA Operations, Notifications, Policy Triggers, and Workflows
-
-*WORK IN PROGRESS*
-
-In TOSCA, a workflow is grammar for describing a task graph, which is tightly coupled to the
-topology. It represents the "classical" orchestration paradigm, which procedurally (in serial
-and/or in parallel) executes individual self-contained tasks. When the workflow reaches a successful
-ending, there would be a new state for a service instance. Dealing with workflow failures is often
-painful, resulting in an indeterminate state for the service. It's not always practical to
-"roll back" the task graph or even reset to the original state. Thus, this paradigm is best avoided
-if possible.
-
-The building blocks of workflows are "operations" (calling a single operation is the
-simplest workflow). Notifications and policy triggers are a related feature, as they specify an
-event or condition that could launch a workflow or an individual operation.
-
-Puccini comes with three different implementations of these features:
-
-1) For OpenStack, Puccini can generate [Ansible](https://www.ansible.com/) playbooks that rely on
-the
-[Ansible OpenStack roles](https://docs.ansible.com/ansible/latest/modules/list_of_cloud_modules.html#openstack).
-Custom operation artifacts, if included, are deployed to the virtual machines and executed.
-Effectively, the combination of TOSCA + Ansible provides an equivalent set of features to
-[Heat](https://docs.openstack.org/heat/stein/)/[Mistral](https://docs.openstack.org/mistral/rocky/).
-However, Ansible is a general-purpose orchestrator that can do a lot more than Heat. The generated
-playbooks comprise roles that can be imported and used in other playbooks, allowing for custom
-orchestration integrations. Also note that although Puccini can compile HOT directly, we recommend
-TOSCA because of its much richer grammar and features.  
-
-2) Puccini's BPMN profile lets you generate [BPMN2](https://www.omg.org/spec/BPMN/) processes from
-TOSCA workflows and policy triggers. These allow for tight integration with enterprise process
-management (called [OSS/BSS](https://en.wikipedia.org/wiki/OSS/BSS) in the telecommunications
-industry). The generated processes can also be included as sub-processes within larger business
-processes. 
-
-3) Kubernetes doesn't normally require workflows: its "scheduling" paradigm is a declarative
-alternative to the classical procedural orchestration paradigm. As it provides a truly
-cloud-native environment, Kubernetes applications are better off orchestrating themselves, for
-example by relying on [operators](https://github.com/operator-framework/operator-sdk) to do the
-heavy lifting. Still, it could make sense to use workflows for certain externally triggered
-features. Puccini's solution is straightforward: it can generate an Ansible playbook that deploys
-TOSCA artifacts with `kubectl cp` and executes them with `kubectl exec`.
 
 
 Clout
@@ -296,25 +192,56 @@ fit all. Puccini instead comes with examples: see [storing in Neo4j](examples/ne
 FAQ
 ---
 
-### Can Puccini deploy my existing TOSCA to Kubernetes or OpenStack?
+### Can Puccini deploy the same TOSCA to either Kubernetes, OpenStack, AWS, Azure, etc.?
 
-If you didn't plan it that way, then: no. Our TOSCA Kubernetes/OpenStack profiles do *not* make use
-of TOSCA's
+If you didn't plan it that way, then: no. Firstly, Puccini is *not* an orchestrator.
+(It's "BYOO" = "Bring Your Own Orchestrator"). Secondly, assuming you have an orchestrator
+that supports all those cloud platforms, creating portable TOSCA is less useful than may
+initially appear.
+
+Indeed, many orchestrators come with a variety of adapters or plugins to support various
+cloud platforms, with a very specific approach to portability. For example, Ansible's
+inventory plugin mechanism can generate a list of host addresses from various cloud sources.
+You could thus run the same playbook on virtual machines deployed on OpenStack, AWS,
+baremetal, etc.
+
+But what would portability mean for TOSCA? If your goal is to use TOSCA to generate
+that inventory, for example with Puccini's [Ansible inventory plugin](examples/ansible/hosts/),
+then how would you create your TOSCA topology template? What would be the node types?
+
+The best answer would be to use types that are appropriate for your cloud platform,
+that directly model its compute, networking, storage, etc. resources. So, just like you
+would use a different Ansible inventory plugin for the different cloud platform you are
+targeting, you would have a different TOSCA service template for each cloud platform.
+
+However, if your desire is to use a single TOSCA service template for *all* clouds,
+how would you model it? Your node types would have to match the lowest common set of features
+for all cloud platforms and nothing more. You could not use any platform-specific feature
+without breaking portability.
+
+Until TOSCA version 1.3 the specification came with an implicit
 [Simple Profile](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html)
-or [Simple Profile for NFV](https://docs.oasis-open.org/tosca/tosca-nfv/v1.0/tosca-nfv-v1.0.html)
-types (Compute, BlockStorage, VDU, etc.). Still, if you find these so-called "normative" types
-useful, they are included in Puccini and will be compiled into Clout. You may bring in your
-own orchestration to deploy them to your cloud environments. But, we encourage you to consider
-carefully whether this is a good idea. We think it's a dead end.
+(as well as a [Simple Profile for NFV](https://docs.oasis-open.org/tosca/tosca-nfv/v1.0/tosca-nfv-v1.0.html))
+that intended to be exactly that: a set of agnostic models for compute, networking,
+and storage resources that all cloud platforms were presumed to have.
 
-The notion that a single set of normative types could be used for all the various cloud and
-container platforms out there is a pipe dream. There may be superficial similarities between them,
-but the devil is in the details and the amount of detail needed for integrated, scalable,
-cloud-native deployments keeps growing and diversifying. Thus every platform needs and deserves its
-own concepts, models, data points, and thus its own profile of interrelated TOSCA types. However, by
-bringing all these tiny-but-important implementation details into one place we can at least have a
-lingua franca and common toolchain for all platforms. That's the value proposition of TOSCA and the
-gist of Puccini.
+Unfortunately, this approach didn't work well in practice, for several reasons. Firstly,
+because cloud platforms are just too different, even in terms of the basics of how they
+model simple resources. Secondly, because any non-trivial workload would want to leverage
+platform-specific features. Indeed that is the competitive advantage and indeed a reason to
+choose one platform over another. Thirdly, because some platform-specific features are
+non-optional. In such cases the "portable" TOSCA would have to be supplemented with extra
+artifacts required by each cloud platform, such that though you would have some shared TOSCA
+you would still need to maintain some platform-specific code, compromising on the goal of true
+portability.
+
+For all these reasons, since TOSCA 2.0 it no longer comes with a normative Simple Profile
+and does not commit to an expectation for transparent portability. Still, nothing is stopping
+you from trying anyway. Perhaps you can come up with a better set of portable models than those
+of the Simple Profile. It's just not a design goal for Puccini.
+
+The value proposition of TOSCA is not "write-once-run-everywhere" portability but "use
+the same language and tooling everywhere". Puccini's goal is provide some of that toolchain.
 
 ### Why Go?
 
@@ -353,11 +280,11 @@ even performing simple manipulations. Example:
 
 ### Can I use simple text templating instead of TOSCA functions and YAML processing?
 
-Nothing is stopping you. You can pipe the input and output to and from the text translator of your
+Nothing is stopping you. You can pipe the TOSCA or Clout to and from the text translator of your
 choice at any point in the toolchain. Here's an example using
 [gomplate](https://github.com/hairyhenderson/gomplate):
 
-    puccini-tosca compile my-app.yaml | gomplate | puccini-clout scriptlet exec kubernetes.generate
+    puccini-tosca compile my-app.yaml | gomplate
 
 Your TOSCA `my-app.yaml` can then include template expressions, such as:
 
@@ -368,10 +295,8 @@ in YAML is significant, so it can be tricky to insert blocks into arbitrary loca
 using text templating to manipulate YAML is not a great idea for these reasons.
 
 Puccini's decision to use an embedded interpreted programming language (JavaScript) is intentional
-and important. Unlike some Kubernetes tools ([Helm](https://helm.sh/)), we prefer not treat YAML
-files as plain text to be manipulated by an anemic text templating language. Perhaps in the future
-someone will create a templating language specifically for YAML that is designed to work with its
-special requirements. 
+and important. Unlike some tools (see [Helm](https://helm.sh/)), we prefer not treat YAML
+files as plain text to be manipulated by an anemic text templating language.
 
 If you insist on text templating, a useful convention for your toolchain could be to add a file
 extension to mark a file for template processing. For example, `.yaml.j2` could be recognized as

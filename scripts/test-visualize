@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
+. "$HERE/_env"
+
+"$HERE/build"
+
+puccini-tosca compile "$ROOT/examples/tosca/requirements-and-capabilities.yaml" \
+    --exec="$ROOT/assets/tosca/profiles/common/1.0/js/visualize.js" > /tmp/puccini.html && \
+    xdg-open /tmp/puccini.html

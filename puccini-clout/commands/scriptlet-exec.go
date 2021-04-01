@@ -25,12 +25,12 @@ var execCommand = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		scriptletName := args[0]
 
-		var path string
+		var url string
 		if len(args) == 2 {
-			path = args[1]
+			url = args[1]
 		}
 
-		clout, err := ReadClout(path)
+		clout, err := cloutpkg.Load(url, inputFormat)
 		util.FailOnError(err)
 
 		// Try loading JavaScript from Clout
@@ -41,10 +41,10 @@ var execCommand = &cobra.Command{
 
 		if err != nil {
 			// Try loading JavaScript from path or URL
-			url, err := urlpkg.NewValidURL(scriptletName, nil, urlContext)
+			scriptletUrl, err := urlpkg.NewValidURL(scriptletName, nil, urlContext)
 			util.FailOnError(err)
 
-			scriptlet, err = urlpkg.ReadString(url)
+			scriptlet, err = urlpkg.ReadString(scriptletUrl)
 			util.FailOnError(err)
 
 			err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)

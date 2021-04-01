@@ -106,5 +106,9 @@ func Parse(map_ ard.Map) (*Clout, error) {
 		}
 	}
 
-	return clout, nil
+	if err := clout.Resolve(); err == nil {
+		return clout, nil
+	} else {
+		return nil, err
+	}
 }

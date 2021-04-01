@@ -6,6 +6,7 @@ import (
 	"github.com/tliron/kutil/terminal"
 	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
+	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
 )
 
@@ -21,23 +22,23 @@ var putCommand = &cobra.Command{
 	Args:  cobra.RangeArgs(2, 3),
 	Run: func(cmd *cobra.Command, args []string) {
 		scriptletName := args[0]
-		jsUrl := args[1]
+		scriptletUrl := args[1]
 
-		var cloutPath string
+		var url string
 		if len(args) == 3 {
-			cloutPath = args[2]
+			url = args[2]
 		}
 
-		clout, err := ReadClout(cloutPath)
+		clout, err := cloutpkg.Load(url, inputFormat)
 		util.FailOnError(err)
 
 		urlContext := urlpkg.NewContext()
 		defer urlContext.Release()
 
-		url, err := urlpkg.NewValidURL(jsUrl, nil, urlContext)
+		scriptletUrl_, err := urlpkg.NewValidURL(scriptletUrl, nil, urlContext)
 		util.FailOnError(err)
 
-		scriptlet, err := urlpkg.ReadString(url)
+		scriptlet, err := urlpkg.ReadString(scriptletUrl_)
 		util.FailOnError(err)
 
 		err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)

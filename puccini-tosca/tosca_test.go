@@ -42,7 +42,6 @@ func TestParse(t *testing.T) {
 	testCompile(t, "javascript/define.yaml", nil)
 	testCompile(t, "javascript/exec.yaml", nil)
 	testCompile(t, "javascript/functions.yaml", nil)
-	testCompile(t, "kubernetes/bookinfo/bookinfo-simple.yaml", nil)
 	testCompile(t, "openstack/hello-world.yaml", nil)
 	testCompile(t, "bpmn/open-loop.yaml", nil)
 	testCompile(t, "cloudify/advanced-blueprint-example.yaml", map[string]interface{}{

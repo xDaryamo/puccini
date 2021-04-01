@@ -16,10 +16,10 @@ function c () {
 
 mkdir --parents "$HERE/data/"
 
-puccini-tosca compile "$HERE/../kubernetes/bookinfo/bookinfo-simple.yaml" | \
+puccini-tosca compile "$HERE/../tosca/requirements-and-capabilities.yaml" | \
 puccini-clout scriptlet exec "$HERE/neo4j.js" \
-	> "$HERE/data/bookinfo-simple.json"
+	> "$HERE/data/tosca.json"
 
 c --data '{"statements": [{"statement": "MATCH (n) DETACH DELETE n"}]}'
-c --data-binary @"$HERE/data/bookinfo-simple.json"
+c --data-binary @"$HERE/data/tosca.json"
 c --data '{"statements": [{"statement": "MATCH (n) RETURN n"}]}'

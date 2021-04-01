@@ -6,4 +6,4 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 
 "$HERE/build"
 
-puccini-tosca parse "$ROOT/examples/kubernetes/bookinfo/bookinfo-simple.yaml" "$@"
+puccini-tosca parse "$ROOT/examples/openstack/hello-world.yaml" "$@"

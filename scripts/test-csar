@@ -6,4 +6,4 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 
 "$HERE/build-csar"
 
-puccini-tosca compile "$ROOT/dist/bookinfo.csar" "$@"
+puccini-tosca compile "$ROOT/dist/openstack.csar" "$@"

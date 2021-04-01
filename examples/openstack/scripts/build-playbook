@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
+. "$HERE/../../../scripts/_env"
+
+puccini-tosca compile "$HERE/../hello-world.yaml" --exec=openstack.generate --output="$ROOT/dist/openstack"

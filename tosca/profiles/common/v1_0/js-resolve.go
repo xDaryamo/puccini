@@ -67,7 +67,7 @@ function resolve(sourceVertex, sourceNodeTemplate, requirement) {
 	var name = requirement.name;
 
 	if (isSubstituted(sourceNodeTemplate.name, name)) {
-		puccini.log.debugf('%s: skipping because in substitution mappings', location)
+		puccini.log.debugf('%s: skipping because in substitution mappings', location.path)
 		return;
 	}
 

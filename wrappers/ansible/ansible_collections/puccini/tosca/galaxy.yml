@@ -1,7 +1,7 @@
 # https://docs.ansible.com/ansible/latest/dev_guide/collections_galaxy_meta.html#collections-galaxy-meta
 namespace: puccini
 name: tosca
-version: 0.0.1
+version: 0.0.2
 readme: README.md
 authors:
 - Puccini

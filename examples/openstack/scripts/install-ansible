@@ -5,7 +5,7 @@ set -e
 # sudo dnf install python3-virtualenv python3-libselinux
 
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
-. "$HERE/../../scripts/_env"
+. "$HERE/../../../scripts/_env"
 
 # virtualenv
 # (must use "--system-site-packages" so that Ansible can access localhost on SELinux!)

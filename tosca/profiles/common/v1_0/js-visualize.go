@@ -10,12 +10,12 @@ clout.exec('tosca.lib.traversal');
 tosca.coerce();
 
 // From: cdnjs.com
-var jQueryVersion = '3.5.1';
+var jQueryVersion = '3.6.0';
 var jQueryUiVersion = '1.12.1';
 
 // From: jsdeliver.net
-var jQueryLayoutVersion = '1.8.4';
-var visJsVersion = '8.1.0';
+var jQueryLayoutVersion = '1.8.5';
+var visJsVersion = '9.0.4';
 
 var colorNode = 'rgb(100,200,255)';
 var colorPolicy = 'rgb(255,165,0)';

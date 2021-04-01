@@ -12,12 +12,12 @@ function c () {
 
 mkdir --parents "$HERE/data/"
 
-puccini-tosca compile "$HERE/../kubernetes/bookinfo/bookinfo-simple.yaml" | \
+puccini-tosca compile "$HERE/../tosca/requirements-and-capabilities.yaml" | \
 puccini-clout scriptlet exec "$HERE/dgraph.js" \
-	> "$HERE/data/bookinfo-simple.json"
+	> "$HERE/data/tosca.json"
 
 c alter --data '{"drop_all": true}'
 
-c mutate --data-binary @"$HERE/data/bookinfo-simple.json" \
+c mutate --data-binary @"$HERE/data/tosca.json" \
 	--header 'X-Dgraph-MutationType: json' \
 	--header 'X-Dgraph-CommitNow: true'

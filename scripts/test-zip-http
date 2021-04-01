@@ -8,4 +8,4 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 
 . "$HERE/_start-http-server"
 
-puccini-tosca compile "zip:http://localhost:8000/bookinfo.csar!bookinfo-simple.yaml" "$@"
+puccini-tosca compile "zip:http://localhost:8000/openstack.csar!hello-world.yaml" "$@"

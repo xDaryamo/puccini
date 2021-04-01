@@ -22,12 +22,12 @@ var listCommand = &cobra.Command{
 	Long:  ``,
 	Args:  cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		var path string
+		var url string
 		if len(args) == 1 {
-			path = args[0]
+			url = args[0]
 		}
 
-		clout, err := ReadClout(path)
+		clout, err := cloutpkg.Load(url, inputFormat)
 		util.FailOnError(err)
 
 		List(clout)

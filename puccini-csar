@@ -12,7 +12,10 @@ TOOL=$(basename "$0")
 TOSCA_META_FILE_VERSION=${TOSCA_META_FILE_VERSION:-1.1}
 CSAR_VERSION=${CSAR_VERSION:-1.1}
 CREATED_BY=${CREATED_BY:-$TOOL}
+ZIP_TOOL=${ZIP_TOOL:-zip}
+ZIPINFO_TOOL=${ZIPINFO_TOOL:-zipinfo}
 ZIP_LEVEL=${ZIP_LEVEL:-0}
+TEMP_ROOT=
 
 if [ "$#" -lt 1 ]; then
 cat << EOT
@@ -40,19 +43,37 @@ there's more than one YAML file in the root then you *must* explicitly set
 
 Other supported environment variables:
 
-    TOSCA_META_FILE_VERSION
-    CSAR_VERSION
-    CREATED_BY
+    TOSCA_META_FILE_VERSION (default: $TOSCA_META_FILE_VERSION)
+    CSAR_VERSION (default: $CSAR_VERSION)
+    CREATED_BY (default: $CREATED_BY)
     OTHER_DEFINITIONS
-    ZIP_LEVEL
+    ZIP_TOOL (default: $ZIP_TOOL)
+    ZIP_LEVEL (default: $ZIP_LEVEL)
+    ZIPINFO_TOOL (default: $ZIPINFO_TOOL)
 
 EOT
 	exit 1
 fi
 
+function the_end () {
+	local ERR=$?
+	if [ -d "$TEMP_ROOT" ]; then
+		rm --recursive "$TEMP_ROOT"
+	fi
+	if [ "$ERR" == 0 ]; then
+		echo "CSAR created: $CSAR"
+	else
+		echo "Failed to create CSAR: $CSAR" > /dev/stderr
+		rm --force "$CSAR"
+		exit $ERR
+	fi
+}
+
+trap the_end EXIT
+
 # CSAR file
 
-CSAR=$(readlink -f "$1")
+CSAR=$1
 
 if [ "${CSAR##*.}" != csar ]; then
 	CSAR=$CSAR.csar
@@ -74,22 +95,34 @@ fi
 
 # Zip
 
+mkdir --parents "$(dirname "$CSAR")"
+CSAR=$(readlink -f "$CSAR")
+
+if ! command -v "$ZIP_TOOL" &> /dev/null; then
+	echo "Missing zip tool: $ZIP_TOOL" > /dev/stderr
+	exit 1
+fi
+
 pushd "$ROOT" > /dev/null
-zip "-$ZIP_LEVEL" --recurse-paths "$CSAR" . > /dev/null
+"$ZIP_TOOL" "-$ZIP_LEVEL" --recurse-paths "$CSAR" . > /dev/null
 popd > /dev/null
 
 # Entry-Definitions
 
 if [ -z "$ENTRY_DEFINITIONS" ]; then
+	if ! command -v "$ZIPINFO_TOOL" &> /dev/null; then
+		echo "Missing zipinfo tool: $ZIPINFO_TOOL" > /dev/stderr
+		exit 1
+	fi
+
 	# Try to automatically set Entry-Definitions
 	IFS=$'\n'
-	for F in $(zipinfo -1 "$CSAR"); do
+	for F in $("$ZIPINFO_TOOL" -1 "$CSAR"); do
 		if [ "$(dirname "$F")" == . ]; then
 			EXT=${F##*.}
 			if [ "$EXT" == yaml ] || [ "$EXT" == yml ]; then
 				if [ -n "$ENTRY_DEFINITIONS" ]; then
-					echo 'Failed: multiple YAML files in root, you must set ENTRY_DEFINITIONS environment variable to choose one' > /dev/stderr
-					rm --force "$CSAR"
+					echo 'Multiple YAML files in root, you must set ENTRY_DEFINITIONS environment variable to choose one' > /dev/stderr
 					exit 1
 				fi
 				ENTRY_DEFINITIONS=$F
@@ -98,8 +131,7 @@ if [ -z "$ENTRY_DEFINITIONS" ]; then
 	done
 
 	if [ -z "$ENTRY_DEFINITIONS" ]; then
-		echo 'Failed: no YAML files in root, you must set ENTRY_DEFINITIONS environment variable to choose one' > /dev/stderr
-		rm --force "$CSAR"
+		echo 'No YAML files in root, you must set ENTRY_DEFINITIONS environment variable to choose one' > /dev/stderr
 		exit 1
 	fi
 fi
@@ -109,20 +141,6 @@ echo "Entry-Definitions: $ENTRY_DEFINITIONS"
 # Metadata
 
 TEMP_ROOT=$(mktemp --directory)
-
-function the_end () {
-	local ERR=$?
-	rm --recursive "$TEMP_ROOT"
-	if [ "$ERR" == 0 ]; then
-		echo "CSAR created: $CSAR"
-	else
-		echo "Failed" > /dev/stderr
-		rm --force "$CSAR"
-		exit $ERR
-	fi
-}
-
-trap the_end EXIT
 
 cd "$TEMP_ROOT"
 mkdir TOSCA-Metadata
@@ -135,4 +153,4 @@ Entry-Definitions: $ENTRY_DEFINITIONS
 Other-Definitions: $OTHER_DEFINITIONS
 EOT
 
-zip "-$ZIP_LEVEL" --recurse-paths "$CSAR" . > /dev/null
+"$ZIP_TOOL" "-$ZIP_LEVEL" --recurse-paths "$CSAR" . > /dev/null
