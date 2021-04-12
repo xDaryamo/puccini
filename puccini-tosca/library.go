@@ -51,7 +51,7 @@ func Compile(url *C.char, inputs *C.char) *C.char {
 		return result(nil, nil, err)
 	}
 
-	if _, serviceTemplate, problems, err = parser.Parse(url_, nil, inputs_); err != nil {
+	if _, serviceTemplate, problems, err = parser.Parse(url_, nil, nil, inputs_); err != nil {
 		return result(nil, problems, err)
 	}
 

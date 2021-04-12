@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/puccini/tosca"
 )
@@ -36,7 +34,7 @@ func (self *Context) PrintHierarchies(indent int) {
 		context := import_.GetContext()
 		if !context.Hierarchy.Empty() {
 			terminal.PrintIndent(indent)
-			fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleValue(context.URL.String()))
+			terminal.Printf("%s\n", terminal.Stylize.Value(context.URL.String()))
 			context.Hierarchy.Print(indent)
 		}
 	}

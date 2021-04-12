@@ -14,7 +14,7 @@ import (
 )
 
 func (self *Context) ReadRoot(url urlpkg.URL) bool {
-	toscaContext := tosca.NewContext(self.Quirks)
+	toscaContext := tosca.NewContext(self.Stylist, self.Quirks)
 
 	toscaContext.URL = url
 

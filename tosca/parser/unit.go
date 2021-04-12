@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 	"sync"
@@ -86,7 +85,7 @@ func (self *Unit) PrintImports(indent int, treePrefix terminal.TreePrefix) {
 
 func (self *Unit) PrintNode(indent int, treePrefix terminal.TreePrefix, last bool) {
 	treePrefix.Print(indent, last)
-	fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleValue(self.GetContext().URL.String()))
+	terminal.Printf("%s\n", terminal.Stylize.Value(self.GetContext().URL.String()))
 }
 
 //

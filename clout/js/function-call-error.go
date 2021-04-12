@@ -40,20 +40,7 @@ func (self *Error) Signature() string {
 
 // error interface
 func (self *Error) Error() string {
-	message := fmt.Sprintf("%s: ", self.FunctionCall.Path)
-	if self.Message != "" {
-		message += fmt.Sprintf("%s in call to %s", self.Message, self.Signature())
-	} else {
-		message += fmt.Sprintf("call to %s failed", self.Signature())
-	}
-	if self.Cause != nil {
-		if jsError, ok := self.Cause.(*Error); ok {
-			_, _, message_, _, _ := jsError.Problem()
-			message += fmt.Sprintf(" because %s", message_)
-		} else {
-			message += fmt.Sprintf(" because %s", self.Cause.Error())
-		}
-	}
+	_, _, message, _, _ := self.Problem(nil)
 	return message
 }
 
@@ -63,20 +50,27 @@ func (self *Error) String() string {
 }
 
 // problems.Problematic interface
-func (self *Error) Problem() (string, string, string, int, int) {
-	message := fmt.Sprintf("%s: ", terminal.StylePath(self.FunctionCall.Path))
-	if self.Message != "" {
-		message += fmt.Sprintf("%s in call to %s", self.Message, terminal.StyleName(self.Signature()))
-	} else {
-		message += fmt.Sprintf("call to %s failed", terminal.StyleName(self.Signature()))
+func (self *Error) Problem(stylist *terminal.Stylist) (string, string, string, int, int) {
+	if stylist == nil {
+		stylist = terminal.NewStylist(false)
 	}
+
+	message := fmt.Sprintf("%s: ", stylist.Path(self.FunctionCall.Path))
+
+	if self.Message != "" {
+		message += fmt.Sprintf("%s in call to %s", self.Message, stylist.Name(self.Signature()))
+	} else {
+		message += fmt.Sprintf("call to %s failed", stylist.Name(self.Signature()))
+	}
+
 	if self.Cause != nil {
 		if jsError, ok := self.Cause.(*Error); ok {
-			_, _, message_, _, _ := jsError.Problem()
-			message += fmt.Sprintf(" because %s", terminal.StyleError(message_))
+			_, _, message_, _, _ := jsError.Problem(stylist)
+			message += fmt.Sprintf(" because %s", stylist.Error(message_))
 		} else {
-			message += fmt.Sprintf(" because %s", terminal.StyleError(self.Cause.Error()))
+			message += fmt.Sprintf(" because %s", stylist.Error(self.Cause.Error()))
 		}
 	}
+
 	return self.FunctionCall.URL, "", message, self.FunctionCall.Row, self.FunctionCall.Column
 }

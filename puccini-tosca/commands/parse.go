@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 
@@ -76,7 +75,11 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 	}
 	util.FailOnError(err)
 
-	context := parser.NewContext(tosca.NewQuirks(quirks...))
+	stylist := terminal.Stylize
+	if problemsFormat != "" {
+		stylist = terminal.NewStylist(false)
+	}
+	context := parser.NewContext(stylist, tosca.NewQuirks(quirks...))
 
 	var problems *problemspkg.Problems
 
@@ -95,7 +98,7 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 
 		if ToPrintPhase(1) {
 			if len(dumpPhases) > 1 {
-				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleHeading("Imports"))
+				terminal.Printf("%s\n", terminal.Stylize.Heading("Imports"))
 				context.PrintImports(1)
 			} else {
 				context.PrintImports(0)
@@ -109,7 +112,7 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 		context.LookupNames()
 		if ToPrintPhase(2) {
 			if len(dumpPhases) > 1 {
-				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleHeading("Namespaces"))
+				terminal.Printf("%s\n", terminal.Stylize.Heading("Namespaces"))
 				context.PrintNamespaces(1)
 			} else {
 				context.PrintNamespaces(0)
@@ -122,7 +125,7 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 		context.AddHierarchies()
 		if ToPrintPhase(3) {
 			if len(dumpPhases) > 1 {
-				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleHeading("Hierarchies"))
+				terminal.Printf("%s\n", terminal.Stylize.Heading("Hierarchies"))
 				context.PrintHierarchies(1)
 			} else {
 				context.PrintHierarchies(0)
@@ -135,7 +138,7 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 		tasks := context.GetInheritTasks()
 		if ToPrintPhase(4) {
 			if len(dumpPhases) > 1 {
-				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleHeading("Inheritance Tasks"))
+				terminal.Printf("%s\n", terminal.Stylize.Heading("Inheritance Tasks"))
 				tasks.Print(1)
 			} else {
 				tasks.Print(0)
@@ -156,10 +159,10 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 		if ToPrintPhase(5) {
 			sort.Sort(entityPtrs)
 			if len(dumpPhases) > 1 {
-				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleHeading("Rendering"))
+				terminal.Printf("%s\n", terminal.Stylize.Heading("Rendering"))
 			}
 			for _, entityPtr := range entityPtrs {
-				fmt.Fprintf(terminal.Stdout, "%s:\n", terminal.StylePath(tosca.GetContext(entityPtr).Path.String()))
+				terminal.Printf("%s:\n", terminal.Stylize.Path(tosca.GetContext(entityPtr).Path.String()))
 				err = formatpkg.Print(entityPtr, format, terminal.Stdout, strict, pretty)
 				util.FailOnError(err)
 			}
@@ -172,7 +175,7 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 			util.Failf("No paths found matching filter: %q\n", filter)
 		} else if !terminal.Quiet {
 			for _, entityPtr := range entityPtrs {
-				fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StylePath(tosca.GetContext(entityPtr).Path.String()))
+				terminal.Printf("%s\n", terminal.Stylize.Path(tosca.GetContext(entityPtr).Path.String()))
 				err = formatpkg.Print(entityPtr, format, terminal.Stdout, strict, pretty)
 				util.FailOnError(err)
 			}

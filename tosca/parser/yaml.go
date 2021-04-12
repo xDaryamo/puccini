@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 
+	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -24,6 +25,6 @@ func (self *YAMLDecodeError) Error() string {
 }
 
 // problems.Problematic interface
-func (self *YAMLDecodeError) Problem() (string, string, string, int, int) {
+func (self *YAMLDecodeError) Problem(stylist terminal.Stylist) (string, string, string, int, int) {
 	return "", "", fmt.Sprintf("malformed YAML, %s", self.DecodeError.Message), self.DecodeError.Line, self.DecodeError.Column
 }

@@ -30,6 +30,7 @@ type Context struct {
 	Stdout          io.Writer
 	Stderr          io.Writer
 	Stdin           io.Writer
+	Stylist         *terminal.Stylist
 	URLContext      *urlpkg.Context
 
 	programCache sync.Map
@@ -52,6 +53,7 @@ func NewContext(name string, log logging.Logger, arguments map[string]string, qu
 		Stdout:          terminal.Stdout,
 		Stderr:          terminal.Stderr,
 		Stdin:           os.Stdin,
+		Stylist:         terminal.Stylize,
 		URLContext:      urlContext,
 	}
 }
@@ -103,7 +105,11 @@ func (self *Context) Exec(clout *cloutpkg.Clout, scriptletName string, apis map[
 
 func (self *Context) Fail(message string) {
 	if !self.Quiet {
-		fmt.Fprintln(self.Stderr, terminal.StyleError(message))
+		stylist := self.Stylist
+		if stylist == nil {
+			stylist = terminal.NewStylist(false)
+		}
+		fmt.Fprintln(self.Stderr, stylist.Error(message))
 	}
 	util.Exit(1)
 }

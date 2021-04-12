@@ -7,6 +7,7 @@ import (
 
 	"github.com/tliron/kutil/ard"
 	"github.com/tliron/kutil/problems"
+	"github.com/tliron/kutil/terminal"
 	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/yamlkeys"
 )
@@ -65,12 +66,12 @@ type Context struct {
 	ReadTagOverrides   map[string]string
 }
 
-func NewContext(quirks Quirks) *Context {
+func NewContext(stylist *terminal.Stylist, quirks Quirks) *Context {
 	return &Context{
 		Namespace:          NewNamespace(),
 		ScriptletNamespace: NewScriptletNamespace(),
 		Hierarchy:          NewHierarchy(),
-		Problems:           new(problems.Problems),
+		Problems:           problems.NewProblems(stylist),
 		Quirks:             quirks,
 	}
 }
@@ -84,7 +85,7 @@ func (self *Context) NewImportContext(url urlpkg.URL) *Context {
 		Namespace:          NewNamespace(),
 		ScriptletNamespace: NewScriptletNamespace(),
 		Hierarchy:          NewHierarchy(),
-		Problems:           new(problems.Problems),
+		Problems:           self.Problems.NewProblems(),
 		Quirks:             self.Quirks,
 		Grammar:            self.Grammar,
 	}

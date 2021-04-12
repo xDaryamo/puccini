@@ -28,6 +28,7 @@ type PucciniAPI struct {
 	Stdout          io.Writer
 	Stderr          io.Writer
 	Stdin           io.Writer
+	Stylist         *terminal.Stylist
 	Output          string
 	Format          string
 	Strict          bool
@@ -48,6 +49,7 @@ func (self *Context) NewPucciniAPI() *PucciniAPI {
 		Stdout:          self.Stdout,
 		Stderr:          self.Stderr,
 		Stdin:           self.Stdin,
+		Stylist:         self.Stylist,
 		Output:          self.Output,
 		Format:          format,
 		Strict:          self.Strict,
@@ -150,15 +152,19 @@ func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool)
 		_, err := os.Stat(output)
 		var message string
 		var skip bool
+		stylist := self.Stylist
+		if stylist == nil {
+			stylist = terminal.NewStylist(false)
+		}
 		if (err == nil) || os.IsExist(err) {
 			if dontOverwrite {
-				message = terminal.StyleError("skipping:   ")
+				message = stylist.Error("skipping:   ")
 				skip = true
 			} else {
-				message = terminal.StyleValue("overwriting:")
+				message = stylist.Value("overwriting:")
 			}
 		} else {
-			message = terminal.StyleHeading("writing:    ")
+			message = stylist.Heading("writing:    ")
 		}
 		if !self.context.Quiet {
 			fmt.Fprintf(self.Stdout, "%s %s\n", message, output)
@@ -232,8 +238,12 @@ func (self *PucciniAPI) DeepEquals(a ard.Value, b ard.Value) bool {
 }
 
 func (self *PucciniAPI) Fail(message string) {
+	stylist := self.Stylist
+	if stylist == nil {
+		stylist = terminal.NewStylist(false)
+	}
 	if !self.context.Quiet {
-		fmt.Fprintln(self.Stderr, terminal.StyleError(message))
+		fmt.Fprintln(self.Stderr, stylist.Error(message))
 	}
 	util.Exit(1)
 }

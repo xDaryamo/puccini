@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/puccini/tosca"
 )
@@ -37,7 +35,7 @@ func (self *Context) PrintNamespaces(indent int) {
 		context := import_.GetContext()
 		if !context.Namespace.Empty() {
 			terminal.PrintIndent(indent)
-			fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleValue(context.URL.String()))
+			terminal.Printf("%s\n", terminal.Stylize.Value(context.URL.String()))
 			context.Namespace.Print(childIndent)
 		}
 	}

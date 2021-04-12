@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -45,7 +44,7 @@ func ListValue(value interface{}, path []string) {
 	switch value_ := value.(type) {
 	case string:
 		if !terminal.Quiet {
-			fmt.Fprintf(terminal.Stdout, "%s\n", strings.Join(path, "."))
+			terminal.Printf("%s\n", strings.Join(path, "."))
 		}
 
 	case ard.StringMap:

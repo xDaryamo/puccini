@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 
@@ -53,7 +52,7 @@ func (self *Task) Done() {
 
 func (self *Task) Print(indent int) {
 	terminal.PrintIndent(indent)
-	fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StylePath(self.Name))
+	terminal.Printf("%s\n", terminal.Stylize.Path(self.Name))
 	self.PrintDependencies(indent, terminal.TreePrefix{})
 }
 
@@ -75,7 +74,7 @@ func (self *Task) PrintDependencies(indent int, treePrefix terminal.TreePrefix) 
 
 func (self *Task) PrintDependency(indent int, treePrefix terminal.TreePrefix, last bool) {
 	treePrefix.Print(indent, last)
-	fmt.Fprintf(terminal.Stdout, "%s\n", self.Name)
+	terminal.Printf("%s\n", self.Name)
 }
 
 func (self *Task) AddDependency(task *Task) {

@@ -35,7 +35,7 @@ func (self *Context) Reportf(skip int, f string, arg ...interface{}) bool {
 func (self *Context) ReportPath(skip int, message string) bool {
 	path := self.Path.String()
 	if path != "" {
-		path = terminal.StylePath(path)
+		path = self.Problems.Stylist.Path(path)
 	}
 	return self.Report(skip+1, path, message)
 }
@@ -46,7 +46,7 @@ func (self *Context) ReportPathf(skip int, f string, arg ...interface{}) bool {
 
 func (self *Context) ReportProblematic(skip int, problematic problems.Problematic) bool {
 	// Note: we are ignoring the problem's section and using the URL instead
-	_, item, message, row, column := problematic.Problem()
+	_, item, message, row, column := problematic.Problem(self.Problems.Stylist)
 	return self.ReportURL(skip+1, item, message, row, column)
 }
 
@@ -63,15 +63,15 @@ func (self *Context) ReportError(err error) bool {
 //
 
 func (self *Context) FormatBadData() string {
-	return terminal.StyleError(fmt.Sprintf("%+v", self.Data))
+	return self.Problems.Stylist.Error(fmt.Sprintf("%+v", self.Data))
 }
 
 func (self *Context) ReportValueWrongType(allowedTypeNames ...ard.TypeName) bool {
-	return self.ReportPathf(1, "%s instead of %s", terminal.StyleTypeName(quote(ardGetTypeName(self.Data))), terminal.ColoredOptions(ardTypeNamesToStrings(allowedTypeNames), terminal.StyleTypeName))
+	return self.ReportPathf(1, "%s instead of %s", self.Problems.Stylist.TypeName(quote(ardGetTypeName(self.Data))), terminal.StylizedOptions(ardTypeNamesToStrings(allowedTypeNames), self.Problems.Stylist.TypeName))
 }
 
 func (self *Context) ReportAspectWrongType(aspect string, value ard.Value, allowedTypeNames ...ard.TypeName) bool {
-	return self.ReportPathf(1, "%s is %s instead of %s", aspect, terminal.StyleTypeName(quote(ardGetTypeName(value))), terminal.ColoredOptions(ardTypeNamesToStrings(allowedTypeNames), terminal.StyleTypeName))
+	return self.ReportPathf(1, "%s is %s instead of %s", aspect, self.Problems.Stylist.TypeName(quote(ardGetTypeName(value))), terminal.StylizedOptions(ardTypeNamesToStrings(allowedTypeNames), self.Problems.Stylist.TypeName))
 }
 
 func (self *Context) ReportValueWrongFormat(format string) bool {
@@ -79,14 +79,14 @@ func (self *Context) ReportValueWrongFormat(format string) bool {
 }
 
 func (self *Context) ReportValueWrongLength(kind string, length int) bool {
-	return self.ReportPathf(1, "%s does not have %d elements", terminal.StyleTypeName(quote(kind)), length)
+	return self.ReportPathf(1, "%s does not have %d elements", self.Problems.Stylist.TypeName(quote(kind)), length)
 }
 
 func (self *Context) ReportValueMalformed(kind string, reason string) bool {
 	if reason == "" {
-		return self.ReportPathf(1, "malformed %s: %s", terminal.StyleTypeName(quote(kind)), self.FormatBadData())
+		return self.ReportPathf(1, "malformed %s: %s", self.Problems.Stylist.TypeName(quote(kind)), self.FormatBadData())
 	} else {
-		return self.ReportPathf(1, "malformed %s, %s: %s", terminal.StyleTypeName(quote(kind)), reason, self.FormatBadData())
+		return self.ReportPathf(1, "malformed %s, %s: %s", self.Problems.Stylist.TypeName(quote(kind)), reason, self.FormatBadData())
 	}
 }
 
@@ -95,15 +95,15 @@ func (self *Context) ReportValueMalformed(kind string, reason string) bool {
 //
 
 func (self *Context) ReportImportIncompatible(url urlpkg.URL) bool {
-	return self.Reportf(1, "incompatible import %s", terminal.StyleValue(quote(url.String())))
+	return self.Reportf(1, "incompatible import %s", self.Problems.Stylist.Value(quote(url.String())))
 }
 
 func (self *Context) ReportImportLoop(url urlpkg.URL) bool {
-	return self.Reportf(1, "endless loop caused by importing %s", terminal.StyleValue(quote(url.String())))
+	return self.Reportf(1, "endless loop caused by importing %s", self.Problems.Stylist.Value(quote(url.String())))
 }
 
 func (self *Context) ReportRepositoryInaccessible(repositoryName string) bool {
-	return self.ReportPathf(1, "inaccessible repository %s", terminal.StyleValue(quote(repositoryName)))
+	return self.ReportPathf(1, "inaccessible repository %s", self.Problems.Stylist.Value(quote(repositoryName)))
 }
 
 func (self *Context) ReportFieldMissing() bool {
@@ -119,7 +119,7 @@ func (self *Context) ReportFieldUnsupportedValue() bool {
 }
 
 func (self *Context) ReportFieldMalformedSequencedList() bool {
-	return self.ReportPathf(1, "field must be a %s of single-key %s elements", terminal.StyleTypeName(quote("sequenced list")), terminal.StyleTypeName(quote("map")))
+	return self.ReportPathf(1, "field must be a %s of single-key %s elements", self.Problems.Stylist.TypeName(quote("sequenced list")), self.Problems.Stylist.TypeName(quote("map")))
 }
 
 func (self *Context) ReportPrimitiveType() bool {
@@ -127,7 +127,7 @@ func (self *Context) ReportPrimitiveType() bool {
 }
 
 func (self *Context) ReportDuplicateMapKey(key string) bool {
-	return self.ReportPathf(1, "duplicate map key: %s", terminal.StyleValue(key))
+	return self.ReportPathf(1, "duplicate map key: %s", self.Problems.Stylist.Value(key))
 }
 
 //
@@ -135,7 +135,7 @@ func (self *Context) ReportDuplicateMapKey(key string) bool {
 //
 
 func (self *Context) ReportNameAmbiguous(type_ reflect.Type, name string, entityPtrs ...EntityPtr) bool {
-	return self.Reportf(1, "ambiguous %s name %s, can be in %s", GetEntityTypeName(type_), terminal.StyleName(quote(name)), terminal.ColoredOptions(urlsOfEntityPtrs(entityPtrs), terminal.StyleValue))
+	return self.Reportf(1, "ambiguous %s name %s, can be in %s", GetEntityTypeName(type_), self.Problems.Stylist.Name(quote(name)), terminal.StylizedOptions(urlsOfEntityPtrs(entityPtrs), self.Problems.Stylist.Value))
 }
 
 func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) bool {
@@ -147,11 +147,11 @@ func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) bool {
 //
 
 func (self *Context) ReportInheritanceLoop(parentType EntityPtr) bool {
-	return self.ReportPathf(1, "inheritance loop by deriving from %s", terminal.StyleTypeName(quote(GetCanonicalName(parentType))))
+	return self.ReportPathf(1, "inheritance loop by deriving from %s", self.Problems.Stylist.TypeName(quote(GetCanonicalName(parentType))))
 }
 
 func (self *Context) ReportTypeIncomplete(parentType EntityPtr) bool {
-	return self.ReportPathf(1, "deriving from incomplete type %s", terminal.StyleTypeName(quote(GetCanonicalName(parentType))))
+	return self.ReportPathf(1, "deriving from incomplete type %s", self.Problems.Stylist.TypeName(quote(GetCanonicalName(parentType))))
 }
 
 //
@@ -169,13 +169,13 @@ func (self *Context) ReportUnknown(kind string) bool {
 func (self *Context) ReportReferenceNotFound(kind string, entityPtr EntityPtr) bool {
 	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
 	name := GetContext(entityPtr).Name
-	return self.ReportPathf(1, "unknown %s reference in %s %s: %s", kind, typeName, terminal.StyleName(quote(name)), self.FormatBadData())
+	return self.ReportPathf(1, "unknown %s reference in %s %s: %s", kind, typeName, self.Problems.Stylist.Name(quote(name)), self.FormatBadData())
 }
 
 func (self *Context) ReportReferenceAmbiguous(kind string, entityPtr EntityPtr) bool {
 	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
 	name := GetContext(entityPtr).Name
-	return self.ReportPathf(1, "ambiguous %s in %s %s: %s", kind, typeName, terminal.StyleName(quote(name)), self.FormatBadData())
+	return self.ReportPathf(1, "ambiguous %s in %s %s: %s", kind, typeName, self.Problems.Stylist.Name(quote(name)), self.FormatBadData())
 }
 
 func (self *Context) ReportPropertyRequired(kind string) bool {
@@ -187,7 +187,7 @@ func (self *Context) ReportReservedMetadata() bool {
 }
 
 func (self *Context) ReportUnknownDataType(dataTypeName string) bool {
-	return self.ReportPathf(1, "unknown data type %s", terminal.StyleError(quote(dataTypeName)))
+	return self.ReportPathf(1, "unknown data type %s", self.Problems.Stylist.Error(quote(dataTypeName)))
 }
 
 func (self *Context) ReportMissingEntrySchema(kind string) bool {
@@ -195,23 +195,23 @@ func (self *Context) ReportMissingEntrySchema(kind string) bool {
 }
 
 func (self *Context) ReportUnsupportedType() bool {
-	return self.ReportPathf(1, "unsupported puccini.type %s", terminal.StyleError(quote(self.Name)))
+	return self.ReportPathf(1, "unsupported puccini.type %s", self.Problems.Stylist.Error(quote(self.Name)))
 }
 
 func (self *Context) ReportIncompatibleType(type_ EntityPtr, parentType EntityPtr) bool {
-	return self.ReportPathf(1, "type %s must be derived from type %s", terminal.StyleTypeName(quote(GetCanonicalName(type_))), terminal.StyleTypeName(quote(GetCanonicalName(parentType))))
+	return self.ReportPathf(1, "type %s must be derived from type %s", self.Problems.Stylist.TypeName(quote(GetCanonicalName(type_))), self.Problems.Stylist.TypeName(quote(GetCanonicalName(parentType))))
 }
 
 func (self *Context) ReportIncompatibleTypeInSet(type_ EntityPtr) bool {
-	return self.ReportPathf(1, "type %s must be derived from one of the types in the parent set", terminal.StyleTypeName(quote(GetCanonicalName(type_))))
+	return self.ReportPathf(1, "type %s must be derived from one of the types in the parent set", self.Problems.Stylist.TypeName(quote(GetCanonicalName(type_))))
 }
 
 func (self *Context) ReportIncompatible(name string, target string, kind string) bool {
-	return self.ReportPathf(1, "%s cannot be %s of %s", terminal.StyleName(quote(name)), kind, target)
+	return self.ReportPathf(1, "%s cannot be %s of %s", self.Problems.Stylist.Name(quote(name)), kind, target)
 }
 
 func (self *Context) ReportIncompatibleExtension(extension string, requiredExtensions []string) bool {
-	return self.ReportPathf(1, "extension %s is not %s", terminal.StyleValue(quote(extension)), terminal.ColoredOptions(requiredExtensions, terminal.StyleValue))
+	return self.ReportPathf(1, "extension %s is not %s", self.Problems.Stylist.Value(quote(extension)), terminal.StylizedOptions(requiredExtensions, self.Problems.Stylist.Value))
 }
 
 func (self *Context) ReportNotInRange(name string, value uint64, lower uint64, upper uint64) bool {
@@ -219,7 +219,7 @@ func (self *Context) ReportNotInRange(name string, value uint64, lower uint64, u
 }
 
 func (self *Context) ReportCopyLoop(name string) bool {
-	return self.ReportPathf(1, "endless loop caused by copying %s", terminal.StyleValue(quote(name)))
+	return self.ReportPathf(1, "endless loop caused by copying %s", self.Problems.Stylist.Value(quote(name)))
 }
 
 // Utils

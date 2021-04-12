@@ -5,13 +5,14 @@ import (
 
 	"github.com/tliron/kutil/ard"
 	"github.com/tliron/kutil/problems"
+	"github.com/tliron/kutil/terminal"
 	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
 
-func Parse(url urlpkg.URL, quirks tosca.Quirks, inputs map[string]ard.Value) (*Context, *normal.ServiceTemplate, *problems.Problems, error) {
-	context := NewContext(quirks)
+func Parse(url urlpkg.URL, stylist *terminal.Stylist, quirks tosca.Quirks, inputs map[string]ard.Value) (*Context, *normal.ServiceTemplate, *problems.Problems, error) {
+	context := NewContext(stylist, quirks)
 
 	// Phase 1: Read
 	ok := context.ReadRoot(url)

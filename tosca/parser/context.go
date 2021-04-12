@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/tliron/kutil/problems"
@@ -12,6 +11,7 @@ import (
 
 type Context struct {
 	Root            *Unit
+	Stylist         *terminal.Stylist
 	Quirks          tosca.Quirks
 	Units           Units
 	Parsing         sync.Map
@@ -22,8 +22,9 @@ type Context struct {
 	unitsLock sync.Mutex
 }
 
-func NewContext(quirks tosca.Quirks) *Context {
+func NewContext(stylist *terminal.Stylist, quirks tosca.Quirks) *Context {
 	return &Context{
+		Stylist:         stylist,
 		Quirks:          quirks,
 		NamespacesWork:  NewContextualWork(logNamespaces),
 		HierarchiesWork: NewContextualWork(logHierarchies),
@@ -72,6 +73,6 @@ func (self *Context) AddImportUnit(entityPtr tosca.EntityPtr, container *Unit, n
 
 func (self *Context) PrintImports(indent int) {
 	terminal.PrintIndent(indent)
-	fmt.Fprintf(terminal.Stdout, "%s\n", terminal.StyleValue(self.Root.GetContext().URL.String()))
+	terminal.Printf("%s\n", terminal.Stylize.Value(self.Root.GetContext().URL.String()))
 	self.Root.PrintImports(indent, terminal.TreePrefix{})
 }
