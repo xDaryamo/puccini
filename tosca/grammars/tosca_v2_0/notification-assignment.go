@@ -63,7 +63,11 @@ func (self *NotificationAssignment) Normalize(normalInterface *normal.Interface)
 		self.Implementation.NormalizeNotification(normalNotification)
 	}
 
-	self.Outputs.Normalize(normalInterface.NodeTemplate, normalNotification.Outputs)
+	if normalInterface.NodeTemplate != nil {
+		self.Outputs.NormalizeForNodeTemplate(normalInterface.NodeTemplate.ServiceTemplate, normalNotification.Outputs)
+	} else if normalInterface.Relationship != nil {
+		self.Outputs.NormalizeForRelationship(normalInterface.Relationship, normalNotification.Outputs)
+	}
 
 	return normalNotification
 }
@@ -84,7 +88,28 @@ func (self NotificationAssignments) CopyUnassigned(assignments NotificationAssig
 	}
 }
 
-func (self NotificationAssignments) Render(definitions NotificationDefinitions, context *tosca.Context) {
+func (self NotificationAssignments) RenderForNodeTemplate(nodeTemplate *NodeTemplate, definitions NotificationDefinitions, context *tosca.Context) {
+	self.render(definitions, context)
+	for _, assignment := range self {
+		assignment.Outputs.RenderForNodeTemplate(nodeTemplate)
+	}
+}
+
+func (self NotificationAssignments) RenderForRelationship(relationship *RelationshipAssignment, definitions NotificationDefinitions, context *tosca.Context) {
+	self.render(definitions, context)
+	for _, assignment := range self {
+		assignment.Outputs.RenderForRelationship(relationship)
+	}
+}
+
+func (self NotificationAssignments) RenderForGroup(definitions NotificationDefinitions, context *tosca.Context) {
+	self.render(definitions, context)
+	for _, assignment := range self {
+		assignment.Outputs.RenderForGroup()
+	}
+}
+
+func (self NotificationAssignments) render(definitions NotificationDefinitions, context *tosca.Context) {
 	for key, definition := range definitions {
 		assignment, ok := self[key]
 

@@ -42,7 +42,7 @@ func init() {
 	Grammar.RegisterReader("InterfaceType", tosca_v1_2.ReadInterfaceType)             // 1.2
 	Grammar.RegisterReader("Metadata", tosca_v2_0.ReadMetadata)
 	Grammar.RegisterReader("NodeFilter", tosca_v2_0.ReadNodeFilter)
-	Grammar.RegisterReader("NodeTemplate", tosca_v2_0.ReadNodeTemplate)
+	Grammar.RegisterReader("NodeTemplate", tosca_v1_3.ReadNodeTemplate) // 1.3
 	Grammar.RegisterReader("NodeType", tosca_v2_0.ReadNodeType)
 	Grammar.RegisterReader("OperationAssignment", tosca_v1_2.ReadOperationAssignment) // 1.2
 	Grammar.RegisterReader("OperationDefinition", tosca_v1_2.ReadOperationDefinition) // 1.2

@@ -59,7 +59,11 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 		return nil, false
 	}
 
-	importSpec := &tosca.ImportSpec{url, nameTransformer, false}
+	importSpec := &tosca.ImportSpec{
+		URL:             url,
+		NameTransformer: nameTransformer,
+		Implicit:        false,
+	}
 	return importSpec, true
 }
 

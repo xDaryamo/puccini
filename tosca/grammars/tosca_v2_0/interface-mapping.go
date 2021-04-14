@@ -15,6 +15,7 @@ import (
 
 type InterfaceMapping struct {
 	*Entity `name:"interface mapping"`
+	Name    string
 
 	NodeTemplateName *string `require:"0"`
 	InterfaceName    *string `require:"1"`
@@ -23,7 +24,10 @@ type InterfaceMapping struct {
 }
 
 func NewInterfaceMapping(context *tosca.Context) *InterfaceMapping {
-	return &InterfaceMapping{Entity: NewEntity(context)}
+	return &InterfaceMapping{
+		Entity: NewEntity(context),
+		Name:   context.Name,
+	}
 }
 
 // tosca.Reader signature
@@ -37,6 +41,11 @@ func ReadInterfaceMapping(context *tosca.Context) tosca.EntityPtr {
 		}
 	}
 	return self
+}
+
+// tosca.Mappable interface
+func (self *InterfaceMapping) GetKey() string {
+	return self.Name
 }
 
 // parser.Renderable interface
@@ -58,4 +67,4 @@ func (self *InterfaceMapping) Render() {
 // InterfaceMappings
 //
 
-type InterfaceMappings []*InterfaceMapping
+type InterfaceMappings map[string]*InterfaceMapping

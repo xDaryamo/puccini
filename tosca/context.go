@@ -67,6 +67,10 @@ type Context struct {
 }
 
 func NewContext(stylist *terminal.Stylist, quirks Quirks) *Context {
+	if stylist == nil {
+		stylist = terminal.NewStylist(false)
+	}
+
 	return &Context{
 		Namespace:          NewNamespace(),
 		ScriptletNamespace: NewScriptletNamespace(),

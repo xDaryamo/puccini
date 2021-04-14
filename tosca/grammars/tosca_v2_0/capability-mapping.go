@@ -18,6 +18,7 @@ import (
 
 type CapabilityMapping struct {
 	*Entity `name:"capability mapping"`
+	Name    string
 
 	NodeTemplateName *string `require:"0"`
 	CapabilityName   *string `require:"1"`
@@ -26,7 +27,10 @@ type CapabilityMapping struct {
 }
 
 func NewCapabilityMapping(context *tosca.Context) *CapabilityMapping {
-	return &CapabilityMapping{Entity: NewEntity(context)}
+	return &CapabilityMapping{
+		Entity: NewEntity(context),
+		Name:   context.Name,
+	}
 }
 
 // tosca.Reader signature
@@ -39,6 +43,11 @@ func ReadCapabilityMapping(context *tosca.Context) tosca.EntityPtr {
 	}
 
 	return self
+}
+
+// tosca.Mappable interface
+func (self *CapabilityMapping) GetKey() string {
+	return self.Name
 }
 
 // parser.Renderable interface
@@ -61,4 +70,4 @@ func (self *CapabilityMapping) Render() {
 // CapabilityMappings
 //
 
-type CapabilityMappings []*CapabilityMapping
+type CapabilityMappings map[string]*CapabilityMapping

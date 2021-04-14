@@ -54,6 +54,10 @@ func NewNodeTemplate(context *tosca.Context) *NodeTemplate {
 func ReadNodeTemplate(context *tosca.Context) tosca.EntityPtr {
 	self := NewNodeTemplate(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
+	switch self.Name {
+	case "SELF", "SOURCE", "TARGET":
+		context.Clone(self.Name).ReportValueInvalid("node template name", "reserved")
+	}
 	return self
 }
 
@@ -80,7 +84,7 @@ func (self *NodeTemplate) Render() {
 	self.Attributes.RenderAttributes(self.NodeType.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
 	self.Capabilities.Render(self.NodeType.CapabilityDefinitions, self.Context.FieldChild("capabilities", nil))
 	self.Requirements.Render(self.NodeType.RequirementDefinitions, self.Context.FieldChild("requirements", nil))
-	self.Interfaces.Render(self.NodeType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
+	self.Interfaces.RenderForNodeTemplate(self, self.NodeType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
 	self.Artifacts.Render(self.NodeType.ArtifactDefinitions, self.Context.FieldChild("artifacts", nil))
 }
 

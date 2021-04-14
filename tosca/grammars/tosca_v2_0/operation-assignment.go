@@ -69,7 +69,11 @@ func (self *OperationAssignment) Normalize(normalInterface *normal.Interface) *n
 	}
 
 	self.Inputs.Normalize(normalOperation.Inputs)
-	self.Outputs.Normalize(normalInterface.NodeTemplate, normalOperation.Outputs)
+	if normalInterface.NodeTemplate != nil {
+		self.Outputs.NormalizeForNodeTemplate(normalInterface.NodeTemplate.ServiceTemplate, normalOperation.Outputs)
+	} else if normalInterface.Relationship != nil {
+		self.Outputs.NormalizeForRelationship(normalInterface.Relationship, normalOperation.Outputs)
+	}
 
 	return normalOperation
 }

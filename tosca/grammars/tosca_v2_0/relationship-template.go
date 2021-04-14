@@ -71,7 +71,6 @@ func (self *RelationshipTemplate) Render() {
 
 	self.Properties.RenderProperties(self.RelationshipType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
 	self.Attributes.RenderAttributes(self.RelationshipType.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
-	self.Interfaces.Render(self.RelationshipType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
 }
 
 func (self *RelationshipTemplate) Normalize(normalRelationship *normal.Relationship) {

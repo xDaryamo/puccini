@@ -9,8 +9,8 @@ import (
 // SubstitutionMappings
 //
 // [TOSCA-v2.0] @ ?
-// [TOSCA-Simple-Profile-YAML-v1.3] @ 2.10, 2.11, 2.12
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 2.10, 2.11
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.8.13, 2.10, 2.11, 2.12
+// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.8.12, 2.10, 2.11
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 2.10, 2.11
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 2.10, 2.11
 //
@@ -30,7 +30,14 @@ type SubstitutionMappings struct {
 }
 
 func NewSubstitutionMappings(context *tosca.Context) *SubstitutionMappings {
-	return &SubstitutionMappings{Entity: NewEntity(context)}
+	return &SubstitutionMappings{
+		Entity:              NewEntity(context),
+		CapabilityMappings:  make(CapabilityMappings),
+		RequirementMappings: make(RequirementMappings),
+		PropertyMappings:    make(PropertyMappings),
+		AttributeMappings:   make(AttributeMappings),
+		InterfaceMappings:   make(InterfaceMappings),
+	}
 }
 
 // tosca.Reader signature

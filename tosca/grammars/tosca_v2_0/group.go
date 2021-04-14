@@ -55,7 +55,7 @@ func (self *Group) Render() {
 	}
 
 	self.Properties.RenderProperties(self.GroupType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
-	self.Interfaces.Render(self.GroupType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
+	self.Interfaces.RenderForGroup(self.GroupType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
 
 	// Validate members
 	if len(self.GroupType.MemberNodeTypes) > 0 {

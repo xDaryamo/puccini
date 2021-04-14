@@ -79,14 +79,22 @@ func (self *Context) ReportValueWrongFormat(format string) bool {
 }
 
 func (self *Context) ReportValueWrongLength(kind string, length int) bool {
-	return self.ReportPathf(1, "%s does not have %d elements", self.Problems.Stylist.TypeName(quote(kind)), length)
+	return self.ReportPathf(1, "%s does not have %d elements", kind, length)
+}
+
+func (self *Context) ReportValueInvalid(kind string, reason string) bool {
+	if reason == "" {
+		return self.ReportPathf(1, "invalid %s: %s", kind, self.FormatBadData())
+	} else {
+		return self.ReportPathf(1, "invalid %s, %s: %s", kind, reason, self.FormatBadData())
+	}
 }
 
 func (self *Context) ReportValueMalformed(kind string, reason string) bool {
 	if reason == "" {
-		return self.ReportPathf(1, "malformed %s: %s", self.Problems.Stylist.TypeName(quote(kind)), self.FormatBadData())
+		return self.ReportPathf(1, "malformed %s: %s", kind, self.FormatBadData())
 	} else {
-		return self.ReportPathf(1, "malformed %s, %s: %s", self.Problems.Stylist.TypeName(quote(kind)), reason, self.FormatBadData())
+		return self.ReportPathf(1, "malformed %s, %s: %s", kind, reason, self.FormatBadData())
 	}
 }
 

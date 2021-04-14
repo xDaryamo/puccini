@@ -15,6 +15,7 @@ import (
 
 type AttributeMapping struct {
 	*Entity `name:"attribute mapping"`
+	Name    string
 
 	NodeTemplateName *string `require:"0"`
 	AttributeName    *string `require:"1"`
@@ -23,7 +24,10 @@ type AttributeMapping struct {
 }
 
 func NewAttributeMapping(context *tosca.Context) *AttributeMapping {
-	return &AttributeMapping{Entity: NewEntity(context)}
+	return &AttributeMapping{
+		Entity: NewEntity(context),
+		Name:   context.Name,
+	}
 }
 
 // tosca.Reader signature
@@ -36,6 +40,11 @@ func ReadAttributeMapping(context *tosca.Context) tosca.EntityPtr {
 	}
 
 	return self
+}
+
+// tosca.Mappable interface
+func (self *AttributeMapping) GetKey() string {
+	return self.Name
 }
 
 // parser.Renderable interface
@@ -57,4 +66,4 @@ func (self *AttributeMapping) Render() {
 // AttributeMappings
 //
 
-type AttributeMappings []*AttributeMapping
+type AttributeMappings map[string]*AttributeMapping

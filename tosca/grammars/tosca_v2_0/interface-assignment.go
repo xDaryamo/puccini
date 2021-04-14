@@ -71,10 +71,22 @@ func (self *InterfaceAssignment) GetDefinitionForRelationship(relationship *Rela
 	return definition, ok
 }
 
-func (self *InterfaceAssignment) Render(definition *InterfaceDefinition) {
+func (self *InterfaceAssignment) RenderForNodeTemplate(nodeTemplate *NodeTemplate, definition *InterfaceDefinition) {
 	self.Inputs.RenderProperties(definition.InputDefinitions, "input", self.Context.FieldChild("inputs", nil))
 	self.Operations.Render(definition.OperationDefinitions, self.Context.FieldChild("operations", nil))
-	self.Notifications.Render(definition.NotificationDefinitions, self.Context.FieldChild("notifications", nil))
+	self.Notifications.RenderForNodeTemplate(nodeTemplate, definition.NotificationDefinitions, self.Context.FieldChild("notifications", nil))
+}
+
+func (self *InterfaceAssignment) RenderForRelationship(relationship *RelationshipAssignment, definition *InterfaceDefinition) {
+	self.Inputs.RenderProperties(definition.InputDefinitions, "input", self.Context.FieldChild("inputs", nil))
+	self.Operations.Render(definition.OperationDefinitions, self.Context.FieldChild("operations", nil))
+	self.Notifications.RenderForRelationship(relationship, definition.NotificationDefinitions, self.Context.FieldChild("notifications", nil))
+}
+
+func (self *InterfaceAssignment) RenderForGroup(definition *InterfaceDefinition) {
+	self.Inputs.RenderProperties(definition.InputDefinitions, "input", self.Context.FieldChild("inputs", nil))
+	self.Operations.Render(definition.OperationDefinitions, self.Context.FieldChild("operations", nil))
+	self.Notifications.RenderForGroup(definition.NotificationDefinitions, self.Context.FieldChild("notifications", nil))
 }
 
 func (self *InterfaceAssignment) Normalize(normalInterface *normal.Interface, definition *InterfaceDefinition) {
@@ -111,14 +123,40 @@ func (self InterfaceAssignments) CopyUnassigned(assignments InterfaceAssignments
 	}
 }
 
-func (self InterfaceAssignments) Render(definitions InterfaceDefinitions, context *tosca.Context) {
-	for key, definition := range definitions {
+func (self InterfaceAssignments) RenderForNodeTemplate(nodeTemplate *NodeTemplate, definitions InterfaceDefinitions, context *tosca.Context) {
+	self.render(definitions, context)
+	for name, assignment := range self {
+		if definition, ok := definitions[name]; ok {
+			assignment.RenderForNodeTemplate(nodeTemplate, definition)
+		}
+	}
+}
+
+func (self InterfaceAssignments) RenderForRelationship(relationship *RelationshipAssignment, definitions InterfaceDefinitions, context *tosca.Context) {
+	self.render(definitions, context)
+	for name, assignment := range self {
+		if definition, ok := definitions[name]; ok {
+			assignment.RenderForRelationship(relationship, definition)
+		}
+	}
+}
+
+func (self InterfaceAssignments) RenderForGroup(definitions InterfaceDefinitions, context *tosca.Context) {
+	self.render(definitions, context)
+	for name, assignment := range self {
+		if definition, ok := definitions[name]; ok {
+			assignment.RenderForGroup(definition)
+		}
+	}
+}
+
+func (self InterfaceAssignments) render(definitions InterfaceDefinitions, context *tosca.Context) {
+	for key := range definitions {
 		assignment, ok := self[key]
 		if !ok {
 			assignment = NewInterfaceAssignment(context.MapChild(key, nil))
 			self[key] = assignment
 		}
-		assignment.Render(definition)
 	}
 
 	for key, assignment := range self {

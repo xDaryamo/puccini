@@ -1,7 +1,6 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -17,6 +16,7 @@ import (
 
 type PropertyMapping struct {
 	*Entity `name:"property mapping"`
+	Name    string
 
 	NodeTemplateName *string `require:"0"`
 	PropertyName     *string `require:"1"`
@@ -25,20 +25,27 @@ type PropertyMapping struct {
 }
 
 func NewPropertyMapping(context *tosca.Context) *PropertyMapping {
-	return &PropertyMapping{Entity: NewEntity(context)}
+	return &PropertyMapping{
+		Entity: NewEntity(context),
+		Name:   context.Name,
+	}
 }
 
 // tosca.Reader signature
 func ReadPropertyMapping(context *tosca.Context) tosca.EntityPtr {
 	self := NewPropertyMapping(context)
-	if context.ValidateType(ard.TypeList) {
-		strings := context.ReadStringListFixed(2)
-		if strings != nil {
-			self.NodeTemplateName = &(*strings)[0]
-			self.PropertyName = &(*strings)[1]
-		}
+
+	if strings := context.ReadStringListFixed(2); strings != nil {
+		self.NodeTemplateName = &(*strings)[0]
+		self.PropertyName = &(*strings)[1]
 	}
+
 	return self
+}
+
+// tosca.Mappable interface
+func (self *PropertyMapping) GetKey() string {
+	return self.Name
 }
 
 // parser.Renderable interface
@@ -60,4 +67,4 @@ func (self *PropertyMapping) Render() {
 // PropertyMappings
 //
 
-type PropertyMappings []*PropertyMapping
+type PropertyMappings map[string]*PropertyMapping

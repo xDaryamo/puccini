@@ -98,7 +98,11 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 
 	appendShortcutNames := !self.Context.HasQuirk(tosca.QuirkNamespaceNormativeShortcutsDisable)
 
-	importSpec := &tosca.ImportSpec{url, newImportNameTransformer(self.Namespace, appendShortcutNames), false}
+	importSpec := &tosca.ImportSpec{
+		URL:             url,
+		NameTransformer: newImportNameTransformer(self.Namespace, appendShortcutNames),
+		Implicit:        false,
+	}
 	return importSpec, true
 }
 

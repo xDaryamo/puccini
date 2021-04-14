@@ -237,44 +237,44 @@ func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cl
 		vertex.Properties["type"] = serviceTemplate.Substitution.Type
 		vertex.Properties["typeMetadata"] = serviceTemplate.Substitution.TypeMetadata
 
-		for nodeTemplate, capability := range serviceTemplate.Substitution.CapabilityMappings {
+		for nodeTemplate, mapping := range serviceTemplate.Substitution.CapabilityMappings {
 			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
 			edge := vertex.NewEdgeTo(nodeTemplateVertex)
 
 			SetMetadata(edge, "CapabilityMapping")
-			edge.Properties["capability"] = capability.Name
+			edge.Properties["capability"] = mapping.Name
 		}
 
-		for nodeTemplate, requirement := range serviceTemplate.Substitution.RequirementMappings {
+		for nodeTemplate, mapping := range serviceTemplate.Substitution.RequirementMappings {
 			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
 			edge := vertex.NewEdgeTo(nodeTemplateVertex)
 
 			SetMetadata(edge, "RequirementMapping")
-			edge.Properties["requirement"] = requirement
+			edge.Properties["requirement"] = mapping
 		}
 
-		for nodeTemplate, property := range serviceTemplate.Substitution.PropertyMappings {
+		for nodeTemplate, mapping := range serviceTemplate.Substitution.PropertyMappings {
 			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
 			edge := vertex.NewEdgeTo(nodeTemplateVertex)
 
 			SetMetadata(edge, "PropertyMapping")
-			edge.Properties["property"] = property
+			edge.Properties["property"] = mapping
 		}
 
-		for nodeTemplate, attribute := range serviceTemplate.Substitution.AttributeMappings {
+		for nodeTemplate, mapping := range serviceTemplate.Substitution.AttributeMappings {
 			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
 			edge := vertex.NewEdgeTo(nodeTemplateVertex)
 
 			SetMetadata(edge, "AttributeMapping")
-			edge.Properties["attribute"] = attribute
+			edge.Properties["attribute"] = mapping
 		}
 
-		for nodeTemplate, interface_ := range serviceTemplate.Substitution.InterfaceMappings {
+		for nodeTemplate, mapping := range serviceTemplate.Substitution.InterfaceMappings {
 			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
 			edge := vertex.NewEdgeTo(nodeTemplateVertex)
 
 			SetMetadata(edge, "InterfaceMapping")
-			edge.Properties["interface"] = interface_
+			edge.Properties["interface"] = mapping
 		}
 	}
 

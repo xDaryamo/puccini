@@ -18,6 +18,7 @@ import (
 
 type RequirementMapping struct {
 	*Entity `name:"requirement mapping"`
+	Name    string
 
 	NodeTemplateName *string `require:"0"`
 	RequirementName  *string `require:"1"`
@@ -26,7 +27,10 @@ type RequirementMapping struct {
 }
 
 func NewRequirementMapping(context *tosca.Context) *RequirementMapping {
-	return &RequirementMapping{Entity: NewEntity(context)}
+	return &RequirementMapping{
+		Entity: NewEntity(context),
+		Name:   context.Name,
+	}
 }
 
 // tosca.Reader signature
@@ -39,6 +43,11 @@ func ReadRequirementMapping(context *tosca.Context) tosca.EntityPtr {
 	}
 
 	return self
+}
+
+// tosca.Mappable interface
+func (self *RequirementMapping) GetKey() string {
+	return self.Name
 }
 
 // parser.Renderable interface
@@ -72,4 +81,4 @@ func (self *RequirementMapping) Render() {
 // RequirementMappings
 //
 
-type RequirementMappings []*RequirementMapping
+type RequirementMappings map[string]*RequirementMapping

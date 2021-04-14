@@ -35,14 +35,14 @@ func init() {
 	Grammar.RegisterReader("EventFilter", tosca_v2_0.ReadEventFilter)
 	Grammar.RegisterReader("Group", tosca_v2_0.ReadGroup)
 	Grammar.RegisterReader("GroupType", tosca_v2_0.ReadGroupType)
-	Grammar.RegisterReader("Import", ReadImport) /// override
+	Grammar.RegisterReader("Import", ReadImport) // override
 	Grammar.RegisterReader("InterfaceAssignment", tosca_v2_0.ReadInterfaceAssignment)
 	Grammar.RegisterReader("InterfaceDefinition", tosca_v2_0.ReadInterfaceDefinition)
 	Grammar.RegisterReader("InterfaceMapping", tosca_v2_0.ReadInterfaceMapping) // introduced in TOSCA 1.2
 	Grammar.RegisterReader("InterfaceType", tosca_v2_0.ReadInterfaceType)
 	Grammar.RegisterReader("Metadata", tosca_v2_0.ReadMetadata)
 	Grammar.RegisterReader("NodeFilter", tosca_v2_0.ReadNodeFilter)
-	Grammar.RegisterReader("NodeTemplate", tosca_v2_0.ReadNodeTemplate)
+	Grammar.RegisterReader("NodeTemplate", ReadNodeTemplate) // override
 	Grammar.RegisterReader("NodeType", tosca_v2_0.ReadNodeType)
 	Grammar.RegisterReader("NotificationAssignment", tosca_v2_0.ReadNotificationAssignment) // introduced in TOSCA 1.3
 	Grammar.RegisterReader("NotificationDefinition", tosca_v2_0.ReadNotificationDefinition) // introduced in TOSCA 1.3
