@@ -4,20 +4,19 @@ set -e
 HERE=$(dirname "$(readlink -f "$0")")
 
 function c () {
-	curl "localhost:8080/$1" \
-		--silent \
+	curl "http://localhost:8080/$1?commitNow=true" \
+		--header "Content-Type: application/$2" \
 		--request POST \
-		"${@:2}" | python -m json.tool
+		--data-binary "$3" \
+		--silent | python -m json.tool
 }
 
-mkdir --parents "$HERE/data/"
+puccini-tosca compile "$HERE/../tosca/requirements-and-capabilities.yaml" --exec="$HERE/dgraph.js" --output="$HERE/tosca.json"
 
-puccini-tosca compile "$HERE/../tosca/requirements-and-capabilities.yaml" | \
-puccini-clout scriptlet exec "$HERE/dgraph.js" \
-	> "$HERE/data/tosca.json"
-
-c alter --data '{"drop_all": true}'
-
-c mutate --data-binary @"$HERE/data/tosca.json" \
-	--header 'X-Dgraph-MutationType: json' \
-	--header 'X-Dgraph-CommitNow: true'
+c alter json '{"drop_all": true}'
+c mutate json @"$HERE/tosca.json"
+c query dql '{
+ nodeTemplates(func: has(tosca.name)) {
+   tosca.name
+ }
+}'

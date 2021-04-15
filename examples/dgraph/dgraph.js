@@ -1,7 +1,7 @@
 
 // See: https://docs.dgraph.io/mutations/#json-mutation-format
 
-clout.exec('tosca.utils');
+clout.exec('tosca.lib.traversal');
 
 tosca.coerce();
 
@@ -14,11 +14,13 @@ for (var vertexId in clout.vertexes) {
 
 	var vertexItem = {uid: '_:clout.vertex.' + vertexId, 'clout:edge': []};
 
-	if (tosca.isTosca(vertex, 'nodeTemplate'))
+	if (tosca.isTosca(vertex, 'NodeTemplate'))
 		fillNodeTemplate(vertexItem, vertex.properties);
 
-	for (var e in vertex.edgesOut)
-		fillEdge(vertexItem, vertex.edgesOut[e]);
+	for (var e = 0, l = vertex.edgesOut.length; e < l; e++) {
+		var edge = vertex.edgesOut[e];
+		fillEdge(vertexItem, edge);
+	}
 
 	vertexItems.push(vertexItem);
 }
@@ -26,7 +28,7 @@ for (var vertexId in clout.vertexes) {
 function fillEdge(item, edge) {
 	var edgeItem = {uid: '_:clout.vertex.' + edge.targetID};
 
-	if (tosca.isTosca(edge, 'relationship'))
+	if (tosca.isTosca(edge, 'Relationship'))
 		fillRelationship(edgeItem, edge.properties);
 
 	item['clout:edge'].push(edgeItem);
@@ -35,12 +37,12 @@ function fillEdge(item, edge) {
 function fillTosca(item, entity, type_, prefix) {
 	if (prefix === undefined)
 		prefix = '';
-	item[prefix + 'tosca:entity'] = type_;
-	item[prefix + 'tosca:name'] = entity.name;
-	item[prefix + 'tosca:description'] = entity.description;
-	item[prefix + 'tosca:types'] = JSON.stringify(entity.types);
-	item[prefix + 'tosca:properties'] = JSON.stringify(entity.properties);
-	item[prefix + 'tosca:attributes'] = JSON.stringify(entity.attributes);
+	item[prefix + 'tosca.entity'] = type_;
+	item[prefix + 'tosca.name'] = entity.name;
+	item[prefix + 'tosca.description'] = entity.description;
+	item[prefix + 'tosca.types'] = JSON.stringify(entity.types);
+	item[prefix + 'tosca.properties'] = JSON.stringify(entity.properties);
+	item[prefix + 'tosca.attributes'] = JSON.stringify(entity.attributes);
 }
 
 function fillNodeTemplate(item, nodeTemplate) {
