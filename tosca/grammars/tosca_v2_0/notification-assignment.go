@@ -67,6 +67,8 @@ func (self *NotificationAssignment) Normalize(normalInterface *normal.Interface)
 		self.Outputs.NormalizeForNodeTemplate(normalInterface.NodeTemplate.ServiceTemplate, normalNotification.Outputs)
 	} else if normalInterface.Relationship != nil {
 		self.Outputs.NormalizeForRelationship(normalInterface.Relationship, normalNotification.Outputs)
+	} else if normalInterface.Group != nil {
+		self.Outputs.NormalizeForGroup(normalInterface.Group.ServiceTemplate, normalNotification.Outputs)
 	}
 
 	return normalNotification

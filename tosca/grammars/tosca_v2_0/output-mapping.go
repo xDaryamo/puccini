@@ -55,6 +55,10 @@ func (self *OutputMapping) RenderForNodeTemplate(nodeTemplate *NodeTemplate) {
 		return
 	}
 
+	// The entity name can be a node template name *or* "SELF"
+	// If it's "SELF" it could be a node template reference *or* a relationship
+	// (but not a group, because a group doesn't have attributes)
+
 	entityName := *self.EntityName
 	if entityName == "SELF" {
 		self.NodeTemplate = nodeTemplate
@@ -80,6 +84,10 @@ func (self *OutputMapping) RenderForRelationship(relationship *RelationshipAssig
 	if (self.EntityName == nil) || (self.AttributeName == nil) {
 		return
 	}
+
+	// The entity name can be a node template name *or* "SELF"
+	// If it's "SELF" it could be a node template reference *or* a relationship
+	// (but not a group, because a group doesn't have attributes)
 
 	entityName := *self.EntityName
 	if entityName == "SELF" {
@@ -113,6 +121,10 @@ func (self *OutputMapping) RenderForGroup() {
 		return
 	}
 
+	// The entity name can be a node template name *or* "SELF"
+	// If it's "SELF" it could be a node template reference *or* a relationship
+	// (but not a group, because a group doesn't have attributes)
+
 	entityName := *self.EntityName
 	if entityName == "SELF" {
 		self.Context.ListChild(0, entityName).ReportValueInvalid("modelable entity name", "cannot be used in groups")
@@ -132,23 +144,30 @@ func (self *OutputMapping) RenderForGroup() {
 	}
 }
 
-func (self *OutputMapping) NormalizeForNodeTemplate(normalServiceTemplate *normal.ServiceTemplate, normalOutputs normal.Outputs) {
+func (self *OutputMapping) NormalizeForNodeTemplate(normalServiceTemplate *normal.ServiceTemplate, normalOutputs normal.Mappings) {
 	if (self.NodeTemplate == nil) || (self.AttributeName == nil) {
 		return
 	}
 
 	if normalTargetNodeTemplate, ok := normalServiceTemplate.NodeTemplates[self.NodeTemplate.Name]; ok {
-		normalOutputs[self.Name] = normalTargetNodeTemplate.NewMapping(*self.AttributeName)
+		normalOutputs[self.Name] = normalTargetNodeTemplate.NewMapping("attribute", *self.AttributeName)
 	}
 }
 
-func (self *OutputMapping) NormalizeForRelationship(normalRelationship *normal.Relationship, normalOutputs normal.Outputs) {
+func (self *OutputMapping) NormalizeForRelationship(normalRelationship *normal.Relationship, normalOutputs normal.Mappings) {
+	if self.AttributeName == nil {
+		return
+	}
+
 	if (self.EntityName != nil) && (*self.EntityName == "SELF") {
-		// TODO
-		//normalOutputs[self.Name] = normalRelationship.NewMapping(*self.AttributeName)
+		normalOutputs[self.Name] = normal.NewMapping("attribute", *self.AttributeName)
 	} else {
 		self.NormalizeForNodeTemplate(normalRelationship.Requirement.NodeTemplate.ServiceTemplate, normalOutputs)
 	}
+}
+
+func (self *OutputMapping) NormalizeForGroup(normalServiceTemplate *normal.ServiceTemplate, normalOutputs normal.Mappings) {
+	self.NormalizeForNodeTemplate(normalServiceTemplate, normalOutputs)
 }
 
 //
@@ -191,14 +210,20 @@ func (self OutputMappings) RenderForGroup() {
 	}
 }
 
-func (self OutputMappings) NormalizeForNodeTemplate(normalServiceTemplate *normal.ServiceTemplate, normalOutputs normal.Outputs) {
+func (self OutputMappings) NormalizeForNodeTemplate(normalServiceTemplate *normal.ServiceTemplate, normalOutputs normal.Mappings) {
 	for _, outputMapping := range self {
 		outputMapping.NormalizeForNodeTemplate(normalServiceTemplate, normalOutputs)
 	}
 }
 
-func (self OutputMappings) NormalizeForRelationship(normalRelationship *normal.Relationship, normalOutputs normal.Outputs) {
+func (self OutputMappings) NormalizeForRelationship(normalRelationship *normal.Relationship, normalOutputs normal.Mappings) {
 	for _, outputMapping := range self {
 		outputMapping.NormalizeForRelationship(normalRelationship, normalOutputs)
+	}
+}
+
+func (self OutputMappings) NormalizeForGroup(normalServiceTemplate *normal.ServiceTemplate, normalOutputs normal.Mappings) {
+	for _, outputMapping := range self {
+		outputMapping.NormalizeForGroup(normalServiceTemplate, normalOutputs)
 	}
 }

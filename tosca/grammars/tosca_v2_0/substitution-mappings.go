@@ -78,54 +78,42 @@ func (self *SubstitutionMappings) Normalize(normalServiceTemplate *normal.Servic
 	}
 
 	for _, mapping := range self.CapabilityMappings {
-		if (mapping.NodeTemplate == nil) || (mapping.CapabilityName == nil) {
-			continue
-		}
-
-		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-			if normalCapability, ok := normalNodeTemplate.Capabilities[*mapping.CapabilityName]; ok {
-				normalSubstitution.CapabilityMappings[normalNodeTemplate] = normalCapability
+		if (mapping.NodeTemplate != nil) && (mapping.CapabilityName != nil) {
+			if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+				normalSubstitution.CapabilityMappings[mapping.Name] = normalNodeTemplate.NewMapping("capability", *mapping.CapabilityName)
 			}
 		}
 	}
 
 	for _, mapping := range self.RequirementMappings {
-		if (mapping.NodeTemplate == nil) || (mapping.RequirementName == nil) {
-			continue
-		}
-
-		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-			normalSubstitution.RequirementMappings[normalNodeTemplate] = *mapping.RequirementName
+		if (mapping.NodeTemplate != nil) && (mapping.RequirementName != nil) {
+			if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+				normalSubstitution.RequirementMappings[mapping.Name] = normalNodeTemplate.NewMapping("requirement", *mapping.RequirementName)
+			}
 		}
 	}
 
 	for _, mapping := range self.PropertyMappings {
-		if (mapping.NodeTemplate == nil) || (mapping.PropertyName == nil) {
-			continue
-		}
-
-		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-			normalServiceTemplate.Substitution.PropertyMappings[normalNodeTemplate] = *mapping.PropertyName
+		if (mapping.NodeTemplate != nil) && (mapping.PropertyName != nil) {
+			if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+				normalSubstitution.PropertyMappings[mapping.Name] = normalNodeTemplate.NewMapping("property", *mapping.PropertyName)
+			}
 		}
 	}
 
 	for _, mapping := range self.AttributeMappings {
-		if (mapping.NodeTemplate == nil) || (mapping.AttributeName == nil) {
-			continue
-		}
-
-		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-			normalServiceTemplate.Substitution.AttributeMappings[normalNodeTemplate] = *mapping.AttributeName
+		if (mapping.NodeTemplate != nil) && (mapping.AttributeName != nil) {
+			if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+				normalSubstitution.AttributeMappings[mapping.Name] = normalNodeTemplate.NewMapping("attribute", *mapping.AttributeName)
+			}
 		}
 	}
 
 	for _, mapping := range self.InterfaceMappings {
-		if (mapping.NodeTemplate == nil) || (mapping.InterfaceName == nil) {
-			continue
-		}
-
-		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-			normalServiceTemplate.Substitution.InterfaceMappings[normalNodeTemplate] = *mapping.InterfaceName
+		if (mapping.NodeTemplate != nil) && (mapping.InterfaceName != nil) {
+			if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
+				normalSubstitution.InterfaceMappings[mapping.Name] = normalNodeTemplate.NewMapping("interface", *mapping.InterfaceName)
+			}
 		}
 	}
 

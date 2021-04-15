@@ -45,7 +45,6 @@ type MarshalableCapability struct {
 	Attributes           Constrainables `json:"attributes" yaml:"attributes"`
 	MinRelationshipCount int64          `json:"minRelationshipCount" yaml:"minRelationshipCount"`
 	MaxRelationshipCount int64          `json:"maxRelationshipCount" yaml:"maxRelationshipCount"`
-	Path                 string         `json:"path" yaml:"path"`
 	Location             *Location      `json:"location" yaml:"location"`
 }
 

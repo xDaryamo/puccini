@@ -298,7 +298,7 @@ function isSubstituted(nodeTemplateName, requirementName) {
 				if (!tosca.isTosca(edge, 'RequirementMapping'))
 					continue;
 
-				if ((edge.target.properties.name === nodeTemplateName) && (edge.properties.requirement === requirementName))
+				if ((edge.target.properties.name === nodeTemplateName) && (edge.properties.target === requirementName))
 					return true;
 			}
 

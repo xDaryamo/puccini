@@ -12,25 +12,43 @@ import (
 
 type Mapping struct {
 	NodeTemplate *NodeTemplate
-	Name         string
+	TargetType   string
+	Target       string
 }
 
-func (self *NodeTemplate) NewMapping(name string) *Mapping {
+func NewMapping(targetType string, target string) *Mapping {
 	return &Mapping{
-		NodeTemplate: self,
-		Name:         name,
+		TargetType: targetType,
+		Target:     target,
 	}
 }
 
-type MarshalableAttributeMapping struct {
-	NodeTemplateName string `json:"nodeTemplateName" yaml:"nodeTemplateName"`
-	Name             string `json:"name" yaml:"name"`
+func (self *NodeTemplate) NewMapping(targetType string, target string) *Mapping {
+	return &Mapping{
+		NodeTemplate: self,
+		TargetType:   targetType,
+		Target:       target,
+	}
+}
+
+type MarshalableMapping struct {
+	NodeTemplateName string `json:"nodeTemplateName,omitempty" yaml:"nodeTemplateName,omitempty"`
+	TargetType       string `json:"targetType" yaml:"targetType"`
+	Target           string `json:"target" yaml:"target"`
 }
 
 func (self *Mapping) Marshalable() interface{} {
-	return &MarshalableAttributeMapping{
-		NodeTemplateName: self.NodeTemplate.Name,
-		Name:             self.Name,
+	if self.NodeTemplate != nil {
+		return &MarshalableMapping{
+			NodeTemplateName: self.NodeTemplate.Name,
+			TargetType:       self.TargetType,
+			Target:           self.Target,
+		}
+	} else {
+		return &MarshalableMapping{
+			TargetType: self.TargetType,
+			Target:     self.Target,
+		}
 	}
 }
 
@@ -53,10 +71,4 @@ func (self *Mapping) MarshalCBOR() ([]byte, error) {
 // Mappings
 //
 
-type Mappings map[*NodeTemplate]*Mapping
-
-//
-// Outputs
-//
-
-type Outputs map[string]*Mapping
+type Mappings map[string]*Mapping

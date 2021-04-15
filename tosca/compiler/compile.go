@@ -237,44 +237,24 @@ func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cl
 		vertex.Properties["type"] = serviceTemplate.Substitution.Type
 		vertex.Properties["typeMetadata"] = serviceTemplate.Substitution.TypeMetadata
 
-		for nodeTemplate, mapping := range serviceTemplate.Substitution.CapabilityMappings {
-			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
-			edge := vertex.NewEdgeTo(nodeTemplateVertex)
-
-			SetMetadata(edge, "CapabilityMapping")
-			edge.Properties["capability"] = mapping.Name
+		for name, mapping := range serviceTemplate.Substitution.CapabilityMappings {
+			NewMappingEdge("Capability", name, mapping, vertex, nodeTemplates)
 		}
 
-		for nodeTemplate, mapping := range serviceTemplate.Substitution.RequirementMappings {
-			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
-			edge := vertex.NewEdgeTo(nodeTemplateVertex)
-
-			SetMetadata(edge, "RequirementMapping")
-			edge.Properties["requirement"] = mapping
+		for name, mapping := range serviceTemplate.Substitution.RequirementMappings {
+			NewMappingEdge("Requirement", name, mapping, vertex, nodeTemplates)
 		}
 
-		for nodeTemplate, mapping := range serviceTemplate.Substitution.PropertyMappings {
-			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
-			edge := vertex.NewEdgeTo(nodeTemplateVertex)
-
-			SetMetadata(edge, "PropertyMapping")
-			edge.Properties["property"] = mapping
+		for name, mapping := range serviceTemplate.Substitution.PropertyMappings {
+			NewMappingEdge("Property", name, mapping, vertex, nodeTemplates)
 		}
 
-		for nodeTemplate, mapping := range serviceTemplate.Substitution.AttributeMappings {
-			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
-			edge := vertex.NewEdgeTo(nodeTemplateVertex)
-
-			SetMetadata(edge, "AttributeMapping")
-			edge.Properties["attribute"] = mapping
+		for name, mapping := range serviceTemplate.Substitution.AttributeMappings {
+			NewMappingEdge("Attribute", name, mapping, vertex, nodeTemplates)
 		}
 
-		for nodeTemplate, mapping := range serviceTemplate.Substitution.InterfaceMappings {
-			nodeTemplateVertex := nodeTemplates[nodeTemplate.Name]
-			edge := vertex.NewEdgeTo(nodeTemplateVertex)
-
-			SetMetadata(edge, "InterfaceMapping")
-			edge.Properties["interface"] = mapping
+		for name, mapping := range serviceTemplate.Substitution.InterfaceMappings {
+			NewMappingEdge("Interface", name, mapping, vertex, nodeTemplates)
 		}
 	}
 
@@ -294,4 +274,13 @@ func SetMetadata(entity cloutpkg.Entity, kind string) {
 	metadata["version"] = VERSION
 	metadata["kind"] = kind
 	entity.GetMetadata()["puccini"] = metadata
+}
+
+func NewMappingEdge(type_ string, name string, mapping *normal.Mapping, substitutionVertex *cloutpkg.Vertex, nodeTemplates map[string]*cloutpkg.Vertex) {
+	nodeTemplateVertex := nodeTemplates[mapping.NodeTemplate.Name]
+	edge := substitutionVertex.NewEdgeTo(nodeTemplateVertex)
+
+	SetMetadata(edge, type_+"Mapping")
+	edge.Properties["name"] = name
+	edge.Properties["target"] = mapping.Target
 }
