@@ -19,31 +19,33 @@ Let's start by compiling a self-contained local file:
 
     puccini-tosca compile examples/tosca/descriptions.yaml
 
-What if the file imports other files? TOSCA `imports` can refer to absolutely located
-files or URLs or to relative paths. Relative paths are processed with the importing file's
-location as root, including Unix-style support for `..` to access the parent directory.
+What if the file imports other files? TOSCA `imports` can refer to either absolute
+URLs or relative URLs ([RFC 1808](https://tools.ietf.org/html/rfc1808)). Note that
+if the URL scheme is not provided it defaults to "file:", so that it can be treated
+as a platform-independent file system path. Also note that relative URLs support
+Unix-like `.` and `..` components, allowing you to refer to resources upwards in the
+directory tree.
 
-Let's compile a local example for OpenStack that has relative imports:
+Let's compile a local example for OpenStack that uses imports (relative URLs):
 
     puccini-tosca compile examples/openstack/hello-world.yaml
 
-Note that you can also use relative paths in TOSCA artifacts (their `file` keyword).
+Note that you can also use relative URLs in TOSCA artifacts (their `file` keyword).
 
 Puccini can also compile directly from a URL. Let's use the same OpenStack example as
 above:
 
     puccini-tosca compile https://raw.githubusercontent.com/tliron/puccini/main/examples/openstack/hello-world.yaml
 
-When reading from a URL the relative imports are processed as if URL's path component were
-a Unix-style path. Indeed the OpenStack example above works whether you access it locally or
-at the URL.
+You'll see that the relative URLs continue to work as expected even though the base
+URL is not on the local filesystem.
 
 Puccini can also compile YAML from stdin:
 
-    examples/tosca/descriptions.yaml | puccini-tosca compile
+    cat examples/tosca/descriptions.yaml | puccini-tosca compile
 
-Though note that a stdin source does not have a path and thus cannot support relative
-imports.
+Be aware that a stdin source does not have a path and thus cannot support relative
+URLs.
 
 For the above examples we referred to a single, root YAML file. However, Puccini can also
 compile a CSAR package (and again, it can be a local file or at a URL). Let's create a
@@ -52,11 +54,11 @@ local CSAR and then compile it:
     puccini-csar openstack.csar examples/openstack
     puccini-tosca compile openstack.csar
 
-The `puccini-csar` tool will zip the entire directory and automatically create a
+The `puccini-csar` tool will archive the entire directory and automatically create a
 "TOSCA-Metadata" section for us, resulting in a compliant CSAR file.
 
-For a CSAR the relative imports refer to the internal structure of the zip archive (note
-that Puccini does *not* unpack the archive into individual files, but rather treats the
+For a CSAR the relative URLs refer to the internal structure of the archive (note that
+Puccini does *not* unpack the archive into individual files, but rather treats the
 entire archive as a self-contained filesystem). So, once again, the same exact OpenStack
 example works whether it's accessed locally, at a URL, or from within a CSAR.
 
@@ -78,7 +80,7 @@ By default the Clout is sent to stdout but you can also output to a file:
 
     puccini-tosca compile examples/tosca/descriptions.yaml --output=clout.yaml
 
-Of course if running in a shell you can also redirect to a file:
+Of course if running in a shell you can also redirect stdout to a file:
 
     puccini-tosca compile examples/tosca/descriptions.yaml > clout.yaml
 
@@ -91,9 +93,19 @@ By default all the log messages go to stderr but we can send them to a file:
     puccini-tosca compile examples/tosca/descriptions.yaml -vv --log=puccini.log
     cat puccini.log
 
+If you only want to see the logs and not the Clout output:
+
+    puccini-tosca compile examples/tosca/descriptions.yaml -vv > /dev/null
+
 To suppress all output (if you're only interested in the return error code):
 
     puccini-tosca compile examples/tosca/descriptions.yaml --quiet
+
+Also note that there is a `puccini-tosca parse` command that provides a lot
+of internal diagnostic information about the language parser. It's generally
+useful for Puccini developers rather than Puccini users, so it is out of scope
+for this quickstart guide. See [here](puccini-tosca/) for more information.
+
 
 
 More on Compilation
@@ -136,6 +148,8 @@ reports:
 
 When you turn off the resolution phase you will indeed see no relationships in the Clout
 (you'll see that the `edgesOut` for all vertexes is an empty list).
+
+Read more about how Puccini implements resolution [here](tosca/compiler/RESOLUTION.md).
 
 
 TOSCA Functions and Constraints
@@ -241,6 +255,8 @@ Note another shortcut for `puccini-tosca compile`: you can use the `--exec` flag
 execute scriptlets during compilation, thus skipping the Clout intermediary:
 
     puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml --exec=assets/tosca/profiles/common/1.0/js/visualize.js
+
+See [here](puccini-clout/) for more information about the `puccini-clout` tool.
 
 
 Why Scriptlets?

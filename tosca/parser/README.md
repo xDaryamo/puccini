@@ -1,5 +1,5 @@
-TOSCA Parser
-============
+Puccini TOSCA Parser
+====================
 
 Optimized for speed via caching and concurrency. Parsing even very big and complex service templates
 is practically instantaneous, delayed at worst only by network and filesystem transfer.

@@ -1,11 +1,68 @@
-Clout: Cloud Topology ("clou-" + "t") Representation Language
-=============================================================
+Clout
+=====
 
-File Format
------------
+Introducing the **clou**d **t**opology ("clou" + "t") representation language, which is, simply put,
+a straightforward and rather generic graph database stored in YAML/JSON/XML/CBOR.
+
+Clout functions as the intermediary format for your deployments. As an analogy, consider a program
+written in the C language. First, you must *compile* the C source into machine code for your
+hardware architecture. Then, you *link* the compiled object, together with various libraries, into a
+deployable executable for a specific target platform. Clout is the compiled object in this analogy.
+If you only care about the final result then you won't see the Clout at all. However, the decoupling
+allows for a more powerful toolchain. For example, some tools might change your Clout after the
+initial compilation (to scale out, to optimize, to add platform hooks, debugging features, etc.) and
+then you just need to "re-link" in order to update your deployment. This can happen without
+requiring you to update your original source design. It may also possible to "de-compile" some cloud
+deployments so that you can generate a Clout without any TOSCA "source code".
+
+
+Design Principles
+-----------------
+
+Clout is essentially a big, unopinionated, implementation-specific dump of vertexes and the edges
+between them with un-typed, non-validated properties. Rule #1 of Clout is that everything and the
+kitchen sink should be in one Clout file. Really, anything goes: specifications, configurations,
+metadata, annotations, source code, documentation, and even text-encoded binaries. (The only
+exception might be that you might want to store security certificates and keys elsewhere.)
+
+In itself Clout is an unremarkable format. Think of it as a way to gather various deployment
+specifications for disparate technologies in one place while allowing for the *relationships*
+(edges) between entities to be specified and annotated. That's the topology.
+
+Clout is not supposed to be human-readable or human-manageable. The idea is to use tools (Clout
+frontends and processors) to deal with its complexity. We have some great ones for you here. For
+example, with Puccini you can use just a little bit of TOSCA to generate a single big Clout file
+that describes a complex Kubernetes service mesh.
+
+If Clout's file size is an issue, it's good to know that Clout is usually eminently compressible,
+comprising just text with quite a lot of repetition.
+
+
+Storage
+-------
+
+Orchestrators may choose to store Clout opaquely, as is, in a key-value database or filesystem.
+This could work well because cloud deployments change infrequently: often all that's needed is to
+retrieve a Clout, parse and lookup data, and possibly update a TOSCA attribute and store it again.
+Iterating many Clouts in sequence this way could be done quickly enough even for large
+environments. Simple solutions are often best.
+
+That said, it could also make sense to store Clout data in a graph database. This would allow for
+sophisticated queries, using languages such [GraphQL](https://graphql.org/) and
+[Gremlin](https://tinkerpop.apache.org/gremlin.html), as well as localized transactional updates.
+This approach could be especially useful for highly composable and dynamic environments in which
+Clouts combine together to form larger topologies and even relate to data coming from other systems.
+
+Graph databases are quite diverse in features and Clout is very flexible, so one schema will not
+fit all. Puccini instead comes with examples: see [storing in Neo4j](examples/neo4j/) and
+[storing in Dgraph](examples/dgraph/).
+
+
+Format
+------
 
 Clout is ["agnostic raw data"](https://github.com/tliron/kutil/tree/master/ard/) that can be stored
-as YAML/JSON/XML/etc.
+as YAML/JSON/XML/CBOR.
 
 ### `version` (string)
 

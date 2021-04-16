@@ -12,20 +12,22 @@ import (
 
 type Mapping struct {
 	NodeTemplate *NodeTemplate
+	Relationship *Relationship
 	TargetType   string
 	Target       string
-}
-
-func NewMapping(targetType string, target string) *Mapping {
-	return &Mapping{
-		TargetType: targetType,
-		Target:     target,
-	}
 }
 
 func (self *NodeTemplate) NewMapping(targetType string, target string) *Mapping {
 	return &Mapping{
 		NodeTemplate: self,
+		TargetType:   targetType,
+		Target:       target,
+	}
+}
+
+func (self *Relationship) NewMapping(targetType string, target string) *Mapping {
+	return &Mapping{
+		Relationship: self,
 		TargetType:   targetType,
 		Target:       target,
 	}

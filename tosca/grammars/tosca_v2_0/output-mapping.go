@@ -61,11 +61,11 @@ func (self *OutputMapping) RenderForNodeTemplate(nodeTemplate *NodeTemplate) {
 
 	entityName := *self.EntityName
 	if entityName == "SELF" {
-		self.NodeTemplate = nodeTemplate
+		self.setNodeTemplate(nodeTemplate)
 	} else {
 		var nodeTemplateType *NodeTemplate
 		if nodeTemplate, ok := self.Context.Namespace.LookupForType(entityName, reflect.TypeOf(nodeTemplateType)); ok {
-			self.NodeTemplate = nodeTemplate.(*NodeTemplate)
+			self.setNodeTemplate(nodeTemplate.(*NodeTemplate))
 		} else {
 			self.Context.ListChild(0, entityName).ReportUnknown("node template")
 		}
@@ -91,23 +91,11 @@ func (self *OutputMapping) RenderForRelationship(relationship *RelationshipAssig
 
 	entityName := *self.EntityName
 	if entityName == "SELF" {
-		self.Relationship = relationship
-
-		// Attributes should already have been rendered
-		attributeName := *self.AttributeName
-		if _, ok := self.Relationship.Attributes[attributeName]; !ok {
-			self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", self.NodeTemplate)
-		}
+		self.setRelationship(relationship)
 	} else {
 		var nodeTemplateType *NodeTemplate
 		if nodeTemplate, ok := self.Context.Namespace.LookupForType(entityName, reflect.TypeOf(nodeTemplateType)); ok {
-			self.NodeTemplate = nodeTemplate.(*NodeTemplate)
-
-			// Attributes should already have been rendered
-			attributeName := *self.AttributeName
-			if _, ok := self.NodeTemplate.Attributes[attributeName]; !ok {
-				self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", self.NodeTemplate)
-			}
+			self.setNodeTemplate(nodeTemplate.(*NodeTemplate))
 		} else {
 			self.Context.ListChild(0, entityName).ReportUnknown("node template")
 		}
@@ -131,16 +119,30 @@ func (self *OutputMapping) RenderForGroup() {
 	} else {
 		var nodeTemplateType *NodeTemplate
 		if nodeTemplate, ok := self.Context.Namespace.LookupForType(entityName, reflect.TypeOf(nodeTemplateType)); ok {
-			self.NodeTemplate = nodeTemplate.(*NodeTemplate)
-
-			// Attributes should already have been rendered
-			attributeName := *self.AttributeName
-			if _, ok := self.NodeTemplate.Attributes[attributeName]; !ok {
-				self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", self.NodeTemplate)
-			}
+			self.setNodeTemplate(nodeTemplate.(*NodeTemplate))
 		} else {
 			self.Context.ListChild(0, entityName).ReportUnknown("node template")
 		}
+	}
+}
+
+func (self *OutputMapping) setNodeTemplate(nodeTemplate *NodeTemplate) {
+	self.NodeTemplate = nodeTemplate
+
+	// Attributes should already have been rendered
+	attributeName := *self.AttributeName
+	if _, ok := self.NodeTemplate.Attributes[attributeName]; !ok {
+		self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", self.NodeTemplate)
+	}
+}
+
+func (self *OutputMapping) setRelationship(relationship *RelationshipAssignment) {
+	self.Relationship = relationship
+
+	// Attributes should already have been rendered
+	attributeName := *self.AttributeName
+	if _, ok := self.Relationship.Attributes[attributeName]; !ok {
+		self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", self.NodeTemplate)
 	}
 }
 
@@ -160,7 +162,10 @@ func (self *OutputMapping) NormalizeForRelationship(normalRelationship *normal.R
 	}
 
 	if (self.EntityName != nil) && (*self.EntityName == "SELF") {
-		normalOutputs[self.Name] = normal.NewMapping("attribute", *self.AttributeName)
+		// Note: relationships are not identifiable, thus there is no way to translate our
+		// self.Relationship reference to the normal.Relationship equivalent; we must
+		// receive it as an argument
+		normalOutputs[self.Name] = normalRelationship.NewMapping("attribute", *self.AttributeName)
 	} else {
 		self.NormalizeForNodeTemplate(normalRelationship.Requirement.NodeTemplate.ServiceTemplate, normalOutputs)
 	}
