@@ -6,13 +6,13 @@ clout.exec('tosca.lib.traversal');
 tosca.coerce();
 
 var vertexItems = [];
-var cloutItem = {'clout:vertex': vertexItems};
+var cloutItem = {'clout.vertex': vertexItems};
 var items = [cloutItem];
 
 for (var vertexId in clout.vertexes) {
 	var vertex = clout.vertexes[vertexId];
 
-	var vertexItem = {uid: '_:clout.vertex.' + vertexId, 'clout:edge': []};
+	var vertexItem = {uid: '_:clout.vertex.' + vertexId, 'clout.edge': []};
 
 	if (tosca.isTosca(vertex, 'NodeTemplate'))
 		fillNodeTemplate(vertexItem, vertex.properties);
@@ -31,7 +31,7 @@ function fillEdge(item, edge) {
 	if (tosca.isTosca(edge, 'Relationship'))
 		fillRelationship(edgeItem, edge.properties);
 
-	item['clout:edge'].push(edgeItem);
+	item['clout.edge'].push(edgeItem);
 }
 
 function fillTosca(item, entity, type_, prefix) {
@@ -59,7 +59,7 @@ function fillNodeTemplate(item, nodeTemplate) {
 
 function fillRelationship(item, relationship) {
 	// As facets
-	fillTosca(item, relationship, 'relationship', 'clout:edge|');
+	fillTosca(item, relationship, 'relationship', 'clout.edge.');
 }
 
 puccini.format = 'json';
