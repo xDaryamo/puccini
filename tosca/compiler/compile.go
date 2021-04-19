@@ -232,10 +232,12 @@ func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cl
 	// Substitution
 	if serviceTemplate.Substitution != nil {
 		vertex := clout.NewVertex(cloutpkg.NewKey())
+		inputs := make(ard.StringMap)
 
 		SetMetadata(vertex, "Substitution")
 		vertex.Properties["type"] = serviceTemplate.Substitution.Type
 		vertex.Properties["typeMetadata"] = serviceTemplate.Substitution.TypeMetadata
+		vertex.Properties["inputs"] = inputs
 
 		for name, mapping := range serviceTemplate.Substitution.CapabilityMappings {
 			NewMappingEdge("Capability", name, mapping, vertex, nodeTemplates)
@@ -246,7 +248,12 @@ func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cl
 		}
 
 		for name, mapping := range serviceTemplate.Substitution.PropertyMappings {
-			NewMappingEdge("Property", name, mapping, vertex, nodeTemplates)
+			if mapping.NodeTemplate != nil {
+				NewMappingEdge("Property", name, mapping, vertex, nodeTemplates)
+			} else {
+				// This is an input mapping
+				inputs[name] = mapping.Target
+			}
 		}
 
 		for name, mapping := range serviceTemplate.Substitution.AttributeMappings {

@@ -17,8 +17,12 @@ type OutputMapping struct {
 	*Entity `name:"output mapping"`
 	Name    string
 
-	EntityName    *string `require:"0"`
-	AttributeName *string `require:"1"`
+	// The entity name can be a node template name *or* "SELF"
+	// If it's "SELF" it could be a node template reference *or* a relationship
+	// (but not a group, because a group doesn't have attributes)
+
+	EntityName    *string
+	AttributeName *string
 
 	NodeTemplate *NodeTemplate           `traverse:"ignore" json:"-" yaml:"-"`
 	Relationship *RelationshipAssignment `traverse:"ignore" json:"-" yaml:"-"`
@@ -55,10 +59,6 @@ func (self *OutputMapping) RenderForNodeTemplate(nodeTemplate *NodeTemplate) {
 		return
 	}
 
-	// The entity name can be a node template name *or* "SELF"
-	// If it's "SELF" it could be a node template reference *or* a relationship
-	// (but not a group, because a group doesn't have attributes)
-
 	entityName := *self.EntityName
 	if entityName == "SELF" {
 		self.setNodeTemplate(nodeTemplate)
@@ -68,13 +68,8 @@ func (self *OutputMapping) RenderForNodeTemplate(nodeTemplate *NodeTemplate) {
 			self.setNodeTemplate(nodeTemplate.(*NodeTemplate))
 		} else {
 			self.Context.ListChild(0, entityName).ReportUnknown("node template")
+			return
 		}
-	}
-
-	// Attributes should already have been rendered
-	attributeName := *self.AttributeName
-	if _, ok := self.NodeTemplate.Attributes[attributeName]; !ok {
-		self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", self.NodeTemplate)
 	}
 }
 
@@ -84,10 +79,6 @@ func (self *OutputMapping) RenderForRelationship(relationship *RelationshipAssig
 	if (self.EntityName == nil) || (self.AttributeName == nil) {
 		return
 	}
-
-	// The entity name can be a node template name *or* "SELF"
-	// If it's "SELF" it could be a node template reference *or* a relationship
-	// (but not a group, because a group doesn't have attributes)
 
 	entityName := *self.EntityName
 	if entityName == "SELF" {
@@ -108,10 +99,6 @@ func (self *OutputMapping) RenderForGroup() {
 	if (self.EntityName == nil) || (self.AttributeName == nil) {
 		return
 	}
-
-	// The entity name can be a node template name *or* "SELF"
-	// If it's "SELF" it could be a node template reference *or* a relationship
-	// (but not a group, because a group doesn't have attributes)
 
 	entityName := *self.EntityName
 	if entityName == "SELF" {

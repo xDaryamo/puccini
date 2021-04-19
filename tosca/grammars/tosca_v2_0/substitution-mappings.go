@@ -62,6 +62,63 @@ func (self *SubstitutionMappings) IsRequirementMapped(nodeTemplate *NodeTemplate
 	return false
 }
 
+func (self *SubstitutionMappings) Render(inputDefinitions ParameterDefinitions) {
+	logRender.Debug("substitution mappings")
+
+	if self.NodeType == nil {
+		return
+	}
+
+	for name, mapping := range self.CapabilityMappings {
+		if definition, ok := self.NodeType.CapabilityDefinitions[name]; ok {
+			if mappedDefinition, ok := mapping.GetCapabilityDefinition(); ok {
+				if (definition.CapabilityType != nil) && (mappedDefinition.CapabilityType != nil) {
+					if !self.Context.Hierarchy.IsCompatible(definition.CapabilityType, mappedDefinition.CapabilityType) {
+						self.Context.ReportIncompatibleType(definition.CapabilityType, mappedDefinition.CapabilityType)
+					}
+				}
+			}
+		} else {
+			mapping.Context.Clone(name).ReportReferenceNotFound("capability", self.NodeType)
+		}
+	}
+
+	for name, mapping := range self.RequirementMappings {
+		if _, ok := self.NodeType.RequirementDefinitions[name]; !ok {
+			mapping.Context.Clone(name).ReportReferenceNotFound("requirement", self.NodeType)
+		}
+	}
+
+	self.PropertyMappings.Render(inputDefinitions)
+	for name, mapping := range self.PropertyMappings {
+		if _, ok := self.NodeType.PropertyDefinitions[name]; !ok {
+			// TODO validate data type
+			mapping.Context.Clone(name).ReportReferenceNotFound("property", self.NodeType)
+		}
+	}
+
+	for name, mapping := range self.AttributeMappings {
+		if _, ok := self.NodeType.AttributeDefinitions[name]; !ok {
+			// TODO validate data type
+			mapping.Context.Clone(name).ReportReferenceNotFound("attribute", self.NodeType)
+		}
+	}
+
+	for name, mapping := range self.InterfaceMappings {
+		if definition, ok := self.NodeType.InterfaceDefinitions[name]; ok {
+			if mappedDefinition, ok := mapping.GetInterfaceDefinition(); ok {
+				if (definition.InterfaceType != nil) && (mappedDefinition.InterfaceType != nil) {
+					if !self.Context.Hierarchy.IsCompatible(definition.InterfaceType, mappedDefinition.InterfaceType) {
+						self.Context.ReportIncompatibleType(definition.InterfaceType, mappedDefinition.InterfaceType)
+					}
+				}
+			}
+		} else {
+			mapping.Context.Clone(name).ReportReferenceNotFound("interface", self.NodeType)
+		}
+	}
+}
+
 func (self *SubstitutionMappings) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Substitution {
 	logNormalize.Debug("substitution mappings")
 
@@ -98,6 +155,8 @@ func (self *SubstitutionMappings) Normalize(normalServiceTemplate *normal.Servic
 			if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
 				normalSubstitution.PropertyMappings[mapping.Name] = normalNodeTemplate.NewMapping("property", *mapping.PropertyName)
 			}
+		} else if mapping.InputName != nil {
+			normalSubstitution.PropertyMappings[mapping.Name] = normal.NewMapping("input", *mapping.InputName)
 		}
 	}
 

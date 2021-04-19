@@ -1,6 +1,8 @@
 package tosca_v2_0
 
 import (
+	"reflect"
+
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -17,10 +19,11 @@ type AttributeMapping struct {
 	*Entity `name:"attribute mapping"`
 	Name    string
 
-	NodeTemplateName *string `require:"0"`
-	AttributeName    *string `require:"1"`
+	NodeTemplateName *string
+	AttributeName    *string
 
-	NodeTemplate *NodeTemplate `lookup:"0,NodeTemplateName" json:"-" yaml:"-"`
+	NodeTemplate *NodeTemplate `traverse:"ignore" json:"-" yaml:"-"`
+	Attribute    *Value        `traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewAttributeMapping(context *tosca.Context) *AttributeMapping {
@@ -51,13 +54,23 @@ func (self *AttributeMapping) GetKey() string {
 func (self *AttributeMapping) Render() {
 	logRender.Debug("attribute mapping")
 
-	if (self.NodeTemplate == nil) || (self.AttributeName == nil) {
+	if (self.NodeTemplateName == nil) || (self.AttributeName == nil) {
+		return
+	}
+
+	nodeTemplateName := *self.NodeTemplateName
+	var nodeTemplateType *NodeTemplate
+	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
+		self.NodeTemplate = nodeTemplate.(*NodeTemplate)
+		self.NodeTemplate.Render()
+	} else {
+		self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")
 		return
 	}
 
 	name := *self.AttributeName
-	self.NodeTemplate.Render()
-	if _, ok := self.NodeTemplate.Attributes[name]; !ok {
+	var ok bool
+	if self.Attribute, ok = self.NodeTemplate.Attributes[name]; !ok {
 		self.Context.ListChild(1, name).ReportReferenceNotFound("attribute", self.NodeTemplate)
 	}
 }

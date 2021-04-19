@@ -17,6 +17,13 @@ type Mapping struct {
 	Target       string
 }
 
+func NewMapping(targetType string, target string) *Mapping {
+	return &Mapping{
+		TargetType: targetType,
+		Target:     target,
+	}
+}
+
 func (self *NodeTemplate) NewMapping(targetType string, target string) *Mapping {
 	return &Mapping{
 		NodeTemplate: self,

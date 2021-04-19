@@ -1,6 +1,8 @@
 package tosca_v2_0
 
 import (
+	"reflect"
+
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -18,10 +20,13 @@ type PropertyMapping struct {
 	*Entity `name:"property mapping"`
 	Name    string
 
-	NodeTemplateName *string `require:"0"`
-	PropertyName     *string `require:"1"`
+	InputName        *string
+	NodeTemplateName *string // deprecated in TOSCA 1.3
+	PropertyName     *string // deprecated in TOSCA 1.3
 
-	NodeTemplate *NodeTemplate `lookup:"0,NodeTemplateName" json:"-" yaml:"-"`
+	InputDefinition *ParameterDefinition `traverse:"ignore" json:"-" yaml:"-"`
+	NodeTemplate    *NodeTemplate        `traverse:"ignore" json:"-" yaml:"-"`
+	Property        *Value               `traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewPropertyMapping(context *tosca.Context) *PropertyMapping {
@@ -35,9 +40,19 @@ func NewPropertyMapping(context *tosca.Context) *PropertyMapping {
 func ReadPropertyMapping(context *tosca.Context) tosca.EntityPtr {
 	self := NewPropertyMapping(context)
 
-	if strings := context.ReadStringListFixed(2); strings != nil {
-		self.NodeTemplateName = &(*strings)[0]
-		self.PropertyName = &(*strings)[1]
+	if strings := context.ReadStringList(); strings != nil {
+		switch len(*strings) {
+		case 1:
+			self.InputName = &(*strings)[0]
+
+		case 2:
+			// Deprecated in TOSCA 1.3
+			self.NodeTemplateName = &(*strings)[0]
+			self.PropertyName = &(*strings)[1]
+
+		default:
+			self.Context.ReportValueMalformed("property mapping", "must be list of 1 or 2 strings")
+		}
 	}
 
 	return self
@@ -48,18 +63,32 @@ func (self *PropertyMapping) GetKey() string {
 	return self.Name
 }
 
-// parser.Renderable interface
-func (self *PropertyMapping) Render() {
+func (self *PropertyMapping) Render(inputDefinitions ParameterDefinitions) {
 	logRender.Debug("property mapping")
 
-	if (self.NodeTemplate == nil) || (self.PropertyName == nil) {
-		return
-	}
+	if self.InputName != nil {
+		inputName := *self.InputName
+		var ok bool
+		if self.InputDefinition, ok = inputDefinitions[inputName]; !ok {
+			self.Context.ListChild(0, inputName).ReportUnknown("input")
+		}
+	} else if (self.NodeTemplateName != nil) && (self.PropertyName != nil) {
+		// Deprecated in TOSCA 1.3
+		nodeTemplateName := *self.NodeTemplateName
+		var nodeTemplateType *NodeTemplate
+		if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
+			self.NodeTemplate = nodeTemplate.(*NodeTemplate)
+			self.NodeTemplate.Render()
+		} else {
+			self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")
+			return
+		}
 
-	name := *self.PropertyName
-	self.NodeTemplate.Render()
-	if _, ok := self.NodeTemplate.Properties[name]; !ok {
-		self.Context.ListChild(1, name).ReportReferenceNotFound("property", self.NodeTemplate)
+		name := *self.PropertyName
+		var ok bool
+		if self.Property, ok = self.NodeTemplate.Properties[name]; !ok {
+			self.Context.ListChild(1, name).ReportReferenceNotFound("property", self.NodeTemplate)
+		}
 	}
 }
 
@@ -68,3 +97,9 @@ func (self *PropertyMapping) Render() {
 //
 
 type PropertyMappings map[string]*PropertyMapping
+
+func (self PropertyMappings) Render(inputDefinitions ParameterDefinitions) {
+	for _, mapping := range self {
+		mapping.Render(inputDefinitions)
+	}
+}

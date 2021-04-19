@@ -1,6 +1,8 @@
 package tosca_v2_0
 
 import (
+	"reflect"
+
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -20,10 +22,11 @@ type CapabilityMapping struct {
 	*Entity `name:"capability mapping"`
 	Name    string
 
-	NodeTemplateName *string `require:"0"`
-	CapabilityName   *string `require:"1"`
+	NodeTemplateName *string
+	CapabilityName   *string
 
-	NodeTemplate *NodeTemplate `lookup:"0,NodeTemplateName" json:"-" yaml:"-"`
+	NodeTemplate *NodeTemplate         `traverse:"ignore" json:"-" yaml:"-"`
+	Capability   *CapabilityAssignment `traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewCapabilityMapping(context *tosca.Context) *CapabilityMapping {
@@ -50,18 +53,35 @@ func (self *CapabilityMapping) GetKey() string {
 	return self.Name
 }
 
+func (self *CapabilityMapping) GetCapabilityDefinition() (*CapabilityDefinition, bool) {
+	if (self.Capability != nil) && (self.NodeTemplate != nil) {
+		return self.Capability.GetDefinition(self.NodeTemplate)
+	} else {
+		return nil, false
+	}
+}
+
 // parser.Renderable interface
 func (self *CapabilityMapping) Render() {
 	logRender.Debug("capability mapping")
 
-	if (self.NodeTemplate == nil) || (self.CapabilityName == nil) {
+	if (self.NodeTemplateName == nil) || (self.CapabilityName == nil) {
+		return
+	}
+
+	nodeTemplateName := *self.NodeTemplateName
+	var nodeTemplateType *NodeTemplate
+	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
+		self.NodeTemplate = nodeTemplate.(*NodeTemplate)
+		self.NodeTemplate.Render()
+	} else {
+		self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")
 		return
 	}
 
 	name := *self.CapabilityName
-	self.NodeTemplate.Render()
-	if _, ok := self.NodeTemplate.Capabilities[name]; !ok {
-		log.Debugf("%s", self.NodeTemplate.Capabilities)
+	var ok bool
+	if self.Capability, ok = self.NodeTemplate.Capabilities[name]; !ok {
 		self.Context.ListChild(1, name).ReportReferenceNotFound("capability", self.NodeTemplate)
 	}
 }

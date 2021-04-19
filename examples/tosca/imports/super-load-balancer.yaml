@@ -6,8 +6,8 @@ node_types:
   SuperLoadBalancer:
     derived_from: tosca:LoadBalancer
     properties:
-      version:
-        type: version
+      redundancy:
+        type: integer
         required: false
     attributes:
       admin_state:

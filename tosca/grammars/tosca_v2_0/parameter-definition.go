@@ -32,7 +32,7 @@ func ReadParameterDefinition(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-func (self *ParameterDefinition) Render(kind string) {
+func (self *ParameterDefinition) Render(kind string, mapped []string) {
 	logRender.Debugf("parameter definition: %s", self.Name)
 
 	if self.DataTypeName == nil {
@@ -44,7 +44,15 @@ func (self *ParameterDefinition) Render(kind string) {
 	}
 
 	if self.Value == nil {
-		if self.IsRequired() {
+		isMapped := false
+		for _, mapped_ := range mapped {
+			if self.Name == mapped_ {
+				isMapped = true
+				break
+			}
+		}
+
+		if !isMapped && self.IsRequired() {
 			self.Context.ReportPropertyRequired(kind)
 			return
 		}
@@ -70,9 +78,9 @@ func (self *ParameterDefinition) Normalize(context *tosca.Context) normal.Constr
 
 type ParameterDefinitions map[string]*ParameterDefinition
 
-func (self ParameterDefinitions) Render(kind string, context *tosca.Context) {
+func (self ParameterDefinitions) Render(kind string, mapped []string, context *tosca.Context) {
 	for _, definition := range self {
-		definition.Render(kind)
+		definition.Render(kind, mapped)
 	}
 }
 

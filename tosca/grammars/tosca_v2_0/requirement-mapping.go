@@ -1,6 +1,8 @@
 package tosca_v2_0
 
 import (
+	"reflect"
+
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -20,10 +22,11 @@ type RequirementMapping struct {
 	*Entity `name:"requirement mapping"`
 	Name    string
 
-	NodeTemplateName *string `require:"0"`
-	RequirementName  *string `require:"1"`
+	NodeTemplateName *string
+	RequirementName  *string
 
-	NodeTemplate *NodeTemplate `lookup:"0,NodeTemplateName" json:"-" yaml:"-"`
+	NodeTemplate *NodeTemplate          `traverse:"ignore" json:"-" yaml:"-"`
+	Requirement  *RequirementAssignment `traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewRequirementMapping(context *tosca.Context) *RequirementMapping {
@@ -50,11 +53,28 @@ func (self *RequirementMapping) GetKey() string {
 	return self.Name
 }
 
+func (self *RequirementMapping) GetRequirementDefinition() (*RequirementDefinition, bool) {
+	if (self.Requirement != nil) && (self.NodeTemplate != nil) {
+		return self.Requirement.GetDefinition(self.NodeTemplate)
+	} else {
+		return nil, false
+	}
+}
+
 // parser.Renderable interface
 func (self *RequirementMapping) Render() {
 	logRender.Debug("requirement mapping")
 
-	if (self.NodeTemplate == nil) || (self.RequirementName == nil) {
+	if (self.NodeTemplateName == nil) || (self.RequirementName == nil) {
+		return
+	}
+
+	nodeTemplateName := *self.NodeTemplateName
+	var nodeTemplateType *NodeTemplate
+	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
+		self.NodeTemplate = nodeTemplate.(*NodeTemplate)
+	} else {
+		self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")
 		return
 	}
 
@@ -67,6 +87,7 @@ func (self *RequirementMapping) Render() {
 				self.Context.ListChild(1, name).ReportReferenceAmbiguous("requirement", self.NodeTemplate)
 				break
 			} else {
+				self.Requirement = requirement
 				found = true
 			}
 		}

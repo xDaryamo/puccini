@@ -2,12 +2,15 @@ Clout
 =====
 
 Introducing the **clou**d **t**opology ("clou" + "t") representation language, which is, simply put,
-a straightforward and rather generic graph database stored in YAML/JSON/XML/CBOR.
+a straightforward and rather generic graph database stored as
+["agnostic raw data"](https://github.com/tliron/kutil/tree/master/ard/), in YAML, JSON, XML, or CBOR.
+By default it will be in YAML.
 
 Clout functions as the intermediary format for your deployments. As an analogy, consider a program
 written in the C language. First, you must *compile* the C source into machine code for your
 hardware architecture. Then, you *link* the compiled object, together with various libraries, into a
 deployable executable for a specific target platform. Clout is the compiled object in this analogy.
+
 If you only care about the final result then you won't see the Clout at all. However, the decoupling
 allows for a more powerful toolchain. For example, some tools might change your Clout after the
 initial compilation (to scale out, to optimize, to add platform hooks, debugging features, etc.) and
@@ -20,22 +23,21 @@ Design Principles
 -----------------
 
 Clout is essentially a big, unopinionated, implementation-specific dump of vertexes and the edges
-between them with un-typed, non-validated properties. Rule #1 of Clout is that everything and the
-kitchen sink should be in one Clout file. Really, anything goes: specifications, configurations,
-metadata, annotations, source code, documentation, and even text-encoded binaries. (The only
-exception might be that you might want to store security certificates and keys elsewhere.)
+between them with un-typed, non-validated properties.
 
 In itself Clout is an unremarkable format. Think of it as a way to gather various deployment
 specifications for disparate technologies in one place while allowing for the *relationships*
 (edges) between entities to be specified and annotated. That's the topology.
 
 Clout is not supposed to be human-readable or human-manageable. The idea is to use tools (Clout
-frontends and processors) to deal with its complexity. We have some great ones for you here. For
-example, with Puccini you can use just a little bit of TOSCA to generate a single big Clout file
-that describes a complex Kubernetes service mesh.
+frontends and processors) to deal with its complexity. For example, with Puccini you can use just
+a little bit of TOSCA to generate a single big Clout file that describes a complex Kubernetes
+service mesh.
 
-If Clout's file size is an issue, it's good to know that Clout is usually eminently compressible,
-comprising just text with quite a lot of repetition.
+Rule #1 of Clout is that everything and the kitchen sink should be in one Clout file. Really, anything
+goes: specifications, configurations, metadata, annotations, source code, documentation, and even
+text-encoded binaries. (The only exception might be that security certificates and keys are best stored
+in a separate vault.)
 
 
 Storage
@@ -58,11 +60,8 @@ fit all. Puccini instead comes with examples: see [storing in Neo4j](examples/ne
 [storing in Dgraph](examples/dgraph/).
 
 
-Format
-------
-
-Clout is ["agnostic raw data"](https://github.com/tliron/kutil/tree/master/ard/) that can be stored
-as YAML/JSON/XML/CBOR.
+Structure
+---------
 
 ### `version` (string)
 

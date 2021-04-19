@@ -14,6 +14,14 @@ imports:
 
 topology_template:
 
+  inputs:
+
+    # This input is mapped to a property in "substitution_mappings"
+    # Thus, we do not have to give it a default value
+    # (even though it is a required input)
+    scale:
+      type: integer
+
   node_templates:
 
     loadbalancer:
@@ -21,7 +29,7 @@ topology_template:
 
     # Both the WebServer and DBMS types derive from SoftwareComponent, meaning that they require a host
     # So normally this service template would fail to parse due to unsatisfied requirements
-    # However, because we are mapping these in "substitution_mappings" Puccini will allow it
+    # However, because we are mapping these in "substitution_mappings", Puccini will allow it
     # (They are expected to be satisfied by a client service template)
 
     admin:
@@ -37,15 +45,18 @@ topology_template:
     node_type: SuperLoadBalancer
     capabilities:
       # Expose the internal loadbalancer node's capability
+      # (The capability types must be compatible)
       client: [ loadbalancer, client ]
     requirements:
       # Expose the requirements of our software components
       admin_host: [ admin, host ]
       db_host: [ db, host ]
     properties:
-      version: [ admin, component_version ]
+      # Properties are mapped to inputs, not node template properties
+      redundancy: [ scale ]
     attributes:
       admin_state: [ admin, state ]
       db_state: [ db, state ]
     interfaces:
+      # (The interface types must be compatible)
       Standard: [ admin, Standard ]

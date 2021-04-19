@@ -1,6 +1,8 @@
 package tosca_v2_0
 
 import (
+	"reflect"
+
 	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 )
@@ -17,10 +19,11 @@ type InterfaceMapping struct {
 	*Entity `name:"interface mapping"`
 	Name    string
 
-	NodeTemplateName *string `require:"0"`
-	InterfaceName    *string `require:"1"`
+	NodeTemplateName *string
+	InterfaceName    *string
 
-	NodeTemplate *NodeTemplate `lookup:"0,NodeTemplateName" json:"-" yaml:"-"`
+	NodeTemplate *NodeTemplate        `traverse:"ignore" json:"-" yaml:"-"`
+	Interface    *InterfaceAssignment `traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewInterfaceMapping(context *tosca.Context) *InterfaceMapping {
@@ -48,17 +51,35 @@ func (self *InterfaceMapping) GetKey() string {
 	return self.Name
 }
 
+func (self *InterfaceMapping) GetInterfaceDefinition() (*InterfaceDefinition, bool) {
+	if (self.Interface != nil) && (self.NodeTemplate != nil) {
+		return self.Interface.GetDefinitionForNodeTemplate(self.NodeTemplate)
+	} else {
+		return nil, false
+	}
+}
+
 // parser.Renderable interface
 func (self *InterfaceMapping) Render() {
 	logRender.Debug("interface mapping")
 
-	if (self.NodeTemplate == nil) || (self.InterfaceName == nil) {
+	if (self.NodeTemplateName == nil) || (self.InterfaceName == nil) {
+		return
+	}
+
+	nodeTemplateName := *self.NodeTemplateName
+	var nodeTemplateType *NodeTemplate
+	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
+		self.NodeTemplate = nodeTemplate.(*NodeTemplate)
+		self.NodeTemplate.Render()
+	} else {
+		self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")
 		return
 	}
 
 	name := *self.InterfaceName
-	self.NodeTemplate.Render()
-	if _, ok := self.NodeTemplate.Interfaces[name]; !ok {
+	var ok bool
+	if self.Interface, ok = self.NodeTemplate.Interfaces[name]; !ok {
 		self.Context.ListChild(1, name).ReportReferenceNotFound("interface", self.NodeTemplate)
 	}
 }

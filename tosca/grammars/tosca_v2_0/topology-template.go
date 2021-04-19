@@ -19,23 +19,23 @@ import (
 type TopologyTemplate struct {
 	*Entity `name:"topology template"`
 
-	Description                *string               `read:"description"`
-	NodeTemplates              NodeTemplates         `read:"node_templates,NodeTemplate"`
-	RelationshipTemplates      RelationshipTemplates `read:"relationship_templates,RelationshipTemplate"`
-	Groups                     Groups                `read:"groups,Group"`
-	Policies                   Policies              `read:"policies,<>Policy"`
-	InputParameterDefinitions  ParameterDefinitions  `read:"inputs,ParameterDefinition"`
-	OutputParameterDefinitions ParameterDefinitions  `read:"outputs,ParameterDefinition"`
-	WorkflowDefinitions        WorkflowDefinitions   `read:"workflows,WorkflowDefinition"`
-	SubstitutionMappings       *SubstitutionMappings `read:"substitution_mappings,SubstitutionMappings"`
+	Description           *string               `read:"description"`
+	NodeTemplates         NodeTemplates         `read:"node_templates,NodeTemplate"`
+	RelationshipTemplates RelationshipTemplates `read:"relationship_templates,RelationshipTemplate"`
+	Groups                Groups                `read:"groups,Group"`
+	Policies              Policies              `read:"policies,<>Policy"`
+	InputDefinitions      ParameterDefinitions  `read:"inputs,ParameterDefinition"`
+	OutputDefinitions     ParameterDefinitions  `read:"outputs,ParameterDefinition"`
+	WorkflowDefinitions   WorkflowDefinitions   `read:"workflows,WorkflowDefinition"`
+	SubstitutionMappings  *SubstitutionMappings `read:"substitution_mappings,SubstitutionMappings"`
 }
 
 func NewTopologyTemplate(context *tosca.Context) *TopologyTemplate {
 	return &TopologyTemplate{
-		Entity:                     NewEntity(context),
-		InputParameterDefinitions:  make(ParameterDefinitions),
-		OutputParameterDefinitions: make(ParameterDefinitions),
-		WorkflowDefinitions:        make(WorkflowDefinitions),
+		Entity:              NewEntity(context),
+		InputDefinitions:    make(ParameterDefinitions),
+		OutputDefinitions:   make(ParameterDefinitions),
+		WorkflowDefinitions: make(WorkflowDefinitions),
 	}
 }
 
@@ -61,7 +61,7 @@ func (self *TopologyTemplate) SetInputs(inputs map[string]ard.Value) {
 	context := self.Context.FieldChild("inputs", nil)
 	for name, data := range inputs {
 		childContext := context.MapChild(name, data)
-		if definition, ok := self.InputParameterDefinitions[name]; ok {
+		if definition, ok := self.InputDefinitions[name]; ok {
 			if definition.DataType != nil {
 				if internalTypeName, ok := definition.DataType.GetInternalTypeName(); ok {
 					if internalTypeName == ard.TypeInteger {
@@ -89,8 +89,22 @@ func (self *TopologyTemplate) SetInputs(inputs map[string]ard.Value) {
 func (self *TopologyTemplate) Render() {
 	logRender.Debug("topology template")
 
-	self.InputParameterDefinitions.Render("input definition", self.Context.FieldChild("inputs", nil))
-	self.OutputParameterDefinitions.Render("output definition", self.Context.FieldChild("outputs", nil))
+	var mappedInputs []string
+
+	if self.SubstitutionMappings != nil {
+		// Substitution mapping rendering has to happen before input rendering
+		// in order to avoid rendering of mapped inputs
+		self.SubstitutionMappings.Render(self.InputDefinitions)
+
+		for _, mapping := range self.SubstitutionMappings.PropertyMappings {
+			if mapping.InputDefinition != nil {
+				mappedInputs = append(mappedInputs, mapping.InputDefinition.Name)
+			}
+		}
+	}
+
+	self.InputDefinitions.Render("input definition", mappedInputs, self.Context.FieldChild("inputs", nil))
+	self.OutputDefinitions.Render("output definition", nil, self.Context.FieldChild("outputs", nil))
 }
 
 func (self *TopologyTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
@@ -104,8 +118,8 @@ func (self *TopologyTemplate) Normalize(normalServiceTemplate *normal.ServiceTem
 		normalServiceTemplate.Description += *self.Description
 	}
 
-	self.InputParameterDefinitions.Normalize(normalServiceTemplate.Inputs, self.Context.FieldChild("inputs", nil))
-	self.OutputParameterDefinitions.Normalize(normalServiceTemplate.Outputs, self.Context.FieldChild("outputs", nil))
+	self.InputDefinitions.Normalize(normalServiceTemplate.Inputs, self.Context.FieldChild("inputs", nil))
+	self.OutputDefinitions.Normalize(normalServiceTemplate.Outputs, self.Context.FieldChild("outputs", nil))
 
 	self.NodeTemplates.Normalize(normalServiceTemplate)
 	self.Groups.Normalize(normalServiceTemplate)
