@@ -7,7 +7,7 @@ For [OpenStack](https://www.openstack.org/) Puccini can generate
 Custom operation artifacts, if included, are deployed to the virtual machines and executed.
 
 Effectively, the combination of TOSCA + Ansible provides an equivalent set of features to
-[Heat](https://docs.openstack.org/heat/stein/)/[Mistral](https://docs.openstack.org/mistral/stein/).
+[Heat](https://docs.openstack.org/heat/wallaby/)/[Mistral](https://docs.openstack.org/mistral/wallaby/).
 However, Ansible is a general-purpose orchestrator that can do a lot more than Heat. The generated
 playbooks comprise roles that can be imported and used in other playbooks, allowing for custom
 orchestration integrations.

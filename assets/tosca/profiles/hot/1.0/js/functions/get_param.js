@@ -1,5 +1,5 @@
 
-// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#get_param]
+// [https://docs.openstack.org/heat/wallaby/template_guide/hot_spec.html#get_param]
 
 clout.exec('tosca.lib.utils');
 

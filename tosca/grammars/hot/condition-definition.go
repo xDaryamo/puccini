@@ -9,7 +9,7 @@ import (
 //
 // ConditionDefinition
 //
-// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#conditions-section]
+// [https://docs.openstack.org/heat/wallaby/template_guide/hot_spec.html#conditions-section]
 //
 
 type ConditionDefinition struct {

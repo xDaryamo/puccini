@@ -14,6 +14,8 @@ var Grammar = tosca.NewGrammar()
 var DefaultScriptletNamespace = tosca.NewScriptletNamespace()
 
 func init() {
+	// https://docs.openstack.org/heat/wallaby/template_guide/hot_spec.html
+	Grammar.RegisterVersion("heat_template_version", "wallaby", "")
 	Grammar.RegisterVersion("heat_template_version", "train", "") // not mentioned in spec, but probably supported
 	Grammar.RegisterVersion("heat_template_version", "stein", "") // not mentioned in spec, but probably supported
 	Grammar.RegisterVersion("heat_template_version", "rocky", "")
@@ -21,6 +23,7 @@ func init() {
 	Grammar.RegisterVersion("heat_template_version", "pike", "")
 	Grammar.RegisterVersion("heat_template_version", "newton", "")
 	Grammar.RegisterVersion("heat_template_version", "ocata", "")
+	Grammar.RegisterVersion("heat_template_version", "2021-04-16", "") // wallaby
 	Grammar.RegisterVersion("heat_template_version", "2018-08-31", "") // train, stein, rocky
 	Grammar.RegisterVersion("heat_template_version", "2018-03-02", "") // queens
 	Grammar.RegisterVersion("heat_template_version", "2017-09-01", "") // pike

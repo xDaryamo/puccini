@@ -67,7 +67,7 @@ Puccini can parse all versions of TOSCA:
 Additionally, Puccini can parse the following TOSCA-like dialects:
 
 * [Cloudify DSL 1.3](https://docs.cloudify.co/5.0.5/developer/blueprints/)
-* [OpenStack Heat HOT 2018-08-31](https://docs.openstack.org/heat/stein/template_guide/hot_guide.html)
+* [OpenStack Heat HOT 2021-04-16](https://docs.openstack.org/heat/wallaby/template_guide/hot_guide.html)
 
 TOSCA is a complex object-oriented language. We put considerable effort into adhering to every
 aspect of the grammar, especially in regards to value type checking and type inheritance contracts,

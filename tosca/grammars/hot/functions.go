@@ -11,7 +11,7 @@ import (
 //
 // Built-in functions
 //
-// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#intrinsic-functions]
+// [https://docs.openstack.org/heat/wallaby/template_guide/hot_spec.html#intrinsic-functions]
 //
 
 var FunctionScriptlets = map[string]string{
@@ -71,7 +71,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 		}
 
 		// The "list_join" function has a nested argument structure that we need to flatten
-		// https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#list-join
+		// https://docs.openstack.org/heat/wallaby/template_guide/hot_spec.html#list-join
 		if name == "list_join" {
 			newArguments := ard.List{originalArguments[0]}
 			for _, argument := range originalArguments[1:] {

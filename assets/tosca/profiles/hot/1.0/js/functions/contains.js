@@ -1,5 +1,5 @@
 
-// [https://docs.openstack.org/heat/stein/template_guide/hot_spec.html#contains]
+// [https://docs.openstack.org/heat/wallaby/template_guide/hot_spec.html#contains]
 
 function evaluate() {
 	return 'TODO';
