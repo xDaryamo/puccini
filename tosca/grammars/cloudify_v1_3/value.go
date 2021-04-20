@@ -19,15 +19,16 @@ type Value struct {
 
 	Description *string
 
-	information *normal.Information
-	rendered    bool
+	Information *normal.Information `traverse:"ignore" json:"-" yaml:"-"`
+
+	rendered bool
 }
 
 func NewValue(context *tosca.Context) *Value {
 	return &Value{
 		Entity:      NewEntity(context),
 		Name:        context.Name,
-		information: normal.NewInformation(),
+		Information: normal.NewInformation(),
 	}
 }
 
@@ -58,15 +59,15 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 	self.rendered = true
 
 	if self.Description != nil {
-		self.information.Description = *self.Description
+		self.Information.Description = *self.Description
 	}
 
 	if definition != nil {
-		self.information.Definition = definition.GetTypeInformation()
+		self.Information.Definition = definition.GetTypeInformation()
 	}
 
 	if dataType != nil {
-		self.information.Type = dataType.GetTypeInformation()
+		self.Information.Type = dataType.GetTypeInformation()
 	}
 
 	if _, ok := self.Context.Data.(*tosca.FunctionCall); ok {
@@ -170,7 +171,7 @@ func (self *Value) normalize(withInformation bool) normal.Constrainable {
 	}
 
 	if withInformation {
-		normalConstrainable.SetInformation(self.information)
+		normalConstrainable.SetInformation(self.Information)
 	}
 
 	return normalConstrainable

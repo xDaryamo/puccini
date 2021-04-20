@@ -91,15 +91,36 @@ func (self *SubstitutionMappings) Render(inputDefinitions ParameterDefinitions) 
 
 	self.PropertyMappings.Render(inputDefinitions)
 	for name, mapping := range self.PropertyMappings {
-		if _, ok := self.NodeType.PropertyDefinitions[name]; !ok {
-			// TODO validate data type
+		if definition, ok := self.NodeType.PropertyDefinitions[name]; ok {
+			if mapping.InputDefinition != nil {
+				// Input mapping
+				if (definition.DataType != nil) && (mapping.InputDefinition.DataType != nil) {
+					if !self.Context.Hierarchy.IsCompatible(definition.DataType, mapping.InputDefinition.DataType) {
+						self.Context.ReportIncompatibleType(definition.DataType, mapping.InputDefinition.DataType)
+					}
+				}
+			} else if mapping.Property != nil {
+				// Property mapping (deprecated in TOSCA 1.3)
+				if (definition.DataType != nil) && (mapping.Property.DataType != nil) {
+					if !self.Context.Hierarchy.IsCompatible(definition.DataType, mapping.Property.DataType) {
+						self.Context.ReportIncompatibleType(definition.DataType, mapping.Property.DataType)
+					}
+				}
+			}
+		} else {
 			mapping.Context.Clone(name).ReportReferenceNotFound("property", self.NodeType)
 		}
 	}
 
+	self.AttributeMappings.EnsureRender()
 	for name, mapping := range self.AttributeMappings {
-		if _, ok := self.NodeType.AttributeDefinitions[name]; !ok {
-			// TODO validate data type
+		if definition, ok := self.NodeType.AttributeDefinitions[name]; ok {
+			if (definition.DataType != nil) && (mapping.Attribute != nil) && (mapping.Attribute.DataType != nil) {
+				if !self.Context.Hierarchy.IsCompatible(definition.DataType, mapping.Attribute.DataType) {
+					self.Context.ReportIncompatibleType(definition.DataType, mapping.Attribute.DataType)
+				}
+			}
+		} else {
 			mapping.Context.Clone(name).ReportReferenceNotFound("attribute", self.NodeType)
 		}
 	}

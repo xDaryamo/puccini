@@ -18,14 +18,14 @@ type Value struct {
 	Constraints Constraints
 	Description *string
 
-	information *normal.Information
+	Information *normal.Information `traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewValue(context *tosca.Context) *Value {
 	return &Value{
 		Entity:      NewEntity(context),
 		Name:        context.Name,
-		information: normal.NewInformation(),
+		Information: normal.NewInformation(),
 	}
 }
 
@@ -72,10 +72,10 @@ func (self *Value) Normalize() normal.Constrainable {
 	}
 
 	if self.Description != nil {
-		self.information.Description = *self.Description
+		self.Information.Description = *self.Description
 	}
 
-	normalConstrainable.SetInformation(self.information)
+	normalConstrainable.SetInformation(self.Information)
 
 	self.Constraints.Normalize(self.Context, normalConstrainable)
 

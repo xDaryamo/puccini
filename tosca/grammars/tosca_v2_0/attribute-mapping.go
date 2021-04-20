@@ -50,8 +50,7 @@ func (self *AttributeMapping) GetKey() string {
 	return self.Name
 }
 
-// parser.Renderable interface
-func (self *AttributeMapping) Render() {
+func (self *AttributeMapping) EnsureRender() {
 	logRender.Debug("attribute mapping")
 
 	if (self.NodeTemplateName == nil) || (self.AttributeName == nil) {
@@ -80,3 +79,9 @@ func (self *AttributeMapping) Render() {
 //
 
 type AttributeMappings map[string]*AttributeMapping
+
+func (self AttributeMappings) EnsureRender() {
+	for _, mapping := range self {
+		mapping.EnsureRender()
+	}
+}

@@ -26,15 +26,17 @@ type Value struct {
 	ConstraintClauses ConstraintClauses
 	Description       *string
 
-	information *normal.Information
-	rendered    bool
+	DataType    *DataType           `traverse:"ignore" json:"-" yaml:"-"`
+	Information *normal.Information `traverse:"ignore" json:"-" yaml:"-"`
+
+	rendered bool
 }
 
 func NewValue(context *tosca.Context) *Value {
 	return &Value{
 		Entity:      NewEntity(context),
 		Name:        context.Name,
-		information: normal.NewInformation(),
+		Information: normal.NewInformation(),
 	}
 }
 
@@ -97,21 +99,23 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 	}
 	self.rendered = true
 
+	self.DataType = dataType
+
 	if definition != nil {
 		definition.Render()
 	}
 
 	if !bare {
 		if self.Description != nil {
-			self.information.Description = *self.Description
+			self.Information.Description = *self.Description
 		}
 
 		if definition != nil {
-			self.information.Definition = definition.GetTypeInformation()
+			self.Information.Definition = definition.GetTypeInformation()
 		}
 
 		if dataType != nil {
-			self.information.Type = dataType.GetTypeInformation()
+			self.Information.Type = dataType.GetTypeInformation()
 		}
 	}
 
@@ -162,9 +166,9 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 						// Information
 						entryDataType := definition.EntrySchema.DataType
 						entryConstraints := definition.EntrySchema.GetConstraints()
-						self.information.Entry = entryDataType.GetTypeInformation()
+						self.Information.Entry = entryDataType.GetTypeInformation()
 						if definition.EntrySchema.Description != nil {
-							self.information.Entry.SchemaDescription = *definition.EntrySchema.Description
+							self.Information.Entry.SchemaDescription = *definition.EntrySchema.Description
 						}
 
 						slice := self.Context.Data.(ard.List)
@@ -185,15 +189,15 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 						// Information
 						keyDataType := definition.KeySchema.DataType
 						keyConstraints := definition.KeySchema.GetConstraints()
-						self.information.Key = keyDataType.GetTypeInformation()
+						self.Information.Key = keyDataType.GetTypeInformation()
 						if definition.KeySchema.Description != nil {
-							self.information.Key.SchemaDescription = *definition.KeySchema.Description
+							self.Information.Key.SchemaDescription = *definition.KeySchema.Description
 						}
 						valueDataType := definition.EntrySchema.DataType
 						valueConstraints := definition.EntrySchema.GetConstraints()
-						self.information.Value = valueDataType.GetTypeInformation()
+						self.Information.Value = valueDataType.GetTypeInformation()
 						if definition.EntrySchema.Description != nil {
-							self.information.Value.SchemaDescription = *definition.EntrySchema.Description
+							self.Information.Value.SchemaDescription = *definition.EntrySchema.Description
 						}
 
 						valueMap := NewValueMap(definition, keyConstraints, valueConstraints)
@@ -257,9 +261,9 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 				}
 
 				// Grab information
-				if value.information != nil {
-					if !value.information.Empty() {
-						self.information.Properties[key] = value.information
+				if value.Information != nil {
+					if !value.Information.Empty() {
+						self.Information.Properties[key] = value.Information
 					}
 				}
 			} else if definition.IsRequired() {
@@ -323,7 +327,7 @@ func (self *Value) normalize(withInformation bool) normal.Constrainable {
 	}
 
 	if withInformation {
-		normalConstrainable.SetInformation(self.information)
+		normalConstrainable.SetInformation(self.Information)
 	}
 
 	self.ConstraintClauses.NormalizeConstrainable(self.Context, normalConstrainable)

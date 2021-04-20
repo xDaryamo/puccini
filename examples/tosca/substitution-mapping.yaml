@@ -45,18 +45,21 @@ topology_template:
     node_type: SuperLoadBalancer
     capabilities:
       # Expose the internal loadbalancer node's capability
-      # (The capability types must be compatible)
+      # The capability types must be compatible
       client: [ loadbalancer, client ]
     requirements:
       # Expose the requirements of our software components
+      # Any requirement can be mapped
       admin_host: [ admin, host ]
       db_host: [ db, host ]
     properties:
-      # Properties are mapped to inputs, not node template properties
+      # Properties are mapped to inputs, *not* node template properties
+      # The data types must be compatible
       redundancy: [ scale ]
     attributes:
+      # The data types must be compatible
       admin_state: [ admin, state ]
       db_state: [ db, state ]
     interfaces:
-      # (The interface types must be compatible)
+      # The interface types must be compatible
       Standard: [ admin, Standard ]
