@@ -11,13 +11,13 @@ data_types:
   tosca.datatypes.nfv.L2AddressData:
     # ERRATUM: TBD
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.3.1
 
   tosca.datatypes.nfv.L3AddressData:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.3.2
     description: >-
@@ -54,7 +54,7 @@ data_types:
 
   tosca.datatypes.nfv.AddressData:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.3.3
     description: >-
@@ -89,7 +89,7 @@ data_types:
 
   tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.3.4
     description: >-
@@ -124,7 +124,7 @@ data_types:
 
   tosca.datatypes.nfv.ConnectivityType:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.3.5
     description: >-
@@ -148,7 +148,7 @@ data_types:
 
   tosca.datatypes.nfv.RequestedAdditionalCapability:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.3.6
     description: >-
@@ -186,7 +186,7 @@ data_types:
 
   tosca.datatypes.nfv.VirtualMemory:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.3.7
     description: >-
@@ -214,7 +214,7 @@ data_types:
 
   tosca.datatypes.nfv.VirtualCpu:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.3.8
     description: >-
@@ -249,7 +249,7 @@ data_types:
 
   tosca.datatypes.nfv.VirtualCpuPinning:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.3.9
     description: >-
@@ -274,7 +274,7 @@ data_types:
 
   tosca.datatypes.nfv.VnfcConfigurableProperties:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.3.10
     # ERRATUM: description is mangled in spec

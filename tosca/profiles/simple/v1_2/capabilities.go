@@ -13,7 +13,7 @@ capability_types:
 
   tosca.capabilities.Root:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.1
     description: >-
@@ -22,7 +22,7 @@ capability_types:
 
   tosca.capabilities.Node:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.2
     description: >-
@@ -31,7 +31,7 @@ capability_types:
 
   tosca.capabilities.Compute:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.3
       role: host
@@ -78,7 +78,7 @@ capability_types:
 
   tosca.capabilities.Network:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.4
     description: >-
@@ -94,7 +94,7 @@ capability_types:
 
   tosca.capabilities.Storage:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.5
     description: >-
@@ -110,7 +110,7 @@ capability_types:
 
   tosca.capabilities.Container:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.6
     description: >-
@@ -120,7 +120,7 @@ capability_types:
 
   tosca.capabilities.Endpoint:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.7
     description: >-
@@ -191,7 +191,7 @@ capability_types:
 
   tosca.capabilities.Endpoint.Public:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.8
     description: >-
@@ -225,7 +225,7 @@ capability_types:
 
   tosca.capabilities.Endpoint.Admin:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.9
     description: >-
@@ -244,7 +244,7 @@ capability_types:
 
   tosca.capabilities.Endpoint.Database:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.10
     description: >-
@@ -254,7 +254,7 @@ capability_types:
 
   tosca.capabilities.Attachment:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.11
     description: >-
@@ -264,7 +264,7 @@ capability_types:
 
   tosca.capabilities.OperatingSystem:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.12
     description: >-
@@ -298,7 +298,7 @@ capability_types:
 
   tosca.capabilities.Scalable:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.13
     description: >-
@@ -329,7 +329,7 @@ capability_types:
 
   tosca.capabilities.network.Bindable:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.5.14
     description: >-
@@ -343,7 +343,7 @@ capability_types:
 
   tosca.capabilities.network.Linkable:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 8.5.3
     description: >-

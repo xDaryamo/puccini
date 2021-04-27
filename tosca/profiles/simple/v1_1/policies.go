@@ -10,7 +10,7 @@ policy_types:
 
   tosca.policies.Root:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       specification.location: 5.11.1
     description: >-
@@ -19,7 +19,7 @@ policy_types:
 
   tosca.policies.Placement:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       specification.location: 5.11.2
     description: >-
@@ -29,7 +29,7 @@ policy_types:
 
   tosca.policies.Scaling:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       specification.location: 5.11.3
     description: >-
@@ -39,7 +39,7 @@ policy_types:
 
   tosca.policies.Update:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       specification.location: 5.11.4
     description: >-
@@ -49,7 +49,7 @@ policy_types:
 
   tosca.policies.Performance:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       specification.location: 5.11.5
     description: >-

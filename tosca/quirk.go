@@ -28,7 +28,7 @@ const QuirkDataTypesStringPermissive Quirk = "data_types.string.permissive"
 // the "$originalString" key, because the literal YAML is not preserved by the YAML parser.
 const QuirkDataTypesTimestampPermissive Quirk = "data_types.timestamp.permissive"
 
-// This will ignore any type that is has the "puccini.normative: 'true'" metadata.
+// This will ignore any type that is has the "tosca.normative: 'true'" metadata.
 const QuirkNamespaceNormativeIgnore Quirk = "namespace.normative.ignore"
 
 // In TOSCA 1.0-1.3 all the normative types have long

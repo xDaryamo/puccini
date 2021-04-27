@@ -78,7 +78,7 @@ data_types:
 
   tosca.datatypes.json?:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-v2.0]'
       specification.location: '?'
     # ERRATUM: typo
@@ -91,7 +91,7 @@ data_types:
 
   tosca.datatypes.xml?:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-v2.0]'
       specification.location: '?'
     # ERRATUM: typo

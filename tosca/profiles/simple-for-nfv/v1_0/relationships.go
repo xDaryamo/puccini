@@ -13,7 +13,7 @@ relationship_types:
 
   tosca.relationships.nfv.VirtualBindsTo:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.7.1
     description: >-
@@ -25,7 +25,7 @@ relationship_types:
   # valid_target_types), so we are using the definition in csd03 section 8.4.2.
   tosca.relationships.nfv.Monitor:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.7.2
     description: >-

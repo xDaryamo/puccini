@@ -23,7 +23,7 @@ These are activated via the `--quirk/-x` switch for
   the "$originalString" key, because the literal YAML is not preserved by the YAML parser.
 
 * **namespace.normative.ignore**: This will ignore any type that is has the
-  "puccini.normative: true" metadata.
+  "tosca.normative: true" metadata.
 
 * **namespace.normative.shortcuts.disable**: In TOSCA 1.0-1.3 all the normative types have long
   names, such as "tosca.nodes.Compute", prefixed names ("tosca:Compute"), and also short names

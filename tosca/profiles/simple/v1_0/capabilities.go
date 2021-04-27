@@ -13,7 +13,7 @@ capability_types:
 
   tosca.capabilities.Root:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.4.1
     description: >-
@@ -22,7 +22,7 @@ capability_types:
 
   tosca.capabilities.Node:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.4.2
     description: >-
@@ -31,7 +31,7 @@ capability_types:
 
   tosca.capabilities.Container:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.4.3
       role: host
@@ -73,7 +73,7 @@ capability_types:
 
   tosca.capabilities.Endpoint:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.4.4
     description: >-
@@ -144,7 +144,7 @@ capability_types:
 
   tosca.capabilities.Endpoint.Public:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.4.5
     description: >-
@@ -178,7 +178,7 @@ capability_types:
 
   tosca.capabilities.Endpoint.Admin:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.4.6
     description: >-
@@ -197,7 +197,7 @@ capability_types:
 
   tosca.capabilities.Endpoint.Database:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.4.7
     description: >-
@@ -207,7 +207,7 @@ capability_types:
 
   tosca.capabilities.Attachment:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.4.8
     description: >-
@@ -217,7 +217,7 @@ capability_types:
 
   tosca.capabilities.OperatingSystem:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.4.9
     description: >-
@@ -251,7 +251,7 @@ capability_types:
 
   tosca.capabilities.Scalable:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.4.10
     description: >-
@@ -282,7 +282,7 @@ capability_types:
 
   tosca.capabilities.network.Bindable:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.4.11
     description: >-
@@ -296,7 +296,7 @@ capability_types:
 
   tosca.capabilities.network.Linkable:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 7.5.3
     description: >-

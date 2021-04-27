@@ -14,7 +14,7 @@ node_types:
 
   tosca.nodes.nfv.VDU.Compute:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.9.2
     description: >-
@@ -109,7 +109,7 @@ node_types:
 
   tosca.nodes.nfv.VDU.VirtualStorage:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.9.3
     description: >-
@@ -143,7 +143,7 @@ node_types:
 
   tosca.nodes.nfv.Cpd:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.9.4
     description: >-
@@ -185,7 +185,7 @@ node_types:
 
   tosca.nodes.nfv.VduCpd:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.9.5
     description: >-
@@ -221,7 +221,7 @@ node_types:
 
   tosca.nodes.nfv.VnfVirtualLinkDesc:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.9.6
     description: >-

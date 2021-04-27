@@ -14,7 +14,7 @@ group_types:
 
   tosca.groups.Root:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.9.1
     description: >-

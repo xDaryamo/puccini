@@ -13,7 +13,7 @@ capability_types:
 
   tosca.capabilities.nfv.VirtualBindable:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.5.1
     description: >-
@@ -23,7 +23,7 @@ capability_types:
 
   tosca.capabilities.nfv.Metric:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.5.2
     description: >-
@@ -33,7 +33,7 @@ capability_types:
 
   tosca.capabilities.nfv.VirtualCompute:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.5.3
     derived_from: tosca.capabilities.Root

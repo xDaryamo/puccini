@@ -4,7 +4,7 @@ interface_types:
 
   tosca.interfaces.Root:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.7.3
     description: >-
@@ -13,7 +13,7 @@ interface_types:
 
   tosca.interfaces.node.lifecycle.Standard:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.7.4
     description: >-
@@ -38,7 +38,7 @@ interface_types:
 
   tosca.interfaces.relationship.Configure:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.7.5
     description: >-

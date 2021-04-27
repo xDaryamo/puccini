@@ -15,7 +15,7 @@ relationship_types:
 
   tosca.relationships.Root:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       specification.location: 5.7.1
     description: >-
@@ -45,7 +45,7 @@ relationship_types:
 
   tosca.relationships.DependsOn:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       specification.location: 5.7.2
     description: >-
@@ -55,7 +55,7 @@ relationship_types:
 
   tosca.relationships.HostedOn:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       specification.location: 5.7.3
       role: host
@@ -66,7 +66,7 @@ relationship_types:
 
   tosca.relationships.ConnectsTo:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       specification.location: 5.7.4
     description: >-
@@ -80,7 +80,7 @@ relationship_types:
 
   tosca.relationships.AttachesTo:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       specification.location: 5.7.5
     description: >-
@@ -112,7 +112,7 @@ relationship_types:
 
   tosca.relationships.RoutesTo:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       specification.location: 5.7.6
     description: >-
@@ -127,7 +127,7 @@ relationship_types:
 
   tosca.relationships.network.LinksTo:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       specification.location: 8.5.4
     description: >-
@@ -138,7 +138,7 @@ relationship_types:
 
   tosca.relationships.network.BindsTo:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.1]'
       specification.location: 8.5.5
     description: >-

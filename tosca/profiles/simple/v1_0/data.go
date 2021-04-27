@@ -101,7 +101,7 @@ data_types:
 
   tosca.datatypes.Root:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.2.1
     description: >-
@@ -110,7 +110,7 @@ data_types:
 
   tosca.datatypes.Credential:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.2.2
     description: >-
@@ -148,7 +148,7 @@ data_types:
 
   tosca.datatypes.network.NetworkInfo:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.2.3
     description: >-
@@ -175,7 +175,7 @@ data_types:
 
   tosca.datatypes.network.PortInfo:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.2.4
     description: >-
@@ -212,7 +212,7 @@ data_types:
 
   tosca.datatypes.network.PortDef:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.2.5
     description: >-
@@ -223,7 +223,7 @@ data_types:
 
   tosca.datatypes.network.PortSpec:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.0]'
       specification.location: 5.2.6
     description: >-

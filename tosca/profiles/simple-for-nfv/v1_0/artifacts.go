@@ -10,7 +10,7 @@ artifact_types:
 
   tosca.artifacts.nfv.SwImage:
     metadata:
-      puccini.normative: 'true'
+      tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
       specification.location: 5.4.1
     derived_from: tosca.artifacts.Deployment.Image
