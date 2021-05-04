@@ -2,6 +2,7 @@ package csar
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"strings"
@@ -27,7 +28,7 @@ type Meta struct {
 	CsarVersion      *Version
 	CreatedBy        string
 	EntryDefinitions string
-	OtherDefinitions string
+	OtherDefinitions []string
 }
 
 func ReadMeta(reader io.Reader) (*Meta, error) {
@@ -69,7 +70,9 @@ func ReadMeta(reader io.Reader) (*Meta, error) {
 
 		case "Other-Definitions":
 			// Added in TOSCA-Meta-File-Version 1.1
-			self.OtherDefinitions = value
+			if self.OtherDefinitions, err = parseStringList(value); err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -116,6 +119,75 @@ func parseMeta(reader io.Reader) (map[string]string, error) {
 	}
 
 	return map_, nil
+}
+
+func parseStringList(value string) ([]string, error) {
+	// Note: The TOSCA specification does not mention the possibility of escaping quotation marks,
+	// but it should obviously be supported. So we are reserving backslashes for escaping.
+	var entries []string
+	var entry bytes.Buffer
+	escaped := false
+	spaced := false
+	quoted := false
+
+	for _, rune_ := range value {
+		if escaped {
+			escaped = false
+			entry.WriteRune(rune_)
+			continue
+		}
+
+		switch rune_ {
+		case '\\':
+			spaced = false
+			escaped = true
+
+		case ' ':
+			// The spec says "a blank space", so we will treat multiple spaces as an error
+			if spaced {
+				return nil, fmt.Errorf("malformed string list, separator must be single space: %s", value)
+			} else {
+				spaced = true
+				entries = append(entries, entry.String())
+				entry.Reset()
+			}
+
+		case '"':
+			spaced = false
+			if quoted {
+				// End quote
+				quoted = false
+				entries = append(entries, entry.String())
+				entry.Reset()
+			} else {
+				// Start quote
+				quoted = true
+			}
+
+		default:
+			spaced = false
+			entry.WriteRune(rune_)
+		}
+	}
+
+	if escaped {
+		return nil, fmt.Errorf("malformed string list, ends with a backslash: %s", value)
+	}
+
+	if spaced {
+		return nil, fmt.Errorf("malformed string list, ends with a space: %s", value)
+	}
+
+	if quoted {
+		return nil, fmt.Errorf("malformed string list, did not close quotation: %s", value)
+	}
+
+	// Last entry
+	if entry_ := entry.String(); len(entry_) > 0 {
+		entries = append(entries, entry_)
+	}
+
+	return entries, nil
 }
 
 func requireMeta(data map[string]string, names ...string) error {

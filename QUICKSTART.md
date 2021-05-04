@@ -67,20 +67,29 @@ Controlling the Output
 ----------------------
 
 The default output format for the Clout is YAML but other formats are supported: JSON
-(and ARD-compatible JSON), XML, and CBOR. Here's JSON:
+(and [ARD](https://github.com/tliron/kutil/tree/master/ard/)-compatible JSON), XML, and
+CBOR. Here's ARD-compatible JSON:
 
-    puccini-tosca compile examples/tosca/descriptions.yaml --format=json
+    puccini-tosca compile examples/tosca/descriptions.yaml --format=cjson
 
-By default the output is, where relevant, prettified and colorized for human readability.
-To disable prettification:
+By default the output is nicely indented and and colorized for human readability. You can
+turn off prettification if you're interested in the most compact output:
 
-    puccini-tosca compile examples/tosca/descriptions.yaml --format=json --pretty=false
+    puccini-tosca compile examples/tosca/descriptions.yaml --pretty=false
 
-By default the Clout is sent to stdout but you can also output to a file:
+Note that colorization will *always* be disabled in contexts that do not support it. In
+other words it will likely only appear in stdout for terminal emulators that support ANSI
+color codes. However, you can also specifically turn off colorization:
+
+    puccini-tosca compile examples/tosca/descriptions.yaml --colorize=false
+
+By default the Clout is sent to stdout but you can also send it to a file (without
+colorization):
 
     puccini-tosca compile examples/tosca/descriptions.yaml --output=clout.yaml
 
-Of course if running in a shell you can also redirect stdout to a file:
+Of course if running in a shell you can also redirect stdout to a file (again, without
+colorization):
 
     puccini-tosca compile examples/tosca/descriptions.yaml > clout.yaml
 
@@ -105,7 +114,6 @@ Also note that there is a `puccini-tosca parse` command that provides a lot
 of internal diagnostic information about the language parser. It's generally
 useful for Puccini developers rather than Puccini users, so it is out of scope
 for this quickstart guide. See [here](puccini-tosca/) for more information.
-
 
 
 More on Compilation

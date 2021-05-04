@@ -12,7 +12,7 @@ git_version
 VERSION=${SHORT_VERSION:1}$SUFFIX
 
 rm --force --recursive "$ROOT/dist/python"
-mkdir --parent "$ROOT/dist/python"
+mkdir --parents "$ROOT/dist/python"
 
 cd "$ROOT/dist/python"
 
