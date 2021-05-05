@@ -50,14 +50,14 @@ setuptools.setup(
     author_email='tal.liron@gmail.com',
     url='https://github.com/tliron/puccini',
     download_url='https://github.com/tliron/puccini/releases',
-    classifiers=[
+    classifiers=(
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: Apache Software License'],
+        'License :: OSI Approved :: Apache Software License'),
 
-    packages=['puccini'],
+    packages=('puccini',),
     package_dir={'puccini': 'puccini'},
     package_data={'puccini': ['libpuccini.so']}, # for bdist
-    install_requires=['ruamel.yaml'],
+    install_requires=('ruamel.yaml',),
 
     distclass=Distribution)

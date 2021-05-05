@@ -31,11 +31,11 @@ if [ "$1" == -i ]; then
 
     rm --recursive --force "$ROOT/dist/python-env"
     # Must use "--system-site-packages" so that Ansible can access localhost on SELinux
-    python3 -m venv --system-site-packages "$ROOT/dist/python-env"
+    python3 -m venv --system-site-packages --upgrade-deps "$ROOT/dist/python-env"
     . "$ROOT/dist/python-env/bin/activate"
-    pip install --upgrade pip
 
-    pip install .
+    python -m pip install wheel
+    python -m pip install .
 
 elif [ "$1" == -p ]; then
 
@@ -47,10 +47,9 @@ elif [ "$1" == -p ]; then
     SDIST=dist/puccini-$VERSION.tar.gz
     BDIST=dist/puccini-$VERSION-$PYTHON_VERSION-$PYTHON_VERSION-$PLATFORM.whl
 
-    python3 -m venv env
+    python3 -m venv --upgrade-deps env
     . env/bin/activate
-    pip install --upgrade pip
-    pip install wheel twine
+    python -m pip install wheel twine
 
     ./setup.py sdist bdist_wheel --plat-name=$PLATFORM
 
@@ -68,9 +67,8 @@ else
 
     # Build sdist only
 
-    python3 -m venv env
+    python3 -m venv --upgrade-deps env
     . env/bin/activate
-    pip install --upgrade pip
 
     ./setup.py sdist
 
