@@ -1,7 +1,7 @@
 # https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html
 
 from ansible.module_utils.basic import AnsibleModule
-import puccini.tosca
+import puccini.tosca, ard
 
 DOCUMENTATION = r'''
 ---
@@ -75,6 +75,7 @@ def run_module():
         except:
             pass
 
+    result = ard.cjson.convert_to(result)
     module.exit_json(**result)
 
 if __name__ == '__main__':

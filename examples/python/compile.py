@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 
-# Note that installing `puccini` will also install `ruamel.yaml` 
+# Note that installing `puccini` will also install `ard` 
 
-import sys, puccini.tosca
-from ruamel.yaml import YAML
-
-yaml = YAML()
+import sys, puccini.tosca, ard
 
 if len(sys.argv) <= 1:
     sys.stderr.write('no URL provided\n')
@@ -15,9 +12,9 @@ url = sys.argv[1]
 
 try:
     clout = puccini.tosca.compile(url)
-    yaml.dump(clout, sys.stdout)
+    ard.write(clout, sys.stdout)
 except puccini.tosca.Problems as e:
     print('Problems:', file=sys.stderr)
     for problem in e.problems:
-        yaml.dump(problem, sys.stderr)
+        ard.write(problem, sys.stderr)
     sys.exit(1)

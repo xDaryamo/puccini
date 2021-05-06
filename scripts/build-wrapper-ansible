@@ -7,12 +7,20 @@ set -e
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 . "$HERE/_env"
 
-SUFFIX=$SUFFIX "$HERE/build-wrapper-python" -i
-. "$ROOT/dist/python-env/bin/activate"
+DIST=$ROOT/dist/ansible-galaxy
+VENV=$ROOT/dist/python-env
 
+rm --force --recursive "$DIST"
+mkdir --parents "$DIST"
+
+# We don't need the Python library to build the Ansible Galaxy collection,
+# however we do want it installed for testing
+SUFFIX=$SUFFIX "$HERE/build-wrapper-python" -e
+
+. "$VENV/bin/activate"
 python -m pip install ansible==3.3.0
 
 ansible-galaxy collection build \
 	"$ROOT/wrappers/ansible/ansible_collections/puccini/tosca" \
-	--output-path "$ROOT/dist/ansible-galaxy" \
+	--output-path "$DIST" \
 	--force

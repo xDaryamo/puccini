@@ -1,3 +1,4 @@
+
 import ctypes
 
 # See: https://medium.com/learning-the-go-programming-language/calling-go-functions-from-other-languages-4c7d8bcc69bf
@@ -11,6 +12,7 @@ class GoString(ctypes.Structure):
 
     def __str__(self):
         return self.p[:self.n].decode() if self.p else ''
+
 
 def to_c_char_p(s):
     return ctypes.c_char_p(str.encode(s))

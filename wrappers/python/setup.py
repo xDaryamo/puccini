@@ -7,11 +7,13 @@
 
 import os, os.path, setuptools, subprocess, tempfile, shutil
 
-with open(os.path.join(os.path.dirname(__file__), 'VERSION')) as f:
-    version = f.read()
+with open(os.path.join(os.path.dirname(__file__), 'puccini', '__init__.py')) as f:
+    globals_ = {}
+    exec(f.read(), globals_)
+    version = globals_['__version__']
 
-with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
-    readme = f.read()
+with open(os.path.join(os.path.dirname(__file__), 'description.md')) as f:
+    description = f.read()
 
 go_version = os.environ.get('PUCCINI_GO_VERSION', '1.16')
 root = os.path.abspath(os.path.dirname(__file__)).replace('"', '\\"')
@@ -44,7 +46,8 @@ setuptools.setup(
     name='puccini',
     version=version,
     description='Puccini',
-    long_description=readme,
+    long_description=description,
+    long_description_content_type='text/markdown',
     license='Apache License 2.0',
     author='Tal Liron',
     author_email='tal.liron@gmail.com',
@@ -58,6 +61,6 @@ setuptools.setup(
     packages=('puccini',),
     package_dir={'puccini': 'puccini'},
     package_data={'puccini': ['libpuccini.so']}, # for bdist
-    install_requires=('ruamel.yaml',),
+    install_requires=('ard',),
 
     distclass=Distribution)

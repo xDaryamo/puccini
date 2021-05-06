@@ -7,14 +7,20 @@ set -e
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 . "$HERE/_env"
 
+DIST=$ROOT/dist/python
+VENV=$ROOT/dist/python-env
+
+PYTHON_VERSION=cp39 # CPython 3.9
+PLATFORM=manylinux1_x86_64 # default is linux_x86_64, which is not widely used
+
 git_version
 
 VERSION=${SHORT_VERSION:1}$SUFFIX
 
-rm --force --recursive "$ROOT/dist/python"
-mkdir --parents "$ROOT/dist/python"
+rm --force --recursive "$DIST"
+mkdir --parents "$DIST"
 
-cd "$ROOT/dist/python"
+cd "$DIST"
 
 rsync --recursive "$ROOT/wrappers/python"/* .
 rsync "$ROOT/go.mod" "$ROOT/go.sum" puccini/go-source/
@@ -23,53 +29,52 @@ rsync --recursive "$ROOT/clout" puccini/go-source/
 rsync --recursive "$ROOT/puccini-tosca" puccini/go-source/
 
 echo "__version__ = '$VERSION'" > puccini/__init__.py
-echo -n "$VERSION" > VERSION
 
-if [ "$1" == -i ]; then
+rm --recursive --force "$VENV"
+# Must use "--system-site-packages" so that Ansible can access localhost on SELinux
+python3 -m venv --system-site-packages --upgrade-deps "$VENV"
+. "$VENV/bin/activate"
+python -m pip install wheel
 
-    # Install
+if [ "$1" == -e ]; then
 
-    rm --recursive --force "$ROOT/dist/python-env"
-    # Must use "--system-site-packages" so that Ansible can access localhost on SELinux
-    python3 -m venv --system-site-packages --upgrade-deps "$ROOT/dist/python-env"
-    . "$ROOT/dist/python-env/bin/activate"
+    # Install editable
+    python -m pip install --editable .
 
-    python -m pip install wheel
-    python -m pip install .
+else
 
-elif [ "$1" == -p ]; then
-
-    # Publish
-
-    PYTHON_VERSION=cp39 # CPython 3.9
-    PLATFORM=manylinux1_x86_64 # default is linux_x86_64, which is not widely used
+    # Build
+    ./setup.py sdist bdist_wheel --plat-name=$PLATFORM
 
     SDIST=dist/puccini-$VERSION.tar.gz
     BDIST=dist/puccini-$VERSION-$PYTHON_VERSION-$PYTHON_VERSION-$PLATFORM.whl
 
-    python3 -m venv --upgrade-deps env
-    . env/bin/activate
-    python -m pip install wheel twine
+    if [ "$1" == -s ]; then
 
-    ./setup.py sdist bdist_wheel --plat-name=$PLATFORM
+        # Install sdist
+        python -m pip install "$SDIST"
 
-    gpg --detach-sign --armor --yes "$SDIST"
-    gpg --detach-sign --armor --yes "$BDIST"
+    elif [ "$1" == -b ]; then
 
-    # Upload to PyPI
-    twine upload \
-        "$SDIST" \
-        "$SDIST.asc" \
-        "$BDIST" \
-        "$BDIST.asc"
+        # Install bdist
+        python -m pip install "$BDIST"
 
-else
+    elif [ "$1" == -p ]; then
 
-    # Build sdist only
+        # Publish
 
-    python3 -m venv --upgrade-deps env
-    . env/bin/activate
+        python -m pip install twine
 
-    ./setup.py sdist
+        gpg --detach-sign --armor --yes "$SDIST"
+        gpg --detach-sign --armor --yes "$BDIST"
+
+        # Upload to PyPI
+        twine upload \
+            "$SDIST" \
+            "$SDIST.asc" \
+            "$BDIST" \
+            "$BDIST.asc"
+
+    fi
 
 fi

@@ -5,10 +5,7 @@ from ansible.errors import AnsibleError, AnsibleParserError
 from ansible.module_utils.common._collections_compat import MutableMapping
 from ansible.module_utils._text import to_text
 from ansible.plugins.inventory import BaseInventoryPlugin
-from ruamel.yaml import YAML
-import puccini.tosca
-
-yaml = YAML()
+import puccini.tosca, ard
 
 class InventoryModule(BaseInventoryPlugin):
 
@@ -27,10 +24,10 @@ class InventoryModule(BaseInventoryPlugin):
         super(InventoryModule, self).parse(inventory, loader, path, cache)
 
         try:
-            # The built-in loader uses ruamel-incompatible data types
+            # Don't use the built-in loader (it uses ruamel.yaml-incompatible classes)
             #data = self.loader.load_from_file(path, cache=False)
             with open(path, 'r') as f:
-                data = yaml.load(f)
+                data = ard.read(f)
         except Exception as e:
             raise AnsibleParserError(e)
 

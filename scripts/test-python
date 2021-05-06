@@ -4,7 +4,10 @@ set -e
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 . "$HERE/_env"
 
-SUFFIX=$SUFFIX "$HERE/build-wrapper-python" -i
+# Test sdist by default
+FLAG=${1:--s}
+
+SUFFIX=$SUFFIX "$HERE/build-wrapper-python" "$FLAG"
 . "$ROOT/dist/python-env/bin/activate"
 
 "$ROOT/examples/python/compile.py" "$ROOT/examples/tosca/data-types.yaml" "$@"
