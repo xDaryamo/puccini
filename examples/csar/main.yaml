@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+metadata:
+
+  template_name: CSAR Main Example
+  template_author: Puccini
+
+imports:
+
+- namespace_prefix: cloud
+  file: cloud/profile.yaml
+
+topology_template:
+
+  node_templates:
+
+    main_server:
+      type: cloud:Server

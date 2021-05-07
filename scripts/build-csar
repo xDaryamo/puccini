@@ -8,5 +8,6 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 
 mkdir --parents "$ROOT/dist"
 
-ENTRY_DEFINITIONS=hello-world.yaml \
-"$ROOT/puccini-csar" "$ROOT/dist/openstack.csar" "$ROOT/examples/openstack"
+ENTRY_DEFINITIONS=main.yaml \
+OTHER_DEFINITIONS='"other 1.yaml" other\ 2.yaml' \
+"$ROOT/puccini-csar" "$ROOT/dist/cloud.csar" "$ROOT/examples/csar"

@@ -87,7 +87,7 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 
 	// Phase 1: Read
 	if stopAtPhase >= 1 {
-		ok := context.ReadRoot(url_)
+		ok := context.ReadRoot(url_, template)
 
 		context.MergeProblems()
 		problems = context.GetProblems()

@@ -6,4 +6,6 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 
 "$HERE/build-csar"
 
-puccini-tosca compile "$ROOT/dist/openstack.csar" "$@"
+puccini-tosca compile "$ROOT/dist/cloud.csar" "$@"
+puccini-tosca compile "$ROOT/dist/cloud.csar" --template="other 1.yaml" "$@"
+puccini-tosca compile "$ROOT/dist/cloud.csar" --template=2 "$@"

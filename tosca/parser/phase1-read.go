@@ -13,7 +13,7 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-func (self *Context) ReadRoot(url urlpkg.URL) bool {
+func (self *Context) ReadRoot(url urlpkg.URL, template string) bool {
 	toscaContext := tosca.NewContext(self.Stylist, self.Quirks)
 
 	toscaContext.URL = url
@@ -21,7 +21,7 @@ func (self *Context) ReadRoot(url urlpkg.URL) bool {
 	var ok bool
 
 	self.WaitGroup.Add(1)
-	self.Root, ok = self.read(nil, toscaContext, nil, nil, "$Root")
+	self.Root, ok = self.read(nil, toscaContext, nil, nil, "$Root", template)
 	self.WaitGroup.Wait()
 
 	sort.Sort(self.Units)
@@ -31,7 +31,7 @@ func (self *Context) ReadRoot(url urlpkg.URL) bool {
 
 var readCache sync.Map // entityPtr or Promise
 
-func (self *Context) read(promise Promise, toscaContext *tosca.Context, container *Unit, nameTransformer tosca.NameTransformer, readerName string) (*Unit, bool) {
+func (self *Context) read(promise Promise, toscaContext *tosca.Context, container *Unit, nameTransformer tosca.NameTransformer, readerName string, template string) (*Unit, bool) {
 	defer self.WaitGroup.Done()
 	if promise != nil {
 		// For the goroutines waiting for our cached entityPtr
@@ -43,7 +43,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 	switch toscaContext.URL.Format() {
 	case "csar", "zip":
 		var err error
-		if toscaContext.URL, err = csar.GetRootURL(toscaContext.URL); err != nil {
+		if toscaContext.URL, err = csar.GetURL(toscaContext.URL, template); err != nil {
 			toscaContext.ReportError(err)
 			unit := NewUnitNoEntity(toscaContext, container, nameTransformer)
 			self.AddUnit(unit)
@@ -142,7 +142,7 @@ func (self *Context) goReadImports(container *Unit) {
 
 			// Read (concurrently)
 			self.WaitGroup.Add(1)
-			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, "$Unit")
+			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, "$Unit", "")
 		}
 	}
 }

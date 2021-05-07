@@ -146,10 +146,14 @@ func parseStringList(value string) ([]string, error) {
 			// The spec says "a blank space", so we will treat multiple spaces as an error
 			if spaced {
 				return nil, fmt.Errorf("malformed string list, separator must be single space: %s", value)
+			} else if quoted {
+				entry.WriteRune(rune_)
 			} else {
 				spaced = true
-				entries = append(entries, entry.String())
-				entry.Reset()
+				if entry_ := entry.String(); len(entry_) > 0 {
+					entries = append(entries, entry_)
+					entry.Reset()
+				}
 			}
 
 		case '"':
@@ -157,8 +161,10 @@ func parseStringList(value string) ([]string, error) {
 			if quoted {
 				// End quote
 				quoted = false
-				entries = append(entries, entry.String())
-				entry.Reset()
+				if entry_ := entry.String(); len(entry_) > 0 {
+					entries = append(entries, entry_)
+					entry.Reset()
+				}
 			} else {
 				// Start quote
 				quoted = true

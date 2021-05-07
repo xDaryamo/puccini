@@ -15,7 +15,7 @@ func Parse(url urlpkg.URL, stylist *terminal.Stylist, quirks tosca.Quirks, input
 	context := NewContext(stylist, quirks)
 
 	// Phase 1: Read
-	ok := context.ReadRoot(url)
+	ok := context.ReadRoot(url, "")
 
 	context.MergeProblems()
 	problems := context.GetProblems()
