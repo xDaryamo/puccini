@@ -63,11 +63,44 @@ entire archive as a self-contained filesystem). So, once again, the same exact O
 example works whether it's accessed locally, at a URL, or from within a CSAR.
 
 
+Working with CSARs
+------------------
+
+The CSAR format supports "Other-Definitions" metadata to specify additional service
+templates beyond than the root "Entry-Definitions". To build the example:
+
+    ENTRY_DEFINITIONS=main.yaml \
+    OTHER_DEFINITIONS='"other 1.yaml" "other 2.yaml"' \
+    puccini-csar cloud.csar examples/csar
+
+You can use the `meta` command to validate and extract the CSAR metadata:
+
+    puccini-tosca meta cloud.csar
+
+When compiling you can use the `--template` flag to select a non-root service template.
+The flag can accept a valid "Other-Definitions" path, like so:
+
+    puccini-tosca compile cloud.csar --template="other 1.yaml"
+
+It can also accept a number, where "0" would be the root service template, "1"
+would be the first "Other-Definitions", and so on:
+
+    puccini-tosca compile cloud.csar --template=2
+
+Puccini also supports a "zip:" prefix scheme for URLs, allowing you to refer to an
+entry within a zip file such as a CSAR. Any valid URL can follow the prefix, whether
+it's a local file URL, HTTP, etc., and then add a "!" to refer to a path within the
+zip. Note that for files it does require absolute file system paths. Also note that in
+bash you need to escape the "!" character. Example:
+
+    puccini-tosca compile zip:$PWD/cloud.csar\!main.yaml
+
+
 Controlling the Output
 ----------------------
 
-The default output format for the Clout is YAML but other formats are supported: JSON
-(and [ARD](https://github.com/tliron/kutil/tree/master/ard/)-compatible JSON), XML, and
+The default output format is YAML but other formats are supported: JSON (and
+[ARD](https://github.com/tliron/kutil/tree/master/ard/)-compatible JSON), XML, and
 CBOR. Here's ARD-compatible JSON:
 
     puccini-tosca compile examples/tosca/descriptions.yaml --format=cjson
@@ -83,7 +116,7 @@ color codes. However, you can also specifically turn off colorization:
 
     puccini-tosca compile examples/tosca/descriptions.yaml --colorize=false
 
-By default the Clout is sent to stdout but you can also send it to a file (without
+By default the output is sent to stdout but you can also send it to a file (without
 colorization):
 
     puccini-tosca compile examples/tosca/descriptions.yaml --output=clout.yaml

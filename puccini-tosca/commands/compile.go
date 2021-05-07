@@ -19,7 +19,7 @@ var arguments map[string]string
 
 func init() {
 	rootCommand.AddCommand(compileCommand)
-	compileCommand.Flags().StringVarP(&template, "template", "t", "", "select service template (leave empty for root, or use \"all\", path, or integer index)")
+	compileCommand.Flags().StringVarP(&template, "template", "t", "", "select service template in CSAR (leave empty for root, or use \"all\", path, or integer index)")
 	compileCommand.Flags().StringToStringVarP(&inputs, "input", "i", nil, "specify input (format is name=value)")
 	compileCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
 	compileCommand.Flags().StringVarP(&output, "output", "o", "", "output Clout to file (leave empty stdout)")

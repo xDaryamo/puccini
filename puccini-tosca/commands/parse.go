@@ -28,7 +28,7 @@ var inputValues = make(map[string]interface{})
 
 func init() {
 	rootCommand.AddCommand(parseCommand)
-	parseCommand.Flags().StringVarP(&template, "template", "t", "", "select service template (leave empty for root, or use path or integer index)")
+	parseCommand.Flags().StringVarP(&template, "template", "t", "", "select service template in CSAR (leave empty for root, or use path or integer index)")
 	parseCommand.Flags().StringToStringVarP(&inputs, "input", "i", nil, "specify input (format is name=value)")
 	parseCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
 	parseCommand.Flags().Uint32VarP(&stopAtPhase, "stop", "s", 5, "parser phase at which to end")

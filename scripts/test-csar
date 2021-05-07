@@ -9,3 +9,4 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 puccini-tosca compile "$ROOT/dist/cloud.csar" "$@"
 puccini-tosca compile "$ROOT/dist/cloud.csar" --template="other 1.yaml" "$@"
 puccini-tosca compile "$ROOT/dist/cloud.csar" --template=2 "$@"
+puccini-tosca meta "$ROOT/dist/cloud.csar"

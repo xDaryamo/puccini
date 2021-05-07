@@ -24,11 +24,11 @@ var CsarVersions = []Version{{1, 1}}
 //   https://docs.oasis-open.org/tosca/TOSCA/v1.0/TOSCA-v1.0.html#_Toc356403711
 
 type Meta struct {
-	Version          *Version
-	CsarVersion      *Version
-	CreatedBy        string
-	EntryDefinitions string
-	OtherDefinitions []string
+	Version          *Version `yaml:"version" json:"version"`
+	CsarVersion      *Version `yaml:"csarVersion" json:"csarVersion"`
+	CreatedBy        string   `yaml:"createdBy" json:"createdBy"`
+	EntryDefinitions string   `yaml:"entryDefinitions" json:"entryDefinitions"`
+	OtherDefinitions []string `yaml:"otherDefinitions" json:"otherDefinitions"`
 }
 
 func ReadMeta(reader io.Reader) (*Meta, error) {
