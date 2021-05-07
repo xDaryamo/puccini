@@ -10,23 +10,18 @@ that adds that type information. You would need specialized code to be able to c
 XML output uses a bespoke structure for maps and lists, which also must be specially consumed.
 (The `puccini-clout` tool supports all these formats as input.)
 
-For YAML you can add the additional `--strict/-y` switch to output a stricter YAML, which adds
+For YAML you can add the additional `--strict/-y` flag to output a stricter YAML, which adds
 scalar type tags (such as `!!str`, `!!int`, `!!timestamp`) and outputs all strings in double quotes
 with no `|` or `>` notations. This is useful if you are consuming the YAML output with a
 non-compliant or buggy parser.
 
-Another YAML-specific switch is `--timestamps`. By default Puccini will not allow the YAML
-"!!timestamp" type in its output. This type was included in YAML 1.1 but made optional in YAML 1.2.
-Most YAML parsers should support it, but in case your YAML 1.2 parser doesn't you can disable this
-feature by setting this switch to false, in which case a canonical ISO-8601 (RFC-3339) string will
-be output instead.
-
-The `--pretty` switch (enabled by default) attempts a more human-readable output, with indentation
-and color highlighting in terminals. Disable this switch for a more compact output.
+Another YAML-specific flag is `--timestamps/-w`. By default Puccini will not allow the YAML
+`!!timestamp` type in its output, instead emitting a canonical ISO-8601 (RFC-3339) string.
+Set this flag to true to emit `!!timestamp`.
 
 ### TOSCA Quirks
 
-**pucini-tosca** supports "quirks", via the `--quirk/-x` switch, which are variations on the default
+**pucini-tosca** supports "quirks", via the `--quirk/-x` flag, which are variations on the default
 grammar rules. The reason this is required is unfortunate: the low quality of the TOSCA spec,
 riddled as it is with gaps, inconsistencies, and errors, means that there's too much room for
 varying interpretations of the spec as well as missing functionality. Puccini aims to adhere as
@@ -49,7 +44,7 @@ See the [quickstart guide](../QUICKSTART.md) for more detail.
 -------
 
 If you need more diagnostics for TOSCA parsing use the `parse` command. It works similarly to
-`compile` but does not emit Clout. Instead, it provides you various switches for examining the
+`compile` but does not emit Clout. Instead, it provides you various flages for examining the
 internal workings of Puccini's TOSCA parser.
 
 Use `--stop/-s` to specify a [phase](../tosca/parser/) (1-5) at which you wish the parser to stop.
@@ -66,12 +61,12 @@ using ",", e.g. `-d 2,3,4`. Per phase you will see:
   type hierarchy.
 * Phase 4: Inheritance. A tree of all inheritance tasks and their dependencies by path.  
 * Phase 5: Rendering. Dumps the rendered entities.
-  More useful, perhaps, would be the `--filter/-t` switch (see below).
+  More useful, perhaps, would be the `--filter/-r` flag (see below).
 
-The `--filter/-t` switch can be used to filter for specific parsed entities. Each entity is given a
+The `--filter/-r` flag can be used to filter for specific parsed entities. Each entity is given a
 path that more-or-less follows JSON. For example, a path can be:
 
     topology_template.node_templates["store"].properties["name"]
 
-The switch will search for all paths that contains your string, e.g. `-t properties`. You can even
-include one or more "*" wildcards, e.g. `-t 'node*properties*data'`.
+The flag will search for all paths that contains your string, e.g. `-r properties`. You can even
+include one or more "*" wildcards, e.g. `-r 'node*properties*data'`.

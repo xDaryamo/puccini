@@ -7,7 +7,7 @@ puccini-clout
 Execute a JavaScript scriptlet embedded in a Clout. The optional input is a filesystem path or URL
 to a Clout file. If no input is provided will attempt to read YAML from stdin. By default the output
 (assuming the scriptlet generates output) will be output to stdout, but you can use the `--output/-o`
-switch to specify a file (or direct to a file in the shell via `>`).
+flag to specify a file (or direct to a file in the shell via `>`).
 
 `exec` creates a specialized JavaScript environment in which to run the code, providing  access to
 the parsed Clout structure as well as a few helper functions.

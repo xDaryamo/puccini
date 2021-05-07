@@ -17,6 +17,7 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
+var template string
 var inputs map[string]string
 var inputsUrl string
 var stopAtPhase uint32
@@ -27,11 +28,12 @@ var inputValues = make(map[string]interface{})
 
 func init() {
 	rootCommand.AddCommand(parseCommand)
+	parseCommand.Flags().StringVarP(&template, "template", "t", "", "select service template (leave empty for root, or use path or integer index)")
 	parseCommand.Flags().StringToStringVarP(&inputs, "input", "i", nil, "specify input (format is name=value)")
 	parseCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
 	parseCommand.Flags().Uint32VarP(&stopAtPhase, "stop", "s", 5, "parser phase at which to end")
 	parseCommand.Flags().UintSliceVarP(&dumpPhases, "dump", "d", nil, "dump phase internals")
-	parseCommand.Flags().StringVarP(&filter, "filter", "t", "", "filter output by entity path; use '*' for wildcard matching (disables --stop and --dump)")
+	parseCommand.Flags().StringVarP(&filter, "filter", "r", "", "filter output by entity path; use '*' for wildcard matching (disables --stop and --dump)")
 }
 
 var parseCommand = &cobra.Command{

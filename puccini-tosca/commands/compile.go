@@ -19,9 +19,10 @@ var arguments map[string]string
 
 func init() {
 	rootCommand.AddCommand(compileCommand)
+	compileCommand.Flags().StringVarP(&template, "template", "t", "", "select service template (leave empty for root, or use \"all\", path, or integer index)")
 	compileCommand.Flags().StringToStringVarP(&inputs, "input", "i", nil, "specify input (format is name=value)")
 	compileCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
-	compileCommand.Flags().StringVarP(&output, "output", "o", "", "output Clout to file (default is stdout)")
+	compileCommand.Flags().StringVarP(&output, "output", "o", "", "output Clout to file (leave empty stdout)")
 	compileCommand.Flags().BoolVarP(&resolve, "resolve", "r", true, "resolves the topology (attempts to satisfy all requirements with capabilities)")
 	compileCommand.Flags().BoolVarP(&coerce, "coerce", "c", false, "coerces all values (calls functions and applies constraints)")
 	compileCommand.Flags().StringVarP(&exec, "exec", "e", "", "execute JavaScript scriptlet")
@@ -31,7 +32,7 @@ func init() {
 var compileCommand = &cobra.Command{
 	Use:   "compile [[TOSCA PATH or URL]]",
 	Short: "Compile TOSCA to Clout",
-	Long:  `Parses a TOSCA service template and compiles the normalized output of the parser to Clout. Supports JavaScript plugins.`,
+	Long:  `Parses TOSCA service templates and compiles the normalized output to Clout.`,
 	Args:  cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var url string
