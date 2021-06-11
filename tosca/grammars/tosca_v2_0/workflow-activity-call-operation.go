@@ -3,7 +3,9 @@ package tosca_v2_0
 import (
 	"strings"
 
+	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/normal"
 )
 
 //
@@ -19,49 +21,64 @@ type WorkflowActivityCallOperation struct {
 	*Entity `name:"workflow activity call operation"`
 	Name    string
 
-	CallOperationSpec *string
+	InterfaceAndOperation *string `read:"operation"`
+	Inputs                Values  `read:"inputs,Value"` // introduced in TOSCA 1.3
 
-	CallInterface *InterfaceAssignment `json:"-" yaml:"-"`
-	CallOperation *OperationAssignment `json:"-" yaml:"-"`
+	Interface *InterfaceAssignment `json:"-" yaml:"-"`
+	Operation *OperationAssignment `json:"-" yaml:"-"`
 }
 
 func NewWorkflowActivityCallOperation(context *tosca.Context) *WorkflowActivityCallOperation {
 	return &WorkflowActivityCallOperation{
 		Entity: NewEntity(context),
 		Name:   context.Name,
+		Inputs: make(Values),
 	}
 }
 
 // tosca.Reader signature
 func ReadWorkflowActivityCallOperation(context *tosca.Context) tosca.EntityPtr {
 	self := NewWorkflowActivityCallOperation(context)
-	context.ValidateUnsupportedFields(context.ReadFields(self))
+
+	if context.Is(ard.TypeMap) {
+		// Long notation (introduced in TOSCA 1.3)
+		context.ValidateUnsupportedFields(context.ReadFields(self))
+	} else if context.ValidateType(ard.TypeMap, ard.TypeString) {
+		// Short notation
+		self.InterfaceAndOperation = context.FieldChild("operation", context.Data).ReadString()
+	}
+
 	return self
 }
 
 func (self *WorkflowActivityCallOperation) Render(stepDefinition *WorkflowStepDefinition) {
-	if self.CallOperationSpec == nil {
+	if self.InterfaceAndOperation == nil {
 		return
 	}
 
 	// Parse operation spec
-	s := strings.SplitN(*self.CallOperationSpec, ".", 2)
+	s := strings.SplitN(*self.InterfaceAndOperation, ".", 2)
 	if len(s) != 2 {
-		self.Context.FieldChild("call_operation", *self.CallOperationSpec).ReportValueWrongFormat("interface.operation")
+		self.Context.FieldChild("operation", *self.InterfaceAndOperation).ReportValueWrongFormat("interface.operation")
 		return
 	}
 
 	var ok bool
 
 	// Lookup interface by name
+	var interfaceDefinition *InterfaceDefinition
 	if stepDefinition.TargetNodeTemplate != nil {
-		if self.CallInterface, ok = stepDefinition.TargetNodeTemplate.Interfaces[s[0]]; !ok {
-			self.Context.FieldChild("call_operation", s[0]).ReportReferenceNotFound("interface", stepDefinition.TargetNodeTemplate)
+		if self.Interface, ok = stepDefinition.TargetNodeTemplate.Interfaces[s[0]]; ok {
+			interfaceDefinition, _ = self.Interface.GetDefinitionForNodeTemplate(stepDefinition.TargetNodeTemplate)
+		} else {
+			self.Context.FieldChild("operation", s[0]).ReportReferenceNotFound("interface", stepDefinition.TargetNodeTemplate)
 			return
 		}
 	} else if stepDefinition.TargetGroup != nil {
-		if self.CallInterface, ok = stepDefinition.TargetGroup.Interfaces[s[0]]; !ok {
-			self.Context.FieldChild("call_operation", s[0]).ReportReferenceNotFound("interface", stepDefinition.TargetGroup)
+		if self.Interface, ok = stepDefinition.TargetGroup.Interfaces[s[0]]; ok {
+			interfaceDefinition, _ = self.Interface.GetDefinitionForGroup(stepDefinition.TargetGroup)
+		} else {
+			self.Context.FieldChild("operation", s[0]).ReportReferenceNotFound("interface", stepDefinition.TargetGroup)
 			return
 		}
 	} else {
@@ -70,7 +87,38 @@ func (self *WorkflowActivityCallOperation) Render(stepDefinition *WorkflowStepDe
 	}
 
 	// Lookup operation by name
-	if self.CallOperation, ok = self.CallInterface.Operations[s[1]]; !ok {
-		self.Context.FieldChild("call_operation", s[1]).ReportReferenceNotFound("operation", self.CallInterface)
+	var operationDefinition *OperationDefinition
+	if self.Operation, ok = self.Interface.Operations[s[1]]; ok {
+		if interfaceDefinition != nil {
+			operationDefinition, _ = interfaceDefinition.OperationDefinitions[self.Operation.Name]
+		}
+	} else {
+		self.Context.FieldChild("operation", s[1]).ReportReferenceNotFound("operation", self.Interface)
 	}
+
+	if operationDefinition != nil {
+		self.Inputs.RenderProperties(operationDefinition.InputDefinitions, "input", self.Context.FieldChild("inputs", nil))
+	}
+}
+
+func (self *WorkflowActivityCallOperation) Normalize(normalWorkflowActivity *normal.WorkflowActivity) {
+	logNormalize.Debug("workflow activity call operation")
+
+	if (self.Interface == nil) || (self.Operation == nil) {
+		return
+	}
+
+	normalCallOperation := normalWorkflowActivity.NewCallOperation()
+
+	var normalInterface *normal.Interface
+	if normalWorkflowActivity.Step.TargetNodeTemplate != nil {
+		normalInterface = normalWorkflowActivity.Step.TargetNodeTemplate.Interfaces[self.Interface.Name]
+	} else if normalWorkflowActivity.Step.TargetGroup != nil {
+		normalInterface = normalWorkflowActivity.Step.TargetGroup.Interfaces[self.Interface.Name]
+	} else {
+		return
+	}
+
+	normalCallOperation.Operation, _ = normalInterface.Operations[self.Operation.Name]
+	self.Inputs.Normalize(normalCallOperation.Inputs)
 }

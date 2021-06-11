@@ -1,8 +1,6 @@
 package tosca_v2_0
 
 import (
-	"strings"
-
 	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
@@ -24,12 +22,10 @@ type WorkflowActivityDefinition struct {
 	DelegateWorkflowDefinitionName *string
 	InlineWorkflowDefinitionName   *string
 	SetNodeState                   *string
-	CallOperationSpec              *string
+	CallOperation                  *WorkflowActivityCallOperation
 
-	DelegateWorkflowDefinition *WorkflowDefinition  `lookup:"delegate,DelegateWorkflowDefinitionName" json:"-" yaml:"-"`
-	InlineWorkflowDefinition   *WorkflowDefinition  `lookup:"inline,InlineWorkflowDefinitionName" json:"-" yaml:"-"`
-	CallInterface              *InterfaceAssignment `json:"-" yaml:"-"`
-	CallOperation              *OperationAssignment `json:"-" yaml:"-"`
+	DelegateWorkflowDefinition *WorkflowDefinition `lookup:"delegate,DelegateWorkflowDefinitionName" json:"-" yaml:"-"`
+	InlineWorkflowDefinition   *WorkflowDefinition `lookup:"inline,InlineWorkflowDefinitionName" json:"-" yaml:"-"`
 }
 
 func NewWorkflowActivityDefinition(context *tosca.Context) *WorkflowActivityDefinition {
@@ -59,9 +55,13 @@ func ReadWorkflowActivityDefinition(context *tosca.Context) tosca.EntityPtr {
 			case "set_state":
 				self.SetNodeState = childContext.ReadString()
 			case "call_operation":
-				self.CallOperationSpec = childContext.ReadString()
+				if reader, ok := Grammar.Readers["WorkflowActivityCallOperation"]; ok {
+					self.CallOperation = reader(childContext).(*WorkflowActivityCallOperation)
+				} else {
+					childContext.ReportValueMalformed("workflow activity definition", "unsupported operator")
+				}
 			default:
-				context.ReportValueMalformed("workflow activity definition", "unsupported operator")
+				childContext.ReportValueMalformed("workflow activity definition", "unsupported operator")
 				return self
 			}
 
@@ -74,38 +74,8 @@ func ReadWorkflowActivityDefinition(context *tosca.Context) tosca.EntityPtr {
 }
 
 func (self *WorkflowActivityDefinition) Render(stepDefinition *WorkflowStepDefinition) {
-	if self.CallOperationSpec == nil {
-		return
-	}
-
-	// Parse operation spec
-	s := strings.SplitN(*self.CallOperationSpec, ".", 2)
-	if len(s) != 2 {
-		self.Context.FieldChild("call_operation", *self.CallOperationSpec).ReportValueWrongFormat("interface.operation")
-		return
-	}
-
-	var ok bool
-
-	// Lookup interface by name
-	if stepDefinition.TargetNodeTemplate != nil {
-		if self.CallInterface, ok = stepDefinition.TargetNodeTemplate.Interfaces[s[0]]; !ok {
-			self.Context.FieldChild("call_operation", s[0]).ReportReferenceNotFound("interface", stepDefinition.TargetNodeTemplate)
-			return
-		}
-	} else if stepDefinition.TargetGroup != nil {
-		if self.CallInterface, ok = stepDefinition.TargetGroup.Interfaces[s[0]]; !ok {
-			self.Context.FieldChild("call_operation", s[0]).ReportReferenceNotFound("interface", stepDefinition.TargetGroup)
-			return
-		}
-	} else {
-		// There was a lookup problem (neither node template nor group)
-		return
-	}
-
-	// Lookup operation by name
-	if self.CallOperation, ok = self.CallInterface.Operations[s[1]]; !ok {
-		self.Context.FieldChild("call_operation", s[1]).ReportReferenceNotFound("operation", self.CallInterface)
+	if self.CallOperation != nil {
+		self.CallOperation.Render(stepDefinition)
 	}
 }
 
@@ -120,15 +90,7 @@ func (self *WorkflowActivityDefinition) Normalize(normalWorkflowStep *normal.Wor
 	} else if self.SetNodeState != nil {
 		normalWorkflowActivity.SetNodeState = *self.SetNodeState
 	} else if self.CallOperation != nil {
-		var normalInterface *normal.Interface
-		if normalWorkflowStep.TargetNodeTemplate != nil {
-			normalInterface = normalWorkflowStep.TargetNodeTemplate.Interfaces[self.CallInterface.Name]
-		} else if normalWorkflowStep.TargetGroup != nil {
-			normalInterface = normalWorkflowStep.TargetGroup.Interfaces[self.CallInterface.Name]
-		} else {
-			return normalWorkflowActivity
-		}
-		normalWorkflowActivity.CallOperation = normalInterface.Operations[self.CallOperation.Name]
+		self.CallOperation.Normalize(normalWorkflowActivity)
 	}
 
 	return normalWorkflowActivity

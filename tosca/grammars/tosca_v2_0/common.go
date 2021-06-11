@@ -81,7 +81,7 @@ func init() {
 	Grammar.RegisterReader("TriggerDefinitionCondition", ReadTriggerDefinitionCondition)
 	Grammar.RegisterReader("Value", ReadValue)
 	Grammar.RegisterReader("version", ReadVersion)
-	Grammar.RegisterReader("WorkflowActivityCallOperation", ReadWorkflowActivityCallOperation)   // TODO: introduced in TOSCA 1.3
+	Grammar.RegisterReader("WorkflowActivityCallOperation", ReadWorkflowActivityCallOperation)   // introduced in TOSCA 1.1
 	Grammar.RegisterReader("WorkflowActivityDefinition", ReadWorkflowActivityDefinition)         // introduced in TOSCA 1.1
 	Grammar.RegisterReader("WorkflowDefinition", ReadWorkflowDefinition)                         // introduced in TOSCA 1.1
 	Grammar.RegisterReader("WorkflowPreconditionDefinition", ReadWorkflowPreconditionDefinition) // introduced in TOSCA 1.1

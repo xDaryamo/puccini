@@ -83,15 +83,34 @@ type WorkflowSteps map[string]*WorkflowStep
 //
 
 type WorkflowActivity struct {
-	Step             *WorkflowStep `json:"-" yaml:"-"`
-	DelegateWorkflow *Workflow     `json:"-" yaml:"-"`
-	InlineWorkflow   *Workflow     `json:"-" yaml:"-"`
-	SetNodeState     string        `json:"setNodeState" yaml:"setNodeState"`
-	CallOperation    *Operation    `json:"callOperation" yaml:"callOperation"`
+	Step             *WorkflowStep  `json:"-" yaml:"-"`
+	DelegateWorkflow *Workflow      `json:"-" yaml:"-"`
+	InlineWorkflow   *Workflow      `json:"-" yaml:"-"`
+	SetNodeState     string         `json:"setNodeState" yaml:"setNodeState"`
+	CallOperation    *CallOperation `json:"callOperation" yaml:"callOperation"`
 }
 
 func (self *WorkflowStep) NewActivity() *WorkflowActivity {
 	activity := &WorkflowActivity{Step: self}
 	self.Activities = append(self.Activities, activity)
 	return activity
+}
+
+//
+// CallOperation
+//
+
+type CallOperation struct {
+	Activity  *WorkflowActivity `json:"-" yaml:"-"`
+	Operation *Operation        `json:"operation" yaml:"operation"`
+	Inputs    Constrainables    `json:"inputs" yaml:"inputs"`
+}
+
+func (self *WorkflowActivity) NewCallOperation() *CallOperation {
+	callOperation := &CallOperation{
+		Activity: self,
+		Inputs:   make(Constrainables),
+	}
+	self.CallOperation = callOperation
+	return callOperation
 }

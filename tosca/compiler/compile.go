@@ -159,8 +159,11 @@ func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cl
 					activityVertex.Properties["setNodeState"] = activity.SetNodeState
 				} else if activity.CallOperation != nil {
 					map_ := make(ard.StringMap)
-					map_["interface"] = activity.CallOperation.Interface.Name
-					map_["operation"] = activity.CallOperation.Name
+					if activity.CallOperation.Operation != nil {
+						map_["interface"] = activity.CallOperation.Operation.Interface.Name
+						map_["operation"] = activity.CallOperation.Operation.Name
+						map_["inputs"] = activity.CallOperation.Inputs
+					}
 					activityVertex.Properties["callOperation"] = map_
 				}
 			}
