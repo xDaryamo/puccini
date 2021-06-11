@@ -7,8 +7,11 @@ These are activated via the `--quirk/-x` switch for
 * **imports.implicit.disable**: In TOSCA 1.0-1.3 the Simple Profile is implicitly imported by
   default. This quirk will disable implicit imports.
 
-* **imports.permissive**: By default Puccini will report an error if a unit imports another
-  unit with an incompatible grammar. This quirk will disable the check.
+* **imports.version.permissive**: By default Puccini will report an error if a unit imports
+  another unit with an incompatible grammar. This quirk will disable the check.
+
+* **imports.topology_template.ignore**: Allows imported units to contain a `topology_template`
+  section, which is ignored.
 
 * **data_types.string.permissive**: By default Puccini is strict about "string"-typed values
   and will consider integers, floats, and boolean values to be problems. This quirk will accept
@@ -35,3 +38,7 @@ These are activated via the `--quirk/-x` switch for
   is inconsistent because it doesn't match the syntax in node templates, which is a sequenced list.
   (In node types, too, it is a sequenced list, although grammatically it works like a map.) This
   quirk changes the expected syntax to be a sequenced list.
+
+* **substitution_mappings.requirements.permissive**: Normally the `requirements` under
+  `substitution_mappings` must be mapped to an assigned requirement in a node template. This quirk
+  allows unassigned requirements to be mapped.

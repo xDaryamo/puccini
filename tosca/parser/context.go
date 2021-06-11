@@ -53,7 +53,7 @@ func (self *Context) AddImportUnit(entityPtr tosca.EntityPtr, container *Unit, n
 
 	if container != nil {
 		containerContext := container.GetContext()
-		if !containerContext.HasQuirk(tosca.QuirkImportsPermissive) {
+		if !containerContext.HasQuirk(tosca.QuirkImportsVersionPermissive) {
 			unitContext := unit.GetContext()
 			if !grammars.CompatibleGrammars(containerContext, unitContext) {
 				containerContext.ReportImportIncompatible(unitContext.URL)

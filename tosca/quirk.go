@@ -10,9 +10,13 @@ type Quirk string
 // implicit imports.
 const QuirkImportsImplicitDisable Quirk = "imports.implicit.disable"
 
-// By default Puccini will report an error if a unit imports another
-// unit with an incompatible grammar. This quirk will disable the check.
-const QuirkImportsPermissive Quirk = "imports.permissive"
+// Allows imported units to contain a `topology_template`
+// section, which is ignored.
+const QuirkImportsTopologyTemplateIgnore Quirk = "imports.topology_template.ignore"
+
+// By default Puccini will report an error if a unit imports
+// another unit with an incompatible grammar. This quirk will disable the check.
+const QuirkImportsVersionPermissive Quirk = "imports.version.permissive"
 
 // By default Puccini is strict about "string"-typed values
 // and will consider integers, floats, and boolean values to be problems. This quirk will accept
@@ -28,7 +32,7 @@ const QuirkDataTypesStringPermissive Quirk = "data_types.string.permissive"
 // the "$originalString" key, because the literal YAML is not preserved by the YAML parser.
 const QuirkDataTypesTimestampPermissive Quirk = "data_types.timestamp.permissive"
 
-// This will ignore any type that is has the "tosca.normative: 'true'" metadata.
+// This will ignore any type that is has the `tosca.normative: 'true'` metadata.
 const QuirkNamespaceNormativeIgnore Quirk = "namespace.normative.ignore"
 
 // In TOSCA 1.0-1.3 all the normative types have long
@@ -44,14 +48,12 @@ const QuirkNamespaceNormativeShortcutsDisable Quirk = "namespace.normative.short
 // quirk changes the expected syntax to be a sequenced list.
 const QuirkSubstitutionMappingsRequirementsList Quirk = "substitution_mappings.requirements.list"
 
-// ETSI SOL001 2.x mandates usage of imports that contain topology_template
-// this quirk ignores topology_template in imports
+// Normally the `requirements` under
+// `substitution_mappings` must be mapped to an assigned requirement in a node template. This quirk
+// allows unassigned requirements to be mapped.
+const QuirkSubstitutionMappingsRequirementsPermissive Quirk = "substitution_mappings.requirements.permissive"
+
 //
-const QuirkImportsTopologyTemplateIgnore Quirk = "imports.ignore.topology_template"
-
-// ETSI SOL001 2.x needs substitutionmappings using unassigned referenced
-const QuirkSubstitutionMappingsRequirementsAllowDangling Quirk = "substitution_mappings.requirements.allow_dangling"
-
 // Quirks
 //
 
