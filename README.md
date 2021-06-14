@@ -13,7 +13,7 @@ and compile it into the [Clout format](clout/).
 
 Let's dive in!
 
-* Head to the [quickstart guide](QUICKSTART.md).
+* Head to the [tutorial](TUTORIAL.md).
 * Also check out this [live demo of Puccini TOSCA running in a browser](https://web.puccini.cloud/).
 
 Note that Puccini is intentionally *not* an orchestrator. This is a "BYOO" kind of establishment

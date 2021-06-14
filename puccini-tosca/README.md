@@ -37,7 +37,7 @@ The list of supported quirks is maintained [here](../tosca/QUIRKS.md).
 `compile`
 ---------
 
-See the [quickstart guide](../QUICKSTART.md) for more detail.
+See the [tutorial](../TUTORIAL.md) for more detail.
 
 
 `meta`
