@@ -58,9 +58,13 @@ func (self *WorkflowDefinition) Normalize(normalServiceTemplate *normal.ServiceT
 
 	normalWorkflow := normalServiceTemplate.NewWorkflow(self.Name)
 
+	normalWorkflow.Metadata = self.Metadata
+
 	if self.Description != nil {
 		normalWorkflow.Description = *self.Description
 	}
+
+	// TODO: PreconditionDefinitions
 
 	// TODO: support property definitions
 	//self.InputDefinitions.Normalize(w.Inputs)

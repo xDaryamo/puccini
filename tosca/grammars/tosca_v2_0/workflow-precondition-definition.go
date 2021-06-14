@@ -18,7 +18,7 @@ type WorkflowPreconditionDefinition struct {
 
 	TargetNodeTemplateOrGroupName *string          `read:"target" require:""`
 	TargetNodeRequirementName     *string          `read:"target_relationship"`
-	ConditionClauses              ConditionClauses `read:"condition,[]ConditionClause"`
+	ConditionClause               *ConditionClause `read:"condition,ConditionClauseAnd"`
 
 	TargetNodeTemplate *NodeTemplate `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`
 	TargetGroup        *Group        `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`

@@ -21,7 +21,7 @@ type WorkflowStepDefinition struct {
 	TargetNodeTemplateOrGroupName *string                     `read:"target" require:""`
 	TargetNodeRequirementName     *string                     `read:"target_relationship"`
 	OperationHost                 *string                     `read:"operation_host"`
-	FilterConditionClauses        ConditionClauses            `read:"filter,[]ConditionClause"` // spec is wrong, says constraint clause
+	FilterConditionClauses        *ConditionClause            `read:"filter,ConditionClauseAnd"` // spec is wrong, says constraint clause
 	ActivityDefinitions           WorkflowActivityDefinitions `read:"activities,[]WorkflowActivityDefinition" require:""`
 	OnSuccessStepNames            *[]string                   `read:"on_success"`
 	OnFailureStepNames            *[]string                   `read:"on_failure"`

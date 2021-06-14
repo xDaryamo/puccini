@@ -8,6 +8,7 @@ type Workflow struct {
 	ServiceTemplate *ServiceTemplate `json:"-" yaml:"-"`
 	Name            string           `json:"-" yaml:"-"`
 
+	Metadata      map[string]string       `json:"metadata" yaml:"metadata"`
 	Description   string                  `json:"description" yaml:"description"`
 	Preconditions []*WorkflowPrecondition `json:"preconditions" yaml:"preconditions"`
 	Steps         WorkflowSteps           `json:"steps" yaml:"steps"`
@@ -18,6 +19,7 @@ func (self *ServiceTemplate) NewWorkflow(name string) *Workflow {
 	workflow := &Workflow{
 		ServiceTemplate: self,
 		Name:            name,
+		Metadata:        make(map[string]string),
 		Steps:           make(WorkflowSteps),
 		Preconditions:   make([]*WorkflowPrecondition, 0),
 		Inputs:          make(Constrainables),

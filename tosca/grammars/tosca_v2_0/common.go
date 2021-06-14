@@ -33,6 +33,7 @@ func init() {
 	Grammar.RegisterReader("CapabilityMapping", ReadCapabilityMapping)
 	Grammar.RegisterReader("CapabilityType", ReadCapabilityType)
 	Grammar.RegisterReader("ConditionClause", ReadConditionClause)
+	Grammar.RegisterReader("ConditionClauseAnd", ReadConditionClauseAnd)
 	Grammar.RegisterReader("ConstraintClause", ReadConstraintClause)
 	Grammar.RegisterReader("DataType", ReadDataType)
 	Grammar.RegisterReader("EventFilter", ReadEventFilter)

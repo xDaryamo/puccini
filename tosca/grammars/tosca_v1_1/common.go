@@ -31,6 +31,7 @@ func init() {
 	Grammar.RegisterReader("CapabilityMapping", tosca_v2_0.ReadCapabilityMapping)
 	Grammar.RegisterReader("CapabilityType", tosca_v2_0.ReadCapabilityType)
 	Grammar.RegisterReader("ConditionClause", tosca_v2_0.ReadConditionClause)
+	Grammar.RegisterReader("ConditionClauseAnd", tosca_v2_0.ReadConditionClauseAnd)
 	Grammar.RegisterReader("ConstraintClause", tosca_v2_0.ReadConstraintClause)
 	Grammar.RegisterReader("DataType", tosca_v1_2.ReadDataType) // 1.2
 	Grammar.RegisterReader("EventFilter", tosca_v2_0.ReadEventFilter)
