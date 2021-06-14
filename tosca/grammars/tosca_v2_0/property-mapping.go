@@ -3,6 +3,7 @@ package tosca_v2_0
 import (
 	"reflect"
 
+	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -40,19 +41,25 @@ func NewPropertyMapping(context *tosca.Context) *PropertyMapping {
 func ReadPropertyMapping(context *tosca.Context) tosca.EntityPtr {
 	self := NewPropertyMapping(context)
 
-	if strings := context.ReadStringList(); strings != nil {
-		switch len(*strings) {
-		case 1:
-			self.InputName = &(*strings)[0]
+	if context.Is(ard.TypeList) {
+		// Long notation
+		if strings := context.ReadStringList(); strings != nil {
+			switch len(*strings) {
+			case 1:
+				self.InputName = &(*strings)[0]
 
-		case 2:
-			// Deprecated in TOSCA 1.3
-			self.NodeTemplateName = &(*strings)[0]
-			self.PropertyName = &(*strings)[1]
+			case 2:
+				// Deprecated in TOSCA 1.3
+				self.NodeTemplateName = &(*strings)[0]
+				self.PropertyName = &(*strings)[1]
 
-		default:
-			self.Context.ReportValueMalformed("property mapping", "must be list of 1 or 2 strings")
+			default:
+				self.Context.ReportValueMalformed("property mapping", "must be list of 1 or 2 strings")
+			}
 		}
+	} else if context.ValidateType(ard.TypeList, ard.TypeString) {
+		// Short notation (deprecated in TOSCA 1.3)
+		self.InputName = context.ReadString()
 	}
 
 	return self
