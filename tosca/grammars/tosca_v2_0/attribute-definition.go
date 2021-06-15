@@ -88,6 +88,16 @@ func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) 
 func (self *AttributeDefinition) Render() {
 	logRender.Debugf("attribute definition: %s", self.Name)
 
+	self.render()
+
+	if self.Default != nil {
+		// The "default" value must be a valid value of the type
+		self.Default.RenderAttribute(self.DataType, self, false, false)
+	}
+}
+
+func (self *AttributeDefinition) render() {
+
 	if self.rendered {
 		// Avoid rendering more than once (can happen if we were called from Value.RenderAttribute)
 		return
@@ -130,11 +140,6 @@ func (self *AttributeDefinition) Render() {
 				}
 			}
 		}
-	}
-
-	if self.Default != nil {
-		// The "default" value must be a valid value of the type
-		self.Default.RenderAttribute(self.DataType, self, false, false)
 	}
 }
 

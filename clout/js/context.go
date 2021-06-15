@@ -58,10 +58,10 @@ func NewContext(name string, log logging.Logger, arguments map[string]string, qu
 }
 
 func (self *Context) NewEnvironment(clout *cloutpkg.Clout, apis map[string]interface{}) *js.Environment {
-	environment := js.NewEnvironment(self.URLContext)
+	environment := js.NewEnvironment(self.URLContext, nil)
 
 	environment.CreateResolver = func(url urlpkg.URL, context *js.Context) js.ResolveFunc {
-		return func(id string) (urlpkg.URL, error) {
+		return func(id string, raw bool) (urlpkg.URL, error) {
 			if scriptlet, err := GetScriptlet(id, clout); err == nil {
 				url := urlpkg.NewInternalURL(id, self.URLContext)
 				url.Content = scriptlet

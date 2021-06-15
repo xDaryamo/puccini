@@ -49,8 +49,13 @@ func (self *PropertyDefinition) Inherit(parentDefinition *PropertyDefinition) {
 func (self *PropertyDefinition) Render() {
 	logRender.Debugf("property definition: %s", self.Name)
 
-	self.AttributeDefinition.Render()
+	self.render()
 	self.ConstraintClauses.Render(self.DataType)
+
+	if self.Default != nil {
+		// The "default" value must be a valid value of the type
+		self.Default.RenderProperty(self.DataType, self)
+	}
 }
 
 func (self *PropertyDefinition) IsRequired() bool {
