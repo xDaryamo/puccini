@@ -2,6 +2,8 @@ module github.com/tliron/puccini
 
 go 1.16
 
+// replace github.com/tliron/kutil => /Depot/Projects/RedHat/kutil
+
 require (
 	github.com/dop251/goja v0.0.0-20210427212725-462d53687b0d
 	github.com/fxamacker/cbor/v2 v2.3.0
