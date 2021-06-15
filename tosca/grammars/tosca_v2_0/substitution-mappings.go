@@ -101,9 +101,13 @@ func (self *SubstitutionMappings) Render(inputDefinitions ParameterDefinitions) 
 				}
 			} else if mapping.Property != nil {
 				// Property mapping (deprecated in TOSCA 1.3)
-				if (definition.DataType != nil) && (mapping.Property.DataType != nil) {
-					if !self.Context.Hierarchy.IsCompatible(definition.DataType, mapping.Property.DataType) {
-						self.Context.ReportIncompatibleType(definition.DataType, mapping.Property.DataType)
+				if definition.DataType != nil {
+					if mapping.Property.DataType != nil {
+						if !self.Context.Hierarchy.IsCompatible(definition.DataType, mapping.Property.DataType) {
+							self.Context.ReportIncompatibleType(definition.DataType, mapping.Property.DataType)
+						}
+					} else {
+						mapping.Property.RenderProperty(definition.DataType, definition)
 					}
 				}
 			}
@@ -172,10 +176,14 @@ func (self *SubstitutionMappings) Normalize(normalServiceTemplate *normal.Servic
 	}
 
 	for _, mapping := range self.PropertyMappings {
-		if (mapping.NodeTemplate != nil) && (mapping.PropertyName != nil) {
+		if mapping.NodeTemplate != nil {
 			if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-				normalSubstitution.PropertyMappings[mapping.Name] = normalNodeTemplate.NewMapping("property", *mapping.PropertyName)
+				if mapping.PropertyName != nil {
+					normalSubstitution.PropertyMappings[mapping.Name] = normalNodeTemplate.NewMapping("property", *mapping.PropertyName)
+				}
 			}
+		} else if mapping.Property != nil {
+			normalSubstitution.PropertyMappings[mapping.Name] = normal.NewMappingValue("property", mapping.Property.Normalize())
 		} else if mapping.InputName != nil {
 			normalSubstitution.PropertyMappings[mapping.Name] = normal.NewMapping("input", *mapping.InputName)
 		}

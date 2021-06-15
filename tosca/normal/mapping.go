@@ -15,12 +15,20 @@ type Mapping struct {
 	Relationship *Relationship
 	TargetType   string
 	Target       string
+	Value        Constrainable
 }
 
 func NewMapping(targetType string, target string) *Mapping {
 	return &Mapping{
 		TargetType: targetType,
 		Target:     target,
+	}
+}
+
+func NewMappingValue(targetType string, value Constrainable) *Mapping {
+	return &Mapping{
+		TargetType: targetType,
+		Value:      value,
 	}
 }
 
@@ -41,9 +49,10 @@ func (self *Relationship) NewMapping(targetType string, target string) *Mapping 
 }
 
 type MarshalableMapping struct {
-	NodeTemplateName string `json:"nodeTemplateName,omitempty" yaml:"nodeTemplateName,omitempty"`
-	TargetType       string `json:"targetType" yaml:"targetType"`
-	Target           string `json:"target" yaml:"target"`
+	NodeTemplateName string        `json:"nodeTemplateName,omitempty" yaml:"nodeTemplateName,omitempty"`
+	TargetType       string        `json:"targetType" yaml:"targetType"`
+	Target           string        `json:"target,omitempty" yaml:"target,omitempty"`
+	Value            Constrainable `json:"value,omitempty" yaml:"value,omitempty"`
 }
 
 func (self *Mapping) Marshalable() interface{} {
@@ -52,11 +61,13 @@ func (self *Mapping) Marshalable() interface{} {
 			NodeTemplateName: self.NodeTemplate.Name,
 			TargetType:       self.TargetType,
 			Target:           self.Target,
+			Value:            self.Value,
 		}
 	} else {
 		return &MarshalableMapping{
 			TargetType: self.TargetType,
 			Target:     self.Target,
+			Value:      self.Value,
 		}
 	}
 }

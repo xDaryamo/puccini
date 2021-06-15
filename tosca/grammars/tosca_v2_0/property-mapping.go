@@ -26,8 +26,8 @@ type PropertyMapping struct {
 	PropertyName     *string // deprecated in TOSCA 1.3
 
 	InputDefinition *ParameterDefinition `traverse:"ignore" json:"-" yaml:"-"`
-	NodeTemplate    *NodeTemplate        `traverse:"ignore" json:"-" yaml:"-"`
-	Property        *Value               `traverse:"ignore" json:"-" yaml:"-"`
+	NodeTemplate    *NodeTemplate        `traverse:"ignore" json:"-" yaml:"-"` // deprecated in TOSCA 1.3
+	Property        *Value               `traverse:"ignore" json:"-" yaml:"-"` // deprecated in TOSCA 1.3
 }
 
 func NewPropertyMapping(context *tosca.Context) *PropertyMapping {
@@ -41,25 +41,28 @@ func NewPropertyMapping(context *tosca.Context) *PropertyMapping {
 func ReadPropertyMapping(context *tosca.Context) tosca.EntityPtr {
 	self := NewPropertyMapping(context)
 
+	var read bool
 	if context.Is(ard.TypeList) {
-		// Long notation
 		if strings := context.ReadStringList(); strings != nil {
 			switch len(*strings) {
 			case 1:
 				self.InputName = &(*strings)[0]
+				read = true
 
 			case 2:
 				// Deprecated in TOSCA 1.3
 				self.NodeTemplateName = &(*strings)[0]
 				self.PropertyName = &(*strings)[1]
-
-			default:
-				self.Context.ReportValueMalformed("property mapping", "must be list of 1 or 2 strings")
+				read = true
 			}
 		}
-	} else if context.ValidateType(ard.TypeList, ard.TypeString) {
-		// Short notation (deprecated in TOSCA 1.3)
-		self.InputName = context.ReadString()
+	}
+
+	if !read {
+		// Fallback to constant value (deprecated in TOSCA 1.3)
+		self.Property = ReadValue(context).(*Value)
+
+		// self.Context.ReportValueMalformed("property mapping", "must be list of 1 or 2 strings")
 	}
 
 	return self

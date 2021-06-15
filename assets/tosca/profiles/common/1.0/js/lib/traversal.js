@@ -109,6 +109,11 @@ exports.traverseValues = function(clout_, traverser) {
 			var path = ['policies', policy.name];
 
 			exports.traverseObjectValues(traverser, copyAndPush(path, 'properties'), policy.properties, vertex);
+		} else if (tosca.isTosca(vertex, 'Substitution')) {
+			var substitution = vertex.properties;
+			var path = ['substitution'];
+
+			exports.traverseObjectValues(traverser, copyAndPush(path, 'properties'), substitution.properties, vertex);
 		}
 	}
 };
