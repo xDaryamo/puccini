@@ -59,6 +59,37 @@ func (self *CloutAPI) Call(scriptletName string, functionName string, arguments 
 	return self.cloutContext.CallFunction(scriptletName, functionName, arguments, FunctionCallContext{})
 }
 
+func (self *CloutAPI) CallAll(function goja.FunctionCall) goja.Value {
+	if len(function.Arguments) >= 2 {
+		if scriptletBaseName, ok := function.Arguments[0].Export().(string); ok {
+			if functionName, ok := function.Arguments[1].Export().(string); ok {
+				if scriptletNames, err := GetScriptletNamesInSection(scriptletBaseName, self.Clout); err == nil {
+					for _, scriptletName := range scriptletNames {
+						if exports, err := self.cloutContext.Context.Require(self.Clout, scriptletName, nil); err == nil {
+							function_ := exports.Get(functionName)
+							if callable, ok := goja.AssertFunction(function_); ok {
+								defer func() {
+									if r := recover(); r != nil {
+										self.cloutContext.Context.Log.Errorf("%s", r)
+									}
+								}()
+
+								callable(nil, function.Arguments[2:]...)
+							}
+						} else {
+							self.cloutContext.Context.Log.Errorf("%s", err.Error())
+						}
+					}
+				} else {
+					self.cloutContext.Context.Log.Errorf("%s", err.Error())
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
 func (self *CloutAPI) Define(scriptletName string, scriptlet string) error {
 	return SetScriptlet(scriptletName, CleanupScriptlet(scriptlet), self.Clout)
 }

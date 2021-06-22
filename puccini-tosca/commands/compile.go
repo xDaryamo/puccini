@@ -100,6 +100,6 @@ func Exec(scriptletName string, arguments map[string]string, clout *cloutpkg.Clo
 	}
 
 	jsContext := js.NewContext(scriptletName, log, arguments, terminal.Quiet, format, strict, timestamps, pretty, output, urlContext)
-	err = jsContext.Require(clout, scriptletName, nil)
+	_, err = jsContext.Require(clout, scriptletName, nil)
 	return js.UnwrapException(err)
 }

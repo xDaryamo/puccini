@@ -98,8 +98,7 @@ func (self *Context) NewEnvironment(clout *cloutpkg.Clout, apis map[string]inter
 	return environment
 }
 
-func (self *Context) Require(clout *cloutpkg.Clout, scriptletName string, apis map[string]interface{}) error {
+func (self *Context) Require(clout *cloutpkg.Clout, scriptletName string, apis map[string]interface{}) (*goja.Object, error) {
 	environment := self.NewEnvironment(clout, apis)
-	_, err := environment.RequireID(scriptletName)
-	return err
+	return environment.RequireID(scriptletName)
 }
