@@ -35,7 +35,7 @@ exports.coerce = function(clout_) {
 exports.getValueInformation = function(clout_) {
 	if (!clout_)
 		clout_ = clout;
-	var information = {};
+	let information = {};
 	exports.traverseValues(clout_, function(data) {
 		if (data.value.$information)
 			information[data.path.join('.')] = data.value.$information;
@@ -53,29 +53,29 @@ exports.traverseValues = function(clout_, traverser) {
 		exports.traverseObjectValues(traverser, ['outputs'], clout_.properties.tosca.outputs);
 	}
 
-	for (var vertexId in clout_.vertexes) {
-		var vertex = clout_.vertexes[vertexId];
+	for (let vertexId in clout_.vertexes) {
+		let vertex = clout_.vertexes[vertexId];
 		if (!tosca.isTosca(vertex))
 			continue;
 
 		if (tosca.isNodeTemplate(vertex)) {
-			var nodeTemplate = vertex.properties;
-			var path = ['nodeTemplates', nodeTemplate.name];
+			let nodeTemplate = vertex.properties;
+			let path = ['nodeTemplates', nodeTemplate.name];
 
 			exports.traverseObjectValues(traverser, copyAndPush(path, 'properties'), nodeTemplate.properties, vertex);
 			exports.traverseObjectValues(traverser, copyAndPush(path, 'attributes'), nodeTemplate.attributes, vertex);
 			exports.traverseInterfaceValues(traverser, copyAndPush(path, 'interfaces'), nodeTemplate.interfaces, vertex)
 
-			for (var capabilityName in nodeTemplate.capabilities) {
-				var capability = nodeTemplate.capabilities[capabilityName];
-				var capabilityPath = copyAndPush(path, 'capabilities', capabilityName);
+			for (let capabilityName in nodeTemplate.capabilities) {
+				let capability = nodeTemplate.capabilities[capabilityName];
+				let capabilityPath = copyAndPush(path, 'capabilities', capabilityName);
 				exports.traverseObjectValues(traverser, copyAndPush(capabilityPath, 'properties'), capability.properties, vertex);
 				exports.traverseObjectValues(traverser, copyAndPush(capabilityPath, 'attributes'), capability.attributes, vertex);
 			}
 
-			for (var artifactName in nodeTemplate.artifacts) {
-				var artifact = nodeTemplate.artifacts[artifactName];
-				var artifactPath = copyAndPush(path, 'artifacts', artifactName);
+			for (let artifactName in nodeTemplate.artifacts) {
+				let artifact = nodeTemplate.artifacts[artifactName];
+				let artifactPath = copyAndPush(path, 'artifacts', artifactName);
 				exports.traverseObjectValues(traverser, copyAndPush(artifactPath, 'properties'), artifact.properties, vertex);
 				if (artifact.credential !== null)
 					try {
@@ -93,31 +93,31 @@ exports.traverseValues = function(clout_, traverser) {
 					}
 			}
 
-			for (var e = 0, l = vertex.edgesOut.length; e < l; e++) {
-				var edge = vertex.edgesOut[e];
+			for (let e = 0, l = vertex.edgesOut.length; e < l; e++) {
+				let edge = vertex.edgesOut[e];
 				if (!tosca.isTosca(edge, 'Relationship'))
 					continue;
 
-				var relationship = edge.properties;
-				var relationshipPath = copyAndPush(path, 'relationships', relationship.name);
+				let relationship = edge.properties;
+				let relationshipPath = copyAndPush(path, 'relationships', relationship.name);
 				exports.traverseObjectValues(traverser, copyAndPush(relationshipPath, 'properties'), relationship.properties, edge, vertex, edge.target);
 				exports.traverseObjectValues(traverser,copyAndPush(relationshipPath, 'attributes'), relationship.attributes, edge, vertex, edge.target);
 				exports.traverseInterfaceValues(traverser, copyAndPush(relationshipPath, 'interfaces'), relationship.interfaces, edge, vertex, edge.target);
 			}
 		} else if (tosca.isTosca(vertex, 'Group')) {
-			var group = vertex.properties;
-			var path = ['groups', group.name];
+			let group = vertex.properties;
+			let path = ['groups', group.name];
 
 			exports.traverseObjectValues(traverser, copyAndPush(path, 'properties'), group.properties, vertex);
 			exports.traverseInterfaceValues(traverser, copyAndPush(path, 'attributes'), group.interfaces, vertex)
 		} else if (tosca.isTosca(vertex, 'Policy')) {
-			var policy = vertex.properties;
-			var path = ['policies', policy.name];
+			let policy = vertex.properties;
+			let path = ['policies', policy.name];
 
 			exports.traverseObjectValues(traverser, copyAndPush(path, 'properties'), policy.properties, vertex);
 		} else if (tosca.isTosca(vertex, 'Substitution')) {
-			var substitution = vertex.properties;
-			var path = ['substitution'];
+			let substitution = vertex.properties;
+			let path = ['substitution'];
 
 			exports.traverseObjectValues(traverser, copyAndPush(path, 'properties'), substitution.properties, vertex);
 		}
@@ -125,17 +125,17 @@ exports.traverseValues = function(clout_, traverser) {
 };
 
 exports.traverseInterfaceValues = function(traverser, path, interfaces, site, source, target) {
-	for (var interfaceName in interfaces) {
-		var interface_ = interfaces[interfaceName];
-		var interfacePath = copyAndPush(path, interfaceName)
+	for (let interfaceName in interfaces) {
+		let interface_ = interfaces[interfaceName];
+		let interfacePath = copyAndPush(path, interfaceName)
 		exports.traverseObjectValues(traverser, copyAndPush(interfacePath, 'inputs'), interface_.inputs, site, source, target);
-		for (var operationName in interface_.operations)
+		for (let operationName in interface_.operations)
 			exports.traverseObjectValues(traverser, copyAndPush(interfacePath, 'operations', operationName), interface_.operations[operationName].inputs, site, source, target);
 	}
 };
 
 exports.traverseObjectValues = function(traverser, path, object, site, source, target) {
-	for (var key in object)
+	for (let key in object)
 		try {
 			object[key] = traverser({
 				path: copyAndPush(path, key),
@@ -154,10 +154,10 @@ exports.traverseObjectValues = function(traverser, path, object, site, source, t
 };
 
 function copyAndPush(array) {
-	var array_ = [];
-	for (var i = 0, l = array.length; i < l; i++)
+	let array_ = [];
+	for (let i = 0, l = array.length; i < l; i++)
 		array_.push(array[i]);
-	for (var i = 1, l = arguments.length; i < l; i++)
+	for (let i = 1, l = arguments.length; i < l; i++)
 		array_.push(arguments[i]);
 	return array_;
 }

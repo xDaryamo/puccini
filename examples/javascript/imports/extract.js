@@ -5,17 +5,17 @@ tosca = require('tosca.lib.utils');
 
 traversal.coerce();
 
-for (var vertexId in clout.vertexes) {
-	var vertex = clout.vertexes[vertexId];
+for (let vertexId in clout.vertexes) {
+	let vertex = clout.vertexes[vertexId];
 	if (!tosca.isNodeTemplate(vertex))
 		continue;
-	var nodeTemplate = vertex.properties;
+	let nodeTemplate = vertex.properties;
 
-	for (var key in nodeTemplate.artifacts) {
-		var artifact = nodeTemplate.artifacts[key];
+	for (let key in nodeTemplate.artifacts) {
+		let artifact = nodeTemplate.artifacts[key];
 
 		// If 'puccini.output' is empty, this will be relative to current directory
-		var targetPath = puccini.joinFilePath(puccini.output, artifact.filename);
+		let targetPath = puccini.joinFilePath(puccini.output, artifact.filename);
 
 		puccini.log.noticef('extracting "%s" to "%s"', artifact.sourcePath, targetPath);
 		puccini.download(artifact.sourcePath, targetPath);

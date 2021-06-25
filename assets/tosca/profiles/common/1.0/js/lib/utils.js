@@ -24,7 +24,7 @@ exports.isNodeTemplate = function(vertex, typeName) {
 exports.setOutputValue = function(name, value) {
 	if (clout.properties.tosca === undefined)
 		return false;
-	var output = clout.properties.tosca.outputs[name];
+	let output = clout.properties.tosca.outputs[name];
 	if (output === undefined)
 		return false;
 
@@ -46,22 +46,22 @@ exports.setOutputValue = function(name, value) {
 };
 
 exports.getPolicyTargets = function(vertex) {
-	var targets = [];
+	let targets = [];
 
 	function addTarget(target) {
-		for (var t = 0, l = targets.length; t < l; t++)
+		for (let t = 0, l = targets.length; t < l; t++)
 			if (targets[t].name === target.name)
 				return;
 		targets.push(target);
 	}
 
-	for (var e = 0, l = vertex.edgesOut.length; e < l; e++) {
-		var edge = vertex.edgesOut[e];
+	for (let e = 0, l = vertex.edgesOut.length; e < l; e++) {
+		let edge = vertex.edgesOut[e];
 		if (exports.isTosca(edge, 'NodeTemplateTarget'))
 			targets.push(clout.vertexes[edge.targetID].properties);
 		else if (toexportssca.isTosca(edge, 'GroupTarget')) {
-			var members = exports.getGroupMembers(clout.vertexes[edge.targetID]);
-			for (var m = 0, ll = members.length; m < ll; m++)
+			let members = exports.getGroupMembers(clout.vertexes[edge.targetID]);
+			for (let m = 0, ll = members.length; m < ll; m++)
 				addTarget(members[m])
 		}
 	}
@@ -69,9 +69,9 @@ exports.getPolicyTargets = function(vertex) {
 };
 
 exports.getGroupMembers = function(vertex) {
-	var members = [];
-	for (var e = 0, l = vertex.edgesOut.length; e < l; e++) {
-		var edge = vertex.edgesOut[e];
+	let members = [];
+	for (let e = 0, l = vertex.edgesOut.length; e < l; e++) {
+		let edge = vertex.edgesOut[e];
 		if (exports.isTosca(edge, 'Member'))
 			members.push(clout.vertexes[edge.targetID].properties);
 	}
@@ -79,10 +79,10 @@ exports.getGroupMembers = function(vertex) {
 };
 
 exports.addHistory = function(description) {
-	var metadata = clout.metadata;
+	let metadata = clout.metadata;
 	if (metadata === undefined)
 		metadata = clout.metadata = {};
-	var history = metadata.history;
+	let history = metadata.history;
 	if (history === undefined)
 		history = [];
 	else
@@ -96,19 +96,19 @@ exports.addHistory = function(description) {
 
 exports.getNestedValue = function(singular, plural, args) {
 	args = Array.prototype.slice.call(args);
-	var length = args.length;
+	let length = args.length;
 	if (length < 2)
 		throw 'must have at least 2 arguments';
-	var nodeTemplate = exports.getModelableEntity.call(this, args[0]);
-	var a = 1;
-	var arg = args[a];
-	var value = nodeTemplate[plural];
+	let nodeTemplate = exports.getModelableEntity.call(this, args[0]);
+	let a = 1;
+	let arg = args[a];
+	let value = nodeTemplate[plural];
 	if (arg in nodeTemplate.capabilities) {
 		value = nodeTemplate.capabilities[arg][plural];
 		singular = puccini.sprintf('capability "%s" %s', arg, singular);
 		arg = args[++a];
-	} else for (var r = 0, l = nodeTemplate.requirements.length; r < l; r++) {
-		var requirement = nodeTemplate.requirements[r];
+	} else for (let r = 0, l = nodeTemplate.requirements.length; r < l; r++) {
+		let requirement = nodeTemplate.requirements[r];
 		if ((requirement.name === arg) && requirement.relationship) {
 			value = requirement.relationship[plural];
 			singular = puccini.sprintf('relationship "%s" %s', arg, singular);
@@ -121,7 +121,7 @@ exports.getNestedValue = function(singular, plural, args) {
 	else
 		throw puccini.sprintf('%s "%s" not found in "%s"', singular, arg, nodeTemplate.name);
 	value = clout.coerce(value);
-	for (var i = a + 1; i < length; i++) {
+	for (let i = a + 1; i < length; i++) {
 		arg = args[i];
 		if (arg in value)
 			value = value[arg];
@@ -132,7 +132,7 @@ exports.getNestedValue = function(singular, plural, args) {
 };
 
 exports.getModelableEntity = function(entity) {
-	var vertex;
+	let vertex;
 	switch (entity) {
 	case 'SELF':
 		if (!this || !this.site)
@@ -155,8 +155,8 @@ exports.getModelableEntity = function(entity) {
 		vertex = exports.getHost(this.site);
 		break;
 	default:
-		for (var vertexId in clout.vertexes) {
-			var vertex = clout.vertexes[vertexId];
+		for (let vertexId in clout.vertexes) {
+			let vertex = clout.vertexes[vertexId];
 			if (exports.isNodeTemplate(vertex) && (vertex.properties.name === entity))
 				return vertex.properties;
 		}
@@ -169,11 +169,11 @@ exports.getModelableEntity = function(entity) {
 };
 
 exports.getHost = function(vertex) {
-	for (var e = 0, l = vertex.edgesOut.length; e < l; e++) {
-		var edge = vertex.edgesOut[e];
+	for (let e = 0, l = vertex.edgesOut.length; e < l; e++) {
+		let edge = vertex.edgesOut[e];
 		if (exports.isTosca(edge, 'Relationship')) {
-			for (var typeName in edge.properties.types) {
-				var type = edge.properties.types[typeName];
+			for (let typeName in edge.properties.types) {
+				let type = edge.properties.types[typeName];
 				if (type.metadata.role === 'host')
 					return edge.target;
 			}
@@ -188,7 +188,7 @@ exports.getHost = function(vertex) {
 exports.getComparable = function(v) {
 	if ((v === undefined) || (v === null))
 		return null;
-	var c = v.$number;
+	let c = v.$number;
 	if (c !== undefined)
 		return c;
 	c = v.$string;
@@ -198,7 +198,7 @@ exports.getComparable = function(v) {
 };
 
 exports.compare = function(v1, v2) {
-	var c = v1.$comparer;
+	let c = v1.$comparer;
 	if (c === undefined)
 		c = v2.$comparer;
 	if (c !== undefined)

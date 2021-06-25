@@ -13,8 +13,8 @@ exports.validate = function(v, rules) {
 	if ((rules.step === undefined) || (rules.offset === undefined))
 		throw 'must provide "step" and "offset"';
 	v = tosca.getComparable(v);
-	var step = tosca.getComparable(rules.step);
-	var offset = tosca.getComparable(rules.offset);
+	let step = tosca.getComparable(rules.step);
+	let offset = tosca.getComparable(rules.offset);
 	return value % self.step == self.offset;
 };
 `

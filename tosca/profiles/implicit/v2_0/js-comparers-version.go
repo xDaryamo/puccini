@@ -19,8 +19,8 @@ exports.compare = function(a, b) {
 		return a.minor < b.minor ? -1 : 1;
 	if (a.fix !== b.fix)
 		return a.fix < b.fix ? -1 : 1;
-	var aq = a.qualifier.toLowerCase();
-	var bq = b.qualifier.toLowerCase();
+	let aq = a.qualifier.toLowerCase();
+	let bq = b.qualifier.toLowerCase();
 	if (aq !== bq) // note: the qualifier is compared alphabetically, *not* semantically
 		return aq < bq ? -1 : 1;
 	if (a.build !== b.build)

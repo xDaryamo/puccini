@@ -5,28 +5,28 @@ puccini.log.infof('%v', traversal)
 traversal.coerce();
 
 // From: cdnjs.com
-var jQueryVersion = '3.6.0';
-var jQueryUiVersion = '1.12.1';
+let jQueryVersion = '3.6.0';
+let jQueryUiVersion = '1.12.1';
 
 // From: jsdeliver.net
-var jQueryLayoutVersion = '1.8.5';
-var visJsVersion = '9.0.4';
+let jQueryLayoutVersion = '1.8.5';
+let visJsVersion = '9.0.4';
 
-var colorNode = 'rgb(100,200,255)';
-var colorPolicy = 'rgb(255,165,0)';
-var colorSubstitution = 'rgb(150,200,255)';
-var colorWorkflow = 'rgb(100,255,100)';
+let colorNode = 'rgb(100,200,255)';
+let colorPolicy = 'rgb(255,165,0)';
+let colorSubstitution = 'rgb(150,200,255)';
+let colorWorkflow = 'rgb(100,255,100)';
 
-var nodes = [];
-var edges = [];
+let nodes = [];
+let edges = [];
 
 if (tosca.isTosca(clout)) {
-	var templateName = clout.properties.tosca.metadata.template_name;
-	var templateAuthor = clout.properties.tosca.metadata.template_author;
-	var templateVersion = clout.properties.tosca.metadata.template_version;
-	var description = clout.properties.tosca.description;
+	let templateName = clout.properties.tosca.metadata.template_name;
+	let templateAuthor = clout.properties.tosca.metadata.template_author;
+	let templateVersion = clout.properties.tosca.metadata.template_version;
+	let description = clout.properties.tosca.description;
 
-	var header = '<h1>Clout from TOSCA Service Template</h1>';
+	let header = '<h1>Clout from TOSCA Service Template</h1>';
 	if (templateName)
 		header += '<h2>' + escapeHtml(templateName) + '</h2>';
 	if (templateVersion)
@@ -39,16 +39,16 @@ if (tosca.isTosca(clout)) {
 	header = '<h1>Clout</h1>';
 }
 
-for (var id in clout.vertexes) {
-	var vertex = clout.vertexes[id];
+for (let id in clout.vertexes) {
+	let vertex = clout.vertexes[id];
 	addVertex(id, vertex);
 }
 
 function formatDescription(description) {
-	var r = '';
-	var paragraphs = description.split('\n');
-	for (var p in paragraphs) {
-		var paragraph = paragraphs[p];
+	let r = '';
+	let paragraphs = description.split('\n');
+	for (let p in paragraphs) {
+		let paragraph = paragraphs[p];
 		if (paragraph)
 			r += '<p>' + escapeHtml(paragraph) + '</p>';
 	}
@@ -70,7 +70,7 @@ function jsonify(data) {
 }
 
 function addVertex(id, vertex) {
-	var node = {
+	let node = {
 		id: id,
 		label: id,
 		data: tosca.isTosca(vertex) ? vertex.properties : vertex
@@ -95,12 +95,12 @@ function addVertex(id, vertex) {
 
 	nodes.push(node);
 
-	for (var e = 0, l = vertex.edgesOut.length; e < l; e++)
+	for (let e = 0, l = vertex.edgesOut.length; e < l; e++)
 		addEdge(id, vertex.edgesOut[e]);
 }
 
 function addEdge(id, e) {
-	var edge = {
+	let edge = {
 		from: id,
 		to: e.targetID,
 		arrows: {
@@ -209,7 +209,7 @@ function addWorkflowActivity(node) {
 	node.color = colorWorkflow;
 }
 
-var template = '\
+let template = '\
 <!doctype html>\n\
 <html>\n\
 <head>\n\
@@ -257,9 +257,9 @@ $(document).ready(function () {\n\
 		east__size: \'25%%\',\n\
 		livePaneResizing: true\n\
 	});\n\
-	var nodes = new vis.DataSet(%s);\n\
-	var edges = new vis.DataSet(%s);\n\
-	var network = new vis.Network(\n\
+	let nodes = new vis.DataSet(%s);\n\
+	let edges = new vis.DataSet(%s);\n\
+	let network = new vis.Network(\n\
 		document.getElementById(\'network\'),\n\
 		{\n\
 			nodes: nodes,\n\
@@ -298,7 +298,7 @@ $(document).ready(function () {\n\
 </body>\n\
 </html>';
 
-var html = puccini.sprintf(
+let html = puccini.sprintf(
 	template,
 	jQueryVersion,
 	jQueryUiVersion, jQueryUiVersion,

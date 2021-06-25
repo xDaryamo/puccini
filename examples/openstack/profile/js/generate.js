@@ -19,13 +19,13 @@ writeClouds();
 writeCfg();
 
 function writeTopology() {
-	var servers = [];
+	let servers = [];
 
-	for (var vertexId in clout.vertexes) {
-		var vertex = clout.vertexes[vertexId];
+	for (let vertexId in clout.vertexes) {
+		let vertex = clout.vertexes[vertexId];
 		if (!tosca.isNodeTemplate(vertex, 'openstack::nova.Server'))
 			continue;
-		var nodeTemplate = vertex.properties;
+		let nodeTemplate = vertex.properties;
 
 		servers.push({
 			name: nodeTemplate.name,

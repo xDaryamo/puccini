@@ -12,10 +12,10 @@ exports.evaluate = function(input) {\n\
 		throw 'must have 1 argument';\n\
 	if (!tosca.isTosca(clout))\n\
 		throw 'Clout is not TOSCA';\n\
-	var inputs = clout.properties.tosca.inputs;\n\
+	let inputs = clout.properties.tosca.inputs;\n\
 	if (!(input in inputs))\n\
 		throw puccini.sprintf('input \"%s\" not found', input);\n\
-	var r = inputs[input];\n\
+	let r = inputs[input];\n\
 	r = clout.coerce(r);\n\
 	return r * 2;\n\
 };\n\

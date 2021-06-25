@@ -5,19 +5,19 @@ clout.exec('tosca.utils');
 
 tosca.coerce();
 
-var statements = [];
+let statements = [];
 
-for (var vertexId in clout.vertexes) {
-	var vertex = clout.vertexes[vertexId];
+for (let vertexId in clout.vertexes) {
+	let vertex = clout.vertexes[vertexId];
 
 	if (tosca.isTosca(vertex, 'nodeTemplate'))
 		createNodeTemplate(vertexId, vertex.properties);
 }
 
-for (var vertexId in clout.vertexes) {
-	var vertex = clout.vertexes[vertexId];
+for (let vertexId in clout.vertexes) {
+	let vertex = clout.vertexes[vertexId];
 
-	for (var e in vertex.edgesOut)
+	for (let e in vertex.edgesOut)
 		createEdge(vertexId, vertex.edgesOut[e]);
 }
 
@@ -35,13 +35,13 @@ function addToscaProperties(entity, properties) {
 }
 
 function createNodeTemplate(id, nodeTemplate) {
-	var properties = {id: id};
+	let properties = {id: id};
 	addToscaProperties(nodeTemplate, properties);
 	addStatementf('CREATE (n:Clout:TOSCA:NodeTemplate { %s })', formatProperties(properties));
 
-	for (var name in nodeTemplate.capabilities) {
-		var capability = nodeTemplate.capabilities[name];
-		var capabilityId = id + '.capability.' + name;
+	for (let name in nodeTemplate.capabilities) {
+		let capability = nodeTemplate.capabilities[name];
+		let capabilityId = id + '.capability.' + name;
 		properties = {id: capabilityId};
 		addToscaProperties(capability, properties);
 		properties.name = name;
@@ -51,7 +51,7 @@ function createNodeTemplate(id, nodeTemplate) {
 }
 
 function createRelationship(sourceId, targetId, relationship) {
-	var properties = {};
+	let properties = {};
 	addToscaProperties(relationship, properties);
 	relate('TOSCA:NodeTemplate', sourceId, 'TOSCA:NodeTemplate', targetId, 'TOSCA_RELATIONSHIP', properties);
 }
@@ -61,10 +61,10 @@ function relate(sourceLabel, sourceId, targetLabel, targetId, label, properties)
 }
 
 function formatProperties(properties) {
-	var values = {};
+	let values = {};
 	addValues(values, properties);
-	var r = [];
-	for (var name in values)
+	let r = [];
+	for (let name in values)
 		r.push(backtick(name) + ': ' + JSON.stringify(String(values[name])));
 	return r.join(', ');
 }
@@ -72,8 +72,8 @@ function formatProperties(properties) {
 function addValues(values, properties, prefix) {
 	if (prefix === undefined)
 		prefix = '';
-	for (var name in properties) {
-		var value = properties[name];
+	for (let name in properties) {
+		let value = properties[name];
 		switch (typeof value) {
 		case 'object':
 			addValues(values, value, prefix + name + ':');

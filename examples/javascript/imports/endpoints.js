@@ -6,19 +6,19 @@ tosca = require('tosca.lib.utils');
 // "traversal.coerce" calls all intrinsic functions and validates all constraints
 traversal.coerce();
 
-var endpoints = [];
+let endpoints = [];
 
-for (var v in clout.vertexes) {
-	var vertex = clout.vertexes[v];
+for (let v in clout.vertexes) {
+	let vertex = clout.vertexes[v];
 
 	// We'll skip vertexes that are not TOSCA node templates
 	if (!tosca.isNodeTemplate(vertex))
 		continue;
 
-	var nodeTemplate = vertex.properties;
+	let nodeTemplate = vertex.properties;
 
-	for (var c in nodeTemplate.capabilities) {
-		var capability = nodeTemplate.capabilities[c];
+	for (let c in nodeTemplate.capabilities) {
+		let capability = nodeTemplate.capabilities[c];
 
 		// We'll skip capabilities that do not inherit from Endpoint
 		if (!('tosca::Endpoint' in capability.types))

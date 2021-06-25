@@ -5,20 +5,20 @@ clout.exec('tosca.lib.traversal');
 
 tosca.coerce();
 
-var vertexItems = [];
-var cloutItem = {'clout.vertex': vertexItems};
-var items = [cloutItem];
+let vertexItems = [];
+let cloutItem = {'clout.vertex': vertexItems};
+let items = [cloutItem];
 
-for (var vertexId in clout.vertexes) {
-	var vertex = clout.vertexes[vertexId];
+for (let vertexId in clout.vertexes) {
+	let vertex = clout.vertexes[vertexId];
 
-	var vertexItem = {uid: '_:clout.vertex.' + vertexId, 'clout.edge': []};
+	let vertexItem = {uid: '_:clout.vertex.' + vertexId, 'clout.edge': []};
 
 	if (tosca.isTosca(vertex, 'NodeTemplate'))
 		fillNodeTemplate(vertexItem, vertex.properties);
 
-	for (var e = 0, l = vertex.edgesOut.length; e < l; e++) {
-		var edge = vertex.edgesOut[e];
+	for (let e = 0, l = vertex.edgesOut.length; e < l; e++) {
+		let edge = vertex.edgesOut[e];
 		fillEdge(vertexItem, edge);
 	}
 
@@ -26,7 +26,7 @@ for (var vertexId in clout.vertexes) {
 }
 
 function fillEdge(item, edge) {
-	var edgeItem = {uid: '_:clout.vertex.' + edge.targetID};
+	let edgeItem = {uid: '_:clout.vertex.' + edge.targetID};
 
 	if (tosca.isTosca(edge, 'Relationship'))
 		fillRelationship(edgeItem, edge.properties);
@@ -49,9 +49,9 @@ function fillNodeTemplate(item, nodeTemplate) {
 	fillTosca(item, nodeTemplate, 'nodeTemplate');
 
 	item.capabilities = [];
-	for (var name in nodeTemplate.capabilities) {
-		var capability = nodeTemplate.capabilities[name];
-		var capabilityItem = {};
+	for (let name in nodeTemplate.capabilities) {
+		let capability = nodeTemplate.capabilities[name];
+		let capabilityItem = {};
 		fillTosca(capabilityItem, capability, 'capability');
 		item.capabilities.push(capabilityItem);
 	}

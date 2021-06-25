@@ -11,7 +11,7 @@ func init() {
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
 
 exports.validate = function(v) {
-	var values = Array.prototype.slice.call(arguments, 1);
+	let values = Array.prototype.slice.call(arguments, 1);
 	return values.indexOf(v) !== -1;
 };
 `

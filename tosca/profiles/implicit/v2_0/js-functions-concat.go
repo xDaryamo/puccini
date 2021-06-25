@@ -11,10 +11,10 @@ func init() {
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 4.3.1
 
 exports.evaluate = function() {
-	var a = [];
-	var length = arguments.length;
-	for (var i = 0; i < length; i++) {
-		var argument = arguments[i];
+	let a = [];
+	let length = arguments.length;
+	for (let i = 0; i < length; i++) {
+		let argument = arguments[i];
 		if (argument.$string !== undefined)
 			argument = argument.$string;
 		a.push(argument);

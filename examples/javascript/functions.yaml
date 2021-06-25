@@ -16,8 +16,8 @@ metadata:
   # It can have any number of arguments
   puccini.scriptlet:tosca.function.in_bed: |-
     exports.evaluate = function() {
-      var a = [];
-      for (var i in arguments) {
+      let a = [];
+      for (let i in arguments) {
         a.push(arguments[i] + ' in bed');
       }
       return a.join('; ');

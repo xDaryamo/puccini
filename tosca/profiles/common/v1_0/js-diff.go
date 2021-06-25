@@ -12,7 +12,7 @@ if (!puccini.arguments.base) {
     throw 'must provide "base" argument';
 }
 
-var base = clout.load(puccini.arguments.base);
+let base = clout.load(puccini.arguments.base);
 
 traversal.coerce();
 traversal.coerce(base);
@@ -20,22 +20,22 @@ traversal.coerce(base);
 puccini.write(diff(clout, base));
 
 function diff(clout, base) {
-    var nodes = gatherNodeTemplates(clout);
-    var baseNodes = gatherNodeTemplates(base);
+    let nodes = gatherNodeTemplates(clout);
+    let baseNodes = gatherNodeTemplates(base);
     
-    var diff = {
+    let diff = {
         added: [],
         removed: []
     };
     
-    for (var n = 0, l = nodes.length; n < l; n++) {
-        var node = nodes[n];
+    for (let n = 0, l = nodes.length; n < l; n++) {
+        let node = nodes[n];
         if (!hasNode(baseNodes, node))
             diff.added.push(node.name);
     }
     
-    for (var n = 0, l = baseNodes.length; n < l; n++) {
-        var node = baseNodes[n];
+    for (let n = 0, l = baseNodes.length; n < l; n++) {
+        let node = baseNodes[n];
         if (!hasNode(nodes, node))
             diff.removed.push(node.name);
     }
@@ -44,11 +44,11 @@ function diff(clout, base) {
 }
 
 function gatherNodeTemplates(clout) {
-    var nodeTemplates = [];
-    for (var vertexId in clout.vertexes) {
-        var vertex = clout.vertexes[vertexId];
+    let nodeTemplates = [];
+    for (let vertexId in clout.vertexes) {
+        let vertex = clout.vertexes[vertexId];
         if (tosca.isNodeTemplate(vertex)) {
-            var nodeTemplate = vertex.properties;
+            let nodeTemplate = vertex.properties;
             nodeTemplates.push(nodeTemplate);
         }
     }
@@ -56,7 +56,7 @@ function gatherNodeTemplates(clout) {
 }
 
 function hasNode(nodes, node) {
-    for (var n = 0, l = nodes.length; n < l; n++)
+    for (let n = 0, l = nodes.length; n < l; n++)
         if (nodes[n].name === node.name)
             return true;
     return false;
