@@ -496,12 +496,24 @@ func (self *Context) ReadSequencedListItems(read Reader, process Processor) bool
 
 // Utils
 
-func getReadTagKey(entity reflect.Value, fieldName string) (string, bool) {
-	if structField, ok := entity.Type().FieldByName(fieldName); ok {
-		if tag, ok := structField.Tag.Lookup("read"); ok {
-			t := strings.Split(tag, ",")
-			return t[0], true
+func (self *Context) getReadTagKey(entity reflect.Value, fieldName string) (string, bool) {
+	var tag string
+	var ok bool
+
+	if self.ReadTagOverrides != nil {
+		tag, ok = self.ReadTagOverrides[fieldName]
+	}
+
+	if !ok {
+		if structField, ok_ := entity.Type().FieldByName(fieldName); ok_ {
+			tag, ok = structField.Tag.Lookup("read")
 		}
 	}
-	return "", false
+
+	if ok {
+		t := strings.Split(tag, ",")
+		return t[0], true
+	} else {
+		return "", false
+	}
 }
