@@ -261,10 +261,8 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 				}
 
 				// Grab information
-				if value.Information != nil {
-					if !value.Information.Empty() {
-						self.Information.Properties[key] = value.Information
-					}
+				if (value.Information != nil) && !value.Information.Empty() {
+					self.Information.Properties[key] = value.Information
 				}
 			} else if definition.IsRequired() {
 				self.Context.MapChild(key, data).ReportPropertyRequired("property")
@@ -304,7 +302,7 @@ func (self *Value) normalize(withInformation bool) normal.Constrainable {
 		normalMap := normal.NewMap()
 		for key, value := range data {
 			if v, ok := value.(*Value); ok {
-				normalMap.Put(key, v.normalize(false))
+				normalMap.Put(key, v.normalize(true))
 			} else {
 				normalMap.Put(key, normal.NewValue(value))
 			}

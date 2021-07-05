@@ -79,7 +79,7 @@ func (self *Value) Coerce() (ard.Value, error) {
 
 // Coercible interface
 func (self *Value) SetConstraints(constraints Constraints) {
-	self.Constraints = constraints
+	self.Constraints = append(self.Constraints, constraints...)
 }
 
 // Coercible interface

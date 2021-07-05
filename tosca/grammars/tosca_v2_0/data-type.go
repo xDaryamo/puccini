@@ -118,7 +118,7 @@ func (self *DataType) GetInternal() (ard.TypeName, ard.TypeValidator, tosca.Read
 }
 
 // Note that this may change the data (if it's a map), but that should be fine, because we intend
-// for the data to be complete. For the same reason, this action is idempotent (subsequent calls to
+// for the data to be complete. For the same reason, this action is idempotent (subsequent calls with
 // the same data will not have an effect).
 func (self *DataType) Complete(context *tosca.Context) {
 	map_, ok := context.Data.(ard.Map)

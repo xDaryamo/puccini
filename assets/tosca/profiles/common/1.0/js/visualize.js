@@ -19,6 +19,7 @@ let colorWorkflow = 'rgb(100,255,100)';
 
 let nodes = [];
 let edges = [];
+let header;
 
 if (tosca.isTosca(clout)) {
 	let templateName = clout.properties.tosca.metadata.template_name;
@@ -26,7 +27,7 @@ if (tosca.isTosca(clout)) {
 	let templateVersion = clout.properties.tosca.metadata.template_version;
 	let description = clout.properties.tosca.description;
 
-	let header = '<h1>Clout from TOSCA Service Template</h1>';
+	header = '<h1>Clout from TOSCA Service Template</h1>';
 	if (templateName)
 		header += '<h2>' + escapeHtml(templateName) + '</h2>';
 	if (templateVersion)
