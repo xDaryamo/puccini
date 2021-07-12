@@ -1,9 +1,8 @@
 package tosca_v2_0
 
 import (
-	"sync"
-
 	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -27,7 +26,6 @@ type Repository struct {
 
 	url                urlpkg.URL
 	urlProblemReported bool
-	lock               sync.Mutex
 }
 
 func NewRepository(context *tosca.Context) *Repository {
@@ -53,8 +51,9 @@ func (self *Repository) Render() {
 }
 
 func (self *Repository) GetURL() urlpkg.URL {
-	self.lock.Lock()
-	defer self.lock.Unlock()
+	lock := util.GetLock(self)
+	lock.Lock()
+	defer lock.Unlock()
 
 	if (self.url == nil) && (self.URL != nil) {
 		origin := self.Context.URL.Origin()

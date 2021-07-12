@@ -1,8 +1,7 @@
 package tosca_v2_0
 
 import (
-	"sync"
-
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -23,8 +22,6 @@ type Type struct {
 	Version     *Value   `read:"version,Value"`
 	Metadata    Metadata `read:"metadata,!Metadata"`
 	Description *string  `read:"description"`
-
-	metadataLock sync.RWMutex
 }
 
 func NewType(context *tosca.Context) *Type {
@@ -36,8 +33,9 @@ func NewType(context *tosca.Context) *Type {
 
 // tosca.HasMetadata interface
 func (self *Type) GetDescription() (string, bool) {
-	self.metadataLock.RLock()
-	defer self.metadataLock.RUnlock()
+	lock := util.GetLock(self)
+	lock.RLock()
+	defer lock.RUnlock()
 
 	if self.Description != nil {
 		return *self.Description, true
@@ -47,8 +45,9 @@ func (self *Type) GetDescription() (string, bool) {
 
 // tosca.HasMetadata interface
 func (self *Type) GetMetadata() (map[string]string, bool) {
-	self.metadataLock.RLock()
-	defer self.metadataLock.RUnlock()
+	lock := util.GetLock(self)
+	lock.RLock()
+	defer lock.RUnlock()
 
 	metadata := make(map[string]string)
 	if self.Metadata != nil {
@@ -61,8 +60,9 @@ func (self *Type) GetMetadata() (map[string]string, bool) {
 
 // tosca.HasMetadata interface
 func (self *Type) SetMetadata(name string, value string) bool {
-	self.metadataLock.Lock()
-	defer self.metadataLock.Unlock()
+	lock := util.GetLock(self)
+	lock.Lock()
+	defer lock.Unlock()
 
 	self.Metadata[name] = value
 	return true
@@ -77,6 +77,10 @@ func (self *Type) Render() {
 }
 
 func (self *Type) GetMetadataValue(key string) (string, bool) {
+	lock := util.GetLock(self)
+	lock.RLock()
+	defer lock.RUnlock()
+
 	if self.Metadata != nil {
 		value, ok := self.Metadata[key]
 		return value, ok

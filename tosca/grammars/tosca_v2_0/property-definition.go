@@ -52,7 +52,7 @@ func (self *PropertyDefinition) Render() {
 	self.render()
 	self.ConstraintClauses.Render(self.DataType)
 
-	if self.Default != nil {
+	if (self.Default != nil) && (self.DataType != nil) {
 		// The "default" value must be a valid value of the type
 		self.Default.RenderProperty(self.DataType, self)
 	}

@@ -2,10 +2,10 @@ package tosca_v2_0
 
 import (
 	"strings"
-	"sync"
 
 	"github.com/tliron/kutil/ard"
 	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -42,7 +42,6 @@ type ArtifactDefinition struct {
 
 	url                urlpkg.URL
 	urlProblemReported bool
-	lock               sync.Mutex
 }
 
 func NewArtifactDefinition(context *tosca.Context) *ArtifactDefinition {
@@ -74,8 +73,9 @@ func (self *ArtifactDefinition) GetURL() urlpkg.URL {
 		return nil
 	}
 
-	self.lock.Lock()
-	defer self.lock.Unlock()
+	lock := util.GetLock(self)
+	lock.Lock()
+	defer lock.Unlock()
 
 	if self.url == nil {
 		if self.Repository != nil {
