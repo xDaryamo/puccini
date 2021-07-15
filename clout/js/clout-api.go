@@ -80,8 +80,6 @@ func (self *CloutAPI) CallAll(function goja.FunctionCall) goja.Value {
 							self.cloutContext.Context.Log.Errorf("%s", err.Error())
 						}
 					}
-				} else {
-					self.cloutContext.Context.Log.Errorf("%s", err.Error())
 				}
 			}
 		}

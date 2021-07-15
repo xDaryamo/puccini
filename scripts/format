@@ -30,6 +30,10 @@ gofmt -w -s -e \
 	"$ROOT/tosca/profiles/common/v1_0" \
 	"$ROOT/tosca/profiles/hot/v1_0" \
 	"$ROOT/tosca/profiles/implicit/v2_0" \
+	"$ROOT/tosca/profiles/implicit/v1_3" \
+	"$ROOT/tosca/profiles/implicit/v1_2" \
+	"$ROOT/tosca/profiles/implicit/v1_1" \
+	"$ROOT/tosca/profiles/implicit/v1_0" \
 	"$ROOT/tosca/profiles/kubernetes/v1_0" \
 	"$ROOT/tosca/profiles/openstack/v1_0" \
 	"$ROOT/tosca/profiles/simple/v1_0" \
