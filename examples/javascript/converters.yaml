@@ -1,0 +1,53 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+# To apply the converters run:
+#   puccini-tosca compile --coerce examples/javascript/converters.yaml
+
+# Also see: functions.yaml
+
+metadata:
+
+  template_name: JavaScript Converters Example
+  template_author: Puccini
+
+  # Your scriptlet must export a function named "convert"
+  # (You can use any scriptlet name, but a good convention is to prefix with 'tosca.converter.')
+  puccini.scriptlet:tosca.converter.json: |-
+    exports.convert = function(value) {
+      return JSON.stringify(value);
+    };
+
+data_types:
+
+  Config:
+    metadata:
+      # Add this metadata to any data type or definition
+      # The converter is called *after* functions are called and constraints are applied
+      puccini.converter: tosca.converter.json
+    properties:
+      ports:
+        type: integer
+      addresses:
+        type: list
+        entry_schema: string      
+
+node_types:
+
+  Router:
+    properties:
+      config:
+        type: Config
+
+topology_template:
+
+  node_templates:
+
+    router:
+      type: Router
+      properties:
+        # This will be converted to JSON when coerced
+        config:
+          ports: 8
+          addresses:
+          - 1.2.3.4
+          - 5.6.7.8

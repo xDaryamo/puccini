@@ -12,6 +12,7 @@ type List struct {
 	Key         Constrainable `json:"$key,omitempty" yaml:"$key,omitempty"`
 	Information *Information  `json:"$information,omitempty" yaml:"$information,omitempty"`
 	Constraints FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
+	Converter   *FunctionCall `json:"$converter,omitempty" yaml:"$converter,omitempty"`
 
 	EntryConstraints FunctionCalls `json:"$entryConstraints,omitempty" yaml:"$entryConstraints,omitempty"`
 
@@ -35,6 +36,11 @@ func (self *List) SetInformation(information *Information) {
 // Constrainable interface
 func (self *List) AddConstraint(functionCall *tosca.FunctionCall) {
 	self.Constraints = append(self.Constraints, NewFunctionCall(functionCall))
+}
+
+// Constrainable interface
+func (self *List) SetConverter(converter *tosca.FunctionCall) {
+	self.Converter = NewFunctionCall(converter)
 }
 
 func (self *List) AddEntryConstraint(constraint *tosca.FunctionCall) {

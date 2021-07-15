@@ -39,6 +39,7 @@ func TestParse(t *testing.T) {
 	testCompile(t, "tosca/future/tosca_2_0.yaml", nil)
 	testCompile(t, "javascript/artifacts.yaml", nil)
 	testCompile(t, "javascript/constraints.yaml", nil)
+	testCompile(t, "javascript/converters.yaml", nil)
 	testCompile(t, "javascript/define.yaml", nil)
 	testCompile(t, "javascript/exec.yaml", nil)
 	testCompile(t, "javascript/functions.yaml", nil)

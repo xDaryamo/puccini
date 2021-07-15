@@ -12,6 +12,7 @@ type Map struct {
 	Key         Constrainable `json:"$key,omitempty" yaml:"$key,omitempty"`
 	Information *Information  `json:"$information,omitempty" yaml:"$information,omitempty"`
 	Constraints FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
+	Converter   *FunctionCall `json:"$converter,omitempty" yaml:"$converter,omitempty"`
 
 	KeyConstraints   FunctionCalls `json:"$keyConstraints,omitempty" yaml:"$keyConstraints,omitempty"`
 	ValueConstraints FunctionCalls `json:"$valueConstraints,omitempty" yaml:"$valueConstraints,omitempty"`
@@ -36,6 +37,11 @@ func (self *Map) SetInformation(information *Information) {
 // Constrainable interface
 func (self *Map) AddConstraint(constraint *tosca.FunctionCall) {
 	self.Constraints = append(self.Constraints, NewFunctionCall(constraint))
+}
+
+// Constrainable interface
+func (self *Map) SetConverter(converter *tosca.FunctionCall) {
+	self.Converter = NewFunctionCall(converter)
 }
 
 func (self *Map) AddKeyConstraint(constraint *tosca.FunctionCall) {

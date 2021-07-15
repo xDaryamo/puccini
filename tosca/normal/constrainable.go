@@ -12,6 +12,7 @@ type Constrainable interface {
 	SetKey(Constrainable)
 	SetInformation(*Information)
 	AddConstraint(*tosca.FunctionCall)
+	SetConverter(*tosca.FunctionCall)
 }
 
 //

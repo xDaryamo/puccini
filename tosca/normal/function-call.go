@@ -12,6 +12,7 @@ type FunctionCall struct {
 	Key         Constrainable `json:"$key,omitempty" yaml:"$key,omitempty"`
 	Information *Information  `json:"$information,omitempty" yaml:"$information,omitempty"`
 	Constraints FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
+	Converter   *FunctionCall `json:"$converter,omitempty" yaml:"$converter,omitempty"`
 
 	FunctionCall *tosca.FunctionCall `json:"$functionCall" yaml:"$functionCall"`
 }
@@ -33,6 +34,11 @@ func (self *FunctionCall) SetInformation(information *Information) {
 // Constrainable interface
 func (self *FunctionCall) AddConstraint(constraint *tosca.FunctionCall) {
 	self.Constraints = append(self.Constraints, NewFunctionCall(constraint))
+}
+
+// Constrainable interface
+func (self *FunctionCall) SetConverter(converter *tosca.FunctionCall) {
+	self.Converter = NewFunctionCall(converter)
 }
 
 //

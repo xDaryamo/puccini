@@ -62,19 +62,19 @@ func (self Constraints) Validate(value interface{}) (bool, error) {
 	return true, nil
 }
 
-func (self Constraints) Apply(value interface{}) (interface{}, error) {
+func (self Constraints) Apply(value interface{}) error {
 	if coercible, ok := value.(Coercible); ok {
 		var err error
 		if value, err = coercible.Coerce(); err != nil {
-			return nil, err
+			return err
 		}
 	}
 
 	for _, constraint := range self {
 		if _, err := constraint.Validate(value, true); err != nil {
-			return nil, err
+			return err
 		}
 	}
 
-	return value, nil
+	return nil
 }

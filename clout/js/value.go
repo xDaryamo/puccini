@@ -11,8 +11,9 @@ import (
 type Value struct {
 	Notation ard.StringMap `json:"-" yaml:"-"`
 
-	Data        interface{} `json:"data" yaml:"data"` // List, Map, or ard.Value
-	Constraints Constraints `json:"constraints,omitempty" yaml:"constraints,omitempty"`
+	Data        interface{}   `json:"data" yaml:"data"` // List, Map, or ard.Value
+	Constraints Constraints   `json:"constraints,omitempty" yaml:"constraints,omitempty"`
+	Converter   *FunctionCall `json:"converter,omitempty" yaml:"converter,omitempty"`
 }
 
 func (self *CloutContext) NewValue(data ard.Value, notation ard.StringMap, functionCallContext FunctionCallContext) (*Value, error) {
@@ -23,6 +24,9 @@ func (self *CloutContext) NewValue(data ard.Value, notation ard.StringMap, funct
 
 	var err error
 	if value.Constraints, err = self.NewConstraintsFromNotation(notation, "$constraints", functionCallContext); err != nil {
+		return nil, err
+	}
+	if value.Converter, err = self.NewConverter(notation, functionCallContext); err != nil {
 		return nil, err
 	}
 
@@ -74,7 +78,15 @@ func (self *Value) Coerce() (ard.Value, error) {
 		}
 	}
 
-	return self.Constraints.Apply(data)
+	if err := self.Constraints.Apply(data); err == nil {
+		if self.Converter != nil {
+			return self.Converter.Convert(data)
+		} else {
+			return data, nil
+		}
+	} else {
+		return nil, err
+	}
 }
 
 // Coercible interface

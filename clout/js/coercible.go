@@ -45,3 +45,19 @@ func (self *CloutContext) NewCoercible(data ard.Value, functionCallContext Funct
 		return nil, fmt.Errorf("malformed coercible, not a map: %T", data)
 	}
 }
+
+func (self *CloutContext) NewConverter(notation ard.StringMap, functionCallContext FunctionCallContext) (*FunctionCall, error) {
+	if converter, ok := notation["$converter"]; ok {
+		if coercible, err := self.NewCoercible(converter, functionCallContext); err == nil {
+			if converter_, ok := coercible.(*FunctionCall); ok {
+				return converter_, nil
+			} else {
+				return nil, fmt.Errorf("malformed converter, not a function call: %+v", converter)
+			}
+		} else {
+			return nil, err
+		}
+	} else {
+		return nil, nil
+	}
+}
