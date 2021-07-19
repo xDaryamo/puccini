@@ -122,14 +122,14 @@ exports.getNestedValue = function(singular, plural, args) {
 			break;
 		}
 	}
-	if (arg in value)
+	if ((typeof value === 'object') && (value !== null) && (arg in value))
 		value = value[arg];
 	else
 		throw puccini.sprintf('%s "%s" not found in "%s"', singular, arg, nodeTemplate.name);
 	value = clout.coerce(value);
 	for (let i = a + 1; i < length; i++) {
 		arg = args[i];
-		if (arg in value)
+		if ((typeof value === 'object') && (value !== null) && (arg in value))
 			value = value[arg];
 		else
 			throw puccini.sprintf('nested %s "%s" not found in "%s"', singular, args.slice(a, i+1).join('.'), nodeTemplate.name);
