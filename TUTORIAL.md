@@ -1,5 +1,5 @@
-Puccini Quickstart
-==================
+Puccini Tutorial
+================
 
 [Download and install Puccini](https://github.com/tliron/puccini/releases).
 
@@ -39,6 +39,11 @@ above:
 
 You'll see that the relative URLs continue to work as expected even though the base
 URL is not on the local filesystem.
+
+The URL system is quite powerful and even supports access to git repositories (GitOps!)
+using the following notation:
+
+    puccini-tosca compile 'git:https://github.com/tliron/puccini.git!examples/openstack/hello-world.yaml'
 
 Puccini can also compile YAML from stdin:
 
