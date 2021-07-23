@@ -508,8 +508,8 @@ github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5CcY=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69rRypqCw=
-github.com/tliron/kutil v0.1.46 h1:ggWY5AJ55iRf7nTSIYIRmRD6jaQx/3KPdn2iieZ6wpQ=
-github.com/tliron/kutil v0.1.46/go.mod h1:yv6/fhwAZN01INRu/lx1btth6iOSuV+nTX1RYX/uFsY=
+github.com/tliron/kutil v0.1.47 h1:Vd446yXtixjwn7k/RQetuwf752aMiEQ9ZReRrKHbFEY=
+github.com/tliron/kutil v0.1.47/go.mod h1:yv6/fhwAZN01INRu/lx1btth6iOSuV+nTX1RYX/uFsY=
 github.com/tliron/yamlkeys v1.3.5 h1:zfNwrtxNP9pyj2UJV8SgLj6jUP4bsHwFtBByZyIg4AM=
 github.com/tliron/yamlkeys v1.3.5/go.mod h1:8kJ1A/1s3p/I3MQUAbtv72dPEyQGoh0ZkQp0UAkABBo=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20170815181823-89b8d40f7ca8/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=

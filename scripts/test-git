@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
+. "$HERE/_env"
+
+"$HERE/build"
+
+puccini-tosca compile \
+'git:https://github.com/tliron/puccini.git#main!examples/openstack/hello-world.yaml' "$@"

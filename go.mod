@@ -9,6 +9,6 @@ require (
 	github.com/fxamacker/cbor/v2 v2.3.0
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/cobra v1.2.1
-	github.com/tliron/kutil v0.1.46
+	github.com/tliron/kutil v0.1.47
 	github.com/tliron/yamlkeys v1.3.5
 )

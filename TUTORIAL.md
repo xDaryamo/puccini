@@ -40,8 +40,9 @@ above:
 You'll see that the relative URLs continue to work as expected even though the base
 URL is not on the local filesystem.
 
-The URL system is quite powerful and even supports access to git repositories (GitOps!)
-using the following notation:
+The URL system is quite powerful and even supports access to git repositories (GitOps!).
+Any valid git repository URL can follow the "git:" prefix, then follow with a "!" and the
+path within the repository. Also note that in bash you need to escape the "!" character:
 
     puccini-tosca compile 'git:https://github.com/tliron/puccini.git!examples/openstack/hello-world.yaml'
 
@@ -93,10 +94,9 @@ would be the first "Other-Definitions", and so on:
     puccini-tosca compile cloud.csar --template=2
 
 Puccini also supports a "zip:" prefix scheme for URLs, allowing you to refer to an
-entry within a zip file such as a CSAR. Any valid URL can follow the prefix, whether
-it's a local file URL, HTTP, etc., and then add a "!" to refer to a path within the
-zip. Note that for files it does require absolute file system paths. Also note that in
-bash you need to escape the "!" character. Example:
+entry within a zip or CSAR file. Any valid URL can follow the prefix, whether
+it's a local file URL, HTTP, etc. Note that for files it does require absolute file
+system paths. Then follow with a "!" and the path within the zip. Example:
 
     puccini-tosca compile zip:$PWD/cloud.csar\!main.yaml
 

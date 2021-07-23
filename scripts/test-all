@@ -20,6 +20,8 @@ m 'test-zip...'
 "$HERE/test-zip"
 m 'test-zip-http...'
 "$HERE/test-zip-http"
+m 'test-git...'
+"$HERE/test-git"
 m 'test-wasm...'
 "$HERE/test-wasm"
 m 'test-java...'
