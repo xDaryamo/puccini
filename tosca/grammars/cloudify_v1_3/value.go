@@ -19,7 +19,7 @@ type Value struct {
 
 	Description *string
 
-	Information *normal.Information `traverse:"ignore" json:"-" yaml:"-"`
+	Information *normal.ValueInformation `traverse:"ignore" json:"-" yaml:"-"`
 
 	rendered bool
 }
@@ -28,7 +28,7 @@ func NewValue(context *tosca.Context) *Value {
 	return &Value{
 		Entity:      NewEntity(context),
 		Name:        context.Name,
-		Information: normal.NewInformation(),
+		Information: normal.NewValueInformation(),
 	}
 }
 

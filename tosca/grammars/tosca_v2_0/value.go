@@ -26,9 +26,9 @@ type Value struct {
 	ConstraintClauses ConstraintClauses
 	Description       *string
 
-	DataType    *DataType           `traverse:"ignore" json:"-" yaml:"-"`
-	Information *normal.Information `traverse:"ignore" json:"-" yaml:"-"`
-	Converter   *tosca.FunctionCall `traverse:"ignore" json:"-" yaml:"-"`
+	DataType    *DataType                `traverse:"ignore" json:"-" yaml:"-"`
+	Information *normal.ValueInformation `traverse:"ignore" json:"-" yaml:"-"`
+	Converter   *tosca.FunctionCall      `traverse:"ignore" json:"-" yaml:"-"`
 
 	rendered bool
 }
@@ -37,7 +37,7 @@ func NewValue(context *tosca.Context) *Value {
 	return &Value{
 		Entity:      NewEntity(context),
 		Name:        context.Name,
-		Information: normal.NewInformation(),
+		Information: normal.NewValueInformation(),
 	}
 }
 
@@ -255,7 +255,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 
 				// Grab information
 				if (value.Information != nil) && !value.Information.Empty() {
-					self.Information.Properties[key] = value.Information
+					self.Information.Fields[key] = value.Information
 				}
 			} else if definition.IsRequired() {
 				self.Context.MapChild(key, data).ReportPropertyRequired("property")

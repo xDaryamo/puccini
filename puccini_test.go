@@ -11,6 +11,8 @@ import (
 	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
+
+	_ "github.com/tliron/kutil/logging/simple"
 )
 
 func TestParse(t *testing.T) {
@@ -59,7 +61,11 @@ func TestParse(t *testing.T) {
 var ROOT string
 
 func init() {
-	ROOT = os.Getenv("ROOT")
+	if root, ok := os.LookupEnv("ROOT"); ok {
+		ROOT = root
+	} else {
+		ROOT, _ = os.Getwd()
+	}
 }
 
 func testCompile(t *testing.T, url string, inputs map[string]interface{}) {

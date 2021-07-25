@@ -18,14 +18,14 @@ type Value struct {
 	Constraints Constraints
 	Description *string
 
-	Information *normal.Information `traverse:"ignore" json:"-" yaml:"-"`
+	Information *normal.ValueInformation `traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewValue(context *tosca.Context) *Value {
 	return &Value{
 		Entity:      NewEntity(context),
 		Name:        context.Name,
-		Information: normal.NewInformation(),
+		Information: normal.NewValueInformation(),
 	}
 }
 

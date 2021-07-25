@@ -9,10 +9,10 @@ import (
 //
 
 type Map struct {
-	Key         Constrainable `json:"$key,omitempty" yaml:"$key,omitempty"`
-	Information *Information  `json:"$information,omitempty" yaml:"$information,omitempty"`
-	Constraints FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
-	Converter   *FunctionCall `json:"$converter,omitempty" yaml:"$converter,omitempty"`
+	Key         Constrainable     `json:"$key,omitempty" yaml:"$key,omitempty"`
+	Information *ValueInformation `json:"$information,omitempty" yaml:"$information,omitempty"`
+	Constraints FunctionCalls     `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
+	Converter   *FunctionCall     `json:"$converter,omitempty" yaml:"$converter,omitempty"`
 
 	KeyConstraints   FunctionCalls `json:"$keyConstraints,omitempty" yaml:"$keyConstraints,omitempty"`
 	ValueConstraints FunctionCalls `json:"$valueConstraints,omitempty" yaml:"$valueConstraints,omitempty"`
@@ -30,8 +30,8 @@ func (self *Map) SetKey(key Constrainable) {
 }
 
 // Constrainable interface
-func (self *Map) SetInformation(information *Information) {
-	self.Information = CopyInformation(information)
+func (self *Map) SetInformation(information *ValueInformation) {
+	self.Information = CopyValueInformation(information)
 }
 
 // Constrainable interface

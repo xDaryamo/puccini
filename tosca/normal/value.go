@@ -10,10 +10,10 @@ import (
 //
 
 type Value struct {
-	Key         Constrainable `json:"$key,omitempty" yaml:"$key,omitempty"`
-	Information *Information  `json:"$information,omitempty" yaml:"$information,omitempty"`
-	Constraints FunctionCalls `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
-	Converter   *FunctionCall `json:"$converter,omitempty" yaml:"$converter,omitempty"`
+	Key         Constrainable     `json:"$key,omitempty" yaml:"$key,omitempty"`
+	Information *ValueInformation `json:"$information,omitempty" yaml:"$information,omitempty"`
+	Constraints FunctionCalls     `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
+	Converter   *FunctionCall     `json:"$converter,omitempty" yaml:"$converter,omitempty"`
 
 	Value ard.Value `json:"$value" yaml:"$value"`
 }
@@ -28,8 +28,8 @@ func (self *Value) SetKey(key Constrainable) {
 }
 
 // Constrainable interface
-func (self *Value) SetInformation(information *Information) {
-	self.Information = CopyInformation(information)
+func (self *Value) SetInformation(information *ValueInformation) {
+	self.Information = CopyValueInformation(information)
 }
 
 // Constrainable interface

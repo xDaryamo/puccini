@@ -11,4 +11,4 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 m 'testing...'
 
 ROOT=$ROOT \
-go test -count=1 -timeout=10s "$MODULE/puccini-tosca" "$@"
+go test -count=1 -timeout=10s "$MODULE" "$@"
