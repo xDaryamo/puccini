@@ -59,7 +59,7 @@ function fillNodeTemplate(item, nodeTemplate) {
 
 function fillRelationship(item, relationship) {
 	// As facets
-	fillTosca(item, relationship, 'relationship', 'clout.edge.');
+	fillTosca(item, relationship, 'relationship', 'clout.edge|');
 }
 
 puccini.format = 'json';
