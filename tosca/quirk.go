@@ -18,6 +18,10 @@ const QuirkImportsTopologyTemplateIgnore Quirk = "imports.topology_template.igno
 // another unit with an incompatible grammar. This quirk will disable the check.
 const QuirkImportsVersionPermissive Quirk = "imports.version.permissive"
 
+// Allows the "import" syntax to be a sequenced list, in which the
+// name is ignored.
+const QuirkImportsSequencedList Quirk = "imports.sequencedlist"
+
 // By default Puccini is strict about "string"-typed values
 // and will consider integers, floats, and boolean values to be problems. This quirk will accept
 // such values and convert them as sensibly as possible to strings. This includes accepting floats

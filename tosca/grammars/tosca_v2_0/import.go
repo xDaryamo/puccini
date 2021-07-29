@@ -40,6 +40,18 @@ func ReadImport(context *tosca.Context) tosca.EntityPtr {
 	self := NewImport(context)
 
 	if context.Is(ard.TypeMap) {
+		if context.HasQuirk(tosca.QuirkImportsSequencedList) {
+			map_ := context.Data.(ard.Map)
+			if len(map_) == 1 {
+				for _, data := range map_ {
+					if data_, ok := data.(ard.Map); ok {
+						context.Data = data_
+					}
+					break
+				}
+			}
+		}
+
 		// Long notation
 		context.ValidateUnsupportedFields(context.ReadFields(self))
 	} else if context.ValidateType(ard.TypeMap, ard.TypeString) {

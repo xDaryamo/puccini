@@ -13,6 +13,9 @@ These are activated via the `--quirk/-x` switch for
 * **imports.topology_template.ignore**: Allows imported units to contain a `topology_template`
   section, which is ignored.
 
+* **imports.sequencedlist**: Allows the "import" syntax to be a sequenced list, in which the
+  name is ignored.
+
 * **data_types.string.permissive**: By default Puccini is strict about "string"-typed values
   and will consider integers, floats, and boolean values to be problems. This quirk will accept
   such values and convert them as sensibly as possible to strings. This includes accepting floats
@@ -45,4 +48,3 @@ These are activated via the `--quirk/-x` switch for
 
 * **annotations.ignore**: Ignores the "annotation_types" keyword in service templates and the
   "annotations" keyword in parameter definitions.
-
