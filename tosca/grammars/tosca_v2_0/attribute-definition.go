@@ -43,7 +43,11 @@ func NewAttributeDefinition(context *tosca.Context) *AttributeDefinition {
 // tosca.Reader signature
 func ReadAttributeDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewAttributeDefinition(context)
-	context.ValidateUnsupportedFields(context.ReadFields(self))
+	var ignore []string
+	if context.HasQuirk(tosca.QuirkAnnotationsIgnore) {
+		ignore = append(ignore, "annotations")
+	}
+	context.ValidateUnsupportedFields(append(context.ReadFields(self), ignore...))
 	return self
 }
 

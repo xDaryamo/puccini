@@ -18,10 +18,13 @@ func ReadUnit(context *tosca.Context) tosca.EntityPtr {
 
 	self := tosca_v2_0.NewUnit(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
+	ignore := []string{"dsl_definitions"}
 	if context.HasQuirk(tosca.QuirkImportsTopologyTemplateIgnore) {
-		context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions", "topology_template"))
-	} else {
-		context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
+		ignore = append(ignore, "topology_template")
 	}
+	if context.HasQuirk(tosca.QuirkAnnotationsIgnore) {
+		ignore = append(ignore, "annotation_types")
+	}
+	context.ValidateUnsupportedFields(append(context.ReadFields(self), ignore...))
 	return self
 }

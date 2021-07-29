@@ -42,3 +42,7 @@ These are activated via the `--quirk/-x` switch for
 * **substitution_mappings.requirements.permissive**: Normally the `requirements` under
   `substitution_mappings` must be mapped to an assigned requirement in a node template. This quirk
   allows unassigned requirements to be mapped.
+
+* **annotations.ignore**: Ignores the "annotation_types" keyword in service templates and the
+  "annotations" keyword in parameter definitions.
+

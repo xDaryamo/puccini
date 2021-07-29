@@ -53,6 +53,10 @@ const QuirkSubstitutionMappingsRequirementsList Quirk = "substitution_mappings.r
 // allows unassigned requirements to be mapped.
 const QuirkSubstitutionMappingsRequirementsPermissive Quirk = "substitution_mappings.requirements.permissive"
 
+// Ignores the "annotation_types" keyword in service templates and the
+// "annotations" keyword in parameter definitions.
+const QuirkAnnotationsIgnore Quirk = "annotations.ignore"
+
 //
 // Quirks
 //

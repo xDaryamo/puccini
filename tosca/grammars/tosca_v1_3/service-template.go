@@ -20,7 +20,11 @@ func ReadServiceTemplate(context *tosca.Context) tosca.EntityPtr {
 
 	self := tosca_v2_0.NewServiceTemplate(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
-	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
+	ignore := []string{"dsl_definitions"}
+	if context.HasQuirk(tosca.QuirkAnnotationsIgnore) {
+		ignore = append(ignore, "annotation_types")
+	}
+	context.ValidateUnsupportedFields(append(context.ReadFields(self), ignore...))
 	if self.Profile != nil {
 		context.CanonicalNamespace = self.Profile
 	}
