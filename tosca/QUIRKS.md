@@ -48,3 +48,10 @@ These are activated via the `--quirk/-x` switch for
 
 * **annotations.ignore**: Ignores the "annotation_types" keyword in service templates and the
   "annotations" keyword in parameter definitions.
+
+Combination Quirks
+------------------
+
+* **etsinfv**: Combines "imports.topology_template.ignore", "data_types.string.permissive",
+  "substitution_mappings.requirements.permissive", "substitution_mappings.requirements.list"
+* **onap**: Combines "annotations.ignore", "imports.sequencedlist"

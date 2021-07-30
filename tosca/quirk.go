@@ -61,6 +61,26 @@ const QuirkSubstitutionMappingsRequirementsPermissive Quirk = "substitution_mapp
 // "annotations" keyword in parameter definitions.
 const QuirkAnnotationsIgnore Quirk = "annotations.ignore"
 
+// Combines "imports.topology_template.ignore", "data_types.string.permissive",
+// "substitution_mappings.requirements.permissive", "substitution_mappings.requirements.list"
+const QuirkETSINFV Quirk = "etsinfv"
+
+// Combines "annotations.ignore", "imports.sequencedlist"
+const QuirkONAP Quirk = "onap"
+
+var combinationQuirks = map[Quirk][]Quirk{
+	QuirkETSINFV: {
+		QuirkImportsTopologyTemplateIgnore,
+		QuirkDataTypesStringPermissive,
+		QuirkSubstitutionMappingsRequirementsPermissive,
+		QuirkSubstitutionMappingsRequirementsList,
+	},
+	QuirkONAP: {
+		QuirkAnnotationsIgnore,
+		QuirkImportsSequencedList,
+	},
+}
+
 //
 // Quirks
 //
@@ -68,9 +88,16 @@ const QuirkAnnotationsIgnore Quirk = "annotations.ignore"
 type Quirks []Quirk
 
 func NewQuirks(quirks ...string) Quirks {
-	self := make(Quirks, len(quirks))
-	for index, quirk := range quirks {
-		self[index] = Quirk(quirk)
+	var self Quirks
+	for _, quirk := range quirks {
+		quirk_ := Quirk(quirk)
+		if quirks_, ok := combinationQuirks[quirk_]; ok {
+			for _, quirk__ := range quirks_ {
+				self = append(self, quirk__)
+			}
+		} else {
+			self = append(self, quirk_)
+		}
 	}
 	return self
 }
