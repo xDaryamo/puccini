@@ -1,6 +1,7 @@
 package tosca_v2_0
 
 import (
+	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
@@ -43,7 +44,13 @@ func NewSubstitutionMappings(context *tosca.Context) *SubstitutionMappings {
 // tosca.Reader signature
 func ReadSubstitutionMappings(context *tosca.Context) tosca.EntityPtr {
 	if context.HasQuirk(tosca.QuirkSubstitutionMappingsRequirementsList) {
-		context.SetReadTag("RequirementMappings", "requirements,{}RequirementMapping")
+		if map_, ok := context.Data.(ard.Map); ok {
+			if requirements, ok := map_["requirements"]; ok {
+				if _, ok := requirements.(ard.List); ok {
+					context.SetReadTag("RequirementMappings", "requirements,{}RequirementMapping")
+				}
+			}
+		}
 	}
 
 	self := NewSubstitutionMappings(context)

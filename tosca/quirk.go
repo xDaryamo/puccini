@@ -49,7 +49,7 @@ const QuirkNamespaceNormativeShortcutsDisable Quirk = "namespace.normative.short
 // the `requirements` key under `substitution_mappings` is syntactically a map. However, this syntax
 // is inconsistent because it doesn't match the syntax in node templates, which is a sequenced list.
 // (In node types, too, it is a sequenced list, although grammatically it works like a map.) This
-// quirk changes the expected syntax to be a sequenced list.
+// quirk allows the expected syntax to be a sequenced list.
 const QuirkSubstitutionMappingsRequirementsList Quirk = "substitution_mappings.requirements.list"
 
 // Normally the `requirements` under
