@@ -78,6 +78,7 @@ var combinationQuirks = map[Quirk][]Quirk{
 	QuirkONAP: {
 		QuirkAnnotationsIgnore,
 		QuirkImportsSequencedList,
+		QuirkImportsVersionPermissive,
 	},
 }
 
