@@ -130,13 +130,16 @@ func (self *ConstraintClause) IsNativeArgument(index uint) bool {
 type ConstraintClauses []*ConstraintClause
 
 func (self ConstraintClauses) Append(constraints ConstraintClauses) ConstraintClauses {
-	var r ConstraintClauses
 	length := len(self)
 	if length > 0 {
-		r = make(ConstraintClauses, length)
+		r := make(ConstraintClauses, length)
 		copy(r, self)
+		return append(r, constraints...)
+	} else {
+		r := make(ConstraintClauses, len(constraints))
+		copy(r, constraints)
+		return r
 	}
-	return append(r, constraints...)
 }
 
 func (self ConstraintClauses) Render(dataType *DataType) {

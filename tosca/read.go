@@ -197,15 +197,20 @@ func NewReadField(fieldName string, tag string, context *Context, entity reflect
 }
 
 func (self *ReadField) Read() {
+	field := self.Entity.FieldByName(self.FieldName)
+	fieldType := field.Type()
+
 	childData, ok := self.Context.Data.(ard.Map)[self.Key]
 	if !ok {
+		if reflection.IsSliceOfPtrToStruct(fieldType) {
+			// If we have no items, at least have an empty slice
+			// so that "require" will not see a nil here
+			field.Set(reflect.MakeSlice(fieldType, 0, 0))
+		}
 		return
 	}
 
-	field := self.Entity.FieldByName(self.FieldName)
-
 	if self.Reader != nil {
-		fieldType := field.Type()
 		if reflection.IsSliceOfPtrToStruct(fieldType) {
 			// Field is compatible with []*interface{}
 			slice := field
@@ -234,7 +239,7 @@ func (self *ReadField) Read() {
 			if slice.IsNil() {
 				// If we have no items, at least have an empty slice
 				// so that "require" will not see a nil here
-				slice = reflect.MakeSlice(slice.Type(), 0, 0)
+				slice = reflect.MakeSlice(fieldType, 0, 0)
 			}
 			field.Set(slice)
 		} else if reflection.IsMapOfStringToPtrToStruct(fieldType) {

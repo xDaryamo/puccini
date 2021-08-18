@@ -53,10 +53,10 @@ If you need more diagnostics for TOSCA parsing use the `parse` command. It works
 `compile` but does not emit Clout. Instead, it provides you various flages for examining the
 internal workings of Puccini's TOSCA parser.
 
-Use `--stop/-s` to specify a [phase](../tosca/parser/) (1-5) at which you wish the parser to stop.
-This could be useful if you're getting too many problems in your report and wish to minimize them
-to a more manageable list. Note that `-s 0` will skip the TOSCA parser entirely and just check that
-the YAML input is readable.
+By default Puccini will attempt all [5 parser phases](../tosca/parser/). This is in order to give
+users as complete a problem report as possible. However, if you're getting too many problems it
+may be useful to specify `--stop/-s` with a phase number (1-5) at which you wish the to stop. Note
+that `-s 0` will skip the TOSCA parser entirely and just check that the YAML input is readable.
 
 `--dump/-d` is used to dump the internal data of phases. You may specify multiple phases to dump
 using ",", e.g. `-d 2,3,4`. Per phase you will see:
