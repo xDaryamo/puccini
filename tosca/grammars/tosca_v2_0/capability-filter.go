@@ -17,7 +17,7 @@ import (
 
 type CapabilityFilter struct {
 	*Entity `name:"capability filter"`
-	Name    string
+	Name    string // name or type name
 
 	PropertyFilters PropertyFilters `read:"properties,PropertyFilter"`
 }

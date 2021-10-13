@@ -151,7 +151,17 @@ function gatherCandidateNodeTemplates(sourceVertex, requirement) {
 			let valid = true;
 			for (let candidateCapabilityName in candidateCapabilities) {
 				let candidateCapability = candidateCapabilities[candidateCapabilityName];
+
+				// Try by name
 				let capabilityPropertyConstraints = capabilityPropertyConstraintsMap[candidateCapabilityName];
+				if (capabilityPropertyConstraints === undefined) {
+					// Try by type name
+					for (let candidateTypeName in candidateCapability.types) {
+						capabilityPropertyConstraints = capabilityPropertyConstraintsMap[candidateTypeName];
+						if (capabilityPropertyConstraints !== undefined) break;
+					}
+				}
+
 				if ((capabilityPropertyConstraints !== undefined) && (capabilityPropertyConstraints.length !== 0) && !arePropertiesValid(path, sourceVertex, 'capability', candidateCapabilityName, candidateCapability, capabilityPropertyConstraints)) {
 					puccini.log.debugf('%s: properties of capability "%s" in node template "%s" do not match constraints', path, candidateCapabilityName, candidateNodeTemplateName);
 					valid = false;
