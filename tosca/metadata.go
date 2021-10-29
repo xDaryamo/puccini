@@ -4,6 +4,14 @@ import (
 	"strings"
 )
 
+const (
+	METADATA_INFORMATION_PREFIX      = "puccini.information:"
+	METADATA_SCRIPTLET_PREFIX        = "puccini.scriptlet:"
+	METADATA_SCRIPTLET_IMPORT_PREFIX = "puccini.scriptlet.import:"
+	METADATA_CANONICAL_NAME          = "tosca.canonical-name"
+	METADATA_NORMATIVE               = "tosca.normative"
+)
+
 //
 // HasMetadata
 //
@@ -44,7 +52,7 @@ func GetInformationMetadata(metadata map[string]string) map[string]string {
 	informationMetadata := make(map[string]string)
 	if metadata != nil {
 		for key, value := range metadata {
-			if strings.HasPrefix(key, "puccini.information:") {
+			if strings.HasPrefix(key, METADATA_INFORMATION_PREFIX) {
 				informationMetadata[key[20:]] = value
 			}
 		}

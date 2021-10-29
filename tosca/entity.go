@@ -24,7 +24,7 @@ func GetEntityTypeName(type_ reflect.Type) string {
 // EntityPtrs
 //
 
-type EntityPtrs []interface{}
+type EntityPtrs []EntityPtr
 
 // sort.Interface
 

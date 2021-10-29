@@ -42,6 +42,8 @@ func (self CapabilityFilter) Normalize(normalRequirement *normal.Requirement) no
 		return nil
 	}
 
+	// TODO: separate maps for by-name vs. by-type-name
+
 	var normalFunctionCallMap normal.FunctionCallMap
 	var ok bool
 	if normalFunctionCallMap, ok = normalRequirement.CapabilityPropertyConstraints[self.Name]; !ok {

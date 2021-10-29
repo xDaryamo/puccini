@@ -42,7 +42,7 @@ func NewNamespaceFor(entityPtr EntityPtr) *Namespace {
 				if context.HasQuirk(QuirkNamespaceNormativeIgnore) {
 					// Do not add normative types to the namespace
 					if metadata, ok := GetMetadata(entityPtr); ok {
-						if normative, ok := metadata["tosca.normative"]; ok {
+						if normative, ok := metadata[METADATA_NORMATIVE]; ok {
 							if normative == "true" {
 								continue
 							}

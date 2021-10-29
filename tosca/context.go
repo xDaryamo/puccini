@@ -31,7 +31,7 @@ func GetContext(entityPtr EntityPtr) *Context {
 
 func GetCanonicalName(entityPtr EntityPtr) string {
 	if metadata, ok := GetMetadata(entityPtr); ok {
-		if canonicalName, ok := metadata["canonical_name"]; ok {
+		if canonicalName, ok := metadata[METADATA_CANONICAL_NAME]; ok {
 			return canonicalName
 		}
 	}

@@ -28,16 +28,16 @@ func ReadMetadata(context *tosca.Context) tosca.EntityPtr {
 
 	if self != nil {
 		for key, value := range self {
-			if strings.HasPrefix(key, "puccini.scriptlet.import:") {
+			if strings.HasPrefix(key, tosca.METADATA_SCRIPTLET_IMPORT_PREFIX) {
 				if v, ok := value.(string); ok {
-					context.ImportScriptlet(key[25:], v)
+					context.ImportScriptlet(key[len(tosca.METADATA_SCRIPTLET_IMPORT_PREFIX):], v)
 					delete(self, key)
 				} else {
 					context.MapChild(key, value).ReportValueWrongType(ard.TypeString)
 				}
-			} else if strings.HasPrefix(key, "puccini.scriptlet:") {
+			} else if strings.HasPrefix(key, tosca.METADATA_SCRIPTLET_PREFIX) {
 				if v, ok := value.(string); ok {
-					context.EmbedScriptlet(key[18:], v)
+					context.EmbedScriptlet(key[len(tosca.METADATA_SCRIPTLET_PREFIX):], v)
 					delete(self, key)
 				} else {
 					context.MapChild(key, value).ReportValueWrongType(ard.TypeString)
