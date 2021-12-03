@@ -32,11 +32,7 @@ func Meta(url string) {
 	var err error
 
 	urlContext := urlpkg.NewContext()
-	util.OnExit(func() {
-		if err := urlContext.Release(); err != nil {
-			log.Errorf("%s", err.Error())
-		}
-	})
+	util.OnExitError(urlContext.Release)
 
 	var csarUrl urlpkg.URL
 	csarUrl, err = urlpkg.NewValidURL(url, nil, urlContext)
