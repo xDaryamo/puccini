@@ -152,9 +152,9 @@ topology_template:
           capability: Socket
           node_filter:
             properties:
-              age:
+            - age:
               # Note that special data types are not supported here
-              - less_than: 8640000 # 100 d -> seconds
+                less_than: 8640000 # 100 d -> seconds
 
     # You can also put "node_filter" at the node itself, in which case the filter will
     # apply to *all* requirements
@@ -162,8 +162,8 @@ topology_template:
       type: LightBulb
       node_filter:
         properties:
-          age:
-          - less_than: 8640000 # 100 d -> seconds
+        - age:
+            less_than: 8640000 # 100 d -> seconds
       requirements:
       - socket:
           capability: Socket
@@ -178,8 +178,8 @@ topology_template:
             capabilities:
             - emergency:
                 properties:
-                  frequency:
-                  - greater_than: 100 # 100 hz
+                - frequency:
+                    greater_than: 100 # 100 hz
  
     # You can add a relationship type to the requirement
     # (If you don't, Puccini creates an empty relationship with no properties)

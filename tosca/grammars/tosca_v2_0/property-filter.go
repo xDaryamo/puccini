@@ -34,16 +34,15 @@ func NewPropertyFilter(context *tosca.Context) *PropertyFilter {
 func ReadPropertyFilter(context *tosca.Context) tosca.EntityPtr {
 	self := NewPropertyFilter(context)
 
-	context.ReadListItems(ReadConstraintClause, func(item ard.Value) {
-		self.ConstraintClauses = append(self.ConstraintClauses, item.(*ConstraintClause))
-	})
+	if context.Is(ard.TypeList) {
+		context.ReadListItems(ReadConstraintClause, func(item ard.Value) {
+			self.ConstraintClauses = append(self.ConstraintClauses, item.(*ConstraintClause))
+		})
+	} else {
+		self.ConstraintClauses = ConstraintClauses{ReadConstraintClause(context).(*ConstraintClause)}
+	}
 
 	return self
-}
-
-// tosca.Mappable interface
-func (self *PropertyFilter) GetKey() string {
-	return self.Name
 }
 
 func (self *PropertyFilter) Normalize(normalFunctionCallMap normal.FunctionCallMap) normal.FunctionCalls {
@@ -52,7 +51,11 @@ func (self *PropertyFilter) Normalize(normalFunctionCallMap normal.FunctionCallM
 	}
 
 	normalFunctionCalls := self.ConstraintClauses.Normalize(self.Context)
-	normalFunctionCallMap[self.Name] = normalFunctionCalls
+	if existing, ok := normalFunctionCallMap[self.Name]; ok {
+		normalFunctionCallMap[self.Name] = append(existing, normalFunctionCalls...)
+	} else {
+		normalFunctionCallMap[self.Name] = normalFunctionCalls
+	}
 	return normalFunctionCalls
 }
 
@@ -60,7 +63,7 @@ func (self *PropertyFilter) Normalize(normalFunctionCallMap normal.FunctionCallM
 // PropertyFilters
 //
 
-type PropertyFilters map[string]*PropertyFilter
+type PropertyFilters []*PropertyFilter
 
 func (self PropertyFilters) Normalize(normalFunctionCallMap normal.FunctionCallMap) {
 	for _, propertyFilter := range self {

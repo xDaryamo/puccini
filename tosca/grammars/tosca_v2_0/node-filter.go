@@ -18,14 +18,13 @@ import (
 type NodeFilter struct {
 	*Entity `name:"node filter"`
 
-	PropertyFilters   PropertyFilters   `read:"properties,PropertyFilter"`
+	PropertyFilters   PropertyFilters   `read:"properties,{}PropertyFilter"`
 	CapabilityFilters CapabilityFilters `read:"capabilities,{}CapabilityFilter"`
 }
 
 func NewNodeFilter(context *tosca.Context) *NodeFilter {
 	return &NodeFilter{
-		Entity:          NewEntity(context),
-		PropertyFilters: make(PropertyFilters),
+		Entity: NewEntity(context),
 	}
 }
 

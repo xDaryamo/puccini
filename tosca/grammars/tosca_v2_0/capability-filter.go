@@ -19,14 +19,13 @@ type CapabilityFilter struct {
 	*Entity `name:"capability filter"`
 	Name    string // name or type name
 
-	PropertyFilters PropertyFilters `read:"properties,PropertyFilter"`
+	PropertyFilters PropertyFilters `read:"properties,{}PropertyFilter"`
 }
 
 func NewCapabilityFilter(context *tosca.Context) *CapabilityFilter {
 	return &CapabilityFilter{
-		Entity:          NewEntity(context),
-		Name:            context.Name,
-		PropertyFilters: make(PropertyFilters),
+		Entity: NewEntity(context),
+		Name:   context.Name,
 	}
 }
 
