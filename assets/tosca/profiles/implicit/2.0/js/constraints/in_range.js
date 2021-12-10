@@ -9,5 +9,9 @@ const tosca = require('tosca.lib.utils');
 exports.validate = function(v, lower, upper) {
 	if (arguments.length !== 3)
 		throw 'must have 2 arguments';
-	return (tosca.compare(v, lower) >= 0) && (tosca.compare(v, upper) <= 0);
+	if ((v.lower !== undefined) && (v.upper !== undefined))
+		// Special case: is the range in range?
+		return (tosca.compare(v.lower, lower) >= 0) && (tosca.compare(v.upper, upper) <= 0);
+	else
+		return (tosca.compare(v, lower) >= 0) && (tosca.compare(v, upper) <= 0);
 };

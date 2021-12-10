@@ -96,6 +96,20 @@ func ReadConstraintClause(context *tosca.Context) tosca.EntityPtr {
 }
 
 func (self *ConstraintClause) ToFunctionCall(context *tosca.Context, strict bool) *tosca.FunctionCall {
+	// Special case: "in_range" for a "range" accepts a range (two integers) rather than two ranges
+	var isRangeInRange bool
+	if self.Operator == "in_range" {
+		if rangeType, ok := self.Context.Namespace.Lookup("range"); ok {
+			if isRangeInRange = self.Context.Hierarchy.IsCompatible(rangeType, self.DataType); isRangeInRange {
+				range_ := ReadRange(context.Clone(self.Arguments)).(*Range)
+				return context.NewFunctionCall("tosca.constraint."+self.Operator, []interface{}{
+					ReadValue(context.ListChild(0, range_.Lower)).(*Value),
+					ReadValue(context.ListChild(1, range_.Upper)).(*Value),
+				})
+			}
+		}
+	}
+
 	arguments := make([]interface{}, len(self.Arguments))
 	for index, argument := range self.Arguments {
 		if self.IsNativeArgument(uint(index)) {
@@ -109,8 +123,10 @@ func (self *ConstraintClause) ToFunctionCall(context *tosca.Context, strict bool
 				}
 			}
 		}
+
 		arguments[index] = argument
 	}
+
 	return context.NewFunctionCall("tosca.constraint."+self.Operator, arguments)
 }
 

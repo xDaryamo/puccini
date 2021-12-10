@@ -149,6 +149,7 @@ func (self *Hierarchy) find(entityPtr EntityPtr) (*Hierarchy, bool) {
 	return nil, false
 }
 
+/*
 func (self *Hierarchy) Lookup(name string, type_ reflect.Type) (*Hierarchy, bool) {
 	self.lock.RLock()
 	defer self.lock.RUnlock()
@@ -176,6 +177,7 @@ func (self *Hierarchy) lookup(name string, type_ reflect.Type) (*Hierarchy, bool
 
 	return nil, false
 }
+*/
 
 func (self *Hierarchy) IsCompatible(baseEntityPtr EntityPtr, entityPtr EntityPtr) bool {
 	// Trivial case
