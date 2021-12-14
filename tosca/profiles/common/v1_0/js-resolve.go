@@ -43,19 +43,19 @@ for (let v = 0, l = nodeTemplateVertexes.length; v < l; v++) {
 	}
 }
 
-// Check that all capabilities have their minimum relationship count
-for (let v = 0, l = nodeTemplateVertexes.length; v < l; v++) {
-	let vertex = nodeTemplateVertexes[v];
-	let nodeTemplate = vertex.properties;
-	let capabilities = nodeTemplate.capabilities;
-	for (let capabilityName in capabilities) {
-		let capability = capabilities[capabilityName];
-		let relationshipCount = countRelationships(vertex, capabilityName);
-		let minRelationshipCount = capability.minRelationshipCount;
-		if (relationshipCount < minRelationshipCount)
-			notEnoughRelationships(capability.location, relationshipCount, minRelationshipCount)
+if (!traversal.hasQuirk(clout, 'capabilities.occurrences.permissive'))
+	for (let v = 0, l = nodeTemplateVertexes.length; v < l; v++) {
+		let vertex = nodeTemplateVertexes[v];
+		let nodeTemplate = vertex.properties;
+		let capabilities = nodeTemplate.capabilities;
+		for (let capabilityName in capabilities) {
+			let capability = capabilities[capabilityName];
+			let relationshipCount = countRelationships(vertex, capabilityName);
+			let minRelationshipCount = capability.minRelationshipCount;
+			if (relationshipCount < minRelationshipCount)
+				notEnoughRelationships(capability.location, relationshipCount, minRelationshipCount)
+		}
 	}
-}
 
 traversal.unwrapCoercibles();
 

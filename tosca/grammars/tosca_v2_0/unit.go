@@ -79,4 +79,8 @@ func (self *Unit) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
 			normalServiceTemplate.Metadata[k] = v
 		}
 	}
+
+	if len(self.Context.Quirks) > 0 {
+		normalServiceTemplate.Metadata["puccini.quirks"] = self.Context.Quirks.String()
+	}
 }

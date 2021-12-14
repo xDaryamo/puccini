@@ -38,6 +38,19 @@ exports.getValueInformation = function(clout_) {
 	return information;
 };
 
+exports.hasQuirk = function(clout_, quirk) {
+	if (!clout_)
+		clout_ = clout;
+	let quirks = clout_.properties.tosca.metadata['puccini.quirks'];
+	if (quirks !== undefined) {
+		quirks = quirks.split(',');
+		for (let q = 0, l = quirks.length; q < l; q++)
+			if (quirks[q] === quirk)
+				return true;
+	}
+	return false;
+};
+
 exports.traverseValues = function(clout_, traverser) {
 	if (!clout_)
 		clout_ = clout;

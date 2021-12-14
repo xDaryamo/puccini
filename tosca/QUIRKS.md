@@ -28,6 +28,9 @@ These are activated via the `--quirk/-x` switch for
   optional !!timestamp type. This quirk will allow such values. Note that such values will not have
   the "$originalString" key, because the literal YAML is not preserved by the YAML parser.
 
+* **capabilities.occurrences.permissive**: By default Puccini will ensure that capabilities have
+  the minimum number of incoming relationships. This quirk will disable that validation.
+
 * **namespace.normative.ignore**: This will ignore any type that is has the
   "tosca.normative: true" metadata.
 

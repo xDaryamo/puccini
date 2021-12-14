@@ -1,5 +1,7 @@
 package tosca
 
+import "strings"
+
 //
 // Quirk
 //
@@ -35,6 +37,10 @@ const QuirkDataTypesStringPermissive Quirk = "data_types.string.permissive"
 // optional !!timestamp type. This quirk will allow such values. Note that such values will not have
 // the "$originalString" key, because the literal YAML is not preserved by the YAML parser.
 const QuirkDataTypesTimestampPermissive Quirk = "data_types.timestamp.permissive"
+
+// By default Puccini will ensure that capabilities have
+// the minimum number of incoming relationships. This quirk will disable that validation.
+const QuirkCapabilitiesOccurrencesPermissive Quirk = "capabilities.occurrences.permissive"
 
 // This will ignore any type that is has the `tosca.normative: 'true'` metadata.
 const QuirkNamespaceNormativeIgnore Quirk = "namespace.normative.ignore"
@@ -110,4 +116,19 @@ func (self Quirks) Has(quirk Quirk) bool {
 		}
 	}
 	return false
+}
+
+// fmt.Stringify interface
+func (self Quirks) String() string {
+	if len(self) > 0 {
+		var b strings.Builder
+		b.WriteString(string(self[0]))
+		for _, quirk := range self[1:] {
+			b.WriteRune(',')
+			b.WriteString(string(quirk))
+		}
+		return b.String()
+	} else {
+		return ""
+	}
 }
