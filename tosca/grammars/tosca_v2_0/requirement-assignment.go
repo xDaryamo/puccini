@@ -124,33 +124,22 @@ func (self *RequirementAssignments) Render(definitions RequirementDefinitions, c
 	// it would be assigned
 
 	for key, definition := range definitions {
-		if definition.Occurrences == nil {
-			// The TOSCA spec says that occurrences has an "implied default of [1,1]"
-			// Our interpretation is that we should automatically add a single assignment if none was specified
+		// The TOSCA spec says that definition occurrences has an "implied default of [1,1]"
+		occurrences := definition.Occurrences
+		if occurrences == nil {
+			occurrences = ReadRangeEntity(definition.Context.FieldChild("occurrences", ard.List{1, 1})).(*RangeEntity)
+		}
 
-			found := false
-			for _, assignment := range *self {
-				if assignment.Name == key {
-					found = true
-					break
-				}
-			}
+		count := self.Count(key)
 
-			if !found {
-				*self = append(*self, NewDefaultRequirementAssignment(len(*self), definition, context))
-			}
-		} else {
-			// Check occurrences
-			var count uint64
-			for _, assignment := range *self {
-				if assignment.Name == key {
-					count++
-				}
-			}
+		// Automatically add missing assignments
+		for i := count; i < occurrences.Range.Lower; i++ {
+			*self = append(*self, NewDefaultRequirementAssignment(len(*self), definition, context))
+			count++
+		}
 
-			if !definition.Occurrences.Range.InRange(count) {
-				context.ReportNotInRange(fmt.Sprintf("number of requirement %q assignments", definition.Name), count, definition.Occurrences.Range.Lower, definition.Occurrences.Range.Upper)
-			}
+		if !occurrences.Range.InRange(count) {
+			context.ReportNotInRange(fmt.Sprintf("number of requirement %q assignments", definition.Name), count, occurrences.Range.Lower, occurrences.Range.Upper)
 		}
 	}
 
@@ -201,4 +190,14 @@ func (self RequirementAssignments) Normalize(nodeTemplate *NodeTemplate, normalN
 	for _, requirement := range self {
 		requirement.Normalize(nodeTemplate, normalNodeTemplate)
 	}
+}
+
+func (self *RequirementAssignments) Count(key string) uint64 {
+	var count uint64
+	for _, assignment := range *self {
+		if assignment.Name == key {
+			count++
+		}
+	}
+	return count
 }

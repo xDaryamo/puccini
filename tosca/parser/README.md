@@ -144,10 +144,11 @@ do more than just validate: we also change the value, for example by applying de
 There are furthermore various custom validations per entity. One worth mentioning here is
 requirement validation. Specifically, we take into account the `occurrences` field, which limits the
 number of times a requirement may be assigned. The TOSCA spec mentions that the implied default
-`occurrences` is \[1,1\] (the TOSCA spec oddly says that in a `range` the upper bound must be
+`occurrences` is \[1,1] (the TOSCA spec oddly says that in a `range` the upper bound must be
 greater than the lower bound, so that \[1,1] is impossible: one of many contradictions we must
-resolve). However, we further assume that if `occurrences` is not specified then it is also intended
-for the requirement to be automatically assigned if not explicitly specified.
+resolve). Puccini will automatically assign requirements to match the lower bound of `occurrences`,
+so if the lower bound is 2 and you have only assigned one then an additional one will be assigned
+for you.
 
 At the end of this phase the templates are considered "complete" in that we should not have to
 access their types for any data. All fields have been rendered.
