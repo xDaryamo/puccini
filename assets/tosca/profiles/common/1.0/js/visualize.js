@@ -1,7 +1,7 @@
 
 const traversal = require('tosca.lib.traversal');
 const tosca = require('tosca.lib.utils');
-puccini.log.infof('%v', traversal)
+
 traversal.coerce();
 
 // From: cdnjs.com
