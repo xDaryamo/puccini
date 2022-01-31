@@ -1,9 +1,10 @@
 
 // See: https://docs.dgraph.io/mutations/#json-mutation-format
 
-clout.exec('tosca.lib.traversal');
+const traversal = require('tosca.lib.traversal');
+const tosca = require('tosca.lib.utils');
 
-tosca.coerce();
+traversal.coerce();
 
 let vertexItems = [];
 let cloutItem = {'clout.vertex': vertexItems};

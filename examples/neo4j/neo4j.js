@@ -1,9 +1,10 @@
 
 // See: https://neo4j.com/docs/http-api/3.5/
 
-clout.exec('tosca.utils');
+const traversal = require('tosca.lib.traversal');
+const tosca = require('tosca.lib.utils');
 
-tosca.coerce();
+traversal.coerce();
 
 let statements = [];
 
