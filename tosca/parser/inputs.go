@@ -20,7 +20,7 @@ func SetInputs(entityPtr tosca.EntityPtr, inputs map[string]ard.Value) {
 		return
 	}
 
-	reflection.Traverse(entityPtr, func(entityPtr tosca.EntityPtr) bool {
+	reflection.TraverseEntities(entityPtr, false, func(entityPtr tosca.EntityPtr) bool {
 		if hasInputs, ok := entityPtr.(HasInputs); ok {
 			hasInputs.SetInputs(inputs)
 

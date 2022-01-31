@@ -76,6 +76,10 @@ func (self *RelationshipDefinition) Inherit(parentDefinition *RelationshipDefini
 
 // parser.Renderable interface
 func (self *RelationshipDefinition) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *RelationshipDefinition) render() {
 	logRender.Debug("relationship definition")
 
 	if self.RelationshipTypeName == nil {

@@ -73,6 +73,10 @@ func (self *InterfaceDefinition) Inherit(parentDefinition *InterfaceDefinition) 
 
 // parser.Renderable interface
 func (self *InterfaceDefinition) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *InterfaceDefinition) render() {
 	logRender.Debugf("interface definition: %s", self.Name)
 
 	if self.InterfaceTypeName == nil {

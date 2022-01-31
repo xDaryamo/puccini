@@ -8,6 +8,17 @@ import (
 
 type EntityPtr = interface{}
 
+type EntityPtrSet map[EntityPtr]struct{}
+
+func (self EntityPtrSet) Add(entityPtr EntityPtr) {
+	self[entityPtr] = struct{}{}
+}
+
+func (self EntityPtrSet) Contains(entityPtr EntityPtr) bool {
+	_, ok := self[entityPtr]
+	return ok
+}
+
 // From "name" tag
 func GetEntityTypeName(type_ reflect.Type) string {
 	fields := type_.NumField()

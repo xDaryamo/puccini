@@ -18,7 +18,7 @@ type PropertyDefinition struct {
 	*AttributeDefinition `name:"property definition"`
 
 	Required          *bool             `read:"required"`
-	ConstraintClauses ConstraintClauses `read:"constraints,[]ConstraintClause"`
+	ConstraintClauses ConstraintClauses `read:"constraints,[]ConstraintClause" traverse:"ignore"`
 }
 
 func NewPropertyDefinition(context *tosca.Context) *PropertyDefinition {
@@ -51,9 +51,13 @@ func (self *PropertyDefinition) Inherit(parentDefinition *PropertyDefinition) {
 
 // parser.Renderable interface
 func (self *PropertyDefinition) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *PropertyDefinition) render() {
 	logRender.Debugf("property definition: %s", self.Name)
 
-	self.render()
+	self.doRender()
 	self.ConstraintClauses.Render(self.DataType)
 
 	if (self.Default != nil) && (self.DataType != nil) {

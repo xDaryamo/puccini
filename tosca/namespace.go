@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"sort"
 	"strings"
-	"sync"
 
 	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/kutil/terminal"
@@ -19,7 +18,6 @@ type NameTransformer = func(string, EntityPtr) []string
 
 type Namespace struct {
 	namespace map[reflect.Type]map[string]EntityPtr
-	lock      sync.RWMutex
 }
 
 func NewNamespace() *Namespace {
@@ -32,7 +30,7 @@ func NewNamespace() *Namespace {
 func NewNamespaceFor(entityPtr EntityPtr) *Namespace {
 	self := NewNamespace()
 
-	reflection.Traverse(entityPtr, func(entityPtr EntityPtr) bool {
+	reflection.TraverseEntities(entityPtr, false, func(entityPtr EntityPtr) bool {
 		for _, field := range reflection.GetTaggedFields(entityPtr, "namespace") {
 			if field.Kind() != reflect.String {
 				panic(fmt.Sprintf("\"namespace\" tag can only be used on \"string\" field in struct: %T", entityPtr))
@@ -60,19 +58,13 @@ func NewNamespaceFor(entityPtr EntityPtr) *Namespace {
 }
 
 func (self *Namespace) Empty() bool {
-	self.lock.RLock()
-	defer self.lock.RUnlock()
-
 	return len(self.namespace) == 0
 }
 
-func (self *Namespace) Range(f func(EntityPtr, EntityPtr) bool) {
-	self.lock.RLock()
-	defer self.lock.RUnlock()
-
+func (self *Namespace) Range(f func(EntityPtr) bool) {
 	for _, forType := range self.namespace {
 		for _, entityPtr := range forType {
-			if !f(forType, entityPtr) {
+			if !f(entityPtr) {
 				return
 			}
 		}
@@ -80,9 +72,6 @@ func (self *Namespace) Range(f func(EntityPtr, EntityPtr) bool) {
 }
 
 func (self *Namespace) Lookup(name string) (EntityPtr, bool) {
-	self.lock.RLock()
-	defer self.lock.RUnlock()
-
 	for _, forType := range self.namespace {
 		if entityPtr, ok := forType[name]; ok {
 			return entityPtr, true
@@ -93,9 +82,6 @@ func (self *Namespace) Lookup(name string) (EntityPtr, bool) {
 }
 
 func (self *Namespace) LookupForType(name string, type_ reflect.Type) (EntityPtr, bool) {
-	self.lock.RLock()
-	defer self.lock.RUnlock()
-
 	if forType, ok := self.namespace[type_]; ok {
 		entityPtr, ok := forType[name]
 		return entityPtr, ok
@@ -106,9 +92,6 @@ func (self *Namespace) LookupForType(name string, type_ reflect.Type) (EntityPtr
 
 // If the name has already been set returns existing entityPtr, true
 func (self *Namespace) Set(name string, entityPtr EntityPtr) (EntityPtr, bool) {
-	self.lock.Lock()
-	defer self.lock.Unlock()
-
 	return self.set(name, entityPtr)
 }
 
@@ -117,11 +100,18 @@ func (self *Namespace) Merge(namespace *Namespace, nameTransformer NameTransform
 		return
 	}
 
-	self.lock.Lock()
-	defer self.lock.Unlock()
+	type entry struct {
+		type_     reflect.Type
+		name      string
+		entityPtr EntityPtr
+	}
 
-	namespace.lock.RLock()
-	defer namespace.lock.RUnlock()
+	var entries []entry
+	for type_, forType := range namespace.namespace {
+		for name, entityPtr := range forType {
+			entries = append(entries, entry{type_, name, entityPtr})
+		}
+	}
 
 	for type_, forType := range namespace.namespace {
 		for name, entityPtr := range forType {
@@ -133,7 +123,7 @@ func (self *Namespace) Merge(namespace *Namespace, nameTransformer NameTransform
 				names = []string{name}
 			}
 
-			for _, name = range names {
+			for _, name := range names {
 				if existing, exists := self.set(name, entityPtr); exists {
 					GetContext(entityPtr).ReportNameAmbiguous(type_.Elem(), name, entityPtr, existing)
 				}
@@ -168,9 +158,6 @@ func (self *Namespace) set(name string, entityPtr EntityPtr) (EntityPtr, bool) {
 // Print
 
 func (self *Namespace) Print(indent int) {
-	self.lock.RLock()
-	defer self.lock.RUnlock()
-
 	// Sort type names
 	var types TypesByName
 	for type_ := range self.namespace {

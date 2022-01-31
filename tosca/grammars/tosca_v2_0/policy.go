@@ -54,6 +54,10 @@ func (self *Policy) GetKey() string {
 
 // parser.Renderable interface
 func (self *Policy) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *Policy) render() {
 	logRender.Debugf("policy: %s", self.Name)
 
 	if self.PolicyType == nil {
@@ -73,6 +77,7 @@ func (self *Policy) Render() {
 					break
 				}
 			}
+
 			if !compatible {
 				childContext := self.Context.FieldChild("targets", nil).ListChild(index, nil)
 				childContext.ReportIncompatible(nodeTemplate.Name, "policy", "target")
@@ -89,6 +94,7 @@ func (self *Policy) Render() {
 					break
 				}
 			}
+
 			if !compatible {
 				childContext := self.Context.FieldChild("targets", nil).ListChild(index, nil)
 				childContext.ReportIncompatible(group.Name, "policy", "target")

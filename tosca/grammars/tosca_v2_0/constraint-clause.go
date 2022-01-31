@@ -49,7 +49,7 @@ type ConstraintClause struct {
 	Operator              string
 	Arguments             ard.List
 	NativeArgumentIndexes []uint
-	DataType              *DataType `traverse:"ignore" json:"-" yaml:"-"`
+	DataType              *DataType `traverse:"ignore" json:"-" yaml:"-"` // TODO: unncessary, this entity should never be traversed
 }
 
 func NewConstraintClause(context *tosca.Context) *ConstraintClause {

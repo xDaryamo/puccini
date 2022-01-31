@@ -21,7 +21,7 @@ type Task struct {
 	Dependencies Tasks
 }
 
-type Tasks map[*Task]bool
+type Tasks map[*Task]struct{}
 
 type TasksForEntities map[tosca.EntityPtr]*Task
 
@@ -87,7 +87,7 @@ func (self *Task) AddDependency(task *Task) {
 //
 
 func (self Tasks) Add(task *Task) {
-	self[task] = true
+	self[task] = struct{}{}
 }
 
 func (self Tasks) Remove(task *Task) {

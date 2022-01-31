@@ -5,7 +5,6 @@ import (
 
 	"github.com/tliron/kutil/ard"
 	urlpkg "github.com/tliron/kutil/url"
-	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -72,10 +71,6 @@ func (self *ArtifactDefinition) GetURL() urlpkg.URL {
 	if self.File == nil {
 		return nil
 	}
-
-	lock := util.GetLock(self)
-	lock.Lock()
-	defer lock.Unlock()
 
 	if self.url == nil {
 		if self.Repository != nil {

@@ -61,16 +61,16 @@ func (self *AttributeMapping) EnsureRender() {
 	var nodeTemplateType *NodeTemplate
 	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
 		self.NodeTemplate = nodeTemplate.(*NodeTemplate)
+
 		self.NodeTemplate.Render()
+
+		name := *self.AttributeName
+		var ok bool
+		if self.Attribute, ok = self.NodeTemplate.Attributes[name]; !ok {
+			self.Context.ListChild(1, name).ReportReferenceNotFound("attribute", self.NodeTemplate)
+		}
 	} else {
 		self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")
-		return
-	}
-
-	name := *self.AttributeName
-	var ok bool
-	if self.Attribute, ok = self.NodeTemplate.Attributes[name]; !ok {
-		self.Context.ListChild(1, name).ReportReferenceNotFound("attribute", self.NodeTemplate)
 	}
 }
 

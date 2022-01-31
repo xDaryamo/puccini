@@ -48,6 +48,10 @@ func (self *Input) Normalize(context *tosca.Context) normal.Constrainable {
 
 // parser.Renderable interface
 func (self *Input) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *Input) render() {
 	logRender.Debugf("input", self.Name)
 
 	if (self.Value == nil) && (self.Default != nil) {

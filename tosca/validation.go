@@ -34,6 +34,7 @@ func (self *Context) ValidateType(requiredTypeNames ...ard.TypeName) bool {
 }
 
 // From "require" tags
+// reflection.EntityTraverser signature
 func ValidateRequiredFields(entityPtr EntityPtr) bool {
 	context := GetContext(entityPtr)
 	entity := reflect.ValueOf(entityPtr).Elem()

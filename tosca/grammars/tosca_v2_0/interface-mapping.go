@@ -61,6 +61,10 @@ func (self *InterfaceMapping) GetInterfaceDefinition() (*InterfaceDefinition, bo
 
 // parser.Renderable interface
 func (self *InterfaceMapping) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *InterfaceMapping) render() {
 	logRender.Debug("interface mapping")
 
 	if (self.NodeTemplateName == nil) || (self.InterfaceName == nil) {
@@ -71,16 +75,16 @@ func (self *InterfaceMapping) Render() {
 	var nodeTemplateType *NodeTemplate
 	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
 		self.NodeTemplate = nodeTemplate.(*NodeTemplate)
+
 		self.NodeTemplate.Render()
+
+		name := *self.InterfaceName
+		var ok bool
+		if self.Interface, ok = self.NodeTemplate.Interfaces[name]; !ok {
+			self.Context.ListChild(1, name).ReportReferenceNotFound("interface", self.NodeTemplate)
+		}
 	} else {
 		self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")
-		return
-	}
-
-	name := *self.InterfaceName
-	var ok bool
-	if self.Interface, ok = self.NodeTemplate.Interfaces[name]; !ok {
-		self.Context.ListChild(1, name).ReportReferenceNotFound("interface", self.NodeTemplate)
 	}
 }
 

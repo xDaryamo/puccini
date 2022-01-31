@@ -42,6 +42,10 @@ func (self *DataType) GetParent() tosca.EntityPtr {
 
 // tosca.Inherits interface
 func (self *DataType) Inherit() {
+	self.inheritOnce.Do(self.inherit)
+}
+
+func (self *DataType) inherit() {
 	logInherit.Debugf("data type: %s", self.Name)
 
 	if _, ok := self.GetInternalTypeName(); ok && (len(self.PropertyDefinitions) > 0) {
@@ -60,6 +64,10 @@ func (self *DataType) Inherit() {
 
 // parser.Renderable interface
 func (self *DataType) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *DataType) render() {
 	logRender.Debugf("data type: %s", self.Name)
 
 	if internalTypeName, ok := self.GetInternalTypeName(); ok {
@@ -70,6 +78,7 @@ func (self *DataType) Render() {
 		}
 	}
 }
+
 func (self *DataType) GetInternalTypeName() (ard.TypeName, bool) {
 	switch self.Name {
 	case "boolean":

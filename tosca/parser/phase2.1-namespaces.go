@@ -6,36 +6,35 @@ import (
 )
 
 func (self *Context) AddNamespaces() {
-	self.Root.MergeNamespaces(self.NamespacesWork)
+	self.Root.MergeNamespaces()
 }
 
-func (self *Unit) MergeNamespaces(work *ContextualWork) {
+func (self *Unit) MergeNamespaces() {
 	context := self.GetContext()
 
-	if promise, ok := work.Start(context); ok {
-		defer promise.Release()
-
-		for _, import_ := range self.Imports {
-			import_.MergeNamespaces(work)
-			context.Namespace.Merge(import_.GetContext().Namespace, import_.NameTransformer)
-			context.ScriptletNamespace.Merge(import_.GetContext().ScriptletNamespace)
-		}
-
-		logNamespaces.Debugf("create: %s", context.URL.String())
-		namespace := tosca.NewNamespaceFor(self.EntityPtr)
-		context.Namespace.Merge(namespace, nil)
+	for _, import_ := range self.Imports {
+		import_.MergeNamespaces()
+		context.Namespace.Merge(import_.GetContext().Namespace, import_.NameTransformer)
+		context.ScriptletNamespace.Merge(import_.GetContext().ScriptletNamespace)
 	}
+
+	logNamespaces.Debugf("create: %s", context.URL.String())
+	namespace := tosca.NewNamespaceFor(self.EntityPtr)
+	context.Namespace.Merge(namespace, nil)
 }
 
 // Print
 
 func (self *Context) PrintNamespaces(indent int) {
+	self.unitsLock.RLock()
+	defer self.unitsLock.RUnlock()
+
 	childIndent := indent + 1
-	for _, import_ := range self.Units {
-		context := import_.GetContext()
+	for _, unit := range self.Units {
+		context := unit.GetContext()
 		if !context.Namespace.Empty() {
 			terminal.PrintIndent(indent)
-			terminal.Printf("%s\n", terminal.Stylize.Value(context.URL.String()))
+			terminal.Printf("%s\n", self.Stylist.Value(context.URL.String()))
 			context.Namespace.Print(childIndent)
 		}
 	}

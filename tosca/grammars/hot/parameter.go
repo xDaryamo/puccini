@@ -62,6 +62,10 @@ func (self *Parameter) GetKey() string {
 
 // parser.Renderable interface
 func (self *Parameter) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *Parameter) render() {
 	logRender.Debugf("parameter: %s", self.Name)
 
 	if self.Value != nil {

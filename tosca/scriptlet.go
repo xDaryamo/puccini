@@ -3,7 +3,6 @@ package tosca
 import (
 	"strconv"
 	"strings"
-	"sync"
 
 	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/puccini/clout/js"
@@ -87,7 +86,6 @@ func (self *Scriptlet) Read() (string, error) {
 
 type ScriptletNamespace struct {
 	namespace map[string]*Scriptlet
-	lock      sync.RWMutex
 }
 
 func NewScriptletNamespace() *ScriptletNamespace {
@@ -97,10 +95,12 @@ func NewScriptletNamespace() *ScriptletNamespace {
 }
 
 func (self *ScriptletNamespace) Range(f func(string, *Scriptlet) bool) {
-	self.lock.RLock()
-	defer self.lock.RUnlock()
-
+	namespace := make(map[string]*Scriptlet)
 	for name, scriptlet := range self.namespace {
+		namespace[name] = scriptlet
+	}
+
+	for name, scriptlet := range namespace {
 		if !f(name, scriptlet) {
 			return
 		}
@@ -108,17 +108,11 @@ func (self *ScriptletNamespace) Range(f func(string, *Scriptlet) bool) {
 }
 
 func (self *ScriptletNamespace) Lookup(name string) (*Scriptlet, bool) {
-	self.lock.RLock()
-	defer self.lock.RUnlock()
-
 	scriptlet, ok := self.namespace[name]
 	return scriptlet, ok
 }
 
 func (self *ScriptletNamespace) Set(name string, scriptlet *Scriptlet) {
-	self.lock.Lock()
-	defer self.lock.Unlock()
-
 	self.namespace[name] = scriptlet
 }
 
@@ -151,12 +145,6 @@ func (self *ScriptletNamespace) Merge(namespace *ScriptletNamespace) {
 	if self == namespace {
 		return
 	}
-
-	self.lock.Lock()
-	defer self.lock.Unlock()
-
-	namespace.lock.RLock()
-	defer namespace.lock.RUnlock()
 
 	for name, scriptlet := range namespace.namespace {
 		self.namespace[name] = scriptlet

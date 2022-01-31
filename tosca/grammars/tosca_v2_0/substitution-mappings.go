@@ -99,6 +99,7 @@ func (self *SubstitutionMappings) Render(inputDefinitions ParameterDefinitions) 
 	self.PropertyMappings.Render(inputDefinitions)
 	for name, mapping := range self.PropertyMappings {
 		if definition, ok := self.NodeType.PropertyDefinitions[name]; ok {
+			definition.Render()
 			if mapping.InputDefinition != nil {
 				// Input mapping
 				if (definition.DataType != nil) && (mapping.InputDefinition.DataType != nil) {
@@ -126,9 +127,11 @@ func (self *SubstitutionMappings) Render(inputDefinitions ParameterDefinitions) 
 	self.AttributeMappings.EnsureRender()
 	for name, mapping := range self.AttributeMappings {
 		if definition, ok := self.NodeType.AttributeDefinitions[name]; ok {
-			if (definition.DataType != nil) && (mapping.Attribute != nil) && (mapping.Attribute.DataType != nil) {
-				if !self.Context.Hierarchy.IsCompatible(definition.DataType, mapping.Attribute.DataType) {
-					self.Context.ReportIncompatibleType(definition.DataType, mapping.Attribute.DataType)
+			if (definition.DataType != nil) && (mapping.Attribute != nil) {
+				if mapping.Attribute.DataType != nil {
+					if !self.Context.Hierarchy.IsCompatible(definition.DataType, mapping.Attribute.DataType) {
+						self.Context.ReportIncompatibleType(definition.DataType, mapping.Attribute.DataType)
+					}
 				}
 			}
 		} else {

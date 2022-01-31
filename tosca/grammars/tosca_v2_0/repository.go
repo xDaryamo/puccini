@@ -2,7 +2,6 @@ package tosca_v2_0
 
 import (
 	urlpkg "github.com/tliron/kutil/url"
-	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -44,6 +43,10 @@ func ReadRepository(context *tosca.Context) tosca.EntityPtr {
 
 // parser.Renderable interface
 func (self *Repository) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *Repository) render() {
 	logRender.Debugf("repository: %s", self.Name)
 	if self.Credential != nil {
 		self.Credential.RenderDataType("tosca:Credential")
@@ -51,10 +54,6 @@ func (self *Repository) Render() {
 }
 
 func (self *Repository) GetURL() urlpkg.URL {
-	lock := util.GetLock(self)
-	lock.Lock()
-	defer lock.Unlock()
-
 	if (self.url == nil) && (self.URL != nil) {
 		origin := self.Context.URL.Origin()
 		var err error

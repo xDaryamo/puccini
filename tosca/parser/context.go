@@ -5,29 +5,26 @@ import (
 
 	"github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars"
 )
 
 type Context struct {
-	Root            *Unit
-	Stylist         *terminal.Stylist
-	Quirks          tosca.Quirks
-	Units           Units
-	Parsing         sync.Map
-	WaitGroup       sync.WaitGroup
-	NamespacesWork  *ContextualWork
-	HierarchiesWork *ContextualWork
+	Root     *Unit
+	Stylist  *terminal.Stylist
+	Quirks   tosca.Quirks
+	Units    Units
+	ReadWork sync.WaitGroup
 
-	unitsLock sync.Mutex
+	unitsLock util.RWLocker
 }
 
 func NewContext(stylist *terminal.Stylist, quirks tosca.Quirks) *Context {
 	return &Context{
-		Stylist:         stylist,
-		Quirks:          quirks,
-		NamespacesWork:  NewContextualWork(logNamespaces),
-		HierarchiesWork: NewContextualWork(logHierarchies),
+		Stylist:   stylist,
+		Quirks:    quirks,
+		unitsLock: util.NewDebugRWLocker(),
 	}
 }
 

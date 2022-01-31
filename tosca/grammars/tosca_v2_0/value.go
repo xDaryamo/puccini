@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/tliron/kutil/ard"
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/yamlkeys"
@@ -29,8 +30,6 @@ type Value struct {
 	DataType    *DataType                `traverse:"ignore" json:"-" yaml:"-"`
 	Information *normal.ValueInformation `traverse:"ignore" json:"-" yaml:"-"`
 	Converter   *tosca.FunctionCall      `traverse:"ignore" json:"-" yaml:"-"`
-
-	rendered bool
 }
 
 func NewValue(context *tosca.Context) *Value {
@@ -93,18 +92,13 @@ func (self *Value) RenderDataType(dataTypeName string) {
 	}
 }
 
+// Avoid rendering more than once (can happen if we were copied from PropertyDefinition.Default)
 func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefinition, bare bool, allowNil bool) {
-	if self.rendered {
-		// Avoid rendering more than once (can happen if we were copied from PropertyDefinition.Default)
-		return
-	}
-	self.rendered = true
-
 	self.DataType = dataType
 
-	if definition != nil {
+	/*if definition != nil {
 		definition.Render()
-	}
+	}*/
 
 	if !bare {
 		if self.Description != nil {
@@ -158,9 +152,15 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 				// (The entry schema may also have additional constraints)
 				switch internalTypeName {
 				case ard.TypeList, ard.TypeMap:
-					if (definition == nil) || (definition.EntrySchema == nil) || (definition.EntrySchema.DataType == nil) {
-						// This problem is reported in AttributeDefinition.Render
+					if definition == nil {
 						return
+					} else if definition.EntrySchema == nil {
+						return
+					} else {
+						if definition.EntrySchema.DataType == nil {
+							// This problem is reported in AttributeDefinition.Render
+							return
+						}
 					}
 
 					if internalTypeName == ard.TypeList {
@@ -188,12 +188,14 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 						}
 
 						// Information
+
 						keyDataType := definition.KeySchema.DataType
 						keyConstraints := definition.KeySchema.GetConstraints()
 						self.Information.Key = keyDataType.GetTypeInformation()
 						if definition.KeySchema.Description != nil {
 							self.Information.Key.SchemaDescription = *definition.KeySchema.Description
 						}
+
 						valueDataType := definition.EntrySchema.DataType
 						valueConstraints := definition.EntrySchema.GetConstraints()
 						self.Information.Value = valueDataType.GetTypeInformation()
@@ -242,6 +244,7 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 
 		// Render properties
 		for key, definition := range dataType.PropertyDefinitions {
+			definition.Render()
 			if data, ok := map_[key]; ok {
 				var value *Value
 				if value, ok = data.(*Value); !ok {
@@ -250,7 +253,11 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 					map_[key] = value
 				}
 				if definition.DataType != nil {
+					var lock util.RWLocker
 					value.RenderProperty(definition.DataType, definition)
+					if lock != nil {
+						lock.RUnlock()
+					}
 				}
 
 				// Grab information
@@ -379,6 +386,7 @@ func (self Values) RenderMissingValue(definition *AttributeDefinition, kind stri
 
 func (self Values) RenderProperties(definitions PropertyDefinitions, kind string, context *tosca.Context) {
 	for key, definition := range definitions {
+		definition.Render()
 		if value, ok := self[key]; !ok {
 			self.RenderMissingValue(definition.AttributeDefinition, kind, definition.IsRequired(), context)
 			// (If the above assigns the "default" value -- it has already been rendered elsewhere)
@@ -406,8 +414,11 @@ func (self Values) RenderAttributes(definitions AttributeDefinitions, context *t
 		if definition, ok := definitions[key]; !ok {
 			value.Context.ReportUndeclared("attribute")
 			delete(self, key)
-		} else if definition.DataType != nil {
-			value.RenderAttribute(definition.DataType, definition, false, true)
+		} else {
+			definition.Render()
+			if definition.DataType != nil {
+				value.RenderAttribute(definition.DataType, definition, false, true)
+			}
 		}
 	}
 }

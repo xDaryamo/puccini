@@ -15,7 +15,7 @@ with open(os.path.join(os.path.dirname(__file__), 'puccini', '__init__.py')) as 
 with open(os.path.join(os.path.dirname(__file__), 'description.md')) as f:
     description = f.read()
 
-go_version = os.environ.get('PUCCINI_GO_VERSION', '1.17.2')
+go_version = os.environ.get('PUCCINI_GO_VERSION', '1.17.5')
 root = os.path.abspath(os.path.dirname(__file__)).replace('"', '\\"')
 
 script = '''\

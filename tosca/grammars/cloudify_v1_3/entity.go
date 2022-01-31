@@ -1,6 +1,8 @@
 package cloudify_v1_3
 
 import (
+	"sync"
+
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -10,10 +12,15 @@ import (
 
 type Entity struct {
 	Context *tosca.Context `traverse:"ignore" json:"-" yaml:"-"`
+
+	inheritOnce sync.Once
+	renderOnce  sync.Once
 }
 
 func NewEntity(context *tosca.Context) *Entity {
-	return &Entity{Context: context}
+	return &Entity{
+		Context: context,
+	}
 }
 
 // tosca.Contextual interface

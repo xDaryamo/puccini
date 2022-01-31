@@ -115,10 +115,10 @@ func (self CapabilityAssignments) Render(definitions CapabilityDefinitions, cont
 	}
 }
 
-func (self CapabilityAssignments) Normalize(nodeTemplate *NodeTemplate, n *normal.NodeTemplate) {
+func (self CapabilityAssignments) Normalize(nodeTemplate *NodeTemplate, normalNodeTemplate *normal.NodeTemplate) {
 	for key, capability := range self {
 		if definition, ok := capability.GetDefinition(nodeTemplate); ok {
-			n.Capabilities[key] = capability.Normalize(n, definition)
+			normalNodeTemplate.Capabilities[key] = capability.Normalize(normalNodeTemplate, definition)
 		}
 	}
 }

@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -17,11 +16,13 @@ type Renderable interface {
 	Render()
 }
 
+var renderWork = make(tosca.EntityWork)
+
 // From Renderable interface
 func Render(entityPtr tosca.EntityPtr) tosca.EntityPtrs {
 	var entityPtrs tosca.EntityPtrs
 
-	reflection.Traverse(entityPtr, func(entityPtr tosca.EntityPtr) bool {
+	renderWork.TraverseEntities(entityPtr, func(entityPtr tosca.EntityPtr) bool {
 		if renderable, ok := entityPtr.(Renderable); ok {
 			renderable.Render()
 			entityPtrs = append(entityPtrs, entityPtr)

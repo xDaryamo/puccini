@@ -3,9 +3,9 @@ package parser
 import (
 	"sort"
 	"strings"
-	"sync"
 
 	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -36,7 +36,7 @@ type Unit struct {
 	Imports         Units
 	NameTransformer tosca.NameTransformer
 
-	importsLock sync.Mutex
+	importsLock util.RWLocker
 }
 
 func NewUnitNoEntity(toscaContext *tosca.Context, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
@@ -48,16 +48,20 @@ func NewUnit(entityPtr tosca.EntityPtr, container *Unit, nameTransformer tosca.N
 		EntityPtr:       entityPtr,
 		Container:       container,
 		NameTransformer: nameTransformer,
+		importsLock:     util.NewDebugRWLocker(),
 	}
+
 	if container != nil {
 		container.AddImport(&self)
 	}
+
 	return &self
 }
 
 func (self *Unit) AddImport(import_ *Unit) {
 	self.importsLock.Lock()
 	defer self.importsLock.Unlock()
+
 	self.Imports = append(self.Imports, import_)
 }
 
@@ -68,12 +72,15 @@ func (self *Unit) GetContext() *tosca.Context {
 // Print
 
 func (self *Unit) PrintImports(indent int, treePrefix terminal.TreePrefix) {
+	self.importsLock.RLock()
 	length := len(self.Imports)
+	imports := make(Units, length)
+	copy(imports, self.Imports)
+	self.importsLock.RUnlock()
+
 	last := length - 1
 
 	// Sort
-	imports := make(Units, length)
-	copy(imports, self.Imports)
 	sort.Sort(imports)
 
 	for i, unit := range imports {

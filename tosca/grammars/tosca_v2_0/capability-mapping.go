@@ -63,6 +63,10 @@ func (self *CapabilityMapping) GetCapabilityDefinition() (*CapabilityDefinition,
 
 // parser.Renderable interface
 func (self *CapabilityMapping) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *CapabilityMapping) render() {
 	logRender.Debug("capability mapping")
 
 	if (self.NodeTemplateName == nil) || (self.CapabilityName == nil) {
@@ -73,16 +77,16 @@ func (self *CapabilityMapping) Render() {
 	var nodeTemplateType *NodeTemplate
 	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
 		self.NodeTemplate = nodeTemplate.(*NodeTemplate)
+
 		self.NodeTemplate.Render()
+
+		name := *self.CapabilityName
+		var ok bool
+		if self.Capability, ok = self.NodeTemplate.Capabilities[name]; !ok {
+			self.Context.ListChild(1, name).ReportReferenceNotFound("capability", self.NodeTemplate)
+		}
 	} else {
 		self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")
-		return
-	}
-
-	name := *self.CapabilityName
-	var ok bool
-	if self.Capability, ok = self.NodeTemplate.Capabilities[name]; !ok {
-		self.Context.ListChild(1, name).ReportReferenceNotFound("capability", self.NodeTemplate)
 	}
 }
 

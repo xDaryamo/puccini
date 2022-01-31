@@ -45,7 +45,12 @@ func (self *TriggerDefinition) GetKey() string {
 
 // parser.Renderable interface
 func (self *TriggerDefinition) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *TriggerDefinition) render() {
 	logRender.Debugf("trigger definition: %s", self.Name)
+
 	if self.Schedule != nil {
 		self.Schedule.RenderDataType("tosca:TimeInterval")
 	}

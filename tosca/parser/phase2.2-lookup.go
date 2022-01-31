@@ -9,11 +9,14 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
+var lookupFieldsWork = make(tosca.EntityWork)
+
 func (self *Context) LookupNames() {
-	self.Traverse(logLookup, self.LookupFields)
+	self.TraverseEntities(logLookup, lookupFieldsWork, self.LookupFields)
 }
 
 // From "lookup" tags
+// reflection.EntityTraverser signature
 func (self *Context) LookupFields(entityPtr tosca.EntityPtr) bool {
 	lookupProblems := make(LookupProblems)
 
@@ -41,13 +44,14 @@ func (self *Context) LookupFields(entityPtr tosca.EntityPtr) bool {
 		if lookupFieldPtrTypeKind == reflect.String {
 			// Lookup field is *string
 
-			// TODO: panic if targetField is not of the right type
-
 			lookupType := targetField.Type()
 			lookupProblems.AddType(lookupFieldKey, lookupType)
 
 			// Name to lookup
-			lookupName := lookupField.Interface().(*string)
+			lookupName, ok := lookupField.Interface().(*string)
+			if !ok {
+				panicLookupTag(entityPtr)
+			}
 			if lookupName == nil {
 				continue
 			}
@@ -62,13 +66,14 @@ func (self *Context) LookupFields(entityPtr tosca.EntityPtr) bool {
 		} else if (lookupFieldPtrTypeKind == reflect.Slice) && (lookupFieldPtrType.Elem().Kind() == reflect.String) {
 			// Lookup field is *[]string
 
-			// TODO: panic if targetField is not of the right type
-
 			lookupType := targetField.Type().Elem()
 			lookupProblems.AddType(lookupFieldKey, lookupType)
 
 			// Names to lookup
-			lookupNames := lookupField.Interface().(*[]string)
+			lookupNames, ok := lookupField.Interface().(*[]string)
+			if !ok {
+				panicLookupTag(entityPtr)
+			}
 			if (lookupNames == nil) || (len(*lookupNames) == 0) {
 				continue
 			}

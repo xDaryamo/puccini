@@ -188,7 +188,7 @@ func (self *FunctionCall) Validate(value ard.Value, errorWhenInvalid bool) (bool
 	}
 
 	if errorWhenInvalid {
-		return false, self.NewError(arguments, "", nil)
+		return false, self.NewError(arguments, "returned false", nil)
 	} else {
 		return false, nil
 	}

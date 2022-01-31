@@ -48,6 +48,10 @@ func (self *WorkflowDefinition) GetKey() string {
 
 // parser.Renderable interface
 func (self *WorkflowDefinition) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *WorkflowDefinition) render() {
 	logRender.Debugf("workflow definition: %s", self.Name)
 
 	self.StepDefinitions.Render()

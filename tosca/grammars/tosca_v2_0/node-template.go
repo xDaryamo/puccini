@@ -34,8 +34,6 @@ type NodeTemplate struct {
 
 	CopyNodeTemplate *NodeTemplate `lookup:"copy,CopyNodeTemplateName" json:"-" yaml:"-"`
 	NodeType         *NodeType     `lookup:"type,NodeTypeName" json:"-" yaml:"-"`
-
-	rendered bool
 }
 
 func NewNodeTemplate(context *tosca.Context) *NodeTemplate {
@@ -67,14 +65,13 @@ func (self *NodeTemplate) PreRead() {
 }
 
 // parser.Renderable interface
+// Avoid rendering more than once (can happen if we were called from PropertyMapping etc. Render)
 func (self *NodeTemplate) Render() {
-	logRender.Debugf("node template: %s", self.Name)
+	self.renderOnce.Do(self.render)
+}
 
-	if self.rendered {
-		// Avoid rendering more than once (can happen if we were called from PropertyMapping etc. Render)
-		return
-	}
-	self.rendered = true
+func (self *NodeTemplate) render() {
+	logRender.Debugf("node template: %s", self.Name)
 
 	if self.NodeType == nil {
 		return

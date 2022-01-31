@@ -123,17 +123,18 @@ func (self *RequirementAssignments) Render(definitions RequirementDefinitions, c
 	// assignment, because we interpret "occurrences" in the definition to mean how many times
 	// it would be assigned
 
-	for key, definition := range definitions {
+	for _, definition := range definitions {
 		// The TOSCA spec says that definition occurrences has an "implied default of [1,1]"
 		occurrences := definition.Occurrences
 		if occurrences == nil {
-			occurrences = ReadRangeEntity(definition.Context.FieldChild("occurrences", ard.List{1, 1})).(*RangeEntity)
+			occurrencesContext := definition.Context.FieldChild("occurrences", ard.List{1, 1})
+			occurrences = ReadRangeEntity(occurrencesContext).(*RangeEntity)
 		}
 
-		count := self.Count(key)
+		count := self.Count(definition.Name)
 
 		// Automatically add missing assignments
-		for i := count; i < occurrences.Range.Lower; i++ {
+		for index := count; index < occurrences.Range.Lower; index++ {
 			*self = append(*self, NewDefaultRequirementAssignment(len(*self), definition, context))
 			count++
 		}
@@ -175,9 +176,7 @@ func (self *RequirementAssignments) Render(definitions RequirementDefinitions, c
 					// Note: we are careful not set the relationship type if the assignment uses a relationship template
 					assignment.Relationship.RelationshipType = definition.RelationshipDefinition.RelationshipType
 				}
-			}
 
-			if assignment.Relationship != nil {
 				assignment.Relationship.Render(definition.RelationshipDefinition)
 			}
 		} else {
@@ -192,10 +191,10 @@ func (self RequirementAssignments) Normalize(nodeTemplate *NodeTemplate, normalN
 	}
 }
 
-func (self *RequirementAssignments) Count(key string) uint64 {
+func (self *RequirementAssignments) Count(name string) uint64 {
 	var count uint64
 	for _, assignment := range *self {
-		if assignment.Name == key {
+		if assignment.Name == name {
 			count++
 		}
 	}

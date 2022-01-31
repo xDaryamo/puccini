@@ -63,6 +63,10 @@ func (self *RequirementMapping) GetRequirementDefinition() (*RequirementDefiniti
 
 // parser.Renderable interface
 func (self *RequirementMapping) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *RequirementMapping) render() {
 	logRender.Debug("requirement mapping")
 
 	if (self.NodeTemplateName == nil) || (self.RequirementName == nil) {
@@ -73,32 +77,33 @@ func (self *RequirementMapping) Render() {
 	var nodeTemplateType *NodeTemplate
 	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
 		self.NodeTemplate = nodeTemplate.(*NodeTemplate)
+
+		if self.Context.HasQuirk(tosca.QuirkSubstitutionMappingsRequirementsPermissive) {
+			return
+		}
+
+		self.NodeTemplate.Render()
+
+		name := *self.RequirementName
+		found := false
+		for _, requirement := range self.NodeTemplate.Requirements {
+			if requirement.Name == name {
+				if found {
+					self.Context.ListChild(1, name).ReportReferenceAmbiguous("requirement", self.NodeTemplate)
+					break
+				} else {
+					self.Requirement = requirement
+					found = true
+				}
+			}
+		}
+
+		if !found {
+			self.Context.ListChild(1, name).ReportReferenceNotFound("requirement", self.NodeTemplate)
+		}
 	} else {
 		self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")
 		return
-	}
-
-	if self.Context.HasQuirk(tosca.QuirkSubstitutionMappingsRequirementsPermissive) {
-		return
-	}
-
-	name := *self.RequirementName
-	found := false
-	self.NodeTemplate.Render()
-	for _, requirement := range self.NodeTemplate.Requirements {
-		if requirement.Name == name {
-			if found {
-				self.Context.ListChild(1, name).ReportReferenceAmbiguous("requirement", self.NodeTemplate)
-				break
-			} else {
-				self.Requirement = requirement
-				found = true
-			}
-		}
-	}
-
-	if !found {
-		self.Context.ListChild(1, name).ReportReferenceNotFound("requirement", self.NodeTemplate)
 	}
 }
 

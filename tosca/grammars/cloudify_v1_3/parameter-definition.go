@@ -64,6 +64,10 @@ func (self *ParameterDefinition) Inherit(parentDefinition *ParameterDefinition) 
 
 // parser.Renderable interface
 func (self *ParameterDefinition) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *ParameterDefinition) render() {
 	logRender.Debugf("parameter definition: %s", self.Name)
 
 	if self.DataType == nil {

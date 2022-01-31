@@ -29,8 +29,6 @@ type AttributeDefinition struct {
 	Status       *string  `read:"status"`
 
 	DataType *DataType `lookup:"type,DataTypeName" json:"-" yaml:"-"`
-
-	rendered bool
 }
 
 func NewAttributeDefinition(context *tosca.Context) *AttributeDefinition {
@@ -89,10 +87,15 @@ func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) 
 }
 
 // parser.Renderable interface
+// Avoid rendering more than once (can happen if we were called from Value.RenderAttribute)
 func (self *AttributeDefinition) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *AttributeDefinition) render() {
 	logRender.Debugf("attribute definition: %s", self.Name)
 
-	self.render()
+	self.doRender()
 
 	if (self.Default != nil) && (self.DataType != nil) {
 		// The "default" value must be a valid value of the type
@@ -100,14 +103,7 @@ func (self *AttributeDefinition) Render() {
 	}
 }
 
-func (self *AttributeDefinition) render() {
-
-	if self.rendered {
-		// Avoid rendering more than once (can happen if we were called from Value.RenderAttribute)
-		return
-	}
-	self.rendered = true
-
+func (self *AttributeDefinition) doRender() {
 	if self.DataTypeName == nil {
 		self.Context.FieldChild("type", nil).ReportFieldMissing()
 		return

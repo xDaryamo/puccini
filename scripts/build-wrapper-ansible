@@ -18,7 +18,7 @@ mkdir --parents "$DIST"
 SUFFIX=$SUFFIX "$HERE/build-wrapper-python" -e
 
 . "$VENV/bin/activate"
-python -m pip install ansible==4.8.0
+python -m pip install "ansible==$ANSIBLE_VERSION"
 
 ansible-galaxy collection build \
 	"$ROOT/wrappers/ansible/ansible_collections/puccini/tosca" \

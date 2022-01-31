@@ -1,6 +1,8 @@
 package tosca_v2_0
 
 import (
+	"sync"
+
 	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 )
@@ -14,11 +16,11 @@ type Schema struct {
 
 	DataTypeName      *string           `read:"type" require:""`
 	Description       *string           `read:"description"`
-	ConstraintClauses ConstraintClauses `read:"constraints,[]ConstraintClause"`
+	ConstraintClauses ConstraintClauses `read:"constraints,[]ConstraintClause" traverse:"ignore"`
 
 	DataType *DataType `lookup:"type,DataTypeName" json:"-" yaml:"-"`
 
-	rendered bool
+	renderOnce sync.Once
 }
 
 func NewSchema(context *tosca.Context) *Schema {
@@ -41,17 +43,16 @@ func ReadSchema(context *tosca.Context) tosca.EntityPtr {
 }
 
 // parser.Renderable interface
+// Avoid rendering more than once (can happen if we were called from Schema.GetConstraints)
 func (self *Schema) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *Schema) render() {
 	logRender.Debug("schema")
 
-	if self.rendered {
-		// Avoid rendering more than once (can happen if we were called from Schema.GetConstraints)
+	if self.DataType == nil {
 		return
-	}
-	self.rendered = true
-
-	if self.DataType != nil {
-		self.ConstraintClauses.Render(self.DataType)
 	}
 }
 
@@ -70,8 +71,8 @@ func (self *Schema) LookupDataType() bool {
 }
 
 func (self *Schema) GetConstraints() ConstraintClauses {
-	self.Render()
 	if self.DataType != nil {
+		self.ConstraintClauses.Render(self.DataType)
 		self.DataType.ConstraintClauses.Render(self.DataType)
 		return self.DataType.ConstraintClauses.Append(self.ConstraintClauses)
 	} else {

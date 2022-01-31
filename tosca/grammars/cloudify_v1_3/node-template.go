@@ -45,6 +45,10 @@ func ReadNodeTemplate(context *tosca.Context) tosca.EntityPtr {
 
 // parser.Renderable interface
 func (self *NodeTemplate) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *NodeTemplate) render() {
 	logRender.Debugf("node template: %s", self.Name)
 
 	if self.NodeType == nil {

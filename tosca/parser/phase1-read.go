@@ -20,11 +20,13 @@ func (self *Context) ReadRoot(url urlpkg.URL, template string) bool {
 
 	var ok bool
 
-	self.WaitGroup.Add(1)
+	self.ReadWork.Add(1)
 	self.Root, ok = self.read(nil, toscaContext, nil, nil, "$Root", template)
-	self.WaitGroup.Wait()
+	self.ReadWork.Wait()
 
+	self.unitsLock.Lock()
 	sort.Sort(self.Units)
+	self.unitsLock.Unlock()
 
 	return ok
 }
@@ -32,7 +34,7 @@ func (self *Context) ReadRoot(url urlpkg.URL, template string) bool {
 var readCache sync.Map // entityPtr or Promise
 
 func (self *Context) read(promise Promise, toscaContext *tosca.Context, container *Unit, nameTransformer tosca.NameTransformer, readerName string, template string) (*Unit, bool) {
-	defer self.WaitGroup.Done()
+	defer self.ReadWork.Done()
 	if promise != nil {
 		// For the goroutines waiting for our cached entityPtr
 		defer promise.Release()
@@ -82,7 +84,7 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 	}
 
 	// Validate required fields
-	reflection.Traverse(entityPtr, tosca.ValidateRequiredFields)
+	reflection.TraverseEntities(entityPtr, false, tosca.ValidateRequiredFields)
 
 	readCache.Store(toscaContext.URL.Key(), entityPtr)
 
@@ -129,7 +131,7 @@ func (self *Context) goReadImports(container *Unit) {
 			case Promise:
 				// Wait for promise
 				logRead.Debugf("wait for promise: %s", key)
-				self.WaitGroup.Add(1)
+				self.ReadWork.Add(1)
 				go self.waitForPromise(cached_, key, container, importSpec.NameTransformer)
 
 			default: // entityPtr
@@ -141,14 +143,14 @@ func (self *Context) goReadImports(container *Unit) {
 			importToscaContext := container.GetContext().NewImportContext(importSpec.URL)
 
 			// Read (concurrently)
-			self.WaitGroup.Add(1)
+			self.ReadWork.Add(1)
 			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, "$Unit", "")
 		}
 	}
 }
 
 func (self *Context) waitForPromise(promise Promise, key string, container *Unit, nameTransformer tosca.NameTransformer) {
-	defer self.WaitGroup.Done()
+	defer self.ReadWork.Done()
 	promise.Wait()
 
 	if cached, inCache := readCache.Load(key); inCache {

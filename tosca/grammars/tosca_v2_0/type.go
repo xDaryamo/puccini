@@ -1,7 +1,6 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -33,10 +32,6 @@ func NewType(context *tosca.Context) *Type {
 
 // tosca.HasMetadata interface
 func (self *Type) GetDescription() (string, bool) {
-	lock := util.GetLock(self)
-	lock.RLock()
-	defer lock.RUnlock()
-
 	if self.Description != nil {
 		return *self.Description, true
 	}
@@ -45,10 +40,6 @@ func (self *Type) GetDescription() (string, bool) {
 
 // tosca.HasMetadata interface
 func (self *Type) GetMetadata() (map[string]string, bool) {
-	lock := util.GetLock(self)
-	lock.RLock()
-	defer lock.RUnlock()
-
 	metadata := make(map[string]string)
 	if self.Metadata != nil {
 		for key, value := range self.Metadata {
@@ -60,27 +51,24 @@ func (self *Type) GetMetadata() (map[string]string, bool) {
 
 // tosca.HasMetadata interface
 func (self *Type) SetMetadata(name string, value string) bool {
-	lock := util.GetLock(self)
-	lock.Lock()
-	defer lock.Unlock()
-
 	self.Metadata[name] = value
 	return true
 }
 
 // parser.Renderable interface
 func (self *Type) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *Type) render() {
 	logRender.Debugf("type: %s", self.Name)
+
 	if self.Version != nil {
 		self.Version.RenderDataType("version")
 	}
 }
 
 func (self *Type) GetMetadataValue(key string) (string, bool) {
-	lock := util.GetLock(self)
-	lock.RLock()
-	defer lock.RUnlock()
-
 	if self.Metadata != nil {
 		value, ok := self.Metadata[key]
 		return value, ok

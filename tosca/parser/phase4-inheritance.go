@@ -6,13 +6,14 @@ import (
 	"strings"
 
 	"github.com/tliron/kutil/reflection"
-	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 )
 
+var getInheritTaskWork = make(tosca.EntityWork)
+
 func (self *Context) GetInheritTasks() Tasks {
 	inheritContext := NewInheritContext()
-	self.Traverse(logInheritance, func(entityPtr tosca.EntityPtr) bool {
+	self.TraverseEntities(logInheritance, getInheritTaskWork, func(entityPtr tosca.EntityPtr) bool {
 		inheritContext.GetInheritTask(entityPtr)
 		return true
 	})
@@ -64,10 +65,6 @@ func (self *InheritContext) NewExecutor(entityPtr tosca.EntityPtr) Executor {
 
 		logInheritance.Debugf("task: %s", task.Name)
 
-		lock := util.GetLock(entityPtr)
-		lock.Lock()
-		defer lock.Unlock()
-
 		for _, inheritField := range self.InheritFields.Get(entityPtr) {
 			inheritField.Inherit()
 		}
@@ -80,12 +77,12 @@ func (self *InheritContext) NewExecutor(entityPtr tosca.EntityPtr) Executor {
 }
 
 // TODO: rare race condition due to concurrent access of reflect type
-func (self *InheritContext) GetDependencies(entityPtr tosca.EntityPtr) map[tosca.EntityPtr]bool {
-	dependencies := make(map[tosca.EntityPtr]bool)
+func (self *InheritContext) GetDependencies(entityPtr tosca.EntityPtr) tosca.EntityPtrSet {
+	dependencies := make(tosca.EntityPtrSet)
 
 	// From "inherit" tags
 	for _, inheritField := range self.InheritFields.Get(entityPtr) {
-		dependencies[inheritField.FromEntityPtr] = true
+		dependencies.Add(inheritField.ParentEntityPtr)
 	}
 
 	// From field values
@@ -110,7 +107,7 @@ func (self *InheritContext) GetDependencies(entityPtr tosca.EntityPtr) map[tosca
 			field := entity.FieldByName(structField.Name)
 			for _, mapKey := range field.MapKeys() {
 				element := field.MapIndex(mapKey)
-				dependencies[element.Interface()] = true
+				dependencies.Add(element.Interface())
 			}
 		} else if reflection.IsSliceOfPtrToStruct(structField.Type) {
 			// Compatible with []*interface{}
@@ -118,7 +115,7 @@ func (self *InheritContext) GetDependencies(entityPtr tosca.EntityPtr) map[tosca
 			length := field.Len()
 			for i := 0; i < length; i++ {
 				element := field.Index(i)
-				dependencies[element.Interface()] = true
+				dependencies.Add(element.Interface())
 			}
 		}
 	}
@@ -131,15 +128,15 @@ func (self *InheritContext) GetDependencies(entityPtr tosca.EntityPtr) map[tosca
 //
 
 type InheritField struct {
-	Entity        reflect.Value
-	FromEntityPtr tosca.EntityPtr
-	Key           string
-	Field         reflect.Value
-	FromField     reflect.Value
+	Entity          reflect.Value
+	Key             string
+	Field           reflect.Value
+	ParentEntityPtr tosca.EntityPtr
+	ParentField     reflect.Value
 }
 
 func (self *InheritField) Inherit() {
-	// TODO do we really need all of these? some of them aren't used in TOSCA
+	// TODO: do we really need all of these? some of them aren't used in TOSCA
 	fieldEntityPtr := self.Field.Interface()
 	if reflection.IsPtrToString(fieldEntityPtr) {
 		self.InheritEntity()
@@ -167,22 +164,22 @@ func (self *InheritField) Inherit() {
 
 // Field is compatible with *interface{}
 func (self *InheritField) InheritEntity() {
-	if self.Field.IsNil() && !self.FromField.IsNil() {
-		self.Field.Set(self.FromField)
+	if self.Field.IsNil() && !self.ParentField.IsNil() {
+		self.Field.Set(self.ParentField)
 	}
 }
 
 // Field is *[]string
 func (self *InheritField) InheritStringsFromSlice() {
 	slicePtr := self.Field.Interface().(*[]string)
-	fromSlicePtr := self.FromField.Interface().(*[]string)
+	parentSlicePtr := self.ParentField.Interface().(*[]string)
 
-	if fromSlicePtr == nil {
+	if parentSlicePtr == nil {
 		return
 	}
 
-	fromSlice := *fromSlicePtr
-	length := len(fromSlice)
+	parentSlice := *parentSlicePtr
+	length := len(parentSlice)
 	if length == 0 {
 		return
 	}
@@ -194,8 +191,8 @@ func (self *InheritField) InheritStringsFromSlice() {
 		slice = make([]string, 0, length)
 	}
 
-	for _, s := range fromSlice {
-		slice = append(slice, s)
+	for _, element := range parentSlice {
+		slice = append(slice, element)
 	}
 
 	self.Field.Set(reflect.ValueOf(&slice))
@@ -205,18 +202,18 @@ func (self *InheritField) InheritStringsFromSlice() {
 func (self *InheritField) InheritStructsFromSlice() {
 	slice := self.Field
 
-	length := self.FromField.Len()
+	length := self.ParentField.Len()
 	for i := 0; i < length; i++ {
-		element := self.FromField.Index(i)
+		element := self.ParentField.Index(i)
 
 		if _, ok := element.Interface().(tosca.Mappable); ok {
 			// For mappable elements only, *don't* inherit the same key
 			// (We'll merge everything else)
 			key := tosca.GetKey(element.Interface())
 			if ii, ok := getSliceElementIndexForKey(self.Field, key); ok {
-				e := self.Field.Index(ii)
-				logInheritance.Debugf("override: %s", tosca.GetContext(e.Interface()).Path)
-				continue
+				element_ := self.Field.Index(ii)
+				logInheritance.Debugf("override: %s", tosca.GetContext(element_.Interface()).Path)
+				continue // skip this key
 			}
 		}
 
@@ -229,43 +226,41 @@ func (self *InheritField) InheritStructsFromSlice() {
 // Field is *map[string]string
 func (self *InheritField) InheritStringsFromMap() {
 	mapPtr := self.Field.Interface().(*map[string]string)
-	fromMapPtr := self.FromField.Interface().(*map[string]string)
+	parentMapPtr := self.ParentField.Interface().(*map[string]string)
 
-	if fromMapPtr == nil {
+	if parentMapPtr == nil {
 		return
 	}
 
-	fromMap := *fromMapPtr
-	length := len(fromMap)
-	if length == 0 {
+	parentMap := *parentMapPtr
+	if length := len(parentMap); length == 0 {
 		return
 	}
 
-	var m map[string]string
+	var map_ map[string]string
 	if mapPtr != nil {
-		m = *mapPtr
+		map_ = *mapPtr
 	} else {
-		m = make(map[string]string)
+		map_ = make(map[string]string)
 	}
 
-	for k, v := range fromMap {
-		_, ok := m[k]
-		if !ok {
-			m[k] = v
+	for key, value := range parentMap {
+		if _, ok := map_[key]; !ok {
+			map_[key] = value
 		}
 	}
 
-	self.Field.Set(reflect.ValueOf(&m))
+	self.Field.Set(reflect.ValueOf(&map_))
 }
 
 // Field is compatible with map[string]*interface{}
 func (self *InheritField) InheritStructsFromMap() {
-	for _, mapKey := range self.FromField.MapKeys() {
-		element := self.FromField.MapIndex(mapKey)
-		e := self.Field.MapIndex(mapKey)
-		if e.IsValid() {
+	for _, mapKey := range self.ParentField.MapKeys() {
+		element := self.ParentField.MapIndex(mapKey)
+		element_ := self.Field.MapIndex(mapKey)
+		if element_.IsValid() {
 			// We are overriding this element, so don't inherit it
-			logInheritance.Debugf("override: %s", tosca.GetContext(e.Interface()).Path)
+			logInheritance.Debugf("override: %s", tosca.GetContext(element_.Interface()).Path)
 		} else {
 			self.Field.SetMapIndex(mapKey, element)
 		}
@@ -297,21 +292,17 @@ func NewInheritFields(entityPtr tosca.EntityPtr) []*InheritField {
 	for fieldName, tag := range reflection.GetFieldTagsForValue(entity, "inherit") {
 		key, referenceFieldName := parseInheritTag(tag)
 
-		referenceField, referredField, ok := reflection.GetReferredField(entity, referenceFieldName, fieldName)
-		if !ok {
-			continue
+		if referenceField, referredField, ok := reflection.GetReferredField(entity, referenceFieldName, fieldName); ok {
+			field := entity.FieldByName(fieldName)
+			inheritFields = append(inheritFields, &InheritField{entity, key, field, referenceField.Interface(), referredField})
 		}
-
-		field := entity.FieldByName(fieldName)
-
-		inheritFields = append(inheritFields, &InheritField{entity, referenceField.Interface(), key, field, referredField})
 	}
 
 	return inheritFields
 }
 
-// Cache these, because we call twice for each entity
 func (self InheritFields) Get(entityPtr tosca.EntityPtr) []*InheritField {
+	// TODO: cache these, because we call twice for each entity
 	inheritFields, ok := self[entityPtr]
 	if !ok {
 		inheritFields = NewInheritFields(entityPtr)

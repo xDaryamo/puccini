@@ -39,7 +39,7 @@ func NewServiceTemplate() *ServiceTemplate {
 func NormalizeServiceTemplate(entityPtr tosca.EntityPtr) (*ServiceTemplate, bool) {
 	var s *ServiceTemplate
 
-	reflection.Traverse(entityPtr, func(entityPtr tosca.EntityPtr) bool {
+	reflection.TraverseEntities(entityPtr, false, func(entityPtr tosca.EntityPtr) bool {
 		if normalizable, ok := entityPtr.(Normalizable); ok {
 			s = normalizable.NormalizeServiceTemplate()
 

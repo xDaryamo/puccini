@@ -87,6 +87,10 @@ func (self *TopologyTemplate) SetInputs(inputs map[string]ard.Value) {
 
 // parser.Renderable interface
 func (self *TopologyTemplate) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *TopologyTemplate) render() {
 	logRender.Debug("topology template")
 
 	var mappedInputs []string

@@ -53,7 +53,7 @@ func GetInformationMetadata(metadata map[string]string) map[string]string {
 	if metadata != nil {
 		for key, value := range metadata {
 			if strings.HasPrefix(key, METADATA_INFORMATION_PREFIX) {
-				informationMetadata[key[20:]] = value
+				informationMetadata[key[len(METADATA_INFORMATION_PREFIX):]] = value
 			}
 		}
 	}

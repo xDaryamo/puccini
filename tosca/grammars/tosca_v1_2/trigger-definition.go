@@ -1,6 +1,8 @@
 package tosca_v1_2
 
 import (
+	"sync"
+
 	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
@@ -29,6 +31,8 @@ type TriggerDefinition struct {
 	WorkflowAction  *string
 
 	WorkflowDefinition *tosca_v2_0.WorkflowDefinition `lookup:"action,WorkflowAction"`
+
+	renderOnce sync.Once
 }
 
 func NewTriggerDefinition(context *tosca.Context) *TriggerDefinition {
@@ -73,6 +77,10 @@ func (self *TriggerDefinition) GetKey() string {
 
 // parser.Renderable interface
 func (self *TriggerDefinition) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *TriggerDefinition) render() {
 	logRender.Debugf("trigger definition: %s", self.Name)
 	if self.Schedule != nil {
 		self.Schedule.RenderDataType("tosca:TimeInterval")

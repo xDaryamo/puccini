@@ -93,7 +93,11 @@ func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefiniti
 }
 
 // parser.Renderable interface
-func (self RequirementDefinition) Render() {
+func (self *RequirementDefinition) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *RequirementDefinition) render() {
 	logRender.Debugf("requirement definition: %s", self.Name)
 
 	if self.TargetCapabilityTypeName == nil {

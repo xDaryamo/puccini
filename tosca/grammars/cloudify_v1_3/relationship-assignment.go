@@ -40,6 +40,10 @@ func ReadRelationshipAssignment(context *tosca.Context) tosca.EntityPtr {
 
 // parser.Renderable interface
 func (self *RelationshipAssignment) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *RelationshipAssignment) render() {
 	logRender.Debug("relationship")
 
 	if self.RelationshipType != nil {

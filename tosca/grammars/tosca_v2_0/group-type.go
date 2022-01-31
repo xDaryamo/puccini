@@ -51,6 +51,10 @@ func (self *GroupType) GetParent() tosca.EntityPtr {
 
 // tosca.Inherits interface
 func (self *GroupType) Inherit() {
+	self.inheritOnce.Do(self.inherit)
+}
+
+func (self *GroupType) inherit() {
 	logInherit.Debugf("group type: %s", self.Name)
 
 	if self.Parent == nil {
@@ -73,10 +77,18 @@ func (self *GroupType) Inherit() {
 
 // parser.Renderable interface
 func (self *GroupType) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *GroupType) render() {
 	logRender.Debugf("group type: %s", self.Name)
 
 	// (Note we are checking for MemberNodeTypeNames and not MemberNodeTypes, because the latter will never be nil)
-	if (self.Parent == nil) || (self.Parent.MemberNodeTypeNames == nil) {
+	if self.Parent == nil {
+		return
+	}
+
+	if self.Parent.MemberNodeTypeNames == nil {
 		return
 	}
 

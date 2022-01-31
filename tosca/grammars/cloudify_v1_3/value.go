@@ -20,8 +20,6 @@ type Value struct {
 	Description *string
 
 	Information *normal.ValueInformation `traverse:"ignore" json:"-" yaml:"-"`
-
-	rendered bool
 }
 
 func NewValue(context *tosca.Context) *Value {
@@ -51,13 +49,8 @@ func (self *Value) RenderProperty(dataType *DataType, definition *PropertyDefini
 	}
 }
 
+// Avoid rendering more than once (can happen if we use the "default" value)
 func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefinition, validateRequire bool, allowNil bool) {
-	if self.rendered {
-		// Avoid rendering more than once (can happen if we use the "default" value)
-		return
-	}
-	self.rendered = true
-
 	if self.Description != nil {
 		self.Information.Description = *self.Description
 	}

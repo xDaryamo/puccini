@@ -48,6 +48,10 @@ func ReadGroup(context *tosca.Context) tosca.EntityPtr {
 
 // parser.Renderable interface
 func (self *Group) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *Group) render() {
 	logRender.Debugf("group: %s", self.Name)
 
 	if self.GroupType == nil {
@@ -67,6 +71,7 @@ func (self *Group) Render() {
 					break
 				}
 			}
+
 			if !compatible {
 				childContext := self.Context.FieldChild("members", nil).ListChild(index, nil)
 				childContext.ReportIncompatible(nodeTemplate.Name, "group", "member")
