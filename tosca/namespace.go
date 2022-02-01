@@ -187,9 +187,13 @@ func (self *Namespace) Print(indent int) {
 	}
 }
 
-// sort.Interface
+//
+// TypesByName
+//
 
 type TypesByName []reflect.Type
+
+// sort.Interface
 
 func (self TypesByName) Len() int {
 	return len(self)

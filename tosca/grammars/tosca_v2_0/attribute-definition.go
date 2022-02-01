@@ -86,7 +86,7 @@ func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) 
 	}
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 // Avoid rendering more than once (can happen if we were called from Value.RenderAttribute)
 func (self *AttributeDefinition) Render() {
 	self.renderOnce.Do(self.render)

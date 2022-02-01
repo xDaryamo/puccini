@@ -47,7 +47,7 @@ func ReadUnit(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// parser.Importer interface
+// tosca.Importer interface
 func (self *Unit) GetImportSpecs() []*tosca.ImportSpec {
 	var importSpecs = make([]*tosca.ImportSpec, 0, len(self.Imports))
 	for _, import_ := range self.Imports {

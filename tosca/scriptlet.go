@@ -24,23 +24,6 @@ func (self *Context) EmbedScriptlet(name string, scriptlet string) {
 	self.ScriptletNamespace.RegisterScriptlet(name, scriptlet, nativeArgumentIndexes)
 }
 
-func parseScriptletName(name string) (string, []uint) {
-	// Parse optional native argument indexes specified in name
-	// Notation example: my_constraint(0,1)
-	var nativeArgumentIndexes []uint
-	if parenthesis := strings.Index(name, "("); parenthesis != -1 {
-		// We actually just assume an open parenthesis
-		split := strings.Split(name[parenthesis+1:len(name)-1], ",")
-		name = name[:parenthesis]
-		for _, s := range split {
-			if index, err := strconv.ParseUint(s, 10, 32); err != nil {
-				nativeArgumentIndexes = append(nativeArgumentIndexes, uint(index))
-			}
-		}
-	}
-	return name, nativeArgumentIndexes
-}
-
 //
 // Scriptlet
 //
@@ -149,4 +132,23 @@ func (self *ScriptletNamespace) Merge(namespace *ScriptletNamespace) {
 	for name, scriptlet := range namespace.namespace {
 		self.namespace[name] = scriptlet
 	}
+}
+
+// Utils
+
+func parseScriptletName(name string) (string, []uint) {
+	// Parse optional native argument indexes specified in name
+	// Notation example: my_constraint(0,1)
+	var nativeArgumentIndexes []uint
+	if parenthesis := strings.Index(name, "("); parenthesis != -1 {
+		// We actually just assume an open parenthesis
+		split := strings.Split(name[parenthesis+1:len(name)-1], ",")
+		name = name[:parenthesis]
+		for _, s := range split {
+			if index, err := strconv.ParseUint(s, 10, 32); err != nil {
+				nativeArgumentIndexes = append(nativeArgumentIndexes, uint(index))
+			}
+		}
+	}
+	return name, nativeArgumentIndexes
 }

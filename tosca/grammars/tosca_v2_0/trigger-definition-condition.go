@@ -40,7 +40,7 @@ func ReadTriggerDefinitionCondition(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *TriggerDefinitionCondition) Render() {
 	self.renderOnce.Do(self.render)
 }

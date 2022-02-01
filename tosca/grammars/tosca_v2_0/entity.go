@@ -13,8 +13,7 @@ import (
 type Entity struct {
 	Context *tosca.Context `traverse:"ignore" json:"-" yaml:"-"`
 
-	inheritOnce sync.Once
-	renderOnce  sync.Once
+	renderOnce sync.Once
 }
 
 func NewEntity(context *tosca.Context) *Entity {

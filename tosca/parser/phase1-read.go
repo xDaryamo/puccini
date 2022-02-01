@@ -3,7 +3,6 @@ package parser
 import (
 	"fmt"
 	"sort"
-	"sync"
 
 	"github.com/tliron/kutil/reflection"
 	urlpkg "github.com/tliron/kutil/url"
@@ -13,16 +12,16 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-func (self *Context) ReadRoot(url urlpkg.URL, template string) bool {
+func (self *ServiceContext) ReadRoot(url urlpkg.URL, template string) bool {
 	toscaContext := tosca.NewContext(self.Stylist, self.Quirks)
 
 	toscaContext.URL = url
 
 	var ok bool
 
-	self.ReadWork.Add(1)
+	self.readWork.Add(1)
 	self.Root, ok = self.read(nil, toscaContext, nil, nil, "$Root", template)
-	self.ReadWork.Wait()
+	self.readWork.Wait()
 
 	self.unitsLock.Lock()
 	sort.Sort(self.Units)
@@ -31,10 +30,8 @@ func (self *Context) ReadRoot(url urlpkg.URL, template string) bool {
 	return ok
 }
 
-var readCache sync.Map // entityPtr or Promise
-
-func (self *Context) read(promise Promise, toscaContext *tosca.Context, container *Unit, nameTransformer tosca.NameTransformer, readerName string, template string) (*Unit, bool) {
-	defer self.ReadWork.Done()
+func (self *ServiceContext) read(promise Promise, toscaContext *tosca.Context, container *Unit, nameTransformer tosca.NameTransformer, readerName string, template string) (*Unit, bool) {
+	defer self.readWork.Done()
 	if promise != nil {
 		// For the goroutines waiting for our cached entityPtr
 		defer promise.Release()
@@ -86,17 +83,14 @@ func (self *Context) read(promise Promise, toscaContext *tosca.Context, containe
 	// Validate required fields
 	reflection.TraverseEntities(entityPtr, false, tosca.ValidateRequiredFields)
 
-	readCache.Store(toscaContext.URL.Key(), entityPtr)
+	self.Context.readCache.Store(toscaContext.URL.Key(), entityPtr)
 
 	return self.AddImportUnit(entityPtr, container, nameTransformer), true
 }
 
 // From tosca.Importer interface
-func (self *Context) goReadImports(container *Unit) {
-	var importSpecs []*tosca.ImportSpec
-	if importer, ok := container.EntityPtr.(tosca.Importer); ok {
-		importSpecs = importer.GetImportSpecs()
-	}
+func (self *ServiceContext) goReadImports(container *Unit) {
+	importSpecs := tosca.GetImportSpecs(container.EntityPtr)
 
 	// Implicit import
 	if !container.GetContext().HasQuirk(tosca.QuirkImportsImplicitDisable) {
@@ -126,12 +120,12 @@ func (self *Context) goReadImports(container *Unit) {
 		}
 
 		promise := NewPromise()
-		if cached, inCache := readCache.LoadOrStore(key, promise); inCache {
+		if cached, inCache := self.Context.readCache.LoadOrStore(key, promise); inCache {
 			switch cached_ := cached.(type) {
 			case Promise:
 				// Wait for promise
 				logRead.Debugf("wait for promise: %s", key)
-				self.ReadWork.Add(1)
+				self.readWork.Add(1)
 				go self.waitForPromise(cached_, key, container, importSpec.NameTransformer)
 
 			default: // entityPtr
@@ -143,17 +137,17 @@ func (self *Context) goReadImports(container *Unit) {
 			importToscaContext := container.GetContext().NewImportContext(importSpec.URL)
 
 			// Read (concurrently)
-			self.ReadWork.Add(1)
+			self.readWork.Add(1)
 			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, "$Unit", "")
 		}
 	}
 }
 
-func (self *Context) waitForPromise(promise Promise, key string, container *Unit, nameTransformer tosca.NameTransformer) {
-	defer self.ReadWork.Done()
+func (self *ServiceContext) waitForPromise(promise Promise, key string, container *Unit, nameTransformer tosca.NameTransformer) {
+	defer self.readWork.Done()
 	promise.Wait()
 
-	if cached, inCache := readCache.Load(key); inCache {
+	if cached, inCache := self.Context.readCache.Load(key); inCache {
 		switch cached.(type) {
 		case Promise:
 			logRead.Debugf("promise broken: %s", key)

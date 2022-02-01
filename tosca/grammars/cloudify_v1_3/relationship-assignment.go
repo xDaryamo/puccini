@@ -38,7 +38,7 @@ func ReadRelationshipAssignment(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *RelationshipAssignment) Render() {
 	self.renderOnce.Do(self.render)
 }

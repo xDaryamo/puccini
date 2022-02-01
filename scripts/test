@@ -13,4 +13,4 @@ m 'testing...'
 
 ROOT=$ROOT \
 GORACE=history_size=7 \
-go test -count=1 -timeout=10s "$MODULE" "$@"
+go test -count=1 -timeout=30s "$MODULE" "$@"

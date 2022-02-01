@@ -58,7 +58,7 @@ func ReadUnit(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// parser.Importer interface
+// tosca.Importer interface
 func (self *Unit) GetImportSpecs() []*tosca.ImportSpec {
 	// TODO: importing should also import repositories
 

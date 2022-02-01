@@ -1,6 +1,8 @@
 package tosca
 
-import "strings"
+import (
+	"strings"
+)
 
 //
 // Quirk

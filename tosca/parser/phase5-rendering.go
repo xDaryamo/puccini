@@ -4,27 +4,14 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-func (self *Context) Render() tosca.EntityPtrs {
-	return Render(self.Root.EntityPtr)
-}
+func (self *ServiceContext) Render() tosca.EntityPtrs {
+	self.Context.entitiesLock.Lock()
+	defer self.Context.entitiesLock.Unlock()
 
-//
-// Renderable
-//
-
-type Renderable interface {
-	Render()
-}
-
-var renderWork = make(tosca.EntityWork)
-
-// From Renderable interface
-func Render(entityPtr tosca.EntityPtr) tosca.EntityPtrs {
 	var entityPtrs tosca.EntityPtrs
 
-	renderWork.TraverseEntities(entityPtr, func(entityPtr tosca.EntityPtr) bool {
-		if renderable, ok := entityPtr.(Renderable); ok {
-			renderable.Render()
+	self.Context.renderWork.TraverseEntities(self.Root.EntityPtr, func(entityPtr tosca.EntityPtr) bool {
+		if tosca.Render(entityPtr) {
 			entityPtrs = append(entityPtrs, entityPtr)
 		}
 		return true

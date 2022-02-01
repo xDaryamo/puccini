@@ -51,10 +51,6 @@ func (self *GroupType) GetParent() tosca.EntityPtr {
 
 // tosca.Inherits interface
 func (self *GroupType) Inherit() {
-	self.inheritOnce.Do(self.inherit)
-}
-
-func (self *GroupType) inherit() {
 	logInherit.Debugf("group type: %s", self.Name)
 
 	if self.Parent == nil {
@@ -75,7 +71,7 @@ func (self *GroupType) inherit() {
 	// So we will do that check in the rendering phase, below
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *GroupType) Render() {
 	self.renderOnce.Do(self.render)
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-func (self *Context) Gather(pattern string) tosca.EntityPtrs {
+func (self *ServiceContext) Gather(pattern string) tosca.EntityPtrs {
 	var entityPtrs tosca.EntityPtrs
 
 	re := compileGatherPattern(pattern)

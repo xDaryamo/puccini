@@ -48,10 +48,6 @@ func (self *PolicyType) GetParent() tosca.EntityPtr {
 
 // tosca.Inherits interface
 func (self *PolicyType) Inherit() {
-	self.inheritOnce.Do(self.inherit)
-}
-
-func (self *PolicyType) inherit() {
 	logInherit.Debugf("policy type: %s", self.Name)
 
 	if self.Parent == nil {
@@ -72,7 +68,7 @@ func (self *PolicyType) inherit() {
 	// So we will do that check in the rendering phase, below
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *PolicyType) Render() {
 	self.renderOnce.Do(self.render)
 }

@@ -11,10 +11,6 @@ import (
 	urlpkg "github.com/tliron/kutil/url"
 )
 
-//
-// Context
-//
-
 func (self *Context) ReportURL(skip int, item string, message string, row int, column int) bool {
 	if self.URL != nil {
 		return self.Problems.ReportFull(skip+1, self.URL.String(), item, message, row, column)
@@ -143,7 +139,7 @@ func (self *Context) ReportDuplicateMapKey(key string) bool {
 //
 
 func (self *Context) ReportNameAmbiguous(type_ reflect.Type, name string, entityPtrs ...EntityPtr) bool {
-	return self.Reportf(1, "ambiguous %s name %s, can be in %s", GetEntityTypeName(type_), self.Problems.Stylist.Name(quote(name)), terminal.StylizedOptions(urlsOfEntityPtrs(entityPtrs), self.Problems.Stylist.Value))
+	return self.Reportf(1, "ambiguous %s name %s, can be in %s", entityTypeName(type_), self.Problems.Stylist.Name(quote(name)), terminal.StylizedOptions(urlsOfEntityPtrs(entityPtrs), self.Problems.Stylist.Value))
 }
 
 func (self *Context) ReportFieldReferenceNotFound(types ...reflect.Type) bool {
@@ -175,13 +171,13 @@ func (self *Context) ReportUnknown(kind string) bool {
 }
 
 func (self *Context) ReportReferenceNotFound(kind string, entityPtr EntityPtr) bool {
-	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
+	typeName := entityTypeName(reflect.TypeOf(entityPtr).Elem())
 	name := GetContext(entityPtr).Name
 	return self.ReportPathf(1, "unknown %s reference in %s %s: %s", kind, typeName, self.Problems.Stylist.Name(quote(name)), self.FormatBadData())
 }
 
 func (self *Context) ReportReferenceAmbiguous(kind string, entityPtr EntityPtr) bool {
-	typeName := GetEntityTypeName(reflect.TypeOf(entityPtr).Elem())
+	typeName := entityTypeName(reflect.TypeOf(entityPtr).Elem())
 	name := GetContext(entityPtr).Name
 	return self.ReportPathf(1, "ambiguous %s in %s %s: %s", kind, typeName, self.Problems.Stylist.Name(quote(name)), self.FormatBadData())
 }
@@ -264,10 +260,21 @@ func urlsOfEntityPtrs(entityPtrs []EntityPtr) []string {
 	return urls
 }
 
+func entityTypeName(type_ reflect.Type) string {
+	fields := type_.NumField()
+	for index := 0; index < fields; index++ {
+		structField := type_.Field(index)
+		if value, ok := structField.Tag.Lookup("name"); ok {
+			return value
+		}
+	}
+	return fmt.Sprintf("%s", type_)
+}
+
 func entityTypeNamesOfTypes(types []reflect.Type) []string {
 	entityTypeNames := make([]string, len(types))
 	for index, type_ := range types {
-		entityTypeNames[index] = GetEntityTypeName(type_)
+		entityTypeNames[index] = entityTypeName(type_)
 	}
 	return entityTypeNames
 }

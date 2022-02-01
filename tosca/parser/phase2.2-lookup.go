@@ -9,15 +9,16 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-var lookupFieldsWork = make(tosca.EntityWork)
+func (self *ServiceContext) LookupNames() {
+	self.Context.entitiesLock.Lock()
+	defer self.Context.entitiesLock.Unlock()
 
-func (self *Context) LookupNames() {
-	self.TraverseEntities(logLookup, lookupFieldsWork, self.LookupFields)
+	self.TraverseEntities(logLookup, self.Context.lookupFieldsWork, self.LookupFields)
 }
 
 // From "lookup" tags
 // reflection.EntityTraverser signature
-func (self *Context) LookupFields(entityPtr tosca.EntityPtr) bool {
+func (self *ServiceContext) LookupFields(entityPtr tosca.EntityPtr) bool {
 	lookupProblems := make(LookupProblems)
 
 	context := tosca.GetContext(entityPtr)

@@ -46,7 +46,7 @@ func ReadGroup(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *Group) Render() {
 	self.renderOnce.Do(self.render)
 }

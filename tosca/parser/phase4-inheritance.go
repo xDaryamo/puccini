@@ -9,11 +9,17 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-var getInheritTaskWork = make(tosca.EntityWork)
+func (self *ServiceContext) Inherit() {
+	self.Context.entitiesLock.Lock()
+	defer self.Context.entitiesLock.Unlock()
 
-func (self *Context) GetInheritTasks() Tasks {
+	tasks := self.GetInheritTasks()
+	tasks.Drain()
+}
+
+func (self *ServiceContext) GetInheritTasks() Tasks {
 	inheritContext := NewInheritContext()
-	self.TraverseEntities(logInheritance, getInheritTaskWork, func(entityPtr tosca.EntityPtr) bool {
+	self.TraverseEntities(logInheritance, self.Context.getInheritTaskWork, func(entityPtr tosca.EntityPtr) bool {
 		inheritContext.GetInheritTask(entityPtr)
 		return true
 	})
@@ -70,13 +76,10 @@ func (self *InheritContext) NewExecutor(entityPtr tosca.EntityPtr) Executor {
 		}
 
 		// Custom inheritance after all fields have been inherited
-		if inherits, ok := entityPtr.(tosca.Inherits); ok {
-			inherits.Inherit()
-		}
+		tosca.Inherit(entityPtr)
 	}
 }
 
-// TODO: rare race condition due to concurrent access of reflect type
 func (self *InheritContext) GetDependencies(entityPtr tosca.EntityPtr) tosca.EntityPtrSet {
 	dependencies := make(tosca.EntityPtrSet)
 

@@ -43,7 +43,7 @@ func ReadNodeTemplate(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *NodeTemplate) Render() {
 	self.renderOnce.Do(self.render)
 }

@@ -195,7 +195,7 @@ reports:
 When you turn off the resolution phase you will indeed see no relationships in the Clout
 (you'll see that the `edgesOut` for all vertexes is an empty list).
 
-Read more about how Puccini implements resolution [here](tosca/compiler/RESOLUTION.md).
+Read more about how Puccini implements resolution [here](assets/tosca/profiles/common/1.0/js/RESOLUTION.md).
 
 
 TOSCA Functions and Constraints

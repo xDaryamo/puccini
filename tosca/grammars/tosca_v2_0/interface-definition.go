@@ -71,7 +71,7 @@ func (self *InterfaceDefinition) Inherit(parentDefinition *InterfaceDefinition) 
 	self.NotificationDefinitions.Inherit(parentDefinition.NotificationDefinitions)
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *InterfaceDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }

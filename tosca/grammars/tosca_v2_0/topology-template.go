@@ -56,7 +56,7 @@ func (self *TopologyTemplate) GetNodeTemplatesOfType(nodeType *NodeType) []*Node
 	return nodeTemplates
 }
 
-// parser.HasInputs interface
+// tosca.HasInputs interface
 func (self *TopologyTemplate) SetInputs(inputs map[string]ard.Value) {
 	context := self.Context.FieldChild("inputs", nil)
 	for name, data := range inputs {
@@ -85,7 +85,7 @@ func (self *TopologyTemplate) SetInputs(inputs map[string]ard.Value) {
 	}
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *TopologyTemplate) Render() {
 	self.renderOnce.Do(self.render)
 }

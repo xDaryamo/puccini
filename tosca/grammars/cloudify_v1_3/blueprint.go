@@ -34,7 +34,7 @@ func ReadBlueprint(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// parser.HasInputs interface
+// tosca.HasInputs interface
 func (self *Blueprint) SetInputs(inputs map[string]ard.Value) {
 	context := self.Context.FieldChild("inputs", nil)
 	for name, data := range inputs {

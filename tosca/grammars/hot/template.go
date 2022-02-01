@@ -81,13 +81,13 @@ func (self *Template) NewPseudoParameter(name string, value string) {
 	self.Parameters[name] = parameter
 }
 
-// parser.Importer interface
+// tosca.Importer interface
 func (self *Template) GetImportSpecs() []*tosca.ImportSpec {
 	var importSpecs []*tosca.ImportSpec
 	return importSpecs
 }
 
-// parser.HasInputs interface
+// tosca.HasInputs interface
 func (self *Template) SetInputs(inputs map[string]ard.Value) {
 	context := self.Context.FieldChild("parameters", nil)
 	for name, data := range inputs {

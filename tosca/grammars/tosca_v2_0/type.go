@@ -55,7 +55,7 @@ func (self *Type) SetMetadata(name string, value string) bool {
 	return true
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *Type) Render() {
 	self.renderOnce.Do(self.render)
 }

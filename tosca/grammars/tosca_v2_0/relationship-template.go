@@ -53,7 +53,7 @@ func (self *RelationshipTemplate) PreRead() {
 	CopyTemplate(self.Context)
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *RelationshipTemplate) Render() {
 	self.renderOnce.Do(self.render)
 }

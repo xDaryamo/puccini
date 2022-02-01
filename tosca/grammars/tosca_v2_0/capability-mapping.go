@@ -61,7 +61,7 @@ func (self *CapabilityMapping) GetCapabilityDefinition() (*CapabilityDefinition,
 	}
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *CapabilityMapping) Render() {
 	self.renderOnce.Do(self.render)
 }

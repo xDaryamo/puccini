@@ -12,7 +12,6 @@ gofmt -w -s -e \
 	"$ROOT/puccini-tosca" \
 	"$ROOT/puccini-tosca/commands" \
 	"$ROOT/tosca" \
-	"$ROOT/tosca/compiler" \
 	"$ROOT/tosca/csar" \
 	"$ROOT/tosca/grammars" \
 	"$ROOT/tosca/grammars/cloudify_v1_3" \

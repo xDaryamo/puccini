@@ -75,7 +75,7 @@ func (self *TriggerDefinition) GetKey() string {
 	return self.Name
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *TriggerDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }

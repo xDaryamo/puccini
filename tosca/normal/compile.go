@@ -1,4 +1,4 @@
-package compiler
+package normal
 
 import (
 	"github.com/tliron/kutil/ard"
@@ -6,10 +6,9 @@ import (
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/normal"
 )
 
-func Compile(serviceTemplate *normal.ServiceTemplate, allowTimestamps bool) (*cloutpkg.Clout, error) {
+func (serviceTemplate *ServiceTemplate) Compile(allowTimestamps bool) (*cloutpkg.Clout, error) {
 	clout := cloutpkg.NewClout()
 
 	puccini := make(ard.StringMap)
@@ -291,7 +290,7 @@ func SetMetadata(entity cloutpkg.Entity, kind string) {
 	entity.GetMetadata()["puccini"] = metadata
 }
 
-func NewMappingEdge(type_ string, name string, mapping *normal.Mapping, substitutionVertex *cloutpkg.Vertex, nodeTemplates map[string]*cloutpkg.Vertex) {
+func NewMappingEdge(type_ string, name string, mapping *Mapping, substitutionVertex *cloutpkg.Vertex, nodeTemplates map[string]*cloutpkg.Vertex) {
 	nodeTemplateVertex := nodeTemplates[mapping.NodeTemplate.Name]
 	edge := substitutionVertex.NewEdgeTo(nodeTemplateVertex)
 

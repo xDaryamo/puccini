@@ -4,32 +4,17 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"github.com/tliron/kutil/ard"
+	"github.com/tliron/kutil/reflection"
+	"github.com/tliron/kutil/url"
 )
 
+//
+// EntityPtr
+//
+
 type EntityPtr = interface{}
-
-type EntityPtrSet map[EntityPtr]struct{}
-
-func (self EntityPtrSet) Add(entityPtr EntityPtr) {
-	self[entityPtr] = struct{}{}
-}
-
-func (self EntityPtrSet) Contains(entityPtr EntityPtr) bool {
-	_, ok := self[entityPtr]
-	return ok
-}
-
-// From "name" tag
-func GetEntityTypeName(type_ reflect.Type) string {
-	fields := type_.NumField()
-	for index := 0; index < fields; index++ {
-		structField := type_.Field(index)
-		if value, ok := structField.Tag.Lookup("name"); ok {
-			return value
-		}
-	}
-	return fmt.Sprintf("%s", type_)
-}
 
 //
 // EntityPtrs
@@ -54,6 +39,147 @@ func (self EntityPtrs) Less(i, j int) bool {
 }
 
 //
+// EntitySet
+//
+
+type EntityPtrSet map[EntityPtr]struct{}
+
+func (self EntityPtrSet) Add(entityPtr EntityPtr) {
+	self[entityPtr] = struct{}{}
+}
+
+func (self EntityPtrSet) Contains(entityPtr EntityPtr) bool {
+	_, ok := self[entityPtr]
+	return ok
+}
+
+//
+// EntityWork
+//
+
+type EntityWork = EntityPtrSet
+
+func (self EntityWork) Start(entityPtr EntityPtr) bool {
+	if self.Contains(entityPtr) {
+		return false
+	} else {
+		self.Add(entityPtr)
+		return true
+	}
+}
+
+func (self EntityWork) TraverseEntities(entityPtr EntityPtr, traverse reflection.EntityTraverser) {
+	reflection.TraverseEntities(entityPtr, false, func(entityPtr EntityPtr) bool {
+		if self.Start(entityPtr) {
+			return traverse(entityPtr)
+		}
+		return false
+	})
+}
+
+//
+// PreReadable
+//
+
+type PreReadable interface {
+	PreRead()
+}
+
+// From PreReadable interface
+func PreRead(entityPtr EntityPtr) bool {
+	if preReadable, ok := entityPtr.(PreReadable); ok {
+		preReadable.PreRead()
+		return true
+	} else {
+		return false
+	}
+}
+
+//
+// Importer
+//
+
+type Importer interface {
+	GetImportSpecs() []*ImportSpec
+}
+
+// From Importer interface
+func GetImportSpecs(entityPtr EntityPtr) []*ImportSpec {
+	if importer, ok := entityPtr.(Importer); ok {
+		return importer.GetImportSpecs()
+	} else {
+		return nil
+	}
+}
+
+//
+// ImportSpec
+//
+
+type ImportSpec struct {
+	URL             url.URL
+	NameTransformer NameTransformer
+	Implicit        bool
+}
+
+//
+// Hierarchical
+//
+
+type Hierarchical interface {
+	GetParent() EntityPtr
+}
+
+// From Hierarchical interface
+func GetParent(entityPtr EntityPtr) (EntityPtr, bool) {
+	if hierarchical, ok := entityPtr.(Hierarchical); ok {
+		parentPtr := hierarchical.GetParent()
+		if reflect.ValueOf(parentPtr).IsNil() {
+			parentPtr = nil
+		}
+		return parentPtr, true
+	} else {
+		return nil, false
+	}
+}
+
+//
+// Inherits
+//
+
+type Inherits interface {
+	Inherit()
+}
+
+// From Inherits interface
+func Inherit(entityPtr EntityPtr) bool {
+	if inherits, ok := entityPtr.(Inherits); ok {
+		inherits.Inherit()
+		return true
+	} else {
+		return false
+	}
+}
+
+//
+// Renderable
+//
+
+type Renderable interface {
+	Render()
+}
+
+// From Renderable interface
+func Render(entityPtr EntityPtr) bool {
+	if renderable, ok := entityPtr.(Renderable); ok {
+		renderable.Render()
+		return true
+	} else {
+		return false
+	}
+}
+
+//
 // Mappable
 //
 
@@ -63,9 +189,97 @@ type Mappable interface {
 
 // From Mappable interface
 func GetKey(entityPtr EntityPtr) string {
-	mappable, ok := entityPtr.(Mappable)
-	if !ok {
+	if mappable, ok := entityPtr.(Mappable); ok {
+		return mappable.GetKey()
+	} else {
 		panic(fmt.Sprintf("entity does not implement \"Mappable\" interface: %T", entityPtr))
 	}
-	return mappable.GetKey()
+}
+
+//
+// HasInputs
+//
+
+type HasInputs interface {
+	SetInputs(map[string]ard.Value)
+}
+
+// From HasInputs interface
+func SetInputs(entityPtr EntityPtr, inputs map[string]ard.Value) bool {
+	var done bool
+
+	if inputs == nil {
+		return false
+	}
+
+	reflection.TraverseEntities(entityPtr, false, func(entityPtr EntityPtr) bool {
+		if hasInputs, ok := entityPtr.(HasInputs); ok {
+			hasInputs.SetInputs(inputs)
+			done = true
+
+			// Only one entity should implement the interface
+			return false
+		}
+		return true
+	})
+
+	return done
+}
+
+//
+// HasMetadata
+//
+
+const (
+	METADATA_INFORMATION_PREFIX      = "puccini.information:"
+	METADATA_SCRIPTLET_PREFIX        = "puccini.scriptlet:"
+	METADATA_SCRIPTLET_IMPORT_PREFIX = "puccini.scriptlet.import:"
+	METADATA_CANONICAL_NAME          = "tosca.canonical-name"
+	METADATA_NORMATIVE               = "tosca.normative"
+)
+
+type HasMetadata interface {
+	GetDescription() (string, bool)
+	GetMetadata() (map[string]string, bool) // should return a copy
+	SetMetadata(name string, value string) bool
+}
+
+// From HasMetadata interface
+func GetDescription(entityPtr EntityPtr) (string, bool) {
+	if hasMetadata, ok := entityPtr.(HasMetadata); ok {
+		return hasMetadata.GetDescription()
+	} else {
+		return "", false
+	}
+}
+
+// From HasMetadata interface
+func GetMetadata(entityPtr EntityPtr) (map[string]string, bool) {
+	if hasMetadata, ok := entityPtr.(HasMetadata); ok {
+		return hasMetadata.GetMetadata()
+	} else {
+		return nil, false
+	}
+}
+
+// From HasMetadata interface
+func SetMetadata(entityPtr EntityPtr, name string, value string) bool {
+	if hasMetadata, ok := entityPtr.(HasMetadata); ok {
+		hasMetadata.SetMetadata(name, value)
+		return true
+	} else {
+		return false
+	}
+}
+
+func GetInformationMetadata(metadata map[string]string) map[string]string {
+	informationMetadata := make(map[string]string)
+	if metadata != nil {
+		for key, value := range metadata {
+			if strings.HasPrefix(key, METADATA_INFORMATION_PREFIX) {
+				informationMetadata[key[len(METADATA_INFORMATION_PREFIX):]] = value
+			}
+		}
+	}
+	return informationMetadata
 }

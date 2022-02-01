@@ -42,7 +42,7 @@ func ReadSchema(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 // Avoid rendering more than once (can happen if we were called from Schema.GetConstraints)
 func (self *Schema) Render() {
 	self.renderOnce.Do(self.render)

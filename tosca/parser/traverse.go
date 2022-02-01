@@ -8,7 +8,7 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-func (self *Context) TraverseEntities(log logging.Logger, work tosca.EntityWork, traverse reflection.EntityTraverser) {
+func (self *ServiceContext) TraverseEntities(log logging.Logger, work tosca.EntityWork, traverse reflection.EntityTraverser) {
 	if work == nil {
 		work = make(tosca.EntityWork)
 	}

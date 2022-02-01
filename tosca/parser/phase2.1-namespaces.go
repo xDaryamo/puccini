@@ -5,12 +5,18 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-func (self *Context) AddNamespaces() {
+func (self *ServiceContext) AddNamespaces() {
+	self.Context.entitiesLock.Lock()
+	defer self.Context.entitiesLock.Unlock()
+
 	self.Root.MergeNamespaces()
 }
 
 func (self *Unit) MergeNamespaces() {
 	context := self.GetContext()
+
+	self.importsLock.RLock()
+	defer self.importsLock.RUnlock()
 
 	for _, import_ := range self.Imports {
 		import_.MergeNamespaces()
@@ -25,7 +31,7 @@ func (self *Unit) MergeNamespaces() {
 
 // Print
 
-func (self *Context) PrintNamespaces(indent int) {
+func (self *ServiceContext) PrintNamespaces(indent int) {
 	self.unitsLock.RLock()
 	defer self.unitsLock.RUnlock()
 

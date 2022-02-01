@@ -59,7 +59,9 @@ var parseCommand = &cobra.Command{
 	},
 }
 
-func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
+var parserContext = parser.NewContext()
+
+func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 	ParseInputs()
 
 	urlContext := urlpkg.NewContext()
@@ -80,16 +82,17 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 	if problemsFormat != "" {
 		stylist = terminal.NewStylist(false)
 	}
-	context := parser.NewContext(stylist, tosca.NewQuirks(quirks...))
+
+	serviceContext := parserContext.NewServiceContext(stylist, tosca.NewQuirks(quirks...))
 
 	var problems *problemspkg.Problems
 
 	// Phase 1: Read
 	if stopAtPhase >= 1 {
-		ok := context.ReadRoot(url_, template)
+		ok := serviceContext.ReadRoot(url_, template)
 
-		context.MergeProblems()
-		problems = context.GetProblems()
+		serviceContext.MergeProblems()
+		problems = serviceContext.GetProblems()
 		FailOnProblems(problems)
 
 		if !ok {
@@ -100,43 +103,43 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 		if ToPrintPhase(1) {
 			if len(dumpPhases) > 1 {
 				terminal.Printf("%s\n", terminal.Stylize.Heading("Imports"))
-				context.PrintImports(1)
+				serviceContext.PrintImports(1)
 			} else {
-				context.PrintImports(0)
+				serviceContext.PrintImports(0)
 			}
 		}
 	}
 
 	// Phase 2: Namespaces
 	if stopAtPhase >= 2 {
-		context.AddNamespaces()
-		context.LookupNames()
+		serviceContext.AddNamespaces()
+		serviceContext.LookupNames()
 		if ToPrintPhase(2) {
 			if len(dumpPhases) > 1 {
 				terminal.Printf("%s\n", terminal.Stylize.Heading("Namespaces"))
-				context.PrintNamespaces(1)
+				serviceContext.PrintNamespaces(1)
 			} else {
-				context.PrintNamespaces(0)
+				serviceContext.PrintNamespaces(0)
 			}
 		}
 	}
 
 	// Phase 3: Hieararchies
 	if stopAtPhase >= 3 {
-		context.AddHierarchies()
+		serviceContext.AddHierarchies()
 		if ToPrintPhase(3) {
 			if len(dumpPhases) > 1 {
 				terminal.Printf("%s\n", terminal.Stylize.Heading("Hierarchies"))
-				context.PrintHierarchies(1)
+				serviceContext.PrintHierarchies(1)
 			} else {
-				context.PrintHierarchies(0)
+				serviceContext.PrintHierarchies(0)
 			}
 		}
 	}
 
 	// Phase 4: Inheritance
 	if stopAtPhase >= 4 {
-		tasks := context.GetInheritTasks()
+		tasks := serviceContext.GetInheritTasks()
 		if ToPrintPhase(4) {
 			if len(dumpPhases) > 1 {
 				terminal.Printf("%s\n", terminal.Stylize.Heading("Inheritance Tasks"))
@@ -148,15 +151,15 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 		tasks.Drain()
 	}
 
-	if context.Root == nil {
-		return context, nil
+	if serviceContext.Root == nil {
+		return serviceContext, nil
 	}
 
-	parser.SetInputs(context.Root.EntityPtr, inputValues)
+	serviceContext.SetInputs(inputValues)
 
 	// Phase 5: Rendering
 	if stopAtPhase >= 5 {
-		entityPtrs := context.Render()
+		entityPtrs := serviceContext.Render()
 		if ToPrintPhase(5) {
 			sort.Sort(entityPtrs)
 			if len(dumpPhases) > 1 {
@@ -171,7 +174,7 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 	}
 
 	if filter != "" {
-		entityPtrs := context.Gather(filter)
+		entityPtrs := serviceContext.Gather(filter)
 		if len(entityPtrs) == 0 {
 			util.Failf("No paths found matching filter: %q\n", filter)
 		} else if !terminal.Quiet {
@@ -183,15 +186,15 @@ func Parse(url string) (*parser.Context, *normal.ServiceTemplate) {
 		}
 	}
 
-	context.MergeProblems()
+	serviceContext.MergeProblems()
 	FailOnProblems(problems)
 
 	// Normalize
-	if serviceTemplate, ok := normal.NormalizeServiceTemplate(context.Root.EntityPtr); ok {
-		return context, serviceTemplate
+	if serviceTemplate, ok := serviceContext.Normalize(); ok {
+		return serviceContext, serviceTemplate
 	} else {
 		util.Fail("grammar does not support normalization")
-		return context, nil
+		return serviceContext, nil
 	}
 }
 

@@ -52,7 +52,7 @@ func (self *Policy) GetKey() string {
 	return self.Name
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *Policy) Render() {
 	self.renderOnce.Do(self.render)
 }

@@ -59,7 +59,7 @@ func (self *InterfaceMapping) GetInterfaceDefinition() (*InterfaceDefinition, bo
 	}
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *InterfaceMapping) Render() {
 	self.renderOnce.Do(self.render)
 }

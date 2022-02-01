@@ -61,7 +61,7 @@ func (self *RequirementMapping) GetRequirementDefinition() (*RequirementDefiniti
 	}
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *RequirementMapping) Render() {
 	self.renderOnce.Do(self.render)
 }

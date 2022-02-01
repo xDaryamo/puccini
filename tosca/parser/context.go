@@ -10,42 +10,75 @@ import (
 	"github.com/tliron/puccini/tosca/grammars"
 )
 
-type Context struct {
-	Root     *Unit
-	Stylist  *terminal.Stylist
-	Quirks   tosca.Quirks
-	Units    Units
-	ReadWork sync.WaitGroup
+//
+// Context
+//
 
+type Context struct {
+	readCache          sync.Map // entityPtr or Promise
+	lookupFieldsWork   tosca.EntityWork
+	addHierarchyWork   tosca.EntityWork
+	getInheritTaskWork tosca.EntityWork
+	renderWork         tosca.EntityWork
+	entitiesLock       util.RWLocker
+}
+
+func NewContext() *Context {
+	return &Context{
+		lookupFieldsWork:   make(tosca.EntityWork),
+		addHierarchyWork:   make(tosca.EntityWork),
+		getInheritTaskWork: make(tosca.EntityWork),
+		renderWork:         make(tosca.EntityWork),
+		entitiesLock:       util.NewDefaultRWLocker(),
+	}
+}
+
+//
+// ServiceContext
+//
+
+type ServiceContext struct {
+	Context *Context
+	Root    *Unit
+	Stylist *terminal.Stylist
+	Quirks  tosca.Quirks
+	Units   Units
+
+	readWork  sync.WaitGroup
 	unitsLock util.RWLocker
 }
 
-func NewContext(stylist *terminal.Stylist, quirks tosca.Quirks) *Context {
-	return &Context{
+func (self *Context) NewServiceContext(stylist *terminal.Stylist, quirks tosca.Quirks) *ServiceContext {
+	return &ServiceContext{
+		Context:   self,
 		Stylist:   stylist,
 		Quirks:    quirks,
 		unitsLock: util.NewDebugRWLocker(),
 	}
 }
 
-func (self *Context) GetProblems() *problems.Problems {
+func (self *ServiceContext) GetProblems() *problems.Problems {
 	return self.Root.GetContext().Problems
 }
 
-func (self *Context) MergeProblems() {
+func (self *ServiceContext) MergeProblems() {
+	self.unitsLock.RLock()
+	defer self.unitsLock.RUnlock()
+
 	// Note: This could happen many times, but because problems are de-duped, everything is OK :)
 	for _, unit := range self.Units {
 		self.GetProblems().Merge(unit.GetContext().Problems)
 	}
 }
 
-func (self *Context) AddUnit(unit *Unit) {
+func (self *ServiceContext) AddUnit(unit *Unit) {
 	self.unitsLock.Lock()
+	defer self.unitsLock.Unlock()
+
 	self.Units = append(self.Units, unit)
-	self.unitsLock.Unlock()
 }
 
-func (self *Context) AddImportUnit(entityPtr tosca.EntityPtr, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
+func (self *ServiceContext) AddImportUnit(entityPtr tosca.EntityPtr, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
 	unit := NewUnit(entityPtr, container, nameTransformer)
 
 	if container != nil {
@@ -68,7 +101,7 @@ func (self *Context) AddImportUnit(entityPtr tosca.EntityPtr, container *Unit, n
 
 // Print
 
-func (self *Context) PrintImports(indent int) {
+func (self *ServiceContext) PrintImports(indent int) {
 	terminal.PrintIndent(indent)
 	terminal.Printf("%s\n", terminal.Stylize.Value(self.Root.GetContext().URL.String()))
 	self.Root.PrintImports(indent, terminal.TreePrefix{})

@@ -60,7 +60,7 @@ func (self *Parameter) GetKey() string {
 	return self.Name
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *Parameter) Render() {
 	self.renderOnce.Do(self.render)
 }

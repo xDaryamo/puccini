@@ -93,7 +93,7 @@ func (self *CapabilityDefinition) Inherit(parentDefinition *CapabilityDefinition
 	self.AttributeDefinitions.Inherit(parentDefinition.AttributeDefinitions)
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *CapabilityDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }

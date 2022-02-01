@@ -41,7 +41,7 @@ func ReadRepository(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *Repository) Render() {
 	self.renderOnce.Do(self.render)
 }

@@ -11,29 +11,6 @@ import (
 )
 
 //
-// Hierarchical
-//
-
-type Hierarchical interface {
-	GetParent() EntityPtr
-}
-
-// From Hierarchical interface
-func GetParent(entityPtr EntityPtr) (EntityPtr, bool) {
-	if hierarchical, ok := entityPtr.(Hierarchical); ok {
-		parentPtr := hierarchical.GetParent()
-		parentValue := reflect.ValueOf(parentPtr)
-		if !parentValue.IsNil() {
-			return parentPtr, true
-		} else {
-			return nil, true
-		}
-	} else {
-		return nil, false
-	}
-}
-
-//
 // Hierarchy
 //
 
@@ -46,20 +23,16 @@ type Hierarchy struct {
 // Keeps track of failed types
 type HierarchyContext = EntityPtrSet
 
-type HierarchyDescendants []EntityPtr
-
 func NewHierarchy() *Hierarchy {
 	return new(Hierarchy)
 }
 
-var addHierarchyWork = make(EntityWork)
-
-func NewHierarchyFor(entityPtr EntityPtr, hierarchyContext HierarchyContext) *Hierarchy {
+func NewHierarchyFor(entityPtr EntityPtr, work EntityWork, hierarchyContext HierarchyContext) *Hierarchy {
 	self := NewHierarchy()
 
-	addHierarchyWork.TraverseEntities(entityPtr, func(entityPtr EntityPtr) bool {
+	work.TraverseEntities(entityPtr, func(entityPtr EntityPtr) bool {
 		if parentPtr, ok := GetParent(entityPtr); ok {
-			self.add(entityPtr, parentPtr, hierarchyContext, HierarchyDescendants{})
+			self.add(entityPtr, parentPtr, hierarchyContext, nil)
 		}
 		return true
 	})
@@ -72,10 +45,6 @@ func (self *Hierarchy) Empty() bool {
 }
 
 func (self *Hierarchy) Root() *Hierarchy {
-	return self.root()
-}
-
-func (self *Hierarchy) root() *Hierarchy {
 	for self != nil {
 		if self.parent == nil {
 			return self
@@ -87,10 +56,6 @@ func (self *Hierarchy) root() *Hierarchy {
 }
 
 func (self *Hierarchy) GetContext() *Context {
-	return self.getContext()
-}
-
-func (self *Hierarchy) getContext() *Context {
 	return GetContext(self.entityPtr)
 }
 
@@ -112,10 +77,6 @@ func (self *Hierarchy) Range(f func(EntityPtr, EntityPtr) bool) {
 }
 
 func (self *Hierarchy) Find(entityPtr EntityPtr) (*Hierarchy, bool) {
-	return self.find(entityPtr)
-}
-
-func (self *Hierarchy) find(entityPtr EntityPtr) (*Hierarchy, bool) {
 	if entityPtr == nil {
 		return nil, false
 	}
@@ -125,7 +86,7 @@ func (self *Hierarchy) find(entityPtr EntityPtr) (*Hierarchy, bool) {
 	}
 
 	for _, child := range self.children {
-		if found, ok := child.find(entityPtr); ok {
+		if found, ok := child.Find(entityPtr); ok {
 			return found, true
 		}
 	}
@@ -166,24 +127,24 @@ func (self *Hierarchy) IsCompatible(baseEntityPtr EntityPtr, entityPtr EntityPtr
 		return true
 	}
 
-	if baseNode, ok := self.find(baseEntityPtr); ok {
-		_, ok = baseNode.find(entityPtr)
+	if baseNode, ok := self.Find(baseEntityPtr); ok {
+		_, ok = baseNode.Find(entityPtr)
 		return ok
 	}
 
 	return false
 }
 
-func (self *Hierarchy) add(entityPtr EntityPtr, parentEntityPtr EntityPtr, hierarchyContext HierarchyContext, descendants HierarchyDescendants) (*Hierarchy, bool) {
+func (self *Hierarchy) add(entityPtr EntityPtr, parentEntityPtr EntityPtr, hierarchyContext HierarchyContext, descendants EntityPtrs) (*Hierarchy, bool) {
 	// Several imports may try to add the same entity to their hierarchies, so let's avoid multiple problem reports
 	if hierarchyContext.Contains(entityPtr) {
 		return nil, false
 	}
 
-	root := self.root()
+	root := self.Root()
 
 	// Have we already added this entity?
-	if found, ok := root.find(entityPtr); ok {
+	if found, ok := root.Find(entityPtr); ok {
 		return found, true
 	}
 
@@ -241,7 +202,7 @@ func (self *Hierarchy) merge(hierarchy *Hierarchy, hierarchyContext HierarchyCon
 	if hierarchy.entityPtr != nil {
 		parentPtr, ok := GetParent(hierarchy.entityPtr)
 		if ok {
-			self.add(hierarchy.entityPtr, parentPtr, hierarchyContext, HierarchyDescendants{})
+			self.add(hierarchy.entityPtr, parentPtr, hierarchyContext, nil)
 		}
 	}
 

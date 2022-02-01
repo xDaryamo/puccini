@@ -62,7 +62,7 @@ func (self *ParameterDefinition) Inherit(parentDefinition *ParameterDefinition) 
 	}
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *ParameterDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }

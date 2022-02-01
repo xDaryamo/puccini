@@ -117,7 +117,7 @@ even performing simple manipulations. Example:
 
     puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml | yq eval '.vertexes.[]|select(.properties.name=="light12")' -
 
-### Can I use text templates instead of TOSCA functions like `get_input`?
+### Can I use text templating instead of TOSCA functions like `get_input`?
 
 TOSCA's avoidance of templating is deliberate. Unlike some tools (see
 [Helm](https://helm.sh/)), YAML is not treated as plain text to be manipulated by an anemic text

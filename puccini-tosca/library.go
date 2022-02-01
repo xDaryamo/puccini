@@ -12,11 +12,13 @@ import (
 	"github.com/tliron/kutil/problems"
 	urlpkg "github.com/tliron/kutil/url"
 	cloutpkg "github.com/tliron/puccini/clout"
-	"github.com/tliron/puccini/tosca/compiler"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
 	"github.com/tliron/yamlkeys"
 )
+import "github.com/tliron/puccini/clout/js"
+
+var parserContext = parser.NewContext()
 
 //export Compile
 func Compile(url *C.char, inputs *C.char) *C.char {
@@ -51,20 +53,20 @@ func Compile(url *C.char, inputs *C.char) *C.char {
 		return result(nil, nil, err)
 	}
 
-	if _, serviceTemplate, problems, err = parser.Parse(url_, nil, nil, inputs_); err != nil {
+	if _, serviceTemplate, problems, err = parserContext.Parse(url_, nil, nil, inputs_); err != nil {
 		return result(nil, problems, err)
 	}
 
-	if clout, err = compiler.Compile(serviceTemplate, true); err != nil {
+	if clout, err = serviceTemplate.Compile(false); err != nil {
 		return result(clout, problems, err)
 	}
 
-	compiler.Resolve(clout, problems, urlContext, true, "yaml", true, false, false)
+	js.Resolve(clout, problems, urlContext, true, "yaml", true, false, false)
 	if !problems.Empty() {
 		return result(clout, problems, nil)
 	}
 
-	compiler.Coerce(clout, problems, urlContext, true, "yaml", true, false, false)
+	js.Coerce(clout, problems, urlContext, true, "yaml", true, false, false)
 	if !problems.Empty() {
 		return result(clout, problems, nil)
 	}

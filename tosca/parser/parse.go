@@ -7,59 +7,50 @@ import (
 	"github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
 	urlpkg "github.com/tliron/kutil/url"
-	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 )
 
-var parserLock = util.NewDefaultRWLocker()
-
-func Parse(url urlpkg.URL, stylist *terminal.Stylist, quirks tosca.Quirks, inputs map[string]ard.Value) (*Context, *normal.ServiceTemplate, *problems.Problems, error) {
-	parserLock.Lock()
-	defer parserLock.Unlock()
-
-	context := NewContext(stylist, quirks)
+func (self *Context) Parse(url urlpkg.URL, stylist *terminal.Stylist, quirks tosca.Quirks, inputs map[string]ard.Value) (*ServiceContext, *normal.ServiceTemplate, *problems.Problems, error) {
+	serviceContext := self.NewServiceContext(stylist, quirks)
 
 	// Phase 1: Read
-	ok := context.ReadRoot(url, "")
-
-	context.MergeProblems()
-	problems := context.GetProblems()
+	ok := serviceContext.ReadRoot(url, "")
+	serviceContext.MergeProblems()
+	problems := serviceContext.GetProblems()
 
 	if !problems.Empty() {
-		return context, nil, problems, errors.New("read problems")
+		return serviceContext, nil, problems, errors.New("read problems")
 	}
 
 	if !ok {
-		return context, nil, nil, errors.New("read error")
+		return serviceContext, nil, nil, errors.New("read error")
 	}
 
 	// Phase 2: Namespaces
-	context.AddNamespaces()
-	context.LookupNames()
+	serviceContext.AddNamespaces()
+	serviceContext.LookupNames()
 
 	// Phase 3: Hierarchies
-	context.AddHierarchies()
+	serviceContext.AddHierarchies()
 
 	// Phase 4: Inheritance
-	tasks := context.GetInheritTasks()
-	tasks.Drain()
+	serviceContext.Inherit()
 
-	SetInputs(context.Root.EntityPtr, inputs)
+	serviceContext.SetInputs(inputs)
 
 	// Phase 5: Rendering
-	context.Render()
-
-	context.MergeProblems()
+	serviceContext.Render()
+	serviceContext.MergeProblems()
 	if !problems.Empty() {
-		return context, nil, problems, errors.New("parsing problems")
+		return serviceContext, nil, problems, errors.New("parsing problems")
 	}
 
 	// Normalize
-	serviceTemplate, ok := normal.NormalizeServiceTemplate(context.Root.EntityPtr)
+	serviceTemplate, ok := serviceContext.Normalize()
 	if !ok || !problems.Empty() {
-		return context, nil, problems, errors.New("normalization")
+		return serviceContext, nil, problems, errors.New("normalization")
 	}
 
-	return context, serviceTemplate, problems, nil
+	return serviceContext, serviceTemplate, problems, nil
 }

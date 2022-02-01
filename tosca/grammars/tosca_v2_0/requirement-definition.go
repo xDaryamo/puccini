@@ -92,7 +92,7 @@ func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefiniti
 	}
 }
 
-// parser.Renderable interface
+// tosca.Renderable interface
 func (self *RequirementDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }

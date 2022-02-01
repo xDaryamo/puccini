@@ -8,7 +8,6 @@ import (
 	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
-	"github.com/tliron/puccini/tosca/compiler"
 )
 
 var output string
@@ -51,18 +50,18 @@ func Compile(url string) {
 	urlContext := context.Root.GetContext().URL.Context()
 
 	// Compile
-	clout, err := compiler.Compile(serviceTemplate, timestamps)
+	clout, err := serviceTemplate.Compile(timestamps)
 	util.FailOnError(err)
 
 	// Resolve
 	if resolve {
-		compiler.Resolve(clout, problems, urlContext, true, format, strict, timestamps, pretty)
+		js.Resolve(clout, problems, urlContext, true, format, strict, timestamps, pretty)
 		FailOnProblems(problems)
 	}
 
 	// Coerce
 	if coerce {
-		compiler.Coerce(clout, problems, urlContext, true, format, strict, timestamps, pretty)
+		js.Coerce(clout, problems, urlContext, true, format, strict, timestamps, pretty)
 		FailOnProblems(problems)
 	}
 
