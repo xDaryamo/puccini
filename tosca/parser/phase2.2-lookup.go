@@ -10,15 +10,15 @@ import (
 )
 
 func (self *ServiceContext) LookupNames() {
-	self.Context.entitiesLock.Lock()
-	defer self.Context.entitiesLock.Unlock()
+	self.Context.lock.Lock()
+	defer self.Context.lock.Unlock()
 
-	self.TraverseEntities(logLookup, self.Context.lookupFieldsWork, self.LookupFields)
+	self.TraverseEntities(logLookup, self.Context.lookupFieldsWork, self.lookupFields)
 }
 
 // From "lookup" tags
 // reflection.EntityTraverser signature
-func (self *ServiceContext) LookupFields(entityPtr tosca.EntityPtr) bool {
+func (self *ServiceContext) lookupFields(entityPtr tosca.EntityPtr) bool {
 	lookupProblems := make(LookupProblems)
 
 	context := tosca.GetContext(entityPtr)

@@ -35,7 +35,7 @@ func (self *Context) Parse(url urlpkg.URL, stylist *terminal.Stylist, quirks tos
 	serviceContext.AddHierarchies()
 
 	// Phase 4: Inheritance
-	serviceContext.Inherit()
+	serviceContext.Inherit(nil)
 
 	serviceContext.SetInputs(inputs)
 

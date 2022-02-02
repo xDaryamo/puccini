@@ -54,30 +54,6 @@ func (self EntityPtrSet) Contains(entityPtr EntityPtr) bool {
 }
 
 //
-// EntityWork
-//
-
-type EntityWork = EntityPtrSet
-
-func (self EntityWork) Start(entityPtr EntityPtr) bool {
-	if self.Contains(entityPtr) {
-		return false
-	} else {
-		self.Add(entityPtr)
-		return true
-	}
-}
-
-func (self EntityWork) TraverseEntities(entityPtr EntityPtr, traverse reflection.EntityTraverser) {
-	reflection.TraverseEntities(entityPtr, false, func(entityPtr EntityPtr) bool {
-		if self.Start(entityPtr) {
-			return traverse(entityPtr)
-		}
-		return false
-	})
-}
-
-//
 // PreReadable
 //
 

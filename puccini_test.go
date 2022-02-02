@@ -75,7 +75,7 @@ type Context struct {
 func NewContext(t *testing.T) *Context {
 	var root string
 	var ok bool
-	if root, ok = os.LookupEnv("ROOT"); !ok {
+	if root, ok = os.LookupEnv("PUCCINI_TEST_ROOT"); !ok {
 		root, _ = os.Getwd()
 	}
 

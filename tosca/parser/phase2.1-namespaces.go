@@ -6,20 +6,20 @@ import (
 )
 
 func (self *ServiceContext) AddNamespaces() {
-	self.Context.entitiesLock.Lock()
-	defer self.Context.entitiesLock.Unlock()
+	self.Context.lock.Lock()
+	defer self.Context.lock.Unlock()
 
-	self.Root.MergeNamespaces()
+	self.Root.mergeNamespaces()
 }
 
-func (self *Unit) MergeNamespaces() {
+func (self *Unit) mergeNamespaces() {
 	context := self.GetContext()
 
 	self.importsLock.RLock()
 	defer self.importsLock.RUnlock()
 
 	for _, import_ := range self.Imports {
-		import_.MergeNamespaces()
+		import_.mergeNamespaces()
 		context.Namespace.Merge(import_.GetContext().Namespace, import_.NameTransformer)
 		context.ScriptletNamespace.Merge(import_.GetContext().ScriptletNamespace)
 	}

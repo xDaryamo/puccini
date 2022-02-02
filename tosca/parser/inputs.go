@@ -6,8 +6,8 @@ import (
 )
 
 func (self *ServiceContext) SetInputs(inputs map[string]ard.Value) {
-	self.Context.entitiesLock.Lock()
-	defer self.Context.entitiesLock.Unlock()
+	self.Context.lock.Lock()
+	defer self.Context.lock.Unlock()
 
 	tosca.SetInputs(self.Root.EntityPtr, inputs)
 }

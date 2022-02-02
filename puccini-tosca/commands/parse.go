@@ -139,16 +139,18 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 
 	// Phase 4: Inheritance
 	if stopAtPhase >= 4 {
-		tasks := serviceContext.GetInheritTasks()
 		if ToPrintPhase(4) {
-			if len(dumpPhases) > 1 {
-				terminal.Printf("%s\n", terminal.Stylize.Heading("Inheritance Tasks"))
-				tasks.Print(1)
-			} else {
-				tasks.Print(0)
-			}
+			serviceContext.Inherit(func(tasks parser.Tasks) {
+				if len(dumpPhases) > 1 {
+					terminal.Printf("%s\n", terminal.Stylize.Heading("Inheritance Tasks"))
+					tasks.Print(1)
+				} else {
+					tasks.Print(0)
+				}
+			})
+		} else {
+			serviceContext.Inherit(nil)
 		}
-		tasks.Drain()
 	}
 
 	if serviceContext.Root == nil {

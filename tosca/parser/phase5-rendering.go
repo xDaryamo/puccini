@@ -5,8 +5,8 @@ import (
 )
 
 func (self *ServiceContext) Render() tosca.EntityPtrs {
-	self.Context.entitiesLock.Lock()
-	defer self.Context.entitiesLock.Unlock()
+	self.Context.lock.Lock()
+	defer self.Context.lock.Unlock()
 
 	var entityPtrs tosca.EntityPtrs
 

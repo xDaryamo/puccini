@@ -1,25 +1,26 @@
 package parser
 
 import (
+	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/puccini/tosca"
 )
 
 func (self *ServiceContext) AddHierarchies() {
-	self.Context.entitiesLock.Lock()
-	defer self.Context.entitiesLock.Unlock()
+	self.Context.lock.Lock()
+	defer self.Context.lock.Unlock()
 
-	self.Root.MergeHierarchies(make(tosca.HierarchyContext), self.Context.addHierarchyWork)
+	self.Root.mergeHierarchies(make(tosca.HierarchyContext), self.Context.addHierarchyWork)
 }
 
-func (self *Unit) MergeHierarchies(hierarchyContext tosca.HierarchyContext, work tosca.EntityWork) {
+func (self *Unit) mergeHierarchies(hierarchyContext tosca.HierarchyContext, work reflection.EntityWork) {
 	context := self.GetContext()
 
 	self.importsLock.RLock()
 	defer self.importsLock.RUnlock()
 
 	for _, import_ := range self.Imports {
-		import_.MergeHierarchies(hierarchyContext, work)
+		import_.mergeHierarchies(hierarchyContext, work)
 		context.Hierarchy.Merge(import_.GetContext().Hierarchy, hierarchyContext)
 	}
 

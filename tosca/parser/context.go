@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/tliron/kutil/problems"
+	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
@@ -16,20 +17,20 @@ import (
 
 type Context struct {
 	readCache          sync.Map // entityPtr or Promise
-	lookupFieldsWork   tosca.EntityWork
-	addHierarchyWork   tosca.EntityWork
-	getInheritTaskWork tosca.EntityWork
-	renderWork         tosca.EntityWork
-	entitiesLock       util.RWLocker
+	lookupFieldsWork   reflection.EntityWork
+	addHierarchyWork   reflection.EntityWork
+	getInheritTaskWork reflection.EntityWork
+	renderWork         reflection.EntityWork
+	lock               util.RWLocker
 }
 
 func NewContext() *Context {
 	return &Context{
-		lookupFieldsWork:   make(tosca.EntityWork),
-		addHierarchyWork:   make(tosca.EntityWork),
-		getInheritTaskWork: make(tosca.EntityWork),
-		renderWork:         make(tosca.EntityWork),
-		entitiesLock:       util.NewDefaultRWLocker(),
+		lookupFieldsWork:   make(reflection.EntityWork),
+		addHierarchyWork:   make(reflection.EntityWork),
+		getInheritTaskWork: make(reflection.EntityWork),
+		renderWork:         make(reflection.EntityWork),
+		lock:               util.NewDefaultRWLocker(),
 	}
 }
 

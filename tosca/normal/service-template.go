@@ -35,31 +35,32 @@ func NewServiceTemplate() *ServiceTemplate {
 	}
 }
 
-// From Normalizable interface
-func NormalizeServiceTemplate(entityPtr tosca.EntityPtr) (*ServiceTemplate, bool) {
-	var s *ServiceTemplate
-
-	reflection.TraverseEntities(entityPtr, false, func(entityPtr tosca.EntityPtr) bool {
-		if normalizable, ok := entityPtr.(Normalizable); ok {
-			s = normalizable.NormalizeServiceTemplate()
-
-			// Only one entity should implement the interface
-			return false
-		}
-		return true
-	})
-
-	if s == nil {
-		return nil, false
-	}
-
-	return s, true
-}
-
 //
 // Normalizable
 //
 
 type Normalizable interface {
 	NormalizeServiceTemplate() *ServiceTemplate
+}
+
+// From Normalizable interface
+func NormalizeServiceTemplate(entityPtr tosca.EntityPtr) (*ServiceTemplate, bool) {
+	var serviceTemplate *ServiceTemplate
+
+	reflection.TraverseEntities(entityPtr, false, func(entityPtr tosca.EntityPtr) bool {
+		if normalizable, ok := entityPtr.(Normalizable); ok {
+			serviceTemplate = normalizable.NormalizeServiceTemplate()
+
+			// Only one entity should implement the interface
+			return false
+		} else {
+			return true
+		}
+	})
+
+	if serviceTemplate != nil {
+		return serviceTemplate, true
+	} else {
+		return nil, false
+	}
 }

@@ -9,15 +9,18 @@ import (
 	"github.com/tliron/puccini/tosca"
 )
 
-func (self *ServiceContext) Inherit() {
-	self.Context.entitiesLock.Lock()
-	defer self.Context.entitiesLock.Unlock()
+func (self *ServiceContext) Inherit(debug func(Tasks)) {
+	self.Context.lock.Lock()
+	defer self.Context.lock.Unlock()
 
-	tasks := self.GetInheritTasks()
+	tasks := self.getInheritTasks()
+	if debug != nil {
+		debug(tasks)
+	}
 	tasks.Drain()
 }
 
-func (self *ServiceContext) GetInheritTasks() Tasks {
+func (self *ServiceContext) getInheritTasks() Tasks {
 	inheritContext := NewInheritContext()
 	self.TraverseEntities(logInheritance, self.Context.getInheritTaskWork, func(entityPtr tosca.EntityPtr) bool {
 		inheritContext.GetInheritTask(entityPtr)

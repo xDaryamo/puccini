@@ -27,7 +27,7 @@ func NewHierarchy() *Hierarchy {
 	return new(Hierarchy)
 }
 
-func NewHierarchyFor(entityPtr EntityPtr, work EntityWork, hierarchyContext HierarchyContext) *Hierarchy {
+func NewHierarchyFor(entityPtr EntityPtr, work reflection.EntityWork, hierarchyContext HierarchyContext) *Hierarchy {
 	self := NewHierarchy()
 
 	work.TraverseEntities(entityPtr, func(entityPtr EntityPtr) bool {

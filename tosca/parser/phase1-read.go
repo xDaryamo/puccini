@@ -6,6 +6,7 @@ import (
 
 	"github.com/tliron/kutil/reflection"
 	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/csar"
 	"github.com/tliron/puccini/tosca/grammars"
@@ -30,7 +31,7 @@ func (self *ServiceContext) ReadRoot(url urlpkg.URL, template string) bool {
 	return ok
 }
 
-func (self *ServiceContext) read(promise Promise, toscaContext *tosca.Context, container *Unit, nameTransformer tosca.NameTransformer, readerName string, template string) (*Unit, bool) {
+func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Context, container *Unit, nameTransformer tosca.NameTransformer, readerName string, template string) (*Unit, bool) {
 	defer self.readWork.Done()
 	if promise != nil {
 		// For the goroutines waiting for our cached entityPtr
@@ -119,10 +120,10 @@ func (self *ServiceContext) goReadImports(container *Unit) {
 			continue
 		}
 
-		promise := NewPromise()
+		promise := util.NewPromise()
 		if cached, inCache := self.Context.readCache.LoadOrStore(key, promise); inCache {
 			switch cached_ := cached.(type) {
-			case Promise:
+			case util.Promise:
 				// Wait for promise
 				logRead.Debugf("wait for promise: %s", key)
 				self.readWork.Add(1)
@@ -143,13 +144,13 @@ func (self *ServiceContext) goReadImports(container *Unit) {
 	}
 }
 
-func (self *ServiceContext) waitForPromise(promise Promise, key string, container *Unit, nameTransformer tosca.NameTransformer) {
+func (self *ServiceContext) waitForPromise(promise util.Promise, key string, container *Unit, nameTransformer tosca.NameTransformer) {
 	defer self.readWork.Done()
 	promise.Wait()
 
 	if cached, inCache := self.Context.readCache.Load(key); inCache {
 		switch cached.(type) {
-		case Promise:
+		case util.Promise:
 			logRead.Debugf("promise broken: %s", key)
 
 		default: // entityPtr
