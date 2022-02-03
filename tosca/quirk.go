@@ -80,6 +80,7 @@ var combinationQuirks = map[Quirk][]Quirk{
 	QuirkETSINFV: {
 		QuirkImportsTopologyTemplateIgnore,
 		QuirkDataTypesStringPermissive,
+		QuirkCapabilitiesOccurrencesPermissive,
 		QuirkSubstitutionMappingsRequirementsPermissive,
 		QuirkSubstitutionMappingsRequirementsList,
 	},

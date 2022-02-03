@@ -56,5 +56,6 @@ Combination Quirks
 ------------------
 
 * **etsinfv**: Combines "imports.topology_template.ignore", "data_types.string.permissive",
-  "substitution_mappings.requirements.permissive", "substitution_mappings.requirements.list"
+  "capabilities.occurrences.permissive", "substitution_mappings.requirements.permissive",
+  "substitution_mappings.requirements.list"
 * **onap**: Combines "annotations.ignore", "imports.sequencedlist"
