@@ -19,7 +19,7 @@ type Group struct {
 	*Entity `name:"group"`
 	Name    string `namespace:""`
 
-	GroupTypeName           *string              `read:"type" require:""`
+	GroupTypeName           *string              `read:"type" mandatory:""`
 	Metadata                Metadata             `read:"metadata,Metadata"` // introduced in TOSCA 1.1
 	Description             *string              `read:"description"`
 	Properties              Values               `read:"properties,Value"`

@@ -31,7 +31,7 @@ type Resource struct {
 	*Entity `name:"resource"`
 	Name    string `namespace:""`
 
-	Type           *string    `read:"type" require:""`
+	Type           *string    `read:"type" mandatory:""`
 	Properties     Values     `read:"properties,Value"`
 	Metadata       *Data      `read:"metadata,Data"`
 	DependsOn      *[]string  `read:"depends_on"`

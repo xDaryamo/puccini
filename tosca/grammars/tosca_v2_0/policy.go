@@ -19,7 +19,7 @@ type Policy struct {
 	*Entity `name:"policy"`
 	Name    string `namespace:""`
 
-	PolicyTypeName                 *string            `read:"type" require:""`
+	PolicyTypeName                 *string            `read:"type" mandatory:""`
 	Metadata                       Metadata           `read:"metadata,Metadata"` // introduced in TOSCA 1.1
 	Description                    *string            `read:"description"`
 	Properties                     Values             `read:"properties,Value"`

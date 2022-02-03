@@ -13,8 +13,8 @@ import (
 type DSLResource struct {
 	*Entity `name:"DSL resource"`
 
-	SourcePath      *string `read:"source_path" require:""`
-	DestinationPath *string `read:"destination_path" require:""`
+	SourcePath      *string `read:"source_path" mandatory:""`
+	DestinationPath *string `read:"destination_path" mandatory:""`
 }
 
 func NewDSLResource(context *tosca.Context) *DSLResource {

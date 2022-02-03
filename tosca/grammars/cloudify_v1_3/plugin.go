@@ -14,7 +14,7 @@ type Plugin struct {
 	*Entity `name:"plugin"`
 	Name    string `namespace:""`
 
-	Executor            *string `read:"executor" require:""`
+	Executor            *string `read:"executor" mandatory:""`
 	Source              *string `read:"source"`
 	InstallArguments    *string `read:"install_arguments"`
 	Install             *bool   `read:"install"`

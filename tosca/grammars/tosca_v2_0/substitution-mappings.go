@@ -19,7 +19,7 @@ import (
 type SubstitutionMappings struct {
 	*Entity `name:"substitution mappings"`
 
-	NodeTypeName        *string             `read:"node_type" require:""`
+	NodeTypeName        *string             `read:"node_type" mandatory:""`
 	CapabilityMappings  CapabilityMappings  `read:"capabilities,CapabilityMapping"`
 	RequirementMappings RequirementMappings `read:"requirements,RequirementMapping"`
 	PropertyMappings    PropertyMappings    `read:"properties,PropertyMapping"`     // introduced in TOSCA 1.2

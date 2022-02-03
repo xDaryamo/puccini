@@ -40,11 +40,11 @@ sequenced lists, because actually you cannot repeat the same definition name mor
 The reason the TOSCA spec has this inconsistency is likely to make the syntax more like the
 syntax in node\_template.)
 
-### require:"key"
+### mandatory:"key"
 
 Read phase. Reports a problem if the key is not in the ARD. (Works in combination with "read" tag.)
 
-The "key" value is optional. If not provided it will be read from the "read" tag.
+The "key" value is optional. If not provided its value will be copied from the "read" tag.
 
 ### namespace:""
 

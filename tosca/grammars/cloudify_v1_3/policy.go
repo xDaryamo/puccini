@@ -15,9 +15,9 @@ type Policy struct {
 	*Entity `name:"policy"`
 	Name    string `namespace:""`
 
-	PolicyTypeName   *string   `read:"type" require:""`
+	PolicyTypeName   *string   `read:"type" mandatory:""`
 	Properties       Values    `read:"properties,Value"`
-	TargetGroupNames *[]string `read:"targets" require:""`
+	TargetGroupNames *[]string `read:"targets" mandatory:""`
 
 	PolicyType   *PolicyType `lookup:"type,PolicyTypeName" json:"-" yaml:"-"`
 	TargetGroups Groups      `lookup:"targets,TargetGroupNames" json:"-" yaml:"-"`

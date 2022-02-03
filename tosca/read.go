@@ -198,7 +198,7 @@ func (self *ReadField) Read() {
 	if !ok {
 		if reflection.IsSliceOfPtrToStruct(fieldType) {
 			// If we have no items, at least have an empty slice
-			// so that "require" will not see a nil here
+			// so that "mandatory" will not see a nil here
 			field.Set(reflect.MakeSlice(fieldType, 0, 0))
 		}
 		return
@@ -232,7 +232,7 @@ func (self *ReadField) Read() {
 			}
 			if slice.IsNil() {
 				// If we have no items, at least have an empty slice
-				// so that "require" will not see a nil here
+				// so that "mandatory" will not see a nil here
 				slice = reflect.MakeSlice(fieldType, 0, 0)
 			}
 			field.Set(slice)

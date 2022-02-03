@@ -12,8 +12,8 @@ import (
 type RelationshipAssignment struct {
 	*Entity `name:"relationship assignment"`
 
-	RelationshipTypeName   *string              `read:"type" require:""`
-	TargetNodeTemplateName *string              `read:"target" require:""`
+	RelationshipTypeName   *string              `read:"type" mandatory:""`
+	TargetNodeTemplateName *string              `read:"target" mandatory:""`
 	Properties             Values               `read:"properties,Value"`
 	SourceInterfaces       InterfaceAssignments `read:"source_interfaces,InterfaceAssignment"`
 	TargetInterfaces       InterfaceAssignments `read:"target_interfaces,InterfaceAssignment"`

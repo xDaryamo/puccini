@@ -20,7 +20,7 @@ import (
 type Unit struct {
 	*Entity `name:"unit"`
 
-	ToscaDefinitionsVersion *string           `read:"tosca_definitions_version" require:""`
+	ToscaDefinitionsVersion *string           `read:"tosca_definitions_version" mandatory:""`
 	Profile                 *string           `read:"profile"` // introduced in TOSCA 1.2 as "namespace", renamed in TOSCA 2.0
 	Metadata                Metadata          `read:"metadata,!Metadata"`
 	Description             *string           `read:"description"`

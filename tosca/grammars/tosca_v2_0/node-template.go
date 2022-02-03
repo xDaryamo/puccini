@@ -21,7 +21,7 @@ type NodeTemplate struct {
 
 	Directives                   *[]string              `read:"directives"`
 	CopyNodeTemplateName         *string                `read:"copy"`
-	NodeTypeName                 *string                `read:"type" require:""`
+	NodeTypeName                 *string                `read:"type" mandatory:""`
 	Metadata                     Metadata               `read:"metadata,Metadata"` // introduced in TOSCA 1.1
 	Description                  *string                `read:"description"`
 	Properties                   Values                 `read:"properties,Value"`

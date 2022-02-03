@@ -20,7 +20,7 @@ type Repository struct {
 	Name    string `namespace:""`
 
 	Description *string `read:"description"`
-	URL         *string `read:"url" require:""`
+	URL         *string `read:"url" mandatory:""`
 	Credential  *Value  `read:"credential,Value"` // tosca:Credential
 
 	url                urlpkg.URL

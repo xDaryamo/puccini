@@ -17,11 +17,11 @@ type TriggerDefinition struct {
 	Name    string
 
 	Description  *string                     `read:"description"`
-	Event        *string                     `read:"event" require:""`
+	Event        *string                     `read:"event" mandatory:""`
 	Schedule     *Value                      `read:"schedule,Value"` // tosca:TimeInterval
 	TargetFilter *EventFilter                `read:"target_filter,EventFilter"`
 	Condition    *TriggerDefinitionCondition `read:"condition,TriggerDefinitionCondition"`
-	Action       WorkflowActivityDefinitions `read:"action,[]WorkflowActivityDefinition" require:""`
+	Action       WorkflowActivityDefinitions `read:"action,[]WorkflowActivityDefinition" mandatory:""`
 }
 
 func NewTriggerDefinition(context *tosca.Context) *TriggerDefinition {

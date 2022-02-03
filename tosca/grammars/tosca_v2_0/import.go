@@ -23,7 +23,7 @@ import (
 type Import struct {
 	*Entity `name:"import" json:"-" yaml:"-"`
 
-	URL            *string `read:"url" require:""` // renamed in TOSCA 2.0
+	URL            *string `read:"url" mandatory:""` // renamed in TOSCA 2.0
 	RepositoryName *string `read:"repository"`
 	Namespace      *string `read:"namespace"` // renamed in TOSCA 2.0
 	NamespaceURI   *string /// removed in TOSCA 2.0

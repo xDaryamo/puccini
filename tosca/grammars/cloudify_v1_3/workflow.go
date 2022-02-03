@@ -16,7 +16,7 @@ type Workflow struct {
 	*Entity `name:"workflow"`
 	Name    string `namespace:""`
 
-	Mapping              *string              `read:"mapping" require:""`
+	Mapping              *string              `read:"mapping" mandatory:""`
 	ParameterDefinitions ParameterDefinitions `read:"parameters,ParameterDefinition"`
 	IsCascading          *bool                `read:"is_cascading"` // See: https://docs.cloudify.co/5.0.5/working_with/service_composition/component/
 }

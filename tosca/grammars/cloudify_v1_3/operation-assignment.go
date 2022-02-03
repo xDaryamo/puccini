@@ -16,7 +16,7 @@ type OperationAssignment struct {
 	*Entity `name:"operation assignment"`
 	Name    string
 
-	Implementation *string  `read:"implementation" require:""`
+	Implementation *string  `read:"implementation" mandatory:""`
 	Inputs         Values   `read:"inputs,Value"`
 	Executor       *string  `read:"executor"`
 	MaxRetries     *int64   `read:"max_retries"`

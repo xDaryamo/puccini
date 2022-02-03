@@ -33,12 +33,12 @@ func (self *Context) ValidateType(requiredTypeNames ...ard.TypeName) bool {
 	return is
 }
 
-// From "require" tags
+// From "mandatory" tags
 // reflection.EntityTraverser signature
 func ValidateRequiredFields(entityPtr EntityPtr) bool {
 	context := GetContext(entityPtr)
 	entity := reflect.ValueOf(entityPtr).Elem()
-	for fieldName, tag := range reflection.GetFieldTagsForValue(entity, "require") {
+	for fieldName, tag := range reflection.GetFieldTagsForValue(entity, "mandatory") {
 		field := entity.FieldByName(fieldName)
 		if reflection.IsNil(field) {
 			// Try to use the "read" tag for the problem report

@@ -16,7 +16,7 @@ import (
 type WorkflowPreconditionDefinition struct {
 	*Entity `name:"workflow precondition definition"`
 
-	TargetNodeTemplateOrGroupName *string          `read:"target" require:""`
+	TargetNodeTemplateOrGroupName *string          `read:"target" mandatory:""`
 	TargetNodeRequirementName     *string          `read:"target_relationship"`
 	ConditionClause               *ConditionClause `read:"condition,ConditionClauseAnd"`
 

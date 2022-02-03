@@ -14,7 +14,7 @@ import (
 type Schema struct {
 	*Entity `name:"schema"`
 
-	DataTypeName      *string           `read:"type" require:""`
+	DataTypeName      *string           `read:"type" mandatory:""`
 	Description       *string           `read:"description"`
 	ConstraintClauses ConstraintClauses `read:"constraints,[]ConstraintClause" traverse:"ignore"`
 

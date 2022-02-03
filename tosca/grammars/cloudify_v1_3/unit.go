@@ -13,7 +13,7 @@ import (
 type Unit struct {
 	*Entity `name:"unit"`
 
-	ToscaDefinitionsVersion *string            `read:"tosca_definitions_version" require:""`
+	ToscaDefinitionsVersion *string            `read:"tosca_definitions_version" mandatory:""`
 	Metadata                Metadata           `read:"metadata,!Metadata"` // not in spec, but in code
 	Imports                 Imports            `read:"imports,[]Import"`
 	Inputs                  Inputs             `read:"inputs,Input"`
