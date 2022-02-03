@@ -17,7 +17,7 @@ func (serviceTemplate *ServiceTemplate) Compile(allowTimestamps bool) (*cloutpkg
 	scriptlets := make(ard.StringMap)
 	var err error = nil
 	serviceTemplate.ScriptletNamespace.Range(func(name string, scriptlet *tosca.Scriptlet) bool {
-		if scriptlet_, err_ := scriptlet.Read(); err == nil {
+		if scriptlet_, err_ := scriptlet.Read(); err_ == nil {
 			if err_ = ard.StringMapPutNested(scriptlets, name, js.CleanupScriptlet(scriptlet_)); err_ != nil {
 				err = err_
 				return false
