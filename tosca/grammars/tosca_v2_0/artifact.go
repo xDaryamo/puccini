@@ -78,6 +78,7 @@ func (self *Artifact) DoRender() {
 	}
 
 	if self.ArtifactType == nil {
+		self.Context.FieldChild("type", nil).ReportFieldMissing()
 		return
 	}
 
