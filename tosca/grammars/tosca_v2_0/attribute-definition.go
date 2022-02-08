@@ -99,7 +99,7 @@ func (self *AttributeDefinition) render() {
 
 	if (self.Default != nil) && (self.DataType != nil) {
 		// The "default" value must be a valid value of the type
-		self.Default.RenderAttribute(self.DataType, self, false, false)
+		self.Default.Render(self.DataType, self, false, false)
 	}
 }
 

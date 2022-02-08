@@ -24,13 +24,14 @@ var ConstraintClauseScriptlets = map[string]string{
 	"tosca.constraint.schema":           profile.Profile["/tosca/implicit/2.0/js/constraints/schema.js"], // introduced in TOSCA 1.3
 }
 
-var ConstraintClauseNativeArgumentIndexes = map[string][]uint{
+var ConstraintClauseNativeArgumentIndexes = map[string][]int{
 	"tosca.constraint.equal":            {0},
 	"tosca.constraint.greater_than":     {0},
 	"tosca.constraint.greater_or_equal": {0},
 	"tosca.constraint.less_than":        {0},
 	"tosca.constraint.less_or_equal":    {0},
 	"tosca.constraint.in_range":         {0, 1},
+	"tosca.constraint.valid_values":     {-1}, // -1 means all
 }
 
 //
@@ -48,7 +49,7 @@ type ConstraintClause struct {
 
 	Operator              string
 	Arguments             ard.List
-	NativeArgumentIndexes []uint
+	NativeArgumentIndexes []int
 	DataType              *DataType `traverse:"ignore" json:"-" yaml:"-"` // TODO: unncessary, this entity should never be traversed
 }
 
@@ -112,11 +113,11 @@ func (self *ConstraintClause) ToFunctionCall(context *tosca.Context, strict bool
 
 	arguments := make([]interface{}, len(self.Arguments))
 	for index, argument := range self.Arguments {
-		if self.IsNativeArgument(uint(index)) {
+		if self.IsNativeArgument(index) {
 			if _, ok := argument.(*Value); !ok {
 				if self.DataType != nil {
 					value := ReadValue(context.ListChild(index, argument)).(*Value)
-					value.RenderAttribute(self.DataType, nil, true, false) // bare
+					value.Render(self.DataType, nil, true, false) // bare
 					argument = value
 				} else if strict {
 					panic("no data type for native argument")
@@ -130,9 +131,9 @@ func (self *ConstraintClause) ToFunctionCall(context *tosca.Context, strict bool
 	return context.NewFunctionCall("tosca.constraint."+self.Operator, arguments)
 }
 
-func (self *ConstraintClause) IsNativeArgument(index uint) bool {
+func (self *ConstraintClause) IsNativeArgument(index int) bool {
 	for _, i := range self.NativeArgumentIndexes {
-		if i == index {
+		if (i == -1) || (i == index) {
 			return true
 		}
 	}

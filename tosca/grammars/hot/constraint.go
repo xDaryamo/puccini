@@ -18,7 +18,7 @@ var ConstraintScriptlets = map[string]string{
 	"tosca.constraint.custom_constraint": profile.Profile["/hot/1.0/js/constraints/custom_constraint.js"],
 }
 
-var ConstraintNativeArgumentIndexes = map[string][]uint{}
+var ConstraintNativeArgumentIndexes = map[string][]int{}
 
 //
 // Constraint

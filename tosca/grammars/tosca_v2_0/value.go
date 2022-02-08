@@ -83,7 +83,7 @@ func (self *Value) String() string {
 func (self *Value) RenderDataType(dataTypeName string) {
 	if e, ok := self.Context.Namespace.Lookup(dataTypeName); ok {
 		if dataType, ok := e.(*DataType); ok {
-			self.RenderAttribute(dataType, nil, false, false)
+			self.Render(dataType, nil, false, false)
 		} else {
 			self.Context.ReportUnknownDataType(dataTypeName)
 		}
@@ -93,12 +93,8 @@ func (self *Value) RenderDataType(dataTypeName string) {
 }
 
 // Avoid rendering more than once (can happen if we were copied from PropertyDefinition.Default)
-func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefinition, bare bool, allowNil bool) {
+func (self *Value) Render(dataType *DataType, definition *AttributeDefinition, bare bool, allowNil bool) {
 	self.DataType = dataType
-
-	/*if definition != nil {
-		definition.Render()
-	}*/
 
 	if !bare {
 		if self.Description != nil {
@@ -292,19 +288,19 @@ func (self *Value) RenderAttribute(dataType *DataType, definition *AttributeDefi
 
 func (self *Value) RenderProperty(dataType *DataType, definition *PropertyDefinition) {
 	if definition == nil {
-		self.RenderAttribute(dataType, nil, false, false)
+		self.Render(dataType, nil, false, false)
 	} else {
 		self.ConstraintClauses.Render(dataType)
 		definition.ConstraintClauses.Render(definition.DataType)
 		self.ConstraintClauses = definition.ConstraintClauses.Append(self.ConstraintClauses)
-		self.RenderAttribute(dataType, definition.AttributeDefinition, false, false)
+		self.Render(dataType, definition.AttributeDefinition, false, false)
 		//definition.ConstraintClauses.Prepend(&self.ConstraintClauses, dataType)
 	}
 }
 
 func ReadAndRenderBareAttribute(context *tosca.Context, dataType *DataType) *Value {
 	self := ReadValue(context).(*Value)
-	self.RenderAttribute(dataType, nil, true, false)
+	self.Render(dataType, nil, true, false)
 	return self
 }
 
@@ -417,7 +413,7 @@ func (self Values) RenderAttributes(definitions AttributeDefinitions, context *t
 		} else {
 			definition.Render()
 			if definition.DataType != nil {
-				value.RenderAttribute(definition.DataType, definition, false, true)
+				value.Render(definition.DataType, definition, false, true)
 			}
 		}
 	}

@@ -9,7 +9,7 @@ import (
 )
 
 func (self *Context) ImportScriptlet(name string, path string) {
-	var nativeArgumentIndexes []uint
+	var nativeArgumentIndexes []int
 	name, nativeArgumentIndexes = parseScriptletName(name)
 	self.ScriptletNamespace.Set(name, &Scriptlet{
 		Origin:                self.URL.Origin(),
@@ -19,7 +19,7 @@ func (self *Context) ImportScriptlet(name string, path string) {
 }
 
 func (self *Context) EmbedScriptlet(name string, scriptlet string) {
-	var nativeArgumentIndexes []uint
+	var nativeArgumentIndexes []int
 	name, nativeArgumentIndexes = parseScriptletName(name)
 	self.ScriptletNamespace.RegisterScriptlet(name, scriptlet, nativeArgumentIndexes)
 }
@@ -32,7 +32,7 @@ type Scriptlet struct {
 	Origin                urlpkg.URL `json:"origin" yaml:"origin"`
 	Path                  string     `json:"path" yaml:"path"`
 	Scriptlet             string     `json:"scriptlet" yaml:"scriptlet"`
-	NativeArgumentIndexes []uint     `json:"nativeArgumentIndexes" yaml:"nativeArgumentIndexes"`
+	NativeArgumentIndexes []int      `json:"nativeArgumentIndexes" yaml:"nativeArgumentIndexes"`
 }
 
 func (self *Scriptlet) Read() (string, error) {
@@ -99,14 +99,14 @@ func (self *ScriptletNamespace) Set(name string, scriptlet *Scriptlet) {
 	self.namespace[name] = scriptlet
 }
 
-func (self *ScriptletNamespace) RegisterScriptlet(name string, scriptlet string, nativeArgumentIndexes []uint) {
+func (self *ScriptletNamespace) RegisterScriptlet(name string, scriptlet string, nativeArgumentIndexes []int) {
 	self.Set(name, &Scriptlet{
 		Scriptlet:             js.CleanupScriptlet(scriptlet),
 		NativeArgumentIndexes: nativeArgumentIndexes,
 	})
 }
 
-func (self *ScriptletNamespace) RegisterScriptlets(scriptlets map[string]string, nativeArgumentIndexes map[string][]uint, ignore ...string) {
+func (self *ScriptletNamespace) RegisterScriptlets(scriptlets map[string]string, nativeArgumentIndexes map[string][]int, ignore ...string) {
 	for name, scriptlet := range scriptlets {
 		var ignore_ bool
 		for _, ignore__ := range ignore {
@@ -136,17 +136,17 @@ func (self *ScriptletNamespace) Merge(namespace *ScriptletNamespace) {
 
 // Utils
 
-func parseScriptletName(name string) (string, []uint) {
+func parseScriptletName(name string) (string, []int) {
 	// Parse optional native argument indexes specified in name
 	// Notation example: my_constraint(0,1)
-	var nativeArgumentIndexes []uint
+	var nativeArgumentIndexes []int
 	if parenthesis := strings.Index(name, "("); parenthesis != -1 {
 		// We actually just assume an open parenthesis
 		split := strings.Split(name[parenthesis+1:len(name)-1], ",")
 		name = name[:parenthesis]
 		for _, s := range split {
-			if index, err := strconv.ParseUint(s, 10, 32); err != nil {
-				nativeArgumentIndexes = append(nativeArgumentIndexes, uint(index))
+			if index, err := strconv.ParseInt(s, 10, 32); err != nil {
+				nativeArgumentIndexes = append(nativeArgumentIndexes, int(index))
 			}
 		}
 	}

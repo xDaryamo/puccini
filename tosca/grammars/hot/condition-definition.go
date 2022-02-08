@@ -18,7 +18,7 @@ type ConditionDefinition struct {
 
 	Operator              string
 	Arguments             ard.List
-	NativeArgumentIndexes []uint
+	NativeArgumentIndexes []int
 }
 
 func NewConditionDefinition(context *tosca.Context) *ConditionDefinition {

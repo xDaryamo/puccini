@@ -15,7 +15,7 @@ type Condition struct {
 
 	Operator              string
 	Arguments             ard.List
-	NativeArgumentIndexes []uint
+	NativeArgumentIndexes []int
 
 	DefinitionName *string
 
