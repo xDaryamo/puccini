@@ -1,7 +1,7 @@
 // This scriptlet gathers all endpoint capabilities and generates a report
 
-traversal = require('tosca.lib.traversal');
-tosca = require('tosca.lib.utils');
+const traversal = require('tosca.lib.traversal');
+const tosca = require('tosca.lib.utils');
 
 // "traversal.coerce" calls all intrinsic functions and validates all constraints
 traversal.coerce();

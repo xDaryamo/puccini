@@ -1,7 +1,8 @@
 
-clout.exec('tosca.lib.traversal');
+const traversal = require('tosca.lib.traversal');
+const tosca = require('tosca.lib.utils');
 
-tosca.coerce();
+traversal.coerce();
 
 let bpmn = puccini.newXMLDocument();
 
@@ -55,8 +56,8 @@ function createPolicyProcess(id, vertex) {
 	}
 
 	let startGateway, startEvent, endGateway, endEvent, endTask;
-	let startGateway = startEvent = createEvent(process);
-	let endEvent = createEvent(process, true);
+	startGateway = startEvent = createEvent(process);
+	endEvent = createEvent(process, true);
 
 	let code = puccini.sprintf('\nstartProcess("%s");\n', policy.properties.bpmn_process_id);
 	endGateway = endTask = createScriptTask(process, clout.newKey(), 'startProcess', code);
@@ -104,7 +105,7 @@ function createWorkflowProcess(id, vertex) {
 	// Link previous tasks in graph
 	for (let name in tasks) {
 		let task = tasks[name];
-		for (n in task.next) {
+		for (let n in task.next) {
 			let nextName = task.next[n];
 			tasks[nextName].prev.push(name);
 		}

@@ -1,7 +1,7 @@
 // This scriptlet extracts all artifacts to the output directory
 
-traversal = require('tosca.lib.traversal');
-tosca = require('tosca.lib.utils');
+const traversal = require('tosca.lib.traversal');
+const tosca = require('tosca.lib.utils');
 
 traversal.coerce();
 
