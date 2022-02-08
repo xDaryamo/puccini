@@ -55,7 +55,7 @@ func NewResource(context *tosca.Context) *Resource {
 // tosca.Reader signature
 func ReadResource(context *tosca.Context) tosca.EntityPtr {
 	self := NewResource(context)
-	context.ValidateUnsupportedFields(append(context.ReadFields(self)))
+	context.ValidateUnsupportedFields(context.ReadFields(self))
 
 	if childContext, ok := context.GetFieldChild("depends_on"); ok {
 		self.DependsOn = childContext.ReadStringOrStringList()

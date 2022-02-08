@@ -26,15 +26,20 @@ func NewTriggerDefinitionCondition(context *tosca.Context) *TriggerDefinitionCon
 func ReadTriggerDefinitionCondition(context *tosca.Context) tosca.EntityPtr {
 	self := NewTriggerDefinitionCondition(context)
 
-	if context.ValidateType(ard.TypeMap) {
+	if context.Is(ard.TypeMap) {
 		map_ := context.Data.(ard.Map)
 		if _, ok := map_["constraint"]; ok {
-			// Long notation
+			// Long map notation
 			context.ValidateUnsupportedFields(context.ReadFields(self))
 		} else {
-			// Short notation
+			// Short map notation
 			self.Constraint = ReadConditionClause(context).(*ConditionClause)
 		}
+	} else if context.ValidateType(ard.TypeMap, ard.TypeList) {
+		// Short list notation
+		// See note: [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.25.1
+		context = context.Clone(ard.Map{"and": context.Data})
+		self.Constraint = ReadConditionClause(context).(*ConditionClause)
 	}
 
 	return self
