@@ -209,24 +209,20 @@ func (self *FunctionCall) Convert(value ard.Value) (ard.Value, error) {
 // Utils
 
 func encodeArgument(argument ard.Value) string {
-	var encodedArgument string
-	switch argument.(type) {
+	switch argument_ := argument.(type) {
 	case int64, int32, int16, int8, int, uint64, uint32, uint16, uint8, uint:
-		return fmt.Sprintf("%d", argument)
+		return fmt.Sprintf("%d", argument_)
 	case float64, float32:
-		return fmt.Sprintf("%g", argument)
+		return fmt.Sprintf("%g", argument_)
 	case bool:
-		return fmt.Sprintf("%t", argument)
-	case ard.Map, ard.StringMap, ard.List:
-		encodedArgument, _ = format.EncodeYAML(argument, "", false)
-		encodedArgument = strings.TrimSuffix(encodedArgument, "\n")
+		return fmt.Sprintf("%t", argument_)
+	case string:
+		argument_ = strings.ReplaceAll(argument_, "\n", "¶")
+		return fmt.Sprintf("%q", argument_)
 	default:
-		encodedArgument = fmt.Sprintf("%s", argument)
+		argument__, _ := format.EncodeJSON(argument, "")
+		return argument__
 	}
-
-	encodedArgument = strings.ReplaceAll(encodedArgument, "\n", "¶")
-	encodedArgument = strings.ReplaceAll(encodedArgument, "\"", "\\\"")
-	return fmt.Sprintf("%q", encodedArgument)
 }
 
 func asInt(value interface{}) (int, bool) {
