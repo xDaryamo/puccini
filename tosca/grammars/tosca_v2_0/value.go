@@ -112,8 +112,8 @@ func (self *Value) Render(dataType *DataType, definition *AttributeDefinition, b
 
 	dataType.Complete(self.Context)
 	if !bare {
-		self.ConstraintClauses.Render(dataType)
-		dataType.ConstraintClauses.Render(dataType)
+		self.ConstraintClauses.Render(dataType, definition)
+		dataType.ConstraintClauses.Render(dataType, definition)
 		self.ConstraintClauses = dataType.ConstraintClauses.Append(self.ConstraintClauses)
 	}
 
@@ -148,55 +148,65 @@ func (self *Value) Render(dataType *DataType, definition *AttributeDefinition, b
 				// (The entry schema may also have additional constraints)
 				switch internalTypeName {
 				case ard.TypeList, ard.TypeMap:
-					if definition == nil {
-						return
-					} else if definition.EntrySchema == nil {
-						return
+					var entrySchema *Schema
+					if definition != nil {
+						entrySchema = definition.EntrySchema
 					} else {
-						if definition.EntrySchema.DataType == nil {
-							// This problem is reported in AttributeDefinition.Render
-							return
-						}
+						entrySchema = dataType.EntrySchema
+					}
+
+					if entrySchema == nil {
+						return
+					} else if entrySchema.DataType == nil {
+						return
 					}
 
 					if internalTypeName == ard.TypeList {
 						// Information
-						entryDataType := definition.EntrySchema.DataType
-						entryConstraints := definition.EntrySchema.GetConstraints()
+						entryDataType := entrySchema.DataType
+						entryConstraints := entrySchema.GetConstraints()
 						self.Information.Entry = entryDataType.GetTypeInformation()
-						if definition.EntrySchema.Description != nil {
-							self.Information.Entry.SchemaDescription = *definition.EntrySchema.Description
+						if entrySchema.Description != nil {
+							self.Information.Entry.SchemaDescription = *entrySchema.Description
 						}
 
 						slice := self.Context.Data.(ard.List)
 						valueList := NewValueList(definition, len(slice), entryConstraints)
 
 						for index, data := range slice {
-							value := ReadAndRenderBareAttribute(self.Context.ListChild(index, data), entryDataType)
+							value := ReadAndRenderBare(self.Context.ListChild(index, data), entryDataType)
 							valueList.Set(index, value)
 						}
 
 						self.Context.Data = valueList
 					} else { // ard.TypeMap
-						if definition.KeySchema == nil {
-							// This problem is reported in AttributeDefinition.Complete
+						var keySchema *Schema
+						if definition != nil {
+							keySchema = definition.KeySchema
+						} else {
+							keySchema = dataType.KeySchema
+						}
+
+						if keySchema == nil {
+							return
+						} else if keySchema.DataType == nil {
 							return
 						}
 
 						// Information
 
-						keyDataType := definition.KeySchema.DataType
-						keyConstraints := definition.KeySchema.GetConstraints()
+						keyDataType := keySchema.DataType
+						keyConstraints := keySchema.GetConstraints()
 						self.Information.Key = keyDataType.GetTypeInformation()
-						if definition.KeySchema.Description != nil {
-							self.Information.Key.SchemaDescription = *definition.KeySchema.Description
+						if keySchema.Description != nil {
+							self.Information.Key.SchemaDescription = *keySchema.Description
 						}
 
-						valueDataType := definition.EntrySchema.DataType
-						valueConstraints := definition.EntrySchema.GetConstraints()
+						valueDataType := entrySchema.DataType
+						valueConstraints := entrySchema.GetConstraints()
 						self.Information.Value = valueDataType.GetTypeInformation()
-						if definition.EntrySchema.Description != nil {
-							self.Information.Value.SchemaDescription = *definition.EntrySchema.Description
+						if entrySchema.Description != nil {
+							self.Information.Value.SchemaDescription = *entrySchema.Description
 						}
 
 						valueMap := NewValueMap(definition, keyConstraints, valueConstraints)
@@ -206,10 +216,10 @@ func (self *Value) Render(dataType *DataType, definition *AttributeDefinition, b
 
 							// Validate key schema
 							keyContext := self.Context.MapChild(key, yamlkeys.KeyData(key))
-							key = ReadAndRenderBareAttribute(keyContext, keyDataType)
+							key = ReadAndRenderBare(keyContext, keyDataType)
 
 							context := self.Context.MapChild(key, data)
-							value := ReadAndRenderBareAttribute(context, valueDataType)
+							value := ReadAndRenderBare(context, valueDataType)
 							value.ConstraintClauses = ConstraintClauses{}
 							valueMap.Put(key, value)
 						}
@@ -286,22 +296,22 @@ func (self *Value) Render(dataType *DataType, definition *AttributeDefinition, b
 	}
 }
 
+func ReadAndRenderBare(context *tosca.Context, dataType *DataType) *Value {
+	self := ReadValue(context).(*Value)
+	self.Render(dataType, nil, true, false)
+	return self
+}
+
 func (self *Value) RenderProperty(dataType *DataType, definition *PropertyDefinition) {
 	if definition == nil {
 		self.Render(dataType, nil, false, false)
 	} else {
-		self.ConstraintClauses.Render(dataType)
-		definition.ConstraintClauses.Render(definition.DataType)
+		self.ConstraintClauses.Render(dataType, definition.AttributeDefinition)
+		definition.ConstraintClauses.Render(definition.DataType, definition.AttributeDefinition)
 		self.ConstraintClauses = definition.ConstraintClauses.Append(self.ConstraintClauses)
 		self.Render(dataType, definition.AttributeDefinition, false, false)
 		//definition.ConstraintClauses.Prepend(&self.ConstraintClauses, dataType)
 	}
-}
-
-func ReadAndRenderBareAttribute(context *tosca.Context, dataType *DataType) *Value {
-	self := ReadValue(context).(*Value)
-	self.Render(dataType, nil, true, false)
-	return self
 }
 
 func (self *Value) Normalize() normal.Constrainable {

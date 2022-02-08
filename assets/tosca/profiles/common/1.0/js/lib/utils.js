@@ -197,6 +197,15 @@ exports.getComparable = function(v) {
 	return v;
 };
 
+exports.getLength = function(v) {
+	if (v.$string !== undefined)
+		v = v.$string;
+	let length = v.length;
+	if (length === undefined)
+		length = Object.keys(v).length;
+	return length;
+};
+
 exports.compare = function(v1, v2) {
 	let c = v1.$comparer;
 	if (c === undefined)
@@ -211,4 +220,27 @@ exports.compare = function(v1, v2) {
 		return -1;
 	else
 		return 1;
+};
+
+// See: https://stackoverflow.com/a/45683145
+exports.deepEqual = function(v1, v2) {
+	if (v1 === v2)
+		return true;
+
+	if (exports.isPrimitive(v1) && exports.isPrimitive(v2))
+		return v1 === v2;
+
+	if (Object.keys(v1).length !== Object.keys(v2).length)
+		return false;
+
+	for (let key in v1) {
+		if (!(key in v2)) return false;
+		if (!exports.deepEqual(v1[key], v2[key])) return false;
+	}
+
+	return true;
+};
+
+exports.isPrimitive = function(obj) {
+	return obj !== Object(obj);
 };

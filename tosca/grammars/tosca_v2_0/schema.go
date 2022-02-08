@@ -72,8 +72,8 @@ func (self *Schema) LookupDataType() bool {
 
 func (self *Schema) GetConstraints() ConstraintClauses {
 	if self.DataType != nil {
-		self.ConstraintClauses.Render(self.DataType)
-		self.DataType.ConstraintClauses.Render(self.DataType)
+		self.ConstraintClauses.Render(self.DataType, nil)
+		self.DataType.ConstraintClauses.Render(self.DataType, nil)
 		return self.DataType.ConstraintClauses.Append(self.ConstraintClauses)
 	} else {
 		return self.ConstraintClauses

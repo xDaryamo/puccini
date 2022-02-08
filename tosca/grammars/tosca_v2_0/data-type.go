@@ -88,7 +88,7 @@ func (self *DataType) Render() {
 func (self *DataType) render() {
 	logRender.Debugf("data type: %s", self.Name)
 
-	self.ConstraintClauses.Render(self)
+	self.ConstraintClauses.Render(self, nil)
 
 	if internalTypeName, ok := self.GetInternalTypeName(); ok {
 		if _, ok := ard.TypeValidators[internalTypeName]; !ok {

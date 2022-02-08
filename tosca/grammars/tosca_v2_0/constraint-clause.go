@@ -50,7 +50,8 @@ type ConstraintClause struct {
 	Operator              string
 	Arguments             ard.List
 	NativeArgumentIndexes []int
-	DataType              *DataType `traverse:"ignore" json:"-" yaml:"-"` // TODO: unncessary, this entity should never be traversed
+	DataType              *DataType            `traverse:"ignore" json:"-" yaml:"-"` // TODO: unncessary, this entity should never be traversed
+	Definition            *AttributeDefinition `traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewConstraintClause(context *tosca.Context) *ConstraintClause {
@@ -116,8 +117,8 @@ func (self *ConstraintClause) ToFunctionCall(context *tosca.Context, strict bool
 		if self.IsNativeArgument(index) {
 			if _, ok := argument.(*Value); !ok {
 				if self.DataType != nil {
-					value := ReadValue(context.ListChild(index, argument)).(*Value)
-					value.Render(self.DataType, nil, true, false) // bare
+					value := ReadValue(self.Context.ListChild(index, argument)).(*Value)
+					value.Render(self.DataType, self.Definition, true, false) // bare
 					argument = value
 				} else if strict {
 					panic("no data type for native argument")
@@ -159,9 +160,10 @@ func (self ConstraintClauses) Append(constraints ConstraintClauses) ConstraintCl
 	}
 }
 
-func (self ConstraintClauses) Render(dataType *DataType) {
+func (self ConstraintClauses) Render(dataType *DataType, definition *AttributeDefinition) {
 	for _, constraint := range self {
 		constraint.DataType = dataType
+		constraint.Definition = definition
 	}
 }
 
