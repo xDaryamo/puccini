@@ -37,7 +37,6 @@ func NewTemplate(context *tosca.Context) *Template {
 	self.Context.ImportScriptlet("tosca.lib.traversal", "internal:/tosca/common/1.0/js/lib/traversal.js")
 	self.Context.ImportScriptlet("tosca.resolve", "internal:/tosca/common/1.0/js/resolve.js")
 	self.Context.ImportScriptlet("tosca.coerce", "internal:/tosca/common/1.0/js/coerce.js")
-	self.Context.ImportScriptlet("openstack.generate", "internal:/tosca/openstack/1.0/js/generate.js")
 
 	self.NewPseudoParameter("OS::stack_name", "stack_name")
 	self.NewPseudoParameter("OS::stack_id", "stack_id")

@@ -5,7 +5,7 @@ Puccini
 [![Latest Release](https://img.shields.io/github/release/tliron/puccini.svg)](https://github.com/tliron/puccini/releases/latest)
 [![Go Report Card](https://goreportcard.com/badge/github.com/tliron/puccini)](https://goreportcard.com/report/github.com/tliron/puccini)
 
-Deliberately stateless cloud topology management and deployment tools based on
+Cloud topology management and deployment tools based on
 [TOSCA](https://www.oasis-open.org/committees/tosca/).
 
 Puccini is primarily a TOSCA processor. Its main function is to parse a TOSCA service template
