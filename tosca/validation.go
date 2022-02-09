@@ -20,7 +20,7 @@ func (self *Context) ValidateUnsupportedFields(keys []string) {
 			}
 		}
 		if !found {
-			self.FieldChild(key, nil).ReportFieldUnsupported()
+			self.FieldChild(key, nil).ReportKeynameUnsupported()
 		}
 	}
 }
@@ -46,7 +46,7 @@ func ValidateRequiredFields(entityPtr EntityPtr) bool {
 				tag = readTag
 			}
 
-			context.FieldChild(tag, nil).ReportFieldMissing()
+			context.FieldChild(tag, nil).ReportKeynameMissing()
 		}
 	}
 	return true

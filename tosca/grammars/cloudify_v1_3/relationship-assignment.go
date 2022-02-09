@@ -60,11 +60,11 @@ func (self *RelationshipAssignment) render() {
 				switch *connectionType {
 				case "all_to_all", "all_to_one":
 				default:
-					value.Context.ReportFieldUnsupportedValue()
+					value.Context.ReportKeynameUnsupportedValue()
 				}
 			}
 		default:
-			value.Context.ReportFieldUnsupported()
+			value.Context.ReportKeynameUnsupported()
 		}
 	}
 

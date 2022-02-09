@@ -476,12 +476,12 @@ func (self *Context) ReadSequencedListItems(read Reader, process Processor) bool
 	if self.ValidateType(ard.TypeList) {
 		for index, data := range self.Data.(ard.List) {
 			if !ard.IsMap(data) {
-				self.ReportFieldMalformedSequencedList()
+				self.ReportKeynameMalformedSequencedList()
 				return false
 			}
 			item := data.(ard.Map)
 			if len(item) != 1 {
-				self.ReportFieldMalformedSequencedList()
+				self.ReportKeynameMalformedSequencedList()
 				return false
 			}
 			for itemName, data := range item {

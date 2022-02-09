@@ -78,7 +78,7 @@ func (self *InterfaceImplementation) Render(definition *InterfaceImplementation)
 		}
 
 		if !supported {
-			self.Context.FieldChild("operation_host", operationHost).ReportFieldUnsupportedValue()
+			self.Context.FieldChild("operation_host", operationHost).ReportKeynameUnsupportedValue()
 		}
 	}
 }

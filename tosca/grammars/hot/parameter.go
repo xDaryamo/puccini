@@ -48,7 +48,7 @@ func ReadParameter(context *tosca.Context) tosca.EntityPtr {
 				self.Default.Constraints = self.Constraints
 			}
 		} else {
-			context.FieldChild("type", type_).ReportFieldUnsupportedValue()
+			context.FieldChild("type", type_).ReportKeynameUnsupportedValue()
 		}
 	}
 

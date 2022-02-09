@@ -62,7 +62,7 @@ func ReadTemplate(context *tosca.Context) tosca.EntityPtr {
 			heatTemplateVersionContext.ReportValueWrongType(ard.TypeString, ard.TypeTimestamp)
 		}
 	} else {
-		context.FieldChild("heat_template_version", nil).ReportFieldMissing()
+		context.FieldChild("heat_template_version", nil).ReportKeynameMissing()
 	}
 
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "heat_template_version"))

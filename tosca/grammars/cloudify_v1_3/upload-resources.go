@@ -39,7 +39,7 @@ func ReadUploadResources(context *tosca.Context) tosca.EntityPtr {
 		case "fetch_timeout":
 			childContext.ValidateType(ard.TypeInteger)
 		default:
-			childContext.ReportFieldUnsupported()
+			childContext.ReportKeynameUnsupported()
 		}
 	}
 

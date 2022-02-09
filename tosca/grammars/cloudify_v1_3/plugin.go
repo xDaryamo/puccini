@@ -50,13 +50,13 @@ func ReadPlugin(context *tosca.Context) tosca.EntityPtr {
 		switch executor {
 		case "central_deployment_agent", "host_agent":
 		default:
-			context.FieldChild("executor", executor).ReportFieldUnsupportedValue()
+			context.FieldChild("executor", executor).ReportKeynameUnsupportedValue()
 		}
 	}
 
 	if *self.Install && (self.Source == nil) && (self.PackageName == nil) {
-		context.FieldChild("source", nil).ReportFieldMissing()
-		context.FieldChild("package_name", nil).ReportFieldMissing()
+		context.FieldChild("source", nil).ReportKeynameMissing()
+		context.FieldChild("package_name", nil).ReportKeynameMissing()
 	}
 
 	return self

@@ -65,7 +65,7 @@ func ReadResource(context *tosca.Context) tosca.EntityPtr {
 		if type_, ok := ResourceTypes[*self.Type]; ok {
 			self.ToscaType = &type_
 		} else {
-			context.FieldChild("type", *self.Type).ReportFieldUnsupportedValue()
+			context.FieldChild("type", *self.Type).ReportKeynameUnsupportedValue()
 		}
 	}
 
@@ -73,7 +73,7 @@ func ReadResource(context *tosca.Context) tosca.EntityPtr {
 		if policy, ok := GetDeletionPolicy(*self.DeletionPolicy); ok {
 			self.DeletionPolicy = &policy
 		} else {
-			context.FieldChild("deletion_policy", *self.DeletionPolicy).ReportFieldUnsupportedValue()
+			context.FieldChild("deletion_policy", *self.DeletionPolicy).ReportKeynameUnsupportedValue()
 		}
 	}
 

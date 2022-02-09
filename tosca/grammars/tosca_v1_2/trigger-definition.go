@@ -63,7 +63,7 @@ func ReadTriggerDefinition(context *tosca.Context) tosca.EntityPtr {
 				}
 			}
 		} else {
-			childContext.ReportFieldMissing()
+			childContext.ReportKeynameMissing()
 		}
 	}
 

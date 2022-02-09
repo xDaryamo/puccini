@@ -41,7 +41,7 @@ func (self *NodeTemplateCapability) ValidateScalableProperties(instances *NodeTe
 		case "max_instances":
 			value.Context.ValidateType(ard.TypeInteger, ard.TypeString)
 		default:
-			value.Context.ReportFieldUnsupported()
+			value.Context.ReportKeynameUnsupported()
 		}
 	}
 
@@ -68,7 +68,7 @@ func (self NodeTemplateCapabilities) Validate(context *tosca.Context, instances 
 		case "scalable":
 			capability.ValidateScalableProperties(instances)
 		default:
-			capability.Context.ReportFieldUnsupported()
+			capability.Context.ReportKeynameUnsupported()
 		}
 	}
 

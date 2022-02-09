@@ -110,20 +110,20 @@ func (self *Context) ReportRepositoryInaccessible(repositoryName string) bool {
 	return self.ReportPathf(1, "inaccessible repository %s", self.Problems.Stylist.Value(quote(repositoryName)))
 }
 
-func (self *Context) ReportFieldMissing() bool {
-	return self.ReportPath(1, "missing required field")
+func (self *Context) ReportKeynameMissing() bool {
+	return self.ReportPath(1, "missing required keyname")
 }
 
-func (self *Context) ReportFieldUnsupported() bool {
-	return self.ReportPath(1, "unsupported field")
+func (self *Context) ReportKeynameUnsupported() bool {
+	return self.ReportPath(1, "unsupported keyname")
 }
 
-func (self *Context) ReportFieldUnsupportedValue() bool {
-	return self.ReportPathf(1, "unsupported value for field: %s", self.FormatBadData())
+func (self *Context) ReportKeynameUnsupportedValue() bool {
+	return self.ReportPathf(1, "unsupported value for keyname: %s", self.FormatBadData())
 }
 
-func (self *Context) ReportFieldMalformedSequencedList() bool {
-	return self.ReportPathf(1, "field must be a %s of single-key %s elements", self.Problems.Stylist.TypeName(quote("sequenced list")), self.Problems.Stylist.TypeName(quote("map")))
+func (self *Context) ReportKeynameMalformedSequencedList() bool {
+	return self.ReportPathf(1, "unsupported value for keyname, must be a %s of single-key %s elements", self.Problems.Stylist.TypeName(quote("sequenced list")), self.Problems.Stylist.TypeName(quote("map")))
 }
 
 func (self *Context) ReportPrimitiveType() bool {

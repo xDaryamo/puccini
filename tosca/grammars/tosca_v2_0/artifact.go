@@ -74,11 +74,11 @@ func (self *Artifact) DoRender() {
 	logRender.Debugf("artifact: %s", self.Name)
 
 	if self.File == nil {
-		self.Context.FieldChild("file", nil).ReportFieldMissing()
+		self.Context.FieldChild("file", nil).ReportKeynameMissing()
 	}
 
 	if self.ArtifactType == nil {
-		self.Context.FieldChild("type", nil).ReportFieldMissing()
+		self.Context.FieldChild("type", nil).ReportKeynameMissing()
 		return
 	}
 

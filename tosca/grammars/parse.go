@@ -12,7 +12,7 @@ func Detect(context *tosca.Context) bool {
 	if context.Grammar == nil {
 		var errorContext *tosca.Context
 		if context.Grammar, errorContext = GetGrammar(context); errorContext != nil {
-			errorContext.ReportFieldUnsupportedValue()
+			errorContext.ReportKeynameUnsupportedValue()
 		}
 	}
 	return context.Grammar != nil

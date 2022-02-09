@@ -203,7 +203,7 @@ func (self *Context) GetRequiredFieldChild(name string) (*Context, bool) {
 	if context, ok := self.GetFieldChild(name); ok {
 		return context, true
 	} else {
-		self.FieldChild(name, nil).ReportFieldMissing()
+		self.FieldChild(name, nil).ReportKeynameMissing()
 		return nil, false
 	}
 }

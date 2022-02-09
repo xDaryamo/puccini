@@ -105,7 +105,7 @@ func (self *AttributeDefinition) render() {
 
 func (self *AttributeDefinition) doRender() {
 	if self.DataTypeName == nil {
-		self.Context.FieldChild("type", nil).ReportFieldMissing()
+		self.Context.FieldChild("type", nil).ReportKeynameMissing()
 		return
 	}
 

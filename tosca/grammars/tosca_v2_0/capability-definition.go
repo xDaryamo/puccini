@@ -104,7 +104,7 @@ func (self *CapabilityDefinition) render() {
 	if self.CapabilityTypeName == nil {
 		// Avoid reporting more than once
 		if !self.typeMissingProblemReported {
-			self.Context.FieldChild("type", nil).ReportFieldMissing()
+			self.Context.FieldChild("type", nil).ReportKeynameMissing()
 			self.typeMissingProblemReported = true
 		}
 	}

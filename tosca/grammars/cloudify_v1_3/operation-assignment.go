@@ -54,7 +54,7 @@ func ValidateOperationExecutor(executor string, context *tosca.Context) {
 	switch executor {
 	case "central_deployment_agent", "host_agent":
 	default:
-		context.FieldChild("executor", executor).ReportFieldUnsupportedValue()
+		context.FieldChild("executor", executor).ReportKeynameUnsupportedValue()
 	}
 }
 

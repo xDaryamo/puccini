@@ -85,7 +85,7 @@ func (self *RelationshipDefinition) render() {
 	if self.RelationshipTypeName == nil {
 		// Avoid reporting more than once
 		if !self.typeMissingProblemReported {
-			self.Context.FieldChild("type", nil).ReportFieldMissing()
+			self.Context.FieldChild("type", nil).ReportKeynameMissing()
 			self.typeMissingProblemReported = true
 		}
 	}
