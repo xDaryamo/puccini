@@ -120,7 +120,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 				}
 			} else if validateRequire {
 				if definition.IsRequired() {
-					self.Context.MapChild(key, data).ReportPropertyRequired("property")
+					self.Context.MapChild(key, data).ReportValueRequired("property")
 				}
 			}
 		}
@@ -186,7 +186,7 @@ func (self Values) RenderMissingValue(definition *ParameterDefinition, kind stri
 	if definition.Default != nil {
 		self[definition.Name] = definition.Default
 	} else if required {
-		context.MapChild(definition.Name, nil).ReportPropertyRequired(kind)
+		context.MapChild(definition.Name, nil).ReportValueRequired(kind)
 	} else if kind == "attribute" {
 		// Parameters should always appear, even if they have no default value
 		self[definition.Name] = NewValue(context.MapChild(definition.Name, nil))

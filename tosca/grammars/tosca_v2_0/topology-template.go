@@ -107,8 +107,7 @@ func (self *TopologyTemplate) render() {
 		}
 	}
 
-	self.InputDefinitions.Render("input definition", mappedInputs, self.Context.FieldChild("inputs", nil))
-	self.OutputDefinitions.Render("output definition", nil, self.Context.FieldChild("outputs", nil))
+	self.InputDefinitions.Render("input definition", mappedInputs)
 }
 
 func (self *TopologyTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplate) {

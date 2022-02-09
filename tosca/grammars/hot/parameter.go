@@ -78,7 +78,7 @@ func (self *Parameter) render() {
 			self.Value.Constraints = self.Constraints
 		}
 	} else if self.Default == nil {
-		self.Context.ReportPropertyRequired("parameter")
+		self.Context.ReportValueRequired("parameter")
 	}
 }
 

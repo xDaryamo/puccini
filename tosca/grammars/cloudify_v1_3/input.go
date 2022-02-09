@@ -59,7 +59,7 @@ func (self *Input) render() {
 	}
 
 	if self.Value == nil {
-		self.Context.ReportPropertyRequired("input")
+		self.Context.ReportValueRequired("input")
 	}
 }
 

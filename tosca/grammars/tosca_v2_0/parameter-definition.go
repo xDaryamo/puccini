@@ -36,32 +36,32 @@ func ReadParameterDefinition(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-func (self *ParameterDefinition) Render(kind string, mapped []string) {
+func (self *ParameterDefinition) Inherit(parentDefinition *ParameterDefinition) {
+	logInherit.Debugf("parameter definition: %s", self.Name)
+
+	self.PropertyDefinition.Inherit(parentDefinition.PropertyDefinition)
+
+	if (self.Value == nil) && (parentDefinition.Value != nil) {
+		self.Value = parentDefinition.Value
+	}
+}
+
+// tosca.Renderable interface
+func (self *ParameterDefinition) Render() {
+	self.renderOnce.Do(self.render)
+}
+
+func (self *ParameterDefinition) render() {
 	logRender.Debugf("parameter definition: %s", self.Name)
 
-	if self.DataTypeName == nil {
-		self.Context.FieldChild("type", nil).ReportFieldMissing()
-	}
+	self.PropertyDefinition.render()
 
-	if self.Value == nil {
+	if self.Value != nil {
+		if self.DataType != nil {
+			self.Value.RenderProperty(self.DataType, self.PropertyDefinition)
+		}
+	} else if self.Default != nil {
 		self.Value = self.Default
-	}
-
-	if self.Value == nil {
-		isMapped := false
-		for _, mapped_ := range mapped {
-			if self.Name == mapped_ {
-				isMapped = true
-				break
-			}
-		}
-
-		if !isMapped && self.IsRequired() {
-			self.Context.ReportPropertyRequired(kind)
-			return
-		}
-	} else if self.DataType != nil {
-		self.Value.RenderProperty(self.DataType, self.PropertyDefinition)
 	}
 }
 
@@ -82,9 +82,40 @@ func (self *ParameterDefinition) Normalize(context *tosca.Context) normal.Constr
 
 type ParameterDefinitions map[string]*ParameterDefinition
 
-func (self ParameterDefinitions) Render(kind string, mapped []string, context *tosca.Context) {
+func (self ParameterDefinitions) Inherit(parentDefinitions ParameterDefinitions) {
+	for name, definition := range parentDefinitions {
+		if _, ok := self[name]; !ok {
+			self[name] = definition
+		}
+	}
+
+	for name, definition := range self {
+		if parentDefinition, ok := parentDefinitions[name]; ok {
+			if definition != parentDefinition {
+				definition.Inherit(parentDefinition)
+			}
+		}
+	}
+}
+
+func (self ParameterDefinitions) Render(kind string, mapped []string) {
 	for _, definition := range self {
-		definition.Render(kind, mapped)
+		definition.Render()
+
+		if definition.Value == nil {
+			isMapped := false
+			for _, mapped_ := range mapped {
+				if definition.Name == mapped_ {
+					isMapped = true
+					break
+				}
+			}
+
+			if !isMapped && definition.IsRequired() {
+				definition.Context.ReportValueRequired(kind)
+				return
+			}
+		}
 	}
 }
 

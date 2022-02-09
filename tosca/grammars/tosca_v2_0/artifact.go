@@ -97,7 +97,7 @@ func (self *Artifact) DoRender() {
 		}
 	}
 
-	self.Properties.RenderProperties(self.ArtifactType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
+	self.Properties.RenderProperties(self.ArtifactType.PropertyDefinitions, self.Context.FieldChild("properties", nil))
 }
 
 func (self *Artifact) Normalize(normalNodeTemplate *normal.NodeTemplate) *normal.Artifact {

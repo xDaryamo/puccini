@@ -89,7 +89,7 @@ func (self *RelationshipAssignment) Render(definition *RelationshipDefinition) {
 		self.Interfaces.CopyUnassigned(self.RelationshipTemplate.Interfaces)
 		self.Interfaces.RenderForRelationship(self, self.RelationshipTemplate.RelationshipType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
 	} else {
-		self.Properties.RenderProperties(self.RelationshipType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
+		self.Properties.RenderProperties(self.RelationshipType.PropertyDefinitions, self.Context.FieldChild("properties", nil))
 		self.Attributes.RenderAttributes(self.RelationshipType.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
 		self.Interfaces.RenderForRelationship(self, self.RelationshipType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
 	}

@@ -124,7 +124,7 @@ func (self OperationAssignments) Render(definitions OperationDefinitions, contex
 			assignment.Implementation.Render(definition.Implementation)
 		}
 
-		assignment.Inputs.RenderProperties(definition.InputDefinitions, "input", assignment.Context.FieldChild("inputs", nil))
+		assignment.Inputs.RenderInputs(definition.InputDefinitions, assignment.Context.FieldChild("inputs", nil))
 		assignment.Outputs.Inherit(definition.Outputs)
 	}
 

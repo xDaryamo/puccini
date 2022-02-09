@@ -19,7 +19,7 @@ type InterfaceDefinition struct {
 	Name    string
 
 	InterfaceTypeName       *string                 `read:"type"` // required only if cannot be inherited
-	InputDefinitions        PropertyDefinitions     `read:"inputs,PropertyDefinition" inherit:"inputs,InterfaceType"`
+	InputDefinitions        ParameterDefinitions    `read:"inputs,ParameterDefinition" inherit:"inputs,InterfaceType"`
 	OperationDefinitions    OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,InterfaceType"`          // keyword since TOSCA 1.3
 	NotificationDefinitions NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,InterfaceType"` // introduced in TOSCA 1.3
 
@@ -32,7 +32,7 @@ func NewInterfaceDefinition(context *tosca.Context) *InterfaceDefinition {
 	return &InterfaceDefinition{
 		Entity:                  NewEntity(context),
 		Name:                    context.Name,
-		InputDefinitions:        make(PropertyDefinitions),
+		InputDefinitions:        make(ParameterDefinitions),
 		OperationDefinitions:    make(OperationDefinitions),
 		NotificationDefinitions: make(NotificationDefinitions),
 	}

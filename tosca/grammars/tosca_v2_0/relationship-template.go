@@ -66,7 +66,7 @@ func (self *RelationshipTemplate) render() {
 		return
 	}
 
-	self.Properties.RenderProperties(self.RelationshipType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
+	self.Properties.RenderProperties(self.RelationshipType.PropertyDefinitions, self.Context.FieldChild("properties", nil))
 	self.Attributes.RenderAttributes(self.RelationshipType.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
 }
 

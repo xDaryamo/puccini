@@ -72,19 +72,19 @@ func (self *InterfaceAssignment) GetDefinitionForRelationship(relationship *Rela
 }
 
 func (self *InterfaceAssignment) RenderForNodeTemplate(nodeTemplate *NodeTemplate, definition *InterfaceDefinition) {
-	self.Inputs.RenderProperties(definition.InputDefinitions, "input", self.Context.FieldChild("inputs", nil))
+	self.Inputs.RenderInputs(definition.InputDefinitions, self.Context.FieldChild("inputs", nil))
 	self.Operations.Render(definition.OperationDefinitions, self.Context.FieldChild("operations", nil))
 	self.Notifications.RenderForNodeTemplate(nodeTemplate, definition.NotificationDefinitions, self.Context.FieldChild("notifications", nil))
 }
 
 func (self *InterfaceAssignment) RenderForRelationship(relationship *RelationshipAssignment, definition *InterfaceDefinition) {
-	self.Inputs.RenderProperties(definition.InputDefinitions, "input", self.Context.FieldChild("inputs", nil))
+	self.Inputs.RenderInputs(definition.InputDefinitions, self.Context.FieldChild("inputs", nil))
 	self.Operations.Render(definition.OperationDefinitions, self.Context.FieldChild("operations", nil))
 	self.Notifications.RenderForRelationship(relationship, definition.NotificationDefinitions, self.Context.FieldChild("notifications", nil))
 }
 
 func (self *InterfaceAssignment) RenderForGroup(definition *InterfaceDefinition) {
-	self.Inputs.RenderProperties(definition.InputDefinitions, "input", self.Context.FieldChild("inputs", nil))
+	self.Inputs.RenderInputs(definition.InputDefinitions, self.Context.FieldChild("inputs", nil))
 	self.Operations.Render(definition.OperationDefinitions, self.Context.FieldChild("operations", nil))
 	self.Notifications.RenderForGroup(definition.NotificationDefinitions, self.Context.FieldChild("notifications", nil))
 }

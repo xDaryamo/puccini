@@ -64,7 +64,7 @@ func (self *Policy) render() {
 		return
 	}
 
-	self.Properties.RenderProperties(self.PolicyType.PropertyDefinitions, "property", self.Context.FieldChild("properties", nil))
+	self.Properties.RenderProperties(self.PolicyType.PropertyDefinitions, self.Context.FieldChild("properties", nil))
 
 	// Validate targets
 

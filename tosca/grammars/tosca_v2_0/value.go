@@ -271,7 +271,7 @@ func (self *Value) Render(dataType *DataType, definition *AttributeDefinition, b
 					self.Information.Fields[key] = value.Information
 				}
 			} else if definition.IsRequired() {
-				self.Context.MapChild(key, data).ReportPropertyRequired("property")
+				self.Context.MapChild(key, data).ReportValueRequired("property")
 			}
 		}
 	}
@@ -310,7 +310,6 @@ func (self *Value) RenderProperty(dataType *DataType, definition *PropertyDefini
 		definition.ConstraintClauses.Render(definition.DataType, definition.AttributeDefinition)
 		self.ConstraintClauses = definition.ConstraintClauses.Append(self.ConstraintClauses)
 		self.Render(dataType, definition.AttributeDefinition, false, false)
-		//definition.ConstraintClauses.Prepend(&self.ConstraintClauses, dataType)
 	}
 }
 
@@ -376,56 +375,80 @@ func (self Values) CopyUnassigned(values Values) {
 	}
 }
 
-func (self Values) RenderMissingValue(definition *AttributeDefinition, kind string, required bool, context *tosca.Context) {
-	if definition.Default != nil {
-		// Note: it doesn't make sense if required=false for properties in this case,
-		// but we will just ignore it (future versions of TOSCA may specifically disallow it)
-		self[definition.Name] = definition.Default
-	} else if required {
-		// Attributes are always required=false
-		context.MapChild(definition.Name, nil).ReportPropertyRequired(kind)
-	} else if kind == "attribute" {
-		// Attributes should always appear, even if they have no default value
-		self[definition.Name] = NewValue(context.MapChild(definition.Name, nil))
-	}
-}
-
-func (self Values) RenderProperties(definitions PropertyDefinitions, kind string, context *tosca.Context) {
-	for key, definition := range definitions {
-		definition.Render()
-		if value, ok := self[key]; !ok {
-			self.RenderMissingValue(definition.AttributeDefinition, kind, definition.IsRequired(), context)
-			// (If the above assigns the "default" value -- it has already been rendered elsewhere)
-		} else if definition.DataType != nil {
-			value.RenderProperty(definition.DataType, definition)
-		}
-	}
-
-	for key, value := range self {
-		if _, ok := definitions[key]; !ok {
-			value.Context.ReportUndeclared(kind)
-			delete(self, key)
-		}
-	}
-}
-
 func (self Values) RenderAttributes(definitions AttributeDefinitions, context *tosca.Context) {
 	for key, definition := range definitions {
+		definition.Render()
 		if _, ok := self[key]; !ok {
-			self.RenderMissingValue(definition, "attribute", false, context)
+			if definition.Default != nil {
+				self[definition.Name] = definition.Default
+			} else {
+				// Attributes should always appear, even if they have no default value
+				self[definition.Name] = NewValue(context.MapChild(definition.Name, nil))
+			}
 		}
 	}
 
 	for key, value := range self {
-		if definition, ok := definitions[key]; !ok {
-			value.Context.ReportUndeclared("attribute")
-			delete(self, key)
-		} else {
-			definition.Render()
+		if definition, ok := definitions[key]; ok {
 			if definition.DataType != nil {
 				value.Render(definition.DataType, definition, false, true)
 			}
+		} else {
+			value.Context.ReportUndeclared("attribute")
+			delete(self, key)
 		}
+	}
+}
+
+func (self Values) RenderProperties(definitions PropertyDefinitions, context *tosca.Context) {
+	for key, definition := range definitions {
+		definition.Render()
+		if _, ok := self[key]; !ok {
+			if definition.Default != nil {
+				self[definition.Name] = definition.Default
+			} else if definition.IsRequired() {
+				context.MapChild(definition.Name, nil).ReportValueRequired("property")
+			}
+		}
+	}
+
+	for key, value := range self {
+		if definition, ok := definitions[key]; ok {
+			// Avoid re-rendering
+			if value != definition.Default {
+				if definition.DataType != nil {
+					value.RenderProperty(definition.DataType, definition)
+				}
+			}
+		} else {
+			value.Context.ReportUndeclared("property")
+			delete(self, key)
+		}
+	}
+}
+
+func (self Values) RenderInputs(definitions ParameterDefinitions, context *tosca.Context) {
+	for key, definition := range definitions {
+		definition.Render()
+		if _, ok := self[key]; !ok {
+			if definition.Value != nil {
+				self[definition.Name] = definition.Value
+			} else if definition.IsRequired() {
+				context.MapChild(definition.Name, nil).ReportValueRequired("input")
+			}
+		}
+	}
+
+	for key, value := range self {
+		if definition, ok := definitions[key]; ok {
+			// Avoid re-rendering
+			if value != definition.Value {
+				if definition.DataType != nil {
+					value.RenderProperty(definition.DataType, definition.PropertyDefinition)
+				}
+			}
+		}
+		// No "else": we allow ad-hoc input assignments
 	}
 }
 

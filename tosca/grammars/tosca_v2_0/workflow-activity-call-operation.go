@@ -97,7 +97,7 @@ func (self *WorkflowActivityCallOperation) Render(stepDefinition *WorkflowStepDe
 	}
 
 	if operationDefinition != nil {
-		self.Inputs.RenderProperties(operationDefinition.InputDefinitions, "input", self.Context.FieldChild("inputs", nil))
+		self.Inputs.RenderInputs(operationDefinition.InputDefinitions, self.Context.FieldChild("inputs", nil))
 	}
 }
 

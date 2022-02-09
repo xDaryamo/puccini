@@ -17,7 +17,7 @@ import (
 type InterfaceType struct {
 	*Type `name:"interface type"`
 
-	InputDefinitions        PropertyDefinitions     `read:"inputs,PropertyDefinition" inherit:"inputs,Parent"`
+	InputDefinitions        ParameterDefinitions    `read:"inputs,ParameterDefinition" inherit:"inputs,Parent"`
 	OperationDefinitions    OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,Parent"`
 	NotificationDefinitions NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,Parent"` // introduced in TOSCA 1.3
 
@@ -27,7 +27,7 @@ type InterfaceType struct {
 func NewInterfaceType(context *tosca.Context) *InterfaceType {
 	return &InterfaceType{
 		Type:                    NewType(context),
-		InputDefinitions:        make(PropertyDefinitions),
+		InputDefinitions:        make(ParameterDefinitions),
 		OperationDefinitions:    make(OperationDefinitions),
 		NotificationDefinitions: make(NotificationDefinitions),
 	}

@@ -182,7 +182,7 @@ func (self *Context) ReportReferenceAmbiguous(kind string, entityPtr EntityPtr) 
 	return self.ReportPathf(1, "ambiguous %s in %s %s: %s", kind, typeName, self.Problems.Stylist.Name(quote(name)), self.FormatBadData())
 }
 
-func (self *Context) ReportPropertyRequired(kind string) bool {
+func (self *Context) ReportValueRequired(kind string) bool {
 	return self.ReportPathf(1, "unassigned required %s", kind)
 }
 
