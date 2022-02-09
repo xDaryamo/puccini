@@ -2,6 +2,8 @@
 const traversal = require('tosca.lib.traversal');
 const tosca = require('tosca.lib.utils');
 
+const enforceCapabilityOccurrences = !traversal.hasQuirk(clout, 'capabilities.occurrences.permissive');
+
 // Remove existing relationships
 let nodeTemplateVertexes = [];
 for (let vertexId in clout.vertexes) {
@@ -37,7 +39,7 @@ for (let v = 0, l = nodeTemplateVertexes.length; v < l; v++) {
 	}
 }
 
-if (!traversal.hasQuirk(clout, 'capabilities.occurrences.permissive'))
+if (enforceCapabilityOccurrences)
 	for (let v = 0, l = nodeTemplateVertexes.length; v < l; v++) {
 		let vertex = nodeTemplateVertexes[v];
 		let nodeTemplate = vertex.properties;
@@ -215,10 +217,12 @@ function gatherCandidateCapabilities(requirement, candidateNodeTemplates) {
 				continue;
 			}
 
-			let maxRelationshipCount = candidateCapability.maxRelationshipCount;
-			if ((maxRelationshipCount !== -1) && (countRelationships(candidateVertex, candidateCapabilityName) === maxRelationshipCount)) {
-				puccini.log.debugf('%s: capability "%s" in node template "%s" already has %d relationships, the maximum allowed', path, candidateCapabilityName, candidateNodeTemplateName, maxRelationshipCount);
-				continue;
+			if (enforceCapabilityOccurrences) {
+				let maxRelationshipCount = candidateCapability.maxRelationshipCount;
+				if ((maxRelationshipCount !== -1) && (countRelationships(candidateVertex, candidateCapabilityName) === maxRelationshipCount)) {
+					puccini.log.debugf('%s: capability "%s" in node template "%s" already has %d relationships, the maximum allowed', path, candidateCapabilityName, candidateNodeTemplateName, maxRelationshipCount);
+					continue;
+				}
 			}
 
 			candidates.push({
