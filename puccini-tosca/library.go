@@ -8,22 +8,19 @@ import (
 
 	"github.com/tliron/kutil/ard"
 	"github.com/tliron/kutil/format"
-	"github.com/tliron/kutil/logging"
 	"github.com/tliron/kutil/problems"
 	urlpkg "github.com/tliron/kutil/url"
 	cloutpkg "github.com/tliron/puccini/clout"
+	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
 	"github.com/tliron/yamlkeys"
 )
-import "github.com/tliron/puccini/clout/js"
 
 var parserContext = parser.NewContext()
 
 //export Compile
 func Compile(url *C.char, inputs *C.char) *C.char {
-	logging.Configure(0, nil)
-
 	inputs_ := make(map[string]ard.Value)
 
 	if data, err := yamlkeys.DecodeAll(strings.NewReader(C.GoString(inputs))); err == nil {

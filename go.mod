@@ -5,11 +5,11 @@ go 1.17
 // replace github.com/tliron/kutil => /Depot/Projects/RedHat/kutil
 
 require (
-	github.com/dop251/goja v0.0.0-20220124171016-cfb079cdc7b4
+	github.com/dop251/goja v0.0.0-20220214123719-b09a6bfa842f
 	github.com/fxamacker/cbor/v2 v2.4.0
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/cobra v1.3.0
-	github.com/tliron/kutil v0.1.52
+	github.com/tliron/kutil v0.1.53
 	github.com/tliron/yamlkeys v1.3.5
 )
 
@@ -40,6 +40,7 @@ require (
 	github.com/kevinburke/ssh_config v0.0.0-20201106050909-4977a11b4351 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/klauspost/pgzip v1.2.5 // indirect
+	github.com/kortschak/utter v1.5.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
@@ -56,7 +57,7 @@ require (
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xanzy/ssh-agent v0.3.0 // indirect
 	github.com/zchee/color/v2 v2.0.6 // indirect
-	golang.org/x/crypto v0.0.0-20220131195533-30dcbda58838 // indirect
+	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
 	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
