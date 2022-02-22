@@ -5,6 +5,6 @@ import (
 )
 
 var log = logging.GetLogger("puccini.js")
-var logEvaluate = logging.NewSubLogger(log, "evaluate")
-var logValidate = logging.NewSubLogger(log, "validate")
-var logConvert = logging.NewSubLogger(log, "convert")
+var logEvaluate = logging.NewScopeLogger(log, "evaluate")
+var logValidate = logging.NewScopeLogger(log, "validate")
+var logConvert = logging.NewScopeLogger(log, "convert")

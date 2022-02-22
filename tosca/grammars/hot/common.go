@@ -6,8 +6,8 @@ import (
 )
 
 var log = logging.GetLogger("puccini.grammars.hot")
-var logRender = logging.NewSubLogger(log, "render")
-var logNormalize = logging.NewSubLogger(log, "normalize")
+var logRender = logging.NewScopeLogger(log, "render")
+var logNormalize = logging.NewScopeLogger(log, "normalize")
 
 var Grammar = tosca.NewGrammar()
 

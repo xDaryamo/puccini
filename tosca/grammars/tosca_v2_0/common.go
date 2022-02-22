@@ -6,9 +6,9 @@ import (
 )
 
 var log = logging.GetLogger("puccini.grammars.tosca_v2_0")
-var logInherit = logging.NewSubLogger(log, "inherit")
-var logRender = logging.NewSubLogger(log, "render")
-var logNormalize = logging.NewSubLogger(log, "normalize")
+var logInherit = logging.NewScopeLogger(log, "inherit")
+var logRender = logging.NewScopeLogger(log, "render")
+var logNormalize = logging.NewScopeLogger(log, "normalize")
 
 var Grammar = tosca.NewGrammar()
 

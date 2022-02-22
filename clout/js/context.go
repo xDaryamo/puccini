@@ -48,7 +48,7 @@ func NewContext(name string, log logging.Logger, arguments map[string]string, qu
 		AllowTimestamps: allowTimestamps,
 		Pretty:          pretty,
 		Output:          output,
-		Log:             logging.NewSubLogger(log, name),
+		Log:             logging.NewScopeLogger(log, name),
 		Stdout:          terminal.Stdout,
 		Stderr:          terminal.Stderr,
 		Stdin:           os.Stdin,
