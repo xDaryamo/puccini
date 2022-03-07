@@ -49,7 +49,7 @@ func (self *ServiceTemplate) NewNodeTemplate(name string) *NodeTemplate {
 type NodeTemplates map[string]*NodeTemplate
 
 // For access in JavaScript
-func (self NodeTemplates) Object(name string) map[string]interface{} {
+func (self NodeTemplates) Object(name string) map[string]any {
 	// JavaScript requires keys to be strings, so we would lose complex keys
 	o := make(ard.StringMap)
 	for key, nodeTemplate := range self {

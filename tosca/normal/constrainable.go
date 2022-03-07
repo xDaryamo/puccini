@@ -19,7 +19,7 @@ type Constrainable interface {
 // Constrainables
 //
 
-type Constrainables map[interface{}]Constrainable
+type Constrainables map[any]Constrainable
 
 //
 // ConstrainableList
@@ -27,7 +27,7 @@ type Constrainables map[interface{}]Constrainable
 
 type ConstrainableList []Constrainable
 
-func (self ConstrainableList) AppendWithKey(key interface{}, value Constrainable) ConstrainableList {
+func (self ConstrainableList) AppendWithKey(key any, value Constrainable) ConstrainableList {
 	var constrainableKey Constrainable
 
 	var ok bool

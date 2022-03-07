@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
 	"strings"
 
 	"github.com/tliron/kutil/ard"
@@ -35,7 +34,7 @@ func NewClout() *Clout {
 
 type MarshalableCloutStringMaps Clout
 
-func (self *Clout) MarshalableStringMaps() interface{} {
+func (self *Clout) MarshalableStringMaps() any {
 	return &MarshalableCloutStringMaps{
 		Version:    self.Version,
 		Metadata:   ard.EnsureStringMaps(self.Metadata),

@@ -92,7 +92,7 @@ func (self *Context) ReadFields(entityPtr EntityPtr) []string {
 	return keys
 }
 
-func (self *Context) setMapItem(field reflect.Value, item interface{}) {
+func (self *Context) setMapItem(field reflect.Value, item any) {
 	key := GetKey(item)
 	keyValue := reflect.ValueOf(key)
 	itemValue := reflect.ValueOf(item)
@@ -106,7 +106,7 @@ func (self *Context) setMapItem(field reflect.Value, item interface{}) {
 	field.SetMapIndex(keyValue, itemValue)
 }
 
-func (self *Context) appendUnique(field reflect.Value, item interface{}) reflect.Value {
+func (self *Context) appendUnique(field reflect.Value, item any) reflect.Value {
 	length := field.Len()
 	if length > 0 {
 		key := GetKey(item)
@@ -206,27 +206,27 @@ func (self *ReadField) Read() {
 
 	if self.Reader != nil {
 		if reflection.IsSliceOfPtrToStruct(fieldType) {
-			// Field is compatible with []*interface{}
+			// Field is compatible with []*any
 			slice := field
 			switch self.Mode {
 			case ReadFieldModeList:
-				self.Context.FieldChild(self.Key, childData).ReadListItems(self.Reader, func(item interface{}) {
+				self.Context.FieldChild(self.Key, childData).ReadListItems(self.Reader, func(item any) {
 					slice = reflect.Append(slice, reflect.ValueOf(item))
 				})
 			case ReadFieldModeSequencedList:
-				self.Context.FieldChild(self.Key, childData).ReadSequencedListItems(self.Reader, func(item interface{}) {
+				self.Context.FieldChild(self.Key, childData).ReadSequencedListItems(self.Reader, func(item any) {
 					slice = reflect.Append(slice, reflect.ValueOf(item))
 				})
 			case ReadFieldModeUniqueSequencedList:
 				context := self.Context.FieldChild(self.Key, childData)
-				context.ReadSequencedListItems(self.Reader, func(item interface{}) {
+				context.ReadSequencedListItems(self.Reader, func(item any) {
 					slice = context.appendUnique(slice, item)
 				})
 			case ReadFieldModeItem:
 				length := slice.Len()
 				slice = reflect.Append(slice, reflect.ValueOf(self.Reader(self.Context.ListChild(length, childData))))
 			default:
-				self.Context.FieldChild(self.Key, childData).ReadMapItems(self.Reader, func(item interface{}) {
+				self.Context.FieldChild(self.Key, childData).ReadMapItems(self.Reader, func(item any) {
 					slice = reflect.Append(slice, reflect.ValueOf(item))
 				})
 			}
@@ -237,16 +237,16 @@ func (self *ReadField) Read() {
 			}
 			field.Set(slice)
 		} else if reflection.IsMapOfStringToPtrToStruct(fieldType) {
-			// Field is compatible with map[string]*interface{}
+			// Field is compatible with map[string]*any
 			switch self.Mode {
 			case ReadFieldModeList:
 				context := self.Context.FieldChild(self.Key, childData)
-				context.ReadListItems(self.Reader, func(item interface{}) {
+				context.ReadListItems(self.Reader, func(item any) {
 					context.setMapItem(field, item)
 				})
 			case ReadFieldModeSequencedList, ReadFieldModeUniqueSequencedList:
 				context := self.Context.FieldChild(self.Key, childData)
-				context.ReadSequencedListItems(self.Reader, func(item interface{}) {
+				context.ReadSequencedListItems(self.Reader, func(item any) {
 					context.setMapItem(field, item)
 				})
 			case ReadFieldModeItem:
@@ -254,12 +254,12 @@ func (self *ReadField) Read() {
 				context.setMapItem(field, self.Reader(context))
 			default:
 				context := self.Context.FieldChild(self.Key, childData)
-				context.ReadMapItems(self.Reader, func(item interface{}) {
+				context.ReadMapItems(self.Reader, func(item any) {
 					context.setMapItem(field, item)
 				})
 			}
 		} else {
-			// Field is compatible with *interface{}
+			// Field is compatible with *any
 			item := self.Reader(self.Context.FieldChild(self.Key, childData))
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
@@ -355,9 +355,9 @@ func (self *Context) ReadStringListFixed(length int) *[]string {
 	return strings
 }
 
-func (self *Context) ReadStringMap() *map[string]interface{} {
+func (self *Context) ReadStringMap() *map[string]any {
 	if self.ValidateType(ard.TypeMap) {
-		map_ := make(map[string]interface{})
+		map_ := make(map[string]any)
 		for key, data := range self.Data.(ard.Map) {
 			var ok bool
 			var key_ string

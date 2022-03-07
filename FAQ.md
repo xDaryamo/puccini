@@ -115,7 +115,7 @@ processor in Python, Ruby, etc., to do exactly what you need, e.g.:
 Also check out [yq](https://mikefarah.gitbook.io/yq/), a great little tool for extracting YAML and
 even performing simple manipulations. Example:
 
-    puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml | yq eval '.vertexes.[]|select(.properties.name=="light12")' -
+    puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml | yq '.vertexes.[]|select(.properties.name=="light6")'
 
 ### Can I use text templating instead of TOSCA functions like `get_input`?
 

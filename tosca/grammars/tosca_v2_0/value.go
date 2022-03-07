@@ -464,17 +464,17 @@ func (self Values) Normalize(normalConstrainables normal.Constrainables) {
 
 type ValueList struct {
 	EntryConstraints ConstraintClauses
-	Slice            []interface{}
+	Slice            []any
 }
 
 func NewValueList(definition *AttributeDefinition, length int, entryConstraints ConstraintClauses) *ValueList {
 	return &ValueList{
 		EntryConstraints: entryConstraints,
-		Slice:            make([]interface{}, length),
+		Slice:            make([]any, length),
 	}
 }
 
-func (self *ValueList) Set(index int, value interface{}) {
+func (self *ValueList) Set(index int, value any) {
 	self.Slice[index] = value
 }
 
@@ -512,7 +512,7 @@ func NewValueMap(definition *AttributeDefinition, keyConstraints ConstraintClaus
 	}
 }
 
-func (self *ValueMap) Put(key interface{}, value interface{}) {
+func (self *ValueMap) Put(key any, value any) {
 	self.Map[key] = value
 }
 

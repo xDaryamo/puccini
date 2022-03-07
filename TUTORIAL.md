@@ -325,10 +325,12 @@ more than a string, which is eminently transmittable and storable.
 
 Of course you still need a tool to execute those JavaScript scriptlets, but it is
 the same tool, `puccini-clout`, for all Clouts, whatever version of TOSCA they come
-from.
+from. Indeed, the Clout can contain custom vertexes, edges, and scriptlets, including
+those that did not originate in a TOSCA service template. They do not even have to
+adhere to the TOSCA structure.
 
 For examples of how to create your own custom functions, constraints, and other
-scriptlets, see [here](examples/javascript/).
+scriptlets for TOSCA, see [here](examples/javascript/).
 
 
 Next Steps

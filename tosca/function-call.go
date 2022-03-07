@@ -8,15 +8,15 @@ package tosca
 //
 
 type FunctionCall struct {
-	Name      string        `json:"name" yaml:"name"`
-	Arguments []interface{} `json:"arguments" yaml:"arguments"`
-	URL       string        `json:"url,omitempty" yaml:"url,omitempty"`
-	Row       int           `json:"row,omitempty" yaml:"row,omitempty"`
-	Column    int           `json:"column,omitempty" yaml:"column,omitempty"`
-	Path      string        `json:"path,omitempty" yaml:"path,omitempty"`
+	Name      string `json:"name" yaml:"name"`
+	Arguments []any  `json:"arguments" yaml:"arguments"`
+	URL       string `json:"url,omitempty" yaml:"url,omitempty"`
+	Row       int    `json:"row,omitempty" yaml:"row,omitempty"`
+	Column    int    `json:"column,omitempty" yaml:"column,omitempty"`
+	Path      string `json:"path,omitempty" yaml:"path,omitempty"`
 }
 
-func NewFunctionCall(name string, arguments []interface{}, url string, row int, column int, path string) *FunctionCall {
+func NewFunctionCall(name string, arguments []any, url string, row int, column int, path string) *FunctionCall {
 	return &FunctionCall{
 		Name:      name,
 		Arguments: arguments,
@@ -27,7 +27,7 @@ func NewFunctionCall(name string, arguments []interface{}, url string, row int, 
 	}
 }
 
-func (self *Context) NewFunctionCall(name string, arguments []interface{}) *FunctionCall {
+func (self *Context) NewFunctionCall(name string, arguments []any) *FunctionCall {
 	row, column := self.GetLocation()
 	return NewFunctionCall(name, arguments, self.URL.String(), row, column, self.Path.String())
 }

@@ -24,7 +24,7 @@ func (self *Context) Report(skip int, item string, message string) bool {
 	return self.ReportURL(skip+1, item, message, row, column)
 }
 
-func (self *Context) Reportf(skip int, f string, arg ...interface{}) bool {
+func (self *Context) Reportf(skip int, f string, arg ...any) bool {
 	return self.Report(skip+1, "", fmt.Sprintf(f, arg...))
 }
 
@@ -36,7 +36,7 @@ func (self *Context) ReportPath(skip int, message string) bool {
 	return self.Report(skip+1, path, message)
 }
 
-func (self *Context) ReportPathf(skip int, f string, arg ...interface{}) bool {
+func (self *Context) ReportPathf(skip int, f string, arg ...any) bool {
 	return self.ReportPath(skip+1, fmt.Sprintf(f, arg...))
 }
 
@@ -228,7 +228,7 @@ func (self *Context) ReportCopyLoop(name string) bool {
 
 // Utils
 
-func quote(value interface{}) string {
+func quote(value any) string {
 	return fmt.Sprintf("%q", value)
 }
 

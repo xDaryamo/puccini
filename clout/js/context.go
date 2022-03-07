@@ -57,7 +57,7 @@ func NewContext(name string, log logging.Logger, arguments map[string]string, qu
 	}
 }
 
-func (self *Context) NewEnvironment(clout *cloutpkg.Clout, apis map[string]interface{}) *js.Environment {
+func (self *Context) NewEnvironment(clout *cloutpkg.Clout, apis map[string]any) *js.Environment {
 	environment := js.NewEnvironment(self.URLContext, nil)
 
 	environment.CreateResolver = func(url urlpkg.URL, context *js.Context) js.ResolveFunc {
@@ -98,7 +98,7 @@ func (self *Context) NewEnvironment(clout *cloutpkg.Clout, apis map[string]inter
 	return environment
 }
 
-func (self *Context) Require(clout *cloutpkg.Clout, scriptletName string, apis map[string]interface{}) (*goja.Object, error) {
+func (self *Context) Require(clout *cloutpkg.Clout, scriptletName string, apis map[string]any) (*goja.Object, error) {
 	environment := self.NewEnvironment(clout, apis)
 	return environment.RequireID(scriptletName)
 }

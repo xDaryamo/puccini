@@ -212,7 +212,7 @@ func (self *Timestamp) String() string {
 	return self.CanonicalString
 }
 
-func (self *Timestamp) Compare(data interface{}) (int, error) {
+func (self *Timestamp) Compare(data any) (int, error) {
 	if timestamp, ok := data.(*Timestamp); ok {
 		return CompareInt64(self.CanonicalNumber, timestamp.CanonicalNumber), nil
 	}

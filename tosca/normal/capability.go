@@ -48,7 +48,7 @@ type MarshalableCapability struct {
 	Location             *Location      `json:"location" yaml:"location"`
 }
 
-func (self *Capability) Marshalable() interface{} {
+func (self *Capability) Marshalable() any {
 	var minRelationshipCount int64
 	var maxRelationshipCount int64
 	minRelationshipCount = int64(self.MinRelationshipCount)
@@ -75,7 +75,7 @@ func (self *Capability) MarshalJSON() ([]byte, error) {
 }
 
 // yaml.Marshaler interface
-func (self *Capability) MarshalYAML() (interface{}, error) {
+func (self *Capability) MarshalYAML() (any, error) {
 	return self.Marshalable(), nil
 }
 

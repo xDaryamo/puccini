@@ -109,7 +109,7 @@ func (self *Version) SetComparer(comparer string) {
 	self.Comparer = comparer
 }
 
-func (self *Version) Compare(data interface{}) (int, error) {
+func (self *Version) Compare(data any) (int, error) {
 	if version, ok := data.(*Version); ok {
 		d := CompareUint32(self.Major, version.Major)
 		if d != 0 {

@@ -61,7 +61,7 @@ type MapEntry struct {
 	Value Coercible `json:"$value" yaml:"$value"`
 }
 
-func (self *CloutContext) NewMapEntry(data interface{}, keyConstraints Constraints, valueConstraints Constraints, functionCallContext FunctionCallContext) (MapEntry, error) {
+func (self *CloutContext) NewMapEntry(data any, keyConstraints Constraints, valueConstraints Constraints, functionCallContext FunctionCallContext) (MapEntry, error) {
 	var entry MapEntry
 
 	if map_, ok := data.(ard.StringMap); ok {
@@ -86,7 +86,7 @@ func (self *CloutContext) NewMapEntry(data interface{}, keyConstraints Constrain
 	}
 }
 
-func (self MapEntry) Coerce() (string, interface{}, error) {
+func (self MapEntry) Coerce() (string, any, error) {
 	if key, err := self.Key.Coerce(); err == nil {
 		if value, err := self.Value.Coerce(); err == nil {
 			return fmt.Sprintf("%v", key), value, nil

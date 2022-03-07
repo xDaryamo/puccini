@@ -52,6 +52,6 @@ func (self *Map) AddValueConstraint(constraint *tosca.FunctionCall) {
 	self.ValueConstraints = append(self.ValueConstraints, NewFunctionCall(constraint))
 }
 
-func (self *Map) Put(key interface{}, value Constrainable) {
+func (self *Map) Put(key any, value Constrainable) {
 	self.Entries = self.Entries.AppendWithKey(key, value)
 }

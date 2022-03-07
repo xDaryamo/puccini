@@ -14,9 +14,9 @@ import (
 //
 
 type FunctionCallContext struct {
-	Site   interface{}
-	Source interface{}
-	Target interface{}
+	Site   any
+	Source any
+	Target any
 }
 
 //
@@ -225,7 +225,7 @@ func encodeArgument(argument ard.Value) string {
 	}
 }
 
-func asInt(value interface{}) (int, bool) {
+func asInt(value any) (int, bool) {
 	switch value_ := value.(type) {
 	case int64:
 		return int(value_), true

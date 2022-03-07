@@ -48,7 +48,7 @@ type MarshalableRequirement struct {
 	Location                        *Location          `json:"location" yaml:"location"`
 }
 
-func (self *Requirement) Marshalable() interface{} {
+func (self *Requirement) Marshalable() any {
 	var capabilityTypeName string
 	var capabilityName string
 	var nodeTypeName string
@@ -85,7 +85,7 @@ func (self *Requirement) MarshalJSON() ([]byte, error) {
 }
 
 // yaml.Marshaler interface
-func (self *Requirement) MarshalYAML() (interface{}, error) {
+func (self *Requirement) MarshalYAML() (any, error) {
 	return self.Marshalable(), nil
 }
 

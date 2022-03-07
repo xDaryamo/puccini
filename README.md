@@ -8,23 +8,27 @@ Puccini
 Cloud topology management and deployment tools based on
 [TOSCA](https://www.oasis-open.org/committees/tosca/).
 
-Puccini is primarily a TOSCA processor. Its main function is to parse a TOSCA service template
-and compile it into the [Clout format](clout/).
+Puccini is primarily a TOSCA processor. It parses TOSCA service templates and compiles them into
+the [Clout format](clout/).
 
 Let's dive in!
 
-* Head to the [tutorial](TUTORIAL.md).
-* Also check out this [live demo of Puccini TOSCA running in a browser](https://web.puccini.cloud/).
+* Head to the [tutorial](TUTORIAL.md). It will likely answer most of your questions.
+* Want to try it out without installing it?
+  [Here's a live demo of Puccini TOSCA running in a browser](https://web.puccini.cloud/).
 
 Note that Puccini is intentionally *not* an orchestrator. This is a "BYOO" kind of establishment
-("Bring Your Own Orchestrator").
+("Bring Your Own Orchestrator"). Available orchestration integrations:
 
-If you are looking for a comprehensive TOSCA orchestrator for
-[Kubernetes](https://kubernetes.io/) based on Puccini, check out
-[Turandot](https://turandot.puccini.cloud/). Puccini also
-[enables TOSCA for Ansible](examples/ansible/) using custom extensions.
-Also included are examples of [generating Ansible playbooks for OpenStack](examples/openstack/)
-as well as [generating BPMN processes](examples/bpmn/) for middleware integration.
+* [Kubernetes](https://kubernetes.io/): [Turandot](https://turandot.puccini.cloud/) is an operator
+  that brings TOSCA into Kubernetes
+* [Ansible](https://www.ansible.com/): Puccini is [packaged for Ansible Galaxy](wrappers/ansible/)
+* [OpenStack](https://www.openstack.org/): see [these examples using Ansible](examples/openstack/)
+  (Puccini also natively supports OpenStack's Heat Orchestration Template language)
+* Process automation: see [these examples for BPMN](examples/bpmn/)
+
+Puccini is also available as a [GitHub action](https://github.com/marketplace/actions/setup-puccini-tosca),
+allowing you to validate and otherwise use TOSCA in your git workflow.
 
 For a TOSCA development environment, check out the
 [TOSCA Visual Studio Code Extension](https://github.com/tliron/puccini-vscode/), which is based
@@ -66,8 +70,8 @@ Puccini can parse all versions of TOSCA:
 
 Additionally, Puccini can parse the following TOSCA-like dialects:
 
-* [Cloudify DSL 1.3](https://docs.cloudify.co/5.0.5/developer/blueprints/)
-* [OpenStack Heat HOT 2021-04-16](https://docs.openstack.org/heat/wallaby/template_guide/hot_guide.html)
+* [Cloudify DSL 1.3](https://docs.cloudify.co/6.3.0/developer/blueprints/)
+* [OpenStack Heat Orchestration Template language (HOT) 2021-04-16](https://docs.openstack.org/heat/wallaby/template_guide/hot_guide.html)
 
 TOSCA is a complex object-oriented language. We put considerable effort into adhering to every
 aspect of the grammar, especially in regards to value type checking and type inheritance contracts,

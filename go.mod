@@ -1,15 +1,13 @@
 module github.com/tliron/puccini
 
-go 1.17
-
-// replace github.com/tliron/kutil => /Depot/Projects/RedHat/kutil
+go 1.18
 
 require (
 	github.com/dop251/goja v0.0.0-20220214123719-b09a6bfa842f
 	github.com/fxamacker/cbor/v2 v2.4.0
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/cobra v1.3.0
-	github.com/tliron/kutil v0.1.55
+	github.com/tliron/kutil v0.1.56
 	github.com/tliron/yamlkeys v1.3.5
 )
 

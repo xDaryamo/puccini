@@ -23,7 +23,7 @@ var stopAtPhase uint32
 var dumpPhases []uint
 var filter string
 
-var inputValues = make(map[string]interface{})
+var inputValues = make(map[string]any)
 
 func init() {
 	rootCommand.AddCommand(parseCommand)

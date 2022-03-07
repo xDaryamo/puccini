@@ -21,4 +21,4 @@ function build () {
 build puccini-tosca
 build puccini-clout
 
-cp "$ROOT/puccini-csar" "$GOPATH/bin/"
+rsync "$ROOT/puccini-csar" "$GOPATH/bin/"

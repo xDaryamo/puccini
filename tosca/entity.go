@@ -14,7 +14,7 @@ import (
 // EntityPtr
 //
 
-type EntityPtr = interface{}
+type EntityPtr = any
 
 //
 // EntityPtrs

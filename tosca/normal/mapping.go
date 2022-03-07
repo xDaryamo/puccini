@@ -55,7 +55,7 @@ type MarshalableMapping struct {
 	Value            Constrainable `json:"value,omitempty" yaml:"value,omitempty"`
 }
 
-func (self *Mapping) Marshalable() interface{} {
+func (self *Mapping) Marshalable() any {
 	if self.NodeTemplate != nil {
 		return &MarshalableMapping{
 			NodeTemplateName: self.NodeTemplate.Name,
@@ -78,7 +78,7 @@ func (self *Mapping) MarshalJSON() ([]byte, error) {
 }
 
 // yaml.Marshaler interface
-func (self *Mapping) MarshalYAML() (interface{}, error) {
+func (self *Mapping) MarshalYAML() (any, error) {
 	return self.Marshalable(), nil
 }
 

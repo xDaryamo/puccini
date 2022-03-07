@@ -2,6 +2,8 @@
 .pydevproject
 .vscode
 
+go.work
+
 dist/
 docs/html/
 work/

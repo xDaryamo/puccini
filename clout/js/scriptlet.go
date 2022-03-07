@@ -101,7 +101,7 @@ type ScriptletNotFoundError struct {
 	string
 }
 
-func NewScriptletNotFoundError(format string, args ...interface{}) *ScriptletNotFoundError {
+func NewScriptletNotFoundError(format string, args ...any) *ScriptletNotFoundError {
 	return &ScriptletNotFoundError{fmt.Sprintf(format, args...)}
 }
 

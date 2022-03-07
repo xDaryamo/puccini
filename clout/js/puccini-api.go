@@ -60,7 +60,7 @@ func (self *Context) NewPucciniAPI() *PucciniAPI {
 	}
 }
 
-func (self *PucciniAPI) Write(data interface{}, path string, dontOverwrite bool) {
+func (self *PucciniAPI) Write(data any, path string, dontOverwrite bool) {
 	output := self.context.Output
 	if path != "" {
 		// Our path is relative to output path
@@ -123,7 +123,7 @@ func (self *PucciniAPI) Fail(message string) {
 	util.Exit(1)
 }
 
-func (self *PucciniAPI) Failf(format string, args ...interface{}) {
+func (self *PucciniAPI) Failf(format string, args ...any) {
 	self.Fail(fmt.Sprintf(format, args...))
 }
 

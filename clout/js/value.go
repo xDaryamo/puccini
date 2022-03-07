@@ -11,7 +11,7 @@ import (
 type Value struct {
 	Notation ard.StringMap `json:"-" yaml:"-"`
 
-	Data        interface{}   `json:"data" yaml:"data"` // List, Map, or ard.Value
+	Data        any           `json:"data" yaml:"data"` // List, Map, or ard.Value
 	Constraints Constraints   `json:"constraints,omitempty" yaml:"constraints,omitempty"`
 	Converter   *FunctionCall `json:"converter,omitempty" yaml:"converter,omitempty"`
 }

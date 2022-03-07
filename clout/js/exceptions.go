@@ -11,7 +11,7 @@ func UnwrapException(err error) error {
 		original := exception.Value().Export()
 		if wrapped, ok := original.(error); ok {
 			return wrapped
-		} else if map_, ok := original.(map[string]interface{}); ok {
+		} else if map_, ok := original.(map[string]any); ok {
 			if value, ok := map_["value"]; ok {
 				if wrapped, ok := value.(error); ok {
 					return wrapped

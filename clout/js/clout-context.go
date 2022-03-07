@@ -25,7 +25,7 @@ func (self *Context) NewCloutContext(clout *cloutpkg.Clout, jsContext *js.Contex
 	}
 }
 
-func (self *CloutContext) CallFunction(scriptletName string, functionName string, arguments []interface{}, functionCallContext FunctionCallContext) (interface{}, error) {
+func (self *CloutContext) CallFunction(scriptletName string, functionName string, arguments []any, functionCallContext FunctionCallContext) (any, error) {
 	if exports, err := self.JSContext.Environment.RequireID(scriptletName); err == nil {
 		if function := exports.Get(functionName); function != nil {
 			return CallFunction(self.JSContext.Environment.Runtime, function, functionCallContext, arguments)

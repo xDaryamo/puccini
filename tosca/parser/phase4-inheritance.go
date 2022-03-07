@@ -97,7 +97,7 @@ func (self *InheritContext) GetDependencies(entityPtr tosca.EntityPtr) tosca.Ent
 		// Does this case ever happen?
 		// Would conflict with anonymous pointer fields (Go "inheritance")
 		//		if reflection.IsPtrToStruct(structField.Type) {
-		//			// Compatible with *interface{}
+		//			// Compatible with *any
 		//			field := entity.FieldByName(structField.Name)
 		//			if !field.IsNil() {
 		//				e := field.Interface()
@@ -109,14 +109,14 @@ func (self *InheritContext) GetDependencies(entityPtr tosca.EntityPtr) tosca.Ent
 		//		}
 
 		if reflection.IsMapOfStringToPtrToStruct(structField.Type) {
-			// Compatible with map[string]*interface{}
+			// Compatible with map[string]*any
 			field := entity.FieldByName(structField.Name)
 			for _, mapKey := range field.MapKeys() {
 				element := field.MapIndex(mapKey)
 				dependencies.Add(element.Interface())
 			}
 		} else if reflection.IsSliceOfPtrToStruct(structField.Type) {
-			// Compatible with []*interface{}
+			// Compatible with []*any
 			field := entity.FieldByName(structField.Name)
 			length := field.Len()
 			for i := 0; i < length; i++ {
@@ -168,7 +168,7 @@ func (self *InheritField) Inherit() {
 	}
 }
 
-// Field is compatible with *interface{}
+// Field is compatible with *any
 func (self *InheritField) InheritEntity() {
 	if self.Field.IsNil() && !self.ParentField.IsNil() {
 		self.Field.Set(self.ParentField)
@@ -204,7 +204,7 @@ func (self *InheritField) InheritStringsFromSlice() {
 	self.Field.Set(reflect.ValueOf(&slice))
 }
 
-// Field is compatible with []*interface{}
+// Field is compatible with []*any
 func (self *InheritField) InheritStructsFromSlice() {
 	slice := self.Field
 
@@ -259,7 +259,7 @@ func (self *InheritField) InheritStringsFromMap() {
 	self.Field.Set(reflect.ValueOf(&map_))
 }
 
-// Field is compatible with map[string]*interface{}
+// Field is compatible with map[string]*any
 func (self *InheritField) InheritStructsFromMap() {
 	for _, mapKey := range self.ParentField.MapKeys() {
 		element := self.ParentField.MapIndex(mapKey)

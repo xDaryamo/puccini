@@ -107,11 +107,34 @@ Vertex
 
 ### `metadata` (map of string to anything)
 
-Often you'll find information here about what kind of vertex this is, e.g. a TOSCA node.
+The convention is that each application will have its own key under `metadata`. Often you'll find
+information here about what kind of vertex this is, e.g. a TOSCA node:
+
+```yaml
+metadata:
+  puccini:
+    kind: NodeTemplate
+    version: "1.0"
+```
 
 ### `properties` (map of string to anything)
 
-Implementation-specific properties for the vertex.
+Implementation-specific properties for the vertex. For example, a TOSCA NodeTemplate would have
+these:
+
+```yaml
+artifacts: {}
+attributes: {}
+capabilities: {}
+description: ""
+directives: []
+interfaces: {}
+metadata: {}
+name: "my-node-template"
+properties: {}
+requirements: []
+types: {}
+```
 
 ### `edgesOut` (list of Edge)
 
@@ -128,11 +151,28 @@ Edge
 
 ### `metadata` (map of string to anything)
 
-Often you'll find information here about what kind of edge this is, e.g. a TOSCA relationship.
+Often you'll find information here about what kind of edge this is, e.g. a TOSCA relationship:
+
+```yaml
+metadata:
+  puccini:
+    kind: Relationship
+    version: "1.0"
+```
 
 ### `properties` (map of string to anything)
 
-Implementation-specific properties for the vertex.
+Implementation-specific properties for the edge, e.g. for a TOSCA relationship:
+
+```yaml
+attributes: {}
+capability: "socket"
+description: ""
+interfaces: {}
+name: "plug"
+properties: {}
+types: {}
+```
 
 ### `targetID` (string)
 
@@ -141,7 +181,7 @@ The key in the vertexes map to which this edge is the target.
 Note that there is no need for a `sourceID` because the edge is already located in the `edgesOut`
 field of its source vertex. Clout parsers may very well add such a field for convenience.
 
-Better yet, Clout parsers may do the ID lookup internally, provide direct access to the source and
+Also, Clout parsers may do the ID lookup internally, provide direct access to the source and
 target vertexes, and hide the `targetID` field.
 
 
@@ -222,36 +262,38 @@ The "type information" mentioned above is a map with the following optional fiel
 
 Example (generated from [this TOSCA example](../examples/tosca/data-types.yaml)):
 
-    lowercase_string_map:
-      $map:
-        - $key:
-            $functionCall:
-              name: tosca.function.concat
-              arguments:
-                - $value: recip
-                - $value: ient
-              path: topology_template.node_templates["data"].properties["lowercase_string_map"]["concat:¶  - recip¶  - ient"]
-              url: file:examples/tosca/data-types.yaml
-              row: 180
-              column: 9
-          $value: Puccini
-        - $key:
-            $value: greeting
-          $value: Hello
-      $keyConstraints:
-        - $functionCall:
-            name: tosca.constraint.pattern
-            arguments:
-              - $value: '[a-z]*'
-            path: topology_template.node_templates["data"].properties["lowercase_string_map"]
-            url: file:examples/tosca/data-types.yaml
-            row: 180
-            column: 9
-      $information:
-        type:
-          name: map
-        key:
-          name: LowerCase
-          description: Lowercase string
-        value:
-          name: string
+```yaml
+lowercase_string_map:
+  $map:
+    - $key:
+        $functionCall:
+          name: tosca.function.concat
+          arguments:
+            - $value: recip
+            - $value: ient
+          path: topology_template.node_templates["data"].properties["lowercase_string_map"]["concat:¶  - recip¶  - ient"]
+          url: file:examples/tosca/data-types.yaml
+          row: 188
+          column: 9
+      $value: Puccini
+    - $key:
+        $value: greeting
+      $value: Hello
+  $keyConstraints:
+    - $functionCall:
+        name: tosca.constraint.pattern
+        arguments:
+          - $value: '[a-z]*'
+        path: topology_template.node_templates["data"].properties["lowercase_string_map"]
+        url: file:examples/tosca/data-types.yaml
+        row: 188
+        column: 9
+  $information:
+    type:
+      name: map
+    key:
+      name: LowerCase
+      description: Lowercase string
+    value:
+      name: string
+```

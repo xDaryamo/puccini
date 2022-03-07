@@ -52,7 +52,7 @@ type MarshalableVertexStringMaps struct {
 	EdgesOut   Edges         `json:"edgesOut"`
 }
 
-func (self *Vertex) MarshalableStringMaps() interface{} {
+func (self *Vertex) MarshalableStringMaps() any {
 	return &MarshalableVertexStringMaps{
 		Metadata:   ard.EnsureStringMaps(self.Metadata),
 		Properties: ard.EnsureStringMaps(self.Properties),

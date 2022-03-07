@@ -26,7 +26,7 @@ func TestParse(t *testing.T) {
 	context.compile("tosca/descriptions.yaml", nil)
 	context.compile("tosca/dsl-definitions.yaml", nil)
 	context.compile("tosca/functions.yaml", nil)
-	context.compile("tosca/inputs-and-outputs.yaml", map[string]interface{}{"ram": "1gib"})
+	context.compile("tosca/inputs-and-outputs.yaml", map[string]any{"ram": "1gib"})
 	context.compile("tosca/interfaces.yaml", nil)
 	context.compile("tosca/metadata.yaml", nil)
 	context.compile("tosca/namespaces.yaml", nil)
@@ -50,13 +50,13 @@ func TestParse(t *testing.T) {
 	context.compile("javascript/functions.yaml", nil)
 	context.compile("openstack/hello-world.yaml", nil)
 	context.compile("bpmn/open-loop.yaml", nil)
-	context.compile("cloudify/advanced-blueprint-example.yaml", map[string]interface{}{
+	context.compile("cloudify/advanced-blueprint-example.yaml", map[string]any{
 		"host_ip":                "1.2.3.4",
 		"agent_user":             "my_user",
 		"agent_private_key_path": "my_key",
 	})
 	context.compile("cloudify/example.yaml", nil)
-	context.compile("hot/hello-world.yaml", map[string]interface{}{
+	context.compile("hot/hello-world.yaml", map[string]any{
 		"username": "test",
 	})
 }
@@ -87,7 +87,7 @@ func NewContext(t *testing.T) *Context {
 	}
 }
 
-func (self *Context) compile(url string, inputs map[string]interface{}) {
+func (self *Context) compile(url string, inputs map[string]any) {
 	self.t.Run(url, func(t *testing.T) {
 		// Running the tests in parallel is not just for speed;
 		// it actually helps us to find concurrency bugs

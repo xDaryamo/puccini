@@ -40,7 +40,7 @@ func List(clout *cloutpkg.Clout) {
 	ListValue(metadata, nil)
 }
 
-func ListValue(value interface{}, path []string) {
+func ListValue(value any, path []string) {
 	switch value_ := value.(type) {
 	case string:
 		if !terminal.Quiet {

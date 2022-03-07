@@ -29,7 +29,7 @@ func (self *Context) NewCloutAPI(clout *cloutpkg.Clout, jsContext *js.Context) *
 	}
 }
 
-func (self *CloutAPI) Load(data interface{}) (*CloutAPI, error) {
+func (self *CloutAPI) Load(data any) (*CloutAPI, error) {
 	var clout *cloutpkg.Clout
 	var err error
 
@@ -55,7 +55,7 @@ func (self *CloutAPI) NewKey() string {
 	return cloutpkg.NewKey()
 }
 
-func (self *CloutAPI) Call(scriptletName string, functionName string, arguments []interface{}) (interface{}, error) {
+func (self *CloutAPI) Call(scriptletName string, functionName string, arguments []any) (any, error) {
 	return self.cloutContext.CallFunction(scriptletName, functionName, arguments, FunctionCallContext{})
 }
 
@@ -92,7 +92,7 @@ func (self *CloutAPI) Define(scriptletName string, scriptlet string) error {
 	return SetScriptlet(scriptletName, CleanupScriptlet(scriptlet), self.Clout)
 }
 
-func (self *CloutAPI) NewCoercible(value goja.Value, site interface{}, source interface{}, target interface{}) (Coercible, error) {
+func (self *CloutAPI) NewCoercible(value goja.Value, site any, source any, target any) (Coercible, error) {
 	if goja.IsUndefined(value) {
 		return nil, errors.New("undefined")
 	}
@@ -104,7 +104,7 @@ func (self *CloutAPI) NewCoercible(value goja.Value, site interface{}, source in
 	}
 }
 
-func (self *CloutAPI) NewConstraints(value goja.Value, site interface{}, source interface{}, target interface{}) (Constraints, error) {
+func (self *CloutAPI) NewConstraints(value goja.Value, site any, source any, target any) (Constraints, error) {
 	if goja.IsUndefined(value) {
 		return nil, errors.New("undefined")
 	}
@@ -121,7 +121,7 @@ func (self *CloutAPI) NewConstraints(value goja.Value, site interface{}, source 
 	return nil, errors.New("not an array")
 }
 
-func (self *CloutAPI) Coerce(value interface{}) (interface{}, error) {
+func (self *CloutAPI) Coerce(value any) (any, error) {
 	if coercible, ok := value.(Coercible); ok {
 		return coercible.Coerce()
 	}
@@ -129,7 +129,7 @@ func (self *CloutAPI) Coerce(value interface{}) (interface{}, error) {
 	return value, nil
 }
 
-func (self *CloutAPI) Unwrap(value interface{}) interface{} {
+func (self *CloutAPI) Unwrap(value any) any {
 	if coercible, ok := value.(Coercible); ok {
 		return coercible.Unwrap()
 	}
@@ -143,7 +143,7 @@ func (self *CloutAPI) MarshalJSON() ([]byte, error) {
 }
 
 // yaml.Marshaler interface
-func (self *CloutAPI) MarshalYAML() (interface{}, error) {
+func (self *CloutAPI) MarshalYAML() (any, error) {
 	return self.Clout, nil
 }
 

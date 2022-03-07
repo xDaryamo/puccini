@@ -69,7 +69,7 @@ type MarshalableEdgeStringMaps struct {
 	TargetID   string        `json:"targetID"`
 }
 
-func (self *Edge) Marshalable(stringMaps bool) interface{} {
+func (self *Edge) Marshalable(stringMaps bool) any {
 	var targetID string
 	if self.Target != nil {
 		targetID = self.Target.ID
@@ -108,7 +108,7 @@ func (self *Edge) MarshalJSON() ([]byte, error) {
 }
 
 // yaml.Marshaler interface
-func (self *Edge) MarshalYAML() (interface{}, error) {
+func (self *Edge) MarshalYAML() (any, error) {
 	return self.Marshalable(false), nil
 }
 
@@ -125,7 +125,7 @@ func (self *Edge) UnmarshalJSON(data []byte) error {
 }
 
 // yaml.Unmarshaler interface
-func (self *Edge) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func (self *Edge) UnmarshalYAML(unmarshal func(any) error) error {
 	return self.Unmarshal(func(m *MarshalableEdge) error {
 		return unmarshal(m)
 	})

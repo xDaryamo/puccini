@@ -6,7 +6,7 @@ import (
 	"github.com/dop251/goja"
 )
 
-func CallFunction(runtime *goja.Runtime, function goja.Value, this interface{}, arguments []interface{}) (interface{}, error) {
+func CallFunction(runtime *goja.Runtime, function goja.Value, this any, arguments []any) (any, error) {
 	function_, ok := goja.AssertFunction(function)
 	if !ok {
 		return nil, fmt.Errorf("not a function: %v", function)

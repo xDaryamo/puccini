@@ -24,9 +24,9 @@ var ScalarUnitTypeZeroes = map[ard.TypeName]ard.Value{
 //
 
 type ScalarUnit struct {
-	CanonicalString string      `json:"$string" yaml:"$string"`
-	CanonicalNumber interface{} `json:"$number" yaml:"$number"` // float64 or uint64
-	OriginalString  string      `json:"$originalString" yaml:"$originalString"`
+	CanonicalString string `json:"$string" yaml:"$string"`
+	CanonicalNumber any    `json:"$number" yaml:"$number"` // float64 or uint64
+	OriginalString  string `json:"$originalString" yaml:"$originalString"`
 
 	Scalar float64 `json:"scalar" yaml:"scalar"`
 	Unit   string  `json:"unit" yaml:"unit"`
@@ -103,7 +103,7 @@ func (self *ScalarUnit) String() string {
 	}
 }
 
-func (self *ScalarUnit) Compare(data interface{}) (int, error) {
+func (self *ScalarUnit) Compare(data any) (int, error) {
 	if scalarUnit, ok := data.(*ScalarUnit); ok {
 		if self.countable {
 			return CompareUint64(self.CanonicalNumber.(uint64), scalarUnit.CanonicalNumber.(uint64)), nil

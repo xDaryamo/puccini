@@ -41,7 +41,7 @@ func (self *CloutContext) NewConstraintsFromNotation(notation ard.StringMap, nam
 	}
 }
 
-func (self Constraints) Validate(value interface{}) (bool, error) {
+func (self Constraints) Validate(value any) (bool, error) {
 	if coercible, ok := value.(Coercible); ok {
 		var err error
 		if value, err = coercible.Coerce(); err != nil {
@@ -62,7 +62,7 @@ func (self Constraints) Validate(value interface{}) (bool, error) {
 	return true, nil
 }
 
-func (self Constraints) Apply(value interface{}) error {
+func (self Constraints) Apply(value any) error {
 	if coercible, ok := value.(Coercible); ok {
 		var err error
 		if value, err = coercible.Coerce(); err != nil {

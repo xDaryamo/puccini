@@ -12,12 +12,12 @@ import (
 
 type Error struct {
 	FunctionCall *FunctionCall
-	Arguments    []interface{}
+	Arguments    []any
 	Message      string
 	Cause        error
 }
 
-func (self *FunctionCall) NewError(arguments []interface{}, message string, cause error) *Error {
+func (self *FunctionCall) NewError(arguments []any, message string, cause error) *Error {
 	return &Error{
 		FunctionCall: self,
 		Arguments:    arguments,
@@ -26,11 +26,11 @@ func (self *FunctionCall) NewError(arguments []interface{}, message string, caus
 	}
 }
 
-func (self *FunctionCall) NewErrorf(arguments []interface{}, format string, arg ...interface{}) *Error {
+func (self *FunctionCall) NewErrorf(arguments []any, format string, arg ...any) *Error {
 	return self.NewError(arguments, fmt.Sprintf(format, arg...), nil)
 }
 
-func (self *FunctionCall) WrapError(arguments []interface{}, err error) *Error {
+func (self *FunctionCall) WrapError(arguments []any, err error) *Error {
 	return self.NewError(arguments, "", UnwrapException(err))
 }
 
