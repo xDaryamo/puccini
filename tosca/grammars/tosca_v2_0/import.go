@@ -102,6 +102,8 @@ func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
 		urlContext = origin.Context()
 	}
 
+	origins = append(origins, self.Context.Origins...)
+
 	url, err := urlpkg.NewValidURL(*self.URL, origins, urlContext)
 	if err != nil {
 		self.Context.ReportError(err)

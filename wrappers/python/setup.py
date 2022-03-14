@@ -5,7 +5,7 @@
 # PUCCINI_REPO: set this to override the Puccini git repo location (i.e. to use a local clone) 
 # PUCCINI_GO_VERSION: set this to override the Go distribution version used to compile Puccini
 
-import os, os.path, setuptools, subprocess, tempfile, shutil
+import os, os.path, setuptools, subprocess, tempfile, shutil, sys
 
 with open(os.path.join(os.path.dirname(__file__), 'puccini', '__init__.py')) as f:
     globals_ = {}
@@ -20,7 +20,7 @@ root = os.path.abspath(os.path.dirname(__file__)).replace('"', '\\"')
 
 script = '''\
 # Install Go
-curl https://storage.googleapis.com/golang/go{go_version}.linux-amd64.tar.gz --silent --location | tar -xz
+curl https://go.dev/dl/go{go_version}.linux-amd64.tar.gz --silent --location | tar -xz
 GO=$PWD/go
 
 # Build library
@@ -35,6 +35,9 @@ cd "{root}/puccini/go-source/puccini-tosca"
 t = tempfile.mkdtemp()
 try:
     subprocess.check_output(('bash',  '-o', 'pipefail', '-euxc', script), cwd=t)
+except subprocess.CalledProcessError as e:
+    print(e.output)
+    sys.exit(e.returncode)
 finally:
     shutil.rmtree(t)
 

@@ -13,8 +13,9 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-func (self *ServiceContext) ReadRoot(url urlpkg.URL, template string) bool {
+func (self *ServiceContext) ReadRoot(url urlpkg.URL, origins []urlpkg.URL, template string) bool {
 	toscaContext := tosca.NewContext(self.Stylist, self.Quirks)
+	toscaContext.Origins = origins
 
 	toscaContext.URL = url
 

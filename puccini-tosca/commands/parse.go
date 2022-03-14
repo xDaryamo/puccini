@@ -16,6 +16,7 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
+var importPaths []string
 var template string
 var inputs map[string]string
 var inputsUrl string
@@ -27,6 +28,7 @@ var inputValues = make(map[string]any)
 
 func init() {
 	rootCommand.AddCommand(parseCommand)
+	parseCommand.Flags().StringSliceVarP(&importPaths, "path", "b", nil, "specify an import path or base URL")
 	parseCommand.Flags().StringVarP(&template, "template", "t", "", "select service template in CSAR (leave empty for root, or use path or integer index)")
 	parseCommand.Flags().StringToStringVarP(&inputs, "input", "i", nil, "specify an input (format is name=YAML)")
 	parseCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
@@ -67,6 +69,15 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 	urlContext := urlpkg.NewContext()
 	util.OnExitError(urlContext.Release)
 
+	var origins []urlpkg.URL
+	for _, importPath := range importPaths {
+		origin, err := urlpkg.NewURL(importPath, urlContext)
+		if err != nil {
+			origin = urlpkg.NewFileURL(importPath, urlContext)
+		}
+		origins = append(origins, origin)
+	}
+
 	var url_ urlpkg.URL
 	var err error
 	if url == "" {
@@ -74,7 +85,7 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 		url_, err = urlpkg.ReadToInternalURLFromStdin("yaml")
 	} else {
 		log.Infof("parsing %q", url)
-		url_, err = urlpkg.NewValidURL(url, nil, urlContext)
+		url_, err = urlpkg.NewValidURL(url, origins, urlContext)
 	}
 	util.FailOnError(err)
 
@@ -89,7 +100,7 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 
 	// Phase 1: Read
 	if stopAtPhase >= 1 {
-		ok := serviceContext.ReadRoot(url_, template)
+		ok := serviceContext.ReadRoot(url_, origins, template)
 
 		serviceContext.MergeProblems()
 		problems = serviceContext.GetProblems()

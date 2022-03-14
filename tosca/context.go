@@ -54,6 +54,7 @@ type Context struct {
 	Name               string
 	Path               ard.Path
 	URL                urlpkg.URL
+	Origins            []urlpkg.URL
 	Data               ard.Value
 	Locator            ard.Locator
 	CanonicalNamespace *string
@@ -85,6 +86,7 @@ func (self *Context) NewImportContext(url urlpkg.URL) *Context {
 		Name:               self.Name,
 		Path:               self.Path,
 		URL:                url,
+		Origins:            self.Origins,
 		CanonicalNamespace: self.CanonicalNamespace,
 		Namespace:          NewNamespace(),
 		ScriptletNamespace: NewScriptletNamespace(),
@@ -159,6 +161,7 @@ func (self *Context) Clone(data ard.Value) *Context {
 		Name:               self.Name,
 		Path:               self.Path,
 		URL:                self.URL,
+		Origins:            self.Origins,
 		Data:               data,
 		Locator:            self.Locator,
 		CanonicalNamespace: self.CanonicalNamespace,
@@ -178,6 +181,7 @@ func (self *Context) FieldChild(name ard.Value, data ard.Value) *Context {
 		Name:               nameString,
 		Path:               self.Path.AppendField(nameString),
 		URL:                self.URL,
+		Origins:            self.Origins,
 		Data:               data,
 		Locator:            self.Locator,
 		CanonicalNamespace: self.CanonicalNamespace,
@@ -223,6 +227,7 @@ func (self *Context) MapChild(name ard.Value, data ard.Value) *Context {
 		Name:               nameString,
 		Path:               self.Path.AppendMap(nameString),
 		URL:                self.URL,
+		Origins:            self.Origins,
 		Data:               data,
 		Locator:            self.Locator,
 		CanonicalNamespace: self.CanonicalNamespace,
@@ -241,6 +246,7 @@ func (self *Context) ListChild(index int, data ard.Value) *Context {
 		Name:               strconv.FormatInt(int64(index), 10),
 		Path:               self.Path.AppendList(index),
 		URL:                self.URL,
+		Origins:            self.Origins,
 		Data:               data,
 		Locator:            self.Locator,
 		CanonicalNamespace: self.CanonicalNamespace,
@@ -259,6 +265,7 @@ func (self *Context) SequencedListChild(index int, name string, data ard.Value) 
 		Name:               name,
 		Path:               self.Path.AppendSequencedList(index),
 		URL:                self.URL,
+		Origins:            self.Origins,
 		Data:               data,
 		Locator:            self.Locator,
 		CanonicalNamespace: self.CanonicalNamespace,

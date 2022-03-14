@@ -104,7 +104,7 @@ func (self *Context) compile(url string, inputs map[string]any) {
 			return
 		}
 
-		if _, serviceTemplate, problems, err = self.parserContext.Parse(url_, nil, nil, inputs); err != nil {
+		if _, serviceTemplate, problems, err = self.parserContext.Parse(url_, nil, nil, nil, inputs); err != nil {
 			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))
 			return
 		}

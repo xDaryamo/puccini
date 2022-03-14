@@ -18,6 +18,7 @@ var arguments map[string]string
 
 func init() {
 	rootCommand.AddCommand(compileCommand)
+	compileCommand.Flags().StringSliceVarP(&importPaths, "path", "b", nil, "specify an import path or base URL")
 	compileCommand.Flags().StringVarP(&template, "template", "t", "", "select service template in CSAR (leave empty for root, or use \"all\", path, or integer index)")
 	compileCommand.Flags().StringToStringVarP(&inputs, "input", "i", nil, "specify input (format is name=value)")
 	compileCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
