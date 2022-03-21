@@ -84,6 +84,6 @@ func result(clout *cloutpkg.Clout, problems *problems.Problems, err error) *C.ch
 	}
 
 	buffer := bytes.NewBuffer(nil)
-	format.WriteYAML(result, buffer, "  ", true)
+	format.WriteYAML(result, buffer, "  ", true) // TODO: err
 	return C.CString(buffer.String())
 }
