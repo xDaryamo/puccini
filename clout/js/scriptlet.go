@@ -86,7 +86,7 @@ func GetScriptletsMetadataSection(name string, clout *cloutpkg.Clout) (ard.Value
 
 func GetScriptletsMetadata(clout *cloutpkg.Clout) (ard.StringMap, error) {
 	// TODO: check that version=1.0
-	if scriptlets, ok := ard.NewNode(clout.Metadata).Get("puccini").Get("scriptlets").StringMap(false); ok {
+	if scriptlets, ok := ard.NewNode(clout.Metadata).Get("puccini").Get("scriptlets").StringMap(); ok {
 		return scriptlets, nil
 	} else {
 		return nil, NewScriptletNotFoundError("%s", "no \"puccini.scriptlets\" metadata in Clout")
