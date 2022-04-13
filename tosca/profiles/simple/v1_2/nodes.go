@@ -117,7 +117,7 @@ node_types:
     requirements:
     - local_storage:
         capability: tosca.capabilities.Attachment
-        node: tosca.nodes.BlockStorage
+        node: tosca.nodes.Storage.BlockStorage
         relationship: tosca.relationships.AttachesTo
         occurrences: [ 0, UNBOUNDED ]
 
@@ -275,7 +275,7 @@ node_types:
         - greater_or_equal: 0 GB
         required: false
 
-  tosca.nodes.ObjectStorage:
+  tosca.nodes.Storage.ObjectStorage:
     metadata:
       tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
@@ -296,12 +296,14 @@ node_types:
       storage_endpoint:
         type: tosca.capabilities.Endpoint
 
-  tosca.nodes.BlockStorage:
+  tosca.nodes.Storage.BlockStorage:
     metadata:
       tosca.normative: 'true'
       specification.citation: '[TOSCA-Simple-Profile-YAML-v1.2]'
       specification.location: 5.9.11
     description: >-
+      The TOSCA BlockStorage node currently represents a server-local block storage device (i.e., not
+      shared) offering evenly sized blocks of data from which raw storage volumes can be created. 
     derived_from: tosca.nodes.Abstract.Storage
     properties:
       volume_id:
