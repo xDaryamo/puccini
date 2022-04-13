@@ -11,7 +11,7 @@ let statements = [];
 for (let vertexId in clout.vertexes) {
 	let vertex = clout.vertexes[vertexId];
 
-	if (tosca.isTosca(vertex, 'nodeTemplate'))
+	if (tosca.isTosca(vertex, 'NodeTemplate'))
 		createNodeTemplate(vertexId, vertex.properties);
 }
 
@@ -23,7 +23,7 @@ for (let vertexId in clout.vertexes) {
 }
 
 function createEdge(id, edge) {
-	if (tosca.isTosca(edge, 'relationship')) 
+	if (tosca.isTosca(edge, 'Relationship')) 
 		createRelationship(id, edge.targetID, edge.properties);
 }
 
