@@ -28,6 +28,7 @@ func NewParameterDefinition(context *tosca.Context) *ParameterDefinition {
 // tosca.Reader signature
 func ReadParameterDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewParameterDefinition(context)
+	self.looseType = true
 	var ignore []string
 	if context.HasQuirk(tosca.QuirkAnnotationsIgnore) {
 		ignore = append(ignore, "annotations")

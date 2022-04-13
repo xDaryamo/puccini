@@ -29,6 +29,8 @@ type AttributeDefinition struct {
 	Status       *string  `read:"status"`
 
 	DataType *DataType `lookup:"type,DataTypeName" json:"-" yaml:"-"`
+
+	looseType bool
 }
 
 func NewAttributeDefinition(context *tosca.Context) *AttributeDefinition {
@@ -104,7 +106,7 @@ func (self *AttributeDefinition) render() {
 }
 
 func (self *AttributeDefinition) doRender() {
-	if self.DataTypeName == nil {
+	if !self.looseType && (self.DataTypeName == nil) {
 		self.Context.FieldChild("type", nil).ReportKeynameMissing()
 		return
 	}
