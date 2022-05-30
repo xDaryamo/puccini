@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"time"
 
 	formatpkg "github.com/tliron/kutil/format"
 	"github.com/tliron/kutil/js"
@@ -23,17 +24,16 @@ type PucciniAPI struct {
 	js.FormatAPI
 	js.FileAPI
 
-	Arguments       map[string]string
-	Log             logging.Logger
-	Stdout          io.Writer
-	Stderr          io.Writer
-	Stdin           io.Writer
-	Stylist         *terminal.Stylist
-	Output          string
-	Format          string
-	Strict          bool
-	AllowTimestamps bool // TODO
-	Pretty          bool
+	Arguments map[string]string
+	Log       logging.Logger
+	Stdout    io.Writer
+	Stderr    io.Writer
+	Stdin     io.Writer
+	Stylist   *terminal.Stylist
+	Output    string
+	Format    string
+	Strict    bool
+	Pretty    bool
 
 	context *Context
 }
@@ -44,20 +44,23 @@ func (self *Context) NewPucciniAPI() *PucciniAPI {
 		format = "yaml"
 	}
 	return &PucciniAPI{
-		FileAPI:         js.NewFileAPI(self.URLContext),
-		Arguments:       self.Arguments,
-		Log:             self.Log,
-		Stdout:          self.Stdout,
-		Stderr:          self.Stderr,
-		Stdin:           self.Stdin,
-		Stylist:         self.Stylist,
-		Output:          self.Output,
-		Format:          format,
-		Strict:          self.Strict,
-		AllowTimestamps: self.AllowTimestamps,
-		Pretty:          self.Pretty,
-		context:         self,
+		FileAPI:   js.NewFileAPI(self.URLContext),
+		Arguments: self.Arguments,
+		Log:       self.Log,
+		Stdout:    self.Stdout,
+		Stderr:    self.Stderr,
+		Stdin:     self.Stdin,
+		Stylist:   self.Stylist,
+		Output:    self.Output,
+		Format:    format,
+		Strict:    self.Strict,
+		Pretty:    self.Pretty,
+		context:   self,
 	}
+}
+
+func (self *PucciniAPI) NowString() string {
+	return self.Now().Format(time.RFC3339Nano)
 }
 
 func (self *PucciniAPI) Write(data any, path string, dontOverwrite bool) {

@@ -88,7 +88,7 @@ exports.addHistory = function(description) {
 	else
 		history = history.slice(0);
 	history.push({
-		timestamp: puccini.now(),
+		timestamp: puccini.nowString(),
 		description: description
 	});
 	metadata.history = history;
