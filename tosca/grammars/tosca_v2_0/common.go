@@ -10,6 +10,8 @@ var logInherit = logging.NewScopeLogger(log, "inherit")
 var logRender = logging.NewScopeLogger(log, "render")
 var logNormalize = logging.NewScopeLogger(log, "normalize")
 
+var True = true
+
 var Grammar = tosca.NewGrammar()
 
 var DefaultScriptletNamespace = tosca.NewScriptletNamespace()

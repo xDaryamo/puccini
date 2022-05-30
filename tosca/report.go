@@ -66,7 +66,7 @@ func (self *Context) ReportValueWrongType(allowedTypeNames ...ard.TypeName) bool
 	return self.ReportPathf(1, "%s instead of %s", self.Problems.Stylist.TypeName(quote(ardGetTypeName(self.Data))), terminal.StylizedOptions(ardTypeNamesToStrings(allowedTypeNames), self.Problems.Stylist.TypeName))
 }
 
-func (self *Context) ReportAspectWrongType(aspect string, value ard.Value, allowedTypeNames ...ard.TypeName) bool {
+func (self *Context) ReportValueAspectWrongType(aspect string, value ard.Value, allowedTypeNames ...ard.TypeName) bool {
 	return self.ReportPathf(1, "%s is %s instead of %s", aspect, self.Problems.Stylist.TypeName(quote(ardGetTypeName(value))), terminal.StylizedOptions(ardTypeNamesToStrings(allowedTypeNames), self.Problems.Stylist.TypeName))
 }
 
@@ -156,6 +156,10 @@ func (self *Context) ReportInheritanceLoop(parentType EntityPtr) bool {
 
 func (self *Context) ReportTypeIncomplete(parentType EntityPtr) bool {
 	return self.ReportPathf(1, "deriving from incomplete type %s", self.Problems.Stylist.TypeName(quote(GetCanonicalName(parentType))))
+}
+
+func (self *Context) ReportRefinement(parentValue ard.Value) bool {
+	return self.ReportPathf(1, "cannot refine %s to %s", self.Problems.Stylist.Value(fmt.Sprintf("%+v", parentValue)), self.FormatBadData())
 }
 
 //

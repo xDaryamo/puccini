@@ -39,6 +39,12 @@ func ReadPropertyDefinition(context *tosca.Context) tosca.EntityPtr {
 func (self *PropertyDefinition) Inherit(parentDefinition *PropertyDefinition) {
 	logInherit.Debugf("property definition: %s", self.Name)
 
+	if self.Required != nil {
+		if parentDefinition.IsRequired() && !*self.Required {
+			self.Context.FieldChild("required", *self.Required).ReportRefinement(parentDefinition.IsRequired())
+		}
+	}
+
 	self.AttributeDefinition.Inherit(parentDefinition.AttributeDefinition)
 
 	if (self.Required == nil) && (parentDefinition.Required != nil) {

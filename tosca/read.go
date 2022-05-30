@@ -365,7 +365,7 @@ func (self *Context) ReadStringMap() *map[string]any {
 			} else if self.HasQuirk(QuirkDataTypesStringPermissive) {
 				key_ = ard.ValueToString(data)
 			} else {
-				self.MapChild(key, data).ReportAspectWrongType("map key", key, ard.TypeString)
+				self.MapChild(key, data).ReportValueAspectWrongType("map key", key, ard.TypeString)
 				continue
 			}
 
@@ -387,7 +387,7 @@ func (self *Context) ReadStringStringMap() *map[string]string {
 			} else if self.HasQuirk(QuirkDataTypesStringPermissive) {
 				key_ = ard.ValueToString(data)
 			} else {
-				self.MapChild(key, data).ReportAspectWrongType("map key", key, ard.TypeString)
+				self.MapChild(key, data).ReportValueAspectWrongType("map key", key, ard.TypeString)
 				continue
 			}
 

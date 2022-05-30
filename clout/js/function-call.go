@@ -63,7 +63,9 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.Strin
 				}
 			}
 		} else {
-			return nil, fmt.Errorf("malformed function call, \"arguments\" not a list: %T", data)
+			if data != nil {
+				return nil, fmt.Errorf("malformed function call, \"arguments\" not a list: %T", data)
+			}
 		}
 	} else {
 		return nil, fmt.Errorf("malformed function call, no \"arguments\": %+v", map_)
@@ -223,14 +225,4 @@ func encodeArgument(argument ard.Value) string {
 		argument__, _ := format.EncodeJSON(argument, "")
 		return argument__
 	}
-}
-
-func asInt(value any) (int, bool) {
-	switch value_ := value.(type) {
-	case int64:
-		return int(value_), true
-	case int:
-		return value_, true
-	}
-	return 0, false
 }

@@ -1,13 +1,13 @@
 package clout
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/tliron/kutil/ard"
-	"github.com/tliron/kutil/format"
 )
 
 const Version = "1.0"
@@ -74,11 +74,15 @@ func (self *Clout) Resolve() error {
 	return nil
 }
 
-func (self *Clout) Normalize() (*Clout, error) {
+func (self *Clout) Copy() (*Clout, error) {
 	// TODO: not very efficient
-	if code, err := format.EncodeYAML(self, " ", false); err == nil {
-		return Read(strings.NewReader(code), "yaml")
+	if code, err := cbor.Marshal(self); err == nil {
+		return Read(bytes.NewReader(code), "cbor")
 	} else {
 		return nil, err
 	}
+}
+
+func (self *Clout) Normalize() (*Clout, error) {
+	return self.Copy()
 }

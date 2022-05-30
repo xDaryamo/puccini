@@ -22,7 +22,7 @@ type CapabilityDefinition struct {
 	Description              *string              `read:"description"`
 	CapabilityTypeName       *string              `read:"type"` // required only if cannot be inherited
 	PropertyDefinitions      PropertyDefinitions  `read:"properties,PropertyDefinition" inherit:"properties,CapabilityType"`
-	AttributeDefinitions     AttributeDefinitions `read:"attributes,PropertyDefinition" inherit:"attributes,CapabilityType"`
+	AttributeDefinitions     AttributeDefinitions `read:"attributes,AttributeDefinition" inherit:"attributes,CapabilityType"`
 	ValidSourceNodeTypeNames *[]string            `read:"valid_source_types" inherit:"valid_source_types,CapabilityType"`
 	Occurrences              *RangeEntity         `read:"occurrences,RangeEntity"`
 
