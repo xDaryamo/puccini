@@ -2,8 +2,8 @@ package commands
 
 import (
 	"github.com/spf13/cobra"
-	formatpkg "github.com/tliron/kutil/format"
 	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/transcribe"
 	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
@@ -51,18 +51,18 @@ func Compile(url string) {
 	urlContext := context.Root.GetContext().URL.Context()
 
 	// Compile
-	clout, err := serviceTemplate.Compile(timestamps)
+	clout, err := serviceTemplate.Compile()
 	util.FailOnError(err)
 
 	// Resolve
 	if resolve {
-		js.Resolve(clout, problems, urlContext, true, format, strict, timestamps, pretty)
+		js.Resolve(clout, problems, urlContext, true, format, strict, pretty)
 		FailOnProblems(problems)
 	}
 
 	// Coerce
 	if coerce {
-		js.Coerce(clout, problems, urlContext, true, format, strict, timestamps, pretty)
+		js.Coerce(clout, problems, urlContext, true, format, strict, pretty)
 		FailOnProblems(problems)
 	}
 
@@ -70,17 +70,12 @@ func Compile(url string) {
 		err = Exec(exec, arguments, clout, urlContext)
 		util.FailOnError(err)
 	} else if !terminal.Quiet || (output != "") {
-		err = formatpkg.WriteOrPrint(clout, format, terminal.Stdout, strict, pretty, output)
+		err = transcribe.WriteOrPrint(clout, format, terminal.Stdout, strict, pretty, output)
 		util.FailOnError(err)
 	}
 }
 
 func Exec(scriptletName string, arguments map[string]string, clout *cloutpkg.Clout, urlContext *urlpkg.Context) error {
-	clout, err := clout.Normalize()
-	if err != nil {
-		return err
-	}
-
 	// Try loading JavaScript from Clout
 	scriptlet, err := js.GetScriptlet(scriptletName, clout)
 
@@ -99,7 +94,7 @@ func Exec(scriptletName string, arguments map[string]string, clout *cloutpkg.Clo
 		util.FailOnError(err)
 	}
 
-	jsContext := js.NewContext(scriptletName, log, arguments, terminal.Quiet, format, strict, timestamps, pretty, output, urlContext)
+	jsContext := js.NewContext(scriptletName, log, arguments, terminal.Quiet, format, strict, pretty, output, urlContext)
 	_, err = jsContext.Require(clout, scriptletName, nil)
 	return js.UnwrapException(err)
 }

@@ -1,14 +1,15 @@
 package normal
 
 import (
+	"time"
+
 	"github.com/tliron/kutil/ard"
-	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/tosca"
 )
 
-func (serviceTemplate *ServiceTemplate) Compile(allowTimestamps bool) (*cloutpkg.Clout, error) {
+func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 	clout := cloutpkg.NewClout()
 
 	puccini := make(ard.StringMap)
@@ -36,7 +37,7 @@ func (serviceTemplate *ServiceTemplate) Compile(allowTimestamps bool) (*cloutpkg
 	clout.Metadata["puccini"] = puccini
 
 	history := ard.List{ard.StringMap{
-		"timestamp":   util.Timestamp(!allowTimestamps),
+		"timestamp":   time.Now().Format(time.RFC3339Nano),
 		"description": "compile",
 	}}
 	clout.Metadata["history"] = history
@@ -272,8 +273,8 @@ func (serviceTemplate *ServiceTemplate) Compile(allowTimestamps bool) (*cloutpkg
 		}
 	}
 
-	// Normalize
-	clout, err = clout.Normalize()
+	// Make agnostic
+	clout, err = clout.AgnosticCopy()
 	if err != nil {
 		return clout, err
 	}

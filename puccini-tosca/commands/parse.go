@@ -5,9 +5,9 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/tliron/kutil/ard"
-	formatpkg "github.com/tliron/kutil/format"
 	problemspkg "github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/transcribe"
 	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
@@ -56,7 +56,7 @@ var parseCommand = &cobra.Command{
 		_, serviceTemplate := Parse(url)
 
 		if (filter == "") && (len(dumpPhases) == 0) {
-			formatpkg.Print(serviceTemplate, format, terminal.Stdout, strict, pretty)
+			transcribe.Print(serviceTemplate, format, terminal.Stdout, strict, pretty)
 		}
 	},
 }
@@ -180,7 +180,7 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 			}
 			for _, entityPtr := range entityPtrs {
 				terminal.Printf("%s:\n", terminal.Stylize.Path(tosca.GetContext(entityPtr).Path.String()))
-				err = formatpkg.Print(entityPtr, format, terminal.Stdout, strict, pretty)
+				err = transcribe.Print(entityPtr, format, terminal.Stdout, strict, pretty)
 				util.FailOnError(err)
 			}
 		}
@@ -193,7 +193,7 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 		} else if !terminal.Quiet {
 			for _, entityPtr := range entityPtrs {
 				terminal.Printf("%s\n", terminal.Stylize.Path(tosca.GetContext(entityPtr).Path.String()))
-				err = formatpkg.Print(entityPtr, format, terminal.Stdout, strict, pretty)
+				err = transcribe.Print(entityPtr, format, terminal.Stdout, strict, pretty)
 				util.FailOnError(err)
 			}
 		}

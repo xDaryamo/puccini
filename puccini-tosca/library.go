@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/tliron/kutil/ard"
-	"github.com/tliron/kutil/format"
 	"github.com/tliron/kutil/problems"
+	"github.com/tliron/kutil/transcribe"
 	urlpkg "github.com/tliron/kutil/url"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
@@ -54,16 +54,16 @@ func Compile(url *C.char, inputs *C.char) *C.char {
 		return result(nil, problems, err)
 	}
 
-	if clout, err = serviceTemplate.Compile(false); err != nil {
+	if clout, err = serviceTemplate.Compile(); err != nil {
 		return result(clout, problems, err)
 	}
 
-	js.Resolve(clout, problems, urlContext, true, "yaml", true, false, false)
+	js.Resolve(clout, problems, urlContext, true, "yaml", true, false)
 	if !problems.Empty() {
 		return result(clout, problems, nil)
 	}
 
-	js.Coerce(clout, problems, urlContext, true, "yaml", true, false, false)
+	js.Coerce(clout, problems, urlContext, true, "yaml", true, false)
 	if !problems.Empty() {
 		return result(clout, problems, nil)
 	}
@@ -84,6 +84,6 @@ func result(clout *cloutpkg.Clout, problems *problems.Problems, err error) *C.ch
 	}
 
 	buffer := bytes.NewBuffer(nil)
-	format.WriteYAML(result, buffer, "  ", true) // TODO: err
+	transcribe.WriteYAML(result, buffer, "  ", true) // TODO: err
 	return C.CString(buffer.String())
 }

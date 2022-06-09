@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"time"
 
-	formatpkg "github.com/tliron/kutil/format"
 	"github.com/tliron/kutil/js"
 	"github.com/tliron/kutil/logging"
 	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/transcribe"
 	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 )
@@ -21,7 +21,7 @@ import (
 
 type PucciniAPI struct {
 	js.UtilAPI
-	js.FormatAPI
+	js.TranscribeAPI
 	js.FileAPI
 
 	Arguments map[string]string
@@ -104,7 +104,7 @@ func (self *PucciniAPI) Write(data any, path string, dontOverwrite bool) {
 		}
 	}
 
-	self.failOnError(formatpkg.WriteOrPrint(data, self.Format, self.Stdout, self.Strict, self.Pretty, output))
+	self.failOnError(transcribe.WriteOrPrint(data, self.Format, self.Stdout, self.Strict, self.Pretty, output))
 }
 
 func (self *PucciniAPI) LoadString(url string) (string, error) {

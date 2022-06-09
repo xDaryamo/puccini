@@ -57,7 +57,7 @@ var execCommand = &cobra.Command{
 }
 
 func Exec(scriptletName string, scriptlet string, clout *cloutpkg.Clout, urlContext *urlpkg.Context) error {
-	jsContext := js.NewContext(scriptletName, log, arguments, terminal.Quiet, format, strict, timestamps, pretty, output, urlContext)
+	jsContext := js.NewContext(scriptletName, log, arguments, terminal.Quiet, format, strict, pretty, output, urlContext)
 	_, err := jsContext.Require(clout, scriptletName, nil)
 	return js.UnwrapException(err)
 }

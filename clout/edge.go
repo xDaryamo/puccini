@@ -24,6 +24,7 @@ func (self *Vertex) NewEdgeTo(target *Vertex) *Edge {
 		Metadata:   make(ard.StringMap),
 		Properties: make(ard.StringMap),
 		Source:     self,
+		TargetID:   target.ID,
 		Target:     target,
 	}
 	self.EdgesOut = append(self.EdgesOut, edge)
@@ -43,8 +44,8 @@ func (self *Vertex) NewEdgeToID(targetId string) *Edge {
 }
 
 func (self *Edge) Remove() {
-	self.Source.EdgesOut = self.Source.EdgesOut.Remove(self)
-	self.Target.EdgesIn = self.Target.EdgesIn.Remove(self)
+	self.Source.EdgesOut = self.Source.EdgesOut.remove(self)
+	self.Target.EdgesIn = self.Target.EdgesIn.remove(self)
 }
 
 // Entity interface
@@ -138,13 +139,47 @@ func (self *Edge) UnmarshalCBOR(data []byte) error {
 	})
 }
 
+func (self *Edge) copy(agnostic bool) (*Edge, error) {
+	edge := Edge{
+		TargetID: self.TargetID,
+	}
+	if agnostic {
+		if metadata, err := ard.NormalizeStringMapsAgnosticCopy(self.Metadata); err == nil {
+			if properties, err := ard.NormalizeStringMapsAgnosticCopy(self.Properties); err == nil {
+				edge.Metadata = metadata.(ard.StringMap)
+				edge.Properties = properties.(ard.StringMap)
+			} else {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
+	} else {
+		edge.Metadata = ard.SimpleCopy(self.Metadata).(ard.StringMap)
+		edge.Properties = ard.SimpleCopy(self.Properties).(ard.StringMap)
+	}
+	return &edge, nil
+}
+
 //
 // Edges
 //
 
+// Warning: Adding public methods will break it in JavaScript
 type Edges []*Edge
 
-func (self Edges) Remove(edge *Edge) Edges {
+func (self Edges) copy(agnostic bool) (Edges, error) {
+	edges := make(Edges, len(self))
+	var err error
+	for index, edge := range self {
+		if edges[index], err = edge.copy(agnostic); err != nil {
+			return nil, err
+		}
+	}
+	return edges, nil
+}
+
+func (self Edges) remove(edge *Edge) Edges {
 	for index, e := range self {
 		if e == edge {
 			return append(self[:index], self[index+1:]...)

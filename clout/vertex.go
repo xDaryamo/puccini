@@ -66,8 +66,48 @@ func (self *Vertex) MarshalJSON() ([]byte, error) {
 	return json.Marshal(self.MarshalableStringMaps())
 }
 
+func (self *Vertex) copy(agnostic bool) (*Vertex, error) {
+	vertex := Vertex{
+		ID:      self.ID,
+		EdgesIn: make(Edges, 0),
+	}
+	var err error
+	if vertex.EdgesOut, err = self.EdgesOut.copy(agnostic); err == nil {
+		if agnostic {
+			if metadata, err := ard.NormalizeStringMapsAgnosticCopy(self.Metadata); err == nil {
+				if properties, err := ard.NormalizeStringMapsAgnosticCopy(self.Properties); err == nil {
+					vertex.Metadata = metadata.(ard.StringMap)
+					vertex.Properties = properties.(ard.StringMap)
+				} else {
+					return nil, err
+				}
+			} else {
+				return nil, err
+			}
+		} else {
+			vertex.Metadata = ard.SimpleCopy(self.Metadata).(ard.StringMap)
+			vertex.Properties = ard.SimpleCopy(self.Properties).(ard.StringMap)
+		}
+	} else {
+		return nil, err
+	}
+	return &vertex, nil
+}
+
 //
 // Vertexes
 //
 
+// Warning: Adding public methods will break it in JavaScript
 type Vertexes map[string]*Vertex
+
+func (self Vertexes) copy(agnostic bool) (Vertexes, error) {
+	vertexes := make(Vertexes)
+	var err error
+	for id, vertex := range self {
+		if vertexes[id], err = vertex.copy(agnostic); err != nil {
+			return nil, err
+		}
+	}
+	return vertexes, nil
+}

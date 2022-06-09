@@ -1,10 +1,10 @@
 package commands
 
 import (
-	formatpkg "github.com/tliron/kutil/format"
 	"github.com/tliron/kutil/logging"
 	problemspkg "github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 )
 
@@ -16,7 +16,7 @@ func FailOnProblems(problems *problemspkg.Problems) {
 	if !problems.Empty() {
 		if !terminal.Quiet {
 			if problemsFormat != "" {
-				formatpkg.Print(problems, problemsFormat, terminal.Stderr, strict, pretty)
+				transcribe.Print(problems, problemsFormat, terminal.Stderr, strict, pretty)
 			} else {
 				problems.Print(verbose > 0)
 			}

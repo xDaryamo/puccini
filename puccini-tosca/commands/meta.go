@@ -4,8 +4,8 @@ import (
 	"io"
 
 	"github.com/spf13/cobra"
-	formatpkg "github.com/tliron/kutil/format"
 	"github.com/tliron/kutil/terminal"
+	formatpkg "github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca/csar"
 

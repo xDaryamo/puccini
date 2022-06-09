@@ -17,7 +17,7 @@ exports.evaluate = function(entity, artifactName, location, remove) {
 		throw 'must have at least 2 arguments';
 	let nodeTemplate = tosca.getModelableEntity.call(this, entity);
 	if (!nodeTemplate.artifacts || !(artifactName in nodeTemplate.artifacts))
-		throw puccini.sprintf('artifact "%s" not found in "%s"', artifactName, nodeTemplate.name);
+		throw puccini.sprintf('artifact %q not found in %q', artifactName, nodeTemplate.name);
 	let artifact = nodeTemplate.artifacts[artifactName];
 	if (artifact.$artifact === undefined)
 		return artifact.sourcePath;

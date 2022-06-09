@@ -18,42 +18,40 @@ import (
 //
 
 type Context struct {
-	Arguments       map[string]string
-	Quiet           bool
-	Format          string
-	Strict          bool
-	AllowTimestamps bool
-	Pretty          bool
-	Output          string
-	Log             logging.Logger
-	Stdout          io.Writer
-	Stderr          io.Writer
-	Stdin           io.Writer
-	Stylist         *terminal.Stylist
-	URLContext      *urlpkg.Context
+	Arguments  map[string]string
+	Quiet      bool
+	Format     string
+	Strict     bool
+	Pretty     bool
+	Output     string
+	Log        logging.Logger
+	Stdout     io.Writer
+	Stderr     io.Writer
+	Stdin      io.Writer
+	Stylist    *terminal.Stylist
+	URLContext *urlpkg.Context
 
 	programCache sync.Map
 }
 
-func NewContext(name string, log logging.Logger, arguments map[string]string, quiet bool, format string, strict bool, allowTimestamps bool, pretty bool, output string, urlContext *urlpkg.Context) *Context {
+func NewContext(name string, log logging.Logger, arguments map[string]string, quiet bool, format string, strict bool, pretty bool, output string, urlContext *urlpkg.Context) *Context {
 	if arguments == nil {
 		arguments = make(map[string]string)
 	}
 
 	return &Context{
-		Arguments:       arguments,
-		Quiet:           quiet,
-		Format:          format,
-		Strict:          strict,
-		AllowTimestamps: allowTimestamps,
-		Pretty:          pretty,
-		Output:          output,
-		Log:             logging.NewScopeLogger(log, name),
-		Stdout:          terminal.Stdout,
-		Stderr:          terminal.Stderr,
-		Stdin:           os.Stdin,
-		Stylist:         terminal.Stylize,
-		URLContext:      urlContext,
+		Arguments:  arguments,
+		Quiet:      quiet,
+		Format:     format,
+		Strict:     strict,
+		Pretty:     pretty,
+		Output:     output,
+		Log:        logging.NewScopeLogger(log, name),
+		Stdout:     terminal.Stdout,
+		Stderr:     terminal.Stderr,
+		Stdin:      os.Stdin,
+		Stylist:    terminal.Stylize,
+		URLContext: urlContext,
 	}
 }
 

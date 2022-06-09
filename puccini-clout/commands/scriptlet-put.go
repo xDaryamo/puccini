@@ -2,8 +2,8 @@ package commands
 
 import (
 	"github.com/spf13/cobra"
-	formatpkg "github.com/tliron/kutil/format"
 	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/transcribe"
 	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
@@ -44,7 +44,7 @@ var putCommand = &cobra.Command{
 		err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)
 		util.FailOnError(err)
 
-		err = formatpkg.WriteOrPrint(clout, format, terminal.Stdout, strict, pretty, output)
+		err = transcribe.WriteOrPrint(clout, format, terminal.Stdout, strict, pretty, output)
 		util.FailOnError(err)
 	},
 }

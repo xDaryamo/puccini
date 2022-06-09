@@ -109,18 +109,18 @@ func (self *Context) compile(url string, inputs map[string]any) {
 			return
 		}
 
-		if clout, err = serviceTemplate.Compile(true); err != nil {
+		if clout, err = serviceTemplate.Compile(); err != nil {
 			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))
 			return
 		}
 
-		js.Resolve(clout, problems, self.urlContext, true, "yaml", false, false, true)
+		js.Resolve(clout, problems, self.urlContext, true, "yaml", false, true)
 		if !problems.Empty() {
 			t.Errorf("%s", problems.ToString(true))
 			return
 		}
 
-		js.Coerce(clout, problems, self.urlContext, true, "yaml", false, false, true)
+		js.Coerce(clout, problems, self.urlContext, true, "yaml", false, true)
 		if !problems.Empty() {
 			t.Errorf("%s", problems.ToString(true))
 			return

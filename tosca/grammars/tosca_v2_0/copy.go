@@ -28,7 +28,7 @@ func CopyTemplate(context *tosca.Context) {
 }
 
 func CopyAndMerge(target ard.Value, source ard.Value, copiedNames []string, targets ard.Map) (ard.Value, bool) {
-	target = ard.Copy(target)
+	target = ard.SimpleCopy(target)
 
 	if targetMap, ok := target.(ard.Map); ok {
 		// Recurse target?

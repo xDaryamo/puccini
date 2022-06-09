@@ -105,13 +105,13 @@ exports.getNestedValue = function(singular, plural, args) {
 	let value = nodeTemplate[plural];
 	if (arg in nodeTemplate.capabilities) {
 		value = nodeTemplate.capabilities[arg][plural];
-		singular = puccini.sprintf('capability "%s" %s', arg, singular);
+		singular = puccini.sprintf('capability %q %s', arg, singular);
 		arg = args[++a];
 	} else for (let r = 0, l = nodeTemplate.requirements.length; r < l; r++) {
 		let requirement = nodeTemplate.requirements[r];
 		if ((requirement.name === arg) && requirement.relationship) {
 			value = requirement.relationship[plural];
-			singular = puccini.sprintf('relationship "%s" %s', arg, singular);
+			singular = puccini.sprintf('relationship %q %s', arg, singular);
 			arg = args[++a];
 			break;
 		}
@@ -119,14 +119,14 @@ exports.getNestedValue = function(singular, plural, args) {
 	if ((typeof value === 'object') && (value !== null) && (arg in value))
 		value = value[arg];
 	else
-		throw puccini.sprintf('%s "%s" not found in "%s"', singular, arg, nodeTemplate.name);
+		throw puccini.sprintf('%s %q not found in %q', singular, arg, nodeTemplate.name);
 	value = clout.coerce(value);
 	for (let i = a + 1; i < length; i++) {
 		arg = args[i];
 		if ((typeof value === 'object') && (value !== null) && (arg in value))
 			value = value[arg];
 		else
-			throw puccini.sprintf('nested %s "%s" not found in "%s"', singular, args.slice(a, i+1).join('.'), nodeTemplate.name);
+			throw puccini.sprintf('nested %s %q not found in %q', singular, args.slice(a, i+1).join('.'), nodeTemplate.name);
 	}
 	return value;
 };
@@ -136,22 +136,22 @@ exports.getModelableEntity = function(entity) {
 	switch (entity) {
 	case 'SELF':
 		if (!this || !this.site)
-			throw puccini.sprintf('"%s" cannot be used in this context', entity);
+			throw puccini.sprintf('%q cannot be used in this context', entity);
 		vertex = this.site;
 		break;
 	case 'SOURCE':
 		if (!this || !this.source)
-			throw puccini.sprintf('"%s" cannot be used in this context', entity);
+			throw puccini.sprintf('%q cannot be used in this context', entity);
 		vertex = this.source;
 		break;
 	case 'TARGET':
 		if (!this || !this.target)
-			throw puccini.sprintf('"%s" cannot be used in this context', entity);
+			throw puccini.sprintf('%q cannot be used in this context', entity);
 		vertex = this.target;
 		break;
 	case 'HOST':
 		if (!this || !this.site)
-			throw puccini.sprintf('"%s" cannot be used in this context', entity);
+			throw puccini.sprintf('%q cannot be used in this context', entity);
 		vertex = exports.getHost(this.site);
 		break;
 	default:
@@ -165,7 +165,7 @@ exports.getModelableEntity = function(entity) {
 	if (exports.isNodeTemplate(vertex))
 		return vertex.properties;
 	else
-		throw puccini.sprintf('node template "%s" not found', entity);
+		throw puccini.sprintf('node template %q not found', entity);
 };
 
 exports.getHost = function(vertex) {
@@ -180,7 +180,7 @@ exports.getHost = function(vertex) {
 		}
 	}
 	if (exports.isNodeTemplate(vertex))
-		throw puccini.sprintf('"HOST" not found for node template "%s"', vertex.properties.name);
+		throw puccini.sprintf('"HOST" not found for node template %q', vertex.properties.name);
 	else
 		throw '"HOST" not found';
 };

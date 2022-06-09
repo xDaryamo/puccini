@@ -57,32 +57,73 @@ func (self *Clout) Resolve() error {
 		return fmt.Errorf("unsupported Clout version: %q", self.Version)
 	}
 
-	for key, v := range self.Vertexes {
-		v.Clout = self
-		v.ID = key
+	return self.ResolveTopology()
+}
 
-		for _, e := range v.EdgesOut {
-			var ok bool
-			if e.Target, ok = self.Vertexes[e.TargetID]; !ok {
-				return fmt.Errorf("could not resolve Clout, bad TargetID: %q", e.TargetID)
+func (self *Clout) ResolveTopology() error {
+	for id, vertex := range self.Vertexes {
+		vertex.Clout = self
+		vertex.ID = id
+
+		for _, edge := range vertex.EdgesOut {
+			if edge.Target == nil {
+				var ok bool
+				if edge.Target, ok = self.Vertexes[edge.TargetID]; !ok {
+					return fmt.Errorf("could not resolve Clout, bad TargetID: %q", edge.TargetID)
+				}
+
+				edge.Source = vertex
+				edge.Target.EdgesIn = append(edge.Target.EdgesIn, edge)
 			}
-
-			e.Source = v
-			e.Target.EdgesIn = append(e.Target.EdgesIn, e)
 		}
 	}
 	return nil
 }
 
-func (self *Clout) Copy() (*Clout, error) {
-	// TODO: not very efficient
-	if code, err := cbor.Marshal(self); err == nil {
-		return Read(bytes.NewReader(code), "cbor")
+func (self *Clout) AgnosticCopy() (*Clout, error) {
+	return self.copy(true)
+}
+
+func (self *Clout) SimpleCopy() *Clout {
+	clout, _ := self.copy(false)
+	return clout
+}
+
+func (self *Clout) copy(agnostic bool) (*Clout, error) {
+	clout := Clout{
+		Version: Version,
+	}
+	var err error
+	if clout.Vertexes, err = self.Vertexes.copy(agnostic); err == nil {
+		if agnostic {
+			if metadata, err := ard.NormalizeStringMapsAgnosticCopy(self.Metadata); err == nil {
+				if properties, err := ard.NormalizeStringMapsAgnosticCopy(self.Properties); err == nil {
+					clout.Metadata = metadata.(ard.StringMap)
+					clout.Properties = properties.(ard.StringMap)
+				} else {
+					return nil, err
+				}
+			} else {
+				return nil, err
+			}
+		} else {
+			clout.Metadata = ard.SimpleCopy(self.Metadata).(ard.StringMap)
+			clout.Properties = ard.SimpleCopy(self.Properties).(ard.StringMap)
+		}
+	} else {
+		return nil, err
+	}
+	if err := clout.ResolveTopology(); err == nil {
+		return &clout, nil
 	} else {
 		return nil, err
 	}
 }
 
-func (self *Clout) Normalize() (*Clout, error) {
-	return self.Copy()
+func (self *Clout) copyOld(agnostic bool) (*Clout, error) {
+	if code, err := cbor.Marshal(self); err == nil {
+		return Read(bytes.NewReader(code), "cbor")
+	} else {
+		return nil, err
+	}
 }

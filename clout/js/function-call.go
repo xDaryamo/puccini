@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/tliron/kutil/ard"
-	"github.com/tliron/kutil/format"
+	"github.com/tliron/kutil/transcribe"
 )
 
 //
@@ -222,7 +222,7 @@ func encodeArgument(argument ard.Value) string {
 		argument_ = strings.ReplaceAll(argument_, "\n", "¶")
 		return fmt.Sprintf("%q", argument_)
 	default:
-		argument__, _ := format.EncodeJSON(argument, "")
+		argument__, _ := transcribe.EncodeJSON(argument, "")
 		return argument__
 	}
 }
