@@ -13,6 +13,8 @@ import (
 //
 // Value
 //
+// (attribute, property, and parameter assignments)
+//
 // [TOSCA-v2.0] @ ?
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.11, 3.6.13
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.10, 3.6.12
@@ -382,7 +384,7 @@ func (self Values) RenderAttributes(definitions AttributeDefinitions, context *t
 			if definition.Default != nil {
 				self[definition.Name] = definition.Default
 			} else {
-				// Attributes should always appear, even if they have no default value
+				// Attributes should always appear, at least as nil, even if they have no default value
 				self[definition.Name] = NewValue(context.MapChild(definition.Name, nil))
 			}
 		}
@@ -390,8 +392,11 @@ func (self Values) RenderAttributes(definitions AttributeDefinitions, context *t
 
 	for key, value := range self {
 		if definition, ok := definitions[key]; ok {
-			if definition.DataType != nil {
-				value.Render(definition.DataType, definition, false, true)
+			// Avoid re-rendering default
+			if value != definition.Default {
+				if definition.DataType != nil {
+					value.Render(definition.DataType, definition, false, true)
+				}
 			}
 		} else {
 			value.Context.ReportUndeclared("attribute")
@@ -414,7 +419,7 @@ func (self Values) RenderProperties(definitions PropertyDefinitions, context *to
 
 	for key, value := range self {
 		if definition, ok := definitions[key]; ok {
-			// Avoid re-rendering
+			// Avoid re-rendering default
 			if value != definition.Default {
 				if definition.DataType != nil {
 					value.RenderProperty(definition.DataType, definition)
