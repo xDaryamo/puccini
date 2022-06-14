@@ -6,7 +6,7 @@ import (
 )
 
 //
-// ServiceTemplate
+// ServiceFile
 //
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.10
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.10
@@ -15,10 +15,11 @@ import (
 //
 
 // tosca.Reader signature
-func ReadServiceTemplate(context *tosca.Context) tosca.EntityPtr {
+func ReadServiceFile(context *tosca.Context) tosca.EntityPtr {
+	context.SetReadTag("ServiceTemplate", "topology_template,ServiceTemplate")
 	context.SetReadTag("Profile", "namespace")
 
-	self := tosca_v2_0.NewServiceTemplate(context)
+	self := tosca_v2_0.NewServiceFile(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	ignore := []string{"dsl_definitions"}
 	if context.HasQuirk(tosca.QuirkAnnotationsIgnore) {

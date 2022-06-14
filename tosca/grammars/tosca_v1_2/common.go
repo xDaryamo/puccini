@@ -18,8 +18,8 @@ func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_yaml_1_2", "/tosca/simple/1.2/profile.yaml")
 	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_profile_for_nfv_1_0", "/tosca/simple-for-nfv/1.0/profile.yaml")
 
-	Grammar.RegisterReader("$Root", ReadServiceTemplate) // override
-	Grammar.RegisterReader("$File", ReadFile)            // override
+	Grammar.RegisterReader("$Root", ReadServiceFile) // override
+	Grammar.RegisterReader("$File", ReadFile)        // override
 
 	Grammar.RegisterReader("Artifact", ReadArtifact)                     // override
 	Grammar.RegisterReader("ArtifactDefinition", ReadArtifactDefinition) // override
@@ -66,13 +66,13 @@ func init() {
 	Grammar.RegisterReader("RequirementAssignment", ReadRequirementAssignment) // override
 	Grammar.RegisterReader("RequirementDefinition", tosca_v2_0.ReadRequirementDefinition)
 	Grammar.RegisterReader("RequirementMapping", tosca_v2_0.ReadRequirementMapping)
+	Grammar.RegisterReader("ServiceTemplate", tosca_v2_0.ReadServiceTemplate)
 	Grammar.RegisterReader("scalar-unit.frequency", tosca_v2_0.ReadScalarUnitFrequency)
 	Grammar.RegisterReader("scalar-unit.size", tosca_v2_0.ReadScalarUnitSize)
 	Grammar.RegisterReader("scalar-unit.time", tosca_v2_0.ReadScalarUnitTime)
 	Grammar.RegisterReader("Schema", tosca_v2_0.ReadSchema)
 	Grammar.RegisterReader("SubstitutionMappings", ReadSubstitutionMappings) // override
 	Grammar.RegisterReader("timestamp", tosca_v2_0.ReadTimestamp)
-	Grammar.RegisterReader("TopologyTemplate", tosca_v2_0.ReadTopologyTemplate)
 	Grammar.RegisterReader("TriggerDefinition", ReadTriggerDefinition) // override
 	Grammar.RegisterReader("TriggerDefinitionCondition", tosca_v2_0.ReadTriggerDefinitionCondition)
 	Grammar.RegisterReader("Value", tosca_v2_0.ReadValue)

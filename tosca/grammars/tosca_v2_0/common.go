@@ -19,7 +19,7 @@ var DefaultScriptletNamespace = tosca.NewScriptletNamespace()
 func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "tosca_2_0", "/tosca/implicit/2.0/profile.yaml")
 
-	Grammar.RegisterReader("$Root", ReadServiceTemplate)
+	Grammar.RegisterReader("$Root", ReadServiceFile)
 	Grammar.RegisterReader("$File", ReadFile)
 
 	Grammar.RegisterReader("Artifact", ReadArtifact)
@@ -72,6 +72,7 @@ func init() {
 	Grammar.RegisterReader("RequirementAssignment", ReadRequirementAssignment)
 	Grammar.RegisterReader("RequirementDefinition", ReadRequirementDefinition)
 	Grammar.RegisterReader("RequirementMapping", ReadRequirementMapping)
+	Grammar.RegisterReader("ServiceTemplate", ReadServiceTemplate)
 	Grammar.RegisterReader("scalar-unit.bitrate", ReadScalarUnitBitrate) // introduced in TOSCA 1.3
 	Grammar.RegisterReader("scalar-unit.frequency", ReadScalarUnitFrequency)
 	Grammar.RegisterReader("scalar-unit.size", ReadScalarUnitSize)
@@ -79,7 +80,6 @@ func init() {
 	Grammar.RegisterReader("Schema", ReadSchema)
 	Grammar.RegisterReader("SubstitutionMappings", ReadSubstitutionMappings)
 	Grammar.RegisterReader("timestamp", ReadTimestamp)
-	Grammar.RegisterReader("TopologyTemplate", ReadTopologyTemplate)
 	Grammar.RegisterReader("TriggerDefinition", ReadTriggerDefinition)
 	Grammar.RegisterReader("TriggerDefinitionCondition", ReadTriggerDefinitionCondition)
 	Grammar.RegisterReader("Value", ReadValue)
