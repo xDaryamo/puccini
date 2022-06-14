@@ -222,7 +222,7 @@ func (self *Hierarchy) addChild(hierarchy *Hierarchy) {
 func (self *Hierarchy) AddTo(entityPtr EntityPtr) {
 	for _, field := range reflection.GetTaggedFields(entityPtr, "hierarchy") {
 		type_ := field.Type()
-		if reflection.IsSliceOfPtrToStruct(type_) {
+		if reflection.IsSliceOfPointerToStruct(type_) {
 			type_ = type_.Elem()
 			self.appendTypeToSlice(field, type_)
 		} else {

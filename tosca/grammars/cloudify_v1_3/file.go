@@ -5,13 +5,13 @@ import (
 )
 
 //
-// Unit
+// File
 //
 // See Blueprint
 //
 
-type Unit struct {
-	*Entity `name:"unit"`
+type File struct {
+	*Entity `name:"file"`
 
 	ToscaDefinitionsVersion *string            `read:"tosca_definitions_version" mandatory:""`
 	Metadata                Metadata           `read:"metadata,!Metadata"` // not in spec, but in code
@@ -31,8 +31,8 @@ type Unit struct {
 	UploadResources         *UploadResources   `read:"upload_resources,UploadResources"`
 }
 
-func NewUnit(context *tosca.Context) *Unit {
-	return &Unit{
+func NewFile(context *tosca.Context) *File {
+	return &File{
 		Entity:  NewEntity(context),
 		Inputs:  make(Inputs),
 		Outputs: make(ValueDefinitions),
@@ -40,15 +40,15 @@ func NewUnit(context *tosca.Context) *Unit {
 }
 
 // tosca.Reader signature
-func ReadUnit(context *tosca.Context) tosca.EntityPtr {
-	self := NewUnit(context)
+func ReadFile(context *tosca.Context) tosca.EntityPtr {
+	self := NewFile(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
 	return self
 }
 
 // tosca.Importer interface
-func (self *Unit) GetImportSpecs() []*tosca.ImportSpec {
+func (self *File) GetImportSpecs() []*tosca.ImportSpec {
 	var importSpecs = make([]*tosca.ImportSpec, 0, len(self.Imports))
 	for _, import_ := range self.Imports {
 		if importSpec, ok := import_.NewImportSpec(self); ok {

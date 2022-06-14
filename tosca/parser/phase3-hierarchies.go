@@ -13,7 +13,7 @@ func (self *ServiceContext) AddHierarchies() {
 	self.Root.mergeHierarchies(make(tosca.HierarchyContext), self.Context.addHierarchyWork)
 }
 
-func (self *Unit) mergeHierarchies(hierarchyContext tosca.HierarchyContext, work reflection.EntityWork) {
+func (self *File) mergeHierarchies(hierarchyContext tosca.HierarchyContext, work reflection.EntityWork) {
 	context := self.GetContext()
 
 	self.importsLock.RLock()
@@ -34,11 +34,11 @@ func (self *Unit) mergeHierarchies(hierarchyContext tosca.HierarchyContext, work
 // Print
 
 func (self *ServiceContext) PrintHierarchies(indent int) {
-	self.unitsLock.RLock()
-	defer self.unitsLock.RUnlock()
+	self.filesLock.RLock()
+	defer self.filesLock.RUnlock()
 
-	for _, unit := range self.Units {
-		context := unit.GetContext()
+	for _, file := range self.Files {
+		context := file.GetContext()
 		if !context.Hierarchy.Empty() {
 			terminal.PrintIndent(indent)
 			terminal.Printf("%s\n", self.Stylist.Value(context.URL.String()))

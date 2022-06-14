@@ -25,14 +25,14 @@ func (self *ServiceContext) ReadRoot(url urlpkg.URL, origins []urlpkg.URL, templ
 	self.Root, ok = self.read(nil, toscaContext, nil, nil, "$Root", template)
 	self.readWork.Wait()
 
-	self.unitsLock.Lock()
-	sort.Sort(self.Units)
-	self.unitsLock.Unlock()
+	self.filesLock.Lock()
+	sort.Sort(self.Files)
+	self.filesLock.Unlock()
 
 	return ok
 }
 
-func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Context, container *Unit, nameTransformer tosca.NameTransformer, readerName string, template string) (*Unit, bool) {
+func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Context, container *File, nameTransformer tosca.NameTransformer, readerName string, template string) (*File, bool) {
 	defer self.readWork.Done()
 	if promise != nil {
 		// For the goroutines waiting for our cached entityPtr
@@ -46,9 +46,9 @@ func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Conte
 		var err error
 		if toscaContext.URL, err = csar.GetURL(toscaContext.URL, template); err != nil {
 			toscaContext.ReportError(err)
-			unit := NewUnitNoEntity(toscaContext, container, nameTransformer)
-			self.AddUnit(unit)
-			return unit, false
+			file := NewFileNoEntity(toscaContext, container, nameTransformer)
+			self.AddFile(file)
+			return file, false
 		}
 	}
 
@@ -59,16 +59,16 @@ func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Conte
 			err = NewYAMLDecodeError(decodeError)
 		}
 		toscaContext.ReportError(err)
-		unit := NewUnitNoEntity(toscaContext, container, nameTransformer)
-		self.AddUnit(unit)
-		return unit, false
+		file := NewFileNoEntity(toscaContext, container, nameTransformer)
+		self.AddFile(file)
+		return file, false
 	}
 
 	// Detect grammar
 	if !grammars.Detect(toscaContext) {
-		unit := NewUnitNoEntity(toscaContext, container, nameTransformer)
-		self.AddUnit(unit)
-		return unit, false
+		file := NewFileNoEntity(toscaContext, container, nameTransformer)
+		self.AddFile(file)
+		return file, false
 	}
 
 	// Read entityPtr
@@ -87,11 +87,11 @@ func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Conte
 
 	self.Context.readCache.Store(toscaContext.URL.Key(), entityPtr)
 
-	return self.AddImportUnit(entityPtr, container, nameTransformer), true
+	return self.AddImportFile(entityPtr, container, nameTransformer), true
 }
 
 // From tosca.Importer interface
-func (self *ServiceContext) goReadImports(container *Unit) {
+func (self *ServiceContext) goReadImports(container *File) {
 	importSpecs := tosca.GetImportSpecs(container.EntityPtr)
 
 	// Implicit import
@@ -133,19 +133,19 @@ func (self *ServiceContext) goReadImports(container *Unit) {
 			default: // entityPtr
 				// Cache hit
 				logRead.Debugf("cache hit: %s", key)
-				self.AddImportUnit(cached, container, importSpec.NameTransformer)
+				self.AddImportFile(cached, container, importSpec.NameTransformer)
 			}
 		} else {
 			importToscaContext := container.GetContext().NewImportContext(importSpec.URL)
 
 			// Read (concurrently)
 			self.readWork.Add(1)
-			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, "$Unit", "")
+			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, "$File", "")
 		}
 	}
 }
 
-func (self *ServiceContext) waitForPromise(promise util.Promise, key string, container *Unit, nameTransformer tosca.NameTransformer) {
+func (self *ServiceContext) waitForPromise(promise util.Promise, key string, container *File, nameTransformer tosca.NameTransformer) {
 	defer self.readWork.Done()
 	promise.Wait()
 
@@ -157,7 +157,7 @@ func (self *ServiceContext) waitForPromise(promise util.Promise, key string, con
 		default: // entityPtr
 			// Cache hit
 			logRead.Debugf("promise kept: %s", key)
-			self.AddImportUnit(cached, container, nameTransformer)
+			self.AddImportFile(cached, container, nameTransformer)
 		}
 	} else {
 		logRead.Debugf("promise broken (empty): %s", key)

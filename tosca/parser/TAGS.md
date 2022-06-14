@@ -70,7 +70,7 @@ optional) use "?field". (E.g. TOSCA requirement.capability.)
 Hierarchy phase. Marks this field as a container for types.
 
 After the hierarchy is built all entities of this type (determined by reflection) will be merged
-here. This allows us to import types from other units.
+here. This allows us to import types from other files.
 
 ### inherit:"key,field"
 

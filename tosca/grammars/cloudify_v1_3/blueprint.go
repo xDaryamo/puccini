@@ -16,14 +16,14 @@ import (
 //
 
 type Blueprint struct {
-	*Unit `name:"blueprint"`
+	*File `name:"blueprint"`
 
 	Description *string `read:"description"` // not in spec, but in code
 	Groups      Groups  `read:"groups,Group"`
 }
 
 func NewBlueprint(context *tosca.Context) *Blueprint {
-	return &Blueprint{Unit: NewUnit(context)}
+	return &Blueprint{File: NewFile(context)}
 }
 
 // tosca.Reader signature

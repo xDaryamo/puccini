@@ -40,13 +40,13 @@ func NewContext() *Context {
 
 type ServiceContext struct {
 	Context *Context
-	Root    *Unit
+	Root    *File
 	Stylist *terminal.Stylist
 	Quirks  tosca.Quirks
-	Units   Units
+	Files   Files
 
 	readWork  sync.WaitGroup
-	unitsLock util.RWLocker
+	filesLock util.RWLocker
 }
 
 func (self *Context) NewServiceContext(stylist *terminal.Stylist, quirks tosca.Quirks) *ServiceContext {
@@ -54,7 +54,7 @@ func (self *Context) NewServiceContext(stylist *terminal.Stylist, quirks tosca.Q
 		Context:   self,
 		Stylist:   stylist,
 		Quirks:    quirks,
-		unitsLock: util.NewDebugRWLocker(),
+		filesLock: util.NewDebugRWLocker(),
 	}
 }
 
@@ -63,41 +63,41 @@ func (self *ServiceContext) GetProblems() *problems.Problems {
 }
 
 func (self *ServiceContext) MergeProblems() {
-	self.unitsLock.RLock()
-	defer self.unitsLock.RUnlock()
+	self.filesLock.RLock()
+	defer self.filesLock.RUnlock()
 
 	// Note: This could happen many times, but because problems are de-duped, everything is OK :)
-	for _, unit := range self.Units {
-		self.GetProblems().Merge(unit.GetContext().Problems)
+	for _, file := range self.Files {
+		self.GetProblems().Merge(file.GetContext().Problems)
 	}
 }
 
-func (self *ServiceContext) AddUnit(unit *Unit) {
-	self.unitsLock.Lock()
-	defer self.unitsLock.Unlock()
+func (self *ServiceContext) AddFile(file *File) {
+	self.filesLock.Lock()
+	defer self.filesLock.Unlock()
 
-	self.Units = append(self.Units, unit)
+	self.Files = append(self.Files, file)
 }
 
-func (self *ServiceContext) AddImportUnit(entityPtr tosca.EntityPtr, container *Unit, nameTransformer tosca.NameTransformer) *Unit {
-	unit := NewUnit(entityPtr, container, nameTransformer)
+func (self *ServiceContext) AddImportFile(entityPtr tosca.EntityPtr, container *File, nameTransformer tosca.NameTransformer) *File {
+	file := NewFile(entityPtr, container, nameTransformer)
 
 	if container != nil {
 		containerContext := container.GetContext()
 		if !containerContext.HasQuirk(tosca.QuirkImportsVersionPermissive) {
-			unitContext := unit.GetContext()
-			if !grammars.CompatibleGrammars(containerContext, unitContext) {
-				containerContext.ReportImportIncompatible(unitContext.URL)
-				return unit
+			fileContext := file.GetContext()
+			if !grammars.CompatibleGrammars(containerContext, fileContext) {
+				containerContext.ReportImportIncompatible(fileContext.URL)
+				return file
 			}
 		}
 	}
 
-	self.AddUnit(unit)
+	self.AddFile(file)
 
-	self.goReadImports(unit)
+	self.goReadImports(file)
 
-	return unit
+	return file
 }
 
 // Print

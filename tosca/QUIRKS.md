@@ -7,10 +7,10 @@ These are activated via the `--quirk/-x` switch for
 * **imports.implicit.disable**: In TOSCA 1.0-1.3 the Simple Profile is implicitly imported by
   default. This quirk will disable implicit imports.
 
-* **imports.version.permissive**: By default Puccini will report an error if a unit imports
-  another unit with an incompatible grammar. This quirk will disable the check.
+* **imports.version.permissive**: By default Puccini will report an error if a file imports
+  another file with an incompatible grammar. This quirk will disable the check.
 
-* **imports.topology_template.ignore**: Allows imported units to contain a `topology_template`
+* **imports.topology_template.ignore**: Allows imported files to contain a `topology_template`
   section, which is ignored.
 
 * **imports.sequencedlist**: Allows the "import" syntax to be a sequenced list, in which the

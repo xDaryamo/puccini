@@ -68,7 +68,7 @@ func ReadImport(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-func (self *Import) NewImportSpec(unit *Unit) (*tosca.ImportSpec, bool) {
+func (self *Import) NewImportSpec(unit *File) (*tosca.ImportSpec, bool) {
 	if self.URL == nil {
 		return nil, false
 	}

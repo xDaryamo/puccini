@@ -14,12 +14,12 @@ type Quirk string
 // implicit imports.
 const QuirkImportsImplicitDisable Quirk = "imports.implicit.disable"
 
-// Allows imported units to contain a `topology_template`
+// Allows imported files to contain a `topology_template`
 // section, which is ignored.
 const QuirkImportsTopologyTemplateIgnore Quirk = "imports.topology_template.ignore"
 
-// By default Puccini will report an error if a unit imports
-// another unit with an incompatible grammar. This quirk will disable the check.
+// By default Puccini will report an error if a file imports
+// another file with an incompatible grammar. This quirk will disable the check.
 const QuirkImportsVersionPermissive Quirk = "imports.version.permissive"
 
 // Allows the "import" syntax to be a sequenced list, in which the

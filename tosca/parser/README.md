@@ -23,7 +23,7 @@ the namespace, and inheriting fields from parent types. Generic code of this sor
 right, but once you do the entire domain is managed via simple annotations (field tags).
 
 There is a cost to using such annotations, and indeed even the simple field tags are controversial
-within the Go community. The problem is that hidden, magical things happen that are not visible
+within the Go commfiley. The problem is that hidden, magical things happen that are not visible
 in the immediate vicinity of the code in front of you. You have to look elsewhere for the systems
 that read these tags and do things with them. The only way to reduce this cost is good
 documentation: make coders aware of these systems and what they do. We will consider this
@@ -61,10 +61,10 @@ multiple names per entity, as is necessary for the normative types.
 
 Recursively, starting at tips of the import hierarchy:
 
-1. Gather all names in the unit
+1. Gather all names in the file
 2. Apply the import's `namespace_prefix` if defined
-3. Set names in unit's namespace (every entity type has its own section)
-4. Merge namespace into parent unit's
+3. Set names in file's namespace (every entity type has its own section)
+4. Merge namespace into parent file's
     * Ambiguous names (per entity type section)
 
 And then:
@@ -81,17 +81,17 @@ The entire goal of this phase is validation. The entities already have hierarchi
 
 Recursively, starting at tips of the import hierarchy:
 
-1. Gather all TOSCA types in the unit
+1. Gather all TOSCA types in the file
 2. Place types in hierarchy (every type has its own hierarchy)
     * Type's parent causes an endless loop
     * Type's parent is incomplete
-3. Merge hierarchy into parent unit's
+3. Merge hierarchy into parent file's
 
 
 Phase 4: Inheritance
 --------------------
 
-From this phase we onward only deal with the root unit, not the imported units, because it already
+From this phase we onward only deal with the root file, not the imported files, because it already
 has all names and types merged in.
 
 This phase is complex because the order of inheritance cannot be determined generally. Not only do

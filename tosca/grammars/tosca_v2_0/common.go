@@ -20,7 +20,7 @@ func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "tosca_2_0", "/tosca/implicit/2.0/profile.yaml")
 
 	Grammar.RegisterReader("$Root", ReadServiceTemplate)
-	Grammar.RegisterReader("$Unit", ReadUnit)
+	Grammar.RegisterReader("$File", ReadFile)
 
 	Grammar.RegisterReader("Artifact", ReadArtifact)
 	Grammar.RegisterReader("ArtifactDefinition", ReadArtifactDefinition)

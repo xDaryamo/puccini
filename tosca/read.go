@@ -196,7 +196,7 @@ func (self *ReadField) Read() {
 
 	childData, ok := self.Context.Data.(ard.Map)[self.Key]
 	if !ok {
-		if reflection.IsSliceOfPtrToStruct(fieldType) {
+		if reflection.IsSliceOfPointerToStruct(fieldType) {
 			// If we have no items, at least have an empty slice
 			// so that "mandatory" will not see a nil here
 			field.Set(reflect.MakeSlice(fieldType, 0, 0))
@@ -205,7 +205,7 @@ func (self *ReadField) Read() {
 	}
 
 	if self.Reader != nil {
-		if reflection.IsSliceOfPtrToStruct(fieldType) {
+		if reflection.IsSliceOfPointerToStruct(fieldType) {
 			// Field is compatible with []*any
 			slice := field
 			switch self.Mode {
@@ -236,7 +236,7 @@ func (self *ReadField) Read() {
 				slice = reflect.MakeSlice(fieldType, 0, 0)
 			}
 			field.Set(slice)
-		} else if reflection.IsMapOfStringToPtrToStruct(fieldType) {
+		} else if reflection.IsMapOfStringToPointerToStruct(fieldType) {
 			// Field is compatible with map[string]*any
 			switch self.Mode {
 			case ReadFieldModeList:
@@ -267,37 +267,37 @@ func (self *ReadField) Read() {
 		}
 	} else {
 		fieldEntityPtr := field.Interface()
-		if reflection.IsPtrToString(fieldEntityPtr) {
+		if reflection.IsPointerToString(fieldEntityPtr) {
 			// Field is *string
 			item := self.Context.FieldChild(self.Key, childData).ReadString()
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
-		} else if reflection.IsPtrToInt64(fieldEntityPtr) {
+		} else if reflection.IsPointerToInt64(fieldEntityPtr) {
 			// Field is *int64
 			item := self.Context.FieldChild(self.Key, childData).ReadInteger()
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
-		} else if reflection.IsPtrToFloat64(fieldEntityPtr) {
+		} else if reflection.IsPointerToFloat64(fieldEntityPtr) {
 			// Field is *float64
 			item := self.Context.FieldChild(self.Key, childData).ReadFloat()
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
-		} else if reflection.IsPtrToBool(fieldEntityPtr) {
+		} else if reflection.IsPointerToBool(fieldEntityPtr) {
 			// Field is *bool
 			item := self.Context.FieldChild(self.Key, childData).ReadBoolean()
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
-		} else if reflection.IsPtrToSliceOfString(fieldEntityPtr) {
+		} else if reflection.IsPointerToSliceOfString(fieldEntityPtr) {
 			// Field is *[]string
 			item := self.Context.FieldChild(self.Key, childData).ReadStringList()
 			if item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
-		} else if reflection.IsPtrToMapOfStringToString(fieldEntityPtr) {
+		} else if reflection.IsPointerToMapOfStringToString(fieldEntityPtr) {
 			// Field is *map[string]string
 			item := self.Context.FieldChild(self.Key, childData).ReadStringStringMap()
 			if item != nil {

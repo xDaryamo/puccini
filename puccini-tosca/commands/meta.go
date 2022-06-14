@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/tliron/kutil/terminal"
-	formatpkg "github.com/tliron/kutil/transcribe"
+	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca/csar"
 
@@ -52,7 +52,7 @@ func Meta(url string) {
 	util.FailOnError(err)
 
 	if !terminal.Quiet || (output != "") {
-		err = formatpkg.WriteOrPrint(meta, format, terminal.Stdout, strict, pretty, output)
+		err = transcribe.WriteOrPrint(meta, format, terminal.Stdout, strict, pretty, output)
 		util.FailOnError(err)
 	}
 }

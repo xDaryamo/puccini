@@ -96,7 +96,7 @@ func (self *InheritContext) GetDependencies(entityPtr tosca.EntityPtr) tosca.Ent
 	for _, structField := range reflection.GetStructFields(entity.Type()) {
 		// Does this case ever happen?
 		// Would conflict with anonymous pointer fields (Go "inheritance")
-		//		if reflection.IsPtrToStruct(structField.Type) {
+		//		if reflection.IsPointerToStruct(structField.Type) {
 		//			// Compatible with *any
 		//			field := entity.FieldByName(structField.Name)
 		//			if !field.IsNil() {
@@ -108,14 +108,14 @@ func (self *InheritContext) GetDependencies(entityPtr tosca.EntityPtr) tosca.Ent
 		//			}
 		//		}
 
-		if reflection.IsMapOfStringToPtrToStruct(structField.Type) {
+		if reflection.IsMapOfStringToPointerToStruct(structField.Type) {
 			// Compatible with map[string]*any
 			field := entity.FieldByName(structField.Name)
 			for _, mapKey := range field.MapKeys() {
 				element := field.MapIndex(mapKey)
 				dependencies.Add(element.Interface())
 			}
-		} else if reflection.IsSliceOfPtrToStruct(structField.Type) {
+		} else if reflection.IsSliceOfPointerToStruct(structField.Type) {
 			// Compatible with []*any
 			field := entity.FieldByName(structField.Name)
 			length := field.Len()
@@ -144,23 +144,23 @@ type InheritField struct {
 func (self *InheritField) Inherit() {
 	// TODO: do we really need all of these? some of them aren't used in TOSCA
 	fieldEntityPtr := self.Field.Interface()
-	if reflection.IsPtrToString(fieldEntityPtr) {
+	if reflection.IsPointerToString(fieldEntityPtr) {
 		self.InheritEntity()
-	} else if reflection.IsPtrToInt64(fieldEntityPtr) {
+	} else if reflection.IsPointerToInt64(fieldEntityPtr) {
 		self.InheritEntity()
-	} else if reflection.IsPtrToBool(fieldEntityPtr) {
+	} else if reflection.IsPointerToBool(fieldEntityPtr) {
 		self.InheritEntity()
-	} else if reflection.IsPtrToSliceOfString(fieldEntityPtr) {
+	} else if reflection.IsPointerToSliceOfString(fieldEntityPtr) {
 		self.InheritStringsFromSlice()
-	} else if reflection.IsPtrToMapOfStringToString(fieldEntityPtr) {
+	} else if reflection.IsPointerToMapOfStringToString(fieldEntityPtr) {
 		self.InheritStringsFromMap()
 	} else {
 		fieldType := self.Field.Type()
-		if reflection.IsPtrToStruct(fieldType) {
+		if reflection.IsPointerToStruct(fieldType) {
 			self.InheritEntity()
-		} else if reflection.IsSliceOfPtrToStruct(fieldType) {
+		} else if reflection.IsSliceOfPointerToStruct(fieldType) {
 			self.InheritStructsFromSlice()
-		} else if reflection.IsMapOfStringToPtrToStruct(fieldType) {
+		} else if reflection.IsMapOfStringToPointerToStruct(fieldType) {
 			self.InheritStructsFromMap()
 		} else {
 			panic(fmt.Sprintf("\"inherit\" tag's field type %q is not supported in struct: %T", fieldType, self.Entity.Interface()))

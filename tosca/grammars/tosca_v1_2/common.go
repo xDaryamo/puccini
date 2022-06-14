@@ -19,7 +19,7 @@ func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_profile_for_nfv_1_0", "/tosca/simple-for-nfv/1.0/profile.yaml")
 
 	Grammar.RegisterReader("$Root", ReadServiceTemplate) // override
-	Grammar.RegisterReader("$Unit", ReadUnit)            // override
+	Grammar.RegisterReader("$File", ReadFile)            // override
 
 	Grammar.RegisterReader("Artifact", ReadArtifact)                     // override
 	Grammar.RegisterReader("ArtifactDefinition", ReadArtifactDefinition) // override

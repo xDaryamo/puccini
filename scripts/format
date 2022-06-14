@@ -7,6 +7,7 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 gofmt -w -s -e \
 	"$ROOT/clout" \
 	"$ROOT/clout/js" \
+	"$ROOT/clout/util" \
 	"$ROOT/puccini-clout" \
 	"$ROOT/puccini-clout/commands" \
 	"$ROOT/puccini-tosca" \

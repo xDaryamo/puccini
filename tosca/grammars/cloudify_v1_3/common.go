@@ -18,7 +18,7 @@ func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "cloudify_dsl_1_3", "/cloudify/5.0.5/profile.yaml")
 
 	Grammar.RegisterReader("$Root", ReadBlueprint)
-	Grammar.RegisterReader("$Unit", ReadUnit)
+	Grammar.RegisterReader("$File", ReadFile)
 
 	Grammar.RegisterReader("Blueprint", ReadBlueprint)
 	Grammar.RegisterReader("DataType", ReadDataType)

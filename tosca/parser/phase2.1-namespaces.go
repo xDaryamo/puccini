@@ -12,7 +12,7 @@ func (self *ServiceContext) AddNamespaces() {
 	self.Root.mergeNamespaces()
 }
 
-func (self *Unit) mergeNamespaces() {
+func (self *File) mergeNamespaces() {
 	context := self.GetContext()
 
 	self.importsLock.RLock()
@@ -32,12 +32,12 @@ func (self *Unit) mergeNamespaces() {
 // Print
 
 func (self *ServiceContext) PrintNamespaces(indent int) {
-	self.unitsLock.RLock()
-	defer self.unitsLock.RUnlock()
+	self.filesLock.RLock()
+	defer self.filesLock.RUnlock()
 
 	childIndent := indent + 1
-	for _, unit := range self.Units {
-		context := unit.GetContext()
+	for _, file := range self.Files {
+		context := file.GetContext()
 		if !context.Namespace.Empty() {
 			terminal.PrintIndent(indent)
 			terminal.Printf("%s\n", self.Stylist.Value(context.URL.String()))

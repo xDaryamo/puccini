@@ -63,6 +63,9 @@ fit all. Puccini instead comes with examples: see [storing in Neo4j](examples/ne
 Structure
 ---------
 
+Note that *all* map keys in Clout must be strings. This is in order to ensure widest compatibility
+with programming languages and implementations.
+
 ### `version` (string)
 
 Must be "1.0" to conform with this document.

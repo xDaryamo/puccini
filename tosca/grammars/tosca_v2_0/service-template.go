@@ -18,13 +18,13 @@ import (
 //
 
 type ServiceTemplate struct {
-	*Unit `name:"service template"`
+	*File `name:"service template"`
 
 	TopologyTemplate *TopologyTemplate `read:"topology_template,TopologyTemplate"`
 }
 
 func NewServiceTemplate(context *tosca.Context) *ServiceTemplate {
-	return &ServiceTemplate{Unit: NewUnit(context)}
+	return &ServiceTemplate{File: NewFile(context)}
 }
 
 // tosca.Reader signature
@@ -54,7 +54,7 @@ func (self *ServiceTemplate) NormalizeServiceTemplate() *normal.ServiceTemplate 
 
 	normalServiceTemplate.ScriptletNamespace = self.Context.ScriptletNamespace
 
-	self.Unit.Normalize(normalServiceTemplate)
+	self.File.Normalize(normalServiceTemplate)
 	if self.TopologyTemplate != nil {
 		self.TopologyTemplate.Normalize(normalServiceTemplate)
 	}

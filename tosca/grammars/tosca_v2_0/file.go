@@ -6,7 +6,7 @@ import (
 )
 
 //
-// Unit
+// File
 //
 // See ServiceTemplate
 //
@@ -17,8 +17,8 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.9
 //
 
-type Unit struct {
-	*Entity `name:"unit"`
+type File struct {
+	*Entity `name:"file"`
 
 	ToscaDefinitionsVersion *string           `read:"tosca_definitions_version" mandatory:""`
 	Profile                 *string           `read:"profile"` // introduced in TOSCA 1.2 as "namespace", renamed in TOSCA 2.0
@@ -36,13 +36,13 @@ type Unit struct {
 	RelationshipTypes       RelationshipTypes `read:"relationship_types,RelationshipType" hierarchy:""`
 }
 
-func NewUnit(context *tosca.Context) *Unit {
-	return &Unit{Entity: NewEntity(context)}
+func NewFile(context *tosca.Context) *File {
+	return &File{Entity: NewEntity(context)}
 }
 
 // tosca.Reader signature
-func ReadUnit(context *tosca.Context) tosca.EntityPtr {
-	self := NewUnit(context)
+func ReadFile(context *tosca.Context) tosca.EntityPtr {
+	self := NewFile(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	ignore := []string{"dsl_definitions"}
 	if context.HasQuirk(tosca.QuirkImportsTopologyTemplateIgnore) {
@@ -59,7 +59,7 @@ func ReadUnit(context *tosca.Context) tosca.EntityPtr {
 }
 
 // tosca.Importer interface
-func (self *Unit) GetImportSpecs() []*tosca.ImportSpec {
+func (self *File) GetImportSpecs() []*tosca.ImportSpec {
 	// TODO: importing should also import repositories
 
 	var importSpecs = make([]*tosca.ImportSpec, 0, len(self.Imports))
@@ -71,8 +71,8 @@ func (self *Unit) GetImportSpecs() []*tosca.ImportSpec {
 	return importSpecs
 }
 
-func (self *Unit) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
-	logNormalize.Debug("unit")
+func (self *File) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
+	logNormalize.Debug("file")
 
 	if self.Metadata != nil {
 		for k, v := range self.Metadata {
