@@ -26,7 +26,10 @@ type RequirementAssignment struct {
 	TargetNodeTemplateNameOrTypeName *string                 `read:"node"`
 	TargetNodeFilter                 *NodeFilter             `read:"node_filter,NodeFilter"`
 	Relationship                     *RelationshipAssignment `read:"relationship,RelationshipAssignment"`
-	Occurrences                      *RangeEntity            `read:"occurrences,RangeEntity"` // introduced in TOSCA 1.3
+	Count                            *int64                  `read:"count"`      // introduced in TOSCA 2.0, replacing "occurrences"
+	Directives                       *[]string               `read:"directives"` // introduced in TOSCA 2.0
+	Optional                         *bool                   `read:"optional"`   // introduced in TOSCA 2.0
+	// TODO: Allocation
 
 	TargetCapabilityType *CapabilityType `lookup:"capability,?TargetCapabilityNameOrTypeName" json:"-" yaml:"-"`
 	TargetNodeTemplate   *NodeTemplate   `lookup:"node,TargetNodeTemplateNameOrTypeName" json:"-" yaml:"-"`
@@ -55,6 +58,8 @@ func ReadRequirementAssignment(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
+var one int64 = 1
+
 func NewDefaultRequirementAssignment(index int, definition *RequirementDefinition, context *tosca.Context) *RequirementAssignment {
 	context = context.SequencedListChild(index, definition.Name, nil)
 	context.Name = definition.Name
@@ -63,6 +68,7 @@ func NewDefaultRequirementAssignment(index int, definition *RequirementDefinitio
 	self.TargetNodeType = definition.TargetNodeType
 	self.TargetCapabilityNameOrTypeName = definition.TargetCapabilityTypeName
 	self.TargetCapabilityType = definition.TargetCapabilityType
+	self.Count = &one
 	return self
 }
 
@@ -109,6 +115,14 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalN
 		}
 	}
 
+	if self.Directives != nil {
+		normalRequirement.Directives = *self.Directives
+	}
+
+	if self.Optional != nil {
+		normalRequirement.Optional = *self.Optional
+	}
+
 	return normalRequirement
 }
 
@@ -119,28 +133,45 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalN
 type RequirementAssignments []*RequirementAssignment
 
 func (self *RequirementAssignments) Render(definitions RequirementDefinitions, context *tosca.Context) {
-	// TODO: currently have no idea what to do with "occurrences" keyword in the requirement
-	// assignment, because we interpret "occurrences" in the definition to mean how many times
-	// it would be assigned
-
-	for _, definition := range definitions {
-		// The TOSCA spec says that definition occurrences has an "implied default of [1,1]"
-		occurrences := definition.Occurrences
-		if occurrences == nil {
-			occurrencesContext := definition.Context.FieldChild("occurrences", ard.List{1, 1})
-			occurrences = ReadRangeEntity(occurrencesContext).(*RangeEntity)
+	for _, assignment := range *self {
+		if assignment.Count == nil {
+			assignment.Count = &one
 		}
 
+		if assignment.Directives != nil {
+			directives := *assignment.Directives
+			for index, directive := range directives {
+				switch directive {
+				case "internal", "external":
+				default:
+					directiveContext := assignment.Context.FieldChild("directives", nil).ListChild(index, directive)
+					directiveContext.ReportKeynameUnsupportedValue()
+				}
+
+				for i := 0; i < index; i++ {
+					if directives[i] == directive {
+						directiveContext := assignment.Context.FieldChild("directives", nil).ListChild(index, directive)
+						directiveContext.ReportPathf(0, "directive repeated: %s", directiveContext.FormatBadData())
+					}
+				}
+			}
+		}
+	}
+
+	for _, definition := range definitions {
+		definition.Render()
+
+		countRange := definition.CountRange.Range
 		count := self.Count(definition.Name)
 
 		// Automatically add missing assignments
-		for index := count; index < occurrences.Range.Lower; index++ {
+		for index := count; index < countRange.Lower; index++ {
 			*self = append(*self, NewDefaultRequirementAssignment(len(*self), definition, context))
 			count++
 		}
 
-		if !occurrences.Range.InRange(count) {
-			context.ReportNotInRange(fmt.Sprintf("number of requirement %q assignments", definition.Name), count, occurrences.Range.Lower, occurrences.Range.Upper)
+		if !countRange.InRange(count) {
+			context.ReportNotInRange(fmt.Sprintf("number of requirement %q assignments", definition.Name), count, countRange.Lower, countRange.Upper)
 		}
 	}
 
@@ -187,7 +218,13 @@ func (self *RequirementAssignments) Render(definitions RequirementDefinitions, c
 
 func (self RequirementAssignments) Normalize(nodeTemplate *NodeTemplate, normalNodeTemplate *normal.NodeTemplate) {
 	for _, requirement := range self {
-		requirement.Normalize(nodeTemplate, normalNodeTemplate)
+		var count int
+		if requirement.Count != nil {
+			count = int(*requirement.Count)
+		}
+		for i := 0; i < count; i++ {
+			requirement.Normalize(nodeTemplate, normalNodeTemplate)
+		}
 	}
 }
 
@@ -195,7 +232,7 @@ func (self *RequirementAssignments) Count(name string) uint64 {
 	var count uint64
 	for _, assignment := range *self {
 		if assignment.Name == name {
-			count++
+			count += uint64(*assignment.Count)
 		}
 	}
 	return count

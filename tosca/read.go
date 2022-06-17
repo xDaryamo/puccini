@@ -422,6 +422,16 @@ func (self *Context) ReadInteger() *int64 {
 			value = int64(d)
 		case int:
 			value = int64(d)
+		case uint64:
+			value = int64(d)
+		case uint32:
+			value = int64(d)
+		case uint16:
+			value = int64(d)
+		case uint8:
+			value = int64(d)
+		case uint:
+			value = int64(d)
 		}
 		return &value
 	}

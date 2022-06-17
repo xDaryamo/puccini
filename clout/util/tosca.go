@@ -2,6 +2,7 @@ package util
 
 import (
 	"github.com/tliron/kutil/ard"
+	cloutpkg "github.com/tliron/puccini/clout"
 )
 
 func IsTosca(metadata ard.Value, kind string) bool {
@@ -32,6 +33,38 @@ func IsToscaType(entity ard.Value, type_ string) bool {
 		}
 	}
 	return false
+}
+
+func GetToscaNodeTemplates(clout *cloutpkg.Clout, type_ string) cloutpkg.Vertexes {
+	vertexes := make(cloutpkg.Vertexes)
+	for key, vertex := range clout.Vertexes {
+		if IsTosca(vertex.Metadata, "NodeTemplate") {
+			ok := true
+			if type_ != "" {
+				ok = IsToscaType(vertex.Properties, type_)
+			}
+			if ok {
+				vertexes[key] = vertex
+			}
+		}
+	}
+	return vertexes
+}
+
+func GetToscaRelationships(vertex *cloutpkg.Vertex, type_ string) cloutpkg.Edges {
+	var edges cloutpkg.Edges
+	for _, edge := range vertex.EdgesOut {
+		if IsTosca(edge.Metadata, "Relationship") {
+			ok := true
+			if type_ != "" {
+				ok = IsToscaType(edge.Properties, type_)
+			}
+			if ok {
+				edges = append(edges, edge)
+			}
+		}
+	}
+	return edges
 }
 
 func GetToscaOutputs(properties ard.Value) (ard.StringMap, bool) {

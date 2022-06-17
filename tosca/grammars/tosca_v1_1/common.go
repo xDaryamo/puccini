@@ -61,7 +61,7 @@ func init() {
 	Grammar.RegisterReader("RelationshipType", tosca_v2_0.ReadRelationshipType)
 	Grammar.RegisterReader("Repository", tosca_v2_0.ReadRepository)
 	Grammar.RegisterReader("RequirementAssignment", tosca_v1_2.ReadRequirementAssignment) // 1.2
-	Grammar.RegisterReader("RequirementDefinition", tosca_v2_0.ReadRequirementDefinition)
+	Grammar.RegisterReader("RequirementDefinition", tosca_v1_3.ReadRequirementDefinition) // 1.3
 	Grammar.RegisterReader("RequirementMapping", tosca_v2_0.ReadRequirementMapping)
 	Grammar.RegisterReader("ServiceTemplate", tosca_v2_0.ReadServiceTemplate)
 	Grammar.RegisterReader("scalar-unit.frequency", tosca_v2_0.ReadScalarUnitFrequency)

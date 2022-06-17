@@ -62,7 +62,7 @@ func (self *Context) NewEnvironment(clout *cloutpkg.Clout, apis map[string]any) 
 		return func(id string, raw bool) (urlpkg.URL, error) {
 			if scriptlet, err := GetScriptlet(id, clout); err == nil {
 				url := urlpkg.NewInternalURL(id, self.URLContext)
-				url.Content = scriptlet
+				url.SetContent(scriptlet)
 				return url, nil
 			} else {
 				return nil, err

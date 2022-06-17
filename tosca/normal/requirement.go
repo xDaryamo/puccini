@@ -21,6 +21,8 @@ type Requirement struct {
 	NodeTemplatePropertyConstraints FunctionCallMap
 	CapabilityPropertyConstraints   FunctionCallMapMap
 	Relationship                    *Relationship
+	Directives                      []string
+	Optional                        bool
 	Location                        *Location
 }
 
@@ -45,6 +47,8 @@ type MarshalableRequirement struct {
 	NodeTemplatePropertyConstraints FunctionCallMap    `json:"nodeTemplatePropertyConstraints" yaml:"nodeTemplatePropertyConstraints"`
 	CapabilityPropertyConstraints   FunctionCallMapMap `json:"capabilityPropertyConstraints" yaml:"capabilityPropertyConstraints"`
 	Relationship                    *Relationship      `json:"relationship" yaml:"relationship"`
+	Directives                      []string           `json:"directives" yaml:"directives"`
+	Optional                        bool               `json:"optional" yaml:"optional"`
 	Location                        *Location          `json:"location" yaml:"location"`
 }
 
@@ -75,6 +79,8 @@ func (self *Requirement) Marshalable() any {
 		NodeTemplatePropertyConstraints: self.NodeTemplatePropertyConstraints,
 		CapabilityPropertyConstraints:   self.CapabilityPropertyConstraints,
 		Relationship:                    self.Relationship,
+		Directives:                      self.Directives,
+		Optional:                        self.Optional,
 		Location:                        self.Location,
 	}
 }

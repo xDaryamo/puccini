@@ -22,7 +22,7 @@ type RequirementDefinition struct {
 	TargetCapabilityTypeName *string                 `read:"capability"` // required only if cannot be inherited
 	TargetNodeTypeName       *string                 `read:"node"`
 	RelationshipDefinition   *RelationshipDefinition `read:"relationship,RelationshipDefinition"`
-	Occurrences              *RangeEntity            `read:"occurrences,RangeEntity"`
+	CountRange               *RangeEntity            `read:"count_range,RangeEntity"` // "occurrences" in TOSCA 1.3
 
 	TargetCapabilityType *CapabilityType `lookup:"capability,TargetCapabilityTypeName" json:"-" yaml:"-"`
 	TargetNodeType       *NodeType       `lookup:"node,TargetNodeTypeName" json:"-" yaml:"-"`
@@ -77,8 +77,8 @@ func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefiniti
 	if (self.RelationshipDefinition == nil) && (parentDefinition.RelationshipDefinition != nil) {
 		self.RelationshipDefinition = parentDefinition.RelationshipDefinition
 	}
-	if (self.Occurrences == nil) && (parentDefinition.Occurrences != nil) {
-		self.Occurrences = parentDefinition.Occurrences
+	if (self.CountRange == nil) && (parentDefinition.CountRange != nil) {
+		self.CountRange = parentDefinition.CountRange
 	}
 	if (self.TargetCapabilityType == nil) && (parentDefinition.TargetCapabilityType != nil) {
 		self.TargetCapabilityType = parentDefinition.TargetCapabilityType
@@ -99,6 +99,11 @@ func (self *RequirementDefinition) Render() {
 
 func (self *RequirementDefinition) render() {
 	logRender.Debugf("requirement definition: %s", self.Name)
+
+	if self.CountRange == nil {
+		// The TOSCA spec says that definition countRange has an "implied default of [1,1]"
+		self.CountRange = ReadRangeEntity(self.Context.FieldChild("count_range", ard.List{1, 1})).(*RangeEntity)
+	}
 
 	if self.TargetCapabilityTypeName == nil {
 		// Avoid reporting more than once
