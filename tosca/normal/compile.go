@@ -274,7 +274,7 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 	}
 
 	// Make agnostic
-	clout, err = clout.AgnosticCopy()
+	clout, err = clout.Copy()
 	if err != nil {
 		return clout, err
 	}

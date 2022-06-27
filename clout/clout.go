@@ -1,12 +1,10 @@
 package clout
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/tliron/kutil/ard"
 )
 
@@ -80,7 +78,7 @@ func (self *Clout) ResolveTopology() error {
 	return nil
 }
 
-func (self *Clout) AgnosticCopy() (*Clout, error) {
+func (self *Clout) Copy() (*Clout, error) {
 	return self.copy(true)
 }
 
@@ -89,15 +87,15 @@ func (self *Clout) SimpleCopy() *Clout {
 	return clout
 }
 
-func (self *Clout) copy(agnostic bool) (*Clout, error) {
+func (self *Clout) copy(toArd bool) (*Clout, error) {
 	clout := Clout{
 		Version: Version,
 	}
 	var err error
-	if clout.Vertexes, err = self.Vertexes.copy(agnostic); err == nil {
-		if agnostic {
-			if metadata, err := ard.NormalizeStringMapsAgnosticCopy(self.Metadata); err == nil {
-				if properties, err := ard.NormalizeStringMapsAgnosticCopy(self.Properties); err == nil {
+	if clout.Vertexes, err = self.Vertexes.copy(toArd); err == nil {
+		if toArd {
+			if metadata, err := ard.NormalizeStringMapsCopyToARD(self.Metadata); err == nil {
+				if properties, err := ard.NormalizeStringMapsCopyToARD(self.Properties); err == nil {
 					clout.Metadata = metadata.(ard.StringMap)
 					clout.Properties = properties.(ard.StringMap)
 				} else {
@@ -115,14 +113,6 @@ func (self *Clout) copy(agnostic bool) (*Clout, error) {
 	}
 	if err := clout.ResolveTopology(); err == nil {
 		return &clout, nil
-	} else {
-		return nil, err
-	}
-}
-
-func (self *Clout) copyOld(agnostic bool) (*Clout, error) {
-	if code, err := cbor.Marshal(self); err == nil {
-		return Read(bytes.NewReader(code), "cbor")
 	} else {
 		return nil, err
 	}

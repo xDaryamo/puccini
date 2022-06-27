@@ -66,16 +66,16 @@ func (self *Vertex) MarshalJSON() ([]byte, error) {
 	return json.Marshal(self.MarshalableStringMaps())
 }
 
-func (self *Vertex) copy(agnostic bool) (*Vertex, error) {
+func (self *Vertex) copy(toArd bool) (*Vertex, error) {
 	vertex := Vertex{
 		ID:      self.ID,
 		EdgesIn: make(Edges, 0),
 	}
 	var err error
-	if vertex.EdgesOut, err = self.EdgesOut.copy(agnostic); err == nil {
-		if agnostic {
-			if metadata, err := ard.NormalizeStringMapsAgnosticCopy(self.Metadata); err == nil {
-				if properties, err := ard.NormalizeStringMapsAgnosticCopy(self.Properties); err == nil {
+	if vertex.EdgesOut, err = self.EdgesOut.copy(toArd); err == nil {
+		if toArd {
+			if metadata, err := ard.NormalizeStringMapsCopyToARD(self.Metadata); err == nil {
+				if properties, err := ard.NormalizeStringMapsCopyToARD(self.Properties); err == nil {
 					vertex.Metadata = metadata.(ard.StringMap)
 					vertex.Properties = properties.(ard.StringMap)
 				} else {
@@ -101,11 +101,11 @@ func (self *Vertex) copy(agnostic bool) (*Vertex, error) {
 // Warning: Adding public methods will break it in JavaScript
 type Vertexes map[string]*Vertex
 
-func (self Vertexes) copy(agnostic bool) (Vertexes, error) {
+func (self Vertexes) copy(toArd bool) (Vertexes, error) {
 	vertexes := make(Vertexes)
 	var err error
 	for id, vertex := range self {
-		if vertexes[id], err = vertex.copy(agnostic); err != nil {
+		if vertexes[id], err = vertex.copy(toArd); err != nil {
 			return nil, err
 		}
 	}

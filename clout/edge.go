@@ -139,13 +139,13 @@ func (self *Edge) UnmarshalCBOR(data []byte) error {
 	})
 }
 
-func (self *Edge) copy(agnostic bool) (*Edge, error) {
+func (self *Edge) copy(toArd bool) (*Edge, error) {
 	edge := Edge{
 		TargetID: self.TargetID,
 	}
-	if agnostic {
-		if metadata, err := ard.NormalizeStringMapsAgnosticCopy(self.Metadata); err == nil {
-			if properties, err := ard.NormalizeStringMapsAgnosticCopy(self.Properties); err == nil {
+	if toArd {
+		if metadata, err := ard.NormalizeStringMapsCopyToARD(self.Metadata); err == nil {
+			if properties, err := ard.NormalizeStringMapsCopyToARD(self.Properties); err == nil {
 				edge.Metadata = metadata.(ard.StringMap)
 				edge.Properties = properties.(ard.StringMap)
 			} else {
@@ -168,11 +168,11 @@ func (self *Edge) copy(agnostic bool) (*Edge, error) {
 // Warning: Adding public methods will break it in JavaScript
 type Edges []*Edge
 
-func (self Edges) copy(agnostic bool) (Edges, error) {
+func (self Edges) copy(toArd bool) (Edges, error) {
 	edges := make(Edges, len(self))
 	var err error
 	for index, edge := range self {
-		if edges[index], err = edge.copy(agnostic); err != nil {
+		if edges[index], err = edge.copy(toArd); err != nil {
 			return nil, err
 		}
 	}
