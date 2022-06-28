@@ -27,13 +27,15 @@ type RequirementDefinition struct {
 	TargetCapabilityType *CapabilityType `lookup:"capability,TargetCapabilityTypeName" json:"-" yaml:"-"`
 	TargetNodeType       *NodeType       `lookup:"node,TargetNodeTypeName" json:"-" yaml:"-"`
 
+	DefaultCountRange                ard.List
 	capabilityMissingProblemReported bool
 }
 
 func NewRequirementDefinition(context *tosca.Context) *RequirementDefinition {
 	return &RequirementDefinition{
-		Entity: NewEntity(context),
-		Name:   context.Name,
+		Entity:            NewEntity(context),
+		Name:              context.Name,
+		DefaultCountRange: ard.List{0, "UNBOUNDED"},
 	}
 }
 
@@ -101,8 +103,7 @@ func (self *RequirementDefinition) render() {
 	logRender.Debugf("requirement definition: %s", self.Name)
 
 	if self.CountRange == nil {
-		// The TOSCA spec says that definition countRange has an "implied default of [1,1]"
-		self.CountRange = ReadRangeEntity(self.Context.FieldChild("count_range", ard.List{1, 1})).(*RangeEntity)
+		self.CountRange = ReadRangeEntity(self.Context.FieldChild("count_range", self.DefaultCountRange)).(*RangeEntity)
 	}
 
 	if self.TargetCapabilityTypeName == nil {

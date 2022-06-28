@@ -1,6 +1,7 @@
 package tosca_v1_3
 
 import (
+	"github.com/tliron/kutil/ard"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 )
@@ -18,5 +19,7 @@ import (
 func ReadRequirementDefinition(context *tosca.Context) tosca.EntityPtr {
 	context.SetReadTag("CountRange", "occurrences,RangeEntity")
 
-	return tosca_v2_0.ReadRequirementDefinition(context)
+	self := tosca_v2_0.ReadRequirementDefinition(context).(*tosca_v2_0.RequirementDefinition)
+	self.DefaultCountRange = ard.List{1, 1}
+	return self
 }
