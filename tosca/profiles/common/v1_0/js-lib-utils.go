@@ -105,22 +105,30 @@ exports.getNestedValue = function(singular, plural, args) {
 	let length = args.length;
 	if (length < 2)
 		throw 'must have at least 2 arguments';
-	let nodeTemplate = exports.getModelableEntity.call(this, args[0]);
+	let vertex = exports.getModelableEntity.call(this, args[0]);
+	let nodeTemplate = vertex.properties;
+	let value = nodeTemplate[plural];
 	let a = 1;
 	let arg = args[a];
-	let value = nodeTemplate[plural];
+	let nextArg = args[a+1];
+	let count = 0;
 	if (arg in nodeTemplate.capabilities) {
 		value = nodeTemplate.capabilities[arg][plural];
 		singular = puccini.sprintf('capability %q %s', arg, singular);
 		arg = args[++a];
-	} else for (let r = 0, l = nodeTemplate.requirements.length; r < l; r++) {
-		let requirement = nodeTemplate.requirements[r];
-		if ((requirement.name === arg) && requirement.relationship) {
-			value = requirement.relationship[plural];
-			singular = puccini.sprintf('relationship %q %s', arg, singular);
-			arg = args[++a];
-			break;
-		}
+	} else for (let e = 0, l = vertex.edgesOut.length; e < l; e++) {
+		let edge = vertex.edgesOut[e];
+		if (!exports.isTosca(edge, 'Relationship'))
+			continue;
+		let relationship = edge.properties;
+		if (relationship.name === arg)
+			if (count++ === nextArg) {
+				value = relationship[plural];
+				singular = puccini.sprintf('relationship %q %s', arg, singular);
+				a += 2;
+				arg = args[a];
+				break;
+			}
 	}
 	if ((typeof value === 'object') && (value !== null) && (arg in value))
 		value = value[arg];
@@ -164,12 +172,12 @@ exports.getModelableEntity = function(entity) {
 		for (let vertexId in clout.vertexes) {
 			let vertex = clout.vertexes[vertexId];
 			if (exports.isNodeTemplate(vertex) && (vertex.properties.name === entity))
-				return vertex.properties;
+				return vertex;
 		}
 		vertex = {};
 	}
 	if (exports.isNodeTemplate(vertex))
-		return vertex.properties;
+		return vertex;
 	else
 		throw puccini.sprintf('node template %q not found', entity);
 };
