@@ -1,10 +1,13 @@
 package clout
 
 import (
+	"bytes"
 	"encoding/json"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/tliron/kutil/ard"
+	"github.com/tliron/kutil/util"
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 //
@@ -59,9 +62,9 @@ func (self *Edge) GetProperties() ard.StringMap {
 }
 
 type MarshalableEdge struct {
-	Metadata   ard.StringMap `yaml:"metadata" cbor:"metadata"`
-	Properties ard.StringMap `yaml:"properties" cbor:"properties"`
-	TargetID   string        `yaml:"targetID" cbor:"targetID"`
+	Metadata   ard.StringMap `json:"metadata" yaml:"metadata"`
+	Properties ard.StringMap `json:"properties" yaml:"properties"`
+	TargetID   string        `json:"targetID" yaml:"targetID"`
 }
 
 type MarshalableEdgeStringMaps struct {
@@ -118,6 +121,11 @@ func (self *Edge) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(self.Marshalable(false))
 }
 
+// msgpack.Marshaler interface
+func (self *Edge) MarshalMsgpack() ([]byte, error) {
+	return msgpack.Marshal(self.Marshalable(false))
+}
+
 // json.Unmarshaler interface
 func (self *Edge) UnmarshalJSON(data []byte) error {
 	return self.Unmarshal(func(m *MarshalableEdge) error {
@@ -139,10 +147,19 @@ func (self *Edge) UnmarshalCBOR(data []byte) error {
 	})
 }
 
+// msgpack.Unmarshaler interface
+func (self *Edge) UnmarshalMsgpack(data []byte) error {
+	decoder := util.NewMessagePackDecoder(bytes.NewReader(data))
+	return self.Unmarshal(func(m *MarshalableEdge) error {
+		return decoder.Decode(m)
+	})
+}
+
 func (self *Edge) copy(toArd bool) (*Edge, error) {
 	edge := Edge{
 		TargetID: self.TargetID,
 	}
+
 	if toArd {
 		if metadata, err := ard.NormalizeStringMapsCopyToARD(self.Metadata); err == nil {
 			if properties, err := ard.NormalizeStringMapsCopyToARD(self.Properties); err == nil {
@@ -158,6 +175,7 @@ func (self *Edge) copy(toArd bool) (*Edge, error) {
 		edge.Metadata = ard.SimpleCopy(self.Metadata).(ard.StringMap)
 		edge.Properties = ard.SimpleCopy(self.Properties).(ard.StringMap)
 	}
+
 	return &edge, nil
 }
 
@@ -165,8 +183,13 @@ func (self *Edge) copy(toArd bool) (*Edge, error) {
 // Edges
 //
 
-// Warning: Adding public methods will break it in JavaScript
 type Edges []*Edge
+
+// Note: ".length" will not work reliably in JavaScript because once the value
+// is bound it will not reflect changes to the struct's field
+func (self Edges) Size() int {
+	return len(self)
+}
 
 func (self Edges) copy(toArd bool) (Edges, error) {
 	edges := make(Edges, len(self))

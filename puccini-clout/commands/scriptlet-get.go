@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/transcribe"
+	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
@@ -27,7 +28,10 @@ var getCommand = &cobra.Command{
 			url = args[1]
 		}
 
-		clout, err := cloutpkg.Load(url, inputFormat)
+		urlContext := urlpkg.NewContext()
+		defer urlContext.Release()
+
+		clout, err := cloutpkg.Load(url, inputFormat, urlContext)
 		util.FailOnError(err)
 
 		scriptlet, err := js.GetScriptlet(scriptletName, clout)

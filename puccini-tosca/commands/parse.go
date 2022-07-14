@@ -81,7 +81,7 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 	var url_ urlpkg.URL
 	var err error
 	if url == "" {
-		log.Infof("parsing stdin", url)
+		log.Info("parsing stdin")
 		url_, err = urlpkg.ReadToInternalURLFromStdin("yaml")
 	} else {
 		log.Infof("parsing %q", url)

@@ -11,12 +11,12 @@ import (
 //
 
 type Vertex struct {
-	Clout      *Clout        `yaml:"-" cbor:"-"`
-	ID         string        `yaml:"-" cbor:"-"`
-	Metadata   ard.StringMap `yaml:"metadata" cbor:"metadata"`
-	Properties ard.StringMap `yaml:"properties" cbor:"properties"`
-	EdgesOut   Edges         `yaml:"edgesOut" cbor:"edgesOut"`
-	EdgesIn    Edges         `yaml:"-" cbor:"-"`
+	Clout      *Clout        `json:"-" yaml:"-"`
+	ID         string        `json:"-" yaml:"-"`
+	Metadata   ard.StringMap `json:"metadata" yaml:"metadata"`
+	Properties ard.StringMap `json:"properties" yaml:"properties"`
+	EdgesOut   Edges         `json:"edgesOut" yaml:"edgesOut"`
+	EdgesIn    Edges         `json:"-" yaml:"-"`
 }
 
 func (self *Clout) NewVertex(id string) *Vertex {
@@ -71,6 +71,7 @@ func (self *Vertex) copy(toArd bool) (*Vertex, error) {
 		ID:      self.ID,
 		EdgesIn: make(Edges, 0),
 	}
+
 	var err error
 	if vertex.EdgesOut, err = self.EdgesOut.copy(toArd); err == nil {
 		if toArd {
@@ -91,6 +92,7 @@ func (self *Vertex) copy(toArd bool) (*Vertex, error) {
 	} else {
 		return nil, err
 	}
+
 	return &vertex, nil
 }
 
@@ -98,7 +100,6 @@ func (self *Vertex) copy(toArd bool) (*Vertex, error) {
 // Vertexes
 //
 
-// Warning: Adding public methods will break it in JavaScript
 type Vertexes map[string]*Vertex
 
 func (self Vertexes) copy(toArd bool) (Vertexes, error) {

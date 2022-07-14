@@ -30,14 +30,14 @@ var execCommand = &cobra.Command{
 			url = args[1]
 		}
 
-		clout, err := cloutpkg.Load(url, inputFormat)
+		urlContext := urlpkg.NewContext()
+		defer urlContext.Release()
+
+		clout, err := cloutpkg.Load(url, inputFormat, urlContext)
 		util.FailOnError(err)
 
 		// Try loading JavaScript from Clout
 		scriptlet, err := js.GetScriptlet(scriptletName, clout)
-
-		urlContext := urlpkg.NewContext()
-		defer urlContext.Release()
 
 		if err != nil {
 			// Try loading JavaScript from path or URL

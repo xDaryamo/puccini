@@ -100,7 +100,7 @@ exports.traverseValues = function(clout_, traverser) {
 					}
 			}
 
-			for (let e = 0, l = vertex.edgesOut.length; e < l; e++) {
+			for (let e = 0, l = vertex.edgesOut.size(); e < l; e++) {
 				let edge = vertex.edgesOut[e];
 				if (!tosca.isTosca(edge, 'Relationship'))
 					continue;

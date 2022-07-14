@@ -29,11 +29,11 @@ var putCommand = &cobra.Command{
 			url = args[2]
 		}
 
-		clout, err := cloutpkg.Load(url, inputFormat)
-		util.FailOnError(err)
-
 		urlContext := urlpkg.NewContext()
 		defer urlContext.Release()
+
+		clout, err := cloutpkg.Load(url, inputFormat, urlContext)
+		util.FailOnError(err)
 
 		scriptletUrl_, err := urlpkg.NewValidURL(scriptletUrl, nil, urlContext)
 		util.FailOnError(err)

@@ -51,6 +51,22 @@ func GetToscaNodeTemplates(clout *cloutpkg.Clout, type_ string) cloutpkg.Vertexe
 	return vertexes
 }
 
+func GetToscaCapabilities(vertex *cloutpkg.Vertex, type_ string) ard.StringMap {
+	capabilities := make(ard.StringMap)
+	if capabilities_, ok := ard.NewNode(vertex.Properties).Get("capabilities").StringMap(); ok {
+		for name, capability := range capabilities_ {
+			ok := true
+			if type_ != "" {
+				ok = IsToscaType(capability, type_)
+			}
+			if ok {
+				capabilities[name] = capability
+			}
+		}
+	}
+	return capabilities
+}
+
 func GetToscaRelationships(vertex *cloutpkg.Vertex, type_ string) cloutpkg.Edges {
 	var edges cloutpkg.Edges
 	for _, edge := range vertex.EdgesOut {

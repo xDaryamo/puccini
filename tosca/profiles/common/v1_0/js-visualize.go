@@ -102,7 +102,7 @@ function addVertex(id, vertex) {
 
 	nodes.push(node);
 
-	for (let e = 0, l = vertex.edgesOut.length; e < l; e++)
+	for (let e = 0, l = vertex.edgesOut.size(); e < l; e++)
 		addEdge(id, vertex.edgesOut[e]);
 }
 

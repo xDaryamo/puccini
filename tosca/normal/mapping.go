@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/tliron/kutil/util"
 )
 
 //
@@ -85,6 +86,11 @@ func (self *Mapping) MarshalYAML() (any, error) {
 // cbor.Marshaler interface
 func (self *Mapping) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(self.Marshalable())
+}
+
+// msgpack.Marshaler interface
+func (self *Mapping) MarshalMsgpack() ([]byte, error) {
+	return util.MarshalMessagePack(self.Marshalable())
 }
 
 //

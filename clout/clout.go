@@ -17,7 +17,7 @@ const Version = "1.0"
 type Clout struct {
 	Version    string        `json:"version" yaml:"version"`
 	Metadata   ard.StringMap `json:"metadata" yaml:"metadata"`
-	Properties ard.StringMap `json:"properties" yaml:"properties" `
+	Properties ard.StringMap `json:"properties" yaml:"properties"`
 	Vertexes   Vertexes      `json:"vertexes" yaml:"vertexes"`
 }
 
@@ -91,6 +91,7 @@ func (self *Clout) copy(toArd bool) (*Clout, error) {
 	clout := Clout{
 		Version: Version,
 	}
+
 	var err error
 	if clout.Vertexes, err = self.Vertexes.copy(toArd); err == nil {
 		if toArd {
@@ -111,6 +112,7 @@ func (self *Clout) copy(toArd bool) (*Clout, error) {
 	} else {
 		return nil, err
 	}
+
 	if err := clout.ResolveTopology(); err == nil {
 		return &clout, nil
 	} else {

@@ -10,6 +10,7 @@ import (
 	"github.com/tliron/kutil/ard"
 	"github.com/tliron/kutil/js"
 	cloutpkg "github.com/tliron/puccini/clout"
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 //
@@ -35,7 +36,7 @@ func (self *CloutAPI) Load(data any) (*CloutAPI, error) {
 
 	switch data_ := data.(type) {
 	case string:
-		if clout, err = cloutpkg.Load(data_, ""); err != nil {
+		if clout, err = cloutpkg.Load(data_, "", self.cloutContext.Context.URLContext); err != nil {
 			return nil, err
 		}
 
@@ -150,4 +151,9 @@ func (self *CloutAPI) MarshalYAML() (any, error) {
 // cbor.Marshaler interface
 func (self *CloutAPI) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(self.Clout)
+}
+
+// msgpack.Marshaler interface
+func (self *CloutAPI) MarshalMsgpack() ([]byte, error) {
+	return msgpack.Marshal(self.Clout)
 }

@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/tliron/kutil/util"
 )
 
 //
@@ -82,6 +83,11 @@ func (self *Capability) MarshalYAML() (any, error) {
 // cbor.Marshaler interface
 func (self *Capability) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(self.Marshalable())
+}
+
+// msgpack.Marshaler interface
+func (self *Capability) MarshalMsgpack() ([]byte, error) {
+	return util.MarshalMessagePack(self.Marshalable())
 }
 
 //

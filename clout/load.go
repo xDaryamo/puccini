@@ -4,10 +4,7 @@ import (
 	urlpkg "github.com/tliron/kutil/url"
 )
 
-func Load(url string, format string) (*Clout, error) {
-	urlContext := urlpkg.NewContext()
-	defer urlContext.Release()
-
+func Load(url string, format string, urlContext *urlpkg.Context) (*Clout, error) {
 	var url_ urlpkg.URL
 
 	var err error

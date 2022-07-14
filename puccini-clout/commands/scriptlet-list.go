@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tliron/kutil/ard"
 	"github.com/tliron/kutil/terminal"
+	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
@@ -26,7 +27,10 @@ var listCommand = &cobra.Command{
 			url = args[0]
 		}
 
-		clout, err := cloutpkg.Load(url, inputFormat)
+		urlContext := urlpkg.NewContext()
+		defer urlContext.Release()
+
+		clout, err := cloutpkg.Load(url, inputFormat, urlContext)
 		util.FailOnError(err)
 
 		List(clout)

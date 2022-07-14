@@ -11,7 +11,7 @@ for (let vertexId in clout.vertexes) {
 	if (tosca.isNodeTemplate(vertex)) {
 		nodeTemplateVertexes.push(vertex);
 		let remove = [];
-		for (let e = 0, l = vertex.edgesOut.length; e < l; e++) {
+		for (let e = 0, l = vertex.edgesOut.size(); e < l; e++) {
 			let edge = vertex.edgesOut[e];
 			if (tosca.isTosca(edge, 'Relationship'))
 				remove.push(edge);
@@ -270,7 +270,7 @@ function addRelationship(sourceVertex, requirement, targetVertex, capabilityName
 
 function countRelationships(vertex, capabilityName) {
 	let count = 0;
-	for (let e = 0, l = vertex.edgesIn.length; e < l; e++) {
+	for (let e = 0, l = vertex.edgesIn.size(); e < l; e++) {
 		let edge = vertex.edgesIn[e];
 		if (tosca.isTosca(edge, 'Relationship') && (edge.properties.capability === capabilityName))
 			count++;
@@ -308,7 +308,7 @@ function isSubstituted(nodeTemplateName, requirementName) {
 	for (let vertexId in clout.vertexes) {
 		let vertex = clout.vertexes[vertexId];
 		if (tosca.isTosca(vertex, 'Substitution')) {
-			for (let e = 0, l = vertex.edgesOut.length; e < l; e++) {
+			for (let e = 0, l = vertex.edgesOut.size(); e < l; e++) {
 				let edge = vertex.edgesOut[e];
 				if (!tosca.isTosca(edge, 'RequirementMapping'))
 					continue;

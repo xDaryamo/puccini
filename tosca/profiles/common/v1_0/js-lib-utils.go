@@ -61,7 +61,7 @@ exports.getPolicyTargets = function(vertex) {
 		targets.push(target);
 	}
 
-	for (let e = 0, l = vertex.edgesOut.length; e < l; e++) {
+	for (let e = 0, l = vertex.edgesOut.size(); e < l; e++) {
 		let edge = vertex.edgesOut[e];
 		if (exports.isTosca(edge, 'NodeTemplateTarget'))
 			targets.push(clout.vertexes[edge.targetID].properties);
@@ -76,7 +76,7 @@ exports.getPolicyTargets = function(vertex) {
 
 exports.getGroupMembers = function(vertex) {
 	let members = [];
-	for (let e = 0, l = vertex.edgesOut.length; e < l; e++) {
+	for (let e = 0, l = vertex.edgesOut.size(); e < l; e++) {
 		let edge = vertex.edgesOut[e];
 		if (exports.isTosca(edge, 'Member'))
 			members.push(clout.vertexes[edge.targetID].properties);
@@ -116,7 +116,7 @@ exports.getNestedValue = function(singular, plural, args) {
 		value = nodeTemplate.capabilities[arg][plural];
 		singular = puccini.sprintf('capability %q %s', arg, singular);
 		arg = args[++a];
-	} else for (let e = 0, l = vertex.edgesOut.length; e < l; e++) {
+	} else for (let e = 0, l = vertex.edgesOut.size(); e < l; e++) {
 		let edge = vertex.edgesOut[e];
 		if (!exports.isTosca(edge, 'Relationship'))
 			continue;
@@ -183,7 +183,7 @@ exports.getModelableEntity = function(entity) {
 };
 
 exports.getHost = function(vertex) {
-	for (let e = 0, l = vertex.edgesOut.length; e < l; e++) {
+	for (let e = 0, l = vertex.edgesOut.size(); e < l; e++) {
 		let edge = vertex.edgesOut[e];
 		if (exports.isTosca(edge, 'Relationship')) {
 			for (let typeName in edge.properties.types) {

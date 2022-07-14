@@ -3,12 +3,13 @@ module github.com/tliron/puccini
 go 1.18
 
 require (
-	github.com/dop251/goja v0.0.0-20220516123900-4418d4575a41
+	github.com/dop251/goja v0.0.0-20220721122435-5b995c25f3f5
 	github.com/fxamacker/cbor/v2 v2.4.0
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/cobra v1.5.0
 	github.com/tliron/kutil v0.1.61
-	github.com/tliron/yamlkeys v1.3.5
+	github.com/tliron/yamlkeys v1.3.6
+	github.com/vmihailenco/msgpack/v5 v5.3.5
 )
 
 require (
@@ -17,7 +18,7 @@ require (
 	github.com/acomagu/bufpipe v1.0.3 // indirect
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/containerd/stargz-snapshotter/estargz v0.11.4 // indirect
-	github.com/dlclark/regexp2 v1.4.1-0.20201116162257-a2a8dda75c91 // indirect
+	github.com/dlclark/regexp2 v1.7.0 // indirect
 	github.com/docker/cli v20.10.16+incompatible // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/docker v20.10.16+incompatible // indirect
@@ -53,6 +54,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/vbatts/tar-split v0.11.2 // indirect
+	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xanzy/ssh-agent v0.3.0 // indirect
 	github.com/zchee/color/v2 v2.0.6 // indirect
