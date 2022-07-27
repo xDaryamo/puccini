@@ -3,7 +3,7 @@ module github.com/tliron/puccini
 go 1.18
 
 require (
-	github.com/dop251/goja v0.0.0-20220721122435-5b995c25f3f5
+	github.com/dop251/goja v0.0.0-20220727084619-a070957bbee3
 	github.com/fxamacker/cbor/v2 v2.4.0
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/cobra v1.5.0

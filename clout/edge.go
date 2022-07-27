@@ -1,7 +1,6 @@
 package clout
 
 import (
-	"bytes"
 	"encoding/json"
 
 	"github.com/fxamacker/cbor/v2"
@@ -62,9 +61,9 @@ func (self *Edge) GetProperties() ard.StringMap {
 }
 
 type MarshalableEdge struct {
-	Metadata   ard.StringMap `json:"metadata" yaml:"metadata"`
-	Properties ard.StringMap `json:"properties" yaml:"properties"`
-	TargetID   string        `json:"targetID" yaml:"targetID"`
+	Metadata   ard.StringMap `json:"metadata" yaml:"metadata" ard:"metadata"`
+	Properties ard.StringMap `json:"properties" yaml:"properties" ard:"properties"`
+	TargetID   string        `json:"targetID" yaml:"targetID" ard:"targetID"`
 }
 
 type MarshalableEdgeStringMaps struct {
@@ -126,6 +125,11 @@ func (self *Edge) MarshalMsgpack() ([]byte, error) {
 	return msgpack.Marshal(self.Marshalable(false))
 }
 
+// ard.ToARD interface
+func (self *Edge) ToARD(reflector *ard.Reflector) (any, error) {
+	return reflector.Unpack(self.Marshalable(false))
+}
+
 // json.Unmarshaler interface
 func (self *Edge) UnmarshalJSON(data []byte) error {
 	return self.Unmarshal(func(m *MarshalableEdge) error {
@@ -149,9 +153,8 @@ func (self *Edge) UnmarshalCBOR(data []byte) error {
 
 // msgpack.Unmarshaler interface
 func (self *Edge) UnmarshalMsgpack(data []byte) error {
-	decoder := util.NewMessagePackDecoder(bytes.NewReader(data))
 	return self.Unmarshal(func(m *MarshalableEdge) error {
-		return decoder.Decode(m)
+		return util.UnmarshalMessagePack(data, m)
 	})
 }
 

@@ -38,7 +38,7 @@ func (self *ServiceContext) lookupFields(entityPtr tosca.EntityPtr) bool {
 		lookupFieldType := lookupField.Type()
 		lookupFieldPtrType := lookupFieldType.Elem()
 		lookupFieldPtrTypeKind := lookupFieldPtrType.Kind()
-		if lookupFieldType.Kind() != reflect.Ptr {
+		if lookupFieldType.Kind() != reflect.Pointer {
 			panicLookupTag(entityPtr)
 		}
 

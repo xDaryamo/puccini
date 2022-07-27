@@ -13,7 +13,7 @@ func IsTosca(metadata ard.Value, kind string) bool {
 		} `ard:"puccini"`
 	}
 
-	if err := ard.NewReflector().ToComposite(metadata, &metadata_); err == nil {
+	if err := ard.NewReflector().Pack(metadata, &metadata_); err == nil {
 		if metadata_.Puccini.Version == "1.0" {
 			if kind != "" {
 				return metadata_.Puccini.Kind == kind

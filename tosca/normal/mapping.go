@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/tliron/kutil/ard"
 	"github.com/tliron/kutil/util"
 )
 
@@ -91,6 +92,11 @@ func (self *Mapping) MarshalCBOR() ([]byte, error) {
 // msgpack.Marshaler interface
 func (self *Mapping) MarshalMsgpack() ([]byte, error) {
 	return util.MarshalMessagePack(self.Marshalable())
+}
+
+// ard.ToARD interface
+func (self *Mapping) ToARD(reflector *ard.Reflector) (any, error) {
+	return reflector.Unpack(self.Marshalable())
 }
 
 //

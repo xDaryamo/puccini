@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/tliron/kutil/ard"
 	"github.com/tliron/kutil/util"
 )
 
@@ -43,7 +44,7 @@ type MarshalableRequirement struct {
 	Name                            string             `json:"name" yaml:"name"`
 	CapabilityTypeName              string             `json:"capabilityTypeName" yaml:"capabilityTypeName"`
 	CapabilityName                  string             `json:"capabilityName" yaml:"capabilityName"`
-	NodeTypeName                    string             `json:"nodeTypeName" yaml:"nodeTypeName" `
+	NodeTypeName                    string             `json:"nodeTypeName" yaml:"nodeTypeName"`
 	NodeTemplateName                string             `json:"nodeTemplateName" yaml:"nodeTemplateName"`
 	NodeTemplatePropertyConstraints FunctionCallMap    `json:"nodeTemplatePropertyConstraints" yaml:"nodeTemplatePropertyConstraints"`
 	CapabilityPropertyConstraints   FunctionCallMapMap `json:"capabilityPropertyConstraints" yaml:"capabilityPropertyConstraints"`
@@ -104,6 +105,11 @@ func (self *Requirement) MarshalCBOR() ([]byte, error) {
 // msgpack.Marshaler interface
 func (self *Requirement) MarshalMsgpack() ([]byte, error) {
 	return util.MarshalMessagePack(self.Marshalable())
+}
+
+// ard.ToARD interface
+func (self *Requirement) ToARD(reflector *ard.Reflector) (any, error) {
+	return reflector.Unpack(self.Marshalable())
 }
 
 //

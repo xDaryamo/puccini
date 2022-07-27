@@ -39,8 +39,8 @@ type Workflows map[string]*Workflow
 //
 
 type WorkflowPrecondition struct {
-	TargetNodeTemplate *NodeTemplate ` json:"-" yaml:"-"`
-	TargetGroup        *Group        ` json:"-" yaml:"-"`
+	TargetNodeTemplate *NodeTemplate `json:"-" yaml:"-"`
+	TargetGroup        *Group        `json:"-" yaml:"-"`
 	// TODO: Conditions
 }
 
