@@ -64,6 +64,7 @@ type Context struct {
 	Problems           *problems.Problems
 	Quirks             Quirks
 	Grammar            *Grammar
+	FunctionPrefix     string
 	ReadTagOverrides   map[string]string
 }
 
@@ -94,6 +95,7 @@ func (self *Context) NewImportContext(url urlpkg.URL) *Context {
 		Problems:           self.Problems.NewProblems(),
 		Quirks:             self.Quirks,
 		Grammar:            self.Grammar,
+		FunctionPrefix:     self.FunctionPrefix,
 	}
 }
 
@@ -171,6 +173,7 @@ func (self *Context) Clone(data ard.Value) *Context {
 		Problems:           self.Problems,
 		Quirks:             self.Quirks,
 		Grammar:            self.Grammar,
+		FunctionPrefix:     self.FunctionPrefix,
 	}
 }
 
@@ -191,6 +194,7 @@ func (self *Context) FieldChild(name ard.Value, data ard.Value) *Context {
 		Problems:           self.Problems,
 		Quirks:             self.Quirks,
 		Grammar:            self.Grammar,
+		FunctionPrefix:     self.FunctionPrefix,
 	}
 }
 
@@ -237,6 +241,7 @@ func (self *Context) MapChild(name ard.Value, data ard.Value) *Context {
 		Problems:           self.Problems,
 		Quirks:             self.Quirks,
 		Grammar:            self.Grammar,
+		FunctionPrefix:     self.FunctionPrefix,
 	}
 }
 
@@ -256,6 +261,7 @@ func (self *Context) ListChild(index int, data ard.Value) *Context {
 		Problems:           self.Problems,
 		Quirks:             self.Quirks,
 		Grammar:            self.Grammar,
+		FunctionPrefix:     self.FunctionPrefix,
 	}
 }
 
@@ -275,5 +281,6 @@ func (self *Context) SequencedListChild(index int, name string, data ard.Value) 
 		Problems:           self.Problems,
 		Quirks:             self.Quirks,
 		Grammar:            self.Grammar,
+		FunctionPrefix:     self.FunctionPrefix,
 	}
 }

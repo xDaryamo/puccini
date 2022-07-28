@@ -29,6 +29,7 @@ func NewServiceFile(context *tosca.Context) *ServiceFile {
 
 // tosca.Reader signature
 func ReadServiceFile(context *tosca.Context) tosca.EntityPtr {
+	context.FunctionPrefix = "$"
 	self := NewServiceFile(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	ignore := []string{"dsl_definitions"}

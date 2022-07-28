@@ -44,7 +44,7 @@ func NewValue(context *tosca.Context) *Value {
 
 // tosca.Reader signature
 func ReadValue(context *tosca.Context) tosca.EntityPtr {
-	ToFunctionCall(context)
+	ParseFunctionCalls(context)
 	return NewValue(context)
 }
 
@@ -67,7 +67,7 @@ func ReadAttributeValue(context *tosca.Context) tosca.EntityPtr {
 		}
 	}
 
-	ToFunctionCall(context)
+	ParseFunctionCalls(context)
 
 	return self
 }

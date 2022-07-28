@@ -14,16 +14,18 @@ import (
 // [https://docs.cloudify.co/5.0.5/developer/blueprints/spec-intrinsic-functions/]
 //
 
+const functionPathPrefix = "/cloudify/5.0.5/js/functions/"
+
 var FunctionScriptlets = map[string]string{
-	"tosca.function.concat":         profile.Profile["/cloudify/5.0.5/js/functions/get_secret.js"],
-	"tosca.function.get_attribute":  profile.Profile["/cloudify/5.0.5/js/functions/get_attribute.js"],
-	"tosca.function.get_capability": profile.Profile["/cloudify/5.0.5/js/functions/get_capability.js"],
-	"tosca.function.get_input":      profile.Profile["/cloudify/5.0.5/js/functions/get_input.js"],
-	"tosca.function.get_property":   profile.Profile["/cloudify/5.0.5/js/functions/get_property.js"],
-	"tosca.function.get_secret":     profile.Profile["/cloudify/5.0.5/js/functions/get_secret.js"],
+	tosca.FunctionScriptletPrefix + "concat":         profile.Profile[functionPathPrefix+"get_secret.js"],
+	tosca.FunctionScriptletPrefix + "get_attribute":  profile.Profile[functionPathPrefix+"get_attribute.js"],
+	tosca.FunctionScriptletPrefix + "get_capability": profile.Profile[functionPathPrefix+"get_capability.js"],
+	tosca.FunctionScriptletPrefix + "get_input":      profile.Profile[functionPathPrefix+"get_input.js"],
+	tosca.FunctionScriptletPrefix + "get_property":   profile.Profile[functionPathPrefix+"get_property.js"],
+	tosca.FunctionScriptletPrefix + "get_secret":     profile.Profile[functionPathPrefix+"get_secret.js"],
 }
 
-func ToFunctionCall(context *tosca.Context) bool {
+func ParseFunctionCalls(context *tosca.Context) bool {
 	if _, ok := context.Data.(*tosca.FunctionCall); ok {
 		// It's already a function call
 		return true
@@ -35,9 +37,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 	}
 
 	for key, data := range map_ {
-		name := yamlkeys.KeyString(key)
-
-		scriptletName := "tosca.function." + name
+		scriptletName := tosca.FunctionScriptletPrefix + yamlkeys.KeyString(key)
 		_, ok := context.ScriptletNamespace.Lookup(scriptletName)
 		if !ok {
 			// Not a function call, despite having the right data structure
@@ -54,7 +54,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 		arguments := make(ard.List, len(originalArguments))
 		for index, argument := range originalArguments {
 			argumentContext := context.Clone(argument)
-			ToFunctionCall(argumentContext)
+			ParseFunctionCalls(argumentContext)
 			arguments[index] = argumentContext.Data
 		}
 
@@ -68,7 +68,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 }
 
 func ToFunctionCalls(context *tosca.Context) {
-	if !ToFunctionCall(context) {
+	if !ParseFunctionCalls(context) {
 		if list, ok := context.Data.(ard.List); ok {
 			for index, value := range list {
 				childContext := context.ListChild(index, value)

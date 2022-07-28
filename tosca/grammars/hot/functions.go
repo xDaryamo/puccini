@@ -14,36 +14,38 @@ import (
 // [https://docs.openstack.org/heat/wallaby/template_guide/hot_spec.html#intrinsic-functions]
 //
 
+const functionPathPrefix = "/hot/1.0/js/functions/"
+
 var FunctionScriptlets = map[string]string{
-	"tosca.function.and":                 profile.Profile["/hot/1.0/js/functions/and.js"],
-	"tosca.function.contains":            profile.Profile["/hot/1.0/js/functions/contains.js"],
-	"tosca.function.digest":              profile.Profile["/hot/1.0/js/functions/digest.js"],
-	"tosca.function.equals":              profile.Profile["/hot/1.0/js/functions/equals.js"],
-	"tosca.function.filter":              profile.Profile["/hot/1.0/js/functions/filter.js"],
-	"tosca.function.get_attr":            profile.Profile["/hot/1.0/js/functions/get_attr.js"],
-	"tosca.function.get_file":            profile.Profile["/hot/1.0/js/functions/get_file.js"],
-	"tosca.function.get_param":           profile.Profile["/hot/1.0/js/functions/get_param.js"],
-	"tosca.function.get_resource":        profile.Profile["/hot/1.0/js/functions/get_resource.js"],
-	"tosca.function.if":                  profile.Profile["/hot/1.0/js/functions/if.js"],
-	"tosca.function.list_concat_unique":  profile.Profile["/hot/1.0/js/functions/list_concat_unique.js"],
-	"tosca.function.list_concat":         profile.Profile["/hot/1.0/js/functions/list_concat.js"],
-	"tosca.function.list_join":           profile.Profile["/hot/1.0/js/functions/list_join.js"],
-	"tosca.function.make_url":            profile.Profile["/hot/1.0/js/functions/make_url.js"],
-	"tosca.function.map_merge":           profile.Profile["/hot/1.0/js/functions/map_merge.js"],
-	"tosca.function.map_replace":         profile.Profile["/hot/1.0/js/functions/map_replace.js"],
-	"tosca.function.not":                 profile.Profile["/hot/1.0/js/functions/not.js"],
-	"tosca.function.or":                  profile.Profile["/hot/1.0/js/functions/or.js"],
-	"tosca.function.repeat":              profile.Profile["/hot/1.0/js/functions/repeat.js"],
-	"tosca.function.resolve":             profile.Profile["/hot/1.0/js/functions/resolve.js"],
-	"tosca.function.resource_facade":     profile.Profile["/hot/1.0/js/functions/resource_facade.js"],
-	"tosca.function.str_replace_strict":  profile.Profile["/hot/1.0/js/functions/str_replace_strict.js"],
-	"tosca.function.str_replace_vstrict": profile.Profile["/hot/1.0/js/functions/str_replace_vstrict.js"],
-	"tosca.function.str_replace":         profile.Profile["/hot/1.0/js/functions/str_replace.js"],
-	"tosca.function.str_split":           profile.Profile["/hot/1.0/js/functions/str_split.js"],
-	"tosca.function.yaql":                profile.Profile["/hot/1.0/js/functions/yaql.js"],
+	tosca.FunctionScriptletPrefix + "and":                 profile.Profile[functionPathPrefix+"and.js"],
+	tosca.FunctionScriptletPrefix + "contains":            profile.Profile[functionPathPrefix+"contains.js"],
+	tosca.FunctionScriptletPrefix + "digest":              profile.Profile[functionPathPrefix+"digest.js"],
+	tosca.FunctionScriptletPrefix + "equals":              profile.Profile[functionPathPrefix+"equals.js"],
+	tosca.FunctionScriptletPrefix + "filter":              profile.Profile[functionPathPrefix+"filter.js"],
+	tosca.FunctionScriptletPrefix + "get_attr":            profile.Profile[functionPathPrefix+"get_attr.js"],
+	tosca.FunctionScriptletPrefix + "get_file":            profile.Profile[functionPathPrefix+"get_file.js"],
+	tosca.FunctionScriptletPrefix + "get_param":           profile.Profile[functionPathPrefix+"get_param.js"],
+	tosca.FunctionScriptletPrefix + "get_resource":        profile.Profile[functionPathPrefix+"get_resource.js"],
+	tosca.FunctionScriptletPrefix + "if":                  profile.Profile[functionPathPrefix+"if.js"],
+	tosca.FunctionScriptletPrefix + "list_concat_unique":  profile.Profile[functionPathPrefix+"list_concat_unique.js"],
+	tosca.FunctionScriptletPrefix + "list_concat":         profile.Profile[functionPathPrefix+"list_concat.js"],
+	tosca.FunctionScriptletPrefix + "list_join":           profile.Profile[functionPathPrefix+"list_join.js"],
+	tosca.FunctionScriptletPrefix + "make_url":            profile.Profile[functionPathPrefix+"make_url.js"],
+	tosca.FunctionScriptletPrefix + "map_merge":           profile.Profile[functionPathPrefix+"map_merge.js"],
+	tosca.FunctionScriptletPrefix + "map_replace":         profile.Profile[functionPathPrefix+"map_replace.js"],
+	tosca.FunctionScriptletPrefix + "not":                 profile.Profile[functionPathPrefix+"not.js"],
+	tosca.FunctionScriptletPrefix + "or":                  profile.Profile[functionPathPrefix+"or.js"],
+	tosca.FunctionScriptletPrefix + "repeat":              profile.Profile[functionPathPrefix+"repeat.js"],
+	tosca.FunctionScriptletPrefix + "resolve":             profile.Profile[functionPathPrefix+"resolve.js"],
+	tosca.FunctionScriptletPrefix + "resource_facade":     profile.Profile[functionPathPrefix+"resource_facade.js"],
+	tosca.FunctionScriptletPrefix + "str_replace_strict":  profile.Profile[functionPathPrefix+"str_replace_strict.js"],
+	tosca.FunctionScriptletPrefix + "str_replace_vstrict": profile.Profile[functionPathPrefix+"str_replace_vstrict.js"],
+	tosca.FunctionScriptletPrefix + "str_replace":         profile.Profile[functionPathPrefix+"str_replace.js"],
+	tosca.FunctionScriptletPrefix + "str_split":           profile.Profile[functionPathPrefix+"str_split.js"],
+	tosca.FunctionScriptletPrefix + "yaql":                profile.Profile[functionPathPrefix+"yaql.js"],
 }
 
-func ToFunctionCall(context *tosca.Context) bool {
+func ParseFunctionCalls(context *tosca.Context) bool {
 	if _, ok := context.Data.(*tosca.FunctionCall); ok {
 		// It's already a function call
 		return true
@@ -57,7 +59,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 	for key, data := range map_ {
 		name := yamlkeys.KeyString(key)
 
-		scriptletName := "tosca.function." + name
+		scriptletName := tosca.FunctionScriptletPrefix + name
 		_, ok := context.ScriptletNamespace.Lookup(scriptletName)
 		if !ok {
 			// Not a function call, despite having the right data structure
@@ -88,7 +90,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 		arguments := make(ard.List, len(originalArguments))
 		for index, argument := range originalArguments {
 			argumentContext := context.Clone(argument)
-			ToFunctionCall(argumentContext)
+			ParseFunctionCalls(argumentContext)
 			arguments[index] = argumentContext.Data
 		}
 
@@ -102,7 +104,7 @@ func ToFunctionCall(context *tosca.Context) bool {
 }
 
 func ToFunctionCalls(context *tosca.Context) {
-	if !ToFunctionCall(context) {
+	if !ParseFunctionCalls(context) {
 		if list, ok := context.Data.(ard.List); ok {
 			for index, value := range list {
 				childContext := context.ListChild(index, value)

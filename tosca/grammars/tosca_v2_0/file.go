@@ -42,6 +42,7 @@ func NewFile(context *tosca.Context) *File {
 
 // tosca.Reader signature
 func ReadFile(context *tosca.Context) tosca.EntityPtr {
+	context.FunctionPrefix = "$"
 	self := NewFile(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	ignore := []string{"dsl_definitions"}

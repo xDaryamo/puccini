@@ -12,12 +12,24 @@ node_types:
       bytes:
         # Base64-encoded data
         type: bytes
+      hints:
+        type: map
+        entry_schema: string
+        required: false
 
 service_template:
 
   node_templates:
 
-    data:
+    data1:
       type: DataNode
       properties:
         bytes: UHVjY2luaQ==
+
+    data2:
+      type: DataNode
+      properties:
+        bytes: { $get_property: [ data1, bytes ] }
+        hints:
+          # "$" needs escaping here so it won't be interpreted as a function call
+          $$concat: production

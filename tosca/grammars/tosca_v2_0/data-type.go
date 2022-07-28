@@ -144,7 +144,7 @@ func (self *DataType) Complete(context *tosca.Context) {
 			map_[key] = data
 		}
 
-		if ToFunctionCall(childContext) {
+		if ParseFunctionCalls(childContext) {
 			map_[key] = childContext.Data
 		} else if definition.DataType != nil {
 			definition.DataType.Complete(childContext)

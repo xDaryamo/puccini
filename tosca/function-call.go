@@ -1,5 +1,9 @@
 package tosca
 
+const FunctionScriptletPrefix = "tosca.function."
+
+const ConstraintScriptletPrefix = "tosca.constraint."
+
 // Note: This is conceptually part of the "tosca.normal" package, but must be separated to
 // avoid circular imports.
 
