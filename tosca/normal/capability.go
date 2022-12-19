@@ -18,9 +18,9 @@ type Capability struct {
 	Name         string
 
 	Description          string
-	Types                Types
-	Properties           Constrainables
-	Attributes           Constrainables
+	Types                EntityTypes
+	Properties           Values
+	Attributes           Values
 	MinRelationshipCount uint64
 	MaxRelationshipCount uint64
 	Location             *Location
@@ -30,9 +30,9 @@ func (self *NodeTemplate) NewCapability(name string, location *Location) *Capabi
 	capability := &Capability{
 		NodeTemplate:         self,
 		Name:                 name,
-		Types:                make(Types),
-		Properties:           make(Constrainables),
-		Attributes:           make(Constrainables),
+		Types:                make(EntityTypes),
+		Properties:           make(Values),
+		Attributes:           make(Values),
 		MaxRelationshipCount: math.MaxUint64,
 		Location:             location,
 	}
@@ -41,13 +41,13 @@ func (self *NodeTemplate) NewCapability(name string, location *Location) *Capabi
 }
 
 type MarshalableCapability struct {
-	Description          string         `json:"description" yaml:"description"`
-	Types                Types          `json:"types" yaml:"types"`
-	Properties           Constrainables `json:"properties" yaml:"properties"`
-	Attributes           Constrainables `json:"attributes" yaml:"attributes"`
-	MinRelationshipCount int64          `json:"minRelationshipCount" yaml:"minRelationshipCount"`
-	MaxRelationshipCount int64          `json:"maxRelationshipCount" yaml:"maxRelationshipCount"`
-	Location             *Location      `json:"location" yaml:"location"`
+	Description          string      `json:"description" yaml:"description"`
+	Types                EntityTypes `json:"types" yaml:"types"`
+	Properties           Values      `json:"properties" yaml:"properties"`
+	Attributes           Values      `json:"attributes" yaml:"attributes"`
+	MinRelationshipCount int64       `json:"minRelationshipCount" yaml:"minRelationshipCount"`
+	MaxRelationshipCount int64       `json:"maxRelationshipCount" yaml:"maxRelationshipCount"`
+	Location             *Location   `json:"location" yaml:"location"`
 }
 
 func (self *Capability) Marshalable() any {

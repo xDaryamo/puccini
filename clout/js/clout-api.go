@@ -98,22 +98,37 @@ func (self *CloutAPI) NewCoercible(value goja.Value, site any, source any, targe
 		return nil, errors.New("undefined")
 	}
 
-	if coercible, err := self.cloutContext.NewCoercible(value.Export(), FunctionCallContext{site, source, target}); err == nil {
+	value_ := value.Export()
+
+	var meta ard.StringMap
+	if notation, ok := value_.(ard.StringMap); ok {
+		if meta == nil {
+			if data, ok := notation["$meta"]; ok {
+				if map_, ok := asStringMap(data); ok {
+					meta = map_
+				} else {
+					return nil, fmt.Errorf("malformed \"$meta\", not a map: %T", data)
+				}
+			}
+		}
+	}
+
+	if coercible, err := self.cloutContext.NewCoercible(value_, meta, FunctionCallContext{site, source, target}); err == nil {
 		return coercible, nil
 	} else {
 		return nil, err
 	}
 }
 
-func (self *CloutAPI) NewConstraints(value goja.Value, site any, source any, target any) (Constraints, error) {
+func (self *CloutAPI) NewValidators(value goja.Value, site any, source any, target any) (Validators, error) {
 	if goja.IsUndefined(value) {
 		return nil, errors.New("undefined")
 	}
 
 	exported := value.Export()
 	if list_, ok := exported.(ard.List); ok {
-		if constraints, err := self.cloutContext.NewConstraints(list_, FunctionCallContext{site, source, target}); err == nil {
-			return constraints, nil
+		if validation, err := self.cloutContext.NewValidators(list_, nil, FunctionCallContext{site, source, target}); err == nil {
+			return validation, nil
 		} else {
 			return nil, err
 		}
@@ -123,19 +138,19 @@ func (self *CloutAPI) NewConstraints(value goja.Value, site any, source any, tar
 }
 
 func (self *CloutAPI) Coerce(value any) (any, error) {
-	if coercible, ok := value.(Coercible); ok {
-		return coercible.Coerce()
+	if value_, ok := value.(Coercible); ok {
+		return value_.Coerce()
+	} else {
+		return value, nil
 	}
-
-	return value, nil
 }
 
 func (self *CloutAPI) Unwrap(value any) any {
-	if coercible, ok := value.(Coercible); ok {
-		return coercible.Unwrap()
+	if value_, ok := value.(Coercible); ok {
+		return value_.Unwrap()
+	} else {
+		return value
 	}
-
-	return value
 }
 
 // json.Marshaler interface

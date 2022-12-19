@@ -15,15 +15,15 @@ var DefaultScriptletNamespace = tosca.NewScriptletNamespace()
 func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_yaml_1_3", "/tosca/simple/1.3/profile.yaml")
 
-	Grammar.RegisterReader("$Root", ReadServiceFile) //override
-	Grammar.RegisterReader("$File", ReadFile)        //override
+	Grammar.RegisterReader("$Root", ReadServiceFile) // override
+	Grammar.RegisterReader("$File", ReadFile)        // override
 
 	Grammar.RegisterReader("Artifact", tosca_v2_0.ReadArtifact)
 	Grammar.RegisterReader("ArtifactDefinition", tosca_v2_0.ReadArtifactDefinition)
 	Grammar.RegisterReader("ArtifactType", tosca_v2_0.ReadArtifactType)
-	Grammar.RegisterReader("AttributeDefinition", tosca_v2_0.ReadAttributeDefinition)
+	Grammar.RegisterReader("AttributeDefinition", ReadAttributeDefinition)      // override
 	Grammar.RegisterReader("AttributeMapping", tosca_v2_0.ReadAttributeMapping) // introduced in TOSCA 1.3
-	Grammar.RegisterReader("AttributeValue", tosca_v2_0.ReadAttributeValue)
+	Grammar.RegisterReader("AttributeValue", ReadAttributeValue)                // override
 	Grammar.RegisterReader("CapabilityAssignment", tosca_v2_0.ReadCapabilityAssignment)
 	Grammar.RegisterReader("CapabilityDefinition", tosca_v2_0.ReadCapabilityDefinition)
 	Grammar.RegisterReader("CapabilityFilter", tosca_v2_0.ReadCapabilityFilter)

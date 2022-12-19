@@ -17,7 +17,7 @@ type ParameterDefinition struct {
 	DataTypeName *string `read:"type"`
 	Default      *Value  `read:"default,Value"`
 
-	DataType *DataType `lookup:"type,DataTypeName" json:"-" yaml:"-"`
+	DataType *DataType `lookup:"type,DataTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewParameterDefinition(context *tosca.Context) *ParameterDefinition {
@@ -80,12 +80,12 @@ func (self *ParameterDefinition) render() {
 	}
 }
 
-func (self *ParameterDefinition) GetTypeInformation() *normal.TypeInformation {
-	information := normal.NewTypeInformation()
+func (self *ParameterDefinition) GetNormalDataType() *normal.ValueMeta {
+	normalDataType := normal.NewValueMeta()
 	if self.Description != nil {
-		information.Description = *self.Description
+		normalDataType.TypeDescription = *self.Description
 	}
-	return information
+	return normalDataType
 }
 
 //

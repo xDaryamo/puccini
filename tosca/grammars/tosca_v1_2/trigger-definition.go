@@ -30,7 +30,7 @@ type TriggerDefinition struct {
 	OperationAction *tosca_v2_0.OperationDefinition
 	WorkflowAction  *string
 
-	WorkflowDefinition *tosca_v2_0.WorkflowDefinition `lookup:"action,WorkflowAction"`
+	WorkflowDefinition *tosca_v2_0.WorkflowDefinition `lookup:"action,WorkflowAction" traverse:"ignore" json:"-" yaml:"-"`
 
 	renderOnce sync.Once
 }

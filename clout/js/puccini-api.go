@@ -97,7 +97,7 @@ func (self *PucciniAPI) Write(data any, path string, dontOverwrite bool) {
 			message = stylist.Heading("writing:    ")
 		}
 		if !self.context.Quiet {
-			fmt.Fprintf(self.Stdout, "%s %s\n", message, output)
+			terminal.Printf("%s %s\n", message, output)
 		}
 		if skip {
 			return
@@ -121,7 +121,7 @@ func (self *PucciniAPI) Fail(message string) {
 		stylist = terminal.NewStylist(false)
 	}
 	if !self.context.Quiet {
-		fmt.Fprintln(self.Stderr, stylist.Error(message))
+		terminal.Eprintln(stylist.Error(message))
 	}
 	util.Exit(1)
 }

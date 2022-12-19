@@ -1,43 +1,35 @@
 package normal
 
-import (
-	"github.com/tliron/kutil/ard"
-	"github.com/tliron/puccini/tosca"
-)
-
 //
 // Value
 //
 
-type Value struct {
-	Key         Constrainable     `json:"$key,omitempty" yaml:"$key,omitempty"`
-	Information *ValueInformation `json:"$information,omitempty" yaml:"$information,omitempty"`
-	Constraints FunctionCalls     `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
-	Converter   *FunctionCall     `json:"$converter,omitempty" yaml:"$converter,omitempty"`
-
-	Value ard.Value `json:"$value" yaml:"$value"`
+type Value interface {
+	SetKey(Value)
+	SetMeta(*ValueMeta)
 }
 
-func NewValue(value ard.Value) *Value {
-	return &Value{Value: value}
-}
+//
+// Values
+//
 
-// Constrainable interface
-func (self *Value) SetKey(key Constrainable) {
-	self.Key = key
-}
+type Values map[string]Value
 
-// Constrainable interface
-func (self *Value) SetInformation(information *ValueInformation) {
-	self.Information = CopyValueInformation(information)
-}
+//
+// ValueList
+//
 
-// Constrainable interface
-func (self *Value) AddConstraint(constraint *tosca.FunctionCall) {
-	self.Constraints = append(self.Constraints, NewFunctionCall(constraint))
-}
+type ValueList []Value
 
-// Constrainable interface
-func (self *Value) SetConverter(converter *tosca.FunctionCall) {
-	self.Converter = NewFunctionCall(converter)
+func (self ValueList) AppendWithKey(key any, value Value) ValueList {
+	var key_ Value
+
+	var ok bool
+	if key_, ok = key.(Value); !ok {
+		key_ = NewPrimitive(key)
+	}
+
+	value.SetKey(key_)
+
+	return append(self, value)
 }

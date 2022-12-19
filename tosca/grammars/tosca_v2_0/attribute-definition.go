@@ -20,15 +20,16 @@ type AttributeDefinition struct {
 	*Entity `name:"attribute definition"`
 	Name    string
 
-	Metadata     Metadata `read:"metadata,Metadata"` // introduced in TOSCA 1.3
-	Description  *string  `read:"description"`
-	DataTypeName *string  `read:"type"`                // required only if cannot be inherited or discovered
-	KeySchema    *Schema  `read:"key_schema,Schema"`   // introduced in TOSCA 1.3
-	EntrySchema  *Schema  `read:"entry_schema,Schema"` // required if list or map
-	Default      *Value   `read:"default,Value"`
-	Status       *string  `read:"status"`
+	Metadata          Metadata          `read:"metadata,Metadata"` // introduced in TOSCA 1.3
+	Description       *string           `read:"description"`
+	DataTypeName      *string           `read:"type"`                                             // mandatory only if cannot be inherited or discovered
+	ConstraintClauses ConstraintClauses `read:"constraints,[]ConstraintClause" traverse:"ignore"` // introduced in TOSCA 2.0
+	KeySchema         *Schema           `read:"key_schema,Schema"`                                // introduced in TOSCA 1.3
+	EntrySchema       *Schema           `read:"entry_schema,Schema"`                              // mandatory if list or map
+	Default           *Value            `read:"default,Value"`
+	Status            *string           `read:"status"`
 
-	DataType *DataType `lookup:"type,DataTypeName" json:"-" yaml:"-"`
+	DataType *DataType `lookup:"type,DataTypeName" traverse:"ignore" json:"-" yaml:"-"`
 
 	looseType bool
 }
@@ -54,6 +55,45 @@ func ReadAttributeDefinition(context *tosca.Context) tosca.EntityPtr {
 // tosca.Mappable interface
 func (self *AttributeDefinition) GetKey() string {
 	return self.Name
+}
+
+// DataDefinition interface
+func (self *AttributeDefinition) ToValueMeta() *normal.ValueMeta {
+	information := normal.NewValueMeta()
+	information.Metadata = tosca.GetDataTypeMetadata(self.Metadata)
+	if self.Description != nil {
+		information.TypeDescription = *self.Description
+	}
+	return information
+}
+
+// DataDefinition interface
+func (self *AttributeDefinition) GetDescription() string {
+	if self.Description != nil {
+		return *self.Description
+	} else {
+		return ""
+	}
+}
+
+// DataDefinition interface
+func (self *AttributeDefinition) GetTypeMetadata() Metadata {
+	return self.Metadata
+}
+
+// DataDefinition interface
+func (self *AttributeDefinition) GetConstraintClauses() ConstraintClauses {
+	return self.ConstraintClauses
+}
+
+// DataDefinition interface
+func (self *AttributeDefinition) GetKeySchema() *Schema {
+	return self.KeySchema
+}
+
+// DataDefinition interface
+func (self *AttributeDefinition) GetEntrySchema() *Schema {
+	return self.EntrySchema
 }
 
 func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) {
@@ -137,21 +177,12 @@ func (self *AttributeDefinition) doRender() {
 					// Default to "string" for key schema
 					self.KeySchema = ReadSchema(self.Context.FieldChild("key_schema", "string")).(*Schema)
 					if !self.KeySchema.LookupDataType() {
-						return
+						panic("missing \"string\" type")
 					}
 				}
 			}
 		}
 	}
-}
-
-func (self *AttributeDefinition) GetTypeInformation() *normal.TypeInformation {
-	information := normal.NewTypeInformation()
-	information.Metadata = tosca.GetInformationMetadata(self.Metadata)
-	if self.Description != nil {
-		information.Description = *self.Description
-	}
-	return information
 }
 
 //

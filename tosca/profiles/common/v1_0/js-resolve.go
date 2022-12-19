@@ -121,8 +121,8 @@ function gatherCandidateNodeTemplates(sourceVertex, requirement) {
 	let path = requirement.location.path;
 	let nodeTemplateName = requirement.nodeTemplateName;
 	let nodeTypeName = requirement.nodeTypeName;
-	let nodeTemplatePropertyConstraints = requirement.nodeTemplatePropertyConstraints;
-	let capabilityPropertyConstraintsMap = requirement.capabilityPropertyConstraints;
+	let nodeTemplatePropertyValidators = requirement.nodeTemplatePropertyValidators;
+	let capabilityPropertyValidatorsMap = requirement.capabilityPropertyValidators;
 
 	let candidates = [];
 	for (let v = 0, l = nodeTemplateVertexes.length; v < l; v++) {
@@ -141,31 +141,31 @@ function gatherCandidateNodeTemplates(sourceVertex, requirement) {
 		}
 
 		// Node filter
-		if ((nodeTemplatePropertyConstraints.length !== 0) && !arePropertiesValid(path, sourceVertex, 'node template', candidateNodeTemplateName, candidateNodeTemplate, nodeTemplatePropertyConstraints)) {
-			puccini.log.debugf('%s: properties of node template %q do not match constraints', path, candidateNodeTemplateName);
+		if ((nodeTemplatePropertyValidators.length !== 0) && !arePropertiesValid(path, sourceVertex, 'node template', candidateNodeTemplateName, candidateNodeTemplate, nodeTemplatePropertyValidators)) {
+			puccini.log.debugf('%s: properties of node template %q do not validate', path, candidateNodeTemplateName);
 			continue;
 		}
 
 		let candidateCapabilities = candidateNodeTemplate.capabilities;
 
 		// Capability filter
-		if (capabilityPropertyConstraintsMap.length !== 0) {
+		if (capabilityPropertyValidatorsMap.length !== 0) {
 			let valid = true;
 			for (let candidateCapabilityName in candidateCapabilities) {
 				let candidateCapability = candidateCapabilities[candidateCapabilityName];
 
 				// Try by name
-				let capabilityPropertyConstraints = capabilityPropertyConstraintsMap[candidateCapabilityName];
-				if (capabilityPropertyConstraints === undefined) {
+				let capabilityPropertyValidators = capabilityPropertyValidatorsMap[candidateCapabilityName];
+				if (capabilityPropertyValidators === undefined) {
 					// Try by type name
 					for (let candidateTypeName in candidateCapability.types) {
-						capabilityPropertyConstraints = capabilityPropertyConstraintsMap[candidateTypeName];
-						if (capabilityPropertyConstraints !== undefined) break;
+						capabilityPropertyValidators = capabilityPropertyValidatorsMap[candidateTypeName];
+						if (capabilityPropertyValidators !== undefined) break;
 					}
 				}
 
-				if ((capabilityPropertyConstraints !== undefined) && (capabilityPropertyConstraints.length !== 0) && !arePropertiesValid(path, sourceVertex, 'capability', candidateCapabilityName, candidateCapability, capabilityPropertyConstraints)) {
-					puccini.log.debugf('%s: properties of capability %q in node template %q do not match constraints', path, candidateCapabilityName, candidateNodeTemplateName);
+				if ((capabilityPropertyValidators !== undefined) && (capabilityPropertyValidators.length !== 0) && !arePropertiesValid(path, sourceVertex, 'capability', candidateCapabilityName, candidateCapability, capabilityPropertyValidators)) {
+					puccini.log.debugf('%s: properties of capability %q in node template %q do not validate', path, candidateCapabilityName, candidateNodeTemplateName);
 					valid = false;
 					break;
 				}
@@ -284,12 +284,12 @@ function countRelationships(vertex, capabilityName) {
 	return count;
 }
 
-function arePropertiesValid(path, sourceVertex, kind, name, entity, constraintsMap) {
+function arePropertiesValid(path, sourceVertex, kind, name, entity, validatorsMap) {
 	let valid = true;
 
 	let properties = entity.properties;
-	for (let propertyName in constraintsMap) {
-		puccini.log.debugf('%s: applying constraints to property %q of %s %q', path, propertyName, kind, name);
+	for (let propertyName in validatorsMap) {
+		puccini.log.debugf('%s: applying validators to property %q of %s %q', path, propertyName, kind, name);
 
 		let property = properties[propertyName];
 		if (property === undefined) {
@@ -298,9 +298,9 @@ function arePropertiesValid(path, sourceVertex, kind, name, entity, constraintsM
 			break;
 		}
 
-		let constraints = constraintsMap[propertyName];
-		constraints = clout.newConstraints(constraints, sourceVertex, sourceVertex, entity)
-		if (!constraints.validate(property)) {
+		let validators = validatorsMap[propertyName];
+		validators = clout.newValidators(validators, sourceVertex, sourceVertex, entity)
+		if (!validators.isValid(property)) {
 			// return false; GOJA: returning from inside for-loop is broken
 			valid = false;
 			break;

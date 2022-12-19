@@ -17,15 +17,15 @@ import (
 const functionPathPrefix = "/cloudify/5.0.5/js/functions/"
 
 var FunctionScriptlets = map[string]string{
-	tosca.FunctionScriptletPrefix + "concat":         profile.Profile[functionPathPrefix+"get_secret.js"],
-	tosca.FunctionScriptletPrefix + "get_attribute":  profile.Profile[functionPathPrefix+"get_attribute.js"],
-	tosca.FunctionScriptletPrefix + "get_capability": profile.Profile[functionPathPrefix+"get_capability.js"],
-	tosca.FunctionScriptletPrefix + "get_input":      profile.Profile[functionPathPrefix+"get_input.js"],
-	tosca.FunctionScriptletPrefix + "get_property":   profile.Profile[functionPathPrefix+"get_property.js"],
-	tosca.FunctionScriptletPrefix + "get_secret":     profile.Profile[functionPathPrefix+"get_secret.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "concat":         profile.Profile[functionPathPrefix+"get_secret.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "get_attribute":  profile.Profile[functionPathPrefix+"get_attribute.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "get_capability": profile.Profile[functionPathPrefix+"get_capability.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "get_input":      profile.Profile[functionPathPrefix+"get_input.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "get_property":   profile.Profile[functionPathPrefix+"get_property.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "get_secret":     profile.Profile[functionPathPrefix+"get_secret.js"],
 }
 
-func ParseFunctionCalls(context *tosca.Context) bool {
+func ParseFunctionCall(context *tosca.Context) bool {
 	if _, ok := context.Data.(*tosca.FunctionCall); ok {
 		// It's already a function call
 		return true
@@ -37,7 +37,7 @@ func ParseFunctionCalls(context *tosca.Context) bool {
 	}
 
 	for key, data := range map_ {
-		scriptletName := tosca.FunctionScriptletPrefix + yamlkeys.KeyString(key)
+		scriptletName := tosca.METADATA_FUNCTION_PREFIX + yamlkeys.KeyString(key)
 		_, ok := context.ScriptletNamespace.Lookup(scriptletName)
 		if !ok {
 			// Not a function call, despite having the right data structure
@@ -54,7 +54,7 @@ func ParseFunctionCalls(context *tosca.Context) bool {
 		arguments := make(ard.List, len(originalArguments))
 		for index, argument := range originalArguments {
 			argumentContext := context.Clone(argument)
-			ParseFunctionCalls(argumentContext)
+			ParseFunctionCall(argumentContext)
 			arguments[index] = argumentContext.Data
 		}
 
@@ -67,18 +67,18 @@ func ParseFunctionCalls(context *tosca.Context) bool {
 	return false
 }
 
-func ToFunctionCalls(context *tosca.Context) {
-	if !ParseFunctionCalls(context) {
+func ParseFunctionCalls(context *tosca.Context) {
+	if !ParseFunctionCall(context) {
 		if list, ok := context.Data.(ard.List); ok {
 			for index, value := range list {
 				childContext := context.ListChild(index, value)
-				ToFunctionCalls(childContext)
+				ParseFunctionCalls(childContext)
 				list[index] = childContext.Data
 			}
 		} else if map_, ok := context.Data.(ard.Map); ok {
 			for key, value := range map_ {
 				childContext := context.MapChild(key, value)
-				ToFunctionCalls(childContext)
+				ParseFunctionCalls(childContext)
 				map_[key] = childContext.Data
 			}
 		}
@@ -90,7 +90,7 @@ func NormalizeFunctionCallArguments(functionCall *tosca.FunctionCall, context *t
 		// Because the same constraint instance may be shared among more than one value, this
 		// func might be called more than once on the same arguments, so we must make sure not
 		// to normalize more than once
-		if _, ok := argument.(normal.Constrainable); !ok {
+		if _, ok := argument.(normal.Value); !ok {
 			if value, ok := argument.(*Value); ok {
 				functionCall.Arguments[index] = value.Normalize()
 			} else {

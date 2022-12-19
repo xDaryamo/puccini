@@ -32,16 +32,16 @@ exports.coerce = function(clout_) {
 	});
 };
 
-exports.getValueInformation = function(clout_) {
+exports.getValueType = function(clout_) {
 	if (!clout_)
 		clout_ = clout;
-	let information = {};
+	let valueType = {};
 	exports.traverseValues(clout_, function(data) {
-		if (data.value.$information)
-			information[data.path.join('.')] = data.value.$information;
+		if (data.value.$meta)
+			valueType[data.path.join('.')] = data.value.$meta.type;
 		return data.value;
 	});
-	return information;
+	return valueType;
 };
 
 exports.hasQuirk = function(clout_, quirk) {

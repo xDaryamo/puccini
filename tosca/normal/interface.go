@@ -10,19 +10,19 @@ type Interface struct {
 	Relationship *Relationship `json:"-" yaml:"-"`
 	Name         string        `json:"-" yaml:"-"`
 
-	Description   string         `json:"description" yaml:"description"`
-	Types         Types          `json:"types" yaml:"types"`
-	Inputs        Constrainables `json:"inputs" yaml:"inputs"`
-	Operations    Operations     `json:"operations" yaml:"operations"`
-	Notifications Notifications  `json:"notifications" yaml:"notifications"`
+	Description   string        `json:"description" yaml:"description"`
+	Types         EntityTypes   `json:"types" yaml:"types"`
+	Inputs        Values        `json:"inputs" yaml:"inputs"`
+	Operations    Operations    `json:"operations" yaml:"operations"`
+	Notifications Notifications `json:"notifications" yaml:"notifications"`
 }
 
 func (self *NodeTemplate) NewInterface(name string) *Interface {
 	interface_ := &Interface{
 		NodeTemplate:  self,
 		Name:          name,
-		Types:         make(Types),
-		Inputs:        make(Constrainables),
+		Types:         make(EntityTypes),
+		Inputs:        make(Values),
 		Operations:    make(Operations),
 		Notifications: make(Notifications),
 	}
@@ -34,8 +34,8 @@ func (self *Group) NewInterface(name string) *Interface {
 	interface_ := &Interface{
 		Group:         self,
 		Name:          name,
-		Types:         make(Types),
-		Inputs:        make(Constrainables),
+		Types:         make(EntityTypes),
+		Inputs:        make(Values),
 		Operations:    make(Operations),
 		Notifications: make(Notifications),
 	}
@@ -47,8 +47,8 @@ func (self *Relationship) NewInterface(name string) *Interface {
 	interface_ := &Interface{
 		Relationship:  self,
 		Name:          name,
-		Types:         make(Types),
-		Inputs:        make(Constrainables),
+		Types:         make(EntityTypes),
+		Inputs:        make(Values),
 		Operations:    make(Operations),
 		Notifications: make(Notifications),
 	}

@@ -207,11 +207,18 @@ func SetInputs(entityPtr EntityPtr, inputs map[string]ard.Value) bool {
 //
 
 const (
-	METADATA_INFORMATION_PREFIX      = "puccini.information:"
+	METADATA_TYPE                    = "puccini.type"
+	METADATA_CONVERTER               = "puccini.converter"
+	METADATA_COMPARER                = "puccini.comparer"
+	METADATA_QUIRKS                  = "puccini.quirks"
+	METADATA_DATA_TYPE_PREFIX        = "puccini.data-type:"
 	METADATA_SCRIPTLET_PREFIX        = "puccini.scriptlet:"
 	METADATA_SCRIPTLET_IMPORT_PREFIX = "puccini.scriptlet.import:"
-	METADATA_CANONICAL_NAME          = "tosca.canonical-name"
-	METADATA_NORMATIVE               = "tosca.normative"
+
+	METADATA_CANONICAL_NAME    = "tosca.canonical-name"
+	METADATA_NORMATIVE         = "tosca.normative"
+	METADATA_FUNCTION_PREFIX   = "tosca.function."
+	METADATA_CONSTRAINT_PREFIX = "tosca.constraint."
 )
 
 type HasMetadata interface {
@@ -248,14 +255,14 @@ func SetMetadata(entityPtr EntityPtr, name string, value string) bool {
 	}
 }
 
-func GetInformationMetadata(metadata map[string]string) map[string]string {
-	informationMetadata := make(map[string]string)
+func GetDataTypeMetadata(metadata map[string]string) map[string]string {
+	dataTypeMetadata := make(map[string]string)
 	if metadata != nil {
 		for key, value := range metadata {
-			if strings.HasPrefix(key, METADATA_INFORMATION_PREFIX) {
-				informationMetadata[key[len(METADATA_INFORMATION_PREFIX):]] = value
+			if strings.HasPrefix(key, METADATA_DATA_TYPE_PREFIX) {
+				dataTypeMetadata[key[len(METADATA_DATA_TYPE_PREFIX):]] = value
 			}
 		}
 	}
-	return informationMetadata
+	return dataTypeMetadata
 }

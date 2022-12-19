@@ -82,7 +82,7 @@ func (self *Parameter) render() {
 	}
 }
 
-func (self *Parameter) Normalize(context *tosca.Context) normal.Constrainable {
+func (self *Parameter) Normalize(context *tosca.Context) normal.Value {
 	value := self.Value
 	if value == nil {
 		if self.Default != nil {
@@ -103,7 +103,7 @@ func (self *Parameter) Normalize(context *tosca.Context) normal.Constrainable {
 
 type Parameters map[string]*Parameter
 
-func (self Parameters) Normalize(c normal.Constrainables, context *tosca.Context) {
+func (self Parameters) Normalize(c normal.Values, context *tosca.Context) {
 	for key, parameter := range self {
 		c[key] = parameter.Normalize(context)
 	}

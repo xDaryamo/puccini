@@ -17,8 +17,7 @@ import (
 type PropertyDefinition struct {
 	*AttributeDefinition `name:"property definition"`
 
-	Required          *bool             `read:"required"`
-	ConstraintClauses ConstraintClauses `read:"constraints,[]ConstraintClause" traverse:"ignore"`
+	Required *bool `read:"required"`
 }
 
 func NewPropertyDefinition(context *tosca.Context) *PropertyDefinition {
@@ -64,7 +63,6 @@ func (self *PropertyDefinition) render() {
 	logRender.Debugf("property definition: %s", self.Name)
 
 	self.doRender()
-	self.ConstraintClauses.Render(self.DataType, self.AttributeDefinition)
 
 	if (self.Default != nil) && (self.DataType != nil) {
 		// The "default" value must be a valid value of the type

@@ -6,12 +6,12 @@ import (
 
 func NewList(entryType string, values ard.List) ard.StringMap {
 	return ard.StringMap{
-		"$information": NewListInformation(entryType),
-		"$list":        values,
+		"$type": NewListType(entryType),
+		"$list": values,
 	}
 }
 
-func NewListInformation(entryType string) ard.StringMap {
+func NewListType(entryType string) ard.StringMap {
 	return ard.StringMap{
 		"type": ard.StringMap{"name": "list"},
 		"entry": ard.StringMap{

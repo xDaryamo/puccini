@@ -20,5 +20,6 @@ exports.validate = function(v, format) {
 			throw x;
 	}
 	return true;
-};`
+};
+`
 }

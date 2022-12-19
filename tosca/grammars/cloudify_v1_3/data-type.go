@@ -18,7 +18,7 @@ type DataType struct {
 	Description         *string             `read:"description"`
 	PropertyDefinitions PropertyDefinitions `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
 
-	Parent *DataType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
+	Parent *DataType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewDataType(context *tosca.Context) *DataType {
@@ -105,13 +105,13 @@ func (self *DataType) GetInternal() (ard.TypeName, ard.TypeValidator, tosca.Read
 	return ard.NoType, nil, nil, false
 }
 
-func (self *DataType) GetTypeInformation() *normal.TypeInformation {
-	information := normal.NewTypeInformation()
-	information.Name = tosca.GetCanonicalName(self)
+func (self *DataType) NewValueMeta() *normal.ValueMeta {
+	normalValueMeta := normal.NewValueMeta()
+	normalValueMeta.Type = tosca.GetCanonicalName(self)
 	if self.Description != nil {
-		information.Description = *self.Description
+		normalValueMeta.TypeDescription = *self.Description
 	}
-	return information
+	return normalValueMeta
 }
 
 //

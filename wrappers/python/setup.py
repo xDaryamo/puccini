@@ -15,17 +15,23 @@ with open(os.path.join(os.path.dirname(__file__), 'puccini', '__init__.py')) as 
 with open(os.path.join(os.path.dirname(__file__), 'description.md')) as f:
     description = f.read()
 
-go_version = os.environ.get('PUCCINI_GO_VERSION', '1.18.4')
+go_version = os.environ.get('PUCCINI_GO_VERSION', '1.19')
 root = os.path.abspath(os.path.dirname(__file__)).replace('"', '\\"')
 
 script = '''\
-# Install Go
-curl https://go.dev/dl/go{go_version}.linux-amd64.tar.gz --silent --location | tar -xz
-GO=$PWD/go
+# Try preinstalled Go
+#GO=$(command -v go)
+GO=
 
-# Build library
+if [ -z "$GO" ]; then
+    # Install Go
+    curl https://go.dev/dl/go{go_version}.linux-amd64.tar.gz --silent --location | tar -xz
+    GO=$PWD/go/bin/go
+fi
+
+# Build libpuccini
 cd "{root}/puccini/go-source/puccini-tosca"
-"$GO/bin/go" build \
+"$GO" build \
     -buildmode=c-shared \
     -o=../../libpuccini.so \
     -ldflags " \

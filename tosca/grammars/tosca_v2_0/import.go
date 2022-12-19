@@ -28,7 +28,7 @@ type Import struct {
 	Namespace      *string `read:"namespace"` // renamed in TOSCA 2.0
 	NamespaceURI   *string /// removed in TOSCA 2.0
 
-	Repository *Repository `lookup:"repository,RepositoryName" json:"-" yaml:"-"`
+	Repository *Repository `lookup:"repository,RepositoryName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewImport(context *tosca.Context) *Import {

@@ -5,10 +5,10 @@ import (
 )
 
 //
-// Type
+// EntityType
 //
 
-type Type struct {
+type EntityType struct {
 	Name string `json:"-" yaml:"-"`
 
 	Description string            `json:"description,omitempty" yaml:"description,omitempty"`
@@ -16,59 +16,59 @@ type Type struct {
 	Parent      string            `json:"parent,omitempty" yaml:"parent,omitempty"`
 }
 
-func NewType(name string) *Type {
-	return &Type{
+func NewEntityType(name string) *EntityType {
+	return &EntityType{
 		Name:     name,
 		Metadata: make(map[string]string),
 	}
 }
 
 //
-// Types
+// EntityTypes
 //
 
-type Types map[string]*Type
+type EntityTypes map[string]*EntityType
 
-func NewTypes(names ...string) Types {
-	types := make(Types)
+func NewEntityTypes(names ...string) EntityTypes {
+	entityTypes := make(EntityTypes)
 	for _, name := range names {
-		types[name] = NewType(name)
+		entityTypes[name] = NewEntityType(name)
 	}
-	return types
+	return entityTypes
 }
 
-func GetHierarchyTypes(hierarchy *tosca.Hierarchy) Types {
-	types := make(Types)
+func GetHierarchyEntityTypes(hierarchy *tosca.Hierarchy) EntityTypes {
+	entityTypes := make(EntityTypes)
 
 	hierarchy.Range(func(entityPtr tosca.EntityPtr, parentEntityPtr tosca.EntityPtr) bool {
-		type_ := NewType(tosca.GetCanonicalName(entityPtr))
+		entityType := NewEntityType(tosca.GetCanonicalName(entityPtr))
 
 		if parentEntityPtr != nil {
-			type_.Parent = tosca.GetCanonicalName(parentEntityPtr)
+			entityType.Parent = tosca.GetCanonicalName(parentEntityPtr)
 		}
 
-		type_.Description, _ = tosca.GetDescription(entityPtr)
+		entityType.Description, _ = tosca.GetDescription(entityPtr)
 
 		if metadata, ok := tosca.GetMetadata(entityPtr); ok {
 			for name, value := range metadata {
 				// No need to include "canonical_name" metadata
 				if name != "canonical_name" {
-					type_.Metadata[name] = value
+					entityType.Metadata[name] = value
 				}
 			}
 		}
 
-		types[type_.Name] = type_
+		entityTypes[entityType.Name] = entityType
 
 		return true
 	})
 
-	return types
+	return entityTypes
 }
 
-func GetTypes(hierarchy *tosca.Hierarchy, entityPtr tosca.EntityPtr) (Types, bool) {
+func GetEntityTypes(hierarchy *tosca.Hierarchy, entityPtr tosca.EntityPtr) (EntityTypes, bool) {
 	if childHierarchy, ok := hierarchy.Find(entityPtr); ok {
-		return GetHierarchyTypes(childHierarchy), true
+		return GetHierarchyEntityTypes(childHierarchy), true
 	}
 	return nil, false
 }

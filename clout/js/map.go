@@ -4,21 +4,23 @@ import (
 	"fmt"
 
 	"github.com/tliron/kutil/ard"
+	"github.com/tliron/kutil/util"
 )
 
 //
 // Map
 //
 
+// TODO: support for fields
+
 type Map []MapEntry
 
-func (self *CloutContext) NewMap(list ard.List, keyConstraints Constraints, valueConstraints Constraints, functionCallContext FunctionCallContext) (Map, error) {
-	var map_ Map
+func (self *CloutContext) NewMap(list ard.List, keyMeta ard.StringMap, valueMeta ard.StringMap, functionCallContext FunctionCallContext) (Map, error) {
+	map_ := make(Map, len(list))
 
-	for _, data := range list {
-		if entry, err := self.NewMapEntry(data, keyConstraints, valueConstraints, functionCallContext); err == nil {
-			map_ = append(map_, entry)
-		} else {
+	for index, data := range list {
+		var err error
+		if map_[index], err = self.NewMapEntry(data, keyMeta, valueMeta, functionCallContext); err != nil {
 			return nil, err
 		}
 	}
@@ -27,29 +29,31 @@ func (self *CloutContext) NewMap(list ard.List, keyConstraints Constraints, valu
 }
 
 func (self Map) Coerce() (ard.Value, error) {
-	value := make(ard.StringMap)
+	map_ := make(ard.StringMap)
 
 	for _, entry := range self {
-		if k, v, err := entry.Coerce(); err == nil {
+		if key, value, err := entry.Coerce(); err == nil {
 			// Key should be a string value
-			if _, ok := value[k]; ok {
+			if _, ok := map_[key]; ok {
 				if keyFunctionCall, ok := entry.Key.(*FunctionCall); ok {
-					arguments, err := keyFunctionCall.CoerceArguments()
-					if err != nil {
+					// ????
+					if arguments, err := keyFunctionCall.CoerceArguments(); err == nil {
+						return nil, keyFunctionCall.NewErrorf(arguments, "duplicate map key %q during coercion", key)
+					} else {
 						return nil, err
 					}
-					return nil, keyFunctionCall.NewErrorf(arguments, "duplicate map key %q during coercion", k)
 				} else {
-					return nil, fmt.Errorf("duplicate map key during coercion: %s", k)
+					return nil, fmt.Errorf("duplicate map key during coercion: %s", key)
 				}
 			}
-			value[k] = v
+
+			map_[key] = value
 		} else {
 			return nil, err
 		}
 	}
 
-	return value, nil
+	return map_, nil
 }
 
 //
@@ -57,20 +61,18 @@ func (self Map) Coerce() (ard.Value, error) {
 //
 
 type MapEntry struct {
-	Key   Coercible `json:"$key" yaml:"$key"`
-	Value Coercible `json:"$value" yaml:"$value"`
+	Key   Coercible `json:"key" yaml:"key"`
+	Value Coercible `json:"value" yaml:"value"`
 }
 
-func (self *CloutContext) NewMapEntry(data any, keyConstraints Constraints, valueConstraints Constraints, functionCallContext FunctionCallContext) (MapEntry, error) {
+func (self *CloutContext) NewMapEntry(data any, keyMeta ard.StringMap, valueMeta ard.StringMap, functionCallContext FunctionCallContext) (MapEntry, error) {
 	var entry MapEntry
 
 	if map_, ok := data.(ard.StringMap); ok {
 		if key, ok := map_["$key"]; ok {
 			var err error
-			if entry.Key, err = self.NewCoercible(key, functionCallContext); err == nil {
-				if entry.Value, err = self.NewCoercible(map_, functionCallContext); err == nil {
-					entry.Key.SetConstraints(keyConstraints)
-					entry.Value.SetConstraints(valueConstraints)
+			if entry.Key, err = self.NewCoercible(key, keyMeta, functionCallContext); err == nil {
+				if entry.Value, err = self.NewCoercible(map_, valueMeta, functionCallContext); err == nil {
 					return entry, nil
 				} else {
 					return entry, err
@@ -89,7 +91,7 @@ func (self *CloutContext) NewMapEntry(data any, keyConstraints Constraints, valu
 func (self MapEntry) Coerce() (string, any, error) {
 	if key, err := self.Key.Coerce(); err == nil {
 		if value, err := self.Value.Coerce(); err == nil {
-			return fmt.Sprintf("%v", key), value, nil
+			return util.ToString(key), value, nil
 		} else {
 			return "", nil, err
 		}

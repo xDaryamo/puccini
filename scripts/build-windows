@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
+. "$HERE/_env"
+
+git_version
+
+function build () {
+	local TOOL=$1
+	local EXE=$ROOT/dist/$TOOL.exe
+	pushd "$ROOT/$TOOL" > /dev/null
+	GOOS=windows go build \
+		-o "$EXE" \
+		-ldflags " \
+			-X 'github.com/tliron/kutil/version.GitVersion=$VERSION' \
+			-X 'github.com/tliron/kutil/version.GitRevision=$REVISION' \
+			-X 'github.com/tliron/kutil/version.Timestamp=$TIMESTAMP'"
+	popd > /dev/null
+	m "built $EXE"
+}
+
+build puccini-tosca
+build puccini-clout

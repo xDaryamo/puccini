@@ -39,7 +39,7 @@ func (self *Output) GetKey() string {
 	return self.Name
 }
 
-func (self *Output) Normalize(context *tosca.Context) normal.Constrainable {
+func (self *Output) Normalize(context *tosca.Context) normal.Value {
 	var value *Value
 	if self.Value != nil {
 		value = self.Value
@@ -56,7 +56,7 @@ func (self *Output) Normalize(context *tosca.Context) normal.Constrainable {
 
 type Outputs map[string]*Output
 
-func (self Outputs) Normalize(normalConstrainables normal.Constrainables, context *tosca.Context) {
+func (self Outputs) Normalize(normalConstrainables normal.Values, context *tosca.Context) {
 	for key, output := range self {
 		normalConstrainables[key] = output.Value.Normalize()
 	}

@@ -26,18 +26,18 @@ type ArtifactDefinition struct {
 	*Entity `name:"artifact definition"`
 	Name    string
 
-	ArtifactTypeName  *string `read:"type"` // required only if cannot be inherited
+	ArtifactTypeName  *string `read:"type"` // mandatory only if cannot be inherited
 	Description       *string `read:"description"`
 	ArtifactVersion   *string `read:"artifact_version"` // introduced in TOSCA 1.3
 	Properties        Values  `read:"properties,Value"` // ERRATUM: ommited in TOSCA 1.0-1.2 (appears in artifact type)
 	RepositoryName    *string `read:"repository"`
-	File              *string `read:"file"` // required only if cannot be inherited
+	File              *string `read:"file"` // mandatory only if cannot be inherited
 	DeployPath        *string `read:"deploy_path"`
 	ChecksumAlgorithm *string `read:"checksum_algorithm"` // introduced in TOSCA 1.3
 	Checksum          *string `read:"checksum"`           // introduced in TOSCA 1.3
 
-	ArtifactType *ArtifactType `lookup:"type,ArtifactTypeName" json:"-" yaml:"-"`
-	Repository   *Repository   `lookup:"repository,RepositoryName" json:"-" yaml:"-"`
+	ArtifactType *ArtifactType `lookup:"type,ArtifactTypeName" traverse:"ignore" json:"-" yaml:"-"`
+	Repository   *Repository   `lookup:"repository,RepositoryName" traverse:"ignore" json:"-" yaml:"-"`
 
 	url                urlpkg.URL
 	urlProblemReported bool

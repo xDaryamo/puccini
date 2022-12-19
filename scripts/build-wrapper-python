@@ -24,8 +24,14 @@ cd "$DIST"
 
 rsync --recursive "$ROOT/wrappers/python"/* .
 rsync "$ROOT/go.mod" "$ROOT/go.sum" puccini/go-source/
-echo 'go 1.18
-use .' > puccini/go-source/go.work
+if [ -z "$KUTIL" ]; then
+    echo 'go 1.19
+    use .' > puccini/go-source/go.work
+else
+    echo "go 1.19
+    replace github.com/tliron/kutil => $KUTIL
+    use ." > puccini/go-source/go.work
+fi
 rsync --recursive "$ROOT/tosca" puccini/go-source/
 rsync --recursive "$ROOT/clout" puccini/go-source/
 rsync --recursive "$ROOT/puccini-tosca" puccini/go-source/

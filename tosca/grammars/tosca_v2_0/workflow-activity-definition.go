@@ -24,8 +24,8 @@ type WorkflowActivityDefinition struct {
 	SetNodeState                   *string
 	CallOperation                  *WorkflowActivityCallOperation
 
-	DelegateWorkflowDefinition *WorkflowDefinition `lookup:"delegate,DelegateWorkflowDefinitionName" json:"-" yaml:"-"`
-	InlineWorkflowDefinition   *WorkflowDefinition `lookup:"inline,InlineWorkflowDefinitionName" json:"-" yaml:"-"`
+	DelegateWorkflowDefinition *WorkflowDefinition `lookup:"delegate,DelegateWorkflowDefinitionName" traverse:"ignore" json:"-" yaml:"-"`
+	InlineWorkflowDefinition   *WorkflowDefinition `lookup:"inline,InlineWorkflowDefinitionName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewWorkflowActivityDefinition(context *tosca.Context) *WorkflowActivityDefinition {

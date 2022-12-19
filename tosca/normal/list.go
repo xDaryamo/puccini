@@ -1,52 +1,30 @@
 package normal
 
-import (
-	"github.com/tliron/puccini/tosca"
-)
-
 //
 // List
 //
 
 type List struct {
-	Key         Constrainable     `json:"$key,omitempty" yaml:"$key,omitempty"`
-	Information *ValueInformation `json:"$information,omitempty" yaml:"$information,omitempty"`
-	Constraints FunctionCalls     `json:"$constraints,omitempty" yaml:"$constraints,omitempty"`
-	Converter   *FunctionCall     `json:"$converter,omitempty" yaml:"$converter,omitempty"`
+	Key       Value      `json:"$key,omitempty" yaml:"$key,omitempty"`
+	ValueMeta *ValueMeta `json:"$meta,omitempty" yaml:"$meta,omitempty"`
 
-	EntryConstraints FunctionCalls `json:"$entryConstraints,omitempty" yaml:"$entryConstraints,omitempty"`
-
-	Entries ConstrainableList `json:"$list" yaml:"$list"`
+	Entries ValueList `json:"$list" yaml:"$list"`
 }
 
 func NewList(length int) *List {
-	return &List{Entries: make(ConstrainableList, length)}
+	return &List{Entries: make(ValueList, length)}
 }
 
-// Constrainable interface
-func (self *List) SetKey(key Constrainable) {
+// Value interface
+func (self *List) SetKey(key Value) {
 	self.Key = key
 }
 
-// Constrainable interface
-func (self *List) SetInformation(information *ValueInformation) {
-	self.Information = CopyValueInformation(information)
+// Value interface
+func (self *List) SetMeta(valueMeta *ValueMeta) {
+	self.ValueMeta = CopyValueMeta(valueMeta)
 }
 
-// Constrainable interface
-func (self *List) AddConstraint(functionCall *tosca.FunctionCall) {
-	self.Constraints = append(self.Constraints, NewFunctionCall(functionCall))
-}
-
-// Constrainable interface
-func (self *List) SetConverter(converter *tosca.FunctionCall) {
-	self.Converter = NewFunctionCall(converter)
-}
-
-func (self *List) AddEntryConstraint(constraint *tosca.FunctionCall) {
-	self.EntryConstraints = append(self.EntryConstraints, NewFunctionCall(constraint))
-}
-
-func (self *List) Set(index int, value Constrainable) {
+func (self *List) Set(index int, value Value) {
 	self.Entries[index] = value
 }

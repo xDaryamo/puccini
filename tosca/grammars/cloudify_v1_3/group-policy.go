@@ -17,7 +17,7 @@ type GroupPolicy struct {
 	Properties     Values              `read:"properties,Value"`
 	Triggers       GroupPolicyTriggers `read:"triggers,GroupPolicyTrigger"`
 
-	PolicyType *PolicyType `lookup:"type,PolicyTypeName" json:"-" yaml:"-"`
+	PolicyType *PolicyType `lookup:"type,PolicyTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewGroupPolicy(context *tosca.Context) *GroupPolicy {

@@ -52,7 +52,7 @@ func (self *Task) Done() {
 
 func (self *Task) Print(indent int) {
 	terminal.PrintIndent(indent)
-	terminal.Printf("%s\n", terminal.Stylize.Path(self.Name))
+	terminal.Printf("%s\n", terminal.DefaultStylist.Path(self.Name))
 	self.PrintDependencies(indent, terminal.TreePrefix{})
 }
 

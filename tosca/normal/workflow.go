@@ -12,7 +12,7 @@ type Workflow struct {
 	Description   string                  `json:"description" yaml:"description"`
 	Preconditions []*WorkflowPrecondition `json:"preconditions" yaml:"preconditions"`
 	Steps         WorkflowSteps           `json:"steps" yaml:"steps"`
-	Inputs        Constrainables          `json:"inputs" yaml:"inputs"`
+	Inputs        Values                  `json:"inputs" yaml:"inputs"`
 }
 
 func (self *ServiceTemplate) NewWorkflow(name string) *Workflow {
@@ -22,7 +22,7 @@ func (self *ServiceTemplate) NewWorkflow(name string) *Workflow {
 		Metadata:        make(map[string]string),
 		Steps:           make(WorkflowSteps),
 		Preconditions:   make([]*WorkflowPrecondition, 0),
-		Inputs:          make(Constrainables),
+		Inputs:          make(Values),
 	}
 	self.Workflows[name] = workflow
 	return workflow
@@ -105,13 +105,13 @@ func (self *WorkflowStep) NewActivity() *WorkflowActivity {
 type CallOperation struct {
 	Activity  *WorkflowActivity `json:"-" yaml:"-"`
 	Operation *Operation        `json:"operation" yaml:"operation"`
-	Inputs    Constrainables    `json:"inputs" yaml:"inputs"`
+	Inputs    Values            `json:"inputs" yaml:"inputs"`
 }
 
 func (self *WorkflowActivity) NewCallOperation() *CallOperation {
 	callOperation := &CallOperation{
 		Activity: self,
-		Inputs:   make(Constrainables),
+		Inputs:   make(Values),
 	}
 	self.CallOperation = callOperation
 	return callOperation

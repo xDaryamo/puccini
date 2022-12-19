@@ -45,7 +45,7 @@ func (self *ValueDefinition) GetKey() string {
 
 type ValueDefinitions map[string]*ValueDefinition
 
-func (self ValueDefinitions) Normalize(c normal.Constrainables) {
+func (self ValueDefinitions) Normalize(c normal.Values) {
 	for key, valueDefinition := range self {
 		if valueDefinition.Value != nil {
 			c[key] = valueDefinition.Value.Normalize()

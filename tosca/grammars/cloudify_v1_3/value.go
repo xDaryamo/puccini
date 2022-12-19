@@ -17,22 +17,20 @@ type Value struct {
 	*Entity `name:"value"`
 	Name    string
 
-	Description *string
-
-	Information *normal.ValueInformation `traverse:"ignore" json:"-" yaml:"-"`
+	Meta *normal.ValueMeta `traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewValue(context *tosca.Context) *Value {
 	return &Value{
-		Entity:      NewEntity(context),
-		Name:        context.Name,
-		Information: normal.NewValueInformation(),
+		Entity: NewEntity(context),
+		Name:   context.Name,
+		Meta:   normal.NewValueMeta(),
 	}
 }
 
 // tosca.Reader signature
 func ReadValue(context *tosca.Context) tosca.EntityPtr {
-	ToFunctionCalls(context)
+	ParseFunctionCalls(context)
 	return NewValue(context)
 }
 
@@ -51,16 +49,8 @@ func (self *Value) RenderProperty(dataType *DataType, definition *PropertyDefini
 
 // Avoid rendering more than once (can happen if we use the "default" value)
 func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefinition, validateRequire bool, allowNil bool) {
-	if self.Description != nil {
-		self.Information.Description = *self.Description
-	}
-
-	if definition != nil {
-		self.Information.Definition = definition.GetTypeInformation()
-	}
-
 	if dataType != nil {
-		self.Information.Type = dataType.GetTypeInformation()
+		self.Meta = dataType.NewValueMeta()
 	}
 
 	if _, ok := self.Context.Data.(*tosca.FunctionCall); ok {
@@ -127,12 +117,12 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 	}
 }
 
-func (self *Value) Normalize() normal.Constrainable {
+func (self *Value) Normalize() normal.Value {
 	return self.normalize(true)
 }
 
-func (self *Value) normalize(withInformation bool) normal.Constrainable {
-	var normalConstrainable normal.Constrainable
+func (self *Value) normalize(withMeta bool) normal.Value {
+	var normalValue normal.Value
 
 	switch data := self.Context.Data.(type) {
 	case ard.List:
@@ -140,7 +130,7 @@ func (self *Value) normalize(withInformation bool) normal.Constrainable {
 		for index, value := range data {
 			normalList.Set(index, NewValue(self.Context.ListChild(index, value)).normalize(false))
 		}
-		normalConstrainable = normalList
+		normalValue = normalList
 
 	case ard.Map:
 		normalMap := normal.NewMap()
@@ -152,22 +142,21 @@ func (self *Value) normalize(withInformation bool) normal.Constrainable {
 			name := yamlkeys.KeyString(key)
 			normalMap.Put(name, NewValue(self.Context.MapChild(name, value)).normalize(false))
 		}
-		normalConstrainable = normalMap
+		normalValue = normalMap
 
 	case *tosca.FunctionCall:
 		NormalizeFunctionCallArguments(data, self.Context)
-		normalConstrainable = normal.NewFunctionCall(data)
+		normalValue = normal.NewFunctionCall(data)
 
 	default:
-		value := normal.NewValue(data)
-		normalConstrainable = value
+		normalValue = normal.NewPrimitive(data)
 	}
 
-	if withInformation {
-		normalConstrainable.SetInformation(self.Information)
+	if withMeta {
+		normalValue.SetMeta(self.Meta)
 	}
 
-	return normalConstrainable
+	return normalValue
 }
 
 //
@@ -221,7 +210,7 @@ func (self Values) RenderParameters(definitions ParameterDefinitions, kind strin
 	}
 }
 
-func (self Values) Normalize(normalConstrainables normal.Constrainables, prefix string) {
+func (self Values) Normalize(normalConstrainables normal.Values, prefix string) {
 	for key, value := range self {
 		normalConstrainables[prefix+key] = value.Normalize()
 	}

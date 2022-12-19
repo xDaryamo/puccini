@@ -41,7 +41,7 @@ type Resource struct {
 	Condition      *Condition `read:"condition,Condition"`
 
 	ToscaType          *string   `json:"-" yaml:"-"`
-	DependsOnResources Resources `lookup:"depends_on,DependsOn" json:"-" yaml:"-"`
+	DependsOnResources Resources `lookup:"depends_on,DependsOn" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewResource(context *tosca.Context) *Resource {
@@ -81,8 +81,8 @@ func ReadResource(context *tosca.Context) tosca.EntityPtr {
 }
 
 var capabilityTypeName = "Resource"
-var capabilityTypes = normal.NewTypes(capabilityTypeName)
-var relationshipTypes = normal.NewTypes("DependsOn")
+var capabilityTypes = normal.NewEntityTypes(capabilityTypeName)
+var relationshipTypes = normal.NewEntityTypes("DependsOn")
 
 func (self *Resource) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.NodeTemplate {
 	logNormalize.Debugf("resource: %s", self.Name)
@@ -90,7 +90,7 @@ func (self *Resource) Normalize(normalServiceTemplate *normal.ServiceTemplate) *
 	normalNodeTemplate := normalServiceTemplate.NewNodeTemplate(self.Name)
 
 	if self.ToscaType != nil {
-		normalNodeTemplate.Types = normal.NewTypes(*self.ToscaType)
+		normalNodeTemplate.Types = normal.NewEntityTypes(*self.ToscaType)
 	}
 
 	self.Properties.Normalize(normalNodeTemplate.Properties)

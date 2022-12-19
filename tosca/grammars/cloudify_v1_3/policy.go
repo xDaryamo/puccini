@@ -19,8 +19,8 @@ type Policy struct {
 	Properties       Values    `read:"properties,Value"`
 	TargetGroupNames *[]string `read:"targets" mandatory:""`
 
-	PolicyType   *PolicyType `lookup:"type,PolicyTypeName" json:"-" yaml:"-"`
-	TargetGroups Groups      `lookup:"targets,TargetGroupNames" json:"-" yaml:"-"`
+	PolicyType   *PolicyType `lookup:"type,PolicyTypeName" traverse:"ignore" json:"-" yaml:"-"`
+	TargetGroups Groups      `lookup:"targets,TargetGroupNames" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewPolicy(context *tosca.Context) *Policy {
@@ -43,7 +43,7 @@ func (self *Policy) Normalize(normalServiceTemplate *normal.ServiceTemplate) *no
 
 	normalPolicy := normalServiceTemplate.NewPolicy(self.Name)
 
-	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.PolicyType); ok {
+	if types, ok := normal.GetEntityTypes(self.Context.Hierarchy, self.PolicyType); ok {
 		normalPolicy.Types = types
 	}
 

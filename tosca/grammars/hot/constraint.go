@@ -12,12 +12,12 @@ const constraintPathPrefix = "/hot/1.0/js/constraints/"
 
 // Built-in constraint functions
 var ConstraintScriptlets = map[string]string{
-	tosca.ConstraintScriptletPrefix + "length":            profile.Profile[constraintPathPrefix+"length.js"],
-	tosca.ConstraintScriptletPrefix + "range":             profile.Profile[constraintPathPrefix+"range.js"],
-	tosca.ConstraintScriptletPrefix + "modulo":            profile.Profile[constraintPathPrefix+"modulo.js"],
-	tosca.ConstraintScriptletPrefix + "allowed_values":    profile.Profile[constraintPathPrefix+"allowed_values.js"],
-	tosca.ConstraintScriptletPrefix + "allowed_pattern":   profile.Profile[constraintPathPrefix+"allowed_pattern.js"],
-	tosca.ConstraintScriptletPrefix + "custom_constraint": profile.Profile[constraintPathPrefix+"custom_constraint.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "length":            profile.Profile[constraintPathPrefix+"length.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "range":             profile.Profile[constraintPathPrefix+"range.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "modulo":            profile.Profile[constraintPathPrefix+"modulo.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "allowed_values":    profile.Profile[constraintPathPrefix+"allowed_values.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "allowed_pattern":   profile.Profile[constraintPathPrefix+"allowed_pattern.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "custom_constraint": profile.Profile[constraintPathPrefix+"custom_constraint.js"],
 }
 
 var ConstraintNativeArgumentIndexes = map[string][]int{}
@@ -60,7 +60,7 @@ func ReadConstraint(context *tosca.Context) tosca.EntityPtr {
 				continue
 			}
 
-			scriptletName := tosca.ConstraintScriptletPrefix + operator
+			scriptletName := tosca.METADATA_CONSTRAINT_PREFIX + operator
 			if _, ok := context.ScriptletNamespace.Lookup(scriptletName); !ok {
 				context.Clone(operator).ReportValueMalformed("constraint", "unsupported operator")
 				return self
@@ -80,7 +80,7 @@ func ReadConstraint(context *tosca.Context) tosca.EntityPtr {
 }
 
 func (self *Constraint) NewFunctionCall(context *tosca.Context) *tosca.FunctionCall {
-	return context.NewFunctionCall(tosca.ConstraintScriptletPrefix+self.Operator, self.Arguments)
+	return context.NewFunctionCall(tosca.METADATA_CONSTRAINT_PREFIX+self.Operator, self.Arguments)
 }
 
 //
@@ -89,11 +89,11 @@ func (self *Constraint) NewFunctionCall(context *tosca.Context) *tosca.FunctionC
 
 type Constraints []*Constraint
 
-func (self Constraints) Normalize(context *tosca.Context, normalConstrainable normal.Constrainable) {
+func (self Constraints) Normalize(context *tosca.Context, normalDataType *normal.ValueMeta) {
 	for _, constraint := range self {
 		functionCall := constraint.NewFunctionCall(context)
 		NormalizeFunctionCallArguments(functionCall, context)
-		normalConstrainable.AddConstraint(functionCall)
+		normalDataType.AddValidator(functionCall)
 		// TODO: normalize constraint description somewhere
 	}
 }

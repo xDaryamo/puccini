@@ -21,7 +21,7 @@ type InterfaceType struct {
 	OperationDefinitions    OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,Parent"`
 	NotificationDefinitions NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,Parent"` // introduced in TOSCA 1.3
 
-	Parent *InterfaceType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
+	Parent *InterfaceType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewInterfaceType(context *tosca.Context) *InterfaceType {

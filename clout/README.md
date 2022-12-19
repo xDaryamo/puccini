@@ -188,80 +188,71 @@ Also, Clout parsers may do the ID lookup internally, provide direct access to th
 target vertexes, and hide the `targetID` field.
 
 
-Coercibles
-----------
+Values
+------
 
 A common feature in many Clout use cases is the inclusion of values that are meant to be "coerced"
-at runtime. Coercion could include evaluating an expression, calling a function, testing for
-validity of the value by applying constraints, etc.
+at runtime. Coercion could include evaluating an expression containing functions, testing for validity
+of the value by applying functions, calling a conversion function, etc.
 
 Clout does not enforce a notation for such coercible values, however we do suggest a convention.
 Puccini comes with tools to help you parse according to this notation and to perform coercion using
 JavaScript.
 
-The convention is recursive and assumes that each value is a map with one *and only one* of
-the following fields:
+The convention assumes that a value is a map with at least one *and only one* of the following
+fields:
 
-* `$value`: this is an ARD literal value (boolean, integer, float, string, list, map, etc.)
-* `$list`: this is a list of coercibles
-* `$map`: this is a *list* of coercibles (not a map!) whereby each entry also includes a `$key` field,
-   which itself is also a coercible (a list is used for better compatibility with systems that do
-   not support maps with arbitrary keys; note that because this is a list duplicate keys are
-   syntactically possible here, but that should be considered a semantic error)
-* `$functionCall`: this is a function call notation (see below)
+* `$primitive`: This is an ARD literal value (boolean, integer, float, string, list, map, etc.),
+  or a special primitive type expressed with an extended map notation.
+* `$list`: This is an ARD list of coercible values (recursive).
+* `$map`: This is an ARD *list* of map entries (not a map!), in which each entry is a coercible value
+   (recursive) with the addition of a `$key` field, which is itself also a coercible value (recursive).
+   Note that a `$map` can be the result of either a map type or a struct (e.g. a complex data type
+   in TOSCA). For structs, see `fields` in `$meta` below.
+* `$functionCall`: This is a function call.
 
-All coercibles may also have the following optional fields:
+Values may also have the following optional fields:
 
-* `$constraints`: a list of coercibles in the `$functionCall` format (see notation below)
-* `$information`: a map with descriptive data (see below)
+* `$meta`: a map with metadata about the value (see below)
+* `$converter`: a `$functionaCall` called after coersion is completed to convert the value to
+  anything else
 
-If the value of `$value` is itself a map, that map may have following optional fields:
+For special primitive types `$primitive` is a map with fields specific to that type as well as
+the following optional fields:
 
 * `$string`: textual representation of the value for human-readability, comparison, sorting, etc.
 * `$number`: numeric representation of the value (float or integer) for comparison, sorting, etc.
 * `$originalString`: if the value was parsed from a string then this would be that string
-* `$comparer`: name of scriptlet to be used for value comparisons
+* `$comparer`: a `$functioncall` value for comparisons, which receives two arguments and returns
+   0 if equal, -1 if the first argument is greater, and 1 if the second argument is greater
 
-`$list` coercibles may also have the following optional fields:
-
-* `$entryConstraints`: a list of coercibles in the `$functionCall` format (see notation below) intended
-  to be applied to each entry in the list
-
-`$map` coercibles may also have the following optional fields:
- 
-* `$keyConstraints`: a list of coercibles in the `$functionCall` format (see notation below) intended
-  to be applied to each key in the map
-* `$valueConstraints`: a list of coercibles in the `$functionCall` format (see notation below) intended
-  to be applied to each value in the map
-
-The value of `$functionCall` is a map with the following required fields:
+`$functionCall` is a map with the following required fields:
 
 * `name`: a string representing the name of the function
-* `arguments`: a list of coercibles (can be an empty list but not null)
+* `arguments`: a list of coercible values (can be an empty list but not null)
 
-Additionally, it may have the follow optional fields (for debugging information):
+It may also have the follow optional fields for debugging information:
 
 * `path`: a string representing a semantic path within the source document (implementation-specific)
 * `url`: a string representing the URL of the source document
 * `row`: an integer representing the row within the source document
 * `column`: an integer representing the column within the source document
 
-The `$information` is a map with the following optional fields:
+`$meta` is a map with the following fields, all of which are optional:
 
-* `description`: a human-readable description of the coercible
-* `definition`: type information map (see below) for the coercible's definition
-* `type`: type information map (see below) for the coercible's type
-* `entry`: type information map (see below) for a `$list` coercible's entries
-* `key`: type information map (see below) for a `$map` coercible's keys
-* `value`: type information map (see below) for a `$map` coercible's values
-* `properties`: a map of `$map` coercible keys (strings) to an `$information` structure (recursive)
-
-The "type information" mentioned above is a map with the following optional fields:
-
-* `name`: the canonical name of the type
-* `description`: a human-readable description of the type
-* `schemaDescription`: a human-readable description of the schema (for `entry`, `key`, and `value`)
-* `metadata`: a map of metadata strings
+* `type`: name of the value's type
+* `element`: meta (recursive) for `$list` elements
+* `key`: meta (recursive) for `$map` keys, if not a struct
+* `value`: meta (recursive) for `$map` values, if not a struct
+* `fields`: a map of field names to their meta (recursive), for `$map` structs
+* `validators`: a list of `$functionCall` which accept the value as their first argument, all
+  of which must return true for the value to be valid (logical "and")
+* `description`: a human-readable description of the variable to which this value is assigned
+* `typeDescription`: a human-readable description of the value's type
+* `localDescription`: a human-readable description of the value itself
+* `metadata`: a map of strings associated with the variable to which this value is assigned
+* `typeMetadata`: a map of strings associated with the value's type
+* `localMetadata`: a map of strings associated with the value itself
 
 Example (generated from [this TOSCA example](../examples/tosca/data-types.yaml)):
 
@@ -269,34 +260,33 @@ Example (generated from [this TOSCA example](../examples/tosca/data-types.yaml))
 lowercase_string_map:
   $map:
     - $key:
-        $functionCall:
-          name: tosca.function.concat
-          arguments:
-            - $value: recip
-            - $value: ient
-          path: topology_template.node_templates["data"].properties["lowercase_string_map"]["concat:¶  - recip¶  - ient"]
-          url: file:examples/tosca/data-types.yaml
-          row: 188
-          column: 9
-      $value: Puccini
+        $primitive: greeting
+      $primitive: Hello
     - $key:
-        $value: greeting
-      $value: Hello
-  $keyConstraints:
-    - $functionCall:
-        name: tosca.constraint.pattern
-        arguments:
-          - $value: '[a-z]*'
-        path: topology_template.node_templates["data"].properties["lowercase_string_map"]
-        url: file:examples/tosca/data-types.yaml
-        row: 188
-        column: 9
-  $information:
-    type:
-      name: map
+        $functionCall:
+          arguments:
+            - $primitive: recip
+            - $primitive: ient
+          column: 9
+          name: tosca.function.concat
+          path: topology_template.node_templates["data"].properties["lowercase_string_map"]["concat:¶  - recip¶  - ient"]
+          row: 194
+          url: file:/Depot/Projects/RedHat/puccini/examples/tosca/data-types.yaml
+      $primitive: Puccini
+  $meta:
+    type: map
     key:
-      name: LowerCase
-      description: Lowercase string
+      type: LowerCase
+      typeDescription: Lowercase string
+      validators:
+        - $functionCall:
+            arguments:
+              - $primitive: '[a-z]*'
+            column: 9
+            name: tosca.constraint.pattern
+            path: topology_template.node_templates["data"].properties["lowercase_string_map"]
+            row: 194
+            url: file:/Depot/Projects/RedHat/puccini/examples/tosca/data-types.yaml
     value:
-      name: string
+      type: string
 ```

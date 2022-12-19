@@ -109,7 +109,7 @@ func (self *Artifact) Normalize(normalNodeTemplate *normal.NodeTemplate) *normal
 		normalArtifact.Description = *self.Description
 	}
 
-	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.ArtifactType); ok {
+	if types, ok := normal.GetEntityTypes(self.Context.Hierarchy, self.ArtifactType); ok {
 		normalArtifact.Types = types
 	}
 

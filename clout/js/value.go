@@ -1,6 +1,8 @@
 package js
 
 import (
+	"fmt"
+
 	"github.com/tliron/kutil/ard"
 )
 
@@ -11,51 +13,70 @@ import (
 type Value struct {
 	Notation ard.StringMap `json:"-" yaml:"-"`
 
-	Data        any           `json:"data" yaml:"data"` // List, Map, or ard.Value
-	Constraints Constraints   `json:"constraints,omitempty" yaml:"constraints,omitempty"`
-	Converter   *FunctionCall `json:"converter,omitempty" yaml:"converter,omitempty"`
+	Data       any           `json:"data" yaml:"data"` // List, Map, or ard.Value
+	Validators Validators    `json:"validators,omitempty" yaml:"validators,omitempty"`
+	Converter  *FunctionCall `json:"converter,omitempty" yaml:"converter,omitempty"`
 }
 
-func (self *CloutContext) NewValue(data ard.Value, notation ard.StringMap, functionCallContext FunctionCallContext) (*Value, error) {
+func (self *CloutContext) NewValue(data ard.Value, notation ard.StringMap, meta ard.StringMap, functionCallContext FunctionCallContext) (*Value, error) {
 	value := Value{
 		Data:     data,
 		Notation: notation,
 	}
 
 	var err error
-	if value.Constraints, err = self.NewConstraintsFromNotation(notation, "$constraints", functionCallContext); err != nil {
+	if value.Validators, err = self.NewValidatorsFromMeta(meta, functionCallContext); err != nil {
 		return nil, err
 	}
-	if value.Converter, err = self.NewConverter(notation, functionCallContext); err != nil {
+	if value.Converter, err = self.NewConverter(meta, functionCallContext); err != nil {
 		return nil, err
 	}
 
 	return &value, nil
 }
 
-func (self *CloutContext) NewValueForList(list ard.List, notation ard.StringMap, functionCallContext FunctionCallContext) (*Value, error) {
-	if entryConstraints, err := self.NewConstraintsFromNotation(notation, "$entryConstraints", functionCallContext); err == nil {
-		if list_, err := self.NewList(list, entryConstraints, functionCallContext); err == nil {
-			return self.NewValue(list_, notation, functionCallContext)
-		} else {
-			return nil, err
+func (self *CloutContext) NewListValue(list ard.List, notation ard.StringMap, meta ard.StringMap, functionCallContext FunctionCallContext) (*Value, error) {
+	var elementMeta ard.StringMap
+	if meta != nil {
+		if data, ok := meta["element"]; ok {
+			if map_, ok := data.(ard.StringMap); ok {
+				elementMeta = map_
+			} else {
+				return nil, fmt.Errorf("malformed meta \"element\", not a map: %T", data)
+			}
 		}
+	}
+
+	if list_, err := self.NewList(list, elementMeta, functionCallContext); err == nil {
+		return self.NewValue(list_, notation, meta, functionCallContext)
 	} else {
 		return nil, err
 	}
 }
 
-func (self *CloutContext) NewValueForMap(list ard.List, notation ard.StringMap, functionCallContext FunctionCallContext) (*Value, error) {
-	if keyConstraints, err := self.NewConstraintsFromNotation(notation, "$keyConstraints", functionCallContext); err == nil {
-		if valueConstraints, err := self.NewConstraintsFromNotation(notation, "$valueConstraints", functionCallContext); err == nil {
-			if map_, err := self.NewMap(list, keyConstraints, valueConstraints, functionCallContext); err == nil {
-				return self.NewValue(map_, notation, functionCallContext)
+func (self *CloutContext) NewMapValue(list ard.List, notation ard.StringMap, meta ard.StringMap, functionCallContext FunctionCallContext) (*Value, error) {
+	var keyMeta ard.StringMap
+	var valueMeta ard.StringMap
+	if meta != nil {
+		if data, ok := meta["key"]; ok {
+			if map_, ok := data.(ard.StringMap); ok {
+				keyMeta = map_
 			} else {
-				return nil, err
+				return nil, fmt.Errorf("malformed meta \"key\", not a map: %T", data)
 			}
-		} else {
-			return nil, err
 		}
+
+		if data, ok := meta["value"]; ok {
+			if map_, ok := data.(ard.StringMap); ok {
+				valueMeta = map_
+			} else {
+				return nil, fmt.Errorf("malformed meta \"value\", not a map: %T", data)
+			}
+		}
+	}
+
+	if map_, err := self.NewMap(list, keyMeta, valueMeta, functionCallContext); err == nil {
+		return self.NewValue(map_, notation, meta, functionCallContext)
 	} else {
 		return nil, err
 	}
@@ -78,7 +99,7 @@ func (self *Value) Coerce() (ard.Value, error) {
 		}
 	}
 
-	if err := self.Constraints.Apply(data); err == nil {
+	if err := self.Validators.Apply(data); err == nil {
 		if self.Converter != nil {
 			return self.Converter.Convert(data)
 		} else {
@@ -90,8 +111,8 @@ func (self *Value) Coerce() (ard.Value, error) {
 }
 
 // Coercible interface
-func (self *Value) SetConstraints(constraints Constraints) {
-	self.Constraints = append(self.Constraints, constraints...)
+func (self *Value) AddValidators(validators Validators) {
+	self.Validators = append(self.Validators, validators...)
 }
 
 // Coercible interface

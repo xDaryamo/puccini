@@ -24,7 +24,7 @@ type NodeType struct {
 	InterfaceDefinitions   InterfaceDefinitions   `read:"interfaces,InterfaceDefinition" inherit:"interfaces,Parent"`
 	ArtifactDefinitions    ArtifactDefinitions    `read:"artifacts,ArtifactDefinition" inherit:"artifacts,Parent"`
 
-	Parent *NodeType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
+	Parent *NodeType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewNodeType(context *tosca.Context) *NodeType {

@@ -32,7 +32,7 @@ func ReadInput(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-func (self *Input) Normalize(context *tosca.Context) normal.Constrainable {
+func (self *Input) Normalize(context *tosca.Context) normal.Value {
 	value := self.Value
 	if value == nil {
 		if self.Default != nil {
@@ -69,7 +69,7 @@ func (self *Input) render() {
 
 type Inputs map[string]*Input
 
-func (self Inputs) Normalize(normalConstrainables normal.Constrainables, context *tosca.Context) {
+func (self Inputs) Normalize(normalConstrainables normal.Values, context *tosca.Context) {
 	for key, input := range self {
 		normalConstrainables[key] = input.Normalize(context)
 	}

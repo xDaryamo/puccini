@@ -96,7 +96,7 @@ func (self *InterfaceAssignment) Normalize(normalInterface *normal.Interface, de
 		normalInterface.Description = *definition.InterfaceType.Description
 	}
 
-	if types, ok := normal.GetTypes(self.Context.Hierarchy, definition.InterfaceType); ok {
+	if types, ok := normal.GetEntityTypes(self.Context.Hierarchy, definition.InterfaceType); ok {
 		normalInterface.Types = types
 	}
 

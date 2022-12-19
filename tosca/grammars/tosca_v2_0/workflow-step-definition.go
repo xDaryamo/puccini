@@ -26,8 +26,8 @@ type WorkflowStepDefinition struct {
 	OnSuccessStepNames            *[]string                   `read:"on_success"`
 	OnFailureStepNames            *[]string                   `read:"on_failure"`
 
-	TargetNodeTemplate *NodeTemplate             `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`
-	TargetGroup        *Group                    `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`
+	TargetNodeTemplate *NodeTemplate             `lookup:"target,TargetNodeTemplateOrGroupName" traverse:"ignore" json:"-" yaml:"-"`
+	TargetGroup        *Group                    `lookup:"target,TargetNodeTemplateOrGroupName" traverse:"ignore" json:"-" yaml:"-"`
 	OnSuccessSteps     []*WorkflowStepDefinition // custom lookup
 	OnFailureSteps     []*WorkflowStepDefinition // custom lookup
 }

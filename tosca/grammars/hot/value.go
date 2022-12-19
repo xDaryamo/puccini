@@ -16,22 +16,21 @@ type Value struct {
 	Name    string
 
 	Constraints Constraints
-	Description *string
 
-	Information *normal.ValueInformation `traverse:"ignore" json:"-" yaml:"-"`
+	Meta *normal.ValueMeta `traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewValue(context *tosca.Context) *Value {
 	return &Value{
-		Entity:      NewEntity(context),
-		Name:        context.Name,
-		Information: normal.NewValueInformation(),
+		Entity: NewEntity(context),
+		Name:   context.Name,
+		Meta:   normal.NewValueMeta(),
 	}
 }
 
 // tosca.Reader signature
 func ReadValue(context *tosca.Context) tosca.EntityPtr {
-	ToFunctionCalls(context)
+	ParseFunctionCalls(context)
 	return NewValue(context)
 }
 
@@ -40,8 +39,8 @@ func (self *Value) GetKey() string {
 	return self.Name
 }
 
-func (self *Value) Normalize() normal.Constrainable {
-	var normalConstrainable normal.Constrainable
+func (self *Value) Normalize() normal.Value {
+	var normalValue normal.Value
 
 	switch data := self.Context.Data.(type) {
 	case ard.List:
@@ -49,7 +48,7 @@ func (self *Value) Normalize() normal.Constrainable {
 		for index, value := range data {
 			normalList.Set(index, NewValue(self.Context.ListChild(index, value)).Normalize())
 		}
-		normalConstrainable = normalList
+		normalValue = normalList
 
 	case ard.Map:
 		normalMap := normal.NewMap()
@@ -61,25 +60,21 @@ func (self *Value) Normalize() normal.Constrainable {
 			name := yamlkeys.KeyString(key)
 			normalMap.Put(name, NewValue(self.Context.MapChild(name, value)).Normalize())
 		}
-		normalConstrainable = normalMap
+		normalValue = normalMap
 
 	case *tosca.FunctionCall:
 		NormalizeFunctionCallArguments(data, self.Context)
-		normalConstrainable = normal.NewFunctionCall(data)
+		normalValue = normal.NewFunctionCall(data)
 
 	default:
-		normalConstrainable = normal.NewValue(data)
+		normalValue = normal.NewPrimitive(data)
 	}
 
-	if self.Description != nil {
-		self.Information.Description = *self.Description
-	}
+	self.Constraints.Normalize(self.Context, self.Meta)
 
-	normalConstrainable.SetInformation(self.Information)
+	normalValue.SetMeta(self.Meta)
 
-	self.Constraints.Normalize(self.Context, normalConstrainable)
-
-	return normalConstrainable
+	return normalValue
 }
 
 //
@@ -88,7 +83,7 @@ func (self *Value) Normalize() normal.Constrainable {
 
 type Values map[string]*Value
 
-func (self Values) Normalize(normalConstrainables normal.Constrainables) {
+func (self Values) Normalize(normalConstrainables normal.Values) {
 	for key, value := range self {
 		normalConstrainables[key] = value.Normalize()
 	}

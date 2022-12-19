@@ -30,7 +30,7 @@ type DataType struct {
 	KeySchema           *Schema             `read:"key_schema,Schema"`   // introduced in TOSCA 1.3
 	EntrySchema         *Schema             `read:"entry_schema,Schema"` // introduced in TOSCA 1.3
 
-	Parent *DataType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
+	Parent *DataType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewDataType(context *tosca.Context) *DataType {
@@ -88,8 +88,6 @@ func (self *DataType) Render() {
 func (self *DataType) render() {
 	logRender.Debugf("data type: %s", self.Name)
 
-	self.ConstraintClauses.Render(self, nil)
-
 	if internalTypeName, ok := self.GetInternalTypeName(); ok {
 		if _, ok := ard.TypeValidators[internalTypeName]; !ok {
 			if _, ok := self.Context.Grammar.Readers[string(internalTypeName)]; !ok {
@@ -100,7 +98,7 @@ func (self *DataType) render() {
 }
 
 func (self *DataType) GetInternalTypeName() (ard.TypeName, bool) {
-	if typeName, ok := self.GetMetadataValue("puccini.type"); ok {
+	if typeName, ok := self.GetMetadataValue(tosca.METADATA_TYPE); ok {
 		return ard.TypeName(typeName), ok
 	} else if self.Parent != nil {
 		// The internal type metadata is inherited
@@ -110,21 +108,27 @@ func (self *DataType) GetInternalTypeName() (ard.TypeName, bool) {
 	}
 }
 
-func (self *DataType) GetInternal() (ard.TypeName, ard.TypeValidator, tosca.Reader, bool) {
+type DataTypeInternal struct {
+	Name      ard.TypeName
+	Validator ard.TypeValidator
+	Reader    tosca.Reader
+}
+
+func (self *DataType) GetInternal() *DataTypeInternal {
 	if internalTypeName, ok := self.GetInternalTypeName(); ok {
 		if typeValidator, ok := ard.TypeValidators[internalTypeName]; ok {
-			return internalTypeName, typeValidator, nil, true
+			return &DataTypeInternal{internalTypeName, typeValidator, nil}
 		} else if reader, ok := self.Context.Grammar.Readers[string(internalTypeName)]; ok {
-			return internalTypeName, nil, reader, true
+			return &DataTypeInternal{internalTypeName, nil, reader}
 		}
 	}
-	return ard.NoType, nil, nil, false
+	return nil
 }
 
 // Note that this may change the data (if it's a map), but that should be fine, because we intend
 // for the data to be complete. For the same reason, this action is idempotent (subsequent calls with
 // the same data will not have an effect).
-func (self *DataType) Complete(context *tosca.Context) {
+func (self *DataType) CompleteData(context *tosca.Context) {
 	map_, ok := context.Data.(ard.Map)
 	if !ok {
 		// Only for complex data types
@@ -134,35 +138,32 @@ func (self *DataType) Complete(context *tosca.Context) {
 	for key, definition := range self.PropertyDefinitions {
 		childContext := context.MapChild(key, nil)
 
-		var data ard.Value
-		if data, ok = map_[key]; ok {
+		if data, ok := map_[key]; ok {
 			childContext.Data = data
 		} else if definition.Default != nil {
 			// Assign default value
-			data = definition.Default.Context.Data
-			childContext.Data = data
-			map_[key] = data
-		}
-
-		if ParseFunctionCalls(childContext) {
+			childContext.Data = definition.Default.Context.Data
+			ParseFunctionCall(childContext)
 			map_[key] = childContext.Data
-		} else if definition.DataType != nil {
-			definition.DataType.Complete(childContext)
+		}
+
+		if definition.DataType != nil {
+			definition.DataType.CompleteData(childContext)
 		}
 	}
 }
 
-func (self *DataType) GetTypeInformation() *normal.TypeInformation {
-	information := normal.NewTypeInformation()
-	information.Name = tosca.GetCanonicalName(self)
-	information.Metadata = tosca.GetInformationMetadata(self.Metadata)
+func (self *DataType) NewValueMeta() *normal.ValueMeta {
+	normalValueMeta := normal.NewValueMeta()
+	normalValueMeta.Type = tosca.GetCanonicalName(self)
+	normalValueMeta.TypeMetadata = tosca.GetDataTypeMetadata(self.Metadata)
 	if self.Description != nil {
-		information.Description = *self.Description
+		normalValueMeta.TypeDescription = *self.Description
 	}
-	return information
+	return normalValueMeta
 }
 
-func GetDataType(context *tosca.Context, name string) (*DataType, bool) {
+func LookupDataType(context *tosca.Context, name string) (*DataType, bool) {
 	var dataType *DataType
 	if entityPtr, ok := context.Namespace.LookupForType(name, reflect.TypeOf(dataType)); ok {
 		return entityPtr.(*DataType), true

@@ -21,7 +21,7 @@ type ArtifactType struct {
 	MIMEType            *string             `read:"mime_type" inherit:"mime_type,Parent"`
 	FileExtension       *[]string           `read:"file_ext" inherit:"file_ext,Parent"`
 
-	Parent *ArtifactType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
+	Parent *ArtifactType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewArtifactType(context *tosca.Context) *ArtifactType {

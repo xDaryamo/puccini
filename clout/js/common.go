@@ -32,6 +32,10 @@ func asInt(value any) (int, bool) {
 		return int(value_), true
 	case uint:
 		return int(value_), true
+	case float64:
+		return int(value_), true
+	case float32:
+		return int(value_), true
 	}
 	return 0, false
 }

@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"os"
 	"sort"
 
 	"github.com/spf13/cobra"
@@ -56,7 +57,7 @@ var parseCommand = &cobra.Command{
 		_, serviceTemplate := Parse(url)
 
 		if (filter == "") && (len(dumpPhases) == 0) {
-			transcribe.Print(serviceTemplate, format, terminal.Stdout, strict, pretty)
+			transcribe.Print(serviceTemplate, format, os.Stdout, strict, pretty)
 		}
 	},
 }
@@ -89,7 +90,7 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 	}
 	util.FailOnError(err)
 
-	stylist := terminal.Stylize
+	stylist := terminal.DefaultStylist
 	if problemsFormat != "" {
 		stylist = terminal.NewStylist(false)
 	}
@@ -113,7 +114,7 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 
 		if ToPrintPhase(1) {
 			if len(dumpPhases) > 1 {
-				terminal.Printf("%s\n", terminal.Stylize.Heading("Imports"))
+				terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Imports"))
 				serviceContext.PrintImports(1)
 			} else {
 				serviceContext.PrintImports(0)
@@ -127,7 +128,7 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 		serviceContext.LookupNames()
 		if ToPrintPhase(2) {
 			if len(dumpPhases) > 1 {
-				terminal.Printf("%s\n", terminal.Stylize.Heading("Namespaces"))
+				terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Namespaces"))
 				serviceContext.PrintNamespaces(1)
 			} else {
 				serviceContext.PrintNamespaces(0)
@@ -140,7 +141,7 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 		serviceContext.AddHierarchies()
 		if ToPrintPhase(3) {
 			if len(dumpPhases) > 1 {
-				terminal.Printf("%s\n", terminal.Stylize.Heading("Hierarchies"))
+				terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Hierarchies"))
 				serviceContext.PrintHierarchies(1)
 			} else {
 				serviceContext.PrintHierarchies(0)
@@ -153,7 +154,7 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 		if ToPrintPhase(4) {
 			serviceContext.Inherit(func(tasks parser.Tasks) {
 				if len(dumpPhases) > 1 {
-					terminal.Printf("%s\n", terminal.Stylize.Heading("Inheritance Tasks"))
+					terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Inheritance Tasks"))
 					tasks.Print(1)
 				} else {
 					tasks.Print(0)
@@ -176,11 +177,11 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 		if ToPrintPhase(5) {
 			sort.Sort(entityPtrs)
 			if len(dumpPhases) > 1 {
-				terminal.Printf("%s\n", terminal.Stylize.Heading("Rendering"))
+				terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Rendering"))
 			}
 			for _, entityPtr := range entityPtrs {
-				terminal.Printf("%s:\n", terminal.Stylize.Path(tosca.GetContext(entityPtr).Path.String()))
-				err = transcribe.Print(entityPtr, format, terminal.Stdout, strict, pretty)
+				terminal.Printf("%s:\n", terminal.DefaultStylist.Path(tosca.GetContext(entityPtr).Path.String()))
+				err = transcribe.Print(entityPtr, format, os.Stdout, strict, pretty)
 				util.FailOnError(err)
 			}
 		}
@@ -192,8 +193,8 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 			util.Failf("No paths found matching filter: %q\n", filter)
 		} else if !terminal.Quiet {
 			for _, entityPtr := range entityPtrs {
-				terminal.Printf("%s\n", terminal.Stylize.Path(tosca.GetContext(entityPtr).Path.String()))
-				err = transcribe.Print(entityPtr, format, terminal.Stdout, strict, pretty)
+				terminal.Printf("%s\n", terminal.DefaultStylist.Path(tosca.GetContext(entityPtr).Path.String()))
+				err = transcribe.Print(entityPtr, format, os.Stdout, strict, pretty)
 				util.FailOnError(err)
 			}
 		}

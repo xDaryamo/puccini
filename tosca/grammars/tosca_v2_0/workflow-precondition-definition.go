@@ -20,8 +20,8 @@ type WorkflowPreconditionDefinition struct {
 	TargetNodeRequirementName     *string          `read:"target_relationship"`
 	ConditionClause               *ConditionClause `read:"condition,ConditionClauseAnd"`
 
-	TargetNodeTemplate *NodeTemplate `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`
-	TargetGroup        *Group        `lookup:"target,TargetNodeTemplateOrGroupName" json:"-" yaml:"-"`
+	TargetNodeTemplate *NodeTemplate `lookup:"target,TargetNodeTemplateOrGroupName" traverse:"ignore" json:"-" yaml:"-"`
+	TargetGroup        *Group        `lookup:"target,TargetNodeTemplateOrGroupName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewWorkflowPreconditionDefinition(context *tosca.Context) *WorkflowPreconditionDefinition {

@@ -9,13 +9,13 @@ type Operation struct {
 	PolicyTrigger *PolicyTrigger `json:"-" yaml:"-"`
 	Name          string         `json:"-" yaml:"-"`
 
-	Description    string         `json:"description" yaml:"description"`
-	Implementation string         `json:"implementation" yaml:"implementation"`
-	Dependencies   []string       `json:"dependencies" yaml:"dependencies"`
-	Inputs         Constrainables `json:"inputs" yaml:"inputs"`
-	Outputs        Mappings       `json:"outputs" yaml:"outputs"`
-	Timeout        int64          `json:"timeout" yaml:"timeout"`
-	Host           string         `json:"host,omitempty" yaml:"host,omitempty"`
+	Description    string   `json:"description" yaml:"description"`
+	Implementation string   `json:"implementation" yaml:"implementation"`
+	Dependencies   []string `json:"dependencies" yaml:"dependencies"`
+	Inputs         Values   `json:"inputs" yaml:"inputs"`
+	Outputs        Mappings `json:"outputs" yaml:"outputs"`
+	Timeout        int64    `json:"timeout" yaml:"timeout"`
+	Host           string   `json:"host,omitempty" yaml:"host,omitempty"`
 }
 
 func (self *Interface) NewOperation(name string) *Operation {
@@ -23,7 +23,7 @@ func (self *Interface) NewOperation(name string) *Operation {
 		Interface:    self,
 		Name:         name,
 		Dependencies: make([]string, 0),
-		Inputs:       make(Constrainables),
+		Inputs:       make(Values),
 		Outputs:      make(Mappings),
 		Timeout:      -1,
 	}
@@ -35,7 +35,7 @@ func (self *PolicyTrigger) NewOperation() *Operation {
 	self.Operation = &Operation{
 		PolicyTrigger: self,
 		Dependencies:  make([]string, 0),
-		Inputs:        make(Constrainables),
+		Inputs:        make(Values),
 		Outputs:       make(Mappings),
 	}
 	return self.Operation

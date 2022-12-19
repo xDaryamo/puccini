@@ -104,6 +104,6 @@ func (self *ServiceContext) AddImportFile(entityPtr tosca.EntityPtr, container *
 
 func (self *ServiceContext) PrintImports(indent int) {
 	terminal.PrintIndent(indent)
-	terminal.Printf("%s\n", terminal.Stylize.Value(self.Root.GetContext().URL.String()))
+	terminal.Printf("%s\n", terminal.DefaultStylist.Value(self.Root.GetContext().URL.String()))
 	self.Root.PrintImports(indent, terminal.TreePrefix{})
 }

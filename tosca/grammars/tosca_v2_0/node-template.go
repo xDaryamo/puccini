@@ -32,8 +32,8 @@ type NodeTemplate struct {
 	Interfaces                   InterfaceAssignments   `read:"interfaces,InterfaceAssignment"`
 	Artifacts                    Artifacts              `read:"artifacts,Artifact"`
 
-	CopyNodeTemplate *NodeTemplate `lookup:"copy,CopyNodeTemplateName" json:"-" yaml:"-"`
-	NodeType         *NodeType     `lookup:"type,NodeTypeName" json:"-" yaml:"-"`
+	CopyNodeTemplate *NodeTemplate `lookup:"copy,CopyNodeTemplateName" traverse:"ignore" json:"-" yaml:"-"`
+	NodeType         *NodeType     `lookup:"type,NodeTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewNodeTemplate(context *tosca.Context) *NodeTemplate {
@@ -96,7 +96,7 @@ func (self *NodeTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplat
 		normalNodeTemplate.Description = *self.Description
 	}
 
-	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.NodeType); ok {
+	if types, ok := normal.GetEntityTypes(self.Context.Hierarchy, self.NodeType); ok {
 		normalNodeTemplate.Types = types
 	}
 

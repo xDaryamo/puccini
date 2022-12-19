@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/transcribe"
@@ -70,7 +72,7 @@ func Compile(url string) {
 		err = Exec(exec, arguments, clout, urlContext)
 		util.FailOnError(err)
 	} else if !terminal.Quiet || (output != "") {
-		err = transcribe.WriteOrPrint(clout, format, terminal.Stdout, strict, pretty, output)
+		err = transcribe.WriteOrPrint(clout, format, os.Stdout, strict, pretty, output)
 		util.FailOnError(err)
 	}
 }

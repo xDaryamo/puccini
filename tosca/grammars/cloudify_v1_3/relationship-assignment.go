@@ -18,8 +18,8 @@ type RelationshipAssignment struct {
 	SourceInterfaces       InterfaceAssignments `read:"source_interfaces,InterfaceAssignment"`
 	TargetInterfaces       InterfaceAssignments `read:"target_interfaces,InterfaceAssignment"`
 
-	RelationshipType   *RelationshipType `lookup:"type,RelationshipTypeName" json:"-" yaml:"-"`
-	TargetNodeTemplate *NodeTemplate     `lookup:"target,TargetNodeTemplateName" json:"-" yaml:"-"`
+	RelationshipType   *RelationshipType `lookup:"type,RelationshipTypeName" traverse:"ignore" json:"-" yaml:"-"`
+	TargetNodeTemplate *NodeTemplate     `lookup:"target,TargetNodeTemplateName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewRelationshipAssignment(context *tosca.Context) *RelationshipAssignment {
@@ -81,7 +81,7 @@ func (self *RelationshipAssignment) Normalize(nodeTemplate *NodeTemplate, normal
 
 	normalRelationship := normalRequirement.NewRelationship()
 
-	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.RelationshipType); ok {
+	if types, ok := normal.GetEntityTypes(self.Context.Hierarchy, self.RelationshipType); ok {
 		normalRelationship.Types = types
 	}
 

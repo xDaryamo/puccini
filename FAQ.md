@@ -124,7 +124,7 @@ TOSCA's avoidance of templating is deliberate. Unlike some tools (see
 templating language, but rather as a representation of a semantic structure.
 
 That said, nothing is stopping you from using templates. You can pipe the TOSCA or Clout to and
-from the tool of your choice at any point. Just bote the proper escaping of quotation marks to avoid
+from the tool of your choice at any point. Just note the proper escaping of quotation marks to avoid
 invalid YAML. Also remember that indentation in YAML is significant, so it can be tricky to insert
 blocks into arbitrary locations. Generally, using text templating to manipulate YAML is not a great
 idea for these reasons.

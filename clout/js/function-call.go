@@ -28,17 +28,17 @@ type FunctionCall struct {
 	FunctionCallContext FunctionCallContext `json:"-" yaml:"-"`
 	Notation            ard.StringMap       `json:"-" yaml:"-"`
 
-	Name        string        `json:"name" yaml:"name"`
-	Arguments   []Coercible   `json:"arguments" yaml:"arguments"`
-	Path        string        `json:"path,omitempty" yaml:"path,omitempty"`
-	URL         string        `json:"url,omitempty" yaml:"url,omitempty"`
-	Row         int           `json:"row" yaml:"row"`
-	Column      int           `json:"column" yaml:"column"`
-	Constraints Constraints   `json:"constraints,omitempty" yaml:"constraints,omitempty"`
-	Converter   *FunctionCall `json:"converter,omitempty" yaml:"converter,omitempty"`
+	Name       string        `json:"name" yaml:"name"`
+	Arguments  []Coercible   `json:"arguments" yaml:"arguments"`
+	Path       string        `json:"path,omitempty" yaml:"path,omitempty"`
+	URL        string        `json:"url,omitempty" yaml:"url,omitempty"`
+	Row        int           `json:"row" yaml:"row"`
+	Column     int           `json:"column" yaml:"column"`
+	Validators Validators    `json:"validators,omitempty" yaml:"validators,omitempty"`
+	Converter  *FunctionCall `json:"converter,omitempty" yaml:"converter,omitempty"`
 }
 
-func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.StringMap, functionCallContext FunctionCallContext) (*FunctionCall, error) {
+func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.StringMap, meta ard.StringMap, functionCallContext FunctionCallContext) (*FunctionCall, error) {
 	functionCall := FunctionCall{
 		CloutContext:        self,
 		Notation:            notation,
@@ -58,7 +58,7 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.Strin
 			functionCall.Arguments = make([]Coercible, len(originalArguments))
 			for index, argument := range originalArguments {
 				var err error
-				if functionCall.Arguments[index], err = self.NewCoercible(argument, functionCallContext); err != nil {
+				if functionCall.Arguments[index], err = self.NewCoercible(argument, nil, functionCallContext); err != nil {
 					return nil, err
 				}
 			}
@@ -96,14 +96,30 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.Strin
 	}
 
 	var err error
-	if functionCall.Constraints, err = self.NewConstraintsFromNotation(notation, "$constraints", functionCallContext); err != nil {
+	if functionCall.Validators, err = self.NewValidatorsFromMeta(meta, functionCallContext); err != nil {
 		return nil, err
 	}
-	if functionCall.Converter, err = self.NewConverter(notation, functionCallContext); err != nil {
+	if functionCall.Converter, err = self.NewConverter(meta, functionCallContext); err != nil {
 		return nil, err
 	}
 
 	return &functionCall, nil
+}
+
+func (self *CloutContext) NewConverter(meta ard.StringMap, functionCallContext FunctionCallContext) (*FunctionCall, error) {
+	if converter, ok := meta["converter"]; ok {
+		if value, err := self.NewCoercible(converter, nil, functionCallContext); err == nil {
+			if converter_, ok := value.(*FunctionCall); ok {
+				return converter_, nil
+			} else {
+				return nil, fmt.Errorf("malformed converter, not a function call: %+v", converter)
+			}
+		} else {
+			return nil, err
+		}
+	} else {
+		return nil, nil
+	}
 }
 
 func (self *FunctionCall) Signature(arguments []ard.Value) string {
@@ -130,7 +146,7 @@ func (self *FunctionCall) Coerce() (ard.Value, error) {
 
 	// TODO: Coerce result?
 
-	if err := self.Constraints.Apply(data); err == nil {
+	if err := self.Validators.Apply(data); err == nil {
 		if self.Converter != nil {
 			return self.Converter.Convert(data)
 		} else {
@@ -142,8 +158,8 @@ func (self *FunctionCall) Coerce() (ard.Value, error) {
 }
 
 // Coercible interface
-func (self *FunctionCall) SetConstraints(constraints Constraints) {
-	self.Constraints = constraints
+func (self *FunctionCall) AddValidators(validators Validators) {
+	self.Validators = append(self.Validators, validators...)
 }
 
 // Coercible interface

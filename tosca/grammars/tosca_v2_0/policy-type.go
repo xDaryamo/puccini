@@ -21,9 +21,9 @@ type PolicyType struct {
 	TargetNodeTypeOrGroupTypeNames *[]string           `read:"targets" inherit:"targets,Parent"`
 	TriggerDefinitions             TriggerDefinitions  `read:"triggers,TriggerDefinition" inherit:"triggers,Parent"` // introduced in TOSCA 1.1
 
-	Parent           *PolicyType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
-	TargetNodeTypes  NodeTypes   `lookup:"targets,TargetNodeTypeOrGroupTypeNames" inherit:"targets,Parent" json:"-" yaml:"-"`
-	TargetGroupTypes GroupTypes  `lookup:"targets,TargetNodeTypeOrGroupTypeNames" inherit:"targets,Parent" json:"-" yaml:"-"`
+	Parent           *PolicyType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
+	TargetNodeTypes  NodeTypes   `lookup:"targets,TargetNodeTypeOrGroupTypeNames" inherit:"targets,Parent" traverse:"ignore" json:"-" yaml:"-"`
+	TargetGroupTypes GroupTypes  `lookup:"targets,TargetNodeTypeOrGroupTypeNames" inherit:"targets,Parent" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewPolicyType(context *tosca.Context) *PolicyType {

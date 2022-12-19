@@ -36,6 +36,6 @@ func ReadNodeFilter(context *tosca.Context) tosca.EntityPtr {
 }
 
 func (self *NodeFilter) Normalize(normalRequirement *normal.Requirement) {
-	self.PropertyFilters.Normalize(normalRequirement.NodeTemplatePropertyConstraints)
+	self.PropertyFilters.Normalize(normalRequirement.NodeTemplatePropertyValidation)
 	self.CapabilityFilters.Normalize(normalRequirement)
 }

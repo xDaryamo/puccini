@@ -31,9 +31,9 @@ type RequirementAssignment struct {
 	Optional                         *bool                   `read:"optional"`   // introduced in TOSCA 2.0
 	// TODO: Allocation
 
-	TargetCapabilityType *CapabilityType `lookup:"capability,?TargetCapabilityNameOrTypeName" json:"-" yaml:"-"`
-	TargetNodeTemplate   *NodeTemplate   `lookup:"node,TargetNodeTemplateNameOrTypeName" json:"-" yaml:"-"`
-	TargetNodeType       *NodeType       `lookup:"node,TargetNodeTemplateNameOrTypeName" json:"-" yaml:"-"`
+	TargetCapabilityType *CapabilityType `lookup:"capability,?TargetCapabilityNameOrTypeName" traverse:"ignore" json:"-" yaml:"-"`
+	TargetNodeTemplate   *NodeTemplate   `lookup:"node,TargetNodeTemplateNameOrTypeName" traverse:"ignore" json:"-" yaml:"-"`
+	TargetNodeType       *NodeType       `lookup:"node,TargetNodeTemplateNameOrTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewRequirementAssignment(context *tosca.Context) *RequirementAssignment {

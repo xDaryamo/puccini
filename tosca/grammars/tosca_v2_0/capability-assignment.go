@@ -73,7 +73,7 @@ func (self *CapabilityAssignment) Normalize(normalNodeTemplate *normal.NodeTempl
 		normalCapability.MaxRelationshipCount = math.MaxUint64
 	}
 
-	if types, ok := normal.GetTypes(self.Context.Hierarchy, definition.CapabilityType); ok {
+	if types, ok := normal.GetEntityTypes(self.Context.Hierarchy, definition.CapabilityType); ok {
 		normalCapability.Types = types
 	}
 

@@ -23,3 +23,4 @@ function build () {
 }
 
 build puccini-tosca
+build puccini-clout

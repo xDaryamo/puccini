@@ -18,7 +18,7 @@ type Group struct {
 	MemberNodeTemplateNames *[]string     `read:"members" mandatory:""`
 	Policies                GroupPolicies `read:"policies,GroupPolicy"`
 
-	MemberNodeTemplates NodeTemplates `lookup:"members,MemberNodeTemplateNames" json:"-" yaml:"-"`
+	MemberNodeTemplates NodeTemplates `lookup:"members,MemberNodeTemplateNames" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewGroup(context *tosca.Context) *Group {
@@ -37,7 +37,7 @@ func ReadGroup(context *tosca.Context) tosca.EntityPtr {
 }
 
 var groupTypeName = "cloudify.Group"
-var groupTypes = normal.NewTypes(groupTypeName)
+var groupTypes = normal.NewEntityTypes(groupTypeName)
 
 func (self *Group) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.Group {
 	logNormalize.Debugf("group: %s", self.Name)

@@ -45,9 +45,9 @@ func (self CapabilityFilter) Normalize(normalRequirement *normal.Requirement) no
 
 	var normalFunctionCallMap normal.FunctionCallMap
 	var ok bool
-	if normalFunctionCallMap, ok = normalRequirement.CapabilityPropertyConstraints[self.Name]; !ok {
+	if normalFunctionCallMap, ok = normalRequirement.CapabilityPropertyValidation[self.Name]; !ok {
 		normalFunctionCallMap = make(normal.FunctionCallMap)
-		normalRequirement.CapabilityPropertyConstraints[self.Name] = normalFunctionCallMap
+		normalRequirement.CapabilityPropertyValidation[self.Name] = normalFunctionCallMap
 	}
 
 	self.PropertyFilters.Normalize(normalFunctionCallMap)

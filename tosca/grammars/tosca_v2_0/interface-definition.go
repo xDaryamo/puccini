@@ -18,12 +18,12 @@ type InterfaceDefinition struct {
 	*Entity `name:"interface definition" json:"-" yaml:"-"`
 	Name    string
 
-	InterfaceTypeName       *string                 `read:"type"` // required only if cannot be inherited
+	InterfaceTypeName       *string                 `read:"type"` // mandatory only if cannot be inherited
 	InputDefinitions        ParameterDefinitions    `read:"inputs,ParameterDefinition" inherit:"inputs,InterfaceType"`
 	OperationDefinitions    OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,InterfaceType"`          // keyword since TOSCA 1.3
 	NotificationDefinitions NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,InterfaceType"` // introduced in TOSCA 1.3
 
-	InterfaceType *InterfaceType `lookup:"type,InterfaceTypeName" json:"-" yaml:"-"`
+	InterfaceType *InterfaceType `lookup:"type,InterfaceTypeName" traverse:"ignore" json:"-" yaml:"-"`
 
 	typeMissingProblemReported bool
 }

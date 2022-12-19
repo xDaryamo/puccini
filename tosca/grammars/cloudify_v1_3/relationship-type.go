@@ -17,7 +17,7 @@ type RelationshipType struct {
 	TargetInterfaceDefinitions InterfaceDefinitions `read:"target_interfaces,InterfaceDefinition" inherit:"target_interfaces,Parent"`
 	PropertyDefinitions        PropertyDefinitions  `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
 
-	Parent *RelationshipType `lookup:"derived_from,ParentName" json:"-" yaml:"-"`
+	Parent *RelationshipType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewRelationshipType(context *tosca.Context) *RelationshipType {

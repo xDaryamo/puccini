@@ -26,9 +26,9 @@ type Policy struct {
 	TargetNodeTemplateOrGroupNames *[]string          `read:"targets"`
 	TriggerDefinitions             TriggerDefinitions `read:"triggers,TriggerDefinition" inherit:"triggers,PolicyType"` // introduced in TOSCA 1.1
 
-	PolicyType          *PolicyType   `lookup:"type,PolicyTypeName" json:"-" yaml:"-"`
-	TargetNodeTemplates NodeTemplates `lookup:"targets,TargetNodeTemplateOrGroupNames" json:"-" yaml:"-"`
-	TargetGroups        Groups        `lookup:"targets,TargetNodeTemplateOrGroupNames" json:"-" yaml:"-"`
+	PolicyType          *PolicyType   `lookup:"type,PolicyTypeName" traverse:"ignore" json:"-" yaml:"-"`
+	TargetNodeTemplates NodeTemplates `lookup:"targets,TargetNodeTemplateOrGroupNames" traverse:"ignore" json:"-" yaml:"-"`
+	TargetGroups        Groups        `lookup:"targets,TargetNodeTemplateOrGroupNames" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewPolicy(context *tosca.Context) *Policy {
@@ -114,7 +114,7 @@ func (self *Policy) Normalize(normalServiceTemplate *normal.ServiceTemplate) *no
 		normalPolicy.Description = *self.Description
 	}
 
-	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.PolicyType); ok {
+	if types, ok := normal.GetEntityTypes(self.Context.Hierarchy, self.PolicyType); ok {
 		normalPolicy.Types = types
 	}
 

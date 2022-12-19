@@ -10,8 +10,8 @@ type Policy struct {
 
 	Metadata    map[string]string `json:"metadata" yaml:"metadata"`
 	Description string            `json:"description" yaml:"description"`
-	Types       Types             `json:"types" yaml:"types"`
-	Properties  Constrainables    `json:"properties" yaml:"properties"`
+	Types       EntityTypes       `json:"types" yaml:"types"`
+	Properties  Values            `json:"properties" yaml:"properties"`
 
 	GroupTargets        []*Group         `json:"-" yaml:"-"`
 	NodeTemplateTargets []*NodeTemplate  `json:"-" yaml:"-"`
@@ -23,8 +23,8 @@ func (self *ServiceTemplate) NewPolicy(name string) *Policy {
 		ServiceTemplate:     self,
 		Name:                name,
 		Metadata:            make(map[string]string),
-		Types:               make(Types),
-		Properties:          make(Constrainables),
+		Types:               make(EntityTypes),
+		Properties:          make(Values),
 		GroupTargets:        make([]*Group, 0),
 		NodeTemplateTargets: make([]*NodeTemplate, 0),
 	}

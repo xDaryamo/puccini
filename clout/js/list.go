@@ -10,14 +10,12 @@ import (
 
 type List []Coercible
 
-func (self *CloutContext) NewList(list ard.List, entryConstraints Constraints, functionCallContext FunctionCallContext) (List, error) {
+func (self *CloutContext) NewList(list ard.List, elementMeta ard.StringMap, functionCallContext FunctionCallContext) (List, error) {
 	list_ := make(List, len(list))
 
 	for index, data := range list {
-		if entry, err := self.NewCoercible(data, functionCallContext); err == nil {
-			entry.SetConstraints(entryConstraints)
-			list_[index] = entry
-		} else {
+		var err error
+		if list_[index], err = self.NewCoercible(data, elementMeta, functionCallContext); err != nil {
 			return nil, err
 		}
 	}
@@ -26,14 +24,14 @@ func (self *CloutContext) NewList(list ard.List, entryConstraints Constraints, f
 }
 
 func (self List) Coerce() (ard.Value, error) {
-	value := make(ard.List, len(self))
+	list := make(ard.List, len(self))
 
-	for index, coercible := range self {
+	for index, element := range self {
 		var err error
-		if value[index], err = coercible.Coerce(); err != nil {
+		if list[index], err = element.Coerce(); err != nil {
 			return nil, err
 		}
 	}
 
-	return value, nil
+	return list, nil
 }

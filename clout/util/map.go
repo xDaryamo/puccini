@@ -16,13 +16,13 @@ func NewStringMap(values ard.StringMap, valueType string) ard.StringMap {
 
 func NewStringMapEntry(key string, value ard.Value, valueType string) ard.StringMap {
 	return ard.StringMap{
-		"$information": NewValueInformation(valueType),
-		"$key":         ard.StringMap{"$value": key},
-		"$value":       value,
+		"$type":  NewValueType(valueType),
+		"$key":   ard.StringMap{"$value": key},
+		"$value": value,
 	}
 }
 
-func NewValueInformation(type_ string) ard.StringMap {
+func NewValueType(type_ string) ard.StringMap {
 	return ard.StringMap{
 		"type": ard.StringMap{"name": type_},
 	}

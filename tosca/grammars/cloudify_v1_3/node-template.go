@@ -22,7 +22,7 @@ type NodeTemplate struct {
 	Relationships RelationshipAssignments  `read:"relationships,[]RelationshipAssignment"`
 	Capabilities  NodeTemplateCapabilities `read:"capabilities,NodeTemplateCapability"`
 
-	NodeType *NodeType `lookup:"type,NodeTypeName" json:"-" yaml:"-"`
+	NodeType *NodeType `lookup:"type,NodeTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewNodeTemplate(context *tosca.Context) *NodeTemplate {
@@ -60,14 +60,14 @@ func (self *NodeTemplate) render() {
 }
 
 var capabilityTypeName = "cloudify.Node"
-var capabilityTypes = normal.NewTypes(capabilityTypeName)
+var capabilityTypes = normal.NewEntityTypes(capabilityTypeName)
 
 func (self *NodeTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplate) *normal.NodeTemplate {
 	logNormalize.Debugf("node template: %s", self.Name)
 
 	normalNodeTemplate := normalServiceTemplate.NewNodeTemplate(self.Name)
 
-	if types, ok := normal.GetTypes(self.Context.Hierarchy, self.NodeType); ok {
+	if types, ok := normal.GetEntityTypes(self.Context.Hierarchy, self.NodeType); ok {
 		normalNodeTemplate.Types = types
 	}
 

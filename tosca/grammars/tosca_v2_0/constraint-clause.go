@@ -12,28 +12,28 @@ const constraintPathPrefix = "/tosca/implicit/2.0/js/constraints/"
 
 // Built-in constraint functions
 var ConstraintClauseScriptlets = map[string]string{
-	tosca.ConstraintScriptletPrefix + "equal":            profile.Profile[constraintPathPrefix+"equal.js"],
-	tosca.ConstraintScriptletPrefix + "greater_than":     profile.Profile[constraintPathPrefix+"greater_than.js"],
-	tosca.ConstraintScriptletPrefix + "greater_or_equal": profile.Profile[constraintPathPrefix+"greater_or_equal.js"],
-	tosca.ConstraintScriptletPrefix + "less_than":        profile.Profile[constraintPathPrefix+"less_than.js"],
-	tosca.ConstraintScriptletPrefix + "less_or_equal":    profile.Profile[constraintPathPrefix+"less_or_equal.js"],
-	tosca.ConstraintScriptletPrefix + "in_range":         profile.Profile[constraintPathPrefix+"in_range.js"],
-	tosca.ConstraintScriptletPrefix + "valid_values":     profile.Profile[constraintPathPrefix+"valid_values.js"],
-	tosca.ConstraintScriptletPrefix + "length":           profile.Profile[constraintPathPrefix+"length.js"],
-	tosca.ConstraintScriptletPrefix + "min_length":       profile.Profile[constraintPathPrefix+"min_length.js"],
-	tosca.ConstraintScriptletPrefix + "max_length":       profile.Profile[constraintPathPrefix+"max_length.js"],
-	tosca.ConstraintScriptletPrefix + "pattern":          profile.Profile[constraintPathPrefix+"pattern.js"],
-	tosca.ConstraintScriptletPrefix + "schema":           profile.Profile[constraintPathPrefix+"schema.js"], // introduced in TOSCA 1.3
+	tosca.METADATA_CONSTRAINT_PREFIX + "equal":            profile.Profile[constraintPathPrefix+"equal.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "greater_than":     profile.Profile[constraintPathPrefix+"greater_than.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "greater_or_equal": profile.Profile[constraintPathPrefix+"greater_or_equal.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "less_than":        profile.Profile[constraintPathPrefix+"less_than.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "less_or_equal":    profile.Profile[constraintPathPrefix+"less_or_equal.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "in_range":         profile.Profile[constraintPathPrefix+"in_range.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "valid_values":     profile.Profile[constraintPathPrefix+"valid_values.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "length":           profile.Profile[constraintPathPrefix+"length.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "min_length":       profile.Profile[constraintPathPrefix+"min_length.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "max_length":       profile.Profile[constraintPathPrefix+"max_length.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "pattern":          profile.Profile[constraintPathPrefix+"pattern.js"],
+	tosca.METADATA_CONSTRAINT_PREFIX + "schema":           profile.Profile[constraintPathPrefix+"schema.js"], // introduced in TOSCA 1.3
 }
 
 var ConstraintClauseNativeArgumentIndexes = map[string][]int{
-	tosca.ConstraintScriptletPrefix + "equal":            {0},
-	tosca.ConstraintScriptletPrefix + "greater_than":     {0},
-	tosca.ConstraintScriptletPrefix + "greater_or_equal": {0},
-	tosca.ConstraintScriptletPrefix + "less_than":        {0},
-	tosca.ConstraintScriptletPrefix + "less_or_equal":    {0},
-	tosca.ConstraintScriptletPrefix + "in_range":         {0, 1},
-	tosca.ConstraintScriptletPrefix + "valid_values":     {-1}, // -1 means all
+	tosca.METADATA_CONSTRAINT_PREFIX + "equal":            {0},
+	tosca.METADATA_CONSTRAINT_PREFIX + "greater_than":     {0},
+	tosca.METADATA_CONSTRAINT_PREFIX + "greater_or_equal": {0},
+	tosca.METADATA_CONSTRAINT_PREFIX + "less_than":        {0},
+	tosca.METADATA_CONSTRAINT_PREFIX + "less_or_equal":    {0},
+	tosca.METADATA_CONSTRAINT_PREFIX + "in_range":         {0, 1},
+	tosca.METADATA_CONSTRAINT_PREFIX + "valid_values":     {-1}, // -1 means all
 }
 
 //
@@ -52,8 +52,8 @@ type ConstraintClause struct {
 	Operator              string
 	Arguments             ard.List
 	NativeArgumentIndexes []int
-	DataType              *DataType            `traverse:"ignore" json:"-" yaml:"-"` // TODO: unncessary, this entity should never be traversed
-	Definition            *AttributeDefinition `traverse:"ignore" json:"-" yaml:"-"`
+	DataType              *DataType      `traverse:"ignore" json:"-" yaml:"-"` // TODO: unncessary, this entity should never be traversed
+	Definition            DataDefinition `traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewConstraintClause(context *tosca.Context) *ConstraintClause {
@@ -74,7 +74,7 @@ func ReadConstraintClause(context *tosca.Context) tosca.EntityPtr {
 		for key, value := range map_ {
 			operator := yamlkeys.KeyString(key)
 
-			scriptletName := tosca.ConstraintScriptletPrefix + operator
+			scriptletName := tosca.METADATA_CONSTRAINT_PREFIX + operator
 			scriptlet, ok := context.ScriptletNamespace.Lookup(scriptletName)
 			if !ok {
 				context.Clone(operator).ReportValueMalformed("constraint clause", "unsupported operator")
@@ -106,7 +106,7 @@ func (self *ConstraintClause) ToFunctionCall(context *tosca.Context, strict bool
 		if rangeType, ok := self.Context.Namespace.Lookup("range"); ok {
 			if isRangeInRange = self.Context.Hierarchy.IsCompatible(rangeType, self.DataType); isRangeInRange {
 				range_ := ReadRange(context.Clone(self.Arguments)).(*Range)
-				return context.NewFunctionCall(tosca.ConstraintScriptletPrefix+self.Operator, []any{
+				return context.NewFunctionCall(tosca.METADATA_CONSTRAINT_PREFIX+self.Operator, []any{
 					ReadValue(context.ListChild(0, range_.Lower)).(*Value),
 					ReadValue(context.ListChild(1, range_.Upper)).(*Value),
 				})
@@ -131,7 +131,7 @@ func (self *ConstraintClause) ToFunctionCall(context *tosca.Context, strict bool
 		arguments[index] = argument
 	}
 
-	return context.NewFunctionCall(tosca.ConstraintScriptletPrefix+self.Operator, arguments)
+	return context.NewFunctionCall(tosca.METADATA_CONSTRAINT_PREFIX+self.Operator, arguments)
 }
 
 func (self *ConstraintClause) IsNativeArgument(index int) bool {
@@ -162,23 +162,6 @@ func (self ConstraintClauses) Append(constraints ConstraintClauses) ConstraintCl
 	}
 }
 
-func (self ConstraintClauses) Render(dataType *DataType, definition *AttributeDefinition) {
-	for _, constraint := range self {
-		constraint.DataType = dataType
-		constraint.Definition = definition
-	}
-}
-
-/*
-func (self ConstraintClauses) Validate(dataType *DataType) {
-	for _, constraintClause := range self {
-		if (constraintClause.DataType != nil) && (constraintClause.DataType != dataType) {
-			panic(fmt.Sprintf("constraint clause for data type %q cannot be used with data type %q", constraintClause.DataType.Name, dataType.Name))
-		}
-	}
-}
-*/
-
 func (self ConstraintClauses) Normalize(context *tosca.Context) normal.FunctionCalls {
 	var normalFunctionCalls normal.FunctionCalls
 	for _, constraintClause := range self {
@@ -189,34 +172,10 @@ func (self ConstraintClauses) Normalize(context *tosca.Context) normal.FunctionC
 	return normalFunctionCalls
 }
 
-func (self ConstraintClauses) NormalizeConstrainable(context *tosca.Context, normalConstrainable normal.Constrainable) {
+func (self ConstraintClauses) AddToMeta(context *tosca.Context, normalValueMeta *normal.ValueMeta) {
 	for _, constraintClause := range self {
 		functionCall := constraintClause.ToFunctionCall(context, true)
 		NormalizeFunctionCallArguments(functionCall, context)
-		normalConstrainable.AddConstraint(functionCall)
-	}
-}
-
-func (self ConstraintClauses) NormalizeListEntries(context *tosca.Context, normalList *normal.List) {
-	for _, constraintClause := range self {
-		functionCall := constraintClause.ToFunctionCall(context, true)
-		NormalizeFunctionCallArguments(functionCall, context)
-		normalList.AddEntryConstraint(functionCall)
-	}
-}
-
-func (self ConstraintClauses) NormalizeMapKeys(context *tosca.Context, normalMap *normal.Map) {
-	for _, constraintClause := range self {
-		functionCall := constraintClause.ToFunctionCall(context, true)
-		NormalizeFunctionCallArguments(functionCall, context)
-		normalMap.AddKeyConstraint(functionCall)
-	}
-}
-
-func (self ConstraintClauses) NormalizeMapValues(context *tosca.Context, normalMap *normal.Map) {
-	for _, constraintClause := range self {
-		functionCall := constraintClause.ToFunctionCall(context, true)
-		NormalizeFunctionCallArguments(functionCall, context)
-		normalMap.AddValueConstraint(functionCall)
+		normalValueMeta.AddValidator(functionCall)
 	}
 }

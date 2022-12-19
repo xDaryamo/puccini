@@ -27,7 +27,7 @@ type SubstitutionMappings struct {
 	InterfaceMappings   InterfaceMappings   `read:"interfaces,InterfaceMapping"`    // introduced in TOSCA 1.2
 	SubstitutionFilter  *NodeFilter         `read:"substitution_filter,NodeFilter"` // introduced in TOSCA 1.3
 
-	NodeType *NodeType `lookup:"node_type,NodeTypeName" json:"-" yaml:"-"`
+	NodeType *NodeType `lookup:"node_type,NodeTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewSubstitutionMappings(context *tosca.Context) *SubstitutionMappings {

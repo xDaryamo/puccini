@@ -16,7 +16,7 @@ type GroupPolicyTrigger struct {
 	PolicyTriggerTypeName *string `read:"type" mandatory:""`
 	Parameters            Values  `read:"parameters,Value"`
 
-	PolicyTriggerType *PolicyTriggerType `lookup:"type,PolicyTriggerTypeName" json:"-" yaml:"-"`
+	PolicyTriggerType *PolicyTriggerType `lookup:"type,PolicyTriggerTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewGroupPolicyTrigger(context *tosca.Context) *GroupPolicyTrigger {

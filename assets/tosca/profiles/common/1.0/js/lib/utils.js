@@ -28,8 +28,8 @@ exports.setOutputValue = function(name, value) {
 	if (output === undefined)
 		return false;
 
-	if (output.$information && output.$information.type)
-		switch (output.$information.type.name) {
+	if (output.$type && output.$type.type)
+		switch (output.$type.type.name) {
 		case 'boolean':
 			value = (value === 'true');
 			break;

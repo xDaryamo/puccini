@@ -19,13 +19,13 @@ type RequirementDefinition struct {
 	*Entity `name:"requirement definition"`
 	Name    string
 
-	TargetCapabilityTypeName *string                 `read:"capability"` // required only if cannot be inherited
+	TargetCapabilityTypeName *string                 `read:"capability"` // mandatory only if cannot be inherited
 	TargetNodeTypeName       *string                 `read:"node"`
 	RelationshipDefinition   *RelationshipDefinition `read:"relationship,RelationshipDefinition"`
 	CountRange               *RangeEntity            `read:"count_range,RangeEntity"` // "occurrences" in TOSCA 1.3
 
-	TargetCapabilityType *CapabilityType `lookup:"capability,TargetCapabilityTypeName" json:"-" yaml:"-"`
-	TargetNodeType       *NodeType       `lookup:"node,TargetNodeTypeName" json:"-" yaml:"-"`
+	TargetCapabilityType *CapabilityType `lookup:"capability,TargetCapabilityTypeName" traverse:"ignore" json:"-" yaml:"-"`
+	TargetNodeType       *NodeType       `lookup:"node,TargetNodeTypeName" traverse:"ignore" json:"-" yaml:"-"`
 
 	DefaultCountRange                ard.List
 	capabilityMissingProblemReported bool
