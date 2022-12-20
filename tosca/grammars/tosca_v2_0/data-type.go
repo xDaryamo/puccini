@@ -88,6 +88,7 @@ func (self *DataType) Render() {
 func (self *DataType) render() {
 	logRender.Debugf("data type: %s", self.Name)
 
+	// Verify that if it's internal type that it is supported
 	if internalTypeName, ok := self.GetInternalTypeName(); ok {
 		if _, ok := ard.TypeValidators[internalTypeName]; !ok {
 			if _, ok := self.Context.Grammar.Readers[string(internalTypeName)]; !ok {

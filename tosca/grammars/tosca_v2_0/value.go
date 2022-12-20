@@ -189,9 +189,10 @@ func (self *Value) render(dataType *DataType, dataDefinition DataDefinition, bar
 					value.RenderProperty(definition.DataType, definition)
 				}
 
-				// Grab information
+				// Move meta
 				if (value.Meta != nil) && !value.Meta.Empty() {
 					self.Meta.Fields[key] = value.Meta
+					value.Meta = nil
 				}
 			} else if definition.IsRequired() {
 				self.Context.MapChild(key, data).ReportValueRequired("property")

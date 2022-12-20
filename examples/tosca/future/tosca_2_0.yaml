@@ -7,14 +7,29 @@ metadata:
 
 data_types:
 
-  # LOOP
-  Loop:
+  Recursive:
+    properties:
+     field:
+      type: Recursive
+      required: false
+
+  RecursiveMap:
     derived_from: map
-    entry_schema: Loop
+    entry_schema: RecursiveMap
+
+  Complex:
+    properties:
+      field1:
+        type: string
+        constraints:
+        - min_length: 1
 
   StringMap:
     derived_from: map
-    entry_schema: string
+    entry_schema:
+      type: string
+      constraints:
+      - min_length: 50
 
 node_types:
 
@@ -23,6 +38,9 @@ node_types:
       bytes:
         # Base64-encoded data
         type: bytes
+      complex:
+        type: Complex
+        required: false
       hints:
         description: Hint groups
         type: map
@@ -36,6 +54,7 @@ node_types:
               type: string
               constraints:
               - min_length: 1
+            #type: StringMap
         required: false
         constraints:
         - max_length: 1
@@ -53,6 +72,8 @@ service_template:
       type: DataNode
       properties:
         bytes: { $get_property: [ data1, bytes ] }
+        complex:
+          field1: my value
         hints:
           group1:
             # "$" needs escaping here so it won't be interpreted as a function call
