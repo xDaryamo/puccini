@@ -10,12 +10,12 @@ import (
 
 type List []Coercible
 
-func (self *CloutContext) NewList(list ard.List, elementMeta ard.StringMap, functionCallContext FunctionCallContext) (List, error) {
+func (self *ExecutionContext) NewList(list ard.List, elementMeta ard.StringMap) (List, error) {
 	list_ := make(List, len(list))
 
 	for index, data := range list {
 		var err error
-		if list_[index], err = self.NewCoercible(data, elementMeta, functionCallContext); err != nil {
+		if list_[index], err = self.NewCoercible(data, elementMeta); err != nil {
 			return nil, err
 		}
 	}

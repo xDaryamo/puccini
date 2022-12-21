@@ -57,7 +57,8 @@ func (self *CloutAPI) NewKey() string {
 }
 
 func (self *CloutAPI) Call(scriptletName string, functionName string, arguments []any) (any, error) {
-	return self.cloutContext.CallFunction(scriptletName, functionName, arguments, FunctionCallContext{})
+	executionContext := self.cloutContext.NewExecutionContext(nil, nil, nil)
+	return executionContext.Call(scriptletName, functionName, arguments)
 }
 
 func (self *CloutAPI) CallAll(function goja.FunctionCall) goja.Value {
@@ -113,7 +114,8 @@ func (self *CloutAPI) NewCoercible(value goja.Value, site any, source any, targe
 		}
 	}
 
-	if coercible, err := self.cloutContext.NewCoercible(value_, meta, FunctionCallContext{site, source, target}); err == nil {
+	executionContext := self.cloutContext.NewExecutionContext(site, source, target)
+	if coercible, err := executionContext.NewCoercible(value_, meta); err == nil {
 		return coercible, nil
 	} else {
 		return nil, err
@@ -127,7 +129,8 @@ func (self *CloutAPI) NewValidators(value goja.Value, site any, source any, targ
 
 	exported := value.Export()
 	if list_, ok := exported.(ard.List); ok {
-		if validation, err := self.cloutContext.NewValidators(list_, nil, FunctionCallContext{site, source, target}); err == nil {
+		executionContext := self.cloutContext.NewExecutionContext(site, source, target)
+		if validation, err := executionContext.NewValidators(list_, nil); err == nil {
 			return validation, nil
 		} else {
 			return nil, err

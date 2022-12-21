@@ -13,7 +13,7 @@ import (
 
 type Map []MapEntry
 
-func (self *CloutContext) NewMap(list ard.List, keyMeta ard.StringMap, valueMeta ard.StringMap, fieldsMeta ard.StringMap, functionCallContext FunctionCallContext) (Map, error) {
+func (self *ExecutionContext) NewMap(list ard.List, keyMeta ard.StringMap, valueMeta ard.StringMap, fieldsMeta ard.StringMap) (Map, error) {
 	map_ := make(Map, len(list))
 
 	if fieldsMeta != nil {
@@ -24,7 +24,7 @@ func (self *CloutContext) NewMap(list ard.List, keyMeta ard.StringMap, valueMeta
 
 	for index, data := range list {
 		var err error
-		if map_[index], err = self.NewMapEntry(data, keyMeta, valueMeta, fieldsMeta, functionCallContext); err != nil {
+		if map_[index], err = self.NewMapEntry(data, keyMeta, valueMeta, fieldsMeta); err != nil {
 			return nil, err
 		}
 	}
@@ -59,13 +59,13 @@ type MapEntry struct {
 	Value Coercible `json:"value" yaml:"value"`
 }
 
-func (self *CloutContext) NewMapEntry(data any, keyMeta ard.StringMap, valueMeta ard.StringMap, fieldsMeta ard.StringMap, functionCallContext FunctionCallContext) (MapEntry, error) {
+func (self *ExecutionContext) NewMapEntry(data any, keyMeta ard.StringMap, valueMeta ard.StringMap, fieldsMeta ard.StringMap) (MapEntry, error) {
 	var entry MapEntry
 
 	if map_, ok := data.(ard.StringMap); ok {
 		if key, ok := map_["$key"]; ok {
 			var err error
-			if entry.Key, err = self.NewCoercible(key, keyMeta, functionCallContext); err == nil {
+			if entry.Key, err = self.NewCoercible(key, keyMeta); err == nil {
 				if fieldsMeta != nil {
 					// Find field meta
 					if key, err := entry.Key.Coerce(); err == nil {
@@ -85,7 +85,7 @@ func (self *CloutContext) NewMapEntry(data any, keyMeta ard.StringMap, valueMeta
 					}
 				}
 
-				if entry.Value, err = self.NewCoercible(map_, valueMeta, functionCallContext); err == nil {
+				if entry.Value, err = self.NewCoercible(map_, valueMeta); err == nil {
 					return entry, nil
 				} else {
 					return entry, err

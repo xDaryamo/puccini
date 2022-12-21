@@ -10,24 +10,10 @@ import (
 )
 
 //
-// FunctionCallContext
-//
-
-type FunctionCallContext struct {
-	Site   any
-	Source any
-	Target any
-}
-
-//
 // FunctionCall
 //
 
 type FunctionCall struct {
-	CloutContext        *CloutContext       `json:"-" yaml:"-"`
-	FunctionCallContext FunctionCallContext `json:"-" yaml:"-"`
-	Notation            ard.StringMap       `json:"-" yaml:"-"`
-
 	Name       string        `json:"name" yaml:"name"`
 	Arguments  []Coercible   `json:"arguments" yaml:"arguments"`
 	Path       string        `json:"path,omitempty" yaml:"path,omitempty"`
@@ -36,13 +22,15 @@ type FunctionCall struct {
 	Column     int           `json:"column" yaml:"column"`
 	Validators Validators    `json:"validators,omitempty" yaml:"validators,omitempty"`
 	Converter  *FunctionCall `json:"converter,omitempty" yaml:"converter,omitempty"`
+
+	Notation         ard.StringMap     `json:"-" yaml:"-"`
+	ExecutionContext *ExecutionContext `json:"-" yaml:"-"`
 }
 
-func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.StringMap, meta ard.StringMap, functionCallContext FunctionCallContext) (*FunctionCall, error) {
+func (self *ExecutionContext) NewFunctionCall(map_ ard.StringMap, notation ard.StringMap, meta ard.StringMap) (*FunctionCall, error) {
 	functionCall := FunctionCall{
-		CloutContext:        self,
-		Notation:            notation,
-		FunctionCallContext: functionCallContext,
+		Notation:         notation,
+		ExecutionContext: self,
 	}
 
 	if data, ok := map_["name"]; ok {
@@ -58,7 +46,7 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.Strin
 			functionCall.Arguments = make([]Coercible, len(originalArguments))
 			for index, argument := range originalArguments {
 				var err error
-				if functionCall.Arguments[index], err = self.NewCoercible(argument, nil, functionCallContext); err != nil {
+				if functionCall.Arguments[index], err = self.NewCoercible(argument, nil); err != nil {
 					return nil, err
 				}
 			}
@@ -96,19 +84,19 @@ func (self *CloutContext) NewFunctionCall(map_ ard.StringMap, notation ard.Strin
 	}
 
 	var err error
-	if functionCall.Validators, err = self.NewValidatorsFromMeta(meta, functionCallContext); err != nil {
+	if functionCall.Validators, err = self.NewValidatorsFromMeta(meta); err != nil {
 		return nil, err
 	}
-	if functionCall.Converter, err = self.NewConverter(meta, functionCallContext); err != nil {
+	if functionCall.Converter, err = self.NewConverter(meta); err != nil {
 		return nil, err
 	}
 
 	return &functionCall, nil
 }
 
-func (self *CloutContext) NewConverter(meta ard.StringMap, functionCallContext FunctionCallContext) (*FunctionCall, error) {
+func (self *ExecutionContext) NewConverter(meta ard.StringMap) (*FunctionCall, error) {
 	if converter, ok := meta["converter"]; ok {
-		if value, err := self.NewCoercible(converter, nil, functionCallContext); err == nil {
+		if value, err := self.NewCoercible(converter, nil); err == nil {
 			if converter_, ok := value.(*FunctionCall); ok {
 				return converter_, nil
 			} else {
@@ -139,7 +127,7 @@ func (self *FunctionCall) Coerce() (ard.Value, error) {
 
 	logEvaluate.Debugf("%s %s", self.Path, self.Signature(arguments))
 
-	data, err := self.CloutContext.CallFunction(self.Name, "evaluate", arguments, self.FunctionCallContext)
+	data, err := self.ExecutionContext.Call(self.Name, "evaluate", arguments)
 	if err != nil {
 		return nil, self.WrapError(arguments, err)
 	}
@@ -189,7 +177,7 @@ func (self *FunctionCall) Validate(value ard.Value, errorWhenInvalid bool) (bool
 
 	logValidate.Debugf("%s %s", self.Path, self.Signature(arguments))
 
-	r, err := self.CloutContext.CallFunction(self.Name, "validate", arguments, self.FunctionCallContext)
+	r, err := self.ExecutionContext.Call(self.Name, "validate", arguments)
 	if err != nil {
 		return false, self.WrapError(arguments, err)
 	}
@@ -217,7 +205,7 @@ func (self *FunctionCall) Convert(value ard.Value) (ard.Value, error) {
 
 	logConvert.Debugf("%s %s", self.Path, self.Signature(arguments))
 
-	if r, err := self.CloutContext.CallFunction(self.Name, "convert", arguments, self.FunctionCallContext); err == nil {
+	if r, err := self.ExecutionContext.Call(self.Name, "convert", arguments); err == nil {
 		return r, nil
 	} else {
 		return false, self.WrapError(arguments, err)

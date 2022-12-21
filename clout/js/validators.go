@@ -12,11 +12,11 @@ import (
 
 type Validators []*FunctionCall
 
-func (self *CloutContext) NewValidators(list ard.List, meta ard.StringMap, functionCallContext FunctionCallContext) (Validators, error) {
+func (self *ExecutionContext) NewValidators(list ard.List, meta ard.StringMap) (Validators, error) {
 	validators := make(Validators, len(list))
 
 	for index, element := range list {
-		if value, err := self.NewCoercible(element, nil, functionCallContext); err == nil {
+		if value, err := self.NewCoercible(element, nil); err == nil {
 			var ok bool
 			if validators[index], ok = value.(*FunctionCall); !ok {
 				return nil, fmt.Errorf("malformed validator, not a function call: %+v", element)
@@ -29,11 +29,11 @@ func (self *CloutContext) NewValidators(list ard.List, meta ard.StringMap, funct
 	return validators, nil
 }
 
-func (self *CloutContext) NewValidatorsFromMeta(meta ard.StringMap, functionCallContext FunctionCallContext) (Validators, error) {
+func (self *ExecutionContext) NewValidatorsFromMeta(meta ard.StringMap) (Validators, error) {
 	if meta != nil {
 		if data, ok := meta["validators"]; ok {
 			if list, ok := data.(ard.List); ok {
-				return self.NewValidators(list, nil, functionCallContext)
+				return self.NewValidators(list, nil)
 			} else {
 				return nil, fmt.Errorf("malformed \"validators\", not a list: %T", data)
 			}

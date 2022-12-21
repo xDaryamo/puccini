@@ -11,31 +11,31 @@ import (
 //
 
 type Value struct {
-	Notation ard.StringMap `json:"-" yaml:"-"`
-
 	Data       any           `json:"data" yaml:"data"` // List, Map, or ard.Value
 	Validators Validators    `json:"validators,omitempty" yaml:"validators,omitempty"`
 	Converter  *FunctionCall `json:"converter,omitempty" yaml:"converter,omitempty"`
+
+	Notation ard.StringMap `json:"-" yaml:"-"`
 }
 
-func (self *CloutContext) NewValue(data ard.Value, notation ard.StringMap, meta ard.StringMap, functionCallContext FunctionCallContext) (*Value, error) {
+func (self *ExecutionContext) NewValue(data ard.Value, notation ard.StringMap, meta ard.StringMap) (*Value, error) {
 	value := Value{
 		Data:     data,
 		Notation: notation,
 	}
 
 	var err error
-	if value.Validators, err = self.NewValidatorsFromMeta(meta, functionCallContext); err != nil {
+	if value.Validators, err = self.NewValidatorsFromMeta(meta); err != nil {
 		return nil, err
 	}
-	if value.Converter, err = self.NewConverter(meta, functionCallContext); err != nil {
+	if value.Converter, err = self.NewConverter(meta); err != nil {
 		return nil, err
 	}
 
 	return &value, nil
 }
 
-func (self *CloutContext) NewListValue(list ard.List, notation ard.StringMap, meta ard.StringMap, functionCallContext FunctionCallContext) (*Value, error) {
+func (self *ExecutionContext) NewListValue(list ard.List, notation ard.StringMap, meta ard.StringMap) (*Value, error) {
 	var elementMeta ard.StringMap
 	if meta != nil {
 		if data, ok := meta["element"]; ok {
@@ -47,14 +47,14 @@ func (self *CloutContext) NewListValue(list ard.List, notation ard.StringMap, me
 		}
 	}
 
-	if list_, err := self.NewList(list, elementMeta, functionCallContext); err == nil {
-		return self.NewValue(list_, notation, meta, functionCallContext)
+	if list_, err := self.NewList(list, elementMeta); err == nil {
+		return self.NewValue(list_, notation, meta)
 	} else {
 		return nil, err
 	}
 }
 
-func (self *CloutContext) NewMapValue(list ard.List, notation ard.StringMap, meta ard.StringMap, functionCallContext FunctionCallContext) (*Value, error) {
+func (self *ExecutionContext) NewMapValue(list ard.List, notation ard.StringMap, meta ard.StringMap) (*Value, error) {
 	var keyMeta ard.StringMap
 	var valueMeta ard.StringMap
 	var fieldsMeta ard.StringMap
@@ -84,8 +84,8 @@ func (self *CloutContext) NewMapValue(list ard.List, notation ard.StringMap, met
 		}
 	}
 
-	if map_, err := self.NewMap(list, keyMeta, valueMeta, fieldsMeta, functionCallContext); err == nil {
-		return self.NewValue(map_, notation, meta, functionCallContext)
+	if map_, err := self.NewMap(list, keyMeta, valueMeta, fieldsMeta); err == nil {
+		return self.NewValue(map_, notation, meta)
 	} else {
 		return nil, err
 	}
