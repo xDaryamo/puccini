@@ -17,26 +17,38 @@ import (
 type InterfaceType struct {
 	*Type `name:"interface type"`
 
-	InputDefinitions        ParameterDefinitions    `read:"inputs,ParameterDefinition" inherit:"inputs,Parent"`
-	OperationDefinitions    OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,Parent"`
-	NotificationDefinitions NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,Parent"` // introduced in TOSCA 1.3
+	InputDefinitions          ParameterDefinitions    `read:"inputs,ParameterDefinition" inherit:"inputs,Parent"`
+	OperationDefinitions      OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,Parent"`
+	NotificationDefinitions   NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,Parent"` // introduced in TOSCA 1.3
+	ExtraOperationDefinitions OperationDefinitions    `json:"-" yaml:"-"`
 
 	Parent *InterfaceType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewInterfaceType(context *tosca.Context) *InterfaceType {
 	return &InterfaceType{
-		Type:                    NewType(context),
-		InputDefinitions:        make(ParameterDefinitions),
-		OperationDefinitions:    make(OperationDefinitions),
-		NotificationDefinitions: make(NotificationDefinitions),
+		Type:                      NewType(context),
+		InputDefinitions:          make(ParameterDefinitions),
+		OperationDefinitions:      make(OperationDefinitions),
+		NotificationDefinitions:   make(NotificationDefinitions),
+		ExtraOperationDefinitions: make(OperationDefinitions),
 	}
 }
 
 // tosca.Reader signature
 func ReadInterfaceType(context *tosca.Context) tosca.EntityPtr {
 	self := NewInterfaceType(context)
-	context.ValidateUnsupportedFields(context.ReadFields(self))
+
+	if context.HasQuirk(tosca.QuirkInterfacesOperationsPermissive) {
+		context.SetReadTag("ExtraOperationDefinitions", "?,OperationDefinition")
+		context.ReadFields(self)
+		for name, definition := range self.ExtraOperationDefinitions {
+			self.OperationDefinitions[name] = definition
+		}
+	} else {
+		context.ValidateUnsupportedFields(context.ReadFields(self))
+	}
+
 	return self
 }
 

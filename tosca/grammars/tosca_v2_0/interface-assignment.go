@@ -19,25 +19,37 @@ type InterfaceAssignment struct {
 	*Entity `name:"interface" json:"-" yaml:"-"`
 	Name    string
 
-	Inputs        Values                  `read:"inputs,Value"`
-	Operations    OperationAssignments    `read:"operations,OperationAssignment"`       // keyword since TOSCA 1.3
-	Notifications NotificationAssignments `read:"notifications,NotificationAssignment"` // introduced in TOSCA 1.3
+	Inputs          Values                  `read:"inputs,Value"`
+	Operations      OperationAssignments    `read:"operations,OperationAssignment"`       // keyword since TOSCA 1.3
+	Notifications   NotificationAssignments `read:"notifications,NotificationAssignment"` // introduced in TOSCA 1.3
+	ExtraOperations OperationAssignments    `json:"-" yaml:"-"`
 }
 
 func NewInterfaceAssignment(context *tosca.Context) *InterfaceAssignment {
 	return &InterfaceAssignment{
-		Entity:        NewEntity(context),
-		Name:          context.Name,
-		Inputs:        make(Values),
-		Operations:    make(OperationAssignments),
-		Notifications: make(NotificationAssignments),
+		Entity:          NewEntity(context),
+		Name:            context.Name,
+		Inputs:          make(Values),
+		Operations:      make(OperationAssignments),
+		Notifications:   make(NotificationAssignments),
+		ExtraOperations: make(OperationAssignments),
 	}
 }
 
 // tosca.Reader signature
 func ReadInterfaceAssignment(context *tosca.Context) tosca.EntityPtr {
 	self := NewInterfaceAssignment(context)
-	context.ValidateUnsupportedFields(context.ReadFields(self))
+
+	if context.HasQuirk(tosca.QuirkInterfacesOperationsPermissive) {
+		context.SetReadTag("ExtraOperations", "?,OperationAssignments")
+		context.ReadFields(self)
+		for name, operation := range self.ExtraOperations {
+			self.Operations[name] = operation
+		}
+	} else {
+		context.ValidateUnsupportedFields(context.ReadFields(self))
+	}
+
 	return self
 }
 

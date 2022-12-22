@@ -18,10 +18,11 @@ type InterfaceDefinition struct {
 	*Entity `name:"interface definition" json:"-" yaml:"-"`
 	Name    string
 
-	InterfaceTypeName       *string                 `read:"type"` // mandatory only if cannot be inherited
-	InputDefinitions        ParameterDefinitions    `read:"inputs,ParameterDefinition" inherit:"inputs,InterfaceType"`
-	OperationDefinitions    OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,InterfaceType"`          // keyword since TOSCA 1.3
-	NotificationDefinitions NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,InterfaceType"` // introduced in TOSCA 1.3
+	InterfaceTypeName         *string                 `read:"type"` // mandatory only if cannot be inherited
+	InputDefinitions          ParameterDefinitions    `read:"inputs,ParameterDefinition" inherit:"inputs,InterfaceType"`
+	OperationDefinitions      OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,InterfaceType"`          // keyword since TOSCA 1.3
+	NotificationDefinitions   NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,InterfaceType"` // introduced in TOSCA 1.3
+	ExtraOperationDefinitions OperationDefinitions    `json:"-" yaml:"-"`
 
 	InterfaceType *InterfaceType `lookup:"type,InterfaceTypeName" traverse:"ignore" json:"-" yaml:"-"`
 
@@ -30,18 +31,29 @@ type InterfaceDefinition struct {
 
 func NewInterfaceDefinition(context *tosca.Context) *InterfaceDefinition {
 	return &InterfaceDefinition{
-		Entity:                  NewEntity(context),
-		Name:                    context.Name,
-		InputDefinitions:        make(ParameterDefinitions),
-		OperationDefinitions:    make(OperationDefinitions),
-		NotificationDefinitions: make(NotificationDefinitions),
+		Entity:                    NewEntity(context),
+		Name:                      context.Name,
+		InputDefinitions:          make(ParameterDefinitions),
+		OperationDefinitions:      make(OperationDefinitions),
+		NotificationDefinitions:   make(NotificationDefinitions),
+		ExtraOperationDefinitions: make(OperationDefinitions),
 	}
 }
 
 // tosca.Reader signature
 func ReadInterfaceDefinition(context *tosca.Context) tosca.EntityPtr {
 	self := NewInterfaceDefinition(context)
-	context.ValidateUnsupportedFields(context.ReadFields(self))
+
+	if context.HasQuirk(tosca.QuirkInterfacesOperationsPermissive) {
+		context.SetReadTag("ExtraOperationDefinitions", "?,OperationDefinition")
+		context.ReadFields(self)
+		for name, definition := range self.ExtraOperationDefinitions {
+			self.OperationDefinitions[name] = definition
+		}
+	} else {
+		context.ValidateUnsupportedFields(context.ReadFields(self))
+	}
+
 	return self
 }
 
