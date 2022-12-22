@@ -129,7 +129,7 @@ func (self *OutputMapping) setRelationship(relationship *RelationshipAssignment)
 	// Attributes should already have been rendered
 	attributeName := *self.AttributeName
 	if _, ok := self.Relationship.Attributes[attributeName]; !ok {
-		self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", self.NodeTemplate)
+		self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", self.Relationship)
 	}
 }
 
