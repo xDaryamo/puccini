@@ -15,9 +15,10 @@ class Problems(Exception):
         self.problems = problems
 
 
-def compile(url, inputs={}):
-    inputs = ard.encode(inputs)
-    result = ard.read(library.Compile(go.to_c_char_p(url), go.to_c_char_p(inputs)))
+def compile(url, inputs=None, quirks=None):
+    inputs = ard.encode(inputs or {})
+    quirks = ard.encode(quirks or [])
+    result = ard.read(library.Compile(go.to_c_char_p(url), go.to_c_char_p(inputs), go.to_c_char_p(quirks)))
     if 'problems' in result:
         raise Problems(result['problems'])
     elif 'error' in result:

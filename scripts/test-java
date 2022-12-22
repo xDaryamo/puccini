@@ -14,4 +14,4 @@ mvn --file "$ROOT/examples/java" --define puccini.version=${VERSION:1}
 # Run
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROOT/dist \
 mvn --quiet --file "$ROOT/examples/java" \
-	exec:java --define exec.args="$ROOT/examples/tosca/data-types.yaml" --errors
+	exec:java --define exec.args="$ROOT/examples/tosca/inputs-and-outputs.yaml --input=ram=1gib --input=cores=6" --errors

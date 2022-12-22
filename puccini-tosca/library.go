@@ -16,11 +16,12 @@ import (
 	"github.com/tliron/puccini/tosca/parser"
 	"github.com/tliron/yamlkeys"
 )
+import "github.com/tliron/puccini/tosca"
 
 var parserContext = parser.NewContext()
 
 //export Compile
-func Compile(url *C.char, inputs *C.char) *C.char {
+func Compile(url *C.char, inputs *C.char, quirks *C.char) *C.char {
 	inputs_ := make(map[string]ard.Value)
 
 	if data, err := yamlkeys.DecodeAll(strings.NewReader(C.GoString(inputs))); err == nil {
@@ -31,6 +32,26 @@ func Compile(url *C.char, inputs *C.char) *C.char {
 				}
 			} else {
 				return result(nil, nil, errors.New("malformed inputs"))
+			}
+		}
+	} else {
+		return result(nil, nil, err)
+	}
+
+	var quirks_ tosca.Quirks
+
+	if data, err := yamlkeys.DecodeAll(strings.NewReader(C.GoString(quirks))); err == nil {
+		for _, data_ := range data {
+			if list, ok := data_.(ard.List); ok {
+				for _, value := range list {
+					if value_, ok := value.(string); ok {
+						quirks_ = append(quirks_, tosca.Quirk(value_))
+					} else {
+						return result(nil, nil, errors.New("malformed quirk"))
+					}
+				}
+			} else {
+				return result(nil, nil, errors.New("malformed quirks"))
 			}
 		}
 	} else {
@@ -50,7 +71,7 @@ func Compile(url *C.char, inputs *C.char) *C.char {
 		return result(nil, nil, err)
 	}
 
-	if _, serviceTemplate, problems, err = parserContext.Parse(url_, nil, nil, nil, inputs_); err != nil {
+	if _, serviceTemplate, problems, err = parserContext.Parse(url_, nil, nil, quirks_, inputs_); err != nil {
 		return result(nil, problems, err)
 	}
 

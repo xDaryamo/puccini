@@ -10,4 +10,4 @@ FLAG=${1:--s}
 SUFFIX=$SUFFIX "$HERE/build-wrapper-python" "$FLAG"
 . "$ROOT/dist/python-env/bin/activate"
 
-"$ROOT/examples/python/compile.py" "$ROOT/examples/tosca/data-types.yaml" "$@"
+"$ROOT/examples/python/compile.py" "$ROOT/examples/tosca/inputs-and-outputs.yaml" --input=ram=1gib --input=cores=6 "$@"

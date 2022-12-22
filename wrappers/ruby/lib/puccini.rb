@@ -5,7 +5,7 @@ require 'yaml'
 module Puccini
   extend Fiddle::Importer
   dlload File.join(__dir__, 'libpuccini.so')
-  extern 'char *Compile(char *, char *)'
+  extern 'char *Compile(char *, char *, char *)'
 
   module TOSCA
     extend self
@@ -17,9 +17,10 @@ module Puccini
       attr_reader :problems
     end
 
-    def compile(url, inputs: {})
-      inputs = YAML.dump inputs
-      result = YAML.load Puccini::Compile(url, inputs).to_s
+    def compile(url, inputs=nil, quirks=nil)
+      inputs = YAML.dump (inputs || {})
+      quirks = YAML.dump (quirks || [])
+      result = YAML.load Puccini::Compile(url, inputs, quirks).to_s
       if result.key? 'problems'
         raise Problems.new result['problems']
       elsif result.key? 'error'
