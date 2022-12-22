@@ -82,9 +82,6 @@ func Exec(scriptletName string, arguments map[string]string, clout *cloutpkg.Clo
 	scriptlet, err := js.GetScriptlet(scriptletName, clout)
 
 	if err != nil {
-		urlContext := urlpkg.NewContext()
-		defer urlContext.Release()
-
 		// Try loading JavaScript from path or URL
 		url, err := urlpkg.NewValidURL(scriptletName, nil, urlContext)
 		util.FailOnError(err)

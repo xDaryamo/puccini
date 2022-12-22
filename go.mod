@@ -7,7 +7,7 @@ require (
 	github.com/fxamacker/cbor/v2 v2.4.0
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/cobra v1.6.1
-	github.com/tliron/kutil v0.1.64
+	github.com/tliron/kutil v0.1.65
 	github.com/tliron/yamlkeys v1.3.6
 	github.com/vmihailenco/msgpack/v5 v5.3.5
 )

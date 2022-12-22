@@ -13,7 +13,7 @@ func Load(url string, format string, urlContext *urlpkg.Context) (*Clout, error)
 			return nil, err
 		}
 	} else {
-		if url_, err = urlpkg.ReadToInternalURLFromStdin(format); err != nil {
+		if url_, err = urlpkg.ReadToInternalURLFromStdin(format, urlContext); err != nil {
 			return nil, err
 		}
 	}

@@ -70,6 +70,11 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 	urlContext := urlpkg.NewContext()
 	util.OnExitError(urlContext.Release)
 
+	// URL mappings
+	for fromUrl, toUrl := range urlMappings {
+		urlContext.Map(fromUrl, toUrl)
+	}
+
 	var origins []urlpkg.URL
 	for _, importPath := range importPaths {
 		origin, err := urlpkg.NewURL(importPath, urlContext)
@@ -83,7 +88,7 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 	var err error
 	if url == "" {
 		log.Info("parsing stdin")
-		url_, err = urlpkg.ReadToInternalURLFromStdin("yaml")
+		url_, err = urlpkg.ReadToInternalURLFromStdin("yaml", urlContext)
 	} else {
 		log.Infof("parsing %q", url)
 		url_, err = urlpkg.NewValidURL(url, origins, urlContext)
