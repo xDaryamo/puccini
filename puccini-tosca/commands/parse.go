@@ -17,15 +17,9 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-var importPaths []string
-var template string
-var inputs map[string]string
-var inputsUrl string
 var stopAtPhase uint32
 var dumpPhases []uint
 var filter string
-
-var inputValues = make(map[string]any)
 
 func init() {
 	rootCommand.AddCommand(parseCommand)
@@ -33,6 +27,10 @@ func init() {
 	parseCommand.Flags().StringVarP(&template, "template", "t", "", "select service template in CSAR (leave empty for root, or use path or integer index)")
 	parseCommand.Flags().StringToStringVarP(&inputs, "input", "i", nil, "specify an input (format is name=YAML)")
 	parseCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
+	parseCommand.Flags().StringVarP(&problemsFormat, "problems-format", "m", "", "problems format (\"yaml\", \"json\", \"cjson\", \"xml\", \"cbor\", \"messagepack\", or \"go\")")
+	parseCommand.Flags().StringSliceVarP(&quirks, "quirk", "x", nil, "parser quirk")
+	parseCommand.Flags().StringToStringVarP(&urlMappings, "map-url", "u", nil, "map a URL (format is from=to)")
+
 	parseCommand.Flags().Uint32VarP(&stopAtPhase, "stop", "s", 5, "parser phase at which to end")
 	parseCommand.Flags().UintSliceVarP(&dumpPhases, "dump", "d", nil, "dump phase internals")
 	parseCommand.Flags().StringVarP(&filter, "filter", "r", "", "filter output by entity path; use '*' for wildcard matching (disables --stop and --dump)")

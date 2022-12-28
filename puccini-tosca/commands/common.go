@@ -14,6 +14,15 @@ const toolName = "puccini-tosca"
 
 var log = logging.GetLogger(toolName)
 
+var importPaths []string
+var template string
+var inputs map[string]string
+var inputsUrl string
+var inputValues = make(map[string]any)
+var problemsFormat string
+var quirks []string
+var urlMappings map[string]string
+
 func FailOnProblems(problems *problemspkg.Problems) {
 	if !problems.Empty() {
 		if !terminal.Quiet {

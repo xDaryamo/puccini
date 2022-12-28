@@ -20,7 +20,7 @@ func init() {
 var metaCommand = &cobra.Command{
 	Use:   "meta [CSAR PATH or URL]",
 	Short: "Show CSAR metadata",
-	Long:  `Parses and validates a CSAR an extracts the metadata.`,
+	Long:  `Parses and validates a CSAR and extracts the metadata.`,
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var url = args[0]

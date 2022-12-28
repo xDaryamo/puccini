@@ -70,7 +70,7 @@ const (
 	// "annotations" keyword in parameter definitions.
 	QuirkAnnotationsIgnore Quirk = "annotations.ignore"
 
-	// Allows interface types, definitions, and assignments, to
+	// Allows interface types, definitions, and assignments to
 	// refer to operations directly in addition to using the "operations" keyname. This allows TOSCA 1.3
 	// and 2.0 to support the TOSCA 1.2 grammar.
 	QuirkInterfacesOperationsPermissive Quirk = "interfaces.operations.permissive"

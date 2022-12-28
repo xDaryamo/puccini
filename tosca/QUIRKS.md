@@ -52,7 +52,7 @@ These are activated via the `--quirk/-x` switch for
 * **annotations.ignore**: Ignores the "annotation_types" keyword in service templates and the
   "annotations" keyword in parameter definitions.
 
-* **interfaces.operations.permissive**: Allows interface types, definitions, and assignments, to
+* **interfaces.operations.permissive**: Allows interface types, definitions, and assignments to
   refer to operations directly in addition to using the "operations" keyname. This allows TOSCA 1.3
   and 2.0 to support the TOSCA 1.2 grammar.
 

@@ -37,8 +37,8 @@ github.com/docker/docker v20.10.20+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05
 github.com/docker/docker-credential-helpers v0.7.0 h1:xtCHsjxogADNZcdv1pKUHXryefjlVRqWqIhk/uXJp0A=
 github.com/docker/docker-credential-helpers v0.7.0/go.mod h1:rETQfLdHNT3foU5kuNkFR1R1V12OJRRO5lzt2D1b5X0=
 github.com/dop251/goja v0.0.0-20211022113120-dc8c55024d06/go.mod h1:R9ET47fwRVRPZnOGvHxxhuZcbrMCuiqOz3Rlrh4KSnk=
-github.com/dop251/goja v0.0.0-20221118162653-d4bf6fde1b86 h1:E2wycakfddWJ26v+ZyEY91Lb/HEZyaiZhbMX+KQcdmc=
-github.com/dop251/goja v0.0.0-20221118162653-d4bf6fde1b86/go.mod h1:yRkwfj0CBpOGre+TwBsqPV0IH0Pk73e4PXJOeNDboGs=
+github.com/dop251/goja v0.0.0-20221224150820-cc4634e76e9a h1:fji0l3Hl0kePjjFWz65l69Jacej/ADQjryajyBlX06s=
+github.com/dop251/goja v0.0.0-20221224150820-cc4634e76e9a/go.mod h1:yRkwfj0CBpOGre+TwBsqPV0IH0Pk73e4PXJOeNDboGs=
 github.com/dop251/goja_nodejs v0.0.0-20210225215109-d91c329300e7/go.mod h1:hn7BA7c8pLvoGndExHudxTDKZ84Pyvv+90pbBjbTz0Y=
 github.com/dop251/goja_nodejs v0.0.0-20211022123610-8dd9abb0616d/go.mod h1:DngW8aVqWbuLRMHItjPUyqdj+HWPvnQe8V8y1nDpIbM=
 github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=
@@ -161,8 +161,8 @@ github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81P
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5CcY=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
-github.com/tliron/kutil v0.1.64 h1:cwdyV2QCyycRufVGSqpX9ODHUh8cYlCS7+YE3bDX8Sk=
-github.com/tliron/kutil v0.1.64/go.mod h1:mTK5PT6pdE65o9o2QhSx7qezRuxUwINiF/vYNRXlggE=
+github.com/tliron/kutil v0.1.65 h1:BJH6aoKfFFJ1NZPuSM490mn9VQddn9U4nLtiA71s61A=
+github.com/tliron/kutil v0.1.65/go.mod h1:mTK5PT6pdE65o9o2QhSx7qezRuxUwINiF/vYNRXlggE=
 github.com/tliron/yamlkeys v1.3.6 h1:PPV4q7flMqIvmSUSsEZuns7Qt3VIMxkhBj+6KTRvI9c=
 github.com/tliron/yamlkeys v1.3.6/go.mod h1:K/uKQwMke5a9h6YW/Sj9pcp66vU3lRP97OrOjo/ELoU=
 github.com/urfave/cli v1.22.4/go.mod h1:Gos4lmkARVdJ6EkW0WaNv/tZAAMe9V7XWyB60NtXRu0=

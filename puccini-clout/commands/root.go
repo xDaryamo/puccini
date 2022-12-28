@@ -47,6 +47,5 @@ var rootCommand = &cobra.Command{
 }
 
 func Execute() {
-	err := rootCommand.Execute()
-	util.FailOnError(err)
+	util.FailOnError(rootCommand.Execute())
 }

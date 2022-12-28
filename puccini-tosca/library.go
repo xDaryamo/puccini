@@ -12,11 +12,11 @@ import (
 	urlpkg "github.com/tliron/kutil/url"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
+	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
 	"github.com/tliron/yamlkeys"
 )
-import "github.com/tliron/puccini/tosca"
 
 var parserContext = parser.NewContext()
 

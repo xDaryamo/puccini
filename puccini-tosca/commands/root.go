@@ -13,9 +13,6 @@ var format string
 var colorize string
 var strict bool
 var pretty bool
-var problemsFormat string
-var quirks []string
-var urlMappings map[string]string
 
 func init() {
 	rootCommand.PersistentFlags().BoolVarP(&terminal.Quiet, "quiet", "q", false, "suppress output")
@@ -25,9 +22,6 @@ func init() {
 	rootCommand.PersistentFlags().StringVarP(&colorize, "colorize", "z", "true", "colorize output (boolean or \"force\")")
 	rootCommand.PersistentFlags().BoolVarP(&strict, "strict", "y", false, "strict output (for \"yaml\" format only)")
 	rootCommand.PersistentFlags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
-	rootCommand.PersistentFlags().StringVarP(&problemsFormat, "problems-format", "m", "", "problems format (\"yaml\", \"json\", \"cjson\", \"xml\", \"cbor\", \"messagepack\", or \"go\")")
-	rootCommand.PersistentFlags().StringSliceVarP(&quirks, "quirk", "x", nil, "parser quirk")
-	rootCommand.PersistentFlags().StringToStringVarP(&urlMappings, "map-url", "u", nil, "map a URL (format is from=to)")
 }
 
 var rootCommand = &cobra.Command{
@@ -51,6 +45,5 @@ var rootCommand = &cobra.Command{
 }
 
 func Execute() {
-	err := rootCommand.Execute()
-	util.FailOnError(err)
+	util.FailOnError(rootCommand.Execute())
 }
