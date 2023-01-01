@@ -4,8 +4,9 @@ set -e
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 . "$HERE/_env"
 
-"$HERE/build-csar"
+"$HERE/build-csars"
 
 . "$HERE/_start-http-server"
 
+puccini-tosca compile "http://localhost:8000/cloud.tar.gz" "$@"
 puccini-tosca compile "http://localhost:8000/cloud.csar" "$@"

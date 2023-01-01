@@ -4,9 +4,14 @@ set -e
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 . "$HERE/_env"
 
-"$HERE/build-csar"
+"$HERE/build-csars"
 
-puccini-tosca compile "$ROOT/dist/cloud.csar" "$@"
-puccini-tosca compile "$ROOT/dist/cloud.csar" --template="other 1.yaml" "$@"
-puccini-tosca compile "$ROOT/dist/cloud.csar" --template=2 "$@"
-puccini-tosca meta "$ROOT/dist/cloud.csar"
+function t () {
+    puccini-tosca compile "$ROOT/dist/cloud.$1"
+    puccini-tosca compile "$ROOT/dist/cloud.$1" --template='other 1.yaml'
+    puccini-tosca compile "$ROOT/dist/cloud.$1" --template=2
+    puccini-csar meta "$ROOT/dist/cloud.$1"
+}
+
+t tar.gz
+t csar

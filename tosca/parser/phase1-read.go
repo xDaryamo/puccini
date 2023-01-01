@@ -32,7 +32,7 @@ func (self *ServiceContext) ReadRoot(url urlpkg.URL, origins []urlpkg.URL, templ
 	return ok
 }
 
-func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Context, container *File, nameTransformer tosca.NameTransformer, readerName string, template string) (*File, bool) {
+func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Context, container *File, nameTransformer tosca.NameTransformer, readerName string, serviceTemplateName string) (*File, bool) {
 	defer self.readWork.Done()
 	if promise != nil {
 		// For the goroutines waiting for our cached entityPtr
@@ -41,10 +41,10 @@ func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Conte
 
 	logRead.Infof("%s: %s", readerName, toscaContext.URL.Key())
 
-	switch toscaContext.URL.Format() {
-	case "csar", "zip":
+	// TODO: allow override of CSAR format
+	if format := toscaContext.URL.Format(); csar.IsValidFormat(format) {
 		var err error
-		if toscaContext.URL, err = csar.GetURL(toscaContext.URL, template); err != nil {
+		if toscaContext.URL, err = csar.GetServiceTemplateURL(toscaContext.URL, format, serviceTemplateName); err != nil {
 			toscaContext.ReportError(err)
 			file := NewFileNoEntity(toscaContext, container, nameTransformer)
 			self.AddFile(file)

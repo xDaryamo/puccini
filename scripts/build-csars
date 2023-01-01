@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
+. "$HERE/_env"
+
+"$HERE/build"
+
+mkdir --parents "$ROOT/dist"
+
+puccini-csar create "$ROOT/dist/cloud.tar.gz" "$ROOT/examples/csar" \
+    --entry-definitions=main.yaml \
+    --other-definitions='other 1.yaml' \
+    --other-definitions='other 2.yaml' \
+    "$@"
+
+puccini-csar create "$ROOT/dist/cloud.csar" "$ROOT/examples/csar" \
+    --entry-definitions=main.yaml \
+    --other-definitions='other 1.yaml' \
+    --other-definitions='other 2.yaml' \
+    "$@"

@@ -8,6 +8,9 @@ m 'test...'
 "$HERE/test"
 m 'build-library...'
 "$HERE/build-library"
+
+export NOBUILD=true
+
 m 'test-js...'
 "$HERE/test-js"
 m 'test-https...'
@@ -16,10 +19,10 @@ m 'test-csar...'
 "$HERE/test-csar"
 m 'test-csar-http...'
 "$HERE/test-csar-http"
-m 'test-zip...'
-"$HERE/test-zip"
-m 'test-zip-http...'
-"$HERE/test-zip-http"
+m 'test-archive-url...'
+"$HERE/test-archive-url"
+m 'test-archive-url-http...'
+"$HERE/test-archive-url-http"
 m 'test-git...'
 "$HERE/test-git"
 m 'test-wasm...'

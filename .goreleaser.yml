@@ -33,6 +33,22 @@ builds:
   - -X 'github.com/tliron/kutil/version.GitRevision={{.Env.REVISION}}'
   - -X 'github.com/tliron/kutil/version.Timestamp={{.Env.TIMESTAMP}}'
 
+- id: puccini-csar
+  main: ./puccini-csar
+  binary: puccini-csar
+  goarch:
+  - amd64
+  - wasm
+  goos:
+  - linux
+  - darwin
+  - windows
+  - js
+  ldflags:
+  - -X 'github.com/tliron/kutil/version.GitVersion={{.Env.VERSION}}'
+  - -X 'github.com/tliron/kutil/version.GitRevision={{.Env.REVISION}}'
+  - -X 'github.com/tliron/kutil/version.Timestamp={{.Env.TIMESTAMP}}'
+
 nfpms:
 
 - formats:
@@ -42,9 +58,6 @@ nfpms:
   maintainer: Tal Liron <tal.liron@gmail.com>
   description: Deliberately stateless cloud topology management and deployment tools based on TOSCA.
   license: Apache 2.0
-  contents:
-  - src: puccini-csar
-    dst: /usr/local/bin/puccini-csar
 
 archives:
 
@@ -52,7 +65,6 @@ archives:
   - README.md
   - LICENSE
   - NOTICE
-  - puccini-csar
   - assets/tosca/**/*
   - examples/**/*
 

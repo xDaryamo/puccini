@@ -5,8 +5,13 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"os"
 	"strings"
+
+	urlpkg "github.com/tliron/kutil/url"
 )
+
+const TOSCA_META_PATH = "TOSCA-Metadata/TOSCA.meta"
 
 // Version 1.1 adds "Other-Definitions"
 var MetaVersions = []Version{{1, 0}, {1, 1}}
@@ -31,6 +36,28 @@ type Meta struct {
 	OtherDefinitions []string `yaml:"otherDefinitions" json:"otherDefinitions"`
 }
 
+func NewMeta() *Meta {
+	return &Meta{
+		Version:     &Version{1, 1},
+		CsarVersion: &Version{1, 1},
+		CreatedBy:   "puccini-tosca",
+	}
+}
+
+func NewMetaFor(csarUrl urlpkg.URL, format string) (*Meta, error) {
+	if format == "" {
+		format = csarUrl.Format()
+	}
+
+	if path, err := GetRootPath(csarUrl, format); err == nil {
+		meta := NewMeta()
+		meta.EntryDefinitions = path
+		return meta, nil
+	} else {
+		return nil, err
+	}
+}
+
 func ReadMeta(reader io.Reader) (*Meta, error) {
 	map_, err := parseMeta(reader)
 	if err != nil {
@@ -41,7 +68,7 @@ func ReadMeta(reader io.Reader) (*Meta, error) {
 		return nil, err
 	}
 
-	self := new(Meta)
+	var self Meta
 
 	for name, value := range map_ {
 		var err error
@@ -70,58 +97,109 @@ func ReadMeta(reader io.Reader) (*Meta, error) {
 
 		case "Other-Definitions":
 			// Added in TOSCA-Meta-File-Version 1.1
-			if self.OtherDefinitions, err = parseStringList(value); err != nil {
+			if self.OtherDefinitions, err = ParseStringList(value); err != nil {
 				return nil, err
 			}
 		}
 	}
 
-	return self, nil
+	return &self, nil
 }
 
-func parseMeta(reader io.Reader) (map[string]string, error) {
-	map_ := make(map[string]string)
-
-	scanner := bufio.NewScanner(reader)
-
-	var lineNumber uint
-	var current string
-	for scanner.Scan() {
-		line := scanner.Text()
-		lineNumber += 1
-
-		// Empty lines reset current name
-		if line == "" {
-			current = ""
-			continue
-		}
-
-		// Lines beginning with space are appended to current name
-		if strings.HasPrefix(line, " ") && (current != "") {
-			map_[current] += line[1:]
-			continue
-		}
-
-		split := strings.Split(line, ": ")
-		if len(split) != 2 {
-			return nil, fmt.Errorf("malformed line %d in TOSCA.meta: %s", lineNumber, line)
-		}
-
-		// New current name
-		current = split[0]
-
-		// Append to current
-		map_[current] += split[1]
-	}
-
-	if err := scanner.Err(); err != nil {
+func ReadMetaFromPath(path string) (*Meta, error) {
+	if file, err := os.Open(path); err == nil {
+		return ReadMeta(file)
+	} else {
 		return nil, err
 	}
-
-	return map_, nil
 }
 
-func parseStringList(value string) ([]string, error) {
+func ReadMetaFromURL(csarUrl urlpkg.URL, format string) (*Meta, error) {
+	if format == "" {
+		format = csarUrl.Format()
+	}
+
+	if url, err := NewURL(csarUrl, format, TOSCA_META_PATH); err == nil {
+		if reader, err := url.Open(); err == nil {
+			defer reader.Close()
+			return ReadMeta(reader)
+		} else {
+			return nil, err
+		}
+	} else {
+		return nil, err
+	}
+}
+
+// fmt.Stringer interface
+func (self *Meta) String() string {
+	var builder strings.Builder
+	if err := self.Write(&builder); err == nil {
+		return builder.String()
+	} else {
+		return ""
+	}
+}
+
+func (self *Meta) ToBytes() ([]byte, error) {
+	var buffer bytes.Buffer
+	if err := self.Write(&buffer); err == nil {
+		return buffer.Bytes(), nil
+	} else {
+		return nil, err
+	}
+}
+
+func (self *Meta) Write(writer io.Writer) error {
+	var err error
+	if self.Version != nil {
+		err = self.WriteField(writer, "TOSCA-Meta-File-Version", self.Version.String())
+		if err != nil {
+			return err
+		}
+	}
+	if self.CsarVersion != nil {
+		err = self.WriteField(writer, "CSAR-Version", self.CsarVersion.String())
+		if err != nil {
+			return err
+		}
+	}
+	if self.CreatedBy != "" {
+		err = self.WriteField(writer, "Created-By", self.CreatedBy)
+		if err != nil {
+			return err
+		}
+	}
+	if self.EntryDefinitions != "" {
+		err = self.WriteField(writer, "Entry-Definitions", self.EntryDefinitions)
+		if err != nil {
+			return err
+		}
+	}
+	if len(self.OtherDefinitions) > 0 {
+		err = self.WriteField(writer, "Other-Definitions", JoinStringList(self.OtherDefinitions))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (self *Meta) WriteField(writer io.Writer, name string, value string) error {
+	_, err := io.WriteString(writer, fmt.Sprintf("%s: %s\n", name, value))
+	return err
+}
+
+func JoinStringList(values []string) string {
+	values_ := make([]string, len(values))
+	for index, value := range values {
+		value = strings.ReplaceAll(value, " ", "\\ ")
+		values_[index] = strings.ReplaceAll(value, "\"", "\\\"")
+	}
+	return strings.Join(values_, " ")
+}
+
+func ParseStringList(value string) ([]string, error) {
 	// Note: The TOSCA specification does not mention the possibility of escaping quotation marks,
 	// but it should obviously be supported. So we are reserving backslashes for escaping.
 	var entries []string
@@ -194,6 +272,50 @@ func parseStringList(value string) ([]string, error) {
 	}
 
 	return entries, nil
+}
+
+// Utils
+
+func parseMeta(reader io.Reader) (map[string]string, error) {
+	map_ := make(map[string]string)
+
+	scanner := bufio.NewScanner(reader)
+
+	var lineNumber uint
+	var current string
+	for scanner.Scan() {
+		line := scanner.Text()
+		lineNumber += 1
+
+		// Empty lines reset current name
+		if line == "" {
+			current = ""
+			continue
+		}
+
+		// Lines beginning with space are appended to current name
+		if strings.HasPrefix(line, " ") && (current != "") {
+			map_[current] += line[1:]
+			continue
+		}
+
+		split := strings.Split(line, ": ")
+		if len(split) != 2 {
+			return nil, fmt.Errorf("malformed line %d in TOSCA.meta: %s", lineNumber, line)
+		}
+
+		// New current name
+		current = split[0]
+
+		// Append to current
+		map_[current] += split[1]
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return map_, nil
 }
 
 func requireMeta(data map[string]string, names ...string) error {

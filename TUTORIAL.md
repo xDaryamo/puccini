@@ -5,11 +5,9 @@ Puccini Tutorial
 
 The distribution comes with three executables:
 
-* `puccini-tosca`: compiles TOSCA into a Clout
-* `puccini-clout`: processes a Clout, e.g. by running scriptlets on it
-* `puccini-csar`: packs TOSCA sources and artifacts into a CSAR
-
-(Note that the first two are self-contained executables, the last is a bash script.)
+* [`puccini-tosca`](puccini-tosca/): compiles TOSCA into a Clout
+* [`puccini-clout`](puccini-clout/): processes a Clout, e.g. by running scriptlets on it
+* [`puccini-csar`](puccini-csar/): packs TOSCA sources and artifacts into a CSAR
 
 
 Basic Usage
@@ -42,7 +40,8 @@ URL is not on the local filesystem.
 
 The URL system is quite powerful and even supports access to git repositories (GitOps!).
 Any valid git repository URL can follow the "git:" prefix, then follow with a "!" and the
-path within the repository. Also note that in bash you need to escape the "!" character:
+path within the repository. Also note that in bash you need to escape the "!" character
+or wrap it in single quotes:
 
     puccini-tosca compile 'git:https://github.com/tliron/puccini.git!examples/openstack/hello-world.yaml'
 
@@ -54,51 +53,20 @@ Be aware that a stdin source does not have a path and thus cannot support relati
 URLs.
 
 For the above examples we referred to a single, root YAML file. However, Puccini can also
-compile a CSAR package (and again, it can be a local file or at a URL). Let's create a
-local CSAR and then compile it:
+compile from a CSAR package and, again, the CSAR can be a local file or at a URL. Let's create
+a local CSAR and then compile it:
 
-    puccini-csar openstack.csar examples/openstack
-    puccini-tosca compile openstack.csar
+    puccini-csar create openstack.tar.gz examples/openstack
+    puccini-tosca compile openstack.tar.gz
 
 The `puccini-csar` tool will archive the entire directory and automatically create a
 "TOSCA-Metadata" section for us, resulting in a compliant CSAR file.
 
-For a CSAR the relative URLs refer to the internal structure of the archive (note that
-Puccini does *not* unpack the archive into individual files, but rather treats the
-entire archive as a self-contained filesystem). So, once again, the same exact OpenStack
-example works whether it's accessed locally, at a URL, or from within a CSAR.
-
-
-Working with CSARs
-------------------
-
-The CSAR format supports "Other-Definitions" metadata to specify additional service
-templates beyond than the root "Entry-Definitions". To build the example:
-
-    ENTRY_DEFINITIONS=main.yaml \
-    OTHER_DEFINITIONS='"other 1.yaml" "other 2.yaml"' \
-    puccini-csar cloud.csar examples/csar
-
-You can use the `meta` command to validate and extract the CSAR metadata:
-
-    puccini-tosca meta cloud.csar
-
-When compiling you can use the `--template` flag to select a non-root service template.
-The flag can accept a valid "Other-Definitions" path, like so:
-
-    puccini-tosca compile cloud.csar --template="other 1.yaml"
-
-It can also accept a number, where "0" would be the root service template, "1"
-would be the first "Other-Definitions", and so on:
-
-    puccini-tosca compile cloud.csar --template=2
-
-Puccini also supports a "zip:" prefix scheme for URLs, allowing you to refer to an
-entry within a zip or CSAR file. Any valid URL can follow the prefix, whether
-it's a local file URL, HTTP, etc. Note that for files it does require absolute file
-system paths. Then follow with a "!" and the path within the zip. Example:
-
-    puccini-tosca compile zip:$PWD/cloud.csar\!main.yaml
+For TOSCA files within the CSAR the relative URLs refer to the internal structure of the
+archive. Note that Puccini does *not* unpack the archive into individual files, but rather
+treats the entire archive as a self-contained filesystem. Thus, because we used relative URLs
+in our TOSCA imports, the same exact OpenStack example works whether it's accessed locally,
+at a URL, or from within a CSAR, and even a CSAR at a URL.
 
 
 Controlling the Output
@@ -298,7 +266,7 @@ the topology:
     xdg-open tosca.html
 
 Note another shortcut for `puccini-tosca compile`: you can use the `--exec` flag to
-execute scriptlets during compilation, thus skipping the Clout intermediary:
+execute scriptlets right after compilation, thus skipping the Clout intermediary:
 
     puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml --exec=assets/tosca/profiles/common/1.0/js/visualize.js
 
@@ -310,27 +278,75 @@ Why Scriptlets?
 
 Strictly speaking scriptlets are not a necessary feature. For example, we could
 have handled the TOSCA functions and constraints via a separate tool, which would
-have scanned the Clout for those function call stubs and implemented them as
-necessary. Similarly, the `visualize.js` scriptlet we used above could have been
-implemented as an independent Clout processing tool.
+have contained implementations for all those those function call stubs. Similarly,
+the `visualize.js` scriptlet we used above could have been implemented as an
+independent Clout processing tool.
 
 However, such external solutions come with a disadvantage: the Clout would have
 limited portability because it would need to be distributed with that tool in order
 to be fully functional. In a heterogeneous cloud orchestration environment this could
-be burdensome.
+be burdensome. It's a security risk, too, as every additional binary increases the
+attack surface.
 
-Embedding all necessary code within the Clout makes it much more portable. Indeed,
-when formatted as YAML (or JSON or XML) the entire self-contained Clout is nothing
-more than a string, which is eminently transmittable and storable.
+Embedding the required code within the Clout makes it more portable and secure.
+Indeed, when formatted as YAML (or JSON or XML) the entire self-contained Clout is
+nothing more than a string, which is eminently transmittable and storable.
 
 Of course you still need a tool to execute those JavaScript scriptlets, but it is
-the same tool, `puccini-clout`, for all Clouts, whatever version of TOSCA they come
-from. Indeed, the Clout can contain custom vertexes, edges, and scriptlets, including
-those that did not originate in a TOSCA service template. They do not even have to
-adhere to the TOSCA structure.
+the same tool, `puccini-clout`, for all Clouts and all scriptlets. Indeed, the Clout
+can contain custom vertexes, edges, and scriptlets, including those that did not
+originate in a TOSCA service template. They do not even have to adhere to the TOSCA
+structure.
 
 For examples of how to create your own custom functions, constraints, and other
 scriptlets for TOSCA, see [here](examples/javascript/).
+
+
+More on CSARs
+-------------
+
+The [`tosca-csar`](puccini-csar/) tool supports tarball CSARs (`.tar.gz` or `.tar`) as well
+as zip (`.zip` or the `.csar` alias). Note that tarballs have the advantage that they can be
+streamed (e.g. from a HTTP URL) whereas using the zip format would require `puccini-tosca`
+to first download the entire archive to the system's temporary directory. Both will work,
+but tarballs are far more efficient.
+
+Try zip via the `.csar` alias:
+
+    puccini-csar create openstack.csar examples/openstack
+    puccini-tosca compile openstack.csar
+
+The CSAR format supports "Other-Definitions" metadata to specify additional service
+templates beyond than the root "Entry-Definitions". To build the example:
+
+    puccini-csar create cloud.tar.gz examples/csar \
+        --entry=definitions=main.yaml \
+        --other-definitions='other 1.yaml' \
+        --other-definitions='other 2.yaml'
+
+When compiling you can use the `--template` flag to select a non-default service
+template. The flag can accept a valid "Other-Definitions" path, like so:
+
+    puccini-tosca compile cloud.tar.gz --template="other 1.yaml"
+
+It can also accept a number, where "0" would be the default service template, "1"
+would be the first "Other-Definitions", and so on:
+
+    puccini-tosca compile cloud.tar.gz --template=2
+
+Puccini also supports "tar:" and "zip:" prefix schemes for URLs, allowing you to refer
+to an entry within any archive file, CSAR or otherwise. Any valid URL can follow the
+prefix, whether it's a local file URL, HTTP, etc. Note that for files it does require
+absolute file system paths. Then follow with a "!" and the path within the archive.
+Example:
+
+    puccini-tosca compile "tar:$PWD/cloud.tar.gz\!main.yaml"
+
+(We are using a backslash to escape the "!" for bash.)
+
+Also useful is the `meta` command to validate and extract the CSAR metadata:
+
+    puccini-csar meta cloud.tar.gz
 
 
 Next Steps

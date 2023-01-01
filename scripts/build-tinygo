@@ -21,5 +21,6 @@ function build () {
 
 build puccini-tosca
 build puccini-clout
+build puccini-csar
 
 rsync "$ROOT/puccini-csar" "$GOPATH/bin/"

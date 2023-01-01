@@ -86,7 +86,8 @@ The TOSCA source can be accessed by URL, on the local file systems or via HTTP/H
 individual files as well as packaged in
 [CSAR files](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html#_Toc302251718).
 
-Puccini also comes with a simple CSAR creation tool, **puccini-csar**.
+Puccini also comes with a simple CSAR creation tool that can be used independently of the
+other tools, [`puccini-csar`](puccini-csar/).
 
 ### Design Principles
 

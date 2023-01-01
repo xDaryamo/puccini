@@ -11,8 +11,8 @@ import (
 //
 
 type Version struct {
-	Major uint8
-	Minor uint8
+	Major uint8 `json:"major" yaml:"major"`
+	Minor uint8 `json:"minor" yaml:"minor"`
 }
 
 func ParseVersion(value string) (*Version, error) {

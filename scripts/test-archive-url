@@ -4,6 +4,7 @@ set -e
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 . "$HERE/_env"
 
-"$HERE/build-csar"
+"$HERE/build-csars"
 
+puccini-tosca compile "tar:$ROOT/dist/cloud.tar.gz!main.yaml" "$@"
 puccini-tosca compile "zip:$ROOT/dist/cloud.csar!main.yaml" "$@"

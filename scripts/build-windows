@@ -22,3 +22,4 @@ function build () {
 
 build puccini-tosca
 build puccini-clout
+build puccini-csar
