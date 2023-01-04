@@ -27,7 +27,7 @@ type PropertyMapping struct {
 
 	InputDefinition *ParameterDefinition `traverse:"ignore" json:"-" yaml:"-"`
 	NodeTemplate    *NodeTemplate        `traverse:"ignore" json:"-" yaml:"-"` // deprecated in TOSCA 1.3
-	Property        *Value               `traverse:"ignore" json:"-" yaml:"-"` // deprecated in TOSCA 1.3
+	Value           *Value               `traverse:"ignore" json:"-" yaml:"-"` // deprecated in TOSCA 1.3
 }
 
 func NewPropertyMapping(context *tosca.Context) *PropertyMapping {
@@ -60,7 +60,7 @@ func ReadPropertyMapping(context *tosca.Context) tosca.EntityPtr {
 
 	if !read {
 		// Fallback to constant value (deprecated in TOSCA 1.3)
-		self.Property = ReadValue(context).(*Value)
+		self.Value = ReadValue(context).(*Value)
 
 		// self.Context.ReportValueMalformed("property mapping", "must be list of 1 or 2 strings")
 	}
@@ -93,7 +93,7 @@ func (self *PropertyMapping) Render(inputDefinitions ParameterDefinitions) {
 
 			name := *self.PropertyName
 			var ok bool
-			if self.Property, ok = self.NodeTemplate.Properties[name]; !ok {
+			if self.Value, ok = self.NodeTemplate.Properties[name]; !ok {
 				self.Context.ListChild(1, name).ReportReferenceNotFound("property", self.NodeTemplate)
 			}
 		} else {

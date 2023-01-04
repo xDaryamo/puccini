@@ -4,7 +4,7 @@ python3 -m http.server 8000 &
 HTTP_SERVER_PID=$!
 popd > /dev/null
 
-sleep 1
+sleep 2
 if ! kill -0 "$HTTP_SERVER_PID" 2> /dev/null; then
 	m 'Cannot start web server' "$RED"
 	exit 1

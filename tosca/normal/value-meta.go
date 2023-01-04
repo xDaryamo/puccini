@@ -7,6 +7,8 @@ import "github.com/tliron/puccini/tosca"
 //
 
 type ValueMeta struct {
+	// Element, Key+Value, and Fields cannot be set together
+
 	Type             string            `json:"type,omitempty" yaml:"type,omitempty"`
 	Element          *ValueMeta        `json:"element,omitempty" yaml:"element,omitempty"`
 	Key              *ValueMeta        `json:"key,omitempty" yaml:"key,omitempty"`

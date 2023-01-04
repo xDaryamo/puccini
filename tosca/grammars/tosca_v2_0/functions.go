@@ -29,15 +29,16 @@ import (
 const functionPathPrefix = "/tosca/implicit/2.0/js/functions/"
 
 var FunctionScriptlets = map[string]string{
-	tosca.METADATA_FUNCTION_PREFIX + "concat":               profile.Profile[functionPathPrefix+"concat.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "join":                 profile.Profile[functionPathPrefix+"join.js"], // introduced in TOSCA 1.2
-	tosca.METADATA_FUNCTION_PREFIX + "token":                profile.Profile[functionPathPrefix+"token.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "get_input":            profile.Profile[functionPathPrefix+"get_input.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "get_property":         profile.Profile[functionPathPrefix+"get_property.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "get_attribute":        profile.Profile[functionPathPrefix+"get_attribute.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "get_operation_output": profile.Profile[functionPathPrefix+"get_operation_output.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "get_nodes_of_type":    profile.Profile[functionPathPrefix+"get_nodes_of_type.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "get_artifact":         profile.Profile[functionPathPrefix+"get_artifact.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "concat":                profile.Profile[functionPathPrefix+"concat.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "join":                  profile.Profile[functionPathPrefix+"join.js"], // introduced in TOSCA 1.2
+	tosca.METADATA_FUNCTION_PREFIX + "token":                 profile.Profile[functionPathPrefix+"token.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "get_input":             profile.Profile[functionPathPrefix+"get_input.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "get_property":          profile.Profile[functionPathPrefix+"get_property.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "get_attribute":         profile.Profile[functionPathPrefix+"get_attribute.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "get_operation_output":  profile.Profile[functionPathPrefix+"get_operation_output.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "get_nodes_of_type":     profile.Profile[functionPathPrefix+"get_nodes_of_type.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "get_artifact":          profile.Profile[functionPathPrefix+"get_artifact.js"],
+	tosca.METADATA_FUNCTION_PREFIX + "_get_modelable_entity": profile.Profile[functionPathPrefix+"_get_modelable_entity.js"],
 }
 
 func ParseFunctionCall(context *tosca.Context) bool {

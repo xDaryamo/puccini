@@ -355,6 +355,15 @@ func (self *Context) ReadStringListFixed(length int) *[]string {
 	return strings
 }
 
+func (self *Context) ReadStringListMinLength(length int) *[]string {
+	strings := self.ReadStringList()
+	if (strings != nil) && (len(*strings) < length) {
+		self.ReportValueWrongLength("list", length)
+		return nil
+	}
+	return strings
+}
+
 func (self *Context) ReadStringMap() *map[string]any {
 	if self.ValidateType(ard.TypeMap) {
 		map_ := make(map[string]any)

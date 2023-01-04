@@ -136,8 +136,15 @@ exports.traverseInterfaceValues = function(traverser, path, interfaces, site, so
 		let interface_ = interfaces[interfaceName];
 		let interfacePath = copyAndPush(path, interfaceName)
 		exports.traverseObjectValues(traverser, copyAndPush(interfacePath, 'inputs'), interface_.inputs, site, source, target);
-		for (let operationName in interface_.operations)
-			exports.traverseObjectValues(traverser, copyAndPush(interfacePath, 'operations', operationName), interface_.operations[operationName].inputs, site, source, target);
+		for (let operationName in interface_.operations) {
+			let operationPath = copyAndPush(interfacePath, 'operations', operationName);
+			exports.traverseObjectValues(traverser, operationPath, interface_.operations[operationName].inputs, site, source, target);
+			exports.traverseObjectValues(traverser, operationPath, interface_.operations[operationName].outputs, site, source, target);
+		}
+		for (let notificationName in interface_.notifications) {
+			let notificationPath = copyAndPush(interfacePath, 'notifications', notificationName);
+			exports.traverseObjectValues(traverser, notificationPath, interface_.notifications[notificationName].outputs, site, source, target);
+		}
 	}
 };
 

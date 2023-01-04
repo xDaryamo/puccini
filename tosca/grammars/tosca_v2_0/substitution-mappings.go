@@ -107,15 +107,15 @@ func (self *SubstitutionMappings) Render(inputDefinitions ParameterDefinitions) 
 						self.Context.ReportIncompatibleType(definition.DataType, mapping.InputDefinition.DataType)
 					}
 				}
-			} else if mapping.Property != nil {
+			} else if mapping.Value != nil {
 				// Property mapping (deprecated in TOSCA 1.3)
 				if definition.DataType != nil {
-					if mapping.Property.DataType != nil {
-						if !self.Context.Hierarchy.IsCompatible(definition.DataType, mapping.Property.DataType) {
-							self.Context.ReportIncompatibleType(definition.DataType, mapping.Property.DataType)
+					if mapping.Value.DataType != nil {
+						if !self.Context.Hierarchy.IsCompatible(definition.DataType, mapping.Value.DataType) {
+							self.Context.ReportIncompatibleType(definition.DataType, mapping.Value.DataType)
 						}
 					} else {
-						mapping.Property.RenderProperty(definition.DataType, definition)
+						mapping.Value.RenderProperty(definition.DataType, definition)
 					}
 				}
 			}
@@ -172,7 +172,7 @@ func (self *SubstitutionMappings) Normalize(normalServiceTemplate *normal.Servic
 	for _, mapping := range self.CapabilityMappings {
 		if (mapping.NodeTemplate != nil) && (mapping.CapabilityName != nil) {
 			if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-				normalSubstitution.CapabilityMappings[mapping.Name] = normalNodeTemplate.NewMapping("capability", *mapping.CapabilityName)
+				normalSubstitution.CapabilityPointers[mapping.Name] = normalNodeTemplate.NewPointer(*mapping.CapabilityName)
 			}
 		}
 	}
@@ -180,7 +180,7 @@ func (self *SubstitutionMappings) Normalize(normalServiceTemplate *normal.Servic
 	for _, mapping := range self.RequirementMappings {
 		if (mapping.NodeTemplate != nil) && (mapping.RequirementName != nil) {
 			if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-				normalSubstitution.RequirementMappings[mapping.Name] = normalNodeTemplate.NewMapping("requirement", *mapping.RequirementName)
+				normalSubstitution.RequirementPointer[mapping.Name] = normalNodeTemplate.NewPointer(*mapping.RequirementName)
 			}
 		}
 	}
@@ -189,20 +189,20 @@ func (self *SubstitutionMappings) Normalize(normalServiceTemplate *normal.Servic
 		if mapping.NodeTemplate != nil {
 			if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
 				if mapping.PropertyName != nil {
-					normalSubstitution.PropertyMappings[mapping.Name] = normalNodeTemplate.NewMapping("property", *mapping.PropertyName)
+					normalSubstitution.PropertyPointers[mapping.Name] = normalNodeTemplate.NewPointer(*mapping.PropertyName)
 				}
 			}
-		} else if mapping.Property != nil {
-			normalSubstitution.PropertyMappings[mapping.Name] = normal.NewMappingValue("property", mapping.Property.Normalize())
+		} else if mapping.Value != nil {
+			normalSubstitution.PropertyValues[mapping.Name] = mapping.Value.Normalize()
 		} else if mapping.InputName != nil {
-			normalSubstitution.PropertyMappings[mapping.Name] = normal.NewMapping("input", *mapping.InputName)
+			normalSubstitution.InputPointers[mapping.Name] = normal.NewPointer(*mapping.InputName)
 		}
 	}
 
 	for _, mapping := range self.AttributeMappings {
 		if (mapping.NodeTemplate != nil) && (mapping.AttributeName != nil) {
 			if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-				normalSubstitution.AttributeMappings[mapping.Name] = normalNodeTemplate.NewMapping("attribute", *mapping.AttributeName)
+				normalSubstitution.AttributePointers[mapping.Name] = normalNodeTemplate.NewPointer(*mapping.AttributeName)
 			}
 		}
 	}
@@ -210,7 +210,7 @@ func (self *SubstitutionMappings) Normalize(normalServiceTemplate *normal.Servic
 	for _, mapping := range self.InterfaceMappings {
 		if (mapping.NodeTemplate != nil) && (mapping.InterfaceName != nil) {
 			if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[mapping.NodeTemplate.Name]; ok {
-				normalSubstitution.InterfaceMappings[mapping.Name] = normalNodeTemplate.NewMapping("interface", *mapping.InterfaceName)
+				normalSubstitution.InterfacePointers[mapping.Name] = normalNodeTemplate.NewPointer(*mapping.InterfaceName)
 			}
 		}
 	}

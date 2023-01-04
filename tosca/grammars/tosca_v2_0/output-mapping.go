@@ -12,6 +12,8 @@ import (
 //
 // Attaches to notifications and operations
 //
+// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.15
+//
 
 type OutputMapping struct {
 	*Entity `name:"output mapping"`
@@ -21,8 +23,9 @@ type OutputMapping struct {
 	// If it's "SELF" it could be a node template reference *or* a relationship
 	// (but not a group, because a group doesn't have attributes)
 
-	EntityName    *string
-	AttributeName *string
+	EntityName     *string
+	CapabilityName *string
+	AttributePath  []string
 
 	NodeTemplate *NodeTemplate           `traverse:"ignore" json:"-" yaml:"-"`
 	Relationship *RelationshipAssignment `traverse:"ignore" json:"-" yaml:"-"`
@@ -39,9 +42,9 @@ func NewOutputMapping(context *tosca.Context) *OutputMapping {
 func ReadOutputMapping(context *tosca.Context) tosca.EntityPtr {
 	self := NewOutputMapping(context)
 
-	if strings := context.ReadStringListFixed(2); strings != nil {
+	if strings := context.ReadStringListMinLength(2); strings != nil {
 		self.EntityName = &(*strings)[0]
-		self.AttributeName = &(*strings)[1]
+		self.AttributePath = (*strings)[1:]
 	}
 
 	return self
@@ -55,61 +58,48 @@ func (self *OutputMapping) GetKey() string {
 func (self *OutputMapping) RenderForNodeTemplate(nodeTemplate *NodeTemplate) {
 	logRender.Debugf("output mapping: %s", self.Name)
 
-	if (self.EntityName == nil) || (self.AttributeName == nil) {
+	if (self.EntityName == nil) || (len(self.AttributePath) == 0) {
 		return
 	}
 
 	entityName := *self.EntityName
-	if entityName == "SELF" {
+	switch entityName {
+	case "SELF":
 		self.setNodeTemplate(nodeTemplate)
-	} else {
-		var nodeTemplateType *NodeTemplate
-		if nodeTemplate, ok := self.Context.Namespace.LookupForType(entityName, reflect.TypeOf(nodeTemplateType)); ok {
-			self.setNodeTemplate(nodeTemplate.(*NodeTemplate))
-		} else {
-			self.Context.ListChild(0, entityName).ReportUnknown("node template")
-			return
-		}
+	case "SOURCE", "TARGET":
+		self.Context.ListChild(0, entityName).ReportValueInvalid("modelable entity name", "cannot be used in node templates")
+	default:
+		self.setNodeTemplateByName(entityName)
 	}
 }
 
 func (self *OutputMapping) RenderForRelationship(relationship *RelationshipAssignment) {
 	logRender.Debugf("output mapping: %s", self.Name)
 
-	if (self.EntityName == nil) || (self.AttributeName == nil) {
+	if (self.EntityName == nil) || (len(self.AttributePath) == 0) {
 		return
 	}
 
-	entityName := *self.EntityName
-	if entityName == "SELF" {
+	switch entityName := *self.EntityName; entityName {
+	case "SELF", "SOURCE", "TARGET":
 		self.setRelationship(relationship)
-	} else {
-		var nodeTemplateType *NodeTemplate
-		if nodeTemplate, ok := self.Context.Namespace.LookupForType(entityName, reflect.TypeOf(nodeTemplateType)); ok {
-			self.setNodeTemplate(nodeTemplate.(*NodeTemplate))
-		} else {
-			self.Context.ListChild(0, entityName).ReportUnknown("node template")
-		}
+	default:
+		self.setNodeTemplateByName(entityName)
 	}
 }
 
 func (self *OutputMapping) RenderForGroup() {
 	logRender.Debugf("output mapping: %s", self.Name)
 
-	if (self.EntityName == nil) || (self.AttributeName == nil) {
+	if (self.EntityName == nil) || (len(self.AttributePath) == 0) {
 		return
 	}
 
-	entityName := *self.EntityName
-	if entityName == "SELF" {
+	switch entityName := *self.EntityName; entityName {
+	case "SELF", "SOURCE", "TARGET":
 		self.Context.ListChild(0, entityName).ReportValueInvalid("modelable entity name", "cannot be used in groups")
-	} else {
-		var nodeTemplateType *NodeTemplate
-		if nodeTemplate, ok := self.Context.Namespace.LookupForType(entityName, reflect.TypeOf(nodeTemplateType)); ok {
-			self.setNodeTemplate(nodeTemplate.(*NodeTemplate))
-		} else {
-			self.Context.ListChild(0, entityName).ReportUnknown("node template")
-		}
+	default:
+		self.setNodeTemplateByName(entityName)
 	}
 }
 
@@ -117,9 +107,19 @@ func (self *OutputMapping) setNodeTemplate(nodeTemplate *NodeTemplate) {
 	self.NodeTemplate = nodeTemplate
 
 	// Attributes should already have been rendered
-	attributeName := *self.AttributeName
+	attributeName := self.AttributePath[0]
 	if _, ok := self.NodeTemplate.Attributes[attributeName]; !ok {
 		self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", self.NodeTemplate)
+	}
+}
+
+func (self *OutputMapping) setNodeTemplateByName(nodeTemplateName string) {
+	var nodeTemplateType *NodeTemplate
+	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
+		self.setNodeTemplate(nodeTemplate.(*NodeTemplate))
+	} else {
+		self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")
+		return
 	}
 }
 
@@ -127,39 +127,39 @@ func (self *OutputMapping) setRelationship(relationship *RelationshipAssignment)
 	self.Relationship = relationship
 
 	// Attributes should already have been rendered
-	attributeName := *self.AttributeName
+	attributeName := self.AttributePath[0]
 	if _, ok := self.Relationship.Attributes[attributeName]; !ok {
 		self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", self.Relationship)
 	}
 }
 
-func (self *OutputMapping) NormalizeForNodeTemplate(normalServiceTemplate *normal.ServiceTemplate, normalOutputs normal.Mappings) {
-	if (self.NodeTemplate == nil) || (self.AttributeName == nil) {
+func (self *OutputMapping) Normalize(normalOutputs normal.Values) {
+	if (self.EntityName == nil) || (len(self.AttributePath) == 0) {
 		return
 	}
 
-	if normalTargetNodeTemplate, ok := normalServiceTemplate.NodeTemplates[self.NodeTemplate.Name]; ok {
-		normalOutputs[self.Name] = normalTargetNodeTemplate.NewMapping("attribute", *self.AttributeName)
-	}
-}
+	list := normal.NewList(len(self.AttributePath) + 1)
+	meta := normal.NewValueMeta()
+	meta.Type = "list"
+	meta.Element = normal.NewValueMeta()
+	meta.Element.Type = "string"
+	list.SetMeta(meta)
 
-func (self *OutputMapping) NormalizeForRelationship(normalRelationship *normal.Relationship, normalOutputs normal.Mappings) {
-	if self.AttributeName == nil {
-		return
+	switch entityName := *self.EntityName; entityName {
+	case "SOURCE", "TARGET":
+		// These can only be retrieved via a function call
+		row, column := self.Context.GetLocation()
+		arguments := []any{normal.NewPrimitive(entityName)}
+		list.Set(0, normal.NewFunctionCall(tosca.NewFunctionCall("tosca.function._get_modelable_entity", arguments, self.Context.URL.String(), row, column, self.Context.Path.String())))
+	default:
+		list.Set(0, normal.NewPrimitive(entityName))
 	}
 
-	if (self.EntityName != nil) && (*self.EntityName == "SELF") {
-		// Note: relationships are not identifiable, thus there is no way to translate our
-		// self.Relationship reference to the normal.Relationship equivalent; we must
-		// receive it as an argument
-		normalOutputs[self.Name] = normalRelationship.NewMapping("attribute", *self.AttributeName)
-	} else {
-		self.NormalizeForNodeTemplate(normalRelationship.Requirement.NodeTemplate.ServiceTemplate, normalOutputs)
+	for index, pathElement := range self.AttributePath {
+		list.Set(index+1, normal.NewPrimitive(pathElement))
 	}
-}
 
-func (self *OutputMapping) NormalizeForGroup(normalServiceTemplate *normal.ServiceTemplate, normalOutputs normal.Mappings) {
-	self.NormalizeForNodeTemplate(normalServiceTemplate, normalOutputs)
+	normalOutputs[self.Name] = list
 }
 
 //
@@ -202,20 +202,8 @@ func (self OutputMappings) RenderForGroup() {
 	}
 }
 
-func (self OutputMappings) NormalizeForNodeTemplate(normalServiceTemplate *normal.ServiceTemplate, normalOutputs normal.Mappings) {
+func (self OutputMappings) Normalize(normalOutputs normal.Values) {
 	for _, outputMapping := range self {
-		outputMapping.NormalizeForNodeTemplate(normalServiceTemplate, normalOutputs)
-	}
-}
-
-func (self OutputMappings) NormalizeForRelationship(normalRelationship *normal.Relationship, normalOutputs normal.Mappings) {
-	for _, outputMapping := range self {
-		outputMapping.NormalizeForRelationship(normalRelationship, normalOutputs)
-	}
-}
-
-func (self OutputMappings) NormalizeForGroup(normalServiceTemplate *normal.ServiceTemplate, normalOutputs normal.Mappings) {
-	for _, outputMapping := range self {
-		outputMapping.NormalizeForGroup(normalServiceTemplate, normalOutputs)
+		outputMapping.Normalize(normalOutputs)
 	}
 }

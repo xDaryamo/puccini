@@ -244,32 +244,32 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 		vertex.Properties["inputs"] = inputs
 		vertex.Properties["properties"] = properties
 
-		for name, mapping := range serviceTemplate.Substitution.CapabilityMappings {
-			NewMappingEdge("Capability", name, mapping, vertex, nodeTemplates)
+		for name, pointer := range serviceTemplate.Substitution.InputPointers {
+			inputs[name] = pointer.Target
 		}
 
-		for name, mapping := range serviceTemplate.Substitution.RequirementMappings {
-			NewMappingEdge("Requirement", name, mapping, vertex, nodeTemplates)
+		for name, pointer := range serviceTemplate.Substitution.CapabilityPointers {
+			NewNodeTemplatePointerEdge("Capability", name, pointer, vertex, nodeTemplates)
 		}
 
-		for name, mapping := range serviceTemplate.Substitution.PropertyMappings {
-			if mapping.NodeTemplate != nil {
-				NewMappingEdge("Property", name, mapping, vertex, nodeTemplates)
-			} else if mapping.Value != nil {
-				// This is a property value
-				properties[name] = mapping.Value
-			} else {
-				// This is an input mapping
-				inputs[name] = mapping.Target
-			}
+		for name, pointer := range serviceTemplate.Substitution.RequirementPointer {
+			NewNodeTemplatePointerEdge("Requirement", name, pointer, vertex, nodeTemplates)
 		}
 
-		for name, mapping := range serviceTemplate.Substitution.AttributeMappings {
-			NewMappingEdge("Attribute", name, mapping, vertex, nodeTemplates)
+		for name, pointer := range serviceTemplate.Substitution.PropertyPointers {
+			NewNodeTemplatePointerEdge("Property", name, pointer, vertex, nodeTemplates)
 		}
 
-		for name, mapping := range serviceTemplate.Substitution.InterfaceMappings {
-			NewMappingEdge("Interface", name, mapping, vertex, nodeTemplates)
+		for name, value := range serviceTemplate.Substitution.PropertyValues {
+			properties[name] = value
+		}
+
+		for name, pointer := range serviceTemplate.Substitution.AttributePointers {
+			NewNodeTemplatePointerEdge("Attribute", name, pointer, vertex, nodeTemplates)
+		}
+
+		for name, pointer := range serviceTemplate.Substitution.InterfacePointers {
+			NewNodeTemplatePointerEdge("Interface", name, pointer, vertex, nodeTemplates)
 		}
 	}
 
@@ -291,11 +291,11 @@ func SetMetadata(entity cloutpkg.Entity, kind string) {
 	entity.GetMetadata()["puccini"] = metadata
 }
 
-func NewMappingEdge(type_ string, name string, mapping *Mapping, substitutionVertex *cloutpkg.Vertex, nodeTemplates map[string]*cloutpkg.Vertex) {
-	nodeTemplateVertex := nodeTemplates[mapping.NodeTemplate.Name]
+func NewNodeTemplatePointerEdge(type_ string, name string, pointer *Pointer, substitutionVertex *cloutpkg.Vertex, nodeTemplates map[string]*cloutpkg.Vertex) {
+	nodeTemplateVertex := nodeTemplates[pointer.NodeTemplate.Name]
 	edge := substitutionVertex.NewEdgeTo(nodeTemplateVertex)
 
-	SetMetadata(edge, type_+"Mapping")
+	SetMetadata(edge, type_+"Pointer")
 	edge.Properties["name"] = name
-	edge.Properties["target"] = mapping.Target
+	edge.Properties["target"] = pointer.Target
 }

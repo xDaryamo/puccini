@@ -1,10 +1,12 @@
 #!/bin/bash
 set -e
 
+if [ "$NOBUILD" == true ]; then
+	exit
+fi
+
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 . "$HERE/_env"
-
-"$HERE/build"
 
 mkdir --parents "$ROOT/dist"
 

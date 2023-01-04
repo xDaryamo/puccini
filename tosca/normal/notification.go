@@ -13,7 +13,7 @@ type Notification struct {
 	Dependencies   []string `json:"dependencies" yaml:"dependencies"`
 	Timeout        int64    `json:"timeout" yaml:"timeout"`
 	Host           string   `json:"host,omitempty" yaml:"host,omitempty"`
-	Outputs        Mappings `json:"outputs" yaml:"outputs"`
+	Outputs        Values   `json:"outputs" yaml:"outputs"`
 }
 
 func (self *Interface) NewNotification(name string) *Notification {
@@ -21,7 +21,7 @@ func (self *Interface) NewNotification(name string) *Notification {
 		Interface:    self,
 		Name:         name,
 		Dependencies: make([]string, 0),
-		Outputs:      make(Mappings),
+		Outputs:      make(Values),
 	}
 	self.Notifications[name] = notification
 	return notification

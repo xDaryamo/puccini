@@ -310,7 +310,7 @@ function isSubstituted(nodeTemplateName, requirementName) {
 		if (tosca.isTosca(vertex, 'Substitution')) {
 			for (let e = 0, l = vertex.edgesOut.size(); e < l; e++) {
 				let edge = vertex.edgesOut[e];
-				if (!tosca.isTosca(edge, 'RequirementMapping'))
+				if (!tosca.isTosca(edge, 'RequirementPointer'))
 					continue;
 
 				if ((edge.target.properties.name === nodeTemplateName) && (edge.properties.target === requirementName))
