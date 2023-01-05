@@ -132,7 +132,7 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalN
 
 type RequirementAssignments []*RequirementAssignment
 
-func (self *RequirementAssignments) Render(definitions RequirementDefinitions, context *tosca.Context) {
+func (self *RequirementAssignments) Render(sourceNodeTemplate *NodeTemplate, context *tosca.Context) {
 	for _, assignment := range *self {
 		if assignment.Count == nil {
 			assignment.Count = &one
@@ -158,7 +158,7 @@ func (self *RequirementAssignments) Render(definitions RequirementDefinitions, c
 		}
 	}
 
-	for _, definition := range definitions {
+	for _, definition := range sourceNodeTemplate.NodeType.RequirementDefinitions {
 		definition.Render()
 
 		countRange := definition.CountRange.Range
@@ -176,7 +176,7 @@ func (self *RequirementAssignments) Render(definitions RequirementDefinitions, c
 	}
 
 	for _, assignment := range *self {
-		if definition, ok := definitions[assignment.Name]; ok {
+		if definition, ok := sourceNodeTemplate.NodeType.RequirementDefinitions[assignment.Name]; ok {
 			if assignment.TargetCapabilityNameOrTypeName == nil {
 				assignment.TargetCapabilityNameOrTypeName = definition.TargetCapabilityTypeName
 			}
@@ -208,7 +208,7 @@ func (self *RequirementAssignments) Render(definitions RequirementDefinitions, c
 					assignment.Relationship.RelationshipType = definition.RelationshipDefinition.RelationshipType
 				}
 
-				assignment.Relationship.Render(definition.RelationshipDefinition)
+				assignment.Relationship.Render(definition.RelationshipDefinition, sourceNodeTemplate)
 			}
 		} else {
 			assignment.Context.ReportUndeclared("requirement")

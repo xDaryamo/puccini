@@ -83,16 +83,16 @@ func (self *InterfaceAssignment) GetDefinitionForRelationship(relationship *Rela
 	return definition, ok
 }
 
-func (self *InterfaceAssignment) RenderForNodeTemplate(nodeTemplate *NodeTemplate, definition *InterfaceDefinition) {
+func (self *InterfaceAssignment) RenderForNodeType(nodeType *NodeType, definition *InterfaceDefinition) {
 	self.Inputs.RenderInputs(definition.InputDefinitions, self.Context.FieldChild("inputs", nil))
-	self.Operations.RenderForNodeTemplate(nodeTemplate, definition.OperationDefinitions, self.Context.FieldChild("operations", nil))
-	self.Notifications.RenderForNodeTemplate(nodeTemplate, definition.NotificationDefinitions, self.Context.FieldChild("notifications", nil))
+	self.Operations.RenderForNodeType(nodeType, definition.OperationDefinitions, self.Context.FieldChild("operations", nil))
+	self.Notifications.RenderForNodeType(nodeType, definition.NotificationDefinitions, self.Context.FieldChild("notifications", nil))
 }
 
-func (self *InterfaceAssignment) RenderForRelationship(relationship *RelationshipAssignment, definition *InterfaceDefinition) {
+func (self *InterfaceAssignment) RenderForRelationshipType(relationshipType *RelationshipType, definition *InterfaceDefinition, sourceNodeTemplate *NodeTemplate) {
 	self.Inputs.RenderInputs(definition.InputDefinitions, self.Context.FieldChild("inputs", nil))
-	self.Operations.RenderForRelationship(relationship, definition.OperationDefinitions, self.Context.FieldChild("operations", nil))
-	self.Notifications.RenderForRelationship(relationship, definition.NotificationDefinitions, self.Context.FieldChild("notifications", nil))
+	self.Operations.RenderForRelationshipType(relationshipType, definition.OperationDefinitions, sourceNodeTemplate, self.Context.FieldChild("operations", nil))
+	self.Notifications.RenderForRelationshipType(relationshipType, definition.NotificationDefinitions, sourceNodeTemplate, self.Context.FieldChild("notifications", nil))
 }
 
 func (self *InterfaceAssignment) RenderForGroup(definition *InterfaceDefinition) {
@@ -135,20 +135,20 @@ func (self InterfaceAssignments) CopyUnassigned(assignments InterfaceAssignments
 	}
 }
 
-func (self InterfaceAssignments) RenderForNodeTemplate(nodeTemplate *NodeTemplate, definitions InterfaceDefinitions, context *tosca.Context) {
-	self.render(definitions, context)
+func (self InterfaceAssignments) RenderForNodeType(nodeType *NodeType, context *tosca.Context) {
+	self.render(nodeType.InterfaceDefinitions, context)
 	for name, assignment := range self {
-		if definition, ok := definitions[name]; ok {
-			assignment.RenderForNodeTemplate(nodeTemplate, definition)
+		if definition, ok := nodeType.InterfaceDefinitions[name]; ok {
+			assignment.RenderForNodeType(nodeType, definition)
 		}
 	}
 }
 
-func (self InterfaceAssignments) RenderForRelationship(relationship *RelationshipAssignment, definitions InterfaceDefinitions, context *tosca.Context) {
+func (self InterfaceAssignments) RenderForRelationshipType(relationshipType *RelationshipType, definitions InterfaceDefinitions, sourceNodeTemplate *NodeTemplate, context *tosca.Context) {
 	self.render(definitions, context)
 	for name, assignment := range self {
 		if definition, ok := definitions[name]; ok {
-			assignment.RenderForRelationship(relationship, definition)
+			assignment.RenderForRelationshipType(relationshipType, definition, sourceNodeTemplate)
 		}
 	}
 }

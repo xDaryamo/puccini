@@ -179,7 +179,7 @@ exports.getModelableEntity = function(entity) {
 	if (exports.isNodeTemplate(vertex))
 		return vertex;
 	else
-		throw puccini.sprintf('node template %q not found', entity);
+		throw puccini.sprintf('%q node template not found', entity);
 };
 
 exports.getHost = function(vertex) {

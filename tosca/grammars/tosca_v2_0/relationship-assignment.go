@@ -64,7 +64,7 @@ func (self *RelationshipAssignment) GetType(definition *RelationshipDefinition) 
 	}
 }
 
-func (self *RelationshipAssignment) Render(definition *RelationshipDefinition) {
+func (self *RelationshipAssignment) Render(definition *RelationshipDefinition, sourceNodeTemplate *NodeTemplate) {
 	relationshipType := self.GetType(definition)
 	if relationshipType == nil {
 		self.Context.ReportUndeclared("relationship")
@@ -73,7 +73,7 @@ func (self *RelationshipAssignment) Render(definition *RelationshipDefinition) {
 
 	if definition != nil {
 		// We will consider the "interfaces" at the definition to take priority over those at the type
-		self.Interfaces.RenderForRelationship(self, definition.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
+		self.Interfaces.RenderForRelationshipType(self.RelationshipType, definition.InterfaceDefinitions, sourceNodeTemplate, self.Context.FieldChild("interfaces", nil))
 
 		// Validate type compatibility
 		if (definition.RelationshipType != nil) && !self.Context.Hierarchy.IsCompatible(definition.RelationshipType, relationshipType) {
@@ -87,11 +87,11 @@ func (self *RelationshipAssignment) Render(definition *RelationshipDefinition) {
 		self.Properties.CopyUnassigned(self.RelationshipTemplate.Properties)
 		self.Attributes.CopyUnassigned(self.RelationshipTemplate.Attributes)
 		self.Interfaces.CopyUnassigned(self.RelationshipTemplate.Interfaces)
-		self.Interfaces.RenderForRelationship(self, self.RelationshipTemplate.RelationshipType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
+		self.Interfaces.RenderForRelationshipType(self.RelationshipType, self.RelationshipType.InterfaceDefinitions, sourceNodeTemplate, self.Context.FieldChild("interfaces", nil))
 	} else {
 		self.Properties.RenderProperties(self.RelationshipType.PropertyDefinitions, self.Context.FieldChild("properties", nil))
 		self.Attributes.RenderAttributes(self.RelationshipType.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
-		self.Interfaces.RenderForRelationship(self, self.RelationshipType.InterfaceDefinitions, self.Context.FieldChild("interfaces", nil))
+		self.Interfaces.RenderForRelationshipType(self.RelationshipType, self.RelationshipType.InterfaceDefinitions, sourceNodeTemplate, self.Context.FieldChild("interfaces", nil))
 	}
 }
 

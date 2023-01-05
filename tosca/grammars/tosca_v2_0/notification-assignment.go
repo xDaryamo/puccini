@@ -84,17 +84,17 @@ func (self NotificationAssignments) CopyUnassigned(assignments NotificationAssig
 	}
 }
 
-func (self NotificationAssignments) RenderForNodeTemplate(nodeTemplate *NodeTemplate, definitions NotificationDefinitions, context *tosca.Context) {
+func (self NotificationAssignments) RenderForNodeType(nodeType *NodeType, definitions NotificationDefinitions, context *tosca.Context) {
 	self.render(definitions, context)
 	for _, assignment := range self {
-		assignment.Outputs.RenderForNodeTemplate(nodeTemplate)
+		assignment.Outputs.RenderForNodeType(nodeType)
 	}
 }
 
-func (self NotificationAssignments) RenderForRelationship(relationship *RelationshipAssignment, definitions NotificationDefinitions, context *tosca.Context) {
+func (self NotificationAssignments) RenderForRelationshipType(relationshipType *RelationshipType, definitions NotificationDefinitions, sourceNodeTemplate *NodeTemplate, context *tosca.Context) {
 	self.render(definitions, context)
 	for _, assignment := range self {
-		assignment.Outputs.RenderForRelationship(relationship)
+		assignment.Outputs.RenderForRelationshipType(relationshipType, sourceNodeTemplate)
 	}
 }
 

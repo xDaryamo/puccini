@@ -96,17 +96,17 @@ func (self OperationAssignments) CopyUnassigned(assignments OperationAssignments
 	}
 }
 
-func (self OperationAssignments) RenderForNodeTemplate(nodeTemplate *NodeTemplate, definitions OperationDefinitions, context *tosca.Context) {
+func (self OperationAssignments) RenderForNodeType(nodeType *NodeType, definitions OperationDefinitions, context *tosca.Context) {
 	self.render(definitions, context)
 	for _, assignment := range self {
-		assignment.Outputs.RenderForNodeTemplate(nodeTemplate)
+		assignment.Outputs.RenderForNodeType(nodeType)
 	}
 }
 
-func (self OperationAssignments) RenderForRelationship(relationship *RelationshipAssignment, definitions OperationDefinitions, context *tosca.Context) {
+func (self OperationAssignments) RenderForRelationshipType(relationshipType *RelationshipType, definitions OperationDefinitions, sourceNodeTemplate *NodeTemplate, context *tosca.Context) {
 	self.render(definitions, context)
 	for _, assignment := range self {
-		assignment.Outputs.RenderForRelationship(relationship)
+		assignment.Outputs.RenderForRelationshipType(relationshipType, sourceNodeTemplate)
 	}
 }
 

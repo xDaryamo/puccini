@@ -27,8 +27,7 @@ type OutputMapping struct {
 	CapabilityName *string
 	AttributePath  []string
 
-	NodeTemplate *NodeTemplate           `traverse:"ignore" json:"-" yaml:"-"`
-	Relationship *RelationshipAssignment `traverse:"ignore" json:"-" yaml:"-"`
+	SourceNodeTemplate *NodeTemplate `traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewOutputMapping(context *tosca.Context) *OutputMapping {
@@ -55,7 +54,7 @@ func (self *OutputMapping) GetKey() string {
 	return self.Name
 }
 
-func (self *OutputMapping) RenderForNodeTemplate(nodeTemplate *NodeTemplate) {
+func (self *OutputMapping) RenderForNodeType(nodeType *NodeType) {
 	logRender.Debugf("output mapping: %s", self.Name)
 
 	if (self.EntityName == nil) || (len(self.AttributePath) == 0) {
@@ -65,15 +64,15 @@ func (self *OutputMapping) RenderForNodeTemplate(nodeTemplate *NodeTemplate) {
 	entityName := *self.EntityName
 	switch entityName {
 	case "SELF":
-		self.setNodeTemplate(nodeTemplate)
+		self.renderForNodeType(nodeType)
 	case "SOURCE", "TARGET":
 		self.Context.ListChild(0, entityName).ReportValueInvalid("modelable entity name", "cannot be used in node templates")
 	default:
-		self.setNodeTemplateByName(entityName)
+		self.renderForNodeTypeByTemplateName(entityName)
 	}
 }
 
-func (self *OutputMapping) RenderForRelationship(relationship *RelationshipAssignment) {
+func (self *OutputMapping) RenderForRelationshipType(relationshipType *RelationshipType, sourceNodeTemplate *NodeTemplate) {
 	logRender.Debugf("output mapping: %s", self.Name)
 
 	if (self.EntityName == nil) || (len(self.AttributePath) == 0) {
@@ -81,10 +80,18 @@ func (self *OutputMapping) RenderForRelationship(relationship *RelationshipAssig
 	}
 
 	switch entityName := *self.EntityName; entityName {
-	case "SELF", "SOURCE", "TARGET":
-		self.setRelationship(relationship)
+	case "SELF":
+		self.renderForRelationshipType(relationshipType)
+	case "SOURCE":
+		if sourceNodeTemplate != nil {
+			self.SourceNodeTemplate = sourceNodeTemplate
+			self.renderForNodeType(sourceNodeTemplate.NodeType)
+		}
+	case "TARGET":
+		// The target node type is not known until it is resolved, so there is nothing we can do here
+		// (We only know the base node type)
 	default:
-		self.setNodeTemplateByName(entityName)
+		self.renderForNodeTypeByTemplateName(entityName)
 	}
 }
 
@@ -99,37 +106,41 @@ func (self *OutputMapping) RenderForGroup() {
 	case "SELF", "SOURCE", "TARGET":
 		self.Context.ListChild(0, entityName).ReportValueInvalid("modelable entity name", "cannot be used in groups")
 	default:
-		self.setNodeTemplateByName(entityName)
+		self.renderForNodeTypeByTemplateName(entityName)
 	}
 }
 
-func (self *OutputMapping) setNodeTemplate(nodeTemplate *NodeTemplate) {
-	self.NodeTemplate = nodeTemplate
-
-	// Attributes should already have been rendered
-	attributeName := self.AttributePath[0]
-	if _, ok := self.NodeTemplate.Attributes[attributeName]; !ok {
-		self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", self.NodeTemplate)
-	}
-}
-
-func (self *OutputMapping) setNodeTemplateByName(nodeTemplateName string) {
+func (self *OutputMapping) renderForNodeTypeByTemplateName(nodeTemplateName string) {
 	var nodeTemplateType *NodeTemplate
 	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
-		self.setNodeTemplate(nodeTemplate.(*NodeTemplate))
+		self.renderForNodeType(nodeTemplate.(*NodeTemplate).NodeType)
 	} else {
 		self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")
 		return
 	}
 }
 
-func (self *OutputMapping) setRelationship(relationship *RelationshipAssignment) {
-	self.Relationship = relationship
+func (self *OutputMapping) renderForNodeType(nodeType *NodeType) {
+	if nodeType == nil {
+		return
+	}
 
-	// Attributes should already have been rendered
+	// Attribute definitions should already have been rendered
 	attributeName := self.AttributePath[0]
-	if _, ok := self.Relationship.Attributes[attributeName]; !ok {
-		self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", self.Relationship)
+	if _, ok := nodeType.AttributeDefinitions[attributeName]; !ok {
+		self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", nodeType)
+	}
+}
+
+func (self *OutputMapping) renderForRelationshipType(relationshipType *RelationshipType) {
+	if relationshipType == nil {
+		return
+	}
+
+	// Attribute definitions should already have been rendered
+	attributeName := self.AttributePath[0]
+	if _, ok := relationshipType.AttributeDefinitions[attributeName]; !ok {
+		self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", relationshipType)
 	}
 }
 
@@ -146,11 +157,16 @@ func (self *OutputMapping) Normalize(normalOutputs normal.Values) {
 	list.SetMeta(meta)
 
 	switch entityName := *self.EntityName; entityName {
-	case "SOURCE", "TARGET":
-		// These can only be retrieved via a function call
+	case "SOURCE":
+		if self.SourceNodeTemplate != nil {
+			list.Set(0, normal.NewPrimitive(self.SourceNodeTemplate.Name))
+		} else {
+			list.Set(0, normal.NewPrimitive(entityName))
+		}
+	case "TARGET":
+		// Can only be retrieved via a function call
 		row, column := self.Context.GetLocation()
-		arguments := []any{normal.NewPrimitive(entityName)}
-		list.Set(0, normal.NewFunctionCall(tosca.NewFunctionCall("tosca.function._get_modelable_entity", arguments, self.Context.URL.String(), row, column, self.Context.Path.String())))
+		list.Set(0, normal.NewFunctionCall(tosca.NewFunctionCall("tosca.function._get_target_name", nil, self.Context.URL.String(), row, column, self.Context.Path.String())))
 	default:
 		list.Set(0, normal.NewPrimitive(entityName))
 	}
@@ -184,15 +200,15 @@ func (self OutputMappings) Inherit(parent OutputMappings) {
 	}
 }
 
-func (self OutputMappings) RenderForNodeTemplate(nodeTemplate *NodeTemplate) {
+func (self OutputMappings) RenderForNodeType(nodeType *NodeType) {
 	for _, outputMapping := range self {
-		outputMapping.RenderForNodeTemplate(nodeTemplate)
+		outputMapping.RenderForNodeType(nodeType)
 	}
 }
 
-func (self OutputMappings) RenderForRelationship(relationship *RelationshipAssignment) {
+func (self OutputMappings) RenderForRelationshipType(relationshipType *RelationshipType, sourceNodeTemplate *NodeTemplate) {
 	for _, outputMapping := range self {
-		outputMapping.RenderForRelationship(relationship)
+		outputMapping.RenderForRelationshipType(relationshipType, sourceNodeTemplate)
 	}
 }
 
