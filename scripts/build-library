@@ -23,4 +23,4 @@ function build () {
 	popd > /dev/null
 }
 
-build puccini-tosca
+build library

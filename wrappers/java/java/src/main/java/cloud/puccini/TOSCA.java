@@ -10,14 +10,14 @@ import java.util.Map;
 
 public class TOSCA
 {
-	public static Object Compile( String url, Map<String, Object> inputs, List<String> quirks ) throws Exception
+	public static Object Compile( String url, Map<String, Object> inputs, List<String> quirks, boolean resolve, boolean coerce ) throws Exception
 	{
 		Load load = new SnakeYAML.Load( LoadSettings.builder().build() );
 		Dump dump = new SnakeYAML.Dump( DumpSettings.builder().build() );
 
 		String inputs_ = inputs == null ? "" : dump.dumpToString( inputs );
 		String quirks_ = quirks == null ? "" : dump.dumpToString( quirks );
-		Map<Object, Object> result = (Map<Object, Object>) load.loadFromString( _Compile( url, inputs_, quirks_ ) );
+		Map<Object, Object> result = (Map<Object, Object>) load.loadFromString( _Compile( url, inputs_, quirks_, resolve, coerce ) );
 
 		if ( result.containsKey( "problems" ) )
 		{
@@ -44,5 +44,5 @@ public class TOSCA
 		System.loadLibrary( "puccinijni" );
 	}
 
-	public static native String _Compile( String url, String inputs, String quirks );
+	public static native String _Compile( String url, String inputs, String quirks, boolean resolve, boolean coerce );
 }

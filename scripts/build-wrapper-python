@@ -10,7 +10,7 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 DIST=$ROOT/dist/python
 VENV=$ROOT/dist/python-env
 
-PYTHON_VERSION=cp39 # CPython 3.9
+PYTHON_VERSION=cp311 # CPython 3.11
 PLATFORM=manylinux1_x86_64 # default is linux_x86_64, which is not widely used
 
 git_version
@@ -34,7 +34,7 @@ else
 fi
 rsync --recursive "$ROOT/tosca" puccini/go-source/
 rsync --recursive "$ROOT/clout" puccini/go-source/
-rsync --recursive "$ROOT/puccini-tosca" puccini/go-source/
+rsync --recursive "$ROOT/library" puccini/go-source/
 
 echo "__version__ = '$VERSION'" > puccini/__init__.py
 

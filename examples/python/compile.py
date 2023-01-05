@@ -8,6 +8,8 @@ parser = argparse.ArgumentParser(description='Compile TOSCA')
 parser.add_argument('url', help='URL to TOSCA file or CSAR')
 parser.add_argument('-i', '--input', dest='inputs', nargs='*', action='extend', help='specify input (format is name=value)')
 parser.add_argument('-q', '--quirk', dest='quirks', nargs='*', action='extend', help='specify quirk')
+parser.add_argument('-r', '--resolve', dest='resolve', default='true', help='whether to resolve')
+parser.add_argument('-c', '--coerce', dest='coerce', default='true', help='whether to coerce')
 
 args = parser.parse_args()
 
@@ -19,7 +21,7 @@ if args.inputs:
     args.inputs = inputs
 
 try:
-    clout = puccini.tosca.compile(args.url, args.inputs, args.quirks)
+    clout = puccini.tosca.compile(args.url, args.inputs, args.quirks, args.resolve == 'true', args.coerce == 'true')
     ard.write(clout, sys.stdout)
 except puccini.tosca.Problems as e:
     print('Problems:', file=sys.stderr)

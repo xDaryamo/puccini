@@ -22,6 +22,8 @@ public class Compile
 			String url = "";
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			List<String> quirks = new ArrayList<String>();
+			boolean resolve = true;
+			boolean coerce = true;
 
 			Load load = new SnakeYAML.Load( LoadSettings.builder().build() );
 			for ( String arg: args )
@@ -31,6 +33,10 @@ public class Compile
 					inputs.put( s[0], load.loadFromString( s[1] ) );
 				} else if ( arg.startsWith( "--quirk=" ) ) {
 					quirks.add(arg.substring( 8 ));
+				} else if ( arg.startsWith( "--resolve=" ) ) {
+					resolve = arg.substring( 10 ) == "true";
+				} else if ( arg.startsWith( "--coerce=" ) ) {
+					coerce = arg.substring( 9 ) == "true";
 				} else {
 					url = arg;
 				}
@@ -39,7 +45,7 @@ public class Compile
 			Dump dump = new SnakeYAML.Dump( DumpSettings.builder().build() );
 			try
 			{
-				Object clout = TOSCA.Compile( url, inputs, quirks );
+				Object clout = TOSCA.Compile( url, inputs, quirks, resolve, coerce );
 				System.out.print( dump.dumpToString( clout ) );
 			}
 			catch( Problems x )

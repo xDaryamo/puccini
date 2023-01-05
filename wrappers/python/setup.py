@@ -24,7 +24,7 @@ curl https://go.dev/dl/go{go_version}.linux-amd64.tar.gz --silent --location | t
 GO=$PWD/go/bin/go
 
 # Build libpuccini
-cd "{root}/puccini/go-source/puccini-tosca"
+cd "{root}/puccini/go-source/library"
 "$GO" build \
     -buildmode=c-shared \
     -o=../../libpuccini.so \

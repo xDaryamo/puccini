@@ -6,6 +6,8 @@ require 'yaml'
 
 inputs = {}
 quirks = []
+resolve = true
+coerce = true
 
 option_parser = OptionParser.new do |opts|
   opts.on '-i', '--input=INPUT', 'specify input (format is name=value)' do |i|
@@ -14,6 +16,12 @@ option_parser = OptionParser.new do |opts|
   end
   opts.on '-q', '--quirk=QUIRK', 'specify quirk' do |q|
     quirks.push(q)
+  end
+  opts.on '-r', '--resolve=FLAG', 'whether to resolve' do |r|
+    resolve = (r == 'true')
+  end
+  opts.on '-c', '--coerce=FLAG', 'whether to coerce' do |c|
+    coerce = (c == 'true')
   end
 end
 
@@ -25,7 +33,7 @@ if ARGV.length == 0
 end
 
 begin
-  clout = Puccini::TOSCA.compile(ARGV[0], inputs, quirks)
+  clout = Puccini::TOSCA.compile(ARGV[0], inputs, quirks, resolve, coerce)
   puts YAML.dump(clout)
 rescue Puccini::TOSCA::Problems => e
   puts 'Problems:'

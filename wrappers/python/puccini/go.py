@@ -14,5 +14,9 @@ class GoString(ctypes.Structure):
         return self.p[:self.n].decode() if self.p else ''
 
 
+def to_c_char(v):
+    return ctypes.c_char(v)
+
+
 def to_c_char_p(s):
     return ctypes.c_char_p(str.encode(s))

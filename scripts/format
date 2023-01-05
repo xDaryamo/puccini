@@ -8,8 +8,11 @@ gofmt -w -s -e \
 	"$ROOT/clout" \
 	"$ROOT/clout/js" \
 	"$ROOT/clout/util" \
+	"$ROOT/library" \
 	"$ROOT/puccini-clout" \
 	"$ROOT/puccini-clout/commands" \
+	"$ROOT/puccini-csar" \
+	"$ROOT/puccini-csar/commands" \
 	"$ROOT/puccini-tosca" \
 	"$ROOT/puccini-tosca/commands" \
 	"$ROOT/tosca" \

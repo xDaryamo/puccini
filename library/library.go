@@ -21,7 +21,7 @@ import (
 var parserContext = parser.NewContext()
 
 //export Compile
-func Compile(url *C.char, inputs *C.char, quirks *C.char) *C.char {
+func Compile(url *C.char, inputs *C.char, quirks *C.char, resolve C.char, coerce C.char) *C.char {
 	inputs_ := make(map[string]ard.Value)
 
 	if data, err := yamlkeys.DecodeAll(strings.NewReader(C.GoString(inputs))); err == nil {
@@ -79,14 +79,18 @@ func Compile(url *C.char, inputs *C.char, quirks *C.char) *C.char {
 		return result(clout, problems, err)
 	}
 
-	js.Resolve(clout, problems, urlContext, true, "yaml", true, false)
-	if !problems.Empty() {
-		return result(clout, problems, nil)
+	if resolve != 0 {
+		js.Resolve(clout, problems, urlContext, true, "yaml", true, false)
+		if !problems.Empty() {
+			return result(clout, problems, nil)
+		}
 	}
 
-	js.Coerce(clout, problems, urlContext, true, "yaml", true, false)
-	if !problems.Empty() {
-		return result(clout, problems, nil)
+	if coerce != 0 {
+		js.Coerce(clout, problems, urlContext, true, "yaml", true, false)
+		if !problems.Empty() {
+			return result(clout, problems, nil)
+		}
 	}
 
 	return result(clout, problems, nil)
