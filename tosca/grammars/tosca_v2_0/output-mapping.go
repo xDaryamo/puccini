@@ -19,13 +19,20 @@ type OutputMapping struct {
 	*Entity `name:"output mapping"`
 	Name    string
 
-	// The entity name can be a node template name *or* "SELF"
-	// If it's "SELF" it could be a node template reference *or* a relationship
-	// (but not a group, because a group doesn't have attributes)
+	// EntityName can be a node template name or:
+	//
+	// * SELF: When in a node template or a relationship
+	//         (Groups don't have attributes, so SELF can't be used there)
+	// * SOURCE: When in a relationship
+	// * TARGET: When in a relationship
+	//           (Can only be evaluated after the resolution phase in the Clout)
+	//
+	// Note that the actual entity is a node template *except* when using SELF in a relationship
 
-	EntityName     *string
-	CapabilityName *string
-	AttributePath  []string
+	// AttributePath *may* start with a capability name in a node template
+
+	EntityName    *string
+	AttributePath []string
 
 	SourceNodeTemplate *NodeTemplate `traverse:"ignore" json:"-" yaml:"-"`
 }
@@ -126,6 +133,19 @@ func (self *OutputMapping) renderForNodeType(nodeType *NodeType) {
 	}
 
 	// Attribute definitions should already have been rendered
+
+	if len(self.AttributePath) > 1 {
+		// Is the first element the name of a capability?
+		capabilityName := self.AttributePath[0]
+		if capabilityDefinition, ok := nodeType.CapabilityDefinitions[capabilityName]; ok {
+			attributeName := self.AttributePath[1]
+			if _, ok := capabilityDefinition.AttributeDefinitions[attributeName]; !ok {
+				self.Context.ListChild(2, attributeName).ReportReferenceNotFound("attribute", capabilityDefinition)
+			}
+			return
+		}
+	}
+
 	attributeName := self.AttributePath[0]
 	if _, ok := nodeType.AttributeDefinitions[attributeName]; !ok {
 		self.Context.ListChild(1, attributeName).ReportReferenceNotFound("attribute", nodeType)
