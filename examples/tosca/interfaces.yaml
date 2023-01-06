@@ -30,6 +30,10 @@ node_types:
         type: string
       last_turned_off:
         type: timestamp
+    requirements:
+      - dhcp:
+          capability: DHCP
+          relationship: ReceivesIpFrom
 
   BetterServer:
     derived_from: Server
@@ -43,12 +47,28 @@ node_types:
                 # You can override the type, but only if it's a derived type
                 type: Retries
 
+  DHCPServer:
+    derived_from: tosca:Compute
+    capabilities:
+      dhcp:
+        type: DHCP
+
 data_types:
 
   Retries:
     derived_from: integer
     constraints:
     - greater_or_equal: 0
+
+capability_types:
+
+  DHCP:
+    derived_from: tosca.capabilities.Endpoint
+    attributes:
+      ip_pool:
+        type: list
+        entry_schema:
+          type: string
 
 interface_types:
 
@@ -77,12 +97,49 @@ interface_types:
         outputs:
           percentage: [ SELF, progress ]
 
+relationship_types:
+
+  ReceivesIpFrom:
+    derived_from: tosca.relationships.ConnectsTo
+    interfaces:
+      Configure:
+        operations:
+          pre_configure_source:
+            inputs:
+              ip_pool:
+                value: { get_attribute: [ TARGET, dhcp, ip_pool ] }
+            outputs:
+              # Inside a relationship, output mappings can target
+              # SOURCE and TARGET entities
+              ip: [ SOURCE, public_address ]
+
+              # We cannot validate the TARGET attributes, because
+              # the target node type is not known until the target node template is
+              # resolved. We at best know the base type only.
+              #
+              # To evaluate the target use "--coerce":
+              #   puccini-tosca compile --coerce interfaces.yaml
+              updated_ip_pool: [ TARGET, dhcp, ip_pool ]
+
+
 topology_template:
 
   node_templates:
 
+    dhcp_server:
+      type: DHCPServer
+
     server:
       type: Server
+      requirements:
+        - dhcp:
+            node: dhcp_server
+            relationship:
+              interfaces:
+                Configure:
+                  operations:
+                    pre_configure_source:
+                      implementation: scripts/get_ip.sh
       interfaces:
         Standard:
           operations:
