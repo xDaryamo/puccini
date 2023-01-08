@@ -20,12 +20,13 @@ Let's dive in!
 Note that Puccini is intentionally *not* an orchestrator. This is a "BYOO" kind of establishment
 ("Bring Your Own Orchestrator"). Available orchestration integrations:
 
-* [Kubernetes](https://kubernetes.io/): [Turandot](https://turandot.puccini.cloud/) is an operator
-  that brings TOSCA into Kubernetes
+* [Khutulun](https://khutulun.puccini.cloud/) is an extensible TOSCA-native orchestrator
+* [Kubernetes](https://kubernetes.io/): [Turandot](https://turandot.puccini.cloud/) packages Puccini
+  as a Kubernetes operator and includes TOSCA types generated directly from the Kubernetes API
 * [Ansible](https://www.ansible.com/): Puccini is [packaged for Ansible Galaxy](wrappers/ansible/)
 * [OpenStack](https://www.openstack.org/): see [these examples using Ansible](examples/openstack/)
   (Puccini also natively supports OpenStack's Heat Orchestration Template language)
-* Process automation: see [these examples for BPMN](examples/bpmn/)
+* Process automation: see [these examples for BPMN integration](examples/bpmn/)
 
 Puccini is also available as a [GitHub action](https://github.com/marketplace/actions/setup-puccini-tosca),
 allowing you to validate and otherwise use TOSCA in your git workflow.
