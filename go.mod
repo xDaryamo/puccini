@@ -3,7 +3,7 @@ module github.com/tliron/puccini
 go 1.20
 
 require (
-	github.com/dop251/goja v0.0.0-20230216180835-5937a312edda
+	github.com/dop251/goja v0.0.0-20230304130813-e2f543bf4b4c
 	github.com/fxamacker/cbor/v2 v2.4.0
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/cobra v1.6.1
@@ -34,6 +34,7 @@ require (
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/goccy/go-yaml v1.9.8 // indirect
 	github.com/google/go-containerregistry v0.12.1 // indirect
+	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f // indirect
 	github.com/iancoleman/strcase v0.2.0 // indirect
 	github.com/imdario/mergo v0.3.13 // indirect
@@ -67,7 +68,7 @@ require (
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	golang.org/x/crypto v0.4.0 // indirect
 	golang.org/x/mod v0.6.0 // indirect
-	golang.org/x/net v0.7.0 // indirect; indirect SECURITY FIX
+	golang.org/x/net v0.7.0 // indirect; SECURITY FIX
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/term v0.5.0 // indirect

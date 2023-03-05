@@ -94,12 +94,10 @@ func (self *ScalarUnit) String() string {
 
 	if singular {
 		return fmt.Sprintf("1 %s", self.canonicalUnitSingular)
+	} else if self.countable {
+		return fmt.Sprintf("%d %s", self.CanonicalNumber.(uint64), self.canonicalUnitPlural)
 	} else {
-		if self.countable {
-			return fmt.Sprintf("%d %s", self.CanonicalNumber.(uint64), self.canonicalUnitPlural)
-		} else {
-			return fmt.Sprintf("%g %s", self.CanonicalNumber.(float64), self.canonicalUnitPlural)
-		}
+		return fmt.Sprintf("%g %s", self.CanonicalNumber.(float64), self.canonicalUnitPlural)
 	}
 }
 
