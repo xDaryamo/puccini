@@ -84,6 +84,7 @@ func (self OperationAssignments) CopyUnassigned(assignments OperationAssignments
 	for key, assignment := range assignments {
 		if selfAssignment, ok := self[key]; ok {
 			selfAssignment.Inputs.CopyUnassigned(assignment.Inputs)
+			selfAssignment.Outputs.CopyUnassigned(assignment.Outputs)
 			if selfAssignment.Description == nil {
 				selfAssignment.Description = assignment.Description
 			}
