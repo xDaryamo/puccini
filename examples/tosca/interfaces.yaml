@@ -28,12 +28,12 @@ node_types:
     attributes:
       progress:
         type: string
-      last_turned_off:
+      last-turned-off:
         type: timestamp
     requirements:
-      - dhcp:
-          capability: DHCP
-          relationship: ReceivesIpFrom
+    - dhcp:
+        capability: DHCP
+        relationship: AllocateAddress
 
   BetterServer:
     derived_from: Server
@@ -63,9 +63,9 @@ data_types:
 capability_types:
 
   DHCP:
-    derived_from: tosca.capabilities.Endpoint
+    derived_from: tosca:Endpoint
     attributes:
-      ip_pool:
+      ip-pool:
         type: list
         entry_schema:
           type: string
@@ -80,9 +80,9 @@ interface_types:
         constraints:
         - valid_values: [ staging, production ]
     operations:
-      maintenance_on:
+      maintenance-on:
         description: Turn maintenance mode on
-      maintenance_off:
+      maintenance-off:
         description: Turn maintenance mode off
         inputs:
           priority:
@@ -90,7 +90,7 @@ interface_types:
         outputs:
           # Outputs map to *attributes*
           # The attribute must be declared at the type
-          timestamp: [ SELF, last_turned_off ]
+          timestamp: [ SELF, last-turned-off ]
     notifications:
       progress:
         description: Progress on maintenance mode
@@ -99,15 +99,15 @@ interface_types:
 
 relationship_types:
 
-  ReceivesIpFrom:
-    derived_from: tosca.relationships.ConnectsTo
+  AllocateAddress:
+    derived_from: tosca:ConnectsTo
     interfaces:
       Configure:
         operations:
           pre_configure_source:
             inputs:
-              ip_pool:
-                value: { get_attribute: [ TARGET, dhcp, ip_pool ] }
+              ip-pool:
+                value: { get_attribute: [ TARGET, dhcp, ip-pool ] }
             outputs:
               # Inside a relationship, output mappings can target
               # SOURCE and TARGET entities
@@ -119,33 +119,33 @@ relationship_types:
               #
               # To evaluate the target use "--coerce":
               #   puccini-tosca compile --coerce interfaces.yaml
-              updated_ip_pool: [ TARGET, dhcp, ip_pool ]
+              updated-ip-pool: [ TARGET, dhcp, ip-pool ]
 
 
 topology_template:
 
   node_templates:
 
-    dhcp_server:
+    dhcp-server:
       type: DHCPServer
 
     server:
       type: Server
       requirements:
-        - dhcp:
-            node: dhcp_server
-            relationship:
-              interfaces:
-                Configure:
-                  operations:
-                    pre_configure_source:
-                      implementation: scripts/get_ip.sh
+      - dhcp:
+          node: dhcp-server
+          relationship:
+            interfaces:
+              Configure:
+                operations:
+                  pre_configure_source:
+                    implementation: scripts/get_ip.sh
       interfaces:
         Standard:
           operations:
             # Shortest notation has just the implementation
-            start: /opt/scripts/start.sh
-            stop: /opt/scripts/start.sh
+            start: scripts/start.sh
+            stop: scripts/start.sh
 
             # Longer notation with inputs
             create:
@@ -156,10 +156,10 @@ topology_template:
             # Longest notation also allows adding dependencies and other params to the implementation
             configure:
               implementation:
-                primary: /opt/scripts/configure.sh
+                primary: scripts/configure.sh
                 dependencies:
-                - /opt/scripts/utils.sh
-                - /opt/scripts/config.yaml
+                - scripts/utils.sh
+                - scripts/config.yaml
                 timeout: 3
                 operation_host: SELF
 
@@ -167,10 +167,10 @@ topology_template:
           inputs:
             mode: production
           operations:
-            maintenance_on: /opt/scripts/maintenance_on.sh
-            maintenance_off:
-              implementation: /opt/scripts/maintenance_off.sh
+            maintenance-on: scripts/maintenance-on.sh
+            maintenance-off:
+              implementation: scripts/maintenance-off.sh
               inputs:
                 priority: .75
           notifications:
-            progress: /opt/scripts/progress.sh
+            progress: scripts/progress.sh
