@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/go-ard"
 )
 
 func Put(key string, value ard.Value, entity ard.Value, names ...string) bool {

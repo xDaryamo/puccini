@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/util"
 )
 

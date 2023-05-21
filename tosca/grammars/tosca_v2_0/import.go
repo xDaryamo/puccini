@@ -5,8 +5,8 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/tliron/kutil/ard"
-	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/exturl"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -84,8 +84,8 @@ func (self *Import) NewImportSpec(unit *File) (*tosca.ImportSpec, bool) {
 		}
 	}
 
-	var origins []urlpkg.URL
-	var urlContext *urlpkg.Context
+	var origins []exturl.URL
+	var urlContext *exturl.Context
 
 	if repository != nil {
 		repositoryUrl := repository.GetURL()
@@ -94,17 +94,17 @@ func (self *Import) NewImportSpec(unit *File) (*tosca.ImportSpec, bool) {
 			return nil, false
 		}
 
-		origins = []urlpkg.URL{repositoryUrl}
+		origins = []exturl.URL{repositoryUrl}
 		urlContext = repositoryUrl.Context()
 	} else {
 		origin := self.Context.URL.Origin()
-		origins = []urlpkg.URL{origin}
+		origins = []exturl.URL{origin}
 		urlContext = origin.Context()
 	}
 
 	origins = append(origins, self.Context.Origins...)
 
-	url, err := urlpkg.NewValidURL(*self.URL, origins, urlContext)
+	url, err := exturl.NewValidURL(*self.URL, origins, urlContext)
 	if err != nil {
 		self.Context.ReportError(err)
 		return nil, false

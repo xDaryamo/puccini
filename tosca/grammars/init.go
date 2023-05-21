@@ -11,6 +11,7 @@ import (
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_2"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
+
 	_ "github.com/tliron/puccini/tosca/profiles"
 )
 

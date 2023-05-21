@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/exturl"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/terminal"
-	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
@@ -27,7 +27,7 @@ var listCommand = &cobra.Command{
 			url = args[0]
 		}
 
-		urlContext := urlpkg.NewContext()
+		urlContext := exturl.NewContext()
 		defer urlContext.Release()
 
 		clout, err := cloutpkg.Load(url, inputFormat, urlContext)

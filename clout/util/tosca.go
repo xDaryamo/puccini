@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/go-ard"
 	cloutpkg "github.com/tliron/puccini/clout"
 )
 

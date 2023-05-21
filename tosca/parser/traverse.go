@@ -1,12 +1,12 @@
 package parser
 
 import (
-	"github.com/tliron/kutil/logging"
+	"github.com/tliron/commonlog"
 	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/puccini/tosca"
 )
 
-func (self *ServiceContext) TraverseEntities(log logging.Logger, work reflection.EntityWork, traverse reflection.EntityTraverser) {
+func (self *ServiceContext) TraverseEntities(log commonlog.Logger, work reflection.EntityWork, traverse reflection.EntityTraverser) {
 	if work == nil {
 		work = make(reflection.EntityWork)
 	}

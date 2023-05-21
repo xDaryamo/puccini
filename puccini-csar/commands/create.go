@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/exturl"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca/csar"
 )
@@ -63,7 +63,7 @@ func CreateCSAR(csarPath string, dir string) {
 	}
 
 	if archiveFormat == "" {
-		archiveFormat = urlpkg.GetFormat(csarPath)
+		archiveFormat = exturl.GetFormat(csarPath)
 	}
 
 	if !csar.IsValidFormat(archiveFormat) {

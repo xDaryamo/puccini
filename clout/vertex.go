@@ -3,7 +3,7 @@ package clout
 import (
 	"encoding/json"
 
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/go-ard"
 )
 
 //

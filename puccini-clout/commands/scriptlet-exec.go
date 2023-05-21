@@ -2,8 +2,8 @@ package commands
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/tliron/exturl"
 	"github.com/tliron/kutil/terminal"
-	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
@@ -30,7 +30,7 @@ var execCommand = &cobra.Command{
 			url = args[1]
 		}
 
-		urlContext := urlpkg.NewContext()
+		urlContext := exturl.NewContext()
 		defer urlContext.Release()
 
 		clout, err := cloutpkg.Load(url, inputFormat, urlContext)
@@ -41,10 +41,10 @@ var execCommand = &cobra.Command{
 
 		if err != nil {
 			// Try loading JavaScript from path or URL
-			scriptletUrl, err := urlpkg.NewValidURL(scriptletName, nil, urlContext)
+			scriptletUrl, err := exturl.NewValidURL(scriptletName, nil, urlContext)
 			util.FailOnError(err)
 
-			scriptlet, err = urlpkg.ReadString(scriptletUrl)
+			scriptlet, err = exturl.ReadString(scriptletUrl)
 			util.FailOnError(err)
 
 			err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)
@@ -56,7 +56,7 @@ var execCommand = &cobra.Command{
 	},
 }
 
-func Exec(scriptletName string, scriptlet string, clout *cloutpkg.Clout, urlContext *urlpkg.Context) error {
+func Exec(scriptletName string, scriptlet string, clout *cloutpkg.Clout, urlContext *exturl.Context) error {
 	jsContext := js.NewContext(scriptletName, log, arguments, terminal.Quiet, format, strict, pretty, output, urlContext)
 	_, err := jsContext.Require(clout, scriptletName, nil)
 	return js.UnwrapException(err)

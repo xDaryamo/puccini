@@ -1,11 +1,11 @@
 package commands
 
 import (
-	"github.com/tliron/kutil/logging"
+	"github.com/tliron/commonlog"
 )
 
 const toolName = "puccini-clout"
 
-var log = logging.GetLogger(toolName)
+var log = commonlog.GetLogger(toolName)
 
 var output string

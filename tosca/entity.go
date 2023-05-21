@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/exturl"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/reflection"
-	"github.com/tliron/kutil/url"
 )
 
 //
@@ -93,7 +93,7 @@ func GetImportSpecs(entityPtr EntityPtr) []*ImportSpec {
 //
 
 type ImportSpec struct {
-	URL             url.URL
+	URL             exturl.URL
 	NameTransformer NameTransformer
 	Implicit        bool
 }

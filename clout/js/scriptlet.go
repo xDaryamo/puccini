@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/go-ard"
 	cloutpkg "github.com/tliron/puccini/clout"
 )
 

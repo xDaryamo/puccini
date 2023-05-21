@@ -11,7 +11,7 @@ DIST=$ROOT/dist/python
 VENV=$ROOT/dist/python-env
 
 PYTHON_VERSION=cp311 # CPython 3.11
-PLATFORM=manylinux1_x86_64 # default is linux_x86_64, which is not widely used
+PLATFORM=manylinux2014_x86_64 # default is linux_x86_64, which is not widely used: https://github.com/pypa/manylinux
 
 git_version
 
@@ -23,18 +23,17 @@ mkdir --parents "$DIST"
 cd "$DIST"
 
 rsync --recursive "$ROOT/wrappers/python"/* .
-rsync "$ROOT/go.mod" "$ROOT/go.sum" puccini/go-source/
-if [ -z "$KUTIL" ]; then
-    echo 'go 1.20
-    use .' > puccini/go-source/go.work
-else
-    echo "go 1.20
-    replace github.com/tliron/kutil => $KUTIL
-    use ." > puccini/go-source/go.work
-fi
-rsync --recursive "$ROOT/tosca" puccini/go-source/
-rsync --recursive "$ROOT/clout" puccini/go-source/
-rsync --recursive "$ROOT/library" puccini/go-source/
+rsync --recursive "$ROOT/go.mod" "$ROOT/tosca" "$ROOT/clout" "$ROOT/library" puccini/go-source/
+
+echo "go 1.20
+use ." > puccini/go-source/go.work
+
+# KUTIL=$(readlink --canonicalize "$ROOT/../kutil")
+# KUTIL=${KUTIL//\\/\\\\}
+# KUTIL=${KUTIL//\"/\\\"}
+# echo "go 1.20
+# replace github.com/tliron/kutil => \"$KUTIL\"
+# use ." > puccini/go-source/go.work
 
 echo "__version__ = '$VERSION'" > puccini/__init__.py
 
@@ -53,6 +52,7 @@ else
 
     # Build
     ./setup.py sdist bdist_wheel --plat-name=$PLATFORM
+	#python -m build
 
     SDIST=dist/puccini-$VERSION.tar.gz
     BDIST=dist/puccini-$VERSION-$PYTHON_VERSION-$PYTHON_VERSION-$PLATFORM.whl

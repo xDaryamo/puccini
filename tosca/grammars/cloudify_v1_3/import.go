@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/exturl"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -52,8 +52,8 @@ func (self *Import) NewImportSpec(unit *File) (*tosca.ImportSpec, bool) {
 	}
 
 	origin := self.Context.URL.Origin()
-	var origins = []urlpkg.URL{origin}
-	url, err := urlpkg.NewValidURL(file, origins, origin.Context())
+	var origins = []exturl.URL{origin}
+	url, err := exturl.NewValidURL(file, origins, origin.Context())
 	if err != nil {
 		self.Context.ReportError(err)
 		return nil, false

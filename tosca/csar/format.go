@@ -1,11 +1,11 @@
 package csar
 
 import (
-	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/exturl"
 )
 
 func IsValidFormat(format string) bool {
-	if urlpkg.IsValidTarballArchiveFormat(format) {
+	if exturl.IsValidTarballArchiveFormat(format) {
 		return true
 	}
 

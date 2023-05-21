@@ -1,7 +1,7 @@
 package normal
 
 import (
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/go-ard"
 )
 
 //

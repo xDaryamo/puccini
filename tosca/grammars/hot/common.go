@@ -1,13 +1,13 @@
 package hot
 
 import (
-	"github.com/tliron/kutil/logging"
+	"github.com/tliron/commonlog"
 	"github.com/tliron/puccini/tosca"
 )
 
-var log = logging.GetLogger("puccini.grammars.hot")
-var logRender = logging.NewScopeLogger(log, "render")
-var logNormalize = logging.NewScopeLogger(log, "normalize")
+var log = commonlog.GetLogger("puccini.grammars.hot")
+var logRender = commonlog.NewScopeLogger(log, "render")
+var logNormalize = commonlog.NewScopeLogger(log, "normalize")
 
 var Grammar = tosca.NewGrammar()
 

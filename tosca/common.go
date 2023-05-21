@@ -1,7 +1,7 @@
 package tosca
 
 import (
-	"github.com/tliron/kutil/logging"
+	"github.com/tliron/commonlog"
 )
 
-var log = logging.GetLogger("puccini.tosca")
+var log = commonlog.GetLogger("puccini.tosca")

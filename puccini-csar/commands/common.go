@@ -1,11 +1,11 @@
 package commands
 
 import (
-	"github.com/tliron/kutil/logging"
+	"github.com/tliron/commonlog"
 )
 
 const toolName = "puccini-csar"
 
-var log = logging.GetLogger(toolName)
+var log = commonlog.GetLogger(toolName)
 
 var archiveFormat string

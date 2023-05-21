@@ -5,10 +5,10 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/exturl"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
-	urlpkg "github.com/tliron/kutil/url"
 )
 
 func (self *Context) ReportURL(skip int, item string, message string, row int, column int) bool {
@@ -98,11 +98,11 @@ func (self *Context) ReportValueMalformed(kind string, reason string) bool {
 // Read
 //
 
-func (self *Context) ReportImportIncompatible(url urlpkg.URL) bool {
+func (self *Context) ReportImportIncompatible(url exturl.URL) bool {
 	return self.Reportf(1, "incompatible import %s", self.Problems.Stylist.Value(quote(url.String())))
 }
 
-func (self *Context) ReportImportLoop(url urlpkg.URL) bool {
+func (self *Context) ReportImportLoop(url exturl.URL) bool {
 	return self.Reportf(1, "endless loop caused by importing %s", self.Problems.Stylist.Value(quote(url.String())))
 }
 

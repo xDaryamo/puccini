@@ -7,7 +7,7 @@ import (
 
 	"github.com/dop251/goja"
 	"github.com/fxamacker/cbor/v2"
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/js"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/vmihailenco/msgpack/v5"

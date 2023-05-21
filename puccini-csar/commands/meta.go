@@ -4,12 +4,11 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/tliron/exturl"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca/csar"
-
-	urlpkg "github.com/tliron/kutil/url"
 )
 
 var output string
@@ -44,11 +43,11 @@ var metaCommand = &cobra.Command{
 func Meta(url string) {
 	var err error
 
-	urlContext := urlpkg.NewContext()
+	urlContext := exturl.NewContext()
 	util.OnExitError(urlContext.Release)
 
-	var csarUrl urlpkg.URL
-	csarUrl, err = urlpkg.NewValidURL(url, nil, urlContext)
+	var csarUrl exturl.URL
+	csarUrl, err = exturl.NewValidURL(url, nil, urlContext)
 	util.FailOnError(err)
 
 	var meta *csar.Meta

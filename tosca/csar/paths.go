@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/exturl"
 )
 
-func GetRootPath(csarUrl urlpkg.URL, format string) (string, error) {
+func GetRootPath(csarUrl exturl.URL, format string) (string, error) {
 	if format == "" {
 		format = csarUrl.Format()
 	}
@@ -29,7 +29,7 @@ func GetRootPath(csarUrl urlpkg.URL, format string) (string, error) {
 	}
 }
 
-func GetRootPaths(csarUrl urlpkg.URL, format string) ([]string, error) {
+func GetRootPaths(csarUrl exturl.URL, format string) ([]string, error) {
 	if format == "" {
 		format = csarUrl.Format()
 	}
@@ -50,7 +50,7 @@ func GetRootPaths(csarUrl urlpkg.URL, format string) ([]string, error) {
 	}
 
 	switch url_ := url.(type) {
-	case *urlpkg.TarballURL:
+	case *exturl.TarballURL:
 		tarballReader, err := url_.OpenArchive()
 		if err != nil {
 			return nil, err
@@ -64,7 +64,7 @@ func GetRootPaths(csarUrl urlpkg.URL, format string) ([]string, error) {
 			return nil, err
 		}
 
-	case *urlpkg.ZipURL:
+	case *exturl.ZipURL:
 		zipReader, err := url_.OpenArchive()
 		if err != nil {
 			return nil, err

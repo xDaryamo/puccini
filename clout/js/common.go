@@ -1,14 +1,14 @@
 package js
 
 import (
-	"github.com/tliron/kutil/ard"
-	"github.com/tliron/kutil/logging"
+	"github.com/tliron/commonlog"
+	"github.com/tliron/go-ard"
 )
 
-var log = logging.GetLogger("puccini.js")
-var logEvaluate = logging.NewScopeLogger(log, "evaluate")
-var logValidate = logging.NewScopeLogger(log, "validate")
-var logConvert = logging.NewScopeLogger(log, "convert")
+var log = commonlog.GetLogger("puccini.js")
+var logEvaluate = commonlog.NewScopeLogger(log, "evaluate")
+var logValidate = commonlog.NewScopeLogger(log, "validate")
+var logConvert = commonlog.NewScopeLogger(log, "convert")
 
 func asInt(value any) (int, bool) {
 	switch value_ := value.(type) {

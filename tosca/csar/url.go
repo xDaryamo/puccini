@@ -4,38 +4,38 @@ import (
 	"fmt"
 	"strconv"
 
-	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/exturl"
 )
 
-func NewURL(csarUrl urlpkg.URL, format string, path string) (urlpkg.URL, error) {
+func NewURL(csarUrl exturl.URL, format string, path string) (exturl.URL, error) {
 	if format == "" {
 		format = csarUrl.Format()
 	}
 
-	if urlpkg.IsValidTarballArchiveFormat(format) {
-		return urlpkg.NewTarballURL(path, csarUrl, format), nil
+	if exturl.IsValidTarballArchiveFormat(format) {
+		return exturl.NewTarballURL(path, csarUrl, format), nil
 	}
 
 	switch format {
 	case "zip", "csar":
-		return urlpkg.NewZipURL(path, csarUrl), nil
+		return exturl.NewZipURL(path, csarUrl), nil
 	default:
 		return nil, fmt.Errorf("unsupported CSAR archive format: %q", format)
 	}
 }
 
-func GetDefaultServiceTemplateURL(csarUrl urlpkg.URL, format string) (urlpkg.URL, error) {
+func GetDefaultServiceTemplateURL(csarUrl exturl.URL, format string) (exturl.URL, error) {
 	return GetServiceTemplateURL(csarUrl, format, "")
 }
 
-func GetServiceTemplateURL(csarUrl urlpkg.URL, format string, serviceTemplateName string) (urlpkg.URL, error) {
+func GetServiceTemplateURL(csarUrl exturl.URL, format string, serviceTemplateName string) (exturl.URL, error) {
 	if format == "" {
 		format = csarUrl.Format()
 	}
 
 	meta, err := ReadMetaFromURL(csarUrl, format)
 	if err != nil {
-		if urlpkg.IsNotFound(err) {
+		if exturl.IsNotFound(err) {
 			if meta, err = NewMetaFor(csarUrl, format); err != nil {
 				return nil, err
 			}

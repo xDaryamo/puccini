@@ -3,7 +3,7 @@ package commands
 import (
 	"os"
 
-	"github.com/tliron/kutil/logging"
+	"github.com/tliron/commonlog"
 	problemspkg "github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/transcribe"
@@ -12,7 +12,7 @@ import (
 
 const toolName = "puccini-tosca"
 
-var log = logging.GetLogger(toolName)
+var log = commonlog.GetLogger(toolName)
 
 var importPaths []string
 var template string

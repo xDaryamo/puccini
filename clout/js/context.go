@@ -6,10 +6,10 @@ import (
 	"sync"
 
 	"github.com/dop251/goja"
+	"github.com/tliron/commonlog"
+	"github.com/tliron/exturl"
 	"github.com/tliron/kutil/js"
-	"github.com/tliron/kutil/logging"
 	"github.com/tliron/kutil/terminal"
-	urlpkg "github.com/tliron/kutil/url"
 	cloutpkg "github.com/tliron/puccini/clout"
 )
 
@@ -24,17 +24,17 @@ type Context struct {
 	Strict     bool
 	Pretty     bool
 	Output     string
-	Log        logging.Logger
+	Log        commonlog.Logger
 	Stdout     io.Writer
 	Stderr     io.Writer
 	Stdin      io.Writer
 	Stylist    *terminal.Stylist
-	URLContext *urlpkg.Context
+	URLContext *exturl.Context
 
 	programCache sync.Map
 }
 
-func NewContext(name string, log logging.Logger, arguments map[string]string, quiet bool, format string, strict bool, pretty bool, output string, urlContext *urlpkg.Context) *Context {
+func NewContext(name string, log commonlog.Logger, arguments map[string]string, quiet bool, format string, strict bool, pretty bool, output string, urlContext *exturl.Context) *Context {
 	if arguments == nil {
 		arguments = make(map[string]string)
 	}
@@ -46,7 +46,7 @@ func NewContext(name string, log logging.Logger, arguments map[string]string, qu
 		Strict:     strict,
 		Pretty:     pretty,
 		Output:     output,
-		Log:        logging.NewScopeLogger(log, name),
+		Log:        commonlog.NewScopeLogger(log, name),
 		Stdout:     os.Stdout,
 		Stderr:     os.Stderr,
 		Stdin:      os.Stdin,
@@ -58,10 +58,10 @@ func NewContext(name string, log logging.Logger, arguments map[string]string, qu
 func (self *Context) NewEnvironment(clout *cloutpkg.Clout, apis map[string]any) *js.Environment {
 	environment := js.NewEnvironment(self.URLContext, nil)
 
-	environment.CreateResolver = func(url urlpkg.URL, context *js.Context) js.ResolveFunc {
-		return func(id string, raw bool) (urlpkg.URL, error) {
+	environment.CreateResolver = func(url exturl.URL, context *js.Context) js.ResolveFunc {
+		return func(id string, raw bool) (exturl.URL, error) {
 			if scriptlet, err := GetScriptlet(id, clout); err == nil {
-				url := urlpkg.NewInternalURL(id, self.URLContext)
+				url := exturl.NewInternalURL(id, self.URLContext)
 				url.SetContent(scriptlet)
 				return url, nil
 			} else {

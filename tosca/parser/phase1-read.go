@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/tliron/exturl"
 	"github.com/tliron/kutil/reflection"
-	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/csar"
@@ -13,7 +13,7 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-func (self *ServiceContext) ReadRoot(url urlpkg.URL, origins []urlpkg.URL, template string) bool {
+func (self *ServiceContext) ReadRoot(url exturl.URL, origins []exturl.URL, template string) bool {
 	toscaContext := tosca.NewContext(self.Stylist, self.Quirks)
 	toscaContext.Origins = origins
 
@@ -54,7 +54,7 @@ func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Conte
 
 	// Read ARD
 	var err error
-	if toscaContext.Data, toscaContext.Locator, err = urlpkg.ReadARD(toscaContext.URL, true); err != nil {
+	if toscaContext.Data, toscaContext.Locator, err = exturl.ReadARD(toscaContext.URL, true); err != nil {
 		if decodeError, ok := err.(*yamlkeys.DecodeError); ok {
 			err = NewYAMLDecodeError(decodeError)
 		}

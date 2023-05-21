@@ -3,7 +3,7 @@ package cloudify_v1_3
 import (
 	"strings"
 
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/puccini/tosca"
 )
 

@@ -2,21 +2,22 @@
 
 # Supported environment variables:
 #
-# PUCCINI_REPO: set this to override the Puccini git repo location (i.e. to use a local clone) 
 # PUCCINI_GO_VERSION: set this to override the Go distribution version used to compile Puccini
 
-import os, os.path, setuptools, subprocess, tempfile, shutil, sys
+import os, os.path, pathlib, setuptools, subprocess, tempfile, shutil, sys
 
-with open(os.path.join(os.path.dirname(__file__), 'puccini', '__init__.py')) as f:
-    globals_ = {}
-    exec(f.read(), globals_)
-    version = globals_['__version__']
+root = pathlib.Path(__file__).parents[0]
 
-with open(os.path.join(os.path.dirname(__file__), 'description.md')) as f:
-    description = f.read()
+with open(os.path.join(root, 'puccini', '__init__.py')) as f:
+  globals_ = {}
+  exec(f.read(), globals_)
+  version = globals_['__version__']
 
-go_version = os.environ.get('PUCCINI_GO_VERSION', '1.20.1')
-root = os.path.abspath(os.path.dirname(__file__)).replace('"', '\\"')
+with open(os.path.join(root, 'description.md')) as f:
+  description = f.read()
+
+go_version = os.environ.get('PUCCINI_GO_VERSION', '1.20.4')
+root = str(root).replace('"', '\\"')
 
 script = '''\
 # Install Go
@@ -34,36 +35,36 @@ cd "{root}/puccini/go-source/library"
 
 t = tempfile.mkdtemp()
 try:
-    subprocess.check_output(('bash',  '-o', 'pipefail', '-euxc', script), cwd=t)
+  subprocess.check_output(('bash',  '-o', 'pipefail', '-euxc', script), cwd=t)
 except subprocess.CalledProcessError as e:
-    print(e.output)
-    sys.exit(e.returncode)
+  print(e.output)
+  sys.exit(e.returncode)
 finally:
-    shutil.rmtree(t)
+  shutil.rmtree(t)
 
 class Distribution(setuptools.dist.Distribution):
-    def has_ext_modules(_): # https://stackoverflow.com/a/62668026
-        return True
+  def has_ext_modules(_): # https://stackoverflow.com/a/62668026
+    return True
 
 setuptools.setup(
-    name='puccini',
-    version=version,
-    description='Puccini',
-    long_description=description,
-    long_description_content_type='text/markdown',
-    license='Apache License 2.0',
-    author='Tal Liron',
-    author_email='tal.liron@gmail.com',
-    url='https://github.com/tliron/puccini',
-    download_url='https://github.com/tliron/puccini/releases',
-    classifiers=(
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: Apache Software License'),
+  name='puccini',
+  version=version,
+  description='Puccini',
+  long_description=description,
+  long_description_content_type='text/markdown',
+  license='Apache License 2.0',
+  author='Tal Liron',
+  author_email='tal.liron@gmail.com',
+  url='https://github.com/tliron/puccini',
+  download_url='https://github.com/tliron/puccini/releases',
+  classifiers=(
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: Apache Software License'),
 
-    packages=('puccini',),
-    package_dir={'puccini': 'puccini'},
-    package_data={'puccini': ['libpuccini.so']}, # for bdist
-    install_requires=('ard',),
+  packages=('puccini',),
+  package_dir={'puccini': 'puccini'},
+  package_data={'puccini': ['libpuccini.so']}, # for bdist
+  install_requires=('ard',),
 
-    distclass=Distribution)
+  distclass=Distribution)

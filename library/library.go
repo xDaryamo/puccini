@@ -6,10 +6,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/exturl"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/transcribe"
-	urlpkg "github.com/tliron/kutil/url"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/tosca"
@@ -58,16 +58,16 @@ func Compile(url *C.char, inputs *C.char, quirks *C.char, resolve C.char, coerce
 		return result(nil, nil, err)
 	}
 
-	var url_ urlpkg.URL
+	var url_ exturl.URL
 	var serviceTemplate *normal.ServiceTemplate
 	var clout *cloutpkg.Clout
 	var problems *problems.Problems
 	var err error
 
-	urlContext := urlpkg.NewContext()
+	urlContext := exturl.NewContext()
 	defer urlContext.Release()
 
-	if url_, err = urlpkg.NewValidURL(C.GoString(url), nil, urlContext); err != nil {
+	if url_, err = exturl.NewValidURL(C.GoString(url), nil, urlContext); err != nil {
 		return result(nil, nil, err)
 	}
 

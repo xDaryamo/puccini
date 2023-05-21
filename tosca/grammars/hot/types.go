@@ -3,7 +3,7 @@ package hot
 import (
 	"strings"
 
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/go-ard"
 )
 
 //

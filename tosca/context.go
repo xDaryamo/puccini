@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/exturl"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
-	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -53,8 +53,8 @@ type Context struct {
 	Parent             *Context
 	Name               string
 	Path               ard.Path
-	URL                urlpkg.URL
-	Origins            []urlpkg.URL
+	URL                exturl.URL
+	Origins            []exturl.URL
 	Data               ard.Value
 	Locator            ard.Locator
 	CanonicalNamespace *string
@@ -82,7 +82,7 @@ func NewContext(stylist *terminal.Stylist, quirks Quirks) *Context {
 	}
 }
 
-func (self *Context) NewImportContext(url urlpkg.URL) *Context {
+func (self *Context) NewImportContext(url exturl.URL) *Context {
 	return &Context{
 		Name:               self.Name,
 		Path:               self.Path,

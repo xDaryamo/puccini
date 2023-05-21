@@ -3,7 +3,7 @@ package tosca
 import (
 	"reflect"
 
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/reflection"
 )
 

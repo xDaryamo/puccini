@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/exturl"
 )
 
 const TOSCA_META_PATH = "TOSCA-Metadata/TOSCA.meta"
@@ -44,7 +44,7 @@ func NewMeta() *Meta {
 	}
 }
 
-func NewMetaFor(csarUrl urlpkg.URL, format string) (*Meta, error) {
+func NewMetaFor(csarUrl exturl.URL, format string) (*Meta, error) {
 	if format == "" {
 		format = csarUrl.Format()
 	}
@@ -114,7 +114,7 @@ func ReadMetaFromPath(path string) (*Meta, error) {
 	}
 }
 
-func ReadMetaFromURL(csarUrl urlpkg.URL, format string) (*Meta, error) {
+func ReadMetaFromURL(csarUrl exturl.URL, format string) (*Meta, error) {
 	if format == "" {
 		format = csarUrl.Format()
 	}

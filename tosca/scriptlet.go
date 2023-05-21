@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/exturl"
 	"github.com/tliron/puccini/clout/js"
 )
 
@@ -29,7 +29,7 @@ func (self *Context) EmbedScriptlet(name string, scriptlet string) {
 //
 
 type Scriptlet struct {
-	Origin                urlpkg.URL `json:"origin" yaml:"origin"`
+	Origin                exturl.URL `json:"origin" yaml:"origin"`
 	Path                  string     `json:"path" yaml:"path"`
 	Scriptlet             string     `json:"scriptlet" yaml:"scriptlet"`
 	NativeArgumentIndexes []int      `json:"nativeArgumentIndexes" yaml:"nativeArgumentIndexes"`
@@ -37,22 +37,22 @@ type Scriptlet struct {
 
 func (self *Scriptlet) Read() (string, error) {
 	if self.Path != "" {
-		var origins []urlpkg.URL
-		var urlContext *urlpkg.Context
+		var origins []exturl.URL
+		var urlContext *exturl.Context
 		if self.Origin != nil {
-			origins = []urlpkg.URL{self.Origin}
+			origins = []exturl.URL{self.Origin}
 			urlContext = self.Origin.Context()
 		} else {
-			urlContext = urlpkg.NewContext()
+			urlContext = exturl.NewContext()
 			defer urlContext.Release()
 		}
 
-		url, err := urlpkg.NewValidURL(self.Path, origins, urlContext)
+		url, err := exturl.NewValidURL(self.Path, origins, urlContext)
 		if err != nil {
 			return "", err
 		}
 
-		scriptlet, err := urlpkg.ReadString(url)
+		scriptlet, err := exturl.ReadString(url)
 		if err != nil {
 			return "", err
 		}

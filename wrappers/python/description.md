@@ -17,7 +17,7 @@ as more platforms are added. In most cases this should work:
 
     pip install puccini
 
-If you are using Python 3.9 on most Linuxes then you will get our pre-built binaries
+If you are using Python 3.11 on most Linuxes then you will get our pre-built binaries
 when installing.
 
 For other environments, Puccini will be built from source. Though Puccini is written

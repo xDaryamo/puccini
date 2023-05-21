@@ -3,8 +3,8 @@ package tosca_v2_0
 import (
 	"strings"
 
-	"github.com/tliron/kutil/ard"
-	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/exturl"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -39,7 +39,7 @@ type ArtifactDefinition struct {
 	ArtifactType *ArtifactType `lookup:"type,ArtifactTypeName" traverse:"ignore" json:"-" yaml:"-"`
 	Repository   *Repository   `lookup:"repository,RepositoryName" traverse:"ignore" json:"-" yaml:"-"`
 
-	url                urlpkg.URL
+	url                exturl.URL
 	urlProblemReported bool
 }
 
@@ -67,7 +67,7 @@ func ReadArtifactDefinition(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-func (self *ArtifactDefinition) GetURL() urlpkg.URL {
+func (self *ArtifactDefinition) GetURL() exturl.URL {
 	if self.File == nil {
 		return nil
 	}
@@ -79,9 +79,9 @@ func (self *ArtifactDefinition) GetURL() urlpkg.URL {
 			}
 		} else {
 			origin := self.Context.URL.Origin()
-			origins := []urlpkg.URL{origin}
+			origins := []exturl.URL{origin}
 			var err error
-			if self.url, err = urlpkg.NewValidURL(*self.File, origins, origin.Context()); err != nil {
+			if self.url, err = exturl.NewValidURL(*self.File, origins, origin.Context()); err != nil {
 				// Avoid reporting more than once
 				if !self.urlProblemReported {
 					self.Context.ReportError(err)

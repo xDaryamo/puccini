@@ -1,19 +1,19 @@
 package clout
 
 import (
-	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/exturl"
 )
 
-func Load(url string, format string, urlContext *urlpkg.Context) (*Clout, error) {
-	var url_ urlpkg.URL
+func Load(url string, format string, urlContext *exturl.Context) (*Clout, error) {
+	var url_ exturl.URL
 
 	var err error
 	if url != "" {
-		if url_, err = urlpkg.NewValidURL(url, nil, urlContext); err != nil {
+		if url_, err = exturl.NewValidURL(url, nil, urlContext); err != nil {
 			return nil, err
 		}
 	} else {
-		if url_, err = urlpkg.ReadToInternalURLFromStdin(format, urlContext); err != nil {
+		if url_, err = exturl.ReadToInternalURLFromStdin(format, urlContext); err != nil {
 			return nil, err
 		}
 	}

@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/tliron/commonlog"
+	"github.com/tliron/exturl"
 	"github.com/tliron/kutil/js"
-	"github.com/tliron/kutil/logging"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/transcribe"
-	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 )
 
@@ -25,7 +25,7 @@ type PucciniAPI struct {
 	js.FileAPI
 
 	Arguments map[string]string
-	Log       logging.Logger
+	Log       commonlog.Logger
 	Stdout    io.Writer
 	Stderr    io.Writer
 	Stdin     io.Writer
@@ -108,8 +108,8 @@ func (self *PucciniAPI) Write(data any, path string, dontOverwrite bool) {
 }
 
 func (self *PucciniAPI) LoadString(url string) (string, error) {
-	if url_, err := urlpkg.NewValidURL(url, nil, self.context.URLContext); err == nil {
-		return urlpkg.ReadString(url_)
+	if url_, err := exturl.NewValidURL(url, nil, self.context.URLContext); err == nil {
+		return exturl.ReadString(url_)
 	} else {
 		return "", err
 	}

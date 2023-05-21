@@ -3,7 +3,7 @@ package normal
 import (
 	"time"
 
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/go-ard"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/tosca"

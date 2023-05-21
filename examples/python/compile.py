@@ -14,17 +14,17 @@ parser.add_argument('-c', '--coerce', dest='coerce', default='true', help='wheth
 args = parser.parse_args()
 
 if args.inputs:
-    inputs = {}
-    for i in args.inputs:
-        k, v = i.split('=')
-        inputs[k] = ard.decode_yaml(v)
-    args.inputs = inputs
+  inputs = {}
+  for i in args.inputs:
+    k, v = i.split('=')
+    inputs[k] = ard.decode_yaml(v)
+  args.inputs = inputs
 
 try:
-    clout = puccini.tosca.compile(args.url, args.inputs, args.quirks, args.resolve == 'true', args.coerce == 'true')
-    ard.write(clout, sys.stdout)
+  clout = puccini.tosca.compile(args.url, args.inputs, args.quirks, args.resolve == 'true', args.coerce == 'true')
+  ard.write(clout, sys.stdout)
 except puccini.tosca.Problems as e:
-    print('Problems:', file=sys.stderr)
-    for problem in e.problems:
-        ard.write(problem, sys.stderr)
-    sys.exit(1)
+  print('Problems:', file=sys.stderr)
+  for problem in e.problems:
+    ard.write(problem, sys.stderr)
+  sys.exit(1)

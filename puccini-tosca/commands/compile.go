@@ -4,9 +4,9 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/tliron/exturl"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/transcribe"
-	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
@@ -81,16 +81,16 @@ func Compile(url string) {
 	}
 }
 
-func Exec(scriptletName string, arguments map[string]string, clout *cloutpkg.Clout, urlContext *urlpkg.Context) error {
+func Exec(scriptletName string, arguments map[string]string, clout *cloutpkg.Clout, urlContext *exturl.Context) error {
 	// Try loading JavaScript from Clout
 	scriptlet, err := js.GetScriptlet(scriptletName, clout)
 
 	if err != nil {
 		// Try loading JavaScript from path or URL
-		url, err := urlpkg.NewValidURL(scriptletName, nil, urlContext)
+		url, err := exturl.NewValidURL(scriptletName, nil, urlContext)
 		util.FailOnError(err)
 
-		scriptlet, err = urlpkg.ReadString(url)
+		scriptlet, err = exturl.ReadString(url)
 		util.FailOnError(err)
 
 		err = js.SetScriptlet(exec, js.CleanupScriptlet(scriptlet), clout)

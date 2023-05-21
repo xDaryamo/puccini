@@ -5,11 +5,11 @@ import (
 	"sort"
 
 	"github.com/spf13/cobra"
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/exturl"
+	"github.com/tliron/go-ard"
 	problemspkg "github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/transcribe"
-	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
@@ -65,7 +65,7 @@ var parserContext = parser.NewContext()
 func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 	ParseInputs()
 
-	urlContext := urlpkg.NewContext()
+	urlContext := exturl.NewContext()
 	util.OnExitError(urlContext.Release)
 
 	// URL mappings
@@ -73,23 +73,23 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 		urlContext.Map(fromUrl, toUrl)
 	}
 
-	var origins []urlpkg.URL
+	var origins []exturl.URL
 	for _, importPath := range importPaths {
-		origin, err := urlpkg.NewURL(importPath, urlContext)
+		origin, err := exturl.NewURL(importPath, urlContext)
 		if err != nil {
-			origin = urlpkg.NewFileURL(importPath, urlContext)
+			origin = exturl.NewFileURL(importPath, urlContext)
 		}
 		origins = append(origins, origin)
 	}
 
-	var url_ urlpkg.URL
+	var url_ exturl.URL
 	var err error
 	if url == "" {
 		log.Info("parsing stdin")
-		url_, err = urlpkg.ReadToInternalURLFromStdin("yaml", urlContext)
+		url_, err = exturl.ReadToInternalURLFromStdin("yaml", urlContext)
 	} else {
 		log.Infof("parsing %q", url)
-		url_, err = urlpkg.NewValidURL(url, origins, urlContext)
+		url_, err = exturl.NewValidURL(url, origins, urlContext)
 	}
 	util.FailOnError(err)
 
@@ -230,10 +230,10 @@ func ParseInputs() {
 	if inputsUrl != "" {
 		log.Infof("load inputs from %q", inputsUrl)
 
-		urlContext := urlpkg.NewContext()
+		urlContext := exturl.NewContext()
 		util.OnExitError(urlContext.Release)
 
-		url, err := urlpkg.NewValidURL(inputsUrl, nil, urlContext)
+		url, err := exturl.NewValidURL(inputsUrl, nil, urlContext)
 		util.FailOnError(err)
 		reader, err := url.Open()
 		util.FailOnError(err)

@@ -1,8 +1,8 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/kutil/ard"
-	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/exturl"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/puccini/tosca"
 )
 
@@ -24,7 +24,7 @@ type Repository struct {
 	URL         *string `read:"url" mandatory:""`
 	Credential  *Value  `read:"credential,Value"` // tosca:Credential
 
-	url                urlpkg.URL
+	url                exturl.URL
 	urlProblemReported bool
 }
 
@@ -62,11 +62,11 @@ func (self *Repository) render() {
 	}
 }
 
-func (self *Repository) GetURL() urlpkg.URL {
+func (self *Repository) GetURL() exturl.URL {
 	if (self.url == nil) && (self.URL != nil) {
 		origin := self.Context.URL.Origin()
 		var err error
-		if self.url, err = urlpkg.NewURL(*self.URL, origin.Context()); err != nil {
+		if self.url, err = exturl.NewURL(*self.URL, origin.Context()); err != nil {
 			// Avoid reporting more than once
 			if !self.urlProblemReported {
 				self.Context.ReportError(err)

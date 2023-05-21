@@ -5,14 +5,14 @@ import (
 	"os"
 	"testing"
 
+	"github.com/tliron/exturl"
 	problemspkg "github.com/tliron/kutil/problems"
-	urlpkg "github.com/tliron/kutil/url"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
 
-	_ "github.com/tliron/kutil/logging/simple"
+	_ "github.com/tliron/commonlog/simple"
 )
 
 func TestParse(t *testing.T) {
@@ -68,7 +68,7 @@ func TestParse(t *testing.T) {
 type Context struct {
 	t             *testing.T
 	root          string
-	urlContext    *urlpkg.Context
+	urlContext    *exturl.Context
 	parserContext *parser.Context
 }
 
@@ -82,7 +82,7 @@ func NewContext(t *testing.T) *Context {
 	return &Context{
 		t:             t,
 		root:          root,
-		urlContext:    urlpkg.NewContext(),
+		urlContext:    exturl.NewContext(),
 		parserContext: parser.NewContext(),
 	}
 }
@@ -98,7 +98,7 @@ func (self *Context) compile(url string, inputs map[string]any) {
 		var problems *problemspkg.Problems
 		var err error
 
-		url_, err := urlpkg.NewURL(fmt.Sprintf("%s/examples/%s", self.root, url), self.urlContext)
+		url_, err := exturl.NewURL(fmt.Sprintf("%s/examples/%s", self.root, url), self.urlContext)
 		if err != nil {
 			t.Errorf("%s", err.Error())
 			return

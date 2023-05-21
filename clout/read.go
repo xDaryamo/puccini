@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/go-ard"
 )
 
 func Read(reader io.Reader, format string) (*Clout, error) {
