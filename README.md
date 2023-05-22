@@ -3,6 +3,7 @@ Puccini
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Latest Release](https://img.shields.io/github/release/tliron/puccini.svg)](https://github.com/tliron/puccini/releases/latest)
+[![Go Reference](https://pkg.go.dev/badge/github.com/tliron/puccini.svg)](https://pkg.go.dev/github.com/tliron/puccini)
 [![Go Report Card](https://goreportcard.com/badge/github.com/tliron/puccini)](https://goreportcard.com/report/github.com/tliron/puccini)
 
 Cloud topology management and deployment tools based on

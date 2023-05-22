@@ -34,6 +34,8 @@ type RequirementAssignment struct {
 	TargetCapabilityType *CapabilityType `lookup:"capability,?TargetCapabilityNameOrTypeName" traverse:"ignore" json:"-" yaml:"-"`
 	TargetNodeTemplate   *NodeTemplate   `lookup:"node,TargetNodeTemplateNameOrTypeName" traverse:"ignore" json:"-" yaml:"-"`
 	TargetNodeType       *NodeType       `lookup:"node,TargetNodeTemplateNameOrTypeName" traverse:"ignore" json:"-" yaml:"-"`
+
+	capabilityIsName bool
 }
 
 func NewRequirementAssignment(context *tosca.Context) *RequirementAssignment {
@@ -83,13 +85,13 @@ func (self *RequirementAssignment) GetDefinition(nodeTemplate *NodeTemplate) (*R
 func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalNodeTemplate *normal.NodeTemplate) *normal.Requirement {
 	normalRequirement := normalNodeTemplate.NewRequirement(self.Name, normal.NewLocationForContext(self.Context))
 
+	if self.capabilityIsName {
+		normalRequirement.CapabilityName = self.TargetCapabilityNameOrTypeName
+	}
+
 	if self.TargetCapabilityType != nil {
 		name := tosca.GetCanonicalName(self.TargetCapabilityType)
 		normalRequirement.CapabilityTypeName = &name
-	}
-
-	if self.TargetCapabilityNameOrTypeName != nil {
-		normalRequirement.CapabilityName = self.TargetCapabilityNameOrTypeName
 	}
 
 	if self.TargetNodeTemplate != nil {
@@ -136,6 +138,8 @@ type RequirementAssignments []*RequirementAssignment
 
 func (self *RequirementAssignments) Render(sourceNodeTemplate *NodeTemplate, context *tosca.Context) {
 	for _, assignment := range *self {
+		assignment.capabilityIsName = (assignment.TargetCapabilityNameOrTypeName != nil) && (assignment.TargetCapabilityType == nil)
+
 		if assignment.Count == nil {
 			assignment.Count = &one
 		}
