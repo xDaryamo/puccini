@@ -86,7 +86,9 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalN
 	if self.TargetCapabilityType != nil {
 		name := tosca.GetCanonicalName(self.TargetCapabilityType)
 		normalRequirement.CapabilityTypeName = &name
-	} else if self.TargetCapabilityNameOrTypeName != nil {
+	}
+
+	if self.TargetCapabilityNameOrTypeName != nil {
 		normalRequirement.CapabilityName = self.TargetCapabilityNameOrTypeName
 	}
 
