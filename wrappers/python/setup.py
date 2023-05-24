@@ -4,16 +4,16 @@
 #
 # PUCCINI_GO_VERSION: set this to override the Go distribution version used to compile Puccini
 
-import os, os.path, pathlib, setuptools, subprocess, tempfile, shutil, sys
+import os, pathlib, setuptools, subprocess, tempfile, shutil, sys
 
 root = pathlib.Path(__file__).parents[0]
 
-with open(os.path.join(root, 'puccini', '__init__.py')) as f:
+with open(root / 'puccini' / '__init__.py') as f:
   globals_ = {}
   exec(f.read(), globals_)
   version = globals_['__version__']
 
-with open(os.path.join(root, 'description.md')) as f:
+with open(root / 'description.md') as f:
   description = f.read()
 
 go_version = os.environ.get('PUCCINI_GO_VERSION', '1.20.4')

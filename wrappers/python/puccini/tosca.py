@@ -1,8 +1,8 @@
 
-import os.path, ctypes, ard
+import pathlib, ctypes, ard
 from . import go
 
-library_path = os.path.join(os.path.dirname(__file__), 'libpuccini.so')
+library_path = pathlib.Path(__file__).parents[0] / 'libpuccini.so'
 library = ctypes.cdll.LoadLibrary(library_path)
 
 library.Compile.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char, ctypes.c_char)
