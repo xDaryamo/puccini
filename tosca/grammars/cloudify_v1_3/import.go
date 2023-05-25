@@ -1,6 +1,7 @@
 package cloudify_v1_3
 
 import (
+	contextpkg "context"
 	"fmt"
 	"strings"
 
@@ -53,7 +54,7 @@ func (self *Import) NewImportSpec(unit *File) (*tosca.ImportSpec, bool) {
 
 	origin := self.Context.URL.Origin()
 	var origins = []exturl.URL{origin}
-	url, err := exturl.NewValidURL(file, origins, origin.Context())
+	url, err := origin.Context().NewValidURL(contextpkg.TODO(), file, origins)
 	if err != nil {
 		self.Context.ReportError(err)
 		return nil, false

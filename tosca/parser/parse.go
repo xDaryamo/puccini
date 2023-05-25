@@ -1,6 +1,7 @@
 package parser
 
 import (
+	contextpkg "context"
 	"errors"
 
 	"github.com/tliron/exturl"
@@ -11,11 +12,11 @@ import (
 	"github.com/tliron/puccini/tosca/normal"
 )
 
-func (self *Context) Parse(url exturl.URL, origins []exturl.URL, stylist *terminal.Stylist, quirks tosca.Quirks, inputs map[string]ard.Value) (*ServiceContext, *normal.ServiceTemplate, *problems.Problems, error) {
+func (self *Context) Parse(context contextpkg.Context, url exturl.URL, origins []exturl.URL, stylist *terminal.Stylist, quirks tosca.Quirks, inputs map[string]ard.Value) (*ServiceContext, *normal.ServiceTemplate, *problems.Problems, error) {
 	serviceContext := self.NewServiceContext(stylist, quirks)
 
 	// Phase 1: Read
-	ok := serviceContext.ReadRoot(url, origins, "")
+	ok := serviceContext.ReadRoot(context, url, origins, "")
 	serviceContext.MergeProblems()
 	problems := serviceContext.GetProblems()
 

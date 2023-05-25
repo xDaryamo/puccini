@@ -1,10 +1,12 @@
 package parser
 
 import (
+	contextpkg "context"
 	"fmt"
 	"sort"
 
 	"github.com/tliron/exturl"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca"
@@ -13,7 +15,7 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-func (self *ServiceContext) ReadRoot(url exturl.URL, origins []exturl.URL, template string) bool {
+func (self *ServiceContext) ReadRoot(context contextpkg.Context, url exturl.URL, origins []exturl.URL, template string) bool {
 	toscaContext := tosca.NewContext(self.Stylist, self.Quirks)
 	toscaContext.Origins = origins
 
@@ -22,7 +24,7 @@ func (self *ServiceContext) ReadRoot(url exturl.URL, origins []exturl.URL, templ
 	var ok bool
 
 	self.readWork.Add(1)
-	self.Root, ok = self.read(nil, toscaContext, nil, nil, "$Root", template)
+	self.Root, ok = self.read(context, nil, toscaContext, nil, nil, "$Root", template)
 	self.readWork.Wait()
 
 	self.filesLock.Lock()
@@ -32,7 +34,7 @@ func (self *ServiceContext) ReadRoot(url exturl.URL, origins []exturl.URL, templ
 	return ok
 }
 
-func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Context, container *File, nameTransformer tosca.NameTransformer, readerName string, serviceTemplateName string) (*File, bool) {
+func (self *ServiceContext) read(context contextpkg.Context, promise util.Promise, toscaContext *tosca.Context, container *File, nameTransformer tosca.NameTransformer, readerName string, serviceTemplateName string) (*File, bool) {
 	defer self.readWork.Done()
 	if promise != nil {
 		// For the goroutines waiting for our cached entityPtr
@@ -44,7 +46,7 @@ func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Conte
 	// TODO: allow override of CSAR format
 	if format := toscaContext.URL.Format(); csar.IsValidFormat(format) {
 		var err error
-		if toscaContext.URL, err = csar.GetServiceTemplateURL(toscaContext.URL, format, serviceTemplateName); err != nil {
+		if toscaContext.URL, err = csar.GetServiceTemplateURL(context, toscaContext.URL, format, serviceTemplateName); err != nil {
 			toscaContext.ReportError(err)
 			file := NewFileNoEntity(toscaContext, container, nameTransformer)
 			self.AddFile(file)
@@ -54,7 +56,7 @@ func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Conte
 
 	// Read ARD
 	var err error
-	if toscaContext.Data, toscaContext.Locator, err = exturl.ReadARD(toscaContext.URL, true); err != nil {
+	if toscaContext.Data, toscaContext.Locator, err = ard.ReadURL(context, toscaContext.URL, true); err != nil {
 		if decodeError, ok := err.(*yamlkeys.DecodeError); ok {
 			err = NewYAMLDecodeError(decodeError)
 		}
@@ -87,11 +89,11 @@ func (self *ServiceContext) read(promise util.Promise, toscaContext *tosca.Conte
 
 	self.Context.readCache.Store(toscaContext.URL.Key(), entityPtr)
 
-	return self.AddImportFile(entityPtr, container, nameTransformer), true
+	return self.AddImportFile(context, entityPtr, container, nameTransformer), true
 }
 
 // From tosca.Importer interface
-func (self *ServiceContext) goReadImports(container *File) {
+func (self *ServiceContext) goReadImports(context contextpkg.Context, container *File) {
 	importSpecs := tosca.GetImportSpecs(container.EntityPtr)
 
 	// Implicit import
@@ -128,26 +130,28 @@ func (self *ServiceContext) goReadImports(container *File) {
 				// Wait for promise
 				logRead.Debugf("wait for promise: %s", key)
 				self.readWork.Add(1)
-				go self.waitForPromise(cached_, key, container, importSpec.NameTransformer)
+				go self.waitForPromise(context, cached_, key, container, importSpec.NameTransformer)
 
 			default: // entityPtr
 				// Cache hit
 				logRead.Debugf("cache hit: %s", key)
-				self.AddImportFile(cached, container, importSpec.NameTransformer)
+				self.AddImportFile(context, cached, container, importSpec.NameTransformer)
 			}
 		} else {
 			importToscaContext := container.GetContext().NewImportContext(importSpec.URL)
 
 			// Read (concurrently)
 			self.readWork.Add(1)
-			go self.read(promise, importToscaContext, container, importSpec.NameTransformer, "$File", "")
+			go self.read(context, promise, importToscaContext, container, importSpec.NameTransformer, "$File", "")
 		}
 	}
 }
 
-func (self *ServiceContext) waitForPromise(promise util.Promise, key string, container *File, nameTransformer tosca.NameTransformer) {
+func (self *ServiceContext) waitForPromise(context contextpkg.Context, promise util.Promise, key string, container *File, nameTransformer tosca.NameTransformer) {
 	defer self.readWork.Done()
-	promise.Wait()
+	if err := promise.Wait(context); err != nil {
+		logRead.Debugf("promise interrupted: %s, %s", key, err.Error())
+	}
 
 	if cached, inCache := self.Context.readCache.Load(key); inCache {
 		switch cached.(type) {
@@ -157,7 +161,7 @@ func (self *ServiceContext) waitForPromise(promise util.Promise, key string, con
 		default: // entityPtr
 			// Cache hit
 			logRead.Debugf("promise kept: %s", key)
-			self.AddImportFile(cached, container, nameTransformer)
+			self.AddImportFile(context, cached, container, nameTransformer)
 		}
 	} else {
 		logRead.Debugf("promise broken (empty): %s", key)

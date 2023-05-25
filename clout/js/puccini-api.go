@@ -1,6 +1,7 @@
 package js
 
 import (
+	contextpkg "context"
 	"fmt"
 	"io"
 	"os"
@@ -108,8 +109,9 @@ func (self *PucciniAPI) Write(data any, path string, dontOverwrite bool) {
 }
 
 func (self *PucciniAPI) LoadString(url string) (string, error) {
-	if url_, err := exturl.NewValidURL(url, nil, self.context.URLContext); err == nil {
-		return exturl.ReadString(url_)
+	context := contextpkg.TODO()
+	if url_, err := self.context.URLContext.NewValidURL(context, url, nil); err == nil {
+		return exturl.ReadString(context, url_)
 	} else {
 		return "", err
 	}

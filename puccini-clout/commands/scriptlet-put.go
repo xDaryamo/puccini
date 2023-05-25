@@ -1,6 +1,7 @@
 package commands
 
 import (
+	contextpkg "context"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -32,14 +33,15 @@ var putCommand = &cobra.Command{
 
 		urlContext := exturl.NewContext()
 		defer urlContext.Release()
+		context := contextpkg.TODO()
 
-		clout, err := cloutpkg.Load(url, inputFormat, urlContext)
+		clout, err := cloutpkg.Load(context, url, inputFormat, urlContext)
 		util.FailOnError(err)
 
-		scriptletUrl_, err := exturl.NewValidURL(scriptletUrl, nil, urlContext)
+		scriptletUrl_, err := urlContext.NewValidURL(context, scriptletUrl, nil)
 		util.FailOnError(err)
 
-		scriptlet, err := exturl.ReadString(scriptletUrl_)
+		scriptlet, err := exturl.ReadString(context, scriptletUrl_)
 		util.FailOnError(err)
 
 		err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)

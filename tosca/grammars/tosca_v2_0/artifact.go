@@ -1,6 +1,7 @@
 package tosca_v2_0
 
 import (
+	contextpkg "context"
 	"path/filepath"
 
 	"github.com/tliron/puccini/tosca"
@@ -118,7 +119,7 @@ func (self *Artifact) Normalize(normalNodeTemplate *normal.NodeTemplate) *normal
 	if self.File != nil {
 		normalArtifact.Filename = filepath.Base(*self.File)
 	}
-	url := self.GetURL()
+	url := self.GetURL(contextpkg.TODO())
 	if url != nil {
 		normalArtifact.SourcePath = url.String()
 	}

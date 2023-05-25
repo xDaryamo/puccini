@@ -1,6 +1,7 @@
 package commands
 
 import (
+	contextpkg "context"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -46,15 +47,15 @@ var compileCommand = &cobra.Command{
 			url = args[0]
 		}
 
-		Compile(url)
+		Compile(contextpkg.TODO(), url)
 	},
 }
 
-func Compile(url string) {
+func Compile(context contextpkg.Context, url string) {
 	// Parse
-	context, serviceTemplate := Parse(url)
-	problems := context.GetProblems()
-	urlContext := context.Root.GetContext().URL.Context()
+	serviceContext, serviceTemplate := Parse(context, url)
+	problems := serviceContext.GetProblems()
+	urlContext := serviceContext.Root.GetContext().URL.Context()
 
 	// Compile
 	clout, err := serviceTemplate.Compile()
@@ -73,7 +74,7 @@ func Compile(url string) {
 	}
 
 	if exec != "" {
-		err = Exec(exec, arguments, clout, urlContext)
+		err = Exec(context, exec, arguments, clout, urlContext)
 		util.FailOnError(err)
 	} else if !terminal.Quiet || (output != "") {
 		err = transcribe.WriteOrPrint(clout, format, os.Stdout, strict, pretty, output)
@@ -81,16 +82,16 @@ func Compile(url string) {
 	}
 }
 
-func Exec(scriptletName string, arguments map[string]string, clout *cloutpkg.Clout, urlContext *exturl.Context) error {
+func Exec(context contextpkg.Context, scriptletName string, arguments map[string]string, clout *cloutpkg.Clout, urlContext *exturl.Context) error {
 	// Try loading JavaScript from Clout
 	scriptlet, err := js.GetScriptlet(scriptletName, clout)
 
 	if err != nil {
 		// Try loading JavaScript from path or URL
-		url, err := exturl.NewValidURL(scriptletName, nil, urlContext)
+		url, err := urlContext.NewValidURL(context, scriptletName, nil)
 		util.FailOnError(err)
 
-		scriptlet, err = exturl.ReadString(url)
+		scriptlet, err = exturl.ReadString(context, url)
 		util.FailOnError(err)
 
 		err = js.SetScriptlet(exec, js.CleanupScriptlet(scriptlet), clout)

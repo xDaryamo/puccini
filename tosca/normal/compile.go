@@ -1,6 +1,7 @@
 package normal
 
 import (
+	contextpkg "context"
 	"time"
 
 	"github.com/tliron/go-ard"
@@ -18,7 +19,7 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 	scriptlets := make(ard.StringMap)
 	var err error = nil
 	serviceTemplate.ScriptletNamespace.Range(func(name string, scriptlet *tosca.Scriptlet) bool {
-		if scriptlet_, err_ := scriptlet.Read(); err_ == nil {
+		if scriptlet_, err_ := scriptlet.Read(contextpkg.TODO()); err_ == nil {
 			if err_ = ard.StringMapPutNested(scriptlets, name, js.CleanupScriptlet(scriptlet_)); err_ != nil {
 				err = err_
 				return false

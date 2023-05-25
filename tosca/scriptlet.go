@@ -1,6 +1,7 @@
 package tosca
 
 import (
+	contextpkg "context"
 	"strconv"
 	"strings"
 
@@ -35,7 +36,7 @@ type Scriptlet struct {
 	NativeArgumentIndexes []int      `json:"nativeArgumentIndexes" yaml:"nativeArgumentIndexes"`
 }
 
-func (self *Scriptlet) Read() (string, error) {
+func (self *Scriptlet) Read(context contextpkg.Context) (string, error) {
 	if self.Path != "" {
 		var origins []exturl.URL
 		var urlContext *exturl.Context
@@ -47,12 +48,12 @@ func (self *Scriptlet) Read() (string, error) {
 			defer urlContext.Release()
 		}
 
-		url, err := exturl.NewValidURL(self.Path, origins, urlContext)
+		url, err := urlContext.NewValidURL(context, self.Path, origins)
 		if err != nil {
 			return "", err
 		}
 
-		scriptlet, err := exturl.ReadString(url)
+		scriptlet, err := exturl.ReadString(context, url)
 		if err != nil {
 			return "", err
 		}

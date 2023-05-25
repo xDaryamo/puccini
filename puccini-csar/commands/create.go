@@ -24,8 +24,6 @@ var createdBy string
 var entryDefinitions string
 var otherDefinitions []string
 
-// TODO zip compression level
-
 func init() {
 	rootCommand.AddCommand(createCommand)
 

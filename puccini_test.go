@@ -1,6 +1,7 @@
 package main
 
 import (
+	contextpkg "context"
 	"fmt"
 	"os"
 	"testing"
@@ -98,13 +99,13 @@ func (self *Context) compile(url string, inputs map[string]any) {
 		var problems *problemspkg.Problems
 		var err error
 
-		url_, err := exturl.NewURL(fmt.Sprintf("%s/examples/%s", self.root, url), self.urlContext)
+		url_, err := self.urlContext.NewURL(fmt.Sprintf("%s/examples/%s", self.root, url))
 		if err != nil {
 			t.Errorf("%s", err.Error())
 			return
 		}
 
-		if _, serviceTemplate, problems, err = self.parserContext.Parse(url_, nil, nil, nil, inputs); err != nil {
+		if _, serviceTemplate, problems, err = self.parserContext.Parse(contextpkg.TODO(), url_, nil, nil, nil, inputs); err != nil {
 			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))
 			return
 		}

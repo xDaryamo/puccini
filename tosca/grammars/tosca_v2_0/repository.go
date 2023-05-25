@@ -66,7 +66,7 @@ func (self *Repository) GetURL() exturl.URL {
 	if (self.url == nil) && (self.URL != nil) {
 		origin := self.Context.URL.Origin()
 		var err error
-		if self.url, err = exturl.NewURL(*self.URL, origin.Context()); err != nil {
+		if self.url, err = origin.Context().NewURL(*self.URL); err != nil {
 			// Avoid reporting more than once
 			if !self.urlProblemReported {
 				self.Context.ReportError(err)

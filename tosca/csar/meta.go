@@ -3,12 +3,14 @@ package csar
 import (
 	"bufio"
 	"bytes"
+	contextpkg "context"
 	"fmt"
 	"io"
 	"os"
 	"strings"
 
 	"github.com/tliron/exturl"
+	"github.com/tliron/kutil/util"
 )
 
 const TOSCA_META_PATH = "TOSCA-Metadata/TOSCA.meta"
@@ -44,12 +46,12 @@ func NewMeta() *Meta {
 	}
 }
 
-func NewMetaFor(csarUrl exturl.URL, format string) (*Meta, error) {
+func NewMetaFor(context contextpkg.Context, csarUrl exturl.URL, format string) (*Meta, error) {
 	if format == "" {
 		format = csarUrl.Format()
 	}
 
-	if path, err := GetRootPath(csarUrl, format); err == nil {
+	if path, err := GetRootPath(context, csarUrl, format); err == nil {
 		meta := NewMeta()
 		meta.EntryDefinitions = path
 		return meta, nil
@@ -114,13 +116,14 @@ func ReadMetaFromPath(path string) (*Meta, error) {
 	}
 }
 
-func ReadMetaFromURL(csarUrl exturl.URL, format string) (*Meta, error) {
+func ReadMetaFromURL(context contextpkg.Context, csarUrl exturl.URL, format string) (*Meta, error) {
 	if format == "" {
 		format = csarUrl.Format()
 	}
 
 	if url, err := NewURL(csarUrl, format, TOSCA_META_PATH); err == nil {
-		if reader, err := url.Open(); err == nil {
+		if reader, err := url.Open(context); err == nil {
+			reader = util.NewContextualReadCloser(context, reader)
 			defer reader.Close()
 			return ReadMeta(reader)
 		} else {

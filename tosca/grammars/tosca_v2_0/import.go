@@ -1,6 +1,7 @@
 package tosca_v2_0
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"unicode"
@@ -104,7 +105,7 @@ func (self *Import) NewImportSpec(unit *File) (*tosca.ImportSpec, bool) {
 
 	origins = append(origins, self.Context.Origins...)
 
-	url, err := exturl.NewValidURL(*self.URL, origins, urlContext)
+	url, err := urlContext.NewValidURL(context.TODO(), *self.URL, origins)
 	if err != nil {
 		self.Context.ReportError(err)
 		return nil, false

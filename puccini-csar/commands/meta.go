@@ -1,6 +1,7 @@
 package commands
 
 import (
+	contextpkg "context"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -45,13 +46,14 @@ func Meta(url string) {
 
 	urlContext := exturl.NewContext()
 	util.OnExitError(urlContext.Release)
+	context := contextpkg.TODO()
 
 	var csarUrl exturl.URL
-	csarUrl, err = exturl.NewValidURL(url, nil, urlContext)
+	csarUrl, err = urlContext.NewValidURL(context, url, nil)
 	util.FailOnError(err)
 
 	var meta *csar.Meta
-	meta, err = csar.ReadMetaFromURL(csarUrl, archiveFormat)
+	meta, err = csar.ReadMetaFromURL(context, csarUrl, archiveFormat)
 	util.FailOnError(err)
 
 	if !terminal.Quiet || (output != "") {

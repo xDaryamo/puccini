@@ -1,6 +1,8 @@
 package commands
 
 import (
+	contextpkg "context"
+
 	"github.com/spf13/cobra"
 	"github.com/tliron/exturl"
 	"github.com/tliron/kutil/terminal"
@@ -32,8 +34,9 @@ var execCommand = &cobra.Command{
 
 		urlContext := exturl.NewContext()
 		defer urlContext.Release()
+		context := contextpkg.TODO()
 
-		clout, err := cloutpkg.Load(url, inputFormat, urlContext)
+		clout, err := cloutpkg.Load(context, url, inputFormat, urlContext)
 		util.FailOnError(err)
 
 		// Try loading JavaScript from Clout
@@ -41,10 +44,10 @@ var execCommand = &cobra.Command{
 
 		if err != nil {
 			// Try loading JavaScript from path or URL
-			scriptletUrl, err := exturl.NewValidURL(scriptletName, nil, urlContext)
+			scriptletUrl, err := urlContext.NewValidURL(context, scriptletName, nil)
 			util.FailOnError(err)
 
-			scriptlet, err = exturl.ReadString(scriptletUrl)
+			scriptlet, err = exturl.ReadString(context, scriptletUrl)
 			util.FailOnError(err)
 
 			err = js.SetScriptlet(scriptletName, js.CleanupScriptlet(scriptlet), clout)

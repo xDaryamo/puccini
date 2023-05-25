@@ -3,7 +3,6 @@ package grammars
 import (
 	"time"
 
-	"github.com/tliron/exturl"
 	"github.com/tliron/go-ard"
 	"github.com/tliron/puccini/tosca"
 )
@@ -74,7 +73,7 @@ func GetImplicitImportSpec(context *tosca.Context) (*tosca.ImportSpec, bool) {
 	if versionContext, version := DetectVersion(context); version != nil {
 		if paths, ok := ImplicitProfilePaths[versionContext.Name]; ok {
 			if path, ok := paths[*version]; ok {
-				if url, err := exturl.NewValidInternalURL(path, nil); err == nil {
+				if url, err := context.URL.Context().NewValidInternalURL(path); err == nil {
 					return &tosca.ImportSpec{URL: url, NameTransformer: nil, Implicit: true}, true
 				} else {
 					context.ReportError(err)

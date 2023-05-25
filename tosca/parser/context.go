@@ -1,6 +1,7 @@
 package parser
 
 import (
+	contextpkg "context"
 	"sync"
 
 	"github.com/tliron/kutil/problems"
@@ -79,7 +80,7 @@ func (self *ServiceContext) AddFile(file *File) {
 	self.Files = append(self.Files, file)
 }
 
-func (self *ServiceContext) AddImportFile(entityPtr tosca.EntityPtr, container *File, nameTransformer tosca.NameTransformer) *File {
+func (self *ServiceContext) AddImportFile(context contextpkg.Context, entityPtr tosca.EntityPtr, container *File, nameTransformer tosca.NameTransformer) *File {
 	file := NewFile(entityPtr, container, nameTransformer)
 
 	if container != nil {
@@ -95,7 +96,7 @@ func (self *ServiceContext) AddImportFile(entityPtr tosca.EntityPtr, container *
 
 	self.AddFile(file)
 
-	self.goReadImports(file)
+	self.goReadImports(context, file)
 
 	return file
 }

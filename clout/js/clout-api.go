@@ -1,6 +1,7 @@
 package js
 
 import (
+	contextpkg "context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -30,13 +31,13 @@ func (self *Context) NewCloutAPI(clout *cloutpkg.Clout, jsContext *js.Context) *
 	}
 }
 
-func (self *CloutAPI) Load(data any) (*CloutAPI, error) {
+func (self *CloutAPI) Load(context contextpkg.Context, data any) (*CloutAPI, error) {
 	var clout *cloutpkg.Clout
 	var err error
 
 	switch data_ := data.(type) {
 	case string:
-		if clout, err = cloutpkg.Load(data_, "", self.cloutContext.Context.URLContext); err != nil {
+		if clout, err = cloutpkg.Load(context, data_, "", self.cloutContext.Context.URLContext); err != nil {
 			return nil, err
 		}
 

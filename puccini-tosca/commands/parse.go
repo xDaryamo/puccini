@@ -1,6 +1,7 @@
 package commands
 
 import (
+	contextpkg "context"
 	"os"
 	"sort"
 
@@ -52,7 +53,7 @@ var parseCommand = &cobra.Command{
 			dumpPhases = nil
 		}
 
-		_, serviceTemplate := Parse(url)
+		_, serviceTemplate := Parse(contextpkg.TODO(), url)
 
 		if (filter == "") && (len(dumpPhases) == 0) {
 			transcribe.Print(serviceTemplate, format, os.Stdout, strict, pretty)
@@ -62,8 +63,8 @@ var parseCommand = &cobra.Command{
 
 var parserContext = parser.NewContext()
 
-func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
-	ParseInputs()
+func Parse(context contextpkg.Context, url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
+	ParseInputs(context)
 
 	urlContext := exturl.NewContext()
 	util.OnExitError(urlContext.Release)
@@ -75,9 +76,9 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 
 	var origins []exturl.URL
 	for _, importPath := range importPaths {
-		origin, err := exturl.NewURL(importPath, urlContext)
+		origin, err := urlContext.NewURL(importPath)
 		if err != nil {
-			origin = exturl.NewFileURL(importPath, urlContext)
+			origin = urlContext.NewFileURL(importPath)
 		}
 		origins = append(origins, origin)
 	}
@@ -86,10 +87,10 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 	var err error
 	if url == "" {
 		log.Info("parsing stdin")
-		url_, err = exturl.ReadToInternalURLFromStdin("yaml", urlContext)
+		url_, err = urlContext.ReadToInternalURLFromStdin(context, "yaml")
 	} else {
 		log.Infof("parsing %q", url)
-		url_, err = exturl.NewValidURL(url, origins, urlContext)
+		url_, err = urlContext.NewValidURL(context, url, origins)
 	}
 	util.FailOnError(err)
 
@@ -104,7 +105,7 @@ func Parse(url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
 
 	// Phase 1: Read
 	if stopAtPhase >= 1 {
-		ok := serviceContext.ReadRoot(url_, origins, template)
+		ok := serviceContext.ReadRoot(context, url_, origins, template)
 
 		serviceContext.MergeProblems()
 		problems = serviceContext.GetProblems()
@@ -226,17 +227,18 @@ func ToPrintPhase(phase uint) bool {
 	return false
 }
 
-func ParseInputs() {
+func ParseInputs(context contextpkg.Context) {
 	if inputsUrl != "" {
 		log.Infof("load inputs from %q", inputsUrl)
 
 		urlContext := exturl.NewContext()
 		util.OnExitError(urlContext.Release)
 
-		url, err := exturl.NewValidURL(inputsUrl, nil, urlContext)
+		url, err := urlContext.NewValidURL(context, inputsUrl, nil)
 		util.FailOnError(err)
-		reader, err := url.Open()
+		reader, err := url.Open(context)
 		util.FailOnError(err)
+		reader = util.NewContextualReadCloser(context, reader)
 		defer reader.Close()
 		data, err := yamlkeys.DecodeAll(reader)
 		util.FailOnError(err)

@@ -61,7 +61,7 @@ func (self *Context) NewEnvironment(clout *cloutpkg.Clout, apis map[string]any) 
 	environment.CreateResolver = func(url exturl.URL, context *js.Context) js.ResolveFunc {
 		return func(id string, raw bool) (exturl.URL, error) {
 			if scriptlet, err := GetScriptlet(id, clout); err == nil {
-				url := exturl.NewInternalURL(id, self.URLContext)
+				url := self.URLContext.NewInternalURL(id)
 				url.SetContent(scriptlet)
 				return url, nil
 			} else {

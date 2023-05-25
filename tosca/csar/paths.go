@@ -3,6 +3,7 @@ package csar
 import (
 	"archive/tar"
 	"archive/zip"
+	contextpkg "context"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -10,12 +11,12 @@ import (
 	"github.com/tliron/exturl"
 )
 
-func GetRootPath(csarUrl exturl.URL, format string) (string, error) {
+func GetRootPath(context contextpkg.Context, csarUrl exturl.URL, format string) (string, error) {
 	if format == "" {
 		format = csarUrl.Format()
 	}
 
-	if paths, err := GetRootPaths(csarUrl, format); err == nil {
+	if paths, err := GetRootPaths(context, csarUrl, format); err == nil {
 		length := len(paths)
 		if length == 1 {
 			return paths[0], nil
@@ -29,7 +30,7 @@ func GetRootPath(csarUrl exturl.URL, format string) (string, error) {
 	}
 }
 
-func GetRootPaths(csarUrl exturl.URL, format string) ([]string, error) {
+func GetRootPaths(context contextpkg.Context, csarUrl exturl.URL, format string) ([]string, error) {
 	if format == "" {
 		format = csarUrl.Format()
 	}
@@ -51,7 +52,7 @@ func GetRootPaths(csarUrl exturl.URL, format string) ([]string, error) {
 
 	switch url_ := url.(type) {
 	case *exturl.TarballURL:
-		tarballReader, err := url_.OpenArchive()
+		tarballReader, err := url_.OpenArchive(context)
 		if err != nil {
 			return nil, err
 		}
@@ -65,7 +66,7 @@ func GetRootPaths(csarUrl exturl.URL, format string) ([]string, error) {
 		}
 
 	case *exturl.ZipURL:
-		zipReader, err := url_.OpenArchive()
+		zipReader, err := url_.OpenArchive(context)
 		if err != nil {
 			return nil, err
 		}

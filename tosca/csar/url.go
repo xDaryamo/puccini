@@ -1,6 +1,7 @@
 package csar
 
 import (
+	contextpkg "context"
 	"fmt"
 	"strconv"
 
@@ -24,19 +25,19 @@ func NewURL(csarUrl exturl.URL, format string, path string) (exturl.URL, error) 
 	}
 }
 
-func GetDefaultServiceTemplateURL(csarUrl exturl.URL, format string) (exturl.URL, error) {
-	return GetServiceTemplateURL(csarUrl, format, "")
+func GetDefaultServiceTemplateURL(context contextpkg.Context, csarUrl exturl.URL, format string) (exturl.URL, error) {
+	return GetServiceTemplateURL(context, csarUrl, format, "")
 }
 
-func GetServiceTemplateURL(csarUrl exturl.URL, format string, serviceTemplateName string) (exturl.URL, error) {
+func GetServiceTemplateURL(context contextpkg.Context, csarUrl exturl.URL, format string, serviceTemplateName string) (exturl.URL, error) {
 	if format == "" {
 		format = csarUrl.Format()
 	}
 
-	meta, err := ReadMetaFromURL(csarUrl, format)
+	meta, err := ReadMetaFromURL(context, csarUrl, format)
 	if err != nil {
 		if exturl.IsNotFound(err) {
-			if meta, err = NewMetaFor(csarUrl, format); err != nil {
+			if meta, err = NewMetaFor(context, csarUrl, format); err != nil {
 				return nil, err
 			}
 		} else {
@@ -53,7 +54,7 @@ func GetServiceTemplateURL(csarUrl exturl.URL, format string, serviceTemplateNam
 		}
 
 		// Attempt to find it in root of archive
-		if path, err := GetRootPath(csarUrl, format); err == nil {
+		if path, err := GetRootPath(context, csarUrl, format); err == nil {
 			return NewURL(csarUrl, format, path)
 		} else {
 			return nil, err

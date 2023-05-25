@@ -3,6 +3,7 @@ package main
 import (
 	"C"
 	"bytes"
+	contextpkg "context"
 	"errors"
 	"strings"
 
@@ -66,12 +67,13 @@ func Compile(url *C.char, inputs *C.char, quirks *C.char, resolve C.char, coerce
 
 	urlContext := exturl.NewContext()
 	defer urlContext.Release()
+	context := contextpkg.TODO()
 
-	if url_, err = exturl.NewValidURL(C.GoString(url), nil, urlContext); err != nil {
+	if url_, err = urlContext.NewValidURL(context, C.GoString(url), nil); err != nil {
 		return result(nil, nil, err)
 	}
 
-	if _, serviceTemplate, problems, err = parserContext.Parse(url_, nil, nil, quirks_, inputs_); err != nil {
+	if _, serviceTemplate, problems, err = parserContext.Parse(context, url_, nil, nil, quirks_, inputs_); err != nil {
 		return result(nil, problems, err)
 	}
 

@@ -1,6 +1,7 @@
 package tosca_v2_0
 
 import (
+	contextpkg "context"
 	"strings"
 
 	"github.com/tliron/exturl"
@@ -67,7 +68,7 @@ func ReadArtifactDefinition(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-func (self *ArtifactDefinition) GetURL() exturl.URL {
+func (self *ArtifactDefinition) GetURL(context contextpkg.Context) exturl.URL {
 	if self.File == nil {
 		return nil
 	}
@@ -81,7 +82,7 @@ func (self *ArtifactDefinition) GetURL() exturl.URL {
 			origin := self.Context.URL.Origin()
 			origins := []exturl.URL{origin}
 			var err error
-			if self.url, err = exturl.NewValidURL(*self.File, origins, origin.Context()); err != nil {
+			if self.url, err = origin.Context().NewValidURL(context, *self.File, origins); err != nil {
 				// Avoid reporting more than once
 				if !self.urlProblemReported {
 					self.Context.ReportError(err)

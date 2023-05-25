@@ -11,7 +11,6 @@ cp "$ROOT/dist/libpuccini.so" "$ROOT/wrappers/ruby/lib/"
 git_version
 
 PUCCINI_VERSION=${SHORT_VERSION:1} \
-gem build \
-	-C "$ROOT/wrappers/ruby" \
+gem -C "$ROOT/wrappers/ruby" build \
 	--output ../../dist/puccini.gem \
 	"$ROOT/wrappers/ruby/puccini.gemspec"
