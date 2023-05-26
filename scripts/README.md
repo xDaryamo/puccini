@@ -2,7 +2,16 @@ Build Guide
 ===========
 
 Puccini tries to follow the conventions of the Go programming community. However, newcomers to Go
-might not know where to start. Here are some scripts to get you up in running, in order:
+might not know where to start. Here are some scripts to get you up in running.
+
+We recommend developing on Linux. The Go compiler is a cross-compiler so you can build all binaries
+for all platforms and architectures from there. A Linux virtual machine would be find.
+
+If you're on Windows you have two additional options. The better one is
+[WSL](https://learn.microsoft.com/en-us/windows/wsl/about), which *is* Linux, from where you can do
+cross-compiling. The second option is to 1) [install Go for Windows](https://go.dev/doc/install)
+and then 2) install [git for Windows](https://git-scm.com/download/win), which provides a Unix-like
+environment with bash (use "Git Bash").
 
 [build](build)
 --------------

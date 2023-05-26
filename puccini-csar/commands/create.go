@@ -139,6 +139,8 @@ func CreateCSAR(csarPath string, dir string) {
 		util.OnExitError(tarWriter.Close)
 
 		write(func(internalPath string, buffer []byte, file *os.File) error {
+			internalPath = filepath.ToSlash(internalPath)
+
 			header := tar.Header{
 				Name: internalPath,
 				Mode: 0600,
@@ -187,6 +189,7 @@ func CreateCSAR(csarPath string, dir string) {
 		})
 
 		write(func(internalPath string, buffer []byte, file *os.File) error {
+			internalPath = filepath.ToSlash(internalPath)
 			if writer, err := zipWriter.Create(internalPath); err == nil {
 				if buffer != nil {
 					_, err = writer.Write(buffer)

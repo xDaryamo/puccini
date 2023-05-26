@@ -19,7 +19,7 @@ function build () {
 			-X 'github.com/tliron/kutil/version.GitRevision=$REVISION' \
 			-X 'github.com/tliron/kutil/version.Timestamp=$TIMESTAMP'"
 	popd > /dev/null
-	m "built $GOPATH/bin/$TOOL"
+	m "built ${GOPATH//\\//}/bin/$TOOL"
 }
 
 build puccini-tosca

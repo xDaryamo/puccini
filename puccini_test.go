@@ -2,8 +2,9 @@ package main
 
 import (
 	contextpkg "context"
-	"fmt"
 	"os"
+	"path"
+	"path/filepath"
 	"testing"
 
 	"github.com/tliron/exturl"
@@ -99,7 +100,7 @@ func (self *Context) compile(url string, inputs map[string]any) {
 		var problems *problemspkg.Problems
 		var err error
 
-		url_, err := self.urlContext.NewURL(fmt.Sprintf("%s/examples/%s", self.root, url))
+		url_, err := self.urlContext.NewURL("file://" + path.Join(filepath.ToSlash(self.root), "examples", url))
 		if err != nil {
 			t.Errorf("%s", err.Error())
 			return
