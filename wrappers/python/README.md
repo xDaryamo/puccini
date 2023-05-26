@@ -11,18 +11,14 @@ The latest stable version is published on [PyPI](https://pypi.org/project/puccin
 
     pip install puccini
 
-To install the latest development version from GitHub:
+To install from source:
 
-    pip install git+https://github.com/tliron/puccini#subdirectory=wrappers/python
+    git clone https://github.com/tliron/puccini.git
+    cd puccini
+    scripts/build-wrapper-python -e
 
-Or, if you've cloned the repository locally: 
+This will create a [virtualenv](https://virtualenv.pypa.io/). To use it:
 
-    pip install wrappers/python/
-
-For testing it's recommended to install in a [virtualenv](https://virtualenv.pypa.io/), e.g.:
-
-    python -m venv env
-    . env/bin/activate
-    pip install git+https://github.com/tliron/puccini#subdirectory=wrappers/python
+    . dist/python-env/bin/activate
 
 Also see: [Python examples](../../examples/python/).
