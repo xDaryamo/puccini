@@ -3,14 +3,14 @@ package commands
 import (
 	"archive/tar"
 	"archive/zip"
-	"compress/flate"
-	"compress/gzip"
 	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/klauspost/compress/flate"
+	"github.com/klauspost/pgzip"
 	"github.com/spf13/cobra"
 	"github.com/tliron/exturl"
 	"github.com/tliron/kutil/util"
@@ -174,7 +174,7 @@ func CreateCSAR(csarPath string, dir string) {
 		writeTar(file)
 
 	case "tar.gz":
-		gzipWriter, err := gzip.NewWriterLevel(file, compressionLevel)
+		gzipWriter, err := pgzip.NewWriterLevel(file, compressionLevel)
 		util.FailOnError(err)
 		util.OnExitError(gzipWriter.Close)
 
