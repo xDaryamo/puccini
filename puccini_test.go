@@ -100,11 +100,7 @@ func (self *Context) compile(url string, inputs map[string]any) {
 		var problems *problemspkg.Problems
 		var err error
 
-		url_, err := self.urlContext.NewURL("file://" + path.Join(filepath.ToSlash(self.root), "examples", url))
-		if err != nil {
-			t.Errorf("%s", err.Error())
-			return
-		}
+		url_ := self.urlContext.NewFileURL(path.Join(filepath.ToSlash(self.root), "examples", url))
 
 		if _, serviceTemplate, problems, err = self.parserContext.Parse(contextpkg.TODO(), url_, nil, nil, nil, inputs); err != nil {
 			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))
