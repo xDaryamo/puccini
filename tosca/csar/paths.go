@@ -2,11 +2,12 @@ package csar
 
 import (
 	"archive/tar"
-	"archive/zip"
 	contextpkg "context"
 	"fmt"
 	"path/filepath"
 	"strings"
+
+	"github.com/klauspost/compress/zip"
 
 	"github.com/tliron/exturl"
 )
