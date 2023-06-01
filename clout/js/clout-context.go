@@ -1,7 +1,7 @@
 package js
 
 import (
-	"github.com/tliron/kutil/js"
+	"github.com/tliron/commonjs-goja"
 	cloutpkg "github.com/tliron/puccini/clout"
 )
 
@@ -12,10 +12,10 @@ import (
 type CloutContext struct {
 	Context   *Context
 	Clout     *cloutpkg.Clout
-	JSContext *js.Context
+	JSContext *commonjs.Context
 }
 
-func (self *Context) NewCloutContext(clout *cloutpkg.Clout, jsContext *js.Context) *CloutContext {
+func (self *Context) NewCloutContext(clout *cloutpkg.Clout, jsContext *commonjs.Context) *CloutContext {
 	return &CloutContext{
 		Context:   self,
 		Clout:     clout,

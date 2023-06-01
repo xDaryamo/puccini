@@ -3,16 +3,17 @@ module github.com/tliron/puccini
 go 1.20
 
 require (
-	github.com/dop251/goja v0.0.0-20230531152251-f5b4a7592b4d
+	github.com/dop251/goja v0.0.0-20230531210528-d7324b2d74f7
 	github.com/fxamacker/cbor/v2 v2.4.0
 	github.com/klauspost/compress v1.16.5
 	github.com/klauspost/pgzip v1.2.6
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/cobra v1.7.0
+	github.com/tliron/commonjs-goja v0.1.0
 	github.com/tliron/commonlog v0.1.0
 	github.com/tliron/exturl v0.2.3
 	github.com/tliron/go-ard v0.1.1
-	github.com/tliron/kutil v0.2.3
+	github.com/tliron/kutil v0.2.5
 	github.com/tliron/yamlkeys v1.3.6
 	github.com/vmihailenco/msgpack/v5 v5.3.5
 )

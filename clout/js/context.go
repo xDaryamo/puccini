@@ -6,9 +6,9 @@ import (
 	"sync"
 
 	"github.com/dop251/goja"
+	"github.com/tliron/commonjs-goja"
 	"github.com/tliron/commonlog"
 	"github.com/tliron/exturl"
-	"github.com/tliron/kutil/js"
 	"github.com/tliron/kutil/terminal"
 	cloutpkg "github.com/tliron/puccini/clout"
 )
@@ -55,10 +55,10 @@ func NewContext(name string, log commonlog.Logger, arguments map[string]string, 
 	}
 }
 
-func (self *Context) NewEnvironment(clout *cloutpkg.Clout, apis map[string]any) *js.Environment {
-	environment := js.NewEnvironment(self.URLContext, nil)
+func (self *Context) NewEnvironment(clout *cloutpkg.Clout, apis map[string]any) *commonjs.Environment {
+	environment := commonjs.NewEnvironment(self.URLContext, nil)
 
-	environment.CreateResolver = func(url exturl.URL, context *js.Context) js.ResolveFunc {
+	environment.CreateResolver = func(url exturl.URL, context *commonjs.Context) commonjs.ResolveFunc {
 		return func(id string, raw bool) (exturl.URL, error) {
 			if scriptlet, err := GetScriptlet(id, clout); err == nil {
 				url := self.URLContext.NewInternalURL(id)
@@ -70,24 +70,24 @@ func (self *Context) NewEnvironment(clout *cloutpkg.Clout, apis map[string]any) 
 		}
 	}
 
-	environment.Extensions = append(environment.Extensions, js.Extension{
+	environment.Extensions = append(environment.Extensions, commonjs.Extension{
 		Name: "puccini",
-		Create: func(context *js.Context) goja.Value {
+		Create: func(context *commonjs.Context) goja.Value {
 			return context.Environment.Runtime.ToValue(self.NewPucciniAPI())
 		},
 	})
 
-	environment.Extensions = append(environment.Extensions, js.Extension{
+	environment.Extensions = append(environment.Extensions, commonjs.Extension{
 		Name: "clout",
-		Create: func(context *js.Context) goja.Value {
+		Create: func(context *commonjs.Context) goja.Value {
 			return context.Environment.Runtime.ToValue(self.NewCloutAPI(clout, context))
 		},
 	})
 
 	for name, api := range apis {
-		environment.Extensions = append(environment.Extensions, js.Extension{
+		environment.Extensions = append(environment.Extensions, commonjs.Extension{
 			Name: name,
-			Create: func(context *js.Context) goja.Value {
+			Create: func(context *commonjs.Context) goja.Value {
 				return context.Environment.Runtime.ToValue(api)
 			},
 		})

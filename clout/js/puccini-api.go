@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/tliron/commonjs-goja"
 	"github.com/tliron/commonlog"
 	"github.com/tliron/exturl"
-	"github.com/tliron/kutil/js"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
@@ -21,9 +21,9 @@ import (
 //
 
 type PucciniAPI struct {
-	js.UtilAPI
-	js.TranscribeAPI
-	js.FileAPI
+	commonjs.UtilAPI
+	commonjs.TranscribeAPI
+	commonjs.FileAPI
 
 	Arguments map[string]string
 	Log       commonlog.Logger
@@ -45,7 +45,7 @@ func (self *Context) NewPucciniAPI() *PucciniAPI {
 		format = "yaml"
 	}
 	return &PucciniAPI{
-		FileAPI:   js.NewFileAPI(self.URLContext),
+		FileAPI:   commonjs.NewFileAPI(self.URLContext),
 		Arguments: self.Arguments,
 		Log:       self.Log,
 		Stdout:    self.Stdout,

@@ -8,8 +8,8 @@ import (
 
 	"github.com/dop251/goja"
 	"github.com/fxamacker/cbor/v2"
+	"github.com/tliron/commonjs-goja"
 	"github.com/tliron/go-ard"
-	"github.com/tliron/kutil/js"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/vmihailenco/msgpack/v5"
 )
@@ -24,7 +24,7 @@ type CloutAPI struct {
 	cloutContext *CloutContext
 }
 
-func (self *Context) NewCloutAPI(clout *cloutpkg.Clout, jsContext *js.Context) *CloutAPI {
+func (self *Context) NewCloutAPI(clout *cloutpkg.Clout, jsContext *commonjs.Context) *CloutAPI {
 	return &CloutAPI{
 		clout,
 		self.NewCloutContext(clout, jsContext),
