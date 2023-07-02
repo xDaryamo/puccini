@@ -15,6 +15,7 @@ function build () {
 	pushd "$ROOT/$TOOL" > /dev/null
 	go build \
 		-buildmode=c-shared \
+		-pgo=auto \
 		-o="$ROOT/dist/libpuccini.so" \
 		-ldflags " \
 			-X 'github.com/tliron/kutil/version.GitVersion=$VERSION' \

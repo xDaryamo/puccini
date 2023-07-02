@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
+. "$HERE/_env"
+
+rm --force "$ROOT/puccini-tosca/default.pgo"
+rm --force "$ROOT/puccini-clout/default.pgo"
+rm --force "$ROOT/puccini-csar/default.pgo"
+rm --force "$ROOT/library/default.pgo"
+
+"$HERE/test"
+
+m "creating $ROOT/puccini-csar/default.pgo"
+
+mkdir --parents "$ROOT/dist"
+
+puccini-csar create "$ROOT/dist/cloud.tar.gz" "$ROOT/examples/csar" \
+    --entry-definitions=main.yaml \
+    --other-definitions='other 1.yaml' \
+    --other-definitions='other 2.yaml' \
+	--cpu-profile="$ROOT/puccini-csar/default.pgo" > /dev/null 2>&1
+
+m "creating $ROOT/puccini-tosca/default.pgo"
+
+. "$HERE/_start-http-server"
+
+puccini-tosca compile "http://localhost:8000/cloud.tar.gz" --coerce \
+	--cpu-profile="$ROOT/puccini-tosca/default.pgo" > /dev/null 2>&1
+
+cp "$ROOT/puccini-tosca/default.pgo" "$ROOT/library/default.pgo"
+
+m "creating $ROOT/puccini-clout/default.pgo"
+
+puccini-tosca compile "http://localhost:8000/cloud.tar.gz" | \
+puccini-clout scriptlet exec tosca.resolve \
+	--cpu-profile="$ROOT/puccini-clout/default.pgo" > /dev/null 2>&1
+
+"$HERE/test"

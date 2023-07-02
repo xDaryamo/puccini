@@ -1,6 +1,9 @@
 package commands
 
 import (
+	"os"
+	"runtime/pprof"
+
 	"github.com/spf13/cobra"
 	"github.com/tliron/commonlog"
 	"github.com/tliron/kutil/terminal"
@@ -14,6 +17,7 @@ var inputFormat string
 var colorize string
 var strict bool
 var pretty bool
+var cpuProfilePath string
 
 func init() {
 	rootCommand.PersistentFlags().BoolVarP(&terminal.Quiet, "quiet", "q", false, "suppress output")
@@ -24,6 +28,7 @@ func init() {
 	rootCommand.PersistentFlags().StringVarP(&colorize, "colorize", "z", "true", "colorize output (boolean or \"force\")")
 	rootCommand.PersistentFlags().BoolVarP(&strict, "strict", "y", false, "strict output (for \"yaml\" format only)")
 	rootCommand.PersistentFlags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
+	rootCommand.PersistentFlags().StringVarP(&cpuProfilePath, "cpu-profile", "", "", "CPU profile file path")
 }
 
 var rootCommand = &cobra.Command{
@@ -35,6 +40,7 @@ var rootCommand = &cobra.Command{
 		if cleanup != nil {
 			util.OnExitError(cleanup)
 		}
+
 		if logTo == "" {
 			if terminal.Quiet {
 				verbose = -4
@@ -42,6 +48,14 @@ var rootCommand = &cobra.Command{
 			commonlog.Configure(verbose, nil)
 		} else {
 			commonlog.Configure(verbose, &logTo)
+		}
+
+		if cpuProfilePath != "" {
+			cpuProfile, err := os.Create(cpuProfilePath)
+			util.FailOnError(err)
+			err = pprof.StartCPUProfile(cpuProfile)
+			util.FailOnError(err)
+			util.OnExit(pprof.StopCPUProfile)
 		}
 	},
 }

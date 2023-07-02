@@ -3,15 +3,15 @@ module github.com/tliron/puccini
 go 1.20
 
 require (
-	github.com/dop251/goja v0.0.0-20230531210528-d7324b2d74f7
+	github.com/dop251/goja v0.0.0-20230626124041-ba8a63e79201
 	github.com/fxamacker/cbor/v2 v2.4.0
-	github.com/klauspost/compress v1.16.5
+	github.com/klauspost/compress v1.16.6
 	github.com/klauspost/pgzip v1.2.6
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/cobra v1.7.0
 	github.com/tliron/commonjs-goja v0.1.0
 	github.com/tliron/commonlog v0.1.0
-	github.com/tliron/exturl v0.2.3
+	github.com/tliron/exturl v0.2.4
 	github.com/tliron/go-ard v0.1.1
 	github.com/tliron/kutil v0.2.5
 	github.com/tliron/yamlkeys v1.3.6
@@ -28,7 +28,7 @@ require (
 	github.com/containerd/stargz-snapshotter/estargz v0.14.3 // indirect
 	github.com/dlclark/regexp2 v1.7.0 // indirect
 	github.com/docker/cli v23.0.5+incompatible // indirect
-	github.com/docker/distribution v2.8.1+incompatible // indirect
+	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/docker/docker v23.0.5+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.7.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
