@@ -1,9 +1,6 @@
 package commands
 
 import (
-	"os"
-	"runtime/pprof"
-
 	"github.com/spf13/cobra"
 	"github.com/tliron/commonlog"
 	"github.com/tliron/kutil/terminal"
@@ -35,28 +32,9 @@ var rootCommand = &cobra.Command{
 	Use:   toolName,
 	Short: "Clout processor",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		cleanup, err := terminal.ProcessColorizeFlag(colorize)
-		util.FailOnError(err)
-		if cleanup != nil {
-			util.OnExitError(cleanup)
-		}
-
-		if logTo == "" {
-			if terminal.Quiet {
-				verbose = -4
-			}
-			commonlog.Configure(verbose, nil)
-		} else {
-			commonlog.Configure(verbose, &logTo)
-		}
-
-		if cpuProfilePath != "" {
-			cpuProfile, err := os.Create(cpuProfilePath)
-			util.FailOnError(err)
-			err = pprof.StartCPUProfile(cpuProfile)
-			util.FailOnError(err)
-			util.OnExit(pprof.StopCPUProfile)
-		}
+		util.InitializeCPUProfiling(cpuProfilePath)
+		util.InitializeColorization(colorize)
+		commonlog.Initialize(verbose, logTo)
 	},
 }
 

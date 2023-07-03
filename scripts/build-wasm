@@ -13,6 +13,7 @@ function build () {
 	local WASM=$ROOT/dist/$TOOL.wasm
 	pushd "$ROOT/$TOOL" > /dev/null
 	GOOS=js GOARCH=wasm go build \
+		-pgo=auto \
 		-o "$WASM" \
 		-ldflags " \
 			-X 'github.com/tliron/kutil/version.GitVersion=$VERSION' \
