@@ -151,13 +151,13 @@ var ScalarUnitSizeRE = regexp.MustCompile(
 
 var ScalarUnitSizeMeasures = ScalarUnitMeasures{
 	"B":   1,
-	"kB":  1000,
+	"kB":  1_000,
 	"KiB": 1024,
-	"MB":  1000000,
+	"MB":  1_000_000,
 	"MiB": 1048576,
-	"GB":  1000000000,
+	"GB":  1_000_000_000,
 	"GiB": 1073741824,
-	"TB":  1000000000000,
+	"TB":  1_000_000_000_000,
 	"TiB": 1099511627776,
 }
 
@@ -181,8 +181,8 @@ var ScalarUnitTimeRE = regexp.MustCompile(
 		`(?i)(?P<unit>ns|us|ms|s|m|h|d)$`)
 
 var ScalarUnitTimeMeasures = ScalarUnitMeasures{
-	"ns": 0.000000001,
-	"us": 0.000001,
+	"ns": 0.000_000_001,
+	"us": 0.000_001,
 	"ms": 0.001,
 	"s":  1,
 	"m":  60,
@@ -211,9 +211,9 @@ var ScalarUnitFrequencyRE = regexp.MustCompile(
 
 var ScalarUnitFrequencyMeasures = ScalarUnitMeasures{
 	"Hz":  1,
-	"kHz": 1000,
-	"MHz": 1000000,
-	"GHz": 1000000000,
+	"kHz": 1_000,
+	"MHz": 1_000_000,
+	"GHz": 1_000_000_000,
 }
 
 // tosca.Reader signature
@@ -235,22 +235,22 @@ var ScalarUnitBitrateRE = regexp.MustCompile(
 // Case-sensitive!
 var ScalarUnitBitrateMeasures = ScalarUnitMeasures{
 	"bps":   1,
-	"Kbps":  1000,
+	"Kbps":  1_000,
 	"Kibps": 1024,
-	"Mbps":  1000000,
+	"Mbps":  1_000_000,
 	"Mibps": 1048576,
-	"Gbps":  1000000000,
+	"Gbps":  1_000_000_000,
 	"Gibps": 1073741824,
-	"Tbps":  1000000000000,
+	"Tbps":  1_000_000_000_000,
 	"Tibps": 1099511627776,
 	"Bps":   8,
-	"KBps":  8000,
+	"KBps":  8_000,
 	"KiBps": 8192,
-	"MBps":  8000000,
+	"MBps":  8_000_000,
 	"MiBps": 8388608,
-	"GBps":  8000000000,
+	"GBps":  8_000_000_000,
 	"GiBps": 8589934592,
-	"TBps":  8000000000000,
+	"TBps":  8_000_000_000_000,
 	"TiBps": 8796093022208,
 }
 

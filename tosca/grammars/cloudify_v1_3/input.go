@@ -52,7 +52,7 @@ func (self *Input) Render() {
 }
 
 func (self *Input) render() {
-	logRender.Debugf("input", self.Name)
+	logRender.Debugf("input: %s", self.Name)
 
 	if (self.Value == nil) && (self.Default != nil) {
 		self.Value = self.Default

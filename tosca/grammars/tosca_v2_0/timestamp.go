@@ -173,7 +173,7 @@ func ReadTimestamp(context *tosca.Context) tosca.EntityPtr {
 		self.Hour = uint32(time.Hour())
 		self.Minute = uint32(time.Minute())
 		self.Second = uint32(time.Second())
-		self.Fraction = float64(time.Nanosecond()) / 1000000000.0
+		self.Fraction = float64(time.Nanosecond()) / 1_000_000_000.0
 		if tzSeconds >= 0 {
 			self.TZSign = "+"
 		} else {
@@ -237,7 +237,7 @@ func (self *Timestamp) Time() time.Time {
 		int(self.Hour),
 		int(self.Minute),
 		int(self.Second),
-		int(self.Fraction*1000000000.0),
+		int(self.Fraction*1_000_000_000.0),
 		self.Location(),
 	)
 }

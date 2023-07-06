@@ -11,7 +11,9 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 
 m 'testing...'
 
+cd "$ROOT"
+
 PUCCINI_TEST_ROOT=$ROOT \
 KUTIL_LOCK_DEFAULT=debug \
 GORACE=history_size=7 \
-go test -count=1 -timeout=30s "$MODULE" "$@"
+go test -count=1 -timeout=30s . "$@"
