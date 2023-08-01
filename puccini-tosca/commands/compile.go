@@ -61,15 +61,25 @@ func Compile(context contextpkg.Context, url string) {
 	clout, err := serviceTemplate.Compile()
 	util.FailOnError(err)
 
+	execContext := js.ExecContext{
+		Clout:      clout,
+		Problems:   problems,
+		URLContext: urlContext,
+		History:    true,
+		Format:     format,
+		Strict:     strict,
+		Pretty:     pretty,
+	}
+
 	// Resolve
 	if resolve {
-		js.Resolve(clout, problems, urlContext, true, format, strict, pretty)
+		execContext.Resolve()
 		FailOnProblems(problems)
 	}
 
 	// Coerce
 	if coerce {
-		js.Coerce(clout, problems, urlContext, true, format, strict, pretty)
+		execContext.Coerce()
 		FailOnProblems(problems)
 	}
 

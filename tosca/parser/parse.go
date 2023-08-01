@@ -12,46 +12,70 @@ import (
 	"github.com/tliron/puccini/tosca/normal"
 )
 
-func (self *Context) Parse(context contextpkg.Context, url exturl.URL, origins []exturl.URL, stylist *terminal.Stylist, quirks tosca.Quirks, inputs map[string]ard.Value) (*ServiceContext, *normal.ServiceTemplate, *problems.Problems, error) {
-	serviceContext := self.NewServiceContext(stylist, quirks)
+//
+// ParseContext
+//
+
+type ParseContext struct {
+	URL     exturl.URL
+	Origins []exturl.URL
+	Stylist *terminal.Stylist
+	Quirks  tosca.Quirks
+	Inputs  map[string]ard.Value
+}
+
+//
+// Result
+//
+
+type Result struct {
+	ServiceContext        *ServiceContext
+	NormalServiceTemplate *normal.ServiceTemplate
+	Problems              *problems.Problems
+}
+
+func (self *Context) Parse(context contextpkg.Context, parseContext ParseContext) (Result, error) {
+	var result Result
+
+	result.ServiceContext = self.NewServiceContext(parseContext.Stylist, parseContext.Quirks)
 
 	// Phase 1: Read
-	ok := serviceContext.ReadRoot(context, url, origins, "")
-	serviceContext.MergeProblems()
-	problems := serviceContext.GetProblems()
+	ok := result.ServiceContext.ReadRoot(context, parseContext.URL, parseContext.Origins, "")
+	result.ServiceContext.MergeProblems()
+	result.Problems = result.ServiceContext.GetProblems()
 
-	if !problems.Empty() {
-		return serviceContext, nil, problems, errors.New("read problems")
+	if !result.Problems.Empty() {
+		return result, errors.New("read problems")
 	}
 
 	if !ok {
-		return serviceContext, nil, nil, errors.New("read error")
+		return result, errors.New("read error")
 	}
 
 	// Phase 2: Namespaces
-	serviceContext.AddNamespaces()
-	serviceContext.LookupNames()
+	result.ServiceContext.AddNamespaces()
+	result.ServiceContext.LookupNames()
 
 	// Phase 3: Hierarchies
-	serviceContext.AddHierarchies()
+	result.ServiceContext.AddHierarchies()
 
 	// Phase 4: Inheritance
-	serviceContext.Inherit(nil)
+	result.ServiceContext.Inherit(nil)
 
-	serviceContext.SetInputs(inputs)
+	result.ServiceContext.SetInputs(parseContext.Inputs)
 
 	// Phase 5: Rendering
-	serviceContext.Render()
-	serviceContext.MergeProblems()
-	if !problems.Empty() {
-		return serviceContext, nil, problems, errors.New("parsing problems")
+	result.ServiceContext.Render()
+	result.ServiceContext.MergeProblems()
+	if !result.Problems.Empty() {
+		return result, errors.New("parsing problems")
 	}
 
 	// Normalize
-	serviceTemplate, ok := serviceContext.Normalize()
-	if !ok || !problems.Empty() {
-		return serviceContext, nil, problems, errors.New("normalization")
+	result.NormalServiceTemplate, ok = result.ServiceContext.Normalize()
+	if !ok || !result.Problems.Empty() {
+		return result, errors.New("normalization")
 	}
 
-	return serviceContext, serviceTemplate, problems, nil
+	return result, nil
 }

@@ -29,9 +29,9 @@ function run () {
 
 m "running $COUNT times..."
 START=$(date +%s.%N)
-for (( i=0; i<$COUNT; ++i)); do
+for (( i = 0; i < "$COUNT"; i++)); do
 	run
 done
 END=$(date +%s.%N)
-TIME=$(echo "$END - $START" | bc --mathlib)
+TIME=$(printf %.2f $(bc <<< "$END - $START"))
 m "seconds: $TIME"

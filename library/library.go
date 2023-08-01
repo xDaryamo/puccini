@@ -14,7 +14,6 @@ import (
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/tosca"
-	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
 	"github.com/tliron/yamlkeys"
 )
@@ -60,9 +59,8 @@ func Compile(url *C.char, inputs *C.char, quirks *C.char, resolve C.char, coerce
 	}
 
 	var url_ exturl.URL
-	var serviceTemplate *normal.ServiceTemplate
+	var result_ parser.Result
 	var clout *cloutpkg.Clout
-	var problems *problems.Problems
 	var err error
 
 	urlContext := exturl.NewContext()
@@ -73,29 +71,39 @@ func Compile(url *C.char, inputs *C.char, quirks *C.char, resolve C.char, coerce
 		return result(nil, nil, err)
 	}
 
-	if _, serviceTemplate, problems, err = parserContext.Parse(context, url_, nil, nil, quirks_, inputs_); err != nil {
-		return result(nil, problems, err)
+	if result_, err = parserContext.Parse(context, parser.ParseContext{URL: url_, Quirks: quirks_, Inputs: inputs_}); err != nil {
+		return result(nil, result_.Problems, err)
 	}
 
-	if clout, err = serviceTemplate.Compile(); err != nil {
-		return result(clout, problems, err)
+	if clout, err = result_.NormalServiceTemplate.Compile(); err != nil {
+		return result(clout, result_.Problems, err)
+	}
+
+	execContext := js.ExecContext{
+		Clout:      clout,
+		Problems:   result_.Problems,
+		URLContext: urlContext,
+		History:    true,
+		Format:     "yaml",
+		Strict:     true,
+		Pretty:     false,
 	}
 
 	if resolve != 0 {
-		js.Resolve(clout, problems, urlContext, true, "yaml", true, false)
-		if !problems.Empty() {
-			return result(clout, problems, nil)
+		execContext.Resolve()
+		if !result_.Problems.Empty() {
+			return result(clout, result_.Problems, nil)
 		}
 	}
 
 	if coerce != 0 {
-		js.Coerce(clout, problems, urlContext, true, "yaml", true, false)
-		if !problems.Empty() {
-			return result(clout, problems, nil)
+		execContext.Coerce()
+		if !result_.Problems.Empty() {
+			return result(clout, result_.Problems, nil)
 		}
 	}
 
-	return result(clout, problems, nil)
+	return result(clout, result_.Problems, nil)
 }
 
 func result(clout *cloutpkg.Clout, problems *problems.Problems, err error) *C.char {

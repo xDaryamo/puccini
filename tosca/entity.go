@@ -182,11 +182,11 @@ type HasInputs interface {
 
 // From HasInputs interface
 func SetInputs(entityPtr EntityPtr, inputs map[string]ard.Value) bool {
-	var done bool
-
 	if inputs == nil {
 		return false
 	}
+
+	var done bool
 
 	reflection.TraverseEntities(entityPtr, false, func(entityPtr EntityPtr) bool {
 		if hasInputs, ok := entityPtr.(HasInputs); ok {

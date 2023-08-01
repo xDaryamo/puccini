@@ -8,10 +8,8 @@ import (
 	"testing"
 
 	"github.com/tliron/exturl"
-	problemspkg "github.com/tliron/kutil/problems"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
-	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
 
 	_ "github.com/tliron/commonlog/simple"
@@ -78,7 +76,10 @@ func NewContext(t *testing.T) *Context {
 	var root string
 	var ok bool
 	if root, ok = os.LookupEnv("PUCCINI_TEST_ROOT"); !ok {
-		root, _ = os.Getwd()
+		var err error
+		if root, err = os.Getwd(); err != nil {
+			t.Errorf("%s", err.Error())
+		}
 	}
 
 	return &Context{
@@ -95,32 +96,41 @@ func (self *Context) compile(url string, inputs map[string]any) {
 		// it actually helps us to find concurrency bugs
 		t.Parallel()
 
-		var serviceTemplate *normal.ServiceTemplate
+		var result parser.Result
 		var clout *cloutpkg.Clout
-		var problems *problemspkg.Problems
 		var err error
 
 		url_ := self.urlContext.NewFileURL(path.Join(filepath.ToSlash(self.root), "examples", url))
 
-		if _, serviceTemplate, problems, err = self.parserContext.Parse(contextpkg.TODO(), url_, nil, nil, nil, inputs); err != nil {
-			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))
+		if result, err = self.parserContext.Parse(contextpkg.TODO(), parser.ParseContext{URL: url_, Inputs: inputs}); err != nil {
+			t.Errorf("%s\n%s", err.Error(), result.Problems.ToString(true))
 			return
 		}
 
-		if clout, err = serviceTemplate.Compile(); err != nil {
-			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))
+		if clout, err = result.NormalServiceTemplate.Compile(); err != nil {
+			t.Errorf("%s\n%s", err.Error(), result.Problems.ToString(true))
 			return
 		}
 
-		js.Resolve(clout, problems, self.urlContext, true, "yaml", false, true)
-		if !problems.Empty() {
-			t.Errorf("%s", problems.ToString(true))
+		execContext := js.ExecContext{
+			Clout:      clout,
+			Problems:   result.Problems,
+			URLContext: self.urlContext,
+			History:    true,
+			Format:     "yaml",
+			Strict:     false,
+			Pretty:     true,
+		}
+
+		execContext.Resolve()
+		if !result.Problems.Empty() {
+			t.Errorf("%s", result.Problems.ToString(true))
 			return
 		}
 
-		js.Coerce(clout, problems, self.urlContext, true, "yaml", false, true)
-		if !problems.Empty() {
-			t.Errorf("%s", problems.ToString(true))
+		execContext.Coerce()
+		if !result.Problems.Empty() {
+			t.Errorf("%s", result.Problems.ToString(true))
 			return
 		}
 	})
