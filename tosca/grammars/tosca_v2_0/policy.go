@@ -1,8 +1,8 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -31,7 +31,7 @@ type Policy struct {
 	TargetGroups        Groups        `lookup:"targets,TargetNodeTemplateOrGroupNames" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewPolicy(context *tosca.Context) *Policy {
+func NewPolicy(context *parsing.Context) *Policy {
 	return &Policy{
 		Entity:             NewEntity(context),
 		Name:               context.Name,
@@ -40,19 +40,19 @@ func NewPolicy(context *tosca.Context) *Policy {
 	}
 }
 
-// tosca.Reader signature
-func ReadPolicy(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadPolicy(context *parsing.Context) parsing.EntityPtr {
 	self := NewPolicy(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *Policy) GetKey() string {
 	return self.Name
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *Policy) Render() {
 	self.renderOnce.Do(self.render)
 }

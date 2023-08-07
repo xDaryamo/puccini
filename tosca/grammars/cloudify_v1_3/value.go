@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -20,7 +20,7 @@ type Value struct {
 	Meta *normal.ValueMeta `traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewValue(context *tosca.Context) *Value {
+func NewValue(context *parsing.Context) *Value {
 	return &Value{
 		Entity: NewEntity(context),
 		Name:   context.Name,
@@ -28,13 +28,13 @@ func NewValue(context *tosca.Context) *Value {
 	}
 }
 
-// tosca.Reader signature
-func ReadValue(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadValue(context *parsing.Context) parsing.EntityPtr {
 	ParseFunctionCalls(context)
 	return NewValue(context)
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *Value) GetKey() string {
 	return self.Name
 }
@@ -53,7 +53,7 @@ func (self *Value) RenderParameter(dataType *DataType, definition *ParameterDefi
 		self.Meta = dataType.NewValueMeta()
 	}
 
-	if _, ok := self.Context.Data.(*tosca.FunctionCall); ok {
+	if _, ok := self.Context.Data.(*parsing.FunctionCall); ok {
 		return
 	}
 
@@ -144,7 +144,7 @@ func (self *Value) normalize(withMeta bool) normal.Value {
 		}
 		normalValue = normalMap
 
-	case *tosca.FunctionCall:
+	case *parsing.FunctionCall:
 		NormalizeFunctionCallArguments(data, self.Context)
 		normalValue = normal.NewFunctionCall(data)
 
@@ -165,13 +165,13 @@ func (self *Value) normalize(withMeta bool) normal.Value {
 
 type Values map[string]*Value
 
-func (self Values) SetIfNil(context *tosca.Context, key string, data ard.Value) {
+func (self Values) SetIfNil(context *parsing.Context, key string, data ard.Value) {
 	if _, ok := self[key]; !ok {
 		self[key] = NewValue(context.MapChild(key, data))
 	}
 }
 
-func (self Values) RenderMissingValue(definition *ParameterDefinition, kind string, required bool, context *tosca.Context) {
+func (self Values) RenderMissingValue(definition *ParameterDefinition, kind string, required bool, context *parsing.Context) {
 	if definition.Default != nil {
 		self[definition.Name] = definition.Default
 	} else if required {
@@ -182,7 +182,7 @@ func (self Values) RenderMissingValue(definition *ParameterDefinition, kind stri
 	}
 }
 
-func (self Values) RenderProperties(definitions PropertyDefinitions, kind string, context *tosca.Context) {
+func (self Values) RenderProperties(definitions PropertyDefinitions, kind string, context *parsing.Context) {
 	for key, definition := range definitions {
 		if value, ok := self[key]; !ok {
 			self.RenderMissingValue(definition.ParameterDefinition, kind, definition.IsRequired(), context)
@@ -193,7 +193,7 @@ func (self Values) RenderProperties(definitions PropertyDefinitions, kind string
 	}
 }
 
-func (self Values) RenderParameters(definitions ParameterDefinitions, kind string, context *tosca.Context) {
+func (self Values) RenderParameters(definitions ParameterDefinitions, kind string, context *parsing.Context) {
 	for key, definition := range definitions {
 		if _, ok := self[key]; !ok {
 			self.RenderMissingValue(definition, kind, false, context)

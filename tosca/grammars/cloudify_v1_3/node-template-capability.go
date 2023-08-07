@@ -2,7 +2,7 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -17,15 +17,15 @@ type NodeTemplateCapability struct {
 	Properties Values `read:"properties,Value"`
 }
 
-func NewNodeTemplateCapability(context *tosca.Context) *NodeTemplateCapability {
+func NewNodeTemplateCapability(context *parsing.Context) *NodeTemplateCapability {
 	return &NodeTemplateCapability{
 		Entity:     NewEntity(context),
 		Properties: make(Values),
 	}
 }
 
-// tosca.Reader signature
-func ReadNodeTemplateCapability(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadNodeTemplateCapability(context *parsing.Context) parsing.EntityPtr {
 	self := NewNodeTemplateCapability(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
@@ -62,7 +62,7 @@ func (self *NodeTemplateCapability) ValidateScalableProperties(instances *NodeTe
 
 type NodeTemplateCapabilities map[string]*NodeTemplateCapability
 
-func (self NodeTemplateCapabilities) Validate(context *tosca.Context, instances *NodeTemplateInstances) {
+func (self NodeTemplateCapabilities) Validate(context *parsing.Context, instances *NodeTemplateInstances) {
 	for capabilityName, capability := range self {
 		switch capabilityName {
 		case "scalable":

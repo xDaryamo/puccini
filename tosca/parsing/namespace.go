@@ -1,4 +1,4 @@
-package tosca
+package parsing
 
 import (
 	"fmt"
@@ -194,15 +194,16 @@ func (self *Namespace) Print(indent int) {
 type TypesByName []reflect.Type
 
 // sort.Interface
-
 func (self TypesByName) Len() int {
 	return len(self)
 }
 
+// sort.Interface
 func (self TypesByName) Swap(i, j int) {
 	self[i], self[j] = self[j], self[i]
 }
 
+// sort.Interface
 func (self TypesByName) Less(i, j int) bool {
 	iName := self[i].Elem().String()
 	jName := self[j].Elem().String()

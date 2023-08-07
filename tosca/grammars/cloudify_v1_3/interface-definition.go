@@ -1,7 +1,7 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -17,7 +17,7 @@ type InterfaceDefinition struct {
 	OperationDefinitions OperationDefinitions `read:"?,OperationDefinition"`
 }
 
-func NewInterfaceDefinition(context *tosca.Context) *InterfaceDefinition {
+func NewInterfaceDefinition(context *parsing.Context) *InterfaceDefinition {
 	return &InterfaceDefinition{
 		Entity:               NewEntity(context),
 		Name:                 context.Name,
@@ -25,14 +25,14 @@ func NewInterfaceDefinition(context *tosca.Context) *InterfaceDefinition {
 	}
 }
 
-// tosca.Reader signature
-func ReadInterfaceDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadInterfaceDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewInterfaceDefinition(context)
 	context.ReadFields(self)
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *InterfaceDefinition) GetKey() string {
 	return self.Name
 }

@@ -1,8 +1,8 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -18,7 +18,7 @@ type InterfaceAssignment struct {
 	Operations OperationAssignments `read:"?,OperationAssignment"`
 }
 
-func NewInterfaceAssignment(context *tosca.Context) *InterfaceAssignment {
+func NewInterfaceAssignment(context *parsing.Context) *InterfaceAssignment {
 	return &InterfaceAssignment{
 		Entity:     NewEntity(context),
 		Name:       context.Name,
@@ -26,14 +26,14 @@ func NewInterfaceAssignment(context *tosca.Context) *InterfaceAssignment {
 	}
 }
 
-// tosca.Reader signature
-func ReadInterfaceAssignment(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadInterfaceAssignment(context *parsing.Context) parsing.EntityPtr {
 	self := NewInterfaceAssignment(context)
 	context.ReadFields(self)
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *InterfaceAssignment) GetKey() string {
 	return self.Name
 }
@@ -77,7 +77,7 @@ func (self *InterfaceAssignment) Normalize(normalInterface *normal.Interface, de
 
 type InterfaceAssignments map[string]*InterfaceAssignment
 
-func (self InterfaceAssignments) Render(definitions InterfaceDefinitions, context *tosca.Context) {
+func (self InterfaceAssignments) Render(definitions InterfaceDefinitions, context *parsing.Context) {
 	for key, definition := range definitions {
 		assignment, ok := self[key]
 		if !ok {

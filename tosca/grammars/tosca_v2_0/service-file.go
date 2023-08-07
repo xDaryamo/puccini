@@ -1,8 +1,8 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -23,17 +23,17 @@ type ServiceFile struct {
 	ServiceTemplate *ServiceTemplate `read:"service_template,ServiceTemplate"`
 }
 
-func NewServiceFile(context *tosca.Context) *ServiceFile {
+func NewServiceFile(context *parsing.Context) *ServiceFile {
 	return &ServiceFile{File: NewFile(context)}
 }
 
-// tosca.Reader signature
-func ReadServiceFile(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadServiceFile(context *parsing.Context) parsing.EntityPtr {
 	context.FunctionPrefix = "$"
 	self := NewServiceFile(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	ignore := []string{"dsl_definitions"}
-	if context.HasQuirk(tosca.QuirkAnnotationsIgnore) {
+	if context.HasQuirk(parsing.QuirkAnnotationsIgnore) {
 		ignore = append(ignore, "annotation_types")
 	}
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), ignore...))

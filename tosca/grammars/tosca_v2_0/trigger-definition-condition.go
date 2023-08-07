@@ -2,7 +2,7 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -18,12 +18,12 @@ type TriggerDefinitionCondition struct {
 	Method      *string          `read:"method"`
 }
 
-func NewTriggerDefinitionCondition(context *tosca.Context) *TriggerDefinitionCondition {
+func NewTriggerDefinitionCondition(context *parsing.Context) *TriggerDefinitionCondition {
 	return &TriggerDefinitionCondition{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadTriggerDefinitionCondition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadTriggerDefinitionCondition(context *parsing.Context) parsing.EntityPtr {
 	self := NewTriggerDefinitionCondition(context)
 
 	if context.Is(ard.TypeMap) {
@@ -45,7 +45,7 @@ func ReadTriggerDefinitionCondition(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *TriggerDefinitionCondition) Render() {
 	self.renderOnce.Do(self.render)
 }

@@ -9,14 +9,14 @@ import (
 	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/kutil/util"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/csar"
 	"github.com/tliron/puccini/tosca/grammars"
+	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
 
 func (self *ServiceContext) ReadRoot(context contextpkg.Context, url exturl.URL, origins []exturl.URL, template string) bool {
-	toscaContext := tosca.NewContext(self.Stylist, self.Quirks)
+	toscaContext := parsing.NewContext(self.Stylist, self.Quirks)
 	toscaContext.Origins = origins
 
 	toscaContext.URL = url
@@ -34,7 +34,7 @@ func (self *ServiceContext) ReadRoot(context contextpkg.Context, url exturl.URL,
 	return ok
 }
 
-func (self *ServiceContext) read(context contextpkg.Context, promise util.Promise, toscaContext *tosca.Context, container *File, nameTransformer tosca.NameTransformer, readerName string, serviceTemplateName string) (*File, bool) {
+func (self *ServiceContext) read(context contextpkg.Context, promise util.Promise, toscaContext *parsing.Context, container *File, nameTransformer parsing.NameTransformer, readerName string, serviceTemplateName string) (*File, bool) {
 	defer self.readWork.Done()
 	if promise != nil {
 		// For the goroutines waiting for our cached entityPtr
@@ -85,7 +85,7 @@ func (self *ServiceContext) read(context contextpkg.Context, promise util.Promis
 	}
 
 	// Validate required fields
-	reflection.TraverseEntities(entityPtr, false, tosca.ValidateRequiredFields)
+	reflection.TraverseEntities(entityPtr, false, parsing.ValidateRequiredFields)
 
 	self.Context.readCache.Store(toscaContext.URL.Key(), entityPtr)
 
@@ -94,10 +94,10 @@ func (self *ServiceContext) read(context contextpkg.Context, promise util.Promis
 
 // From tosca.Importer interface
 func (self *ServiceContext) goReadImports(context contextpkg.Context, container *File) {
-	importSpecs := tosca.GetImportSpecs(container.EntityPtr)
+	importSpecs := parsing.GetImportSpecs(container.EntityPtr)
 
 	// Implicit import
-	if !container.GetContext().HasQuirk(tosca.QuirkImportsImplicitDisable) {
+	if !container.GetContext().HasQuirk(parsing.QuirkImportsImplicitDisable) {
 		if implicitImportSpec, ok := grammars.GetImplicitImportSpec(container.GetContext()); ok {
 			importSpecs = append(importSpecs, implicitImportSpec)
 		}
@@ -147,7 +147,7 @@ func (self *ServiceContext) goReadImports(context contextpkg.Context, container 
 	}
 }
 
-func (self *ServiceContext) waitForPromise(context contextpkg.Context, promise util.Promise, key string, container *File, nameTransformer tosca.NameTransformer) {
+func (self *ServiceContext) waitForPromise(context contextpkg.Context, promise util.Promise, key string, container *File, nameTransformer parsing.NameTransformer) {
 	defer self.readWork.Done()
 	if err := promise.Wait(context); err != nil {
 		logRead.Debugf("promise interrupted: %s, %s", key, err.Error())

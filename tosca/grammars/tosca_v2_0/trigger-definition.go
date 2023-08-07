@@ -1,8 +1,8 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -24,26 +24,26 @@ type TriggerDefinition struct {
 	Action       WorkflowActivityDefinitions `read:"action,[]WorkflowActivityDefinition" mandatory:""`
 }
 
-func NewTriggerDefinition(context *tosca.Context) *TriggerDefinition {
+func NewTriggerDefinition(context *parsing.Context) *TriggerDefinition {
 	return &TriggerDefinition{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadTriggerDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadTriggerDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewTriggerDefinition(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *TriggerDefinition) GetKey() string {
 	return self.Name
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *TriggerDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }

@@ -1,7 +1,7 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -24,12 +24,12 @@ type WorkflowPreconditionDefinition struct {
 	TargetGroup        *Group        `lookup:"target,TargetNodeTemplateOrGroupName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewWorkflowPreconditionDefinition(context *tosca.Context) *WorkflowPreconditionDefinition {
+func NewWorkflowPreconditionDefinition(context *parsing.Context) *WorkflowPreconditionDefinition {
 	return &WorkflowPreconditionDefinition{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadWorkflowPreconditionDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadWorkflowPreconditionDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewWorkflowPreconditionDefinition(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

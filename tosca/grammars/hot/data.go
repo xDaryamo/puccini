@@ -2,7 +2,7 @@ package hot
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -15,14 +15,14 @@ type Data struct {
 	Data ard.Value
 }
 
-func NewData(context *tosca.Context) *Data {
+func NewData(context *parsing.Context) *Data {
 	return &Data{
 		Entity: NewEntity(context),
 		Data:   context.Data,
 	}
 }
 
-// tosca.Reader signature
-func ReadData(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadData(context *parsing.Context) parsing.EntityPtr {
 	return NewData(context)
 }

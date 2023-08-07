@@ -1,8 +1,8 @@
 package hot
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 var DeletionPolicies = map[string]string{
@@ -44,7 +44,7 @@ type Resource struct {
 	DependsOnResources Resources `lookup:"depends_on,DependsOn" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewResource(context *tosca.Context) *Resource {
+func NewResource(context *parsing.Context) *Resource {
 	return &Resource{
 		Entity:     NewEntity(context),
 		Name:       context.Name,
@@ -52,8 +52,8 @@ func NewResource(context *tosca.Context) *Resource {
 	}
 }
 
-// tosca.Reader signature
-func ReadResource(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadResource(context *parsing.Context) parsing.EntityPtr {
 	self := NewResource(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 

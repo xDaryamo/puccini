@@ -3,8 +3,8 @@ package tosca_v2_0
 import (
 	"reflect"
 
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -37,15 +37,15 @@ type OutputMapping struct {
 	SourceNodeTemplate *NodeTemplate `traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewOutputMapping(context *tosca.Context) *OutputMapping {
+func NewOutputMapping(context *parsing.Context) *OutputMapping {
 	return &OutputMapping{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadOutputMapping(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadOutputMapping(context *parsing.Context) parsing.EntityPtr {
 	self := NewOutputMapping(context)
 
 	if strings := context.ReadStringListMinLength(2); strings != nil {
@@ -56,7 +56,7 @@ func ReadOutputMapping(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *OutputMapping) GetKey() string {
 	return self.Name
 }
@@ -186,7 +186,7 @@ func (self *OutputMapping) Normalize(normalOutputs normal.Values) {
 	case "TARGET":
 		// Can only be retrieved via a function call
 		row, column := self.Context.GetLocation()
-		list.Set(0, normal.NewFunctionCall(tosca.NewFunctionCall("tosca.function._get_target_name", nil, self.Context.URL.String(), row, column, self.Context.Path.String())))
+		list.Set(0, normal.NewFunctionCall(parsing.NewFunctionCall("tosca.function._get_target_name", nil, self.Context.URL.String(), row, column, self.Context.Path.String())))
 	default:
 		list.Set(0, normal.NewPrimitive(entityName))
 	}

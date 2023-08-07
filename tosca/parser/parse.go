@@ -8,8 +8,8 @@ import (
 	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -20,7 +20,7 @@ type ParseContext struct {
 	URL     exturl.URL
 	Origins []exturl.URL
 	Stylist *terminal.Stylist
-	Quirks  tosca.Quirks
+	Quirks  parsing.Quirks
 	Inputs  map[string]ard.Value
 }
 

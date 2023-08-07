@@ -2,12 +2,12 @@ package tosca_v1_3
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
-// tosca.Reader signature
-func ReadAttributeValue(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadAttributeValue(context *parsing.Context) parsing.EntityPtr {
 	self := tosca_v2_0.NewValue(context)
 
 	// Unpack long notation (only for attributes)

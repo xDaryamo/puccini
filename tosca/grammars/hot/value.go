@@ -2,8 +2,8 @@ package hot
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -20,7 +20,7 @@ type Value struct {
 	Meta *normal.ValueMeta `traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewValue(context *tosca.Context) *Value {
+func NewValue(context *parsing.Context) *Value {
 	return &Value{
 		Entity: NewEntity(context),
 		Name:   context.Name,
@@ -28,13 +28,13 @@ func NewValue(context *tosca.Context) *Value {
 	}
 }
 
-// tosca.Reader signature
-func ReadValue(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadValue(context *parsing.Context) parsing.EntityPtr {
 	ParseFunctionCalls(context)
 	return NewValue(context)
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *Value) GetKey() string {
 	return self.Name
 }
@@ -62,7 +62,7 @@ func (self *Value) Normalize() normal.Value {
 		}
 		normalValue = normalMap
 
-	case *tosca.FunctionCall:
+	case *parsing.FunctionCall:
 		NormalizeFunctionCallArguments(data, self.Context)
 		normalValue = normal.NewFunctionCall(data)
 

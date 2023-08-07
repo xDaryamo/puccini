@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 var VersionRE = regexp.MustCompile(
@@ -36,14 +36,14 @@ type Version struct {
 	Build     uint32 `json:"build" yaml:"build"`
 }
 
-// tosca.Reader signature
-func ReadVersion(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadVersion(context *parsing.Context) parsing.EntityPtr {
 	var self Version
 
 	if context.Is(ard.TypeString) {
 		self.OriginalString = *context.ReadString()
 		self.CanonicalString = self.OriginalString
-	} else if context.HasQuirk(tosca.QuirkDataTypesStringPermissive) {
+	} else if context.HasQuirk(parsing.QuirkDataTypesStringPermissive) {
 		if context.Is(ard.TypeFloat) {
 			value := *context.ReadFloat()
 			self.OriginalString = strconv.FormatFloat(value, 'g', -1, 64)

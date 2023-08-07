@@ -8,8 +8,8 @@ import (
 	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/util"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -43,14 +43,14 @@ type ServiceContext struct {
 	Context *Context
 	Root    *File
 	Stylist *terminal.Stylist
-	Quirks  tosca.Quirks
+	Quirks  parsing.Quirks
 	Files   Files
 
 	readWork  sync.WaitGroup
 	filesLock util.RWLocker
 }
 
-func (self *Context) NewServiceContext(stylist *terminal.Stylist, quirks tosca.Quirks) *ServiceContext {
+func (self *Context) NewServiceContext(stylist *terminal.Stylist, quirks parsing.Quirks) *ServiceContext {
 	return &ServiceContext{
 		Context:   self,
 		Stylist:   stylist,
@@ -80,12 +80,12 @@ func (self *ServiceContext) AddFile(file *File) {
 	self.Files = append(self.Files, file)
 }
 
-func (self *ServiceContext) AddImportFile(context contextpkg.Context, entityPtr tosca.EntityPtr, container *File, nameTransformer tosca.NameTransformer) *File {
+func (self *ServiceContext) AddImportFile(context contextpkg.Context, entityPtr parsing.EntityPtr, container *File, nameTransformer parsing.NameTransformer) *File {
 	file := NewFile(entityPtr, container, nameTransformer)
 
 	if container != nil {
 		containerContext := container.GetContext()
-		if !containerContext.HasQuirk(tosca.QuirkImportsVersionPermissive) {
+		if !containerContext.HasQuirk(parsing.QuirkImportsVersionPermissive) {
 			fileContext := file.GetContext()
 			if !grammars.CompatibleGrammars(containerContext, fileContext) {
 				containerContext.ReportImportIncompatible(fileContext.URL)

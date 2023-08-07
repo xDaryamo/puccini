@@ -1,7 +1,7 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -25,7 +25,7 @@ type CapabilityType struct {
 	ValidSourceNodeTypes NodeTypes       `lookup:"valid_source_types,ValidSourceNodeTypeNames" inherit:"valid_source_types,Parent" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewCapabilityType(context *tosca.Context) *CapabilityType {
+func NewCapabilityType(context *parsing.Context) *CapabilityType {
 	return &CapabilityType{
 		Type:                 NewType(context),
 		PropertyDefinitions:  make(PropertyDefinitions),
@@ -33,19 +33,19 @@ func NewCapabilityType(context *tosca.Context) *CapabilityType {
 	}
 }
 
-// tosca.Reader signature
-func ReadCapabilityType(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadCapabilityType(context *parsing.Context) parsing.EntityPtr {
 	self := NewCapabilityType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Hierarchical interface
-func (self *CapabilityType) GetParent() tosca.EntityPtr {
+// parsing.Hierarchical interface
+func (self *CapabilityType) GetParent() parsing.EntityPtr {
 	return self.Parent
 }
 
-// tosca.Inherits interface
+// parsing.Inherits interface
 func (self *CapabilityType) Inherit() {
 	logInherit.Debugf("capability type: %s", self.Name)
 

@@ -2,7 +2,7 @@ package hot
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -21,15 +21,15 @@ type ConditionDefinition struct {
 	NativeArgumentIndexes []int
 }
 
-func NewConditionDefinition(context *tosca.Context) *ConditionDefinition {
+func NewConditionDefinition(context *parsing.Context) *ConditionDefinition {
 	return &ConditionDefinition{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadConditionDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadConditionDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewConditionDefinition(context)
 
 	if context.ValidateType(ard.TypeMap) {

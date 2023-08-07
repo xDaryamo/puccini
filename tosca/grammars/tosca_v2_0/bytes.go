@@ -2,7 +2,7 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/kutil/util"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -17,8 +17,8 @@ type Bytes struct {
 	Bytes []byte `json:"bytes" yaml:"bytes"`
 }
 
-// tosca.Reader signature
-func ReadBytes(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadBytes(context *parsing.Context) parsing.EntityPtr {
 	var self Bytes
 
 	if b64 := context.ReadString(); b64 != nil {

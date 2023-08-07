@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -15,8 +15,8 @@ import (
 
 type Metadata map[string]ard.Value
 
-// tosca.Reader signature
-func ReadMetadata(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadMetadata(context *parsing.Context) parsing.EntityPtr {
 	var self map[string]ard.Value
 
 	if context.ValidateType(ard.TypeMap) {
@@ -28,16 +28,16 @@ func ReadMetadata(context *tosca.Context) tosca.EntityPtr {
 
 	if self != nil {
 		for key, value := range self {
-			if strings.HasPrefix(key, tosca.METADATA_SCRIPTLET_IMPORT_PREFIX) {
+			if strings.HasPrefix(key, parsing.METADATA_SCRIPTLET_IMPORT_PREFIX) {
 				if v, ok := value.(string); ok {
-					context.ImportScriptlet(key[len(tosca.METADATA_SCRIPTLET_IMPORT_PREFIX):], v)
+					context.ImportScriptlet(key[len(parsing.METADATA_SCRIPTLET_IMPORT_PREFIX):], v)
 					delete(self, key)
 				} else {
 					context.MapChild(key, value).ReportValueWrongType(ard.TypeString)
 				}
-			} else if strings.HasPrefix(key, tosca.METADATA_SCRIPTLET_PREFIX) {
+			} else if strings.HasPrefix(key, parsing.METADATA_SCRIPTLET_PREFIX) {
 				if v, ok := value.(string); ok {
-					context.EmbedScriptlet(key[len(tosca.METADATA_SCRIPTLET_PREFIX):], v)
+					context.EmbedScriptlet(key[len(parsing.METADATA_SCRIPTLET_PREFIX):], v)
 					delete(self, key)
 				} else {
 					context.MapChild(key, value).ReportValueWrongType(ard.TypeString)

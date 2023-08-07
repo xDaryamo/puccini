@@ -4,8 +4,8 @@ import (
 	contextpkg "context"
 	"path/filepath"
 
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -20,12 +20,12 @@ type Artifact struct {
 	*ArtifactDefinition `name:"artifact"`
 }
 
-func NewArtifact(context *tosca.Context) *Artifact {
+func NewArtifact(context *parsing.Context) *Artifact {
 	return &Artifact{ArtifactDefinition: NewArtifactDefinition(context)}
 }
 
-// tosca.Reader signature
-func ReadArtifact(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadArtifact(context *parsing.Context) parsing.EntityPtr {
 	self := NewArtifact(context)
 	self.ArtifactDefinition = ReadArtifactDefinition(context).(*ArtifactDefinition)
 	return self
@@ -34,7 +34,7 @@ func ReadArtifact(context *tosca.Context) tosca.EntityPtr {
 func (self *Artifact) Copy(definition *ArtifactDefinition) {
 	// Validate type compatibility
 	if (self.ArtifactType != nil) && (definition.ArtifactType != nil) && !self.Context.Hierarchy.IsCompatible(definition.ArtifactType, self.ArtifactType) {
-		self.Context.ReportIncompatible(tosca.GetCanonicalName(self.ArtifactType), "artifact", "type")
+		self.Context.ReportIncompatible(parsing.GetCanonicalName(self.ArtifactType), "artifact", "type")
 	}
 
 	if self.ArtifactType == nil {
@@ -148,7 +148,7 @@ func (self *Artifact) Normalize(normalNodeTemplate *normal.NodeTemplate) *normal
 
 type Artifacts map[string]*Artifact
 
-func (self Artifacts) Render(definitions ArtifactDefinitions, context *tosca.Context) {
+func (self Artifacts) Render(definitions ArtifactDefinitions, context *parsing.Context) {
 	for key, definition := range definitions {
 		if artifact, ok := self[key]; ok {
 			artifact.Copy(definition)

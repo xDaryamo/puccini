@@ -2,7 +2,7 @@ package hot
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -22,12 +22,12 @@ type Condition struct {
 	Value *bool
 }
 
-func NewCondition(context *tosca.Context) *Condition {
+func NewCondition(context *parsing.Context) *Condition {
 	return &Condition{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadCondition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadCondition(context *parsing.Context) parsing.EntityPtr {
 	self := NewCondition(context)
 
 	if context.Is(ard.TypeMap) {

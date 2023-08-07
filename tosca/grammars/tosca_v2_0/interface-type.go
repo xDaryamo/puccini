@@ -1,7 +1,7 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -25,7 +25,7 @@ type InterfaceType struct {
 	Parent *InterfaceType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewInterfaceType(context *tosca.Context) *InterfaceType {
+func NewInterfaceType(context *parsing.Context) *InterfaceType {
 	return &InterfaceType{
 		Type:                      NewType(context),
 		InputDefinitions:          make(ParameterDefinitions),
@@ -35,11 +35,11 @@ func NewInterfaceType(context *tosca.Context) *InterfaceType {
 	}
 }
 
-// tosca.Reader signature
-func ReadInterfaceType(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadInterfaceType(context *parsing.Context) parsing.EntityPtr {
 	self := NewInterfaceType(context)
 
-	if context.HasQuirk(tosca.QuirkInterfacesOperationsPermissive) {
+	if context.HasQuirk(parsing.QuirkInterfacesOperationsPermissive) {
 		context.SetReadTag("ExtraOperationDefinitions", "?,OperationDefinition")
 		context.ReadFields(self)
 		for name, definition := range self.ExtraOperationDefinitions {
@@ -52,12 +52,12 @@ func ReadInterfaceType(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Hierarchical interface
-func (self *InterfaceType) GetParent() tosca.EntityPtr {
+// parsing.Hierarchical interface
+func (self *InterfaceType) GetParent() parsing.EntityPtr {
 	return self.Parent
 }
 
-// tosca.Inherits interface
+// parsing.Inherits interface
 func (self *InterfaceType) Inherit() {
 	logInherit.Debugf("interface type: %s", self.Name)
 

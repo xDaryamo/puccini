@@ -1,8 +1,8 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -21,16 +21,16 @@ type ParameterDefinition struct {
 	Value *Value `read:"value,Value"`
 }
 
-func NewParameterDefinition(context *tosca.Context) *ParameterDefinition {
+func NewParameterDefinition(context *parsing.Context) *ParameterDefinition {
 	return &ParameterDefinition{PropertyDefinition: NewPropertyDefinition(context)}
 }
 
-// tosca.Reader signature
-func ReadParameterDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadParameterDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewParameterDefinition(context)
 	self.looseType = true
 	var ignore []string
-	if context.HasQuirk(tosca.QuirkAnnotationsIgnore) {
+	if context.HasQuirk(parsing.QuirkAnnotationsIgnore) {
 		ignore = append(ignore, "annotations")
 	}
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), ignore...))
@@ -47,7 +47,7 @@ func (self *ParameterDefinition) Inherit(parentDefinition *ParameterDefinition) 
 	}
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *ParameterDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }
@@ -66,7 +66,7 @@ func (self *ParameterDefinition) render() {
 	}
 }
 
-func (self *ParameterDefinition) Normalize(context *tosca.Context) normal.Value {
+func (self *ParameterDefinition) Normalize(context *parsing.Context) normal.Value {
 	var value *Value
 	if self.Value != nil {
 		value = self.Value
@@ -120,7 +120,7 @@ func (self ParameterDefinitions) Render(kind string, mapped []string) {
 	}
 }
 
-func (self ParameterDefinitions) Normalize(c normal.Values, context *tosca.Context) {
+func (self ParameterDefinitions) Normalize(c normal.Values, context *parsing.Context) {
 	for key, definition := range self {
 		c[key] = definition.Normalize(context)
 	}

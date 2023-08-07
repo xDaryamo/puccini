@@ -1,8 +1,8 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -22,15 +22,15 @@ type CapabilityFilter struct {
 	PropertyFilters PropertyFilters `read:"properties,{}PropertyFilter"`
 }
 
-func NewCapabilityFilter(context *tosca.Context) *CapabilityFilter {
+func NewCapabilityFilter(context *parsing.Context) *CapabilityFilter {
 	return &CapabilityFilter{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadCapabilityFilter(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadCapabilityFilter(context *parsing.Context) parsing.EntityPtr {
 	self := NewCapabilityFilter(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

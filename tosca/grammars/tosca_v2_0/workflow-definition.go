@@ -1,8 +1,8 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -25,7 +25,7 @@ type WorkflowDefinition struct {
 	StepDefinitions         WorkflowStepDefinitions         `read:"steps,WorkflowStepDefinition"`
 }
 
-func NewWorkflowDefinition(context *tosca.Context) *WorkflowDefinition {
+func NewWorkflowDefinition(context *parsing.Context) *WorkflowDefinition {
 	return &WorkflowDefinition{
 		Entity:           NewEntity(context),
 		Name:             context.Name,
@@ -34,19 +34,19 @@ func NewWorkflowDefinition(context *tosca.Context) *WorkflowDefinition {
 	}
 }
 
-// tosca.Reader signature
-func ReadWorkflowDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadWorkflowDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewWorkflowDefinition(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *WorkflowDefinition) GetKey() string {
 	return self.Name
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *WorkflowDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }

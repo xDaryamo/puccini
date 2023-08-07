@@ -3,17 +3,17 @@ package parser
 import (
 	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/kutil/terminal"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 func (self *ServiceContext) AddHierarchies() {
 	self.Context.lock.Lock()
 	defer self.Context.lock.Unlock()
 
-	self.Root.mergeHierarchies(make(tosca.HierarchyContext), self.Context.addHierarchyWork)
+	self.Root.mergeHierarchies(make(parsing.HierarchyContext), self.Context.addHierarchyWork)
 }
 
-func (self *File) mergeHierarchies(hierarchyContext tosca.HierarchyContext, work reflection.EntityWork) {
+func (self *File) mergeHierarchies(hierarchyContext parsing.HierarchyContext, work reflection.EntityWork) {
 	context := self.GetContext()
 
 	self.importsLock.RLock()
@@ -25,7 +25,7 @@ func (self *File) mergeHierarchies(hierarchyContext tosca.HierarchyContext, work
 	}
 
 	logHierarchies.Debugf("create: %s", context.URL.String())
-	hierarchy := tosca.NewHierarchyFor(self.EntityPtr, work, hierarchyContext)
+	hierarchy := parsing.NewHierarchyFor(self.EntityPtr, work, hierarchyContext)
 	context.Hierarchy.Merge(hierarchy, hierarchyContext)
 	// TODO: do we need this?
 	//context.Hierarchy.AddTo(self.EntityPtr)

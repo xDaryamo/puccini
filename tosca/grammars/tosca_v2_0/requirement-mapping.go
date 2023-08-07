@@ -3,7 +3,7 @@ package tosca_v2_0
 import (
 	"reflect"
 
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -29,15 +29,15 @@ type RequirementMapping struct {
 	Requirement  *RequirementAssignment `traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewRequirementMapping(context *tosca.Context) *RequirementMapping {
+func NewRequirementMapping(context *parsing.Context) *RequirementMapping {
 	return &RequirementMapping{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadRequirementMapping(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadRequirementMapping(context *parsing.Context) parsing.EntityPtr {
 	self := NewRequirementMapping(context)
 
 	if strings := context.ReadStringListFixed(2); strings != nil {
@@ -48,7 +48,7 @@ func ReadRequirementMapping(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *RequirementMapping) GetKey() string {
 	return self.Name
 }
@@ -61,7 +61,7 @@ func (self *RequirementMapping) GetRequirementDefinition() (*RequirementDefiniti
 	}
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *RequirementMapping) Render() {
 	self.renderOnce.Do(self.render)
 }
@@ -78,7 +78,7 @@ func (self *RequirementMapping) render() {
 	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
 		self.NodeTemplate = nodeTemplate.(*NodeTemplate)
 
-		if self.Context.HasQuirk(tosca.QuirkSubstitutionMappingsRequirementsPermissive) {
+		if self.Context.HasQuirk(parsing.QuirkSubstitutionMappingsRequirementsPermissive) {
 			return
 		}
 

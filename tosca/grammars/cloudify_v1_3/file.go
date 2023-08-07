@@ -1,7 +1,7 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -31,7 +31,7 @@ type File struct {
 	UploadResources         *UploadResources   `read:"upload_resources,UploadResources"`
 }
 
-func NewFile(context *tosca.Context) *File {
+func NewFile(context *parsing.Context) *File {
 	return &File{
 		Entity:  NewEntity(context),
 		Inputs:  make(Inputs),
@@ -39,17 +39,17 @@ func NewFile(context *tosca.Context) *File {
 	}
 }
 
-// tosca.Reader signature
-func ReadFile(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadFile(context *parsing.Context) parsing.EntityPtr {
 	self := NewFile(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
 	return self
 }
 
-// tosca.Importer interface
-func (self *File) GetImportSpecs() []*tosca.ImportSpec {
-	var importSpecs = make([]*tosca.ImportSpec, 0, len(self.Imports))
+// parsing.Importer interface
+func (self *File) GetImportSpecs() []*parsing.ImportSpec {
+	var importSpecs = make([]*parsing.ImportSpec, 0, len(self.Imports))
 	for _, import_ := range self.Imports {
 		if importSpec, ok := import_.NewImportSpec(self); ok {
 			importSpecs = append(importSpecs, importSpec)

@@ -2,8 +2,8 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -34,25 +34,25 @@ type AttributeDefinition struct {
 	looseType bool
 }
 
-func NewAttributeDefinition(context *tosca.Context) *AttributeDefinition {
+func NewAttributeDefinition(context *parsing.Context) *AttributeDefinition {
 	return &AttributeDefinition{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadAttributeDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadAttributeDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewAttributeDefinition(context)
 	var ignore []string
-	if context.HasQuirk(tosca.QuirkAnnotationsIgnore) {
+	if context.HasQuirk(parsing.QuirkAnnotationsIgnore) {
 		ignore = append(ignore, "annotations")
 	}
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), ignore...))
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *AttributeDefinition) GetKey() string {
 	return self.Name
 }
@@ -60,7 +60,7 @@ func (self *AttributeDefinition) GetKey() string {
 // DataDefinition interface
 func (self *AttributeDefinition) ToValueMeta() *normal.ValueMeta {
 	information := normal.NewValueMeta()
-	information.Metadata = tosca.GetDataTypeMetadata(self.Metadata)
+	information.Metadata = parsing.GetDataTypeMetadata(self.Metadata)
 	if self.Description != nil {
 		information.TypeDescription = *self.Description
 	}
@@ -128,7 +128,7 @@ func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) 
 	}
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 // Avoid rendering more than once (can happen if we were called from Value.RenderAttribute)
 func (self *AttributeDefinition) Render() {
 	self.renderOnce.Do(self.render)

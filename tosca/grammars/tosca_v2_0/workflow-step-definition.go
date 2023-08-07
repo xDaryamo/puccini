@@ -1,8 +1,8 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -32,21 +32,21 @@ type WorkflowStepDefinition struct {
 	OnFailureSteps     []*WorkflowStepDefinition // custom lookup
 }
 
-func NewWorkflowStepDefinition(context *tosca.Context) *WorkflowStepDefinition {
+func NewWorkflowStepDefinition(context *parsing.Context) *WorkflowStepDefinition {
 	return &WorkflowStepDefinition{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadWorkflowStepDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadWorkflowStepDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewWorkflowStepDefinition(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *WorkflowStepDefinition) GetKey() string {
 	return self.Name
 }

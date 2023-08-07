@@ -2,8 +2,8 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -23,7 +23,7 @@ type OperationAssignment struct {
 	RetryInterval  *float64 `read:"retry_interval"`
 }
 
-func NewOperationAssignment(context *tosca.Context) *OperationAssignment {
+func NewOperationAssignment(context *parsing.Context) *OperationAssignment {
 	return &OperationAssignment{
 		Entity: NewEntity(context),
 		Name:   context.Name,
@@ -31,8 +31,8 @@ func NewOperationAssignment(context *tosca.Context) *OperationAssignment {
 	}
 }
 
-// tosca.Reader signature
-func ReadOperationAssignment(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadOperationAssignment(context *parsing.Context) parsing.EntityPtr {
 	self := NewOperationAssignment(context)
 
 	if context.Is(ard.TypeMap) {
@@ -50,7 +50,7 @@ func ReadOperationAssignment(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-func ValidateOperationExecutor(executor string, context *tosca.Context) {
+func ValidateOperationExecutor(executor string, context *parsing.Context) {
 	switch executor {
 	case "central_deployment_agent", "host_agent":
 	default:
@@ -58,7 +58,7 @@ func ValidateOperationExecutor(executor string, context *tosca.Context) {
 	}
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *OperationAssignment) GetKey() string {
 	return self.Name
 }
@@ -83,7 +83,7 @@ func (self *OperationAssignment) Normalize(normalInterface *normal.Interface) *n
 
 type OperationAssignments map[string]*OperationAssignment
 
-func (self OperationAssignments) Render(definitions OperationDefinitions, context *tosca.Context) {
+func (self OperationAssignments) Render(definitions OperationDefinitions, context *parsing.Context) {
 	for key, definition := range definitions {
 		assignment, ok := self[key]
 

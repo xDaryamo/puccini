@@ -12,9 +12,9 @@ import (
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parser"
+	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -99,7 +99,7 @@ func Parse(context contextpkg.Context, url string) (*parser.ServiceContext, *nor
 		stylist = terminal.NewStylist(false)
 	}
 
-	serviceContext := parserContext.NewServiceContext(stylist, tosca.NewQuirks(quirks...))
+	serviceContext := parserContext.NewServiceContext(stylist, parsing.NewQuirks(quirks...))
 
 	var problems *problemspkg.Problems
 
@@ -184,7 +184,7 @@ func Parse(context contextpkg.Context, url string) (*parser.ServiceContext, *nor
 				terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Rendering"))
 			}
 			for _, entityPtr := range entityPtrs {
-				terminal.Printf("%s:\n", terminal.DefaultStylist.Path(tosca.GetContext(entityPtr).Path.String()))
+				terminal.Printf("%s:\n", terminal.DefaultStylist.Path(parsing.GetContext(entityPtr).Path.String()))
 				err = transcribe.Print(entityPtr, format, os.Stdout, strict, pretty)
 				util.FailOnError(err)
 			}
@@ -197,7 +197,7 @@ func Parse(context contextpkg.Context, url string) (*parser.ServiceContext, *nor
 			util.Failf("No paths found matching filter: %q\n", filter)
 		} else if !terminal.Quiet {
 			for _, entityPtr := range entityPtrs {
-				terminal.Printf("%s\n", terminal.DefaultStylist.Path(tosca.GetContext(entityPtr).Path.String()))
+				terminal.Printf("%s\n", terminal.DefaultStylist.Path(parsing.GetContext(entityPtr).Path.String()))
 				err = transcribe.Print(entityPtr, format, os.Stdout, strict, pretty)
 				util.FailOnError(err)
 			}

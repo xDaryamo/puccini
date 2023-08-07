@@ -1,8 +1,8 @@
 package hot
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -27,15 +27,15 @@ type Parameter struct {
 	Value *Value
 }
 
-func NewParameter(context *tosca.Context) *Parameter {
+func NewParameter(context *parsing.Context) *Parameter {
 	return &Parameter{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadParameter(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadParameter(context *parsing.Context) parsing.EntityPtr {
 	self := NewParameter(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 
@@ -55,12 +55,12 @@ func ReadParameter(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *Parameter) GetKey() string {
 	return self.Name
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *Parameter) Render() {
 	self.renderOnce.Do(self.render)
 }
@@ -82,7 +82,7 @@ func (self *Parameter) render() {
 	}
 }
 
-func (self *Parameter) Normalize(context *tosca.Context) normal.Value {
+func (self *Parameter) Normalize(context *parsing.Context) normal.Value {
 	value := self.Value
 	if value == nil {
 		if self.Default != nil {
@@ -103,7 +103,7 @@ func (self *Parameter) Normalize(context *tosca.Context) normal.Value {
 
 type Parameters map[string]*Parameter
 
-func (self Parameters) Normalize(c normal.Values, context *tosca.Context) {
+func (self Parameters) Normalize(c normal.Values, context *parsing.Context) {
 	for key, parameter := range self {
 		c[key] = parameter.Normalize(context)
 	}

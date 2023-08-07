@@ -2,8 +2,8 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -22,7 +22,7 @@ type NotificationAssignment struct {
 	Outputs        OutputMappings           `read:"outputs,OutputMapping"`
 }
 
-func NewNotificationAssignment(context *tosca.Context) *NotificationAssignment {
+func NewNotificationAssignment(context *parsing.Context) *NotificationAssignment {
 	return &NotificationAssignment{
 		Entity:  NewEntity(context),
 		Name:    context.Name,
@@ -30,8 +30,8 @@ func NewNotificationAssignment(context *tosca.Context) *NotificationAssignment {
 	}
 }
 
-// tosca.Reader signature
-func ReadNotificationAssignment(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadNotificationAssignment(context *parsing.Context) parsing.EntityPtr {
 	self := NewNotificationAssignment(context)
 
 	if context.Is(ard.TypeMap) {
@@ -45,7 +45,7 @@ func ReadNotificationAssignment(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *NotificationAssignment) GetKey() string {
 	return self.Name
 }
@@ -84,28 +84,28 @@ func (self NotificationAssignments) CopyUnassigned(assignments NotificationAssig
 	}
 }
 
-func (self NotificationAssignments) RenderForNodeType(nodeType *NodeType, definitions NotificationDefinitions, context *tosca.Context) {
+func (self NotificationAssignments) RenderForNodeType(nodeType *NodeType, definitions NotificationDefinitions, context *parsing.Context) {
 	self.render(definitions, context)
 	for _, assignment := range self {
 		assignment.Outputs.RenderForNodeType(nodeType)
 	}
 }
 
-func (self NotificationAssignments) RenderForRelationshipType(relationshipType *RelationshipType, definitions NotificationDefinitions, sourceNodeTemplate *NodeTemplate, context *tosca.Context) {
+func (self NotificationAssignments) RenderForRelationshipType(relationshipType *RelationshipType, definitions NotificationDefinitions, sourceNodeTemplate *NodeTemplate, context *parsing.Context) {
 	self.render(definitions, context)
 	for _, assignment := range self {
 		assignment.Outputs.RenderForRelationshipType(relationshipType, sourceNodeTemplate)
 	}
 }
 
-func (self NotificationAssignments) RenderForGroup(definitions NotificationDefinitions, context *tosca.Context) {
+func (self NotificationAssignments) RenderForGroup(definitions NotificationDefinitions, context *parsing.Context) {
 	self.render(definitions, context)
 	for _, assignment := range self {
 		assignment.Outputs.RenderForGroup()
 	}
 }
 
-func (self NotificationAssignments) render(definitions NotificationDefinitions, context *tosca.Context) {
+func (self NotificationAssignments) render(definitions NotificationDefinitions, context *parsing.Context) {
 	for key, definition := range definitions {
 		assignment, ok := self[key]
 

@@ -4,7 +4,7 @@ import (
 	"math"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -22,8 +22,8 @@ type Range struct {
 	Upper uint64 `json:"upper" yaml:"upper"`
 }
 
-// tosca.Reader signature
-func ReadRange(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadRange(context *parsing.Context) parsing.EntityPtr {
 	var self Range
 
 	if !context.ValidateType(ard.TypeList) {
@@ -92,12 +92,12 @@ type RangeEntity struct {
 	Range *Range `traverse:"ignore"`
 }
 
-func NewRangeEntity(context *tosca.Context) *RangeEntity {
+func NewRangeEntity(context *parsing.Context) *RangeEntity {
 	return &RangeEntity{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadRangeEntity(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadRangeEntity(context *parsing.Context) parsing.EntityPtr {
 	self := NewRangeEntity(context)
 	self.Range = ReadRange(context).(*Range)
 	return self

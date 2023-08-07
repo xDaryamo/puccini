@@ -1,7 +1,7 @@
 package hot
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -18,12 +18,12 @@ type ParameterGroup struct {
 	Parameters  []*string `read:"parameters"`
 }
 
-func NewParameterGroup(context *tosca.Context) *ParameterGroup {
+func NewParameterGroup(context *parsing.Context) *ParameterGroup {
 	return &ParameterGroup{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadParameterGroup(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadParameterGroup(context *parsing.Context) parsing.EntityPtr {
 	self := NewParameterGroup(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

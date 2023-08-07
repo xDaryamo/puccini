@@ -1,8 +1,8 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -23,7 +23,7 @@ type Policy struct {
 	TargetGroups Groups      `lookup:"targets,TargetGroupNames" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewPolicy(context *tosca.Context) *Policy {
+func NewPolicy(context *parsing.Context) *Policy {
 	return &Policy{
 		Entity:     NewEntity(context),
 		Name:       context.Name,
@@ -31,8 +31,8 @@ func NewPolicy(context *tosca.Context) *Policy {
 	}
 }
 
-// tosca.Reader signature
-func ReadPolicy(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadPolicy(context *parsing.Context) parsing.EntityPtr {
 	self := NewPolicy(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

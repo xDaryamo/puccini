@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -22,19 +22,19 @@ type Blueprint struct {
 	Groups      Groups  `read:"groups,Group"`
 }
 
-func NewBlueprint(context *tosca.Context) *Blueprint {
+func NewBlueprint(context *parsing.Context) *Blueprint {
 	return &Blueprint{File: NewFile(context)}
 }
 
-// tosca.Reader signature
-func ReadBlueprint(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadBlueprint(context *parsing.Context) parsing.EntityPtr {
 	self := NewBlueprint(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "dsl_definitions"))
 	return self
 }
 
-// tosca.HasInputs interface
+// parsing.HasInputs interface
 func (self *Blueprint) SetInputs(inputs map[string]ard.Value) {
 	context := self.Context.FieldChild("inputs", nil)
 	for name, data := range inputs {

@@ -3,7 +3,7 @@ package tosca_v2_0
 import (
 	"sync"
 
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -11,18 +11,18 @@ import (
 //
 
 type Entity struct {
-	Context *tosca.Context `traverse:"ignore" json:"-" yaml:"-"`
+	Context *parsing.Context `traverse:"ignore" json:"-" yaml:"-"`
 
 	renderOnce sync.Once
 }
 
-func NewEntity(context *tosca.Context) *Entity {
+func NewEntity(context *parsing.Context) *Entity {
 	return &Entity{
 		Context: context,
 	}
 }
 
-// tosca.Contextual interface
-func (self *Entity) GetContext() *tosca.Context {
+// parsing.Contextual interface
+func (self *Entity) GetContext() *parsing.Context {
 	return self.Context
 }

@@ -1,7 +1,7 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -27,7 +27,7 @@ type GroupType struct {
 	MemberNodeTypes NodeTypes  `lookup:"members,MemberNodeTypeNames" inherit:"members,Parent" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewGroupType(context *tosca.Context) *GroupType {
+func NewGroupType(context *parsing.Context) *GroupType {
 	return &GroupType{
 		Type:                   NewType(context),
 		PropertyDefinitions:    make(PropertyDefinitions),
@@ -37,19 +37,19 @@ func NewGroupType(context *tosca.Context) *GroupType {
 	}
 }
 
-// tosca.Reader signature
-func ReadGroupType(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadGroupType(context *parsing.Context) parsing.EntityPtr {
 	self := NewGroupType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Hierarchical interface
-func (self *GroupType) GetParent() tosca.EntityPtr {
+// parsing.Hierarchical interface
+func (self *GroupType) GetParent() parsing.EntityPtr {
 	return self.Parent
 }
 
-// tosca.Inherits interface
+// parsing.Inherits interface
 func (self *GroupType) Inherit() {
 	logInherit.Debugf("group type: %s", self.Name)
 
@@ -71,7 +71,7 @@ func (self *GroupType) Inherit() {
 	// So we will do that check in the rendering phase, below
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *GroupType) Render() {
 	self.renderOnce.Do(self.render)
 }
@@ -107,7 +107,7 @@ func (self GroupTypes) IsCompatible(groupType *GroupType) bool {
 	return false
 }
 
-func (self GroupTypes) ValidateSubset(subset GroupTypes, context *tosca.Context) bool {
+func (self GroupTypes) ValidateSubset(subset GroupTypes, context *parsing.Context) bool {
 	isSubset := true
 	for _, subsetGroupType := range subset {
 		if !self.IsCompatible(subsetGroupType) {

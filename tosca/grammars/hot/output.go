@@ -1,8 +1,8 @@
 package hot
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -20,26 +20,26 @@ type Output struct {
 	Condition   *Condition `read:"condition,Condition"`
 }
 
-func NewOutput(context *tosca.Context) *Output {
+func NewOutput(context *parsing.Context) *Output {
 	return &Output{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadOutput(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadOutput(context *parsing.Context) parsing.EntityPtr {
 	self := NewOutput(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *Output) GetKey() string {
 	return self.Name
 }
 
-func (self *Output) Normalize(context *tosca.Context) normal.Value {
+func (self *Output) Normalize(context *parsing.Context) normal.Value {
 	var value *Value
 	if self.Value != nil {
 		value = self.Value
@@ -56,7 +56,7 @@ func (self *Output) Normalize(context *tosca.Context) normal.Value {
 
 type Outputs map[string]*Output
 
-func (self Outputs) Normalize(normalConstrainables normal.Values, context *tosca.Context) {
+func (self Outputs) Normalize(normalConstrainables normal.Values, context *parsing.Context) {
 	for key, output := range self {
 		normalConstrainables[key] = output.Value.Normalize()
 	}

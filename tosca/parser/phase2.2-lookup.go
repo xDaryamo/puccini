@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/tliron/kutil/reflection"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 func (self *ServiceContext) LookupNames() {
@@ -18,10 +18,10 @@ func (self *ServiceContext) LookupNames() {
 
 // From "lookup" tags
 // reflection.EntityTraverser signature
-func (self *ServiceContext) lookupFields(entityPtr tosca.EntityPtr) bool {
+func (self *ServiceContext) lookupFields(entityPtr parsing.EntityPtr) bool {
 	lookupProblems := make(LookupProblems)
 
-	context := tosca.GetContext(entityPtr)
+	context := parsing.GetContext(entityPtr)
 	entity := reflect.ValueOf(entityPtr).Elem()
 
 	for fieldName, tag := range reflection.GetFieldTagsForValue(entity, "lookup") {
@@ -119,7 +119,7 @@ func parseLookupTag(tag string) (string, string, bool) {
 	return lookupFieldKey, lookupFieldName, report
 }
 
-func panicLookupTag(entityPtr tosca.EntityPtr) {
+func panicLookupTag(entityPtr parsing.EntityPtr) {
 	panic(fmt.Sprintf("\"lookup\" tag refers to a field that is not of type \"*string\" or \"*[]string\" in struct %T", entityPtr))
 }
 
@@ -184,7 +184,7 @@ func (self LookupProblems) SetFound(key string, index int, name string, found bo
 	self.Field(key).setFound(index, name, found)
 }
 
-func (self LookupProblems) Report(context *tosca.Context) {
+func (self LookupProblems) Report(context *parsing.Context) {
 	for key, field := range self {
 		for _, name := range field.Names {
 			if !name.Found {

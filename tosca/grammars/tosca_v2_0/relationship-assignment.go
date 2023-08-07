@@ -2,8 +2,8 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -28,7 +28,7 @@ type RelationshipAssignment struct {
 	RelationshipType     *RelationshipType     `lookup:"type,RelationshipTemplateNameOrTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewRelationshipAssignment(context *tosca.Context) *RelationshipAssignment {
+func NewRelationshipAssignment(context *parsing.Context) *RelationshipAssignment {
 	return &RelationshipAssignment{
 		Entity:     NewEntity(context),
 		Properties: make(Values),
@@ -37,8 +37,8 @@ func NewRelationshipAssignment(context *tosca.Context) *RelationshipAssignment {
 	}
 }
 
-// tosca.Reader signature
-func ReadRelationshipAssignment(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadRelationshipAssignment(context *parsing.Context) parsing.EntityPtr {
 	self := NewRelationshipAssignment(context)
 
 	if context.Is(ard.TypeMap) {

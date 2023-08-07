@@ -31,7 +31,7 @@ Example of use:
 
     puccini-tosca compile weird.yaml -x data_types.string.permissive
 
-The list of supported quirks is maintained [here](../tosca/QUIRKS.md).
+The list of supported quirks is maintained [here](../tosca/parsing/QUIRKS.md).
 
 
 `compile`

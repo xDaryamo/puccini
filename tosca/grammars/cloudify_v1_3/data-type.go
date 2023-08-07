@@ -2,8 +2,8 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -21,26 +21,26 @@ type DataType struct {
 	Parent *DataType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewDataType(context *tosca.Context) *DataType {
+func NewDataType(context *parsing.Context) *DataType {
 	return &DataType{
 		Type:                NewType(context),
 		PropertyDefinitions: make(PropertyDefinitions),
 	}
 }
 
-// tosca.Reader signature
-func ReadDataType(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadDataType(context *parsing.Context) parsing.EntityPtr {
 	self := NewDataType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Hierarchical interface
-func (self *DataType) GetParent() tosca.EntityPtr {
+// parsing.Hierarchical interface
+func (self *DataType) GetParent() parsing.EntityPtr {
 	return self.Parent
 }
 
-// tosca.Inherits interface
+// parsing.Inherits interface
 func (self *DataType) Inherit() {
 	logInherit.Debugf("data type: %s", self.Name)
 
@@ -58,7 +58,7 @@ func (self *DataType) Inherit() {
 	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *DataType) Render() {
 	self.renderOnce.Do(self.render)
 }
@@ -94,7 +94,7 @@ func (self *DataType) GetInternalTypeName() (ard.TypeName, bool) {
 	}
 }
 
-func (self *DataType) GetInternal() (ard.TypeName, ard.TypeValidator, tosca.Reader, bool) {
+func (self *DataType) GetInternal() (ard.TypeName, ard.TypeValidator, parsing.Reader, bool) {
 	if internalTypeName, ok := self.GetInternalTypeName(); ok {
 		if typeValidator, ok := ard.TypeValidators[internalTypeName]; ok {
 			return internalTypeName, typeValidator, nil, true
@@ -107,7 +107,7 @@ func (self *DataType) GetInternal() (ard.TypeName, ard.TypeValidator, tosca.Read
 
 func (self *DataType) NewValueMeta() *normal.ValueMeta {
 	normalValueMeta := normal.NewValueMeta()
-	normalValueMeta.Type = tosca.GetCanonicalName(self)
+	normalValueMeta.Type = parsing.GetCanonicalName(self)
 	if self.Description != nil {
 		normalValueMeta.TypeDescription = *self.Description
 	}

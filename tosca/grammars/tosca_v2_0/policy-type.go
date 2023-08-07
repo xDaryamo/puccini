@@ -1,7 +1,7 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -26,7 +26,7 @@ type PolicyType struct {
 	TargetGroupTypes GroupTypes  `lookup:"targets,TargetNodeTypeOrGroupTypeNames" inherit:"targets,Parent" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewPolicyType(context *tosca.Context) *PolicyType {
+func NewPolicyType(context *parsing.Context) *PolicyType {
 	return &PolicyType{
 		Type:                NewType(context),
 		PropertyDefinitions: make(PropertyDefinitions),
@@ -34,19 +34,19 @@ func NewPolicyType(context *tosca.Context) *PolicyType {
 	}
 }
 
-// tosca.Reader signature
-func ReadPolicyType(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadPolicyType(context *parsing.Context) parsing.EntityPtr {
 	self := NewPolicyType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Hierarchical interface
-func (self *PolicyType) GetParent() tosca.EntityPtr {
+// parsing.Hierarchical interface
+func (self *PolicyType) GetParent() parsing.EntityPtr {
 	return self.Parent
 }
 
-// tosca.Inherits interface
+// parsing.Inherits interface
 func (self *PolicyType) Inherit() {
 	logInherit.Debugf("policy type: %s", self.Name)
 
@@ -68,7 +68,7 @@ func (self *PolicyType) Inherit() {
 	// So we will do that check in the rendering phase, below
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *PolicyType) Render() {
 	self.renderOnce.Do(self.render)
 }

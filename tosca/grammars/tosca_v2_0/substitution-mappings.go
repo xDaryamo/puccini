@@ -2,8 +2,8 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -30,7 +30,7 @@ type SubstitutionMappings struct {
 	NodeType *NodeType `lookup:"node_type,NodeTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewSubstitutionMappings(context *tosca.Context) *SubstitutionMappings {
+func NewSubstitutionMappings(context *parsing.Context) *SubstitutionMappings {
 	return &SubstitutionMappings{
 		Entity:              NewEntity(context),
 		CapabilityMappings:  make(CapabilityMappings),
@@ -41,9 +41,9 @@ func NewSubstitutionMappings(context *tosca.Context) *SubstitutionMappings {
 	}
 }
 
-// tosca.Reader signature
-func ReadSubstitutionMappings(context *tosca.Context) tosca.EntityPtr {
-	if context.HasQuirk(tosca.QuirkSubstitutionMappingsRequirementsList) {
+// parsing.Reader signature
+func ReadSubstitutionMappings(context *parsing.Context) parsing.EntityPtr {
+	if context.HasQuirk(parsing.QuirkSubstitutionMappingsRequirementsList) {
 		if map_, ok := context.Data.(ard.Map); ok {
 			if requirements, ok := map_["requirements"]; ok {
 				if _, ok := requirements.(ard.List); ok {
@@ -163,7 +163,7 @@ func (self *SubstitutionMappings) Normalize(normalServiceTemplate *normal.Servic
 
 	normalSubstitution := normalServiceTemplate.NewSubstitution()
 
-	normalSubstitution.Type = tosca.GetCanonicalName(self.NodeType)
+	normalSubstitution.Type = parsing.GetCanonicalName(self.NodeType)
 
 	if metadata, ok := self.NodeType.GetMetadata(); ok {
 		normalSubstitution.TypeMetadata = metadata

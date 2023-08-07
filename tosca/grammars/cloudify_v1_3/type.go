@@ -1,7 +1,7 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -15,7 +15,7 @@ type Type struct {
 	ParentName *string `read:"derived_from"`
 }
 
-func NewType(context *tosca.Context) *Type {
+func NewType(context *parsing.Context) *Type {
 	return &Type{
 		Entity: NewEntity(context),
 		Name:   context.Name,

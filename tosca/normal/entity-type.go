@@ -1,7 +1,7 @@
 package normal
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -37,19 +37,19 @@ func NewEntityTypes(names ...string) EntityTypes {
 	return entityTypes
 }
 
-func GetHierarchyEntityTypes(hierarchy *tosca.Hierarchy) EntityTypes {
+func GetHierarchyEntityTypes(hierarchy *parsing.Hierarchy) EntityTypes {
 	entityTypes := make(EntityTypes)
 
-	hierarchy.Range(func(entityPtr tosca.EntityPtr, parentEntityPtr tosca.EntityPtr) bool {
-		entityType := NewEntityType(tosca.GetCanonicalName(entityPtr))
+	hierarchy.Range(func(entityPtr parsing.EntityPtr, parentEntityPtr parsing.EntityPtr) bool {
+		entityType := NewEntityType(parsing.GetCanonicalName(entityPtr))
 
 		if parentEntityPtr != nil {
-			entityType.Parent = tosca.GetCanonicalName(parentEntityPtr)
+			entityType.Parent = parsing.GetCanonicalName(parentEntityPtr)
 		}
 
-		entityType.Description, _ = tosca.GetDescription(entityPtr)
+		entityType.Description, _ = parsing.GetDescription(entityPtr)
 
-		if metadata, ok := tosca.GetMetadata(entityPtr); ok {
+		if metadata, ok := parsing.GetMetadata(entityPtr); ok {
 			for name, value := range metadata {
 				// No need to include "canonical_name" metadata
 				if name != "canonical_name" {
@@ -66,7 +66,7 @@ func GetHierarchyEntityTypes(hierarchy *tosca.Hierarchy) EntityTypes {
 	return entityTypes
 }
 
-func GetEntityTypes(hierarchy *tosca.Hierarchy, entityPtr tosca.EntityPtr) (EntityTypes, bool) {
+func GetEntityTypes(hierarchy *parsing.Hierarchy, entityPtr parsing.EntityPtr) (EntityTypes, bool) {
 	if childHierarchy, ok := hierarchy.Find(entityPtr); ok {
 		return GetHierarchyEntityTypes(childHierarchy), true
 	}

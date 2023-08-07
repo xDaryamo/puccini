@@ -4,16 +4,16 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
-func (self *ServiceContext) Gather(pattern string) tosca.EntityPtrs {
-	var entityPtrs tosca.EntityPtrs
+func (self *ServiceContext) Gather(pattern string) parsing.EntityPtrs {
+	var entityPtrs parsing.EntityPtrs
 
 	re := compileGatherPattern(pattern)
 
-	self.TraverseEntities(logGather, nil, func(entityPtr tosca.EntityPtr) bool {
-		context := tosca.GetContext(entityPtr)
+	self.TraverseEntities(logGather, nil, func(entityPtr parsing.EntityPtr) bool {
+		context := parsing.GetContext(entityPtr)
 
 		if re.MatchString(context.Path.String()) {
 			entityPtrs = append(entityPtrs, entityPtr)

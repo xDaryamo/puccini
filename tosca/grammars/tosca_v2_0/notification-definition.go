@@ -2,7 +2,7 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -21,7 +21,7 @@ type NotificationDefinition struct {
 	Outputs        OutputMappings           `read:"outputs,OutputMapping"`
 }
 
-func NewNotificationDefinition(context *tosca.Context) *NotificationDefinition {
+func NewNotificationDefinition(context *parsing.Context) *NotificationDefinition {
 	return &NotificationDefinition{
 		Entity:  NewEntity(context),
 		Name:    context.Name,
@@ -29,8 +29,8 @@ func NewNotificationDefinition(context *tosca.Context) *NotificationDefinition {
 	}
 }
 
-// tosca.Reader signature
-func ReadNotificationDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadNotificationDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewNotificationDefinition(context)
 
 	if context.Is(ard.TypeMap) {
@@ -44,7 +44,7 @@ func ReadNotificationDefinition(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *NotificationDefinition) GetKey() string {
 	return self.Name
 }

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -38,15 +38,15 @@ type RequirementAssignment struct {
 	capabilityIsName bool
 }
 
-func NewRequirementAssignment(context *tosca.Context) *RequirementAssignment {
+func NewRequirementAssignment(context *parsing.Context) *RequirementAssignment {
 	return &RequirementAssignment{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadRequirementAssignment(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadRequirementAssignment(context *parsing.Context) parsing.EntityPtr {
 	self := NewRequirementAssignment(context)
 
 	if context.Is(ard.TypeMap) {
@@ -62,7 +62,7 @@ func ReadRequirementAssignment(context *tosca.Context) tosca.EntityPtr {
 
 var one int64 = 1
 
-func NewDefaultRequirementAssignment(index int, definition *RequirementDefinition, context *tosca.Context) *RequirementAssignment {
+func NewDefaultRequirementAssignment(index int, definition *RequirementDefinition, context *parsing.Context) *RequirementAssignment {
 	context = context.SequencedListChild(index, definition.Name, nil)
 	context.Name = definition.Name
 	self := NewRequirementAssignment(context)
@@ -90,7 +90,7 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalN
 	}
 
 	if self.TargetCapabilityType != nil {
-		name := tosca.GetCanonicalName(self.TargetCapabilityType)
+		name := parsing.GetCanonicalName(self.TargetCapabilityType)
 		normalRequirement.CapabilityTypeName = &name
 	}
 
@@ -99,7 +99,7 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalN
 	}
 
 	if self.TargetNodeType != nil {
-		name := tosca.GetCanonicalName(self.TargetNodeType)
+		name := parsing.GetCanonicalName(self.TargetNodeType)
 		normalRequirement.NodeTypeName = &name
 	}
 
@@ -136,7 +136,7 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalN
 
 type RequirementAssignments []*RequirementAssignment
 
-func (self *RequirementAssignments) Render(sourceNodeTemplate *NodeTemplate, context *tosca.Context) {
+func (self *RequirementAssignments) Render(sourceNodeTemplate *NodeTemplate, context *parsing.Context) {
 	for _, assignment := range *self {
 		assignment.capabilityIsName = (assignment.TargetCapabilityNameOrTypeName != nil) && (assignment.TargetCapabilityType == nil)
 

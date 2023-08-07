@@ -1,4 +1,4 @@
-package tosca
+package parsing
 
 import (
 	"fmt"
@@ -9,6 +9,45 @@ import (
 	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/kutil/terminal"
 )
+
+//
+// Inherits
+//
+
+type Inherits interface {
+	Inherit()
+}
+
+// From Inherits interface
+func Inherit(entityPtr EntityPtr) bool {
+	if inherits, ok := entityPtr.(Inherits); ok {
+		inherits.Inherit()
+		return true
+	} else {
+		return false
+	}
+}
+
+//
+// Hierarchical
+//
+
+type Hierarchical interface {
+	GetParent() EntityPtr
+}
+
+// From Hierarchical interface
+func GetParent(entityPtr EntityPtr) (EntityPtr, bool) {
+	if hierarchical, ok := entityPtr.(Hierarchical); ok {
+		parentPtr := hierarchical.GetParent()
+		if reflect.ValueOf(parentPtr).IsNil() {
+			parentPtr = nil
+		}
+		return parentPtr, true
+	} else {
+		return nil, false
+	}
+}
 
 //
 // Hierarchy
@@ -288,15 +327,16 @@ func (self *Hierarchy) PrintChild(indent int, treePrefix terminal.TreePrefix, la
 }
 
 // sort.Interface
-
 func (self Hierarchy) Len() int {
 	return len(self.children)
 }
 
+// sort.Interface
 func (self Hierarchy) Swap(i, j int) {
 	self.children[i], self.children[j] = self.children[j], self.children[i]
 }
 
+// sort.Interface
 func (self Hierarchy) Less(i, j int) bool {
 	iName := self.children[i].GetContext().Name
 	jName := self.children[j].GetContext().Name

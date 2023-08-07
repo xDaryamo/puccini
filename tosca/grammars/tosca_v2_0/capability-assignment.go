@@ -3,8 +3,8 @@ package tosca_v2_0
 import (
 	"math"
 
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -26,7 +26,7 @@ type CapabilityAssignment struct {
 	Occurrences *RangeEntity `read:"occurrences,RangeEntity"` // introduced in TOSCA 1.3
 }
 
-func NewCapabilityAssignment(context *tosca.Context) *CapabilityAssignment {
+func NewCapabilityAssignment(context *parsing.Context) *CapabilityAssignment {
 	return &CapabilityAssignment{
 		Entity:     NewEntity(context),
 		Name:       context.Name,
@@ -35,14 +35,14 @@ func NewCapabilityAssignment(context *tosca.Context) *CapabilityAssignment {
 	}
 }
 
-// tosca.Reader signature
-func ReadCapabilityAssignment(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadCapabilityAssignment(context *parsing.Context) parsing.EntityPtr {
 	self := NewCapabilityAssignment(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *CapabilityAssignment) GetKey() string {
 	return self.Name
 }
@@ -97,7 +97,7 @@ func (self *CapabilityAssignment) Render(definition *CapabilityDefinition) {
 	}
 }
 
-func (self CapabilityAssignments) Render(definitions CapabilityDefinitions, context *tosca.Context) {
+func (self CapabilityAssignments) Render(definitions CapabilityDefinitions, context *parsing.Context) {
 	for key, definition := range definitions {
 		assignment, ok := self[key]
 		if !ok {

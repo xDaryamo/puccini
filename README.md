@@ -79,7 +79,7 @@ TOSCA is a complex object-oriented language. We put considerable effort into adh
 aspect of the grammar, especially in regards to value type checking and type inheritance contracts,
 which are key to delivering the object-oriented promise of extensibility while maintaining reliable
 base type compatibility. Unfortunately, the TOSCA specification can be inconsistent and imprecise.
-For this reason, Puccini also supports [quirk modes](tosca/QUIRKS.md) that enable alternative
+For this reason, Puccini also supports [quirk modes](tosca/parsing/QUIRKS.md) that enable alternative
 behaviors based on differing interpretations of the spec.
 
 ### Packaging

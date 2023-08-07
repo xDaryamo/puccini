@@ -1,8 +1,8 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -20,21 +20,21 @@ type ValueDefinition struct {
 	Value       *Value  `read:"value,Value"`
 }
 
-func NewValueDefinition(context *tosca.Context) *ValueDefinition {
+func NewValueDefinition(context *parsing.Context) *ValueDefinition {
 	return &ValueDefinition{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadValueDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadValueDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewValueDefinition(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *ValueDefinition) GetKey() string {
 	return self.Name
 }

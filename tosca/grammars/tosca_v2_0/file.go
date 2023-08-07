@@ -1,8 +1,8 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -36,20 +36,20 @@ type File struct {
 	RelationshipTypes       RelationshipTypes `read:"relationship_types,RelationshipType" hierarchy:""`
 }
 
-func NewFile(context *tosca.Context) *File {
+func NewFile(context *parsing.Context) *File {
 	return &File{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadFile(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadFile(context *parsing.Context) parsing.EntityPtr {
 	context.FunctionPrefix = "$"
 	self := NewFile(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	ignore := []string{"dsl_definitions"}
-	if context.HasQuirk(tosca.QuirkImportsTopologyTemplateIgnore) {
+	if context.HasQuirk(parsing.QuirkImportsTopologyTemplateIgnore) {
 		ignore = append(ignore, "topology_template")
 	}
-	if context.HasQuirk(tosca.QuirkAnnotationsIgnore) {
+	if context.HasQuirk(parsing.QuirkAnnotationsIgnore) {
 		ignore = append(ignore, "annotation_types")
 	}
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), ignore...))
@@ -59,11 +59,11 @@ func ReadFile(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Importer interface
-func (self *File) GetImportSpecs() []*tosca.ImportSpec {
+// parsing.Importer interface
+func (self *File) GetImportSpecs() []*parsing.ImportSpec {
 	// TODO: importing should also import repositories
 
-	var importSpecs = make([]*tosca.ImportSpec, 0, len(self.Imports))
+	var importSpecs = make([]*parsing.ImportSpec, 0, len(self.Imports))
 	for _, import_ := range self.Imports {
 		if importSpec, ok := import_.NewImportSpec(self); ok {
 			importSpecs = append(importSpecs, importSpec)
@@ -82,6 +82,6 @@ func (self *File) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
 	}
 
 	if len(self.Context.Quirks) > 0 {
-		normalServiceTemplate.Metadata[tosca.METADATA_QUIRKS] = self.Context.Quirks.String()
+		normalServiceTemplate.Metadata[parsing.METADATA_QUIRKS] = self.Context.Quirks.String()
 	}
 }

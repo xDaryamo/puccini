@@ -2,7 +2,7 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -32,7 +32,7 @@ type CapabilityDefinition struct {
 	typeMissingProblemReported bool
 }
 
-func NewCapabilityDefinition(context *tosca.Context) *CapabilityDefinition {
+func NewCapabilityDefinition(context *parsing.Context) *CapabilityDefinition {
 	return &CapabilityDefinition{
 		Entity:               NewEntity(context),
 		Name:                 context.Name,
@@ -41,8 +41,8 @@ func NewCapabilityDefinition(context *tosca.Context) *CapabilityDefinition {
 	}
 }
 
-// tosca.Reader signature
-func ReadCapabilityDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadCapabilityDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewCapabilityDefinition(context)
 
 	if context.Is(ard.TypeMap) {
@@ -56,7 +56,7 @@ func ReadCapabilityDefinition(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *CapabilityDefinition) GetKey() string {
 	return self.Name
 }
@@ -93,7 +93,7 @@ func (self *CapabilityDefinition) Inherit(parentDefinition *CapabilityDefinition
 	self.AttributeDefinitions.Inherit(parentDefinition.AttributeDefinitions)
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *CapabilityDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }

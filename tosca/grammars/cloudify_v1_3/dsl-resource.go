@@ -1,7 +1,7 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -17,12 +17,12 @@ type DSLResource struct {
 	DestinationPath *string `read:"destination_path" mandatory:""`
 }
 
-func NewDSLResource(context *tosca.Context) *DSLResource {
+func NewDSLResource(context *parsing.Context) *DSLResource {
 	return &DSLResource{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadDSLResource(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadDSLResource(context *parsing.Context) parsing.EntityPtr {
 	self := NewDSLResource(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

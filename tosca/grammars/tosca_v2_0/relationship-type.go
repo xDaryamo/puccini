@@ -1,7 +1,7 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -26,7 +26,7 @@ type RelationshipType struct {
 	ValidTargetCapabilityTypes CapabilityTypes   `lookup:"valid_target_types,ValidTargetCapabilityTypeNames" inherit:"valid_target_types,Parent" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewRelationshipType(context *tosca.Context) *RelationshipType {
+func NewRelationshipType(context *parsing.Context) *RelationshipType {
 	return &RelationshipType{
 		Type:                 NewType(context),
 		PropertyDefinitions:  make(PropertyDefinitions),
@@ -35,19 +35,19 @@ func NewRelationshipType(context *tosca.Context) *RelationshipType {
 	}
 }
 
-// tosca.Reader signature
-func ReadRelationshipType(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadRelationshipType(context *parsing.Context) parsing.EntityPtr {
 	self := NewRelationshipType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Hierarchical interface
-func (self *RelationshipType) GetParent() tosca.EntityPtr {
+// parsing.Hierarchical interface
+func (self *RelationshipType) GetParent() parsing.EntityPtr {
 	return self.Parent
 }
 
-// tosca.Inherits interface
+// parsing.Inherits interface
 func (self *RelationshipType) Inherit() {
 	logInherit.Debugf("relationship type: %s", self.Name)
 

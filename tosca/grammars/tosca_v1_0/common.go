@@ -2,16 +2,16 @@ package tosca_v1_0
 
 import (
 	"github.com/tliron/commonlog"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_1"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_2"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 var log = commonlog.GetLogger("puccini.grammars.tosca_v1_0")
 
-var Grammar = tosca.NewGrammar()
+var Grammar = parsing.NewGrammar()
 
 func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_yaml_1_0", "/tosca/simple/1.0/profile.yaml")

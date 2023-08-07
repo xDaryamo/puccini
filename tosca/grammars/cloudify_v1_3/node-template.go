@@ -1,8 +1,8 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -25,7 +25,7 @@ type NodeTemplate struct {
 	NodeType *NodeType `lookup:"type,NodeTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewNodeTemplate(context *tosca.Context) *NodeTemplate {
+func NewNodeTemplate(context *parsing.Context) *NodeTemplate {
 	return &NodeTemplate{
 		Entity:       NewEntity(context),
 		Name:         context.Name,
@@ -35,15 +35,15 @@ func NewNodeTemplate(context *tosca.Context) *NodeTemplate {
 	}
 }
 
-// tosca.Reader signature
-func ReadNodeTemplate(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadNodeTemplate(context *parsing.Context) parsing.EntityPtr {
 	self := NewNodeTemplate(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	self.Capabilities.Validate(context, self.Instances)
 	return self
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *NodeTemplate) Render() {
 	self.renderOnce.Do(self.render)
 }

@@ -3,7 +3,7 @@ package tosca_v2_0
 import (
 	"reflect"
 
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -26,15 +26,15 @@ type AttributeMapping struct {
 	Attribute    *Value        `traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewAttributeMapping(context *tosca.Context) *AttributeMapping {
+func NewAttributeMapping(context *parsing.Context) *AttributeMapping {
 	return &AttributeMapping{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadAttributeMapping(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadAttributeMapping(context *parsing.Context) parsing.EntityPtr {
 	self := NewAttributeMapping(context)
 
 	if strings := context.ReadStringListFixed(2); strings != nil {
@@ -45,7 +45,7 @@ func ReadAttributeMapping(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *AttributeMapping) GetKey() string {
 	return self.Name
 }

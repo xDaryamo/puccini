@@ -2,7 +2,7 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -27,12 +27,12 @@ type ConditionClause struct {
 	ConditionClauses []*ConditionClause
 }
 
-func NewConditionClause(context *tosca.Context) *ConditionClause {
+func NewConditionClause(context *parsing.Context) *ConditionClause {
 	return &ConditionClause{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadConditionClause(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadConditionClause(context *parsing.Context) parsing.EntityPtr {
 	self := NewConditionClause(context)
 
 	if context.ValidateType(ard.TypeMap) {
@@ -88,8 +88,8 @@ func ReadConditionClause(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Reader signature
-func ReadConditionClauseAnd(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadConditionClauseAnd(context *parsing.Context) parsing.EntityPtr {
 	self := NewConditionClause(context)
 
 	if context.ValidateType(ard.TypeList) {

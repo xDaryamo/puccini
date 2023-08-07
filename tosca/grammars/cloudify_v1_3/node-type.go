@@ -1,7 +1,7 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -19,7 +19,7 @@ type NodeType struct {
 	Parent *NodeType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewNodeType(context *tosca.Context) *NodeType {
+func NewNodeType(context *parsing.Context) *NodeType {
 	return &NodeType{
 		Type:                 NewType(context),
 		InterfaceDefinitions: make(InterfaceDefinitions),
@@ -27,19 +27,19 @@ func NewNodeType(context *tosca.Context) *NodeType {
 	}
 }
 
-// tosca.Reader signature
-func ReadNodeType(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadNodeType(context *parsing.Context) parsing.EntityPtr {
 	self := NewNodeType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Hierarchical interface
-func (self *NodeType) GetParent() tosca.EntityPtr {
+// parsing.Hierarchical interface
+func (self *NodeType) GetParent() parsing.EntityPtr {
 	return self.Parent
 }
 
-// tosca.Inherits interface
+// parsing.Inherits interface
 func (self *NodeType) Inherit() {
 	logInherit.Debugf("node type: %s", self.Name)
 

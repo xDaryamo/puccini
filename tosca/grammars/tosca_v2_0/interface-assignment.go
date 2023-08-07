@@ -1,8 +1,8 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -25,7 +25,7 @@ type InterfaceAssignment struct {
 	ExtraOperations OperationAssignments    `json:"-" yaml:"-"`
 }
 
-func NewInterfaceAssignment(context *tosca.Context) *InterfaceAssignment {
+func NewInterfaceAssignment(context *parsing.Context) *InterfaceAssignment {
 	return &InterfaceAssignment{
 		Entity:          NewEntity(context),
 		Name:            context.Name,
@@ -36,11 +36,11 @@ func NewInterfaceAssignment(context *tosca.Context) *InterfaceAssignment {
 	}
 }
 
-// tosca.Reader signature
-func ReadInterfaceAssignment(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadInterfaceAssignment(context *parsing.Context) parsing.EntityPtr {
 	self := NewInterfaceAssignment(context)
 
-	if context.HasQuirk(tosca.QuirkInterfacesOperationsPermissive) {
+	if context.HasQuirk(parsing.QuirkInterfacesOperationsPermissive) {
 		context.SetReadTag("ExtraOperations", "?,OperationAssignments")
 		context.ReadFields(self)
 		for name, operation := range self.ExtraOperations {
@@ -53,7 +53,7 @@ func ReadInterfaceAssignment(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *InterfaceAssignment) GetKey() string {
 	return self.Name
 }
@@ -135,7 +135,7 @@ func (self InterfaceAssignments) CopyUnassigned(assignments InterfaceAssignments
 	}
 }
 
-func (self InterfaceAssignments) RenderForNodeType(nodeType *NodeType, context *tosca.Context) {
+func (self InterfaceAssignments) RenderForNodeType(nodeType *NodeType, context *parsing.Context) {
 	self.render(nodeType.InterfaceDefinitions, context)
 	for name, assignment := range self {
 		if definition, ok := nodeType.InterfaceDefinitions[name]; ok {
@@ -144,7 +144,7 @@ func (self InterfaceAssignments) RenderForNodeType(nodeType *NodeType, context *
 	}
 }
 
-func (self InterfaceAssignments) RenderForRelationshipType(relationshipType *RelationshipType, definitions InterfaceDefinitions, sourceNodeTemplate *NodeTemplate, context *tosca.Context) {
+func (self InterfaceAssignments) RenderForRelationshipType(relationshipType *RelationshipType, definitions InterfaceDefinitions, sourceNodeTemplate *NodeTemplate, context *parsing.Context) {
 	self.render(definitions, context)
 	for name, assignment := range self {
 		if definition, ok := definitions[name]; ok {
@@ -153,7 +153,7 @@ func (self InterfaceAssignments) RenderForRelationshipType(relationshipType *Rel
 	}
 }
 
-func (self InterfaceAssignments) RenderForGroup(definitions InterfaceDefinitions, context *tosca.Context) {
+func (self InterfaceAssignments) RenderForGroup(definitions InterfaceDefinitions, context *parsing.Context) {
 	self.render(definitions, context)
 	for name, assignment := range self {
 		if definition, ok := definitions[name]; ok {
@@ -162,7 +162,7 @@ func (self InterfaceAssignments) RenderForGroup(definitions InterfaceDefinitions
 	}
 }
 
-func (self InterfaceAssignments) render(definitions InterfaceDefinitions, context *tosca.Context) {
+func (self InterfaceAssignments) render(definitions InterfaceDefinitions, context *parsing.Context) {
 	for key := range definitions {
 		assignment, ok := self[key]
 		if !ok {

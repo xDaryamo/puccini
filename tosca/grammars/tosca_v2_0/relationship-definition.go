@@ -2,7 +2,7 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -26,15 +26,15 @@ type RelationshipDefinition struct {
 	typeMissingProblemReported bool
 }
 
-func NewRelationshipDefinition(context *tosca.Context) *RelationshipDefinition {
+func NewRelationshipDefinition(context *parsing.Context) *RelationshipDefinition {
 	return &RelationshipDefinition{
 		Entity:               NewEntity(context),
 		InterfaceDefinitions: make(InterfaceDefinitions),
 	}
 }
 
-// tosca.Reader signature
-func ReadRelationshipDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadRelationshipDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewRelationshipDefinition(context)
 
 	if context.Is(ard.TypeMap) {
@@ -48,7 +48,7 @@ func ReadRelationshipDefinition(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-func (self *RelationshipDefinition) NewDefaultAssignment(context *tosca.Context) *RelationshipAssignment {
+func (self *RelationshipDefinition) NewDefaultAssignment(context *parsing.Context) *RelationshipAssignment {
 	assignment := NewRelationshipAssignment(context)
 	assignment.RelationshipTemplateNameOrTypeName = self.RelationshipTypeName
 	assignment.RelationshipType = self.RelationshipType
@@ -74,7 +74,7 @@ func (self *RelationshipDefinition) Inherit(parentDefinition *RelationshipDefini
 	self.InterfaceDefinitions.Inherit(parentDefinition.InterfaceDefinitions)
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *RelationshipDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }

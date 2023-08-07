@@ -2,7 +2,7 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -19,15 +19,15 @@ type UploadResources struct {
 	Parameters      Values       `read:"parameters,Value"`
 }
 
-func NewUploadResources(context *tosca.Context) *UploadResources {
+func NewUploadResources(context *parsing.Context) *UploadResources {
 	return &UploadResources{
 		Entity:     NewEntity(context),
 		Parameters: make(Values),
 	}
 }
 
-// tosca.Reader signature
-func ReadUploadResources(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadUploadResources(context *parsing.Context) parsing.EntityPtr {
 	self := NewUploadResources(context)
 
 	context.ValidateUnsupportedFields(context.ReadFields(self))

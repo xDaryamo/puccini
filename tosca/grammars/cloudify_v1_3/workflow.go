@@ -2,8 +2,8 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -21,7 +21,7 @@ type Workflow struct {
 	IsCascading          *bool                `read:"is_cascading"` // See: https://docs.cloudify.co/5.0.5/working_with/service_composition/component/
 }
 
-func NewWorkflow(context *tosca.Context) *Workflow {
+func NewWorkflow(context *parsing.Context) *Workflow {
 	return &Workflow{
 		Entity:               NewEntity(context),
 		Name:                 context.Name,
@@ -29,8 +29,8 @@ func NewWorkflow(context *tosca.Context) *Workflow {
 	}
 }
 
-// tosca.Reader signature
-func ReadWorkflow(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadWorkflow(context *parsing.Context) parsing.EntityPtr {
 	self := NewWorkflow(context)
 
 	if context.Is(ard.TypeMap) {

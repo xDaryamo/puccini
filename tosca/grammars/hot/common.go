@@ -2,16 +2,16 @@ package hot
 
 import (
 	"github.com/tliron/commonlog"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 var log = commonlog.GetLogger("puccini.grammars.hot")
 var logRender = commonlog.NewScopeLogger(log, "render")
 var logNormalize = commonlog.NewScopeLogger(log, "normalize")
 
-var Grammar = tosca.NewGrammar()
+var Grammar = parsing.NewGrammar()
 
-var DefaultScriptletNamespace = tosca.NewScriptletNamespace()
+var DefaultScriptletNamespace = parsing.NewScriptletNamespace()
 
 func init() {
 	// https://docs.openstack.org/heat/wallaby/template_guide/hot_spec.html

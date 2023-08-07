@@ -1,8 +1,8 @@
 package tosca_v1_2
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -13,8 +13,8 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.10
 //
 
-// tosca.Reader signature
-func ReadAttributeDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadAttributeDefinition(context *parsing.Context) parsing.EntityPtr {
 	context.SetReadTag("Metadata", "")
 	context.SetReadTag("KeySchema", "")
 

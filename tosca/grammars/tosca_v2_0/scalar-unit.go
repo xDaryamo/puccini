@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 var ScalarUnitTypeZeroes = map[ard.TypeName]ard.Value{
@@ -36,7 +36,7 @@ type ScalarUnit struct {
 	canonicalUnitPlural   string
 }
 
-func ReadScalarUnit(context *tosca.Context, name string, canonicalUnit string, canonicalUnitSingular string, canonicalUnitPlural string, re *regexp.Regexp, measures ScalarUnitMeasures, countable bool, caseSensitive bool) *ScalarUnit {
+func ReadScalarUnit(context *parsing.Context, name string, canonicalUnit string, canonicalUnitSingular string, canonicalUnitPlural string, re *regexp.Regexp, measures ScalarUnitMeasures, countable bool, caseSensitive bool) *ScalarUnit {
 	self := ScalarUnit{
 		countable:             countable,
 		canonicalUnitSingular: canonicalUnitSingular,
@@ -161,8 +161,8 @@ var ScalarUnitSizeMeasures = ScalarUnitMeasures{
 	"TiB": 1099511627776,
 }
 
-// tosca.Reader signature
-func ReadScalarUnitSize(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadScalarUnitSize(context *parsing.Context) parsing.EntityPtr {
 	return ReadScalarUnit(context, "scalar-unit.size", "B", "byte", "bytes", ScalarUnitSizeRE, ScalarUnitSizeMeasures, true, false)
 }
 
@@ -190,8 +190,8 @@ var ScalarUnitTimeMeasures = ScalarUnitMeasures{
 	"d":  86400,
 }
 
-// tosca.Reader signature
-func ReadScalarUnitTime(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadScalarUnitTime(context *parsing.Context) parsing.EntityPtr {
 	return ReadScalarUnit(context, "scalar-unit.time", "s", "second", "seconds", ScalarUnitTimeRE, ScalarUnitTimeMeasures, false, false)
 }
 
@@ -216,8 +216,8 @@ var ScalarUnitFrequencyMeasures = ScalarUnitMeasures{
 	"GHz": 1_000_000_000,
 }
 
-// tosca.Reader signature
-func ReadScalarUnitFrequency(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadScalarUnitFrequency(context *parsing.Context) parsing.EntityPtr {
 	return ReadScalarUnit(context, "scalar-unit.frequency", "Hz", "Hz", "Hz", ScalarUnitFrequencyRE, ScalarUnitFrequencyMeasures, false, false)
 }
 
@@ -254,7 +254,7 @@ var ScalarUnitBitrateMeasures = ScalarUnitMeasures{
 	"TiBps": 8796093022208,
 }
 
-// tosca.Reader signature
-func ReadScalarUnitBitrate(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadScalarUnitBitrate(context *parsing.Context) parsing.EntityPtr {
 	return ReadScalarUnit(context, "scalar-unit.bitrate", "bps", "bps", "bps", ScalarUnitBitrateRE, ScalarUnitBitrateMeasures, false, true)
 }

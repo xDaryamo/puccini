@@ -3,7 +3,7 @@ package tosca_v2_0
 import (
 	"reflect"
 
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -29,15 +29,15 @@ type CapabilityMapping struct {
 	Capability   *CapabilityAssignment `traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewCapabilityMapping(context *tosca.Context) *CapabilityMapping {
+func NewCapabilityMapping(context *parsing.Context) *CapabilityMapping {
 	return &CapabilityMapping{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadCapabilityMapping(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadCapabilityMapping(context *parsing.Context) parsing.EntityPtr {
 	self := NewCapabilityMapping(context)
 
 	if strings := context.ReadStringListFixed(2); strings != nil {
@@ -48,7 +48,7 @@ func ReadCapabilityMapping(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *CapabilityMapping) GetKey() string {
 	return self.Name
 }
@@ -61,7 +61,7 @@ func (self *CapabilityMapping) GetCapabilityDefinition() (*CapabilityDefinition,
 	}
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *CapabilityMapping) Render() {
 	self.renderOnce.Do(self.render)
 }

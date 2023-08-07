@@ -1,6 +1,8 @@
 package normal
 
-import "github.com/tliron/puccini/tosca"
+import (
+	"github.com/tliron/puccini/tosca/parsing"
+)
 
 //
 // Location
@@ -20,7 +22,7 @@ func NewLocation(path string, row int, column int) *Location {
 	}
 }
 
-func NewLocationForContext(context *tosca.Context) *Location {
+func NewLocationForContext(context *parsing.Context) *Location {
 	row, column := context.GetLocation()
 	return NewLocation(context.Path.String(), row, column)
 }

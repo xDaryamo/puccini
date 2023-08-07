@@ -2,7 +2,7 @@ package parser
 
 import (
 	"github.com/tliron/kutil/terminal"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 func (self *ServiceContext) AddNamespaces() {
@@ -25,7 +25,7 @@ func (self *File) mergeNamespaces() {
 	}
 
 	logNamespaces.Debugf("create: %s", context.URL.String())
-	namespace := tosca.NewNamespaceFor(self.EntityPtr)
+	namespace := parsing.NewNamespaceFor(self.EntityPtr)
 	context.Namespace.Merge(namespace, nil)
 }
 

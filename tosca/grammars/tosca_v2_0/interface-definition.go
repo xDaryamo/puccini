@@ -1,7 +1,7 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -29,7 +29,7 @@ type InterfaceDefinition struct {
 	typeMissingProblemReported bool
 }
 
-func NewInterfaceDefinition(context *tosca.Context) *InterfaceDefinition {
+func NewInterfaceDefinition(context *parsing.Context) *InterfaceDefinition {
 	return &InterfaceDefinition{
 		Entity:                    NewEntity(context),
 		Name:                      context.Name,
@@ -40,11 +40,11 @@ func NewInterfaceDefinition(context *tosca.Context) *InterfaceDefinition {
 	}
 }
 
-// tosca.Reader signature
-func ReadInterfaceDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadInterfaceDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewInterfaceDefinition(context)
 
-	if context.HasQuirk(tosca.QuirkInterfacesOperationsPermissive) {
+	if context.HasQuirk(parsing.QuirkInterfacesOperationsPermissive) {
 		context.SetReadTag("ExtraOperationDefinitions", "?,OperationDefinition")
 		context.ReadFields(self)
 		for name, definition := range self.ExtraOperationDefinitions {
@@ -57,7 +57,7 @@ func ReadInterfaceDefinition(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *InterfaceDefinition) GetKey() string {
 	return self.Name
 }
@@ -83,7 +83,7 @@ func (self *InterfaceDefinition) Inherit(parentDefinition *InterfaceDefinition) 
 	self.NotificationDefinitions.Inherit(parentDefinition.NotificationDefinitions)
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *InterfaceDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }

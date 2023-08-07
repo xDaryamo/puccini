@@ -1,6 +1,8 @@
 package normal
 
-import "github.com/tliron/puccini/tosca"
+import (
+	"github.com/tliron/puccini/tosca/parsing"
+)
 
 //
 // ValueMeta
@@ -33,11 +35,11 @@ func NewValueMeta() *ValueMeta {
 	}
 }
 
-func (self *ValueMeta) AddValidator(validator *tosca.FunctionCall) {
+func (self *ValueMeta) AddValidator(validator *parsing.FunctionCall) {
 	self.Validators = append(self.Validators, NewFunctionCall(validator))
 }
 
-func (self *ValueMeta) SetConverter(converter *tosca.FunctionCall) {
+func (self *ValueMeta) SetConverter(converter *parsing.FunctionCall) {
 	self.Converter = NewFunctionCall(converter)
 }
 

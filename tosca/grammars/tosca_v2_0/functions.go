@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 	profile "github.com/tliron/puccini/tosca/profiles/implicit/v2_0"
 	"github.com/tliron/yamlkeys"
 )
@@ -29,20 +29,20 @@ import (
 const functionPathPrefix = "/tosca/implicit/2.0/js/functions/"
 
 var FunctionScriptlets = map[string]string{
-	tosca.METADATA_FUNCTION_PREFIX + "concat":               profile.Profile[functionPathPrefix+"concat.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "join":                 profile.Profile[functionPathPrefix+"join.js"], // introduced in TOSCA 1.2
-	tosca.METADATA_FUNCTION_PREFIX + "token":                profile.Profile[functionPathPrefix+"token.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "get_input":            profile.Profile[functionPathPrefix+"get_input.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "get_property":         profile.Profile[functionPathPrefix+"get_property.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "get_attribute":        profile.Profile[functionPathPrefix+"get_attribute.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "get_operation_output": profile.Profile[functionPathPrefix+"get_operation_output.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "get_nodes_of_type":    profile.Profile[functionPathPrefix+"get_nodes_of_type.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "get_artifact":         profile.Profile[functionPathPrefix+"get_artifact.js"],
-	tosca.METADATA_FUNCTION_PREFIX + "_get_target_name":     profile.Profile[functionPathPrefix+"_get_target_name.js"],
+	parsing.METADATA_FUNCTION_PREFIX + "concat":               profile.Profile[functionPathPrefix+"concat.js"],
+	parsing.METADATA_FUNCTION_PREFIX + "join":                 profile.Profile[functionPathPrefix+"join.js"], // introduced in TOSCA 1.2
+	parsing.METADATA_FUNCTION_PREFIX + "token":                profile.Profile[functionPathPrefix+"token.js"],
+	parsing.METADATA_FUNCTION_PREFIX + "get_input":            profile.Profile[functionPathPrefix+"get_input.js"],
+	parsing.METADATA_FUNCTION_PREFIX + "get_property":         profile.Profile[functionPathPrefix+"get_property.js"],
+	parsing.METADATA_FUNCTION_PREFIX + "get_attribute":        profile.Profile[functionPathPrefix+"get_attribute.js"],
+	parsing.METADATA_FUNCTION_PREFIX + "get_operation_output": profile.Profile[functionPathPrefix+"get_operation_output.js"],
+	parsing.METADATA_FUNCTION_PREFIX + "get_nodes_of_type":    profile.Profile[functionPathPrefix+"get_nodes_of_type.js"],
+	parsing.METADATA_FUNCTION_PREFIX + "get_artifact":         profile.Profile[functionPathPrefix+"get_artifact.js"],
+	parsing.METADATA_FUNCTION_PREFIX + "_get_target_name":     profile.Profile[functionPathPrefix+"_get_target_name.js"],
 }
 
-func ParseFunctionCall(context *tosca.Context) bool {
-	if _, ok := context.Data.(*tosca.FunctionCall); ok {
+func ParseFunctionCall(context *parsing.Context) bool {
+	if _, ok := context.Data.(*parsing.FunctionCall); ok {
 		// It's already a function call
 		return true
 	}
@@ -78,7 +78,7 @@ func ParseFunctionCall(context *tosca.Context) bool {
 					return false
 				}
 
-				scriptletName = tosca.METADATA_FUNCTION_PREFIX + scriptletName
+				scriptletName = parsing.METADATA_FUNCTION_PREFIX + scriptletName
 				if _, ok := context.ScriptletNamespace.Lookup(scriptletName); !ok {
 					// Not a function call, despite having the right data structure
 					context.Clone(scriptletName).ReportValueInvalid("function", "unsupported")
@@ -96,7 +96,7 @@ func ParseFunctionCall(context *tosca.Context) bool {
 
 		// Only one iteration
 		for key, data := range map_ {
-			scriptletName := tosca.METADATA_FUNCTION_PREFIX + yamlkeys.KeyString(key)
+			scriptletName := parsing.METADATA_FUNCTION_PREFIX + yamlkeys.KeyString(key)
 
 			if _, ok := context.ScriptletNamespace.Lookup(scriptletName); !ok {
 				// Not a function call, despite having the right data structure
@@ -111,7 +111,7 @@ func ParseFunctionCall(context *tosca.Context) bool {
 	return changed
 }
 
-func ParseFunctionCalls(context *tosca.Context) bool {
+func ParseFunctionCalls(context *parsing.Context) bool {
 	changed := false
 	if ParseFunctionCall(context) {
 		changed = true
@@ -135,7 +135,7 @@ func ParseFunctionCalls(context *tosca.Context) bool {
 	return changed
 }
 
-func NormalizeFunctionCallArguments(functionCall *tosca.FunctionCall, context *tosca.Context) {
+func NormalizeFunctionCallArguments(functionCall *parsing.FunctionCall, context *parsing.Context) {
 	for index, argument := range functionCall.Arguments {
 		// Because the same constraint instance may be shared among more than one value, this
 		// func might be called more than once on the same arguments, so we must make sure not
@@ -153,7 +153,7 @@ func NormalizeFunctionCallArguments(functionCall *tosca.FunctionCall, context *t
 
 // Utils
 
-func setFunctionCall(context *tosca.Context, scriptletName string, data ard.Value) {
+func setFunctionCall(context *parsing.Context, scriptletName string, data ard.Value) {
 	// Some functions accept a list of arguments, some just one argument
 	originalArguments, ok := data.(ard.List)
 	if !ok {

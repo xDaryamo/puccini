@@ -6,7 +6,7 @@ import (
 
 	"github.com/tliron/exturl"
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -44,7 +44,7 @@ type ArtifactDefinition struct {
 	urlProblemReported bool
 }
 
-func NewArtifactDefinition(context *tosca.Context) *ArtifactDefinition {
+func NewArtifactDefinition(context *parsing.Context) *ArtifactDefinition {
 	return &ArtifactDefinition{
 		Entity:     NewEntity(context),
 		Name:       context.Name,
@@ -52,8 +52,8 @@ func NewArtifactDefinition(context *tosca.Context) *ArtifactDefinition {
 	}
 }
 
-// tosca.Reader signature
-func ReadArtifactDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadArtifactDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewArtifactDefinition(context)
 
 	if context.Is(ard.TypeMap) {
@@ -108,7 +108,7 @@ func (self *ArtifactDefinition) GetExtension() string {
 	}
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *ArtifactDefinition) GetKey() string {
 	return self.Name
 }

@@ -1,8 +1,8 @@
 package tosca_v1_2
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -13,8 +13,8 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.14
 //
 
-// tosca.Reader signature
-func ReadInterfaceAssignment(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadInterfaceAssignment(context *parsing.Context) parsing.EntityPtr {
 	context.SetReadTag("Operations", "?,OperationAssignment")
 	context.SetReadTag("Notifications", "")
 

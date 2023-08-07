@@ -1,7 +1,7 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -24,26 +24,26 @@ type ArtifactType struct {
 	Parent *ArtifactType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewArtifactType(context *tosca.Context) *ArtifactType {
+func NewArtifactType(context *parsing.Context) *ArtifactType {
 	return &ArtifactType{
 		Type:                NewType(context),
 		PropertyDefinitions: make(PropertyDefinitions),
 	}
 }
 
-// tosca.Reader signature
-func ReadArtifactType(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadArtifactType(context *parsing.Context) parsing.EntityPtr {
 	self := NewArtifactType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Hierarchical interface
-func (self *ArtifactType) GetParent() tosca.EntityPtr {
+// parsing.Hierarchical interface
+func (self *ArtifactType) GetParent() parsing.EntityPtr {
 	return self.Parent
 }
 
-// tosca.Inherits interface
+// parsing.Inherits interface
 func (self *ArtifactType) Inherit() {
 	logInherit.Debugf("artifact type: %s", self.Name)
 

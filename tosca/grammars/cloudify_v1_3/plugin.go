@@ -1,7 +1,7 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -26,15 +26,15 @@ type Plugin struct {
 	DistributionRelease *string `read:"distribution_release"`
 }
 
-func NewPlugin(context *tosca.Context) *Plugin {
+func NewPlugin(context *parsing.Context) *Plugin {
 	return &Plugin{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadPlugin(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadPlugin(context *parsing.Context) parsing.EntityPtr {
 	self := NewPlugin(context)
 
 	context.ValidateUnsupportedFields(context.ReadFields(self))

@@ -2,8 +2,8 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -26,7 +26,7 @@ func (self *ValueList) Set(index int, value any) {
 	self.Slice[index] = value
 }
 
-func (self *ValueList) Normalize(context *tosca.Context) *normal.List {
+func (self *ValueList) Normalize(context *parsing.Context) *normal.List {
 	normalList := normal.NewList(len(self.Slice))
 
 	for index, value := range self.Slice {
@@ -62,7 +62,7 @@ func (self *ValueMap) Put(key any, value any) {
 	self.Map[key] = value
 }
 
-func (self *ValueMap) Normalize(context *tosca.Context) *normal.Map {
+func (self *ValueMap) Normalize(context *parsing.Context) *normal.Map {
 	normalMap := normal.NewMap()
 
 	for key, value := range self.Map {

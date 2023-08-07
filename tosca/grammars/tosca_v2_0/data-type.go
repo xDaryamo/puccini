@@ -4,8 +4,8 @@ import (
 	"reflect"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 type HasComparer interface {
@@ -33,26 +33,26 @@ type DataType struct {
 	Parent *DataType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewDataType(context *tosca.Context) *DataType {
+func NewDataType(context *parsing.Context) *DataType {
 	return &DataType{
 		Type:                NewType(context),
 		PropertyDefinitions: make(PropertyDefinitions),
 	}
 }
 
-// tosca.Reader signature
-func ReadDataType(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadDataType(context *parsing.Context) parsing.EntityPtr {
 	self := NewDataType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Hierarchical interface
-func (self *DataType) GetParent() tosca.EntityPtr {
+// parsing.Hierarchical interface
+func (self *DataType) GetParent() parsing.EntityPtr {
 	return self.Parent
 }
 
-// tosca.Inherits interface
+// parsing.Inherits interface
 func (self *DataType) Inherit() {
 	logInherit.Debugf("data type: %s", self.Name)
 
@@ -80,7 +80,7 @@ func (self *DataType) Inherit() {
 	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *DataType) Render() {
 	self.renderOnce.Do(self.render)
 }
@@ -99,7 +99,7 @@ func (self *DataType) render() {
 }
 
 func (self *DataType) GetInternalTypeName() (ard.TypeName, bool) {
-	if typeName, ok := self.GetMetadataValue(tosca.METADATA_TYPE); ok {
+	if typeName, ok := self.GetMetadataValue(parsing.METADATA_TYPE); ok {
 		return ard.TypeName(typeName), ok
 	} else if self.Parent != nil {
 		// The internal type metadata is inherited
@@ -112,7 +112,7 @@ func (self *DataType) GetInternalTypeName() (ard.TypeName, bool) {
 type DataTypeInternal struct {
 	Name      ard.TypeName
 	Validator ard.TypeValidator
-	Reader    tosca.Reader
+	Reader    parsing.Reader
 }
 
 func (self *DataType) GetInternal() *DataTypeInternal {
@@ -129,7 +129,7 @@ func (self *DataType) GetInternal() *DataTypeInternal {
 // Note that this may change the data (if it's a map), but that should be fine, because we intend
 // for the data to be complete. For the same reason, this action is idempotent (subsequent calls with
 // the same data will not have an effect).
-func (self *DataType) CompleteData(context *tosca.Context) {
+func (self *DataType) CompleteData(context *parsing.Context) {
 	map_, ok := context.Data.(ard.Map)
 	if !ok {
 		// Only for complex data types
@@ -156,15 +156,15 @@ func (self *DataType) CompleteData(context *tosca.Context) {
 
 func (self *DataType) NewValueMeta() *normal.ValueMeta {
 	normalValueMeta := normal.NewValueMeta()
-	normalValueMeta.Type = tosca.GetCanonicalName(self)
-	normalValueMeta.TypeMetadata = tosca.GetDataTypeMetadata(self.Metadata)
+	normalValueMeta.Type = parsing.GetCanonicalName(self)
+	normalValueMeta.TypeMetadata = parsing.GetDataTypeMetadata(self.Metadata)
 	if self.Description != nil {
 		normalValueMeta.TypeDescription = *self.Description
 	}
 	return normalValueMeta
 }
 
-func LookupDataType(context *tosca.Context, name string) (*DataType, bool) {
+func LookupDataType(context *parsing.Context, name string) (*DataType, bool) {
 	var dataType *DataType
 	if entityPtr, ok := context.Namespace.LookupForType(name, reflect.TypeOf(dataType)); ok {
 		return entityPtr.(*DataType), true

@@ -1,8 +1,8 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -31,7 +31,7 @@ type RelationshipTemplate struct {
 	RelationshipType         *RelationshipType     `lookup:"type,RelationshipTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewRelationshipTemplate(context *tosca.Context) *RelationshipTemplate {
+func NewRelationshipTemplate(context *parsing.Context) *RelationshipTemplate {
 	return &RelationshipTemplate{
 		Entity:     NewEntity(context),
 		Properties: make(Values),
@@ -41,8 +41,8 @@ func NewRelationshipTemplate(context *tosca.Context) *RelationshipTemplate {
 	}
 }
 
-// tosca.Reader signature
-func ReadRelationshipTemplate(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadRelationshipTemplate(context *parsing.Context) parsing.EntityPtr {
 	self := NewRelationshipTemplate(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
@@ -53,7 +53,7 @@ func (self *RelationshipTemplate) PreRead() {
 	CopyTemplate(self.Context)
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *RelationshipTemplate) Render() {
 	self.renderOnce.Do(self.render)
 }

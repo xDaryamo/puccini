@@ -6,7 +6,7 @@ import (
 
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/util"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -14,15 +14,15 @@ import (
 //
 
 type NoEntity struct {
-	Context *tosca.Context
+	Context *parsing.Context
 }
 
-func NewNoEntity(toscaContext *tosca.Context) *NoEntity {
+func NewNoEntity(toscaContext *parsing.Context) *NoEntity {
 	return &NoEntity{toscaContext}
 }
 
-// tosca.Contextual interface
-func (self *NoEntity) GetContext() *tosca.Context {
+// parsing.Contextual interface
+func (self *NoEntity) GetContext() *parsing.Context {
 	return self.Context
 }
 
@@ -31,19 +31,19 @@ func (self *NoEntity) GetContext() *tosca.Context {
 //
 
 type File struct {
-	EntityPtr       tosca.EntityPtr
+	EntityPtr       parsing.EntityPtr
 	Container       *File
 	Imports         Files
-	NameTransformer tosca.NameTransformer
+	NameTransformer parsing.NameTransformer
 
 	importsLock util.RWLocker
 }
 
-func NewFileNoEntity(toscaContext *tosca.Context, container *File, nameTransformer tosca.NameTransformer) *File {
+func NewFileNoEntity(toscaContext *parsing.Context, container *File, nameTransformer parsing.NameTransformer) *File {
 	return NewFile(NewNoEntity(toscaContext), container, nameTransformer)
 }
 
-func NewFile(entityPtr tosca.EntityPtr, container *File, nameTransformer tosca.NameTransformer) *File {
+func NewFile(entityPtr parsing.EntityPtr, container *File, nameTransformer parsing.NameTransformer) *File {
 	self := File{
 		EntityPtr:       entityPtr,
 		Container:       container,
@@ -65,8 +65,8 @@ func (self *File) AddImport(import_ *File) {
 	self.Imports = append(self.Imports, import_)
 }
 
-func (self *File) GetContext() *tosca.Context {
-	return tosca.GetContext(self.EntityPtr)
+func (self *File) GetContext() *parsing.Context {
+	return parsing.GetContext(self.EntityPtr)
 }
 
 // Print
@@ -102,15 +102,16 @@ func (self *File) PrintNode(indent int, treePrefix terminal.TreePrefix, last boo
 type Files []*File
 
 // sort.Interface
-
 func (self Files) Len() int {
 	return len(self)
 }
 
+// sort.Interface
 func (self Files) Swap(i, j int) {
 	self[i], self[j] = self[j], self[i]
 }
 
+// sort.Interface
 func (self Files) Less(i, j int) bool {
 	iName := self[i].GetContext().URL.String()
 	jName := self[j].GetContext().URL.String()

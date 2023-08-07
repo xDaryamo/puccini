@@ -1,8 +1,8 @@
 package tosca_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -14,8 +14,8 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.7.3
 //
 
-// tosca.Reader signature
-func ReadNodeTemplate(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadNodeTemplate(context *parsing.Context) parsing.EntityPtr {
 	self := tosca_v2_0.NewNodeTemplate(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	switch self.Name {

@@ -1,4 +1,4 @@
-package tosca
+package parsing
 
 import (
 	"fmt"

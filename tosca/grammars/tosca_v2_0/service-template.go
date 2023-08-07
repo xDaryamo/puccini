@@ -2,8 +2,8 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -30,7 +30,7 @@ type ServiceTemplate struct {
 	SubstitutionMappings  *SubstitutionMappings `read:"substitution_mappings,SubstitutionMappings"`
 }
 
-func NewServiceTemplate(context *tosca.Context) *ServiceTemplate {
+func NewServiceTemplate(context *parsing.Context) *ServiceTemplate {
 	return &ServiceTemplate{
 		Entity:              NewEntity(context),
 		InputDefinitions:    make(ParameterDefinitions),
@@ -39,8 +39,8 @@ func NewServiceTemplate(context *tosca.Context) *ServiceTemplate {
 	}
 }
 
-// tosca.Reader signature
-func ReadServiceTemplate(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadServiceTemplate(context *parsing.Context) parsing.EntityPtr {
 	self := NewServiceTemplate(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
@@ -56,7 +56,7 @@ func (self *ServiceTemplate) GetNodeTemplatesOfType(nodeType *NodeType) []*NodeT
 	return nodeTemplates
 }
 
-// tosca.HasInputs interface
+// parsing.HasInputs interface
 func (self *ServiceTemplate) SetInputs(inputs map[string]ard.Value) {
 	context := self.Context.FieldChild("inputs", nil)
 	for name, data := range inputs {
@@ -85,7 +85,7 @@ func (self *ServiceTemplate) SetInputs(inputs map[string]ard.Value) {
 	}
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *ServiceTemplate) Render() {
 	self.renderOnce.Do(self.render)
 }

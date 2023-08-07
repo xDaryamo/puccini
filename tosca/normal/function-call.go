@@ -1,7 +1,7 @@
 package normal
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -12,10 +12,10 @@ type FunctionCall struct {
 	Key       Value      `json:"$key,omitempty" yaml:"$key,omitempty"`
 	ValueMeta *ValueMeta `json:"$meta,omitempty" yaml:"$meta,omitempty"`
 
-	FunctionCall *tosca.FunctionCall `json:"$functionCall" yaml:"$functionCall"`
+	FunctionCall *parsing.FunctionCall `json:"$functionCall" yaml:"$functionCall"`
 }
 
-func NewFunctionCall(functionCall *tosca.FunctionCall) *FunctionCall {
+func NewFunctionCall(functionCall *parsing.FunctionCall) *FunctionCall {
 	return &FunctionCall{FunctionCall: functionCall}
 }
 

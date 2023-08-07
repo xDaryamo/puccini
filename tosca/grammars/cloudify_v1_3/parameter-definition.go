@@ -1,8 +1,8 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -20,21 +20,21 @@ type ParameterDefinition struct {
 	DataType *DataType `lookup:"type,DataTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewParameterDefinition(context *tosca.Context) *ParameterDefinition {
+func NewParameterDefinition(context *parsing.Context) *ParameterDefinition {
 	return &ParameterDefinition{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadParameterDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadParameterDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewParameterDefinition(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *ParameterDefinition) GetKey() string {
 	return self.Name
 }
@@ -62,7 +62,7 @@ func (self *ParameterDefinition) Inherit(parentDefinition *ParameterDefinition) 
 	}
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *ParameterDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }

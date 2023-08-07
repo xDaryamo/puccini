@@ -2,8 +2,8 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -23,12 +23,12 @@ type Schema struct {
 	DataType *DataType `lookup:"type,DataTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewSchema(context *tosca.Context) *Schema {
+func NewSchema(context *parsing.Context) *Schema {
 	return &Schema{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadSchema(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadSchema(context *parsing.Context) parsing.EntityPtr {
 	self := NewSchema(context)
 
 	if context.Is(ard.TypeMap) {
@@ -76,7 +76,7 @@ func (self *Schema) GetEntrySchema() *Schema {
 	return self.EntrySchema
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *Schema) Render() {
 	self.renderOnce.Do(self.render)
 }

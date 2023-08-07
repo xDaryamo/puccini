@@ -1,8 +1,8 @@
 package tosca_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -14,15 +14,15 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.9
 //
 
-// tosca.Reader signature
-func ReadServiceFile(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadServiceFile(context *parsing.Context) parsing.EntityPtr {
 	context.SetReadTag("ServiceTemplate", "topology_template,ServiceTemplate")
 	context.SetReadTag("Profile", "namespace")
 
 	self := tosca_v2_0.NewServiceFile(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 	ignore := []string{"dsl_definitions"}
-	if context.HasQuirk(tosca.QuirkAnnotationsIgnore) {
+	if context.HasQuirk(parsing.QuirkAnnotationsIgnore) {
 		ignore = append(ignore, "annotation_types")
 	}
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), ignore...))

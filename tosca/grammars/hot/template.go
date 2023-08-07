@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -26,7 +26,7 @@ type Template struct {
 	ConditionDefinitions ConditionDefinitions `read:"conditions,ConditionDefinition"`
 }
 
-func NewTemplate(context *tosca.Context) *Template {
+func NewTemplate(context *parsing.Context) *Template {
 	self := &Template{
 		Entity:     NewEntity(context),
 		Parameters: make(Parameters),
@@ -45,8 +45,8 @@ func NewTemplate(context *tosca.Context) *Template {
 	return self
 }
 
-// tosca.Reader signature
-func ReadTemplate(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadTemplate(context *parsing.Context) parsing.EntityPtr {
 	self := NewTemplate(context)
 	context.ScriptletNamespace.Merge(DefaultScriptletNamespace)
 
@@ -80,13 +80,13 @@ func (self *Template) NewPseudoParameter(name string, value string) {
 	self.Parameters[name] = parameter
 }
 
-// tosca.Importer interface
-func (self *Template) GetImportSpecs() []*tosca.ImportSpec {
-	var importSpecs []*tosca.ImportSpec
+// parsing.Importer interface
+func (self *Template) GetImportSpecs() []*parsing.ImportSpec {
+	var importSpecs []*parsing.ImportSpec
 	return importSpecs
 }
 
-// tosca.HasInputs interface
+// parsing.HasInputs interface
 func (self *Template) SetInputs(inputs map[string]ard.Value) {
 	context := self.Context.FieldChild("parameters", nil)
 	for name, data := range inputs {

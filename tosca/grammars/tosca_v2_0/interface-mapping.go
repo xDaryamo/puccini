@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -26,15 +26,15 @@ type InterfaceMapping struct {
 	Interface    *InterfaceAssignment `traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewInterfaceMapping(context *tosca.Context) *InterfaceMapping {
+func NewInterfaceMapping(context *parsing.Context) *InterfaceMapping {
 	return &InterfaceMapping{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadInterfaceMapping(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadInterfaceMapping(context *parsing.Context) parsing.EntityPtr {
 	self := NewInterfaceMapping(context)
 	if context.ValidateType(ard.TypeList) {
 		strings := context.ReadStringListFixed(2)
@@ -46,7 +46,7 @@ func ReadInterfaceMapping(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *InterfaceMapping) GetKey() string {
 	return self.Name
 }
@@ -59,7 +59,7 @@ func (self *InterfaceMapping) GetInterfaceDefinition() (*InterfaceDefinition, bo
 	}
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *InterfaceMapping) Render() {
 	self.renderOnce.Do(self.render)
 }

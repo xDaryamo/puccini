@@ -2,7 +2,7 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/commonlog"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 var log = commonlog.GetLogger("puccini.grammars.tosca_v2_0")
@@ -12,9 +12,9 @@ var logNormalize = commonlog.NewScopeLogger(log, "normalize")
 
 var True = true
 
-var Grammar = tosca.NewGrammar()
+var Grammar = parsing.NewGrammar()
 
-var DefaultScriptletNamespace = tosca.NewScriptletNamespace()
+var DefaultScriptletNamespace = parsing.NewScriptletNamespace()
 
 func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "tosca_2_0", "/tosca/implicit/2.0/profile.yaml")

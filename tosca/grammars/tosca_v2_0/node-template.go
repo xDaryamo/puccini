@@ -1,8 +1,8 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -36,7 +36,7 @@ type NodeTemplate struct {
 	NodeType         *NodeType     `lookup:"type,NodeTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewNodeTemplate(context *tosca.Context) *NodeTemplate {
+func NewNodeTemplate(context *parsing.Context) *NodeTemplate {
 	return &NodeTemplate{
 		Entity:       NewEntity(context),
 		Name:         context.Name,
@@ -48,8 +48,8 @@ func NewNodeTemplate(context *tosca.Context) *NodeTemplate {
 	}
 }
 
-// tosca.Reader signature
-func ReadNodeTemplate(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadNodeTemplate(context *parsing.Context) parsing.EntityPtr {
 	self := NewNodeTemplate(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	switch self.Name {
@@ -64,7 +64,7 @@ func (self *NodeTemplate) PreRead() {
 	CopyTemplate(self.Context)
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 // Avoid rendering more than once (can happen if we were called from PropertyMapping etc. Render)
 func (self *NodeTemplate) Render() {
 	self.renderOnce.Do(self.render)

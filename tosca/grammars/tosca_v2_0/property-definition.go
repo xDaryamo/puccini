@@ -1,7 +1,7 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -20,15 +20,15 @@ type PropertyDefinition struct {
 	Required *bool `read:"required"`
 }
 
-func NewPropertyDefinition(context *tosca.Context) *PropertyDefinition {
+func NewPropertyDefinition(context *parsing.Context) *PropertyDefinition {
 	return &PropertyDefinition{AttributeDefinition: NewAttributeDefinition(context)}
 }
 
-// tosca.Reader signature
-func ReadPropertyDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadPropertyDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewPropertyDefinition(context)
 	var ignore []string
-	if context.HasQuirk(tosca.QuirkAnnotationsIgnore) {
+	if context.HasQuirk(parsing.QuirkAnnotationsIgnore) {
 		ignore = append(ignore, "annotations")
 	}
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), ignore...))
@@ -54,7 +54,7 @@ func (self *PropertyDefinition) Inherit(parentDefinition *PropertyDefinition) {
 	}
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *PropertyDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }

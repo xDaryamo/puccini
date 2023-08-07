@@ -3,7 +3,7 @@ package parser
 import (
 	"github.com/tliron/commonlog"
 	"github.com/tliron/kutil/reflection"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 func (self *ServiceContext) TraverseEntities(log commonlog.Logger, work reflection.EntityWork, traverse reflection.EntityTraverser) {
@@ -15,7 +15,7 @@ func (self *ServiceContext) TraverseEntities(log commonlog.Logger, work reflecti
 	work.TraverseEntities(self.Root.EntityPtr, traverse)
 
 	// Types
-	self.Root.GetContext().Namespace.Range(func(entityPtr tosca.EntityPtr) bool {
+	self.Root.GetContext().Namespace.Range(func(entityPtr parsing.EntityPtr) bool {
 		work.TraverseEntities(entityPtr, traverse)
 		return true
 	})

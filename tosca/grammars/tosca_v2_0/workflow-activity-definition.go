@@ -2,8 +2,8 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -28,12 +28,12 @@ type WorkflowActivityDefinition struct {
 	InlineWorkflowDefinition   *WorkflowDefinition `lookup:"inline,InlineWorkflowDefinitionName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewWorkflowActivityDefinition(context *tosca.Context) *WorkflowActivityDefinition {
+func NewWorkflowActivityDefinition(context *parsing.Context) *WorkflowActivityDefinition {
 	return &WorkflowActivityDefinition{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadWorkflowActivityDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadWorkflowActivityDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewWorkflowActivityDefinition(context)
 
 	if context.ValidateType(ard.TypeMap) {

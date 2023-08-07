@@ -8,7 +8,7 @@ import (
 
 	"github.com/tliron/exturl"
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -32,16 +32,16 @@ type Import struct {
 	Repository *Repository `lookup:"repository,RepositoryName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewImport(context *tosca.Context) *Import {
+func NewImport(context *parsing.Context) *Import {
 	return &Import{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadImport(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadImport(context *parsing.Context) parsing.EntityPtr {
 	self := NewImport(context)
 
 	if context.Is(ard.TypeMap) {
-		if context.HasQuirk(tosca.QuirkImportsSequencedList) {
+		if context.HasQuirk(parsing.QuirkImportsSequencedList) {
 			map_ := context.Data.(ard.Map)
 			if len(map_) == 1 {
 				for _, data := range map_ {
@@ -69,7 +69,7 @@ func ReadImport(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-func (self *Import) NewImportSpec(unit *File) (*tosca.ImportSpec, bool) {
+func (self *Import) NewImportSpec(unit *File) (*parsing.ImportSpec, bool) {
 	if self.URL == nil {
 		return nil, false
 	}
@@ -111,9 +111,9 @@ func (self *Import) NewImportSpec(unit *File) (*tosca.ImportSpec, bool) {
 		return nil, false
 	}
 
-	appendShortcutNames := !self.Context.HasQuirk(tosca.QuirkNamespaceNormativeShortcutsDisable)
+	appendShortcutNames := !self.Context.HasQuirk(parsing.QuirkNamespaceNormativeShortcutsDisable)
 
-	importSpec := &tosca.ImportSpec{
+	importSpec := &parsing.ImportSpec{
 		URL:             url,
 		NameTransformer: newImportNameTransformer(self.Namespace, appendShortcutNames),
 		Implicit:        false,
@@ -121,12 +121,12 @@ func (self *Import) NewImportSpec(unit *File) (*tosca.ImportSpec, bool) {
 	return importSpec, true
 }
 
-func newImportNameTransformer(prefix *string, appendShortCutnames bool) tosca.NameTransformer {
-	return func(name string, entityPtr tosca.EntityPtr) []string {
+func newImportNameTransformer(prefix *string, appendShortCutnames bool) parsing.NameTransformer {
+	return func(name string, entityPtr parsing.EntityPtr) []string {
 		var names []string
 
-		if metadata, ok := tosca.GetMetadata(entityPtr); ok {
-			if normative, ok := metadata[tosca.METADATA_NORMATIVE]; ok {
+		if metadata, ok := parsing.GetMetadata(entityPtr); ok {
+			if normative, ok := metadata[parsing.METADATA_NORMATIVE]; ok {
 				if normative == "true" {
 					// Reserved "tosca." names also get shorthand and prefixed names
 					names = getNormativeNames(entityPtr, names, name, "tosca", appendShortCutnames)
@@ -146,7 +146,7 @@ func newImportNameTransformer(prefix *string, appendShortCutnames bool) tosca.Na
 	}
 }
 
-func getNormativeNames(entityPtr tosca.EntityPtr, names []string, name string, prefix string, appendShortcut bool) []string {
+func getNormativeNames(entityPtr parsing.EntityPtr, names []string, name string, prefix string, appendShortcut bool) []string {
 	if !strings.HasPrefix(name, prefix+".") {
 		return names
 	}
@@ -168,7 +168,7 @@ func getNormativeNames(entityPtr tosca.EntityPtr, names []string, name string, p
 	names = append(names, fmt.Sprintf("%s:%s", prefix, short))
 
 	// Override canonical name
-	tosca.SetMetadata(entityPtr, tosca.METADATA_CANONICAL_NAME, fmt.Sprintf("%s::%s", prefix, short))
+	parsing.SetMetadata(entityPtr, parsing.METADATA_CANONICAL_NAME, fmt.Sprintf("%s::%s", prefix, short))
 
 	// Shortcut
 	if appendShortcut {

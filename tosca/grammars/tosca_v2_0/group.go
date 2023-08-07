@@ -1,8 +1,8 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -30,7 +30,7 @@ type Group struct {
 	MemberNodeTemplates []*NodeTemplate `lookup:"members,MemberNodeTemplateNames" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewGroup(context *tosca.Context) *Group {
+func NewGroup(context *parsing.Context) *Group {
 	return &Group{
 		Entity:     NewEntity(context),
 		Name:       context.Name,
@@ -39,14 +39,14 @@ func NewGroup(context *tosca.Context) *Group {
 	}
 }
 
-// tosca.Reader signature
-func ReadGroup(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadGroup(context *parsing.Context) parsing.EntityPtr {
 	self := NewGroup(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *Group) Render() {
 	self.renderOnce.Do(self.render)
 }

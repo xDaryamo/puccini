@@ -1,7 +1,7 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -24,12 +24,12 @@ type EventFilter struct {
 	NodeType     *NodeType     `lookup:"node,NodeTemplateNameOrTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewEventFilter(context *tosca.Context) *EventFilter {
+func NewEventFilter(context *parsing.Context) *EventFilter {
 	return &EventFilter{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadEventFilter(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadEventFilter(context *parsing.Context) parsing.EntityPtr {
 	self := NewEventFilter(context)
 	context.ReadFields(self)
 	return self

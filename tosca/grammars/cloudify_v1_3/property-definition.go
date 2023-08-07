@@ -1,7 +1,7 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -14,20 +14,20 @@ type PropertyDefinition struct {
 	Required *bool `read:"required"`
 }
 
-func NewPropertyDefinition(context *tosca.Context) *PropertyDefinition {
+func NewPropertyDefinition(context *parsing.Context) *PropertyDefinition {
 	return &PropertyDefinition{
 		ParameterDefinition: NewParameterDefinition(context),
 	}
 }
 
-// tosca.Reader signature
-func ReadPropertyDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadPropertyDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewPropertyDefinition(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *PropertyDefinition) GetKey() string {
 	return self.Name
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/tliron/go-ard"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
@@ -18,7 +18,7 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 
 	scriptlets := make(ard.StringMap)
 	var err error = nil
-	serviceTemplate.ScriptletNamespace.Range(func(name string, scriptlet *tosca.Scriptlet) bool {
+	serviceTemplate.ScriptletNamespace.Range(func(name string, scriptlet *parsing.Scriptlet) bool {
 		if scriptlet_, err_ := scriptlet.Read(contextpkg.TODO()); err_ == nil {
 			if err_ = ard.StringMapPutNested(scriptlets, name, js.CleanupScriptlet(scriptlet_)); err_ != nil {
 				err = err_

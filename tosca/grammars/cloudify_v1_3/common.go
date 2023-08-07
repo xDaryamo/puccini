@@ -2,7 +2,7 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/commonlog"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 var log = commonlog.GetLogger("puccini.grammars.cloudify_v1_3")
@@ -10,9 +10,9 @@ var logInherit = commonlog.NewScopeLogger(log, "inherit")
 var logRender = commonlog.NewScopeLogger(log, "render")
 var logNormalize = commonlog.NewScopeLogger(log, "normalize")
 
-var Grammar = tosca.NewGrammar()
+var Grammar = parsing.NewGrammar()
 
-var DefaultScriptletNamespace = tosca.NewScriptletNamespace()
+var DefaultScriptletNamespace = parsing.NewScriptletNamespace()
 
 func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "cloudify_dsl_1_3", "/cloudify/5.0.5/profile.yaml")

@@ -1,7 +1,7 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -19,15 +19,15 @@ type GroupPolicyTrigger struct {
 	PolicyTriggerType *PolicyTriggerType `lookup:"type,PolicyTriggerTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewGroupPolicyTrigger(context *tosca.Context) *GroupPolicyTrigger {
+func NewGroupPolicyTrigger(context *parsing.Context) *GroupPolicyTrigger {
 	return &GroupPolicyTrigger{
 		Entity:     NewEntity(context),
 		Parameters: make(Values),
 	}
 }
 
-// tosca.Reader signature
-func ReadGroupPolicyTrigger(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadGroupPolicyTrigger(context *parsing.Context) parsing.EntityPtr {
 	self := NewGroupPolicyTrigger(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self

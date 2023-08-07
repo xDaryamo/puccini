@@ -2,8 +2,8 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -25,12 +25,12 @@ type InterfaceImplementation struct {
 	OperationHost *string   `read:"operation_host"` // introduced in TOSCA 1.2
 }
 
-func NewInterfaceImplementation(context *tosca.Context) *InterfaceImplementation {
+func NewInterfaceImplementation(context *parsing.Context) *InterfaceImplementation {
 	return &InterfaceImplementation{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadInterfaceImplementation(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadInterfaceImplementation(context *parsing.Context) parsing.EntityPtr {
 	self := NewInterfaceImplementation(context)
 
 	if context.Is(ard.TypeMap) {

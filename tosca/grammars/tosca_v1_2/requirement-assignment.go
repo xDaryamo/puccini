@@ -2,8 +2,8 @@ package tosca_v1_2
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -14,8 +14,8 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.7.2
 //
 
-// tosca.Reader signature
-func ReadRequirementAssignment(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadRequirementAssignment(context *parsing.Context) parsing.EntityPtr {
 	context.SetReadTag("Count", "")
 	context.SetReadTag("Directives", "")
 	context.SetReadTag("Optional", "")

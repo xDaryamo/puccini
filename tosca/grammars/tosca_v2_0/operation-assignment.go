@@ -2,8 +2,8 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -26,7 +26,7 @@ type OperationAssignment struct {
 	Outputs        OutputMappings           `read:"outputs,OutputMapping"` // introduced in TOSCA 1.3
 }
 
-func NewOperationAssignment(context *tosca.Context) *OperationAssignment {
+func NewOperationAssignment(context *parsing.Context) *OperationAssignment {
 	return &OperationAssignment{
 		Entity:  NewEntity(context),
 		Name:    context.Name,
@@ -35,8 +35,8 @@ func NewOperationAssignment(context *tosca.Context) *OperationAssignment {
 	}
 }
 
-// tosca.Reader signature
-func ReadOperationAssignment(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadOperationAssignment(context *parsing.Context) parsing.EntityPtr {
 	self := NewOperationAssignment(context)
 
 	if context.Is(ard.TypeMap) {
@@ -50,7 +50,7 @@ func ReadOperationAssignment(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *OperationAssignment) GetKey() string {
 	return self.Name
 }
@@ -97,28 +97,28 @@ func (self OperationAssignments) CopyUnassigned(assignments OperationAssignments
 	}
 }
 
-func (self OperationAssignments) RenderForNodeType(nodeType *NodeType, definitions OperationDefinitions, context *tosca.Context) {
+func (self OperationAssignments) RenderForNodeType(nodeType *NodeType, definitions OperationDefinitions, context *parsing.Context) {
 	self.render(definitions, context)
 	for _, assignment := range self {
 		assignment.Outputs.RenderForNodeType(nodeType)
 	}
 }
 
-func (self OperationAssignments) RenderForRelationshipType(relationshipType *RelationshipType, definitions OperationDefinitions, sourceNodeTemplate *NodeTemplate, context *tosca.Context) {
+func (self OperationAssignments) RenderForRelationshipType(relationshipType *RelationshipType, definitions OperationDefinitions, sourceNodeTemplate *NodeTemplate, context *parsing.Context) {
 	self.render(definitions, context)
 	for _, assignment := range self {
 		assignment.Outputs.RenderForRelationshipType(relationshipType, sourceNodeTemplate)
 	}
 }
 
-func (self OperationAssignments) RenderForGroup(definitions OperationDefinitions, context *tosca.Context) {
+func (self OperationAssignments) RenderForGroup(definitions OperationDefinitions, context *parsing.Context) {
 	self.render(definitions, context)
 	for _, assignment := range self {
 		assignment.Outputs.RenderForGroup()
 	}
 }
 
-func (self OperationAssignments) render(definitions OperationDefinitions, context *tosca.Context) {
+func (self OperationAssignments) render(definitions OperationDefinitions, context *parsing.Context) {
 	for key, definition := range definitions {
 		assignment, ok := self[key]
 

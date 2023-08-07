@@ -2,8 +2,8 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -23,15 +23,15 @@ type PropertyFilter struct {
 	ConstraintClauses ConstraintClauses
 }
 
-func NewPropertyFilter(context *tosca.Context) *PropertyFilter {
+func NewPropertyFilter(context *parsing.Context) *PropertyFilter {
 	return &PropertyFilter{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadPropertyFilter(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadPropertyFilter(context *parsing.Context) parsing.EntityPtr {
 	self := NewPropertyFilter(context)
 
 	if context.Is(ard.TypeList) {

@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -30,15 +30,15 @@ type PropertyMapping struct {
 	Value           *Value               `traverse:"ignore" json:"-" yaml:"-"` // deprecated in TOSCA 1.3
 }
 
-func NewPropertyMapping(context *tosca.Context) *PropertyMapping {
+func NewPropertyMapping(context *parsing.Context) *PropertyMapping {
 	return &PropertyMapping{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadPropertyMapping(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadPropertyMapping(context *parsing.Context) parsing.EntityPtr {
 	self := NewPropertyMapping(context)
 
 	var read bool
@@ -68,7 +68,7 @@ func ReadPropertyMapping(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *PropertyMapping) GetKey() string {
 	return self.Name
 }

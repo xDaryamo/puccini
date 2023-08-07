@@ -1,8 +1,8 @@
 package tosca_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -14,8 +14,8 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.10
 //
 
-// tosca.Reader signature
-func ReadAttributeDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadAttributeDefinition(context *parsing.Context) parsing.EntityPtr {
 	context.SetReadTag("ConstraintClauses", "")
 
 	return tosca_v2_0.ReadAttributeDefinition(context).(*tosca_v2_0.AttributeDefinition)

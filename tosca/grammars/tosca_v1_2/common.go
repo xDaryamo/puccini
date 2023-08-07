@@ -2,17 +2,17 @@ package tosca_v1_2
 
 import (
 	"github.com/tliron/commonlog"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 var log = commonlog.GetLogger("puccini.grammars.tosca_v1_2")
 var logRender = commonlog.NewScopeLogger(log, "render")
 
-var Grammar = tosca.NewGrammar()
+var Grammar = parsing.NewGrammar()
 
-var DefaultScriptletNamespace = tosca.NewScriptletNamespace()
+var DefaultScriptletNamespace = parsing.NewScriptletNamespace()
 
 func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_yaml_1_2", "/tosca/simple/1.2/profile.yaml")
@@ -83,6 +83,6 @@ func init() {
 	Grammar.RegisterReader("WorkflowPreconditionDefinition", tosca_v2_0.ReadWorkflowPreconditionDefinition) // introduced in TOSCA 1.1
 	Grammar.RegisterReader("WorkflowStepDefinition", tosca_v2_0.ReadWorkflowStepDefinition)                 // introduced in TOSCA 1.1
 
-	DefaultScriptletNamespace.RegisterScriptlets(tosca_v2_0.FunctionScriptlets, nil, tosca.METADATA_FUNCTION_PREFIX+"join")
+	DefaultScriptletNamespace.RegisterScriptlets(tosca_v2_0.FunctionScriptlets, nil, parsing.METADATA_FUNCTION_PREFIX+"join")
 	DefaultScriptletNamespace.RegisterScriptlets(tosca_v2_0.ConstraintClauseScriptlets, tosca_v2_0.ConstraintClauseNativeArgumentIndexes)
 }

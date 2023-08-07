@@ -1,8 +1,8 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -18,21 +18,21 @@ type Input struct {
 	Value *Value
 }
 
-func NewInput(context *tosca.Context) *Input {
+func NewInput(context *parsing.Context) *Input {
 	return &Input{
 		ParameterDefinition: NewParameterDefinition(context),
 		Name:                context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadInput(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadInput(context *parsing.Context) parsing.EntityPtr {
 	self := NewInput(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-func (self *Input) Normalize(context *tosca.Context) normal.Value {
+func (self *Input) Normalize(context *parsing.Context) normal.Value {
 	value := self.Value
 	if value == nil {
 		if self.Default != nil {
@@ -46,7 +46,7 @@ func (self *Input) Normalize(context *tosca.Context) normal.Value {
 	return value.Normalize()
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *Input) Render() {
 	self.renderOnce.Do(self.render)
 }
@@ -69,7 +69,7 @@ func (self *Input) render() {
 
 type Inputs map[string]*Input
 
-func (self Inputs) Normalize(normalConstrainables normal.Values, context *tosca.Context) {
+func (self Inputs) Normalize(normalConstrainables normal.Values, context *parsing.Context) {
 	for key, input := range self {
 		normalConstrainables[key] = input.Normalize(context)
 	}

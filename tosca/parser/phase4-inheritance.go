@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/tliron/kutil/reflection"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 func (self *ServiceContext) Inherit(debug func(Tasks)) {
@@ -22,7 +22,7 @@ func (self *ServiceContext) Inherit(debug func(Tasks)) {
 
 func (self *ServiceContext) getInheritTasks() Tasks {
 	inheritContext := NewInheritContext()
-	self.TraverseEntities(logInheritance, self.Context.getInheritTaskWork, func(entityPtr tosca.EntityPtr) bool {
+	self.TraverseEntities(logInheritance, self.Context.getInheritTaskWork, func(entityPtr parsing.EntityPtr) bool {
 		inheritContext.GetInheritTask(entityPtr)
 		return true
 	})
@@ -43,10 +43,10 @@ func NewInheritContext() *InheritContext {
 	return &InheritContext{make(Tasks), make(TasksForEntities), make(InheritFields)}
 }
 
-func (self *InheritContext) GetInheritTask(entityPtr tosca.EntityPtr) *Task {
+func (self *InheritContext) GetInheritTask(entityPtr parsing.EntityPtr) *Task {
 	task, ok := self.TasksForEntities[entityPtr]
 	if !ok {
-		path := tosca.GetContext(entityPtr).Path.String()
+		path := parsing.GetContext(entityPtr).Path.String()
 		if path == "" {
 			path = "<root>"
 		}
@@ -68,7 +68,7 @@ func (self *InheritContext) GetInheritTask(entityPtr tosca.EntityPtr) *Task {
 	return task
 }
 
-func (self *InheritContext) NewExecutor(entityPtr tosca.EntityPtr) Executor {
+func (self *InheritContext) NewExecutor(entityPtr parsing.EntityPtr) Executor {
 	return func(task *Task) {
 		defer task.Done()
 
@@ -79,12 +79,12 @@ func (self *InheritContext) NewExecutor(entityPtr tosca.EntityPtr) Executor {
 		}
 
 		// Custom inheritance after all fields have been inherited
-		tosca.Inherit(entityPtr)
+		parsing.Inherit(entityPtr)
 	}
 }
 
-func (self *InheritContext) GetDependencies(entityPtr tosca.EntityPtr) tosca.EntityPtrSet {
-	dependencies := make(tosca.EntityPtrSet)
+func (self *InheritContext) GetDependencies(entityPtr parsing.EntityPtr) parsing.EntityPtrSet {
+	dependencies := make(parsing.EntityPtrSet)
 
 	// From "inherit" tags
 	for _, inheritField := range self.InheritFields.Get(entityPtr) {
@@ -137,7 +137,7 @@ type InheritField struct {
 	Entity          reflect.Value
 	Key             string
 	Field           reflect.Value
-	ParentEntityPtr tosca.EntityPtr
+	ParentEntityPtr parsing.EntityPtr
 	ParentField     reflect.Value
 }
 
@@ -212,13 +212,13 @@ func (self *InheritField) InheritStructsFromSlice() {
 	for i := 0; i < length; i++ {
 		element := self.ParentField.Index(i)
 
-		if _, ok := element.Interface().(tosca.Mappable); ok {
+		if _, ok := element.Interface().(parsing.Mappable); ok {
 			// For mappable elements only, *don't* inherit the same key
 			// (We'll merge everything else)
-			key := tosca.GetKey(element.Interface())
+			key := parsing.GetKey(element.Interface())
 			if ii, ok := getSliceElementIndexForKey(self.Field, key); ok {
 				element_ := self.Field.Index(ii)
-				logInheritance.Debugf("override: %s", tosca.GetContext(element_.Interface()).Path)
+				logInheritance.Debugf("override: %s", parsing.GetContext(element_.Interface()).Path)
 				continue // skip this key
 			}
 		}
@@ -266,7 +266,7 @@ func (self *InheritField) InheritStructsFromMap() {
 		element_ := self.Field.MapIndex(mapKey)
 		if element_.IsValid() {
 			// We are overriding this element, so don't inherit it
-			logInheritance.Debugf("override: %s", tosca.GetContext(element_.Interface()).Path)
+			logInheritance.Debugf("override: %s", parsing.GetContext(element_.Interface()).Path)
 		} else {
 			self.Field.SetMapIndex(mapKey, element)
 		}
@@ -277,7 +277,7 @@ func getSliceElementIndexForKey(slice reflect.Value, key string) (int, bool) {
 	length := slice.Len()
 	for i := 0; i < length; i++ {
 		element := slice.Index(i)
-		if tosca.GetKey(element.Elem()) == key {
+		if parsing.GetKey(element.Elem()) == key {
 			return i, true
 		}
 	}
@@ -288,10 +288,10 @@ func getSliceElementIndexForKey(slice reflect.Value, key string) (int, bool) {
 // InheritFields
 //
 
-type InheritFields map[tosca.EntityPtr][]*InheritField
+type InheritFields map[parsing.EntityPtr][]*InheritField
 
 // From "inherit" tags
-func NewInheritFields(entityPtr tosca.EntityPtr) []*InheritField {
+func NewInheritFields(entityPtr parsing.EntityPtr) []*InheritField {
 	var inheritFields []*InheritField
 
 	entity := reflect.ValueOf(entityPtr).Elem()
@@ -307,7 +307,7 @@ func NewInheritFields(entityPtr tosca.EntityPtr) []*InheritField {
 	return inheritFields
 }
 
-func (self InheritFields) Get(entityPtr tosca.EntityPtr) []*InheritField {
+func (self InheritFields) Get(entityPtr parsing.EntityPtr) []*InheritField {
 	// TODO: cache these, because we call twice for each entity
 	inheritFields, ok := self[entityPtr]
 	if !ok {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -32,7 +32,7 @@ type Value struct {
 	Meta     *normal.ValueMeta `traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewValue(context *tosca.Context) *Value {
+func NewValue(context *parsing.Context) *Value {
 	return &Value{
 		Entity: NewEntity(context),
 		Name:   context.Name,
@@ -40,19 +40,19 @@ func NewValue(context *tosca.Context) *Value {
 	}
 }
 
-// tosca.Reader signature
-func ReadValue(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadValue(context *parsing.Context) parsing.EntityPtr {
 	ParseFunctionCall(context)
 	return NewValue(context)
 }
 
-func ReadAndRenderBare(context *tosca.Context, dataType *DataType, definition DataDefinition) *Value {
+func ReadAndRenderBare(context *parsing.Context, dataType *DataType, definition DataDefinition) *Value {
 	self := ReadValue(context).(*Value)
 	self.render(dataType, definition, true, false)
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *Value) GetKey() string {
 	return self.Name
 }
@@ -96,7 +96,7 @@ func (self *Value) render(dataType *DataType, dataDefinition DataDefinition, bar
 		}
 	}
 
-	if _, ok := self.Context.Data.(*tosca.FunctionCall); ok {
+	if _, ok := self.Context.Data.(*parsing.FunctionCall); ok {
 		return
 	}
 
@@ -118,7 +118,7 @@ func (self *Value) render(dataType *DataType, dataDefinition DataDefinition, bar
 				}
 			}
 
-			if (internal.Name == ard.TypeString) && self.Context.HasQuirk(tosca.QuirkDataTypesStringPermissive) {
+			if (internal.Name == ard.TypeString) && self.Context.HasQuirk(parsing.QuirkDataTypesStringPermissive) {
 				self.Context.Data = ard.ValueToString(self.Context.Data)
 			}
 
@@ -201,16 +201,16 @@ func (self *Value) render(dataType *DataType, dataDefinition DataDefinition, bar
 	}
 
 	if self.Meta != nil {
-		var converter *tosca.FunctionCall
+		var converter *parsing.FunctionCall
 		if dataDefinition != nil {
 			if metadata := dataDefinition.GetTypeMetadata(); metadata != nil {
-				if converter_, ok := metadata[tosca.METADATA_CONVERTER]; ok {
+				if converter_, ok := metadata[parsing.METADATA_CONVERTER]; ok {
 					converter = self.Context.NewFunctionCall(converter_, nil)
 				}
 			}
 		}
 		if converter == nil {
-			if converter_, ok := dataType.GetMetadataValue(tosca.METADATA_CONVERTER); ok {
+			if converter_, ok := dataType.GetMetadataValue(parsing.METADATA_CONVERTER); ok {
 				converter = self.Context.NewFunctionCall(converter_, nil)
 			}
 		}
@@ -219,11 +219,11 @@ func (self *Value) render(dataType *DataType, dataDefinition DataDefinition, bar
 		}
 	}
 
-	if comparer, ok := dataType.GetMetadataValue(tosca.METADATA_COMPARER); ok {
+	if comparer, ok := dataType.GetMetadataValue(parsing.METADATA_COMPARER); ok {
 		if hasComparer, ok := self.Context.Data.(HasComparer); ok {
 			hasComparer.SetComparer(comparer)
 		} else {
-			panic(fmt.Sprintf("type has %q metadata but does not support HasComparer interface: %T", tosca.METADATA_COMPARER, self.Context.Data))
+			panic(fmt.Sprintf("type has %q metadata but does not support HasComparer interface: %T", parsing.METADATA_COMPARER, self.Context.Data))
 		}
 	}
 }
@@ -258,7 +258,7 @@ func (self *Value) normalize(bare bool) normal.Value {
 	case *ValueMap:
 		normalValue = data.Normalize(self.Context)
 
-	case *tosca.FunctionCall:
+	case *parsing.FunctionCall:
 		NormalizeFunctionCallArguments(data, self.Context)
 		normalValue = normal.NewFunctionCall(data)
 
@@ -287,7 +287,7 @@ func (self Values) CopyUnassigned(values Values) {
 	}
 }
 
-func (self Values) RenderAttributes(definitions AttributeDefinitions, context *tosca.Context) {
+func (self Values) RenderAttributes(definitions AttributeDefinitions, context *parsing.Context) {
 	for key, definition := range definitions {
 		definition.Render()
 		if _, ok := self[key]; !ok {
@@ -315,7 +315,7 @@ func (self Values) RenderAttributes(definitions AttributeDefinitions, context *t
 	}
 }
 
-func (self Values) RenderProperties(definitions PropertyDefinitions, context *tosca.Context) {
+func (self Values) RenderProperties(definitions PropertyDefinitions, context *parsing.Context) {
 	for key, definition := range definitions {
 		definition.Render()
 		if _, ok := self[key]; !ok {
@@ -342,7 +342,7 @@ func (self Values) RenderProperties(definitions PropertyDefinitions, context *to
 	}
 }
 
-func (self Values) RenderInputs(definitions ParameterDefinitions, context *tosca.Context) {
+func (self Values) RenderInputs(definitions ParameterDefinitions, context *parsing.Context) {
 	for key, definition := range definitions {
 		definition.Render()
 		if _, ok := self[key]; !ok {
@@ -375,7 +375,7 @@ func (self Values) Normalize(normalConstrainables normal.Values) {
 
 // Utils
 
-func NewValueMeta(context *tosca.Context, dataType *DataType, dataDefinition DataDefinition, constraintClauses ConstraintClauses) *normal.ValueMeta {
+func NewValueMeta(context *parsing.Context, dataType *DataType, dataDefinition DataDefinition, constraintClauses ConstraintClauses) *normal.ValueMeta {
 	if dataType == nil {
 		return nil
 	}

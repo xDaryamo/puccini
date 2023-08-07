@@ -1,7 +1,7 @@
 package tosca_v2_0
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -23,7 +23,7 @@ type Type struct {
 	Description *string  `read:"description"`
 }
 
-func NewType(context *tosca.Context) *Type {
+func NewType(context *parsing.Context) *Type {
 	return &Type{
 		Entity: NewEntity(context),
 		Name:   context.Name,
@@ -55,7 +55,7 @@ func (self *Type) SetMetadata(name string, value string) bool {
 	return true
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *Type) Render() {
 	self.renderOnce.Do(self.render)
 }

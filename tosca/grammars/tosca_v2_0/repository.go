@@ -3,7 +3,7 @@ package tosca_v2_0
 import (
 	"github.com/tliron/exturl"
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -28,15 +28,15 @@ type Repository struct {
 	urlProblemReported bool
 }
 
-func NewRepository(context *tosca.Context) *Repository {
+func NewRepository(context *parsing.Context) *Repository {
 	return &Repository{
 		Entity: NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadRepository(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadRepository(context *parsing.Context) parsing.EntityPtr {
 	self := NewRepository(context)
 
 	if context.Is(ard.TypeMap) {
@@ -50,7 +50,7 @@ func ReadRepository(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *Repository) Render() {
 	self.renderOnce.Do(self.render)
 }

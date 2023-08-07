@@ -13,8 +13,8 @@ import (
 	"github.com/tliron/kutil/transcribe"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/parser"
+	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -38,14 +38,14 @@ func Compile(url *C.char, inputs *C.char, quirks *C.char, resolve C.char, coerce
 		return result(nil, nil, err)
 	}
 
-	var quirks_ tosca.Quirks
+	var quirks_ parsing.Quirks
 
 	if data, err := yamlkeys.DecodeAll(strings.NewReader(C.GoString(quirks))); err == nil {
 		for _, data_ := range data {
 			if list, ok := data_.(ard.List); ok {
 				for _, value := range list {
 					if value_, ok := value.(string); ok {
-						quirks_ = append(quirks_, tosca.Quirk(value_))
+						quirks_ = append(quirks_, parsing.Quirk(value_))
 					} else {
 						return result(nil, nil, errors.New("malformed quirk"))
 					}

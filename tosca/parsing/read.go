@@ -1,4 +1,4 @@
-package tosca
+package parsing
 
 import (
 	"fmt"
@@ -14,13 +14,23 @@ type Reader = func(*Context) EntityPtr
 
 type Readers map[string]Reader
 
-const (
-	ReadFieldModeDefault             = 0
-	ReadFieldModeList                = 1
-	ReadFieldModeSequencedList       = 2
-	ReadFieldModeUniqueSequencedList = 3
-	ReadFieldModeItem                = 4
-)
+//
+// PreReadable
+//
+
+type PreReadable interface {
+	PreRead()
+}
+
+// From PreReadable interface
+func PreRead(entityPtr EntityPtr) bool {
+	if preReadable, ok := entityPtr.(PreReadable); ok {
+		preReadable.PreRead()
+		return true
+	} else {
+		return false
+	}
+}
 
 // From "read" tags
 func (self *Context) ReadFields(entityPtr EntityPtr) []string {
@@ -126,13 +136,23 @@ func (self *Context) appendUnique(field reflect.Value, item any) reflect.Value {
 // ReadField
 //
 
+type ReadMode int
+
+const (
+	ReadFieldModeDefault             = ReadMode(0)
+	ReadFieldModeList                = ReadMode(1)
+	ReadFieldModeSequencedList       = ReadMode(2)
+	ReadFieldModeUniqueSequencedList = ReadMode(3)
+	ReadFieldModeItem                = ReadMode(4)
+)
+
 type ReadField struct {
 	FieldName string
 	Key       string
 	Context   *Context
 	Entity    reflect.Value
 	Reader    Reader
-	Mode      int
+	Mode      ReadMode
 	Important bool
 	Wildcard  bool
 }

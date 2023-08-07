@@ -1,7 +1,7 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -18,7 +18,7 @@ type PolicyType struct {
 	PropertyDefinitions PropertyDefinitions `read:"properties,PropertyDefinition"`
 }
 
-func NewPolicyType(context *tosca.Context) *PolicyType {
+func NewPolicyType(context *parsing.Context) *PolicyType {
 	return &PolicyType{
 		Entity:              NewEntity(context),
 		Name:                context.Name,
@@ -26,8 +26,8 @@ func NewPolicyType(context *tosca.Context) *PolicyType {
 	}
 }
 
-// tosca.Reader signature
-func ReadPolicyType(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadPolicyType(context *parsing.Context) parsing.EntityPtr {
 	self := NewPolicyType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
@@ -35,8 +35,8 @@ func ReadPolicyType(context *tosca.Context) tosca.EntityPtr {
 
 var policyTypeRoot *PolicyType
 
-// tosca.Hierarchical interface
-func (self *PolicyType) GetParent() tosca.EntityPtr {
+// parsing.Hierarchical interface
+func (self *PolicyType) GetParent() parsing.EntityPtr {
 	return policyTypeRoot
 }
 

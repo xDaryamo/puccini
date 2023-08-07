@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/tliron/kutil/terminal"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 type Executor func(task *Task)
@@ -23,7 +23,7 @@ type Task struct {
 
 type Tasks map[*Task]struct{}
 
-type TasksForEntities map[tosca.EntityPtr]*Task
+type TasksForEntities map[parsing.EntityPtr]*Task
 
 func NewTask(name string) *Task {
 	return &Task{Name: name, Parents: make(Tasks), Dependencies: make(Tasks)}
@@ -147,18 +147,19 @@ func (self Tasks) Print(indent int) {
 	}
 }
 
-// sort.Interface
-
 type TaskList []*Task
 
+// sort.Interface
 func (self TaskList) Len() int {
 	return len(self)
 }
 
+// sort.Interface
 func (self TaskList) Swap(i, j int) {
 	self[i], self[j] = self[j], self[i]
 }
 
+// sort.Interface
 func (self TaskList) Less(i, j int) bool {
 	return strings.Compare(self[i].Name, self[j].Name) < 0
 }

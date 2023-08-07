@@ -3,7 +3,6 @@ package grammars
 import (
 	"fmt"
 
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/cloudify_v1_3"
 	"github.com/tliron/puccini/tosca/grammars/hot"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_0"
@@ -11,6 +10,7 @@ import (
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_2"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v1_3"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
+	"github.com/tliron/puccini/tosca/parsing"
 
 	_ "github.com/tliron/puccini/tosca/profiles"
 )
@@ -25,13 +25,13 @@ func init() {
 	initGrammar(&hot.Grammar)
 }
 
-func initGrammar(grammar *tosca.Grammar) {
+func initGrammar(grammar *parsing.Grammar) {
 	for keyword, versions := range grammar.Versions {
-		var grammars map[string]*tosca.Grammar
+		var grammars map[string]*parsing.Grammar
 		var ok bool
 
 		if grammars, ok = Grammars[keyword]; !ok {
-			grammars = make(map[string]*tosca.Grammar)
+			grammars = make(map[string]*parsing.Grammar)
 			Grammars[keyword] = grammars
 		}
 

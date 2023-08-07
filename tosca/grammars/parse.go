@@ -4,12 +4,12 @@ import (
 	"time"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
-func Detect(context *tosca.Context) bool {
+func Detect(context *parsing.Context) bool {
 	if context.Grammar == nil {
-		var errorContext *tosca.Context
+		var errorContext *parsing.Context
 		if context.Grammar, errorContext = GetGrammar(context); errorContext != nil {
 			errorContext.ReportKeynameUnsupportedValue()
 		}
@@ -17,7 +17,7 @@ func Detect(context *tosca.Context) bool {
 	return context.Grammar != nil
 }
 
-func GetGrammar(context *tosca.Context) (*tosca.Grammar, *tosca.Context) {
+func GetGrammar(context *parsing.Context) (*parsing.Grammar, *parsing.Context) {
 	if versionContext, version := DetectVersion(context); version != nil {
 		if grammars, ok := Grammars[versionContext.Name]; ok {
 			if grammar, ok := grammars[*version]; ok {
@@ -32,14 +32,14 @@ func GetGrammar(context *tosca.Context) (*tosca.Grammar, *tosca.Context) {
 	return nil, nil
 }
 
-func CompatibleGrammars(context1 *tosca.Context, context2 *tosca.Context) bool {
+func CompatibleGrammars(context1 *parsing.Context, context2 *parsing.Context) bool {
 	grammar1, _ := GetGrammar(context1)
 	grammar2, _ := GetGrammar(context2)
 	return grammar1 == grammar2
 }
 
-func DetectVersion(context *tosca.Context) (*tosca.Context, *string) {
-	var versionContext *tosca.Context
+func DetectVersion(context *parsing.Context) (*parsing.Context, *string) {
+	var versionContext *parsing.Context
 	var ok bool
 
 	for keyword := range Grammars {
@@ -69,12 +69,12 @@ func DetectVersion(context *tosca.Context) (*tosca.Context, *string) {
 	return nil, nil
 }
 
-func GetImplicitImportSpec(context *tosca.Context) (*tosca.ImportSpec, bool) {
+func GetImplicitImportSpec(context *parsing.Context) (*parsing.ImportSpec, bool) {
 	if versionContext, version := DetectVersion(context); version != nil {
 		if paths, ok := ImplicitProfilePaths[versionContext.Name]; ok {
 			if path, ok := paths[*version]; ok {
 				if url, err := context.URL.Context().NewValidInternalURL(path); err == nil {
-					return &tosca.ImportSpec{URL: url, NameTransformer: nil, Implicit: true}, true
+					return &parsing.ImportSpec{URL: url, NameTransformer: nil, Implicit: true}, true
 				} else {
 					context.ReportError(err)
 				}

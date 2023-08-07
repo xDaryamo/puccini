@@ -1,7 +1,7 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -18,7 +18,7 @@ type PolicyTriggerType struct {
 	Parameters PropertyDefinitions `read:"parameters,PropertyDefinition"`
 }
 
-func NewPolicyTriggerType(context *tosca.Context) *PolicyTriggerType {
+func NewPolicyTriggerType(context *parsing.Context) *PolicyTriggerType {
 	return &PolicyTriggerType{
 		Entity:     NewEntity(context),
 		Name:       context.Name,
@@ -26,8 +26,8 @@ func NewPolicyTriggerType(context *tosca.Context) *PolicyTriggerType {
 	}
 }
 
-// tosca.Reader signature
-func ReadPolicyTriggerType(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadPolicyTriggerType(context *parsing.Context) parsing.EntityPtr {
 	self := NewPolicyTriggerType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
@@ -35,8 +35,8 @@ func ReadPolicyTriggerType(context *tosca.Context) tosca.EntityPtr {
 
 var policyTriggerTypeRoot *PolicyTriggerType
 
-// tosca.Hierarchical interface
-func (self *PolicyTriggerType) GetParent() tosca.EntityPtr {
+// parsing.Hierarchical interface
+func (self *PolicyTriggerType) GetParent() parsing.EntityPtr {
 	return policyTriggerTypeRoot
 }
 

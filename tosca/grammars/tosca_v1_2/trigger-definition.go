@@ -4,9 +4,9 @@ import (
 	"sync"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -35,15 +35,15 @@ type TriggerDefinition struct {
 	renderOnce sync.Once
 }
 
-func NewTriggerDefinition(context *tosca.Context) *TriggerDefinition {
+func NewTriggerDefinition(context *parsing.Context) *TriggerDefinition {
 	return &TriggerDefinition{
 		Entity: tosca_v2_0.NewEntity(context),
 		Name:   context.Name,
 	}
 }
 
-// tosca.Reader signature
-func ReadTriggerDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadTriggerDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewTriggerDefinition(context)
 	context.ValidateUnsupportedFields(append(context.ReadFields(self), "action"))
 
@@ -70,12 +70,12 @@ func ReadTriggerDefinition(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *TriggerDefinition) GetKey() string {
 	return self.Name
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *TriggerDefinition) Render() {
 	self.renderOnce.Do(self.render)
 }

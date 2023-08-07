@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -28,7 +28,7 @@ type WorkflowActivityCallOperation struct {
 	Operation *OperationAssignment `json:"-" yaml:"-"`
 }
 
-func NewWorkflowActivityCallOperation(context *tosca.Context) *WorkflowActivityCallOperation {
+func NewWorkflowActivityCallOperation(context *parsing.Context) *WorkflowActivityCallOperation {
 	return &WorkflowActivityCallOperation{
 		Entity: NewEntity(context),
 		Name:   context.Name,
@@ -36,8 +36,8 @@ func NewWorkflowActivityCallOperation(context *tosca.Context) *WorkflowActivityC
 	}
 }
 
-// tosca.Reader signature
-func ReadWorkflowActivityCallOperation(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadWorkflowActivityCallOperation(context *parsing.Context) parsing.EntityPtr {
 	self := NewWorkflowActivityCallOperation(context)
 
 	if context.Is(ard.TypeMap) {

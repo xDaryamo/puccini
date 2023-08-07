@@ -1,7 +1,7 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -20,7 +20,7 @@ type RelationshipType struct {
 	Parent *RelationshipType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewRelationshipType(context *tosca.Context) *RelationshipType {
+func NewRelationshipType(context *parsing.Context) *RelationshipType {
 	return &RelationshipType{
 		Type:                       NewType(context),
 		SourceInterfaceDefinitions: make(InterfaceDefinitions),
@@ -29,19 +29,19 @@ func NewRelationshipType(context *tosca.Context) *RelationshipType {
 	}
 }
 
-// tosca.Reader signature
-func ReadRelationshipType(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadRelationshipType(context *parsing.Context) parsing.EntityPtr {
 	self := NewRelationshipType(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Hierarchical interface
-func (self *RelationshipType) GetParent() tosca.EntityPtr {
+// parsing.Hierarchical interface
+func (self *RelationshipType) GetParent() parsing.EntityPtr {
 	return self.Parent
 }
 
-// tosca.Inherits interface
+// parsing.Inherits interface
 func (self *RelationshipType) Inherit() {
 	logInherit.Debugf("relationship type: %s", self.Name)
 

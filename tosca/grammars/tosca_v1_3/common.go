@@ -2,15 +2,15 @@ package tosca_v1_3
 
 import (
 	"github.com/tliron/commonlog"
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 var log = commonlog.GetLogger("puccini.grammars.tosca_v1_3")
 
-var Grammar = tosca.NewGrammar()
+var Grammar = parsing.NewGrammar()
 
-var DefaultScriptletNamespace = tosca.NewScriptletNamespace()
+var DefaultScriptletNamespace = parsing.NewScriptletNamespace()
 
 func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_yaml_1_3", "/tosca/simple/1.3/profile.yaml")

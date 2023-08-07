@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/tliron/exturl"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -21,18 +21,18 @@ type Import struct {
 	File *string
 }
 
-func NewImport(context *tosca.Context) *Import {
+func NewImport(context *parsing.Context) *Import {
 	return &Import{Entity: NewEntity(context)}
 }
 
-// tosca.Reader signature
-func ReadImport(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadImport(context *parsing.Context) parsing.EntityPtr {
 	self := NewImport(context)
 	self.File = context.ReadString()
 	return self
 }
 
-func (self *Import) NewImportSpec(unit *File) (*tosca.ImportSpec, bool) {
+func (self *Import) NewImportSpec(unit *File) (*parsing.ImportSpec, bool) {
 	if self.File == nil {
 		return nil, false
 	}
@@ -43,7 +43,7 @@ func (self *Import) NewImportSpec(unit *File) (*tosca.ImportSpec, bool) {
 		return nil, false
 	}
 
-	var nameTransformer tosca.NameTransformer
+	var nameTransformer parsing.NameTransformer
 	if s := strings.SplitN(file, "--", 1); len(s) == 2 {
 		if strings.Contains(s[0], "-") {
 			self.Context.ReportValueMalformed("namespace", "contains '-'")
@@ -60,7 +60,7 @@ func (self *Import) NewImportSpec(unit *File) (*tosca.ImportSpec, bool) {
 		return nil, false
 	}
 
-	importSpec := &tosca.ImportSpec{
+	importSpec := &parsing.ImportSpec{
 		URL:             url,
 		NameTransformer: nameTransformer,
 		Implicit:        false,
@@ -68,8 +68,8 @@ func (self *Import) NewImportSpec(unit *File) (*tosca.ImportSpec, bool) {
 	return importSpec, true
 }
 
-func newImportNameTransformer(prefix string) tosca.NameTransformer {
-	return func(name string, entityPtr tosca.EntityPtr) []string {
+func newImportNameTransformer(prefix string) parsing.NameTransformer {
+	return func(name string, entityPtr parsing.EntityPtr) []string {
 		var names []string
 
 		// Prefixed name

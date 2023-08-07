@@ -1,4 +1,4 @@
-package tosca
+package parsing
 
 // Note: This is conceptually part of the "tosca.normal" package, but must be separated to
 // avoid circular imports.

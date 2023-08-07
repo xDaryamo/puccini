@@ -2,7 +2,7 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -22,7 +22,7 @@ type OperationDefinition struct {
 	RetryInterval    *float64             `read:"retry_interval"`
 }
 
-func NewOperationDefinition(context *tosca.Context) *OperationDefinition {
+func NewOperationDefinition(context *parsing.Context) *OperationDefinition {
 	return &OperationDefinition{
 		Entity:           NewEntity(context),
 		Name:             context.Name,
@@ -30,8 +30,8 @@ func NewOperationDefinition(context *tosca.Context) *OperationDefinition {
 	}
 }
 
-// tosca.Reader signature
-func ReadOperationDefinition(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadOperationDefinition(context *parsing.Context) parsing.EntityPtr {
 	self := NewOperationDefinition(context)
 
 	if context.Is(ard.TypeMap) {
@@ -49,7 +49,7 @@ func ReadOperationDefinition(context *tosca.Context) tosca.EntityPtr {
 	return self
 }
 
-// tosca.Mappable interface
+// parsing.Mappable interface
 func (self *OperationDefinition) GetKey() string {
 	return self.Name
 }

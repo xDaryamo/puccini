@@ -1,8 +1,8 @@
 package cloudify_v1_3
 
 import (
-	"github.com/tliron/puccini/tosca"
 	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 //
@@ -22,7 +22,7 @@ type RelationshipAssignment struct {
 	TargetNodeTemplate *NodeTemplate     `lookup:"target,TargetNodeTemplateName" traverse:"ignore" json:"-" yaml:"-"`
 }
 
-func NewRelationshipAssignment(context *tosca.Context) *RelationshipAssignment {
+func NewRelationshipAssignment(context *parsing.Context) *RelationshipAssignment {
 	return &RelationshipAssignment{
 		Entity:           NewEntity(context),
 		Properties:       make(Values),
@@ -31,14 +31,14 @@ func NewRelationshipAssignment(context *tosca.Context) *RelationshipAssignment {
 	}
 }
 
-// tosca.Reader signature
-func ReadRelationshipAssignment(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadRelationshipAssignment(context *parsing.Context) parsing.EntityPtr {
 	self := NewRelationshipAssignment(context)
 	context.ValidateUnsupportedFields(context.ReadFields(self))
 	return self
 }
 
-// tosca.Renderable interface
+// parsing.Renderable interface
 func (self *RelationshipAssignment) Render() {
 	self.renderOnce.Do(self.render)
 }

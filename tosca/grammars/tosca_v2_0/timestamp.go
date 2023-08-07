@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca"
+	"github.com/tliron/puccini/tosca/parsing"
 )
 
 // See the Timestamp Language-Independent Type for YAML Version 1.1 (Working Draft 2005-01-18)
@@ -47,8 +47,8 @@ type Timestamp struct {
 	TZMinute uint32  `json:"tzMinute" yaml:"tzMinute"`
 }
 
-// tosca.Reader signature
-func ReadTimestamp(context *tosca.Context) tosca.EntityPtr {
+// parsing.Reader signature
+func ReadTimestamp(context *parsing.Context) parsing.EntityPtr {
 	var self Timestamp
 
 	if context.Is(ard.TypeString) {
@@ -162,7 +162,7 @@ func ReadTimestamp(context *tosca.Context) tosca.EntityPtr {
 		if !valid {
 			return &self
 		}
-	} else if context.HasQuirk(tosca.QuirkDataTypesTimestampPermissive) && context.Is(ard.TypeTimestamp) {
+	} else if context.HasQuirk(parsing.QuirkDataTypesTimestampPermissive) && context.Is(ard.TypeTimestamp) {
 		// Note: OriginalString will be empty because it is not preserved by our YAML parser
 		time := context.Data.(time.Time)
 		_, tzSeconds := time.Zone()
@@ -183,7 +183,7 @@ func ReadTimestamp(context *tosca.Context) tosca.EntityPtr {
 		self.TZHour = uint32(tzSeconds / 3600)
 		self.TZMinute = uint32((tzSeconds % 3600) / 60)
 	} else {
-		if context.HasQuirk(tosca.QuirkDataTypesTimestampPermissive) {
+		if context.HasQuirk(parsing.QuirkDataTypesTimestampPermissive) {
 			context.ReportValueWrongType(ard.TypeString, ard.TypeTimestamp)
 		} else {
 			context.ReportValueWrongType(ard.TypeString)
