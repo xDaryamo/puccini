@@ -2,22 +2,22 @@ package hot
 
 import (
 	"github.com/tliron/go-ard"
+	"github.com/tliron/puccini/assets/tosca/profiles"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parsing"
-	profile "github.com/tliron/puccini/tosca/profiles/hot/v1_0"
 	"github.com/tliron/yamlkeys"
 )
 
-const constraintPathPrefix = "/hot/1.0/js/constraints/"
+const constraintPathPrefix = "hot/1.0/js/constraints/"
 
 // Built-in constraint functions
 var ConstraintScriptlets = map[string]string{
-	parsing.MetadataContraintPrefix + "length":            profile.Profile[constraintPathPrefix+"length.js"],
-	parsing.MetadataContraintPrefix + "range":             profile.Profile[constraintPathPrefix+"range.js"],
-	parsing.MetadataContraintPrefix + "modulo":            profile.Profile[constraintPathPrefix+"modulo.js"],
-	parsing.MetadataContraintPrefix + "allowed_values":    profile.Profile[constraintPathPrefix+"allowed_values.js"],
-	parsing.MetadataContraintPrefix + "allowed_pattern":   profile.Profile[constraintPathPrefix+"allowed_pattern.js"],
-	parsing.MetadataContraintPrefix + "custom_constraint": profile.Profile[constraintPathPrefix+"custom_constraint.js"],
+	parsing.MetadataContraintPrefix + "length":            profiles.GetString(constraintPathPrefix + "length.js"),
+	parsing.MetadataContraintPrefix + "range":             profiles.GetString(constraintPathPrefix + "range.js"),
+	parsing.MetadataContraintPrefix + "modulo":            profiles.GetString(constraintPathPrefix + "modulo.js"),
+	parsing.MetadataContraintPrefix + "allowed_values":    profiles.GetString(constraintPathPrefix + "allowed_values.js"),
+	parsing.MetadataContraintPrefix + "allowed_pattern":   profiles.GetString(constraintPathPrefix + "allowed_pattern.js"),
+	parsing.MetadataContraintPrefix + "custom_constraint": profiles.GetString(constraintPathPrefix + "custom_constraint.js"),
 }
 
 var ConstraintNativeArgumentIndexes = map[string][]int{}

@@ -2,28 +2,28 @@ package tosca_v2_0
 
 import (
 	"github.com/tliron/go-ard"
+	"github.com/tliron/puccini/assets/tosca/profiles"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parsing"
-	profile "github.com/tliron/puccini/tosca/profiles/implicit/v2_0"
 	"github.com/tliron/yamlkeys"
 )
 
-const constraintPathPrefix = "/tosca/implicit/2.0/js/constraints/"
+const constraintPathPrefix = "implicit/2.0/js/constraints/"
 
 // Built-in constraint functions
 var ConstraintClauseScriptlets = map[string]string{
-	parsing.MetadataContraintPrefix + "equal":            profile.Profile[constraintPathPrefix+"equal.js"],
-	parsing.MetadataContraintPrefix + "greater_than":     profile.Profile[constraintPathPrefix+"greater_than.js"],
-	parsing.MetadataContraintPrefix + "greater_or_equal": profile.Profile[constraintPathPrefix+"greater_or_equal.js"],
-	parsing.MetadataContraintPrefix + "less_than":        profile.Profile[constraintPathPrefix+"less_than.js"],
-	parsing.MetadataContraintPrefix + "less_or_equal":    profile.Profile[constraintPathPrefix+"less_or_equal.js"],
-	parsing.MetadataContraintPrefix + "in_range":         profile.Profile[constraintPathPrefix+"in_range.js"],
-	parsing.MetadataContraintPrefix + "valid_values":     profile.Profile[constraintPathPrefix+"valid_values.js"],
-	parsing.MetadataContraintPrefix + "length":           profile.Profile[constraintPathPrefix+"length.js"],
-	parsing.MetadataContraintPrefix + "min_length":       profile.Profile[constraintPathPrefix+"min_length.js"],
-	parsing.MetadataContraintPrefix + "max_length":       profile.Profile[constraintPathPrefix+"max_length.js"],
-	parsing.MetadataContraintPrefix + "pattern":          profile.Profile[constraintPathPrefix+"pattern.js"],
-	parsing.MetadataContraintPrefix + "schema":           profile.Profile[constraintPathPrefix+"schema.js"], // introduced in TOSCA 1.3
+	parsing.MetadataContraintPrefix + "equal":            profiles.GetString(constraintPathPrefix + "equal.js"),
+	parsing.MetadataContraintPrefix + "greater_than":     profiles.GetString(constraintPathPrefix + "greater_than.js"),
+	parsing.MetadataContraintPrefix + "greater_or_equal": profiles.GetString(constraintPathPrefix + "greater_or_equal.js"),
+	parsing.MetadataContraintPrefix + "less_than":        profiles.GetString(constraintPathPrefix + "less_than.js"),
+	parsing.MetadataContraintPrefix + "less_or_equal":    profiles.GetString(constraintPathPrefix + "less_or_equal.js"),
+	parsing.MetadataContraintPrefix + "in_range":         profiles.GetString(constraintPathPrefix + "in_range.js"),
+	parsing.MetadataContraintPrefix + "valid_values":     profiles.GetString(constraintPathPrefix + "valid_values.js"),
+	parsing.MetadataContraintPrefix + "length":           profiles.GetString(constraintPathPrefix + "length.js"),
+	parsing.MetadataContraintPrefix + "min_length":       profiles.GetString(constraintPathPrefix + "min_length.js"),
+	parsing.MetadataContraintPrefix + "max_length":       profiles.GetString(constraintPathPrefix + "max_length.js"),
+	parsing.MetadataContraintPrefix + "pattern":          profiles.GetString(constraintPathPrefix + "pattern.js"),
+	parsing.MetadataContraintPrefix + "schema":           profiles.GetString(constraintPathPrefix + "schema.js"), // introduced in TOSCA 1.3
 }
 
 var ConstraintClauseNativeArgumentIndexes = map[string][]int{

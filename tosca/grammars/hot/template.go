@@ -33,10 +33,10 @@ func NewTemplate(context *parsing.Context) *Template {
 		Outputs:    make(Outputs),
 	}
 
-	self.Context.ImportScriptlet("tosca.lib.utils", "internal:/tosca/common/1.0/js/lib/utils.js")
-	self.Context.ImportScriptlet("tosca.lib.traversal", "internal:/tosca/common/1.0/js/lib/traversal.js")
-	self.Context.ImportScriptlet("tosca.resolve", "internal:/tosca/common/1.0/js/resolve.js")
-	self.Context.ImportScriptlet("tosca.coerce", "internal:/tosca/common/1.0/js/coerce.js")
+	self.Context.ImportScriptlet("tosca.lib.utils", "internal:/profiles/common/1.0/js/lib/utils.js")
+	self.Context.ImportScriptlet("tosca.lib.traversal", "internal:/profiles/common/1.0/js/lib/traversal.js")
+	self.Context.ImportScriptlet("tosca.resolve", "internal:/profiles/common/1.0/js/resolve.js")
+	self.Context.ImportScriptlet("tosca.coerce", "internal:/profiles/common/1.0/js/coerce.js")
 
 	self.NewPseudoParameter("OS::stack_name", "stack_name")
 	self.NewPseudoParameter("OS::stack_id", "stack_id")

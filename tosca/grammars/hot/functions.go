@@ -2,9 +2,9 @@ package hot
 
 import (
 	"github.com/tliron/go-ard"
+	"github.com/tliron/puccini/assets/tosca/profiles"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parsing"
-	profile "github.com/tliron/puccini/tosca/profiles/hot/v1_0"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -14,35 +14,34 @@ import (
 // [https://docs.openstack.org/heat/wallaby/template_guide/hot_spec.html#intrinsic-functions]
 //
 
-const functionPathPrefix = "/hot/1.0/js/functions/"
+const functionPathPrefix = "hot/1.0/js/functions/"
 
 var FunctionScriptlets = map[string]string{
-	parsing.MetadataFunctionPrefix + "and":                 profile.Profile[functionPathPrefix+"and.js"],
-	parsing.MetadataFunctionPrefix + "contains":            profile.Profile[functionPathPrefix+"contains.js"],
-	parsing.MetadataFunctionPrefix + "digest":              profile.Profile[functionPathPrefix+"digest.js"],
-	parsing.MetadataFunctionPrefix + "equals":              profile.Profile[functionPathPrefix+"equals.js"],
-	parsing.MetadataFunctionPrefix + "filter":              profile.Profile[functionPathPrefix+"filter.js"],
-	parsing.MetadataFunctionPrefix + "get_attr":            profile.Profile[functionPathPrefix+"get_attr.js"],
-	parsing.MetadataFunctionPrefix + "get_file":            profile.Profile[functionPathPrefix+"get_file.js"],
-	parsing.MetadataFunctionPrefix + "get_param":           profile.Profile[functionPathPrefix+"get_param.js"],
-	parsing.MetadataFunctionPrefix + "get_resource":        profile.Profile[functionPathPrefix+"get_resource.js"],
-	parsing.MetadataFunctionPrefix + "if":                  profile.Profile[functionPathPrefix+"if.js"],
-	parsing.MetadataFunctionPrefix + "list_concat_unique":  profile.Profile[functionPathPrefix+"list_concat_unique.js"],
-	parsing.MetadataFunctionPrefix + "list_concat":         profile.Profile[functionPathPrefix+"list_concat.js"],
-	parsing.MetadataFunctionPrefix + "list_join":           profile.Profile[functionPathPrefix+"list_join.js"],
-	parsing.MetadataFunctionPrefix + "make_url":            profile.Profile[functionPathPrefix+"make_url.js"],
-	parsing.MetadataFunctionPrefix + "map_merge":           profile.Profile[functionPathPrefix+"map_merge.js"],
-	parsing.MetadataFunctionPrefix + "map_replace":         profile.Profile[functionPathPrefix+"map_replace.js"],
-	parsing.MetadataFunctionPrefix + "not":                 profile.Profile[functionPathPrefix+"not.js"],
-	parsing.MetadataFunctionPrefix + "or":                  profile.Profile[functionPathPrefix+"or.js"],
-	parsing.MetadataFunctionPrefix + "repeat":              profile.Profile[functionPathPrefix+"repeat.js"],
-	parsing.MetadataFunctionPrefix + "resolve":             profile.Profile[functionPathPrefix+"resolve.js"],
-	parsing.MetadataFunctionPrefix + "resource_facade":     profile.Profile[functionPathPrefix+"resource_facade.js"],
-	parsing.MetadataFunctionPrefix + "str_replace_strict":  profile.Profile[functionPathPrefix+"str_replace_strict.js"],
-	parsing.MetadataFunctionPrefix + "str_replace_vstrict": profile.Profile[functionPathPrefix+"str_replace_vstrict.js"],
-	parsing.MetadataFunctionPrefix + "str_replace":         profile.Profile[functionPathPrefix+"str_replace.js"],
-	parsing.MetadataFunctionPrefix + "str_split":           profile.Profile[functionPathPrefix+"str_split.js"],
-	parsing.MetadataFunctionPrefix + "yaql":                profile.Profile[functionPathPrefix+"yaql.js"],
+	parsing.MetadataFunctionPrefix + "and":                 profiles.GetString(functionPathPrefix + "and.js"),
+	parsing.MetadataFunctionPrefix + "contains":            profiles.GetString(functionPathPrefix + "contains.js"),
+	parsing.MetadataFunctionPrefix + "digest":              profiles.GetString(functionPathPrefix + "digest.js"),
+	parsing.MetadataFunctionPrefix + "equals":              profiles.GetString(functionPathPrefix + "equals.js"),
+	parsing.MetadataFunctionPrefix + "filter":              profiles.GetString(functionPathPrefix + "filter.js"),
+	parsing.MetadataFunctionPrefix + "get_attr":            profiles.GetString(functionPathPrefix + "get_attr.js"),
+	parsing.MetadataFunctionPrefix + "get_file":            profiles.GetString(functionPathPrefix + "get_file.js"),
+	parsing.MetadataFunctionPrefix + "get_param":           profiles.GetString(functionPathPrefix + "get_param.js"),
+	parsing.MetadataFunctionPrefix + "get_resource":        profiles.GetString(functionPathPrefix + "get_resource.js"),
+	parsing.MetadataFunctionPrefix + "if":                  profiles.GetString(functionPathPrefix + "if.js"),
+	parsing.MetadataFunctionPrefix + "list_concat_unique":  profiles.GetString(functionPathPrefix + "list_concat_unique.js"),
+	parsing.MetadataFunctionPrefix + "list_concat":         profiles.GetString(functionPathPrefix + "list_concat.js"),
+	parsing.MetadataFunctionPrefix + "list_join":           profiles.GetString(functionPathPrefix + "list_join.js"),
+	parsing.MetadataFunctionPrefix + "make_url":            profiles.GetString(functionPathPrefix + "make_url.js"),
+	parsing.MetadataFunctionPrefix + "map_merge":           profiles.GetString(functionPathPrefix + "map_merge.js"),
+	parsing.MetadataFunctionPrefix + "map_replace":         profiles.GetString(functionPathPrefix + "map_replace.js"),
+	parsing.MetadataFunctionPrefix + "not":                 profiles.GetString(functionPathPrefix + "not.js"),
+	parsing.MetadataFunctionPrefix + "or":                  profiles.GetString(functionPathPrefix + "or.js"),
+	parsing.MetadataFunctionPrefix + "repeat":              profiles.GetString(functionPathPrefix + "repeat.js"),
+	parsing.MetadataFunctionPrefix + "resource_facade":     profiles.GetString(functionPathPrefix + "resource_facade.js"),
+	parsing.MetadataFunctionPrefix + "str_replace_strict":  profiles.GetString(functionPathPrefix + "str_replace_strict.js"),
+	parsing.MetadataFunctionPrefix + "str_replace_vstrict": profiles.GetString(functionPathPrefix + "str_replace_vstrict.js"),
+	parsing.MetadataFunctionPrefix + "str_replace":         profiles.GetString(functionPathPrefix + "str_replace.js"),
+	parsing.MetadataFunctionPrefix + "str_split":           profiles.GetString(functionPathPrefix + "str_split.js"),
+	parsing.MetadataFunctionPrefix + "yaql":                profiles.GetString(functionPathPrefix + "yaql.js"),
 }
 
 func ParseFunctionCall(context *parsing.Context) bool {

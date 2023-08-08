@@ -2,9 +2,9 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/go-ard"
+	"github.com/tliron/puccini/assets/tosca/profiles"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parsing"
-	profile "github.com/tliron/puccini/tosca/profiles/cloudify/v5_0_5"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -14,15 +14,15 @@ import (
 // [https://docs.cloudify.co/5.0.5/developer/blueprints/spec-intrinsic-functions/]
 //
 
-const functionPathPrefix = "/cloudify/5.0.5/js/functions/"
+const functionPathPrefix = "cloudify/5.0.5/js/functions/"
 
 var FunctionScriptlets = map[string]string{
-	parsing.MetadataFunctionPrefix + "concat":         profile.Profile[functionPathPrefix+"get_secret.js"],
-	parsing.MetadataFunctionPrefix + "get_attribute":  profile.Profile[functionPathPrefix+"get_attribute.js"],
-	parsing.MetadataFunctionPrefix + "get_capability": profile.Profile[functionPathPrefix+"get_capability.js"],
-	parsing.MetadataFunctionPrefix + "get_input":      profile.Profile[functionPathPrefix+"get_input.js"],
-	parsing.MetadataFunctionPrefix + "get_property":   profile.Profile[functionPathPrefix+"get_property.js"],
-	parsing.MetadataFunctionPrefix + "get_secret":     profile.Profile[functionPathPrefix+"get_secret.js"],
+	parsing.MetadataFunctionPrefix + "concat":         profiles.GetString(functionPathPrefix + "get_secret.js"),
+	parsing.MetadataFunctionPrefix + "get_attribute":  profiles.GetString(functionPathPrefix + "get_attribute.js"),
+	parsing.MetadataFunctionPrefix + "get_capability": profiles.GetString(functionPathPrefix + "get_capability.js"),
+	parsing.MetadataFunctionPrefix + "get_input":      profiles.GetString(functionPathPrefix + "get_input.js"),
+	parsing.MetadataFunctionPrefix + "get_property":   profiles.GetString(functionPathPrefix + "get_property.js"),
+	parsing.MetadataFunctionPrefix + "get_secret":     profiles.GetString(functionPathPrefix + "get_secret.js"),
 }
 
 func ParseFunctionCall(context *parsing.Context) bool {

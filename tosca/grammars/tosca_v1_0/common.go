@@ -14,7 +14,7 @@ var log = commonlog.GetLogger("puccini.grammars.tosca_v1_0")
 var Grammar = parsing.NewGrammar()
 
 func init() {
-	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_yaml_1_0", "/tosca/simple/1.0/profile.yaml")
+	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_yaml_1_0", "/profiles/simple/1.0/profile.yaml")
 
 	Grammar.RegisterReader("$Root", tosca_v1_1.ReadServiceFile) // 1.1
 	Grammar.RegisterReader("$File", tosca_v1_1.ReadFile)        // 1.1

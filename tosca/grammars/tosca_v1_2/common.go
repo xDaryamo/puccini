@@ -15,8 +15,8 @@ var Grammar = parsing.NewGrammar()
 var DefaultScriptletNamespace = parsing.NewScriptletNamespace()
 
 func init() {
-	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_yaml_1_2", "/tosca/simple/1.2/profile.yaml")
-	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_profile_for_nfv_1_0", "/tosca/simple-for-nfv/1.0/profile.yaml")
+	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_yaml_1_2", "/profiles/simple/1.2/profile.yaml")
+	Grammar.RegisterVersion("tosca_definitions_version", "tosca_simple_profile_for_nfv_1_0", "/profiles/simple-for-nfv/1.0/profile.yaml")
 
 	Grammar.RegisterReader("$Root", ReadServiceFile) // override
 	Grammar.RegisterReader("$File", ReadFile)        // override

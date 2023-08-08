@@ -15,7 +15,7 @@ var Grammar = parsing.NewGrammar()
 var DefaultScriptletNamespace = parsing.NewScriptletNamespace()
 
 func init() {
-	Grammar.RegisterVersion("tosca_definitions_version", "cloudify_dsl_1_3", "/cloudify/5.0.5/profile.yaml")
+	Grammar.RegisterVersion("tosca_definitions_version", "cloudify_dsl_1_3", "/profiles/cloudify/5.0.5/profile.yaml")
 
 	Grammar.RegisterReader("$Root", ReadBlueprint)
 	Grammar.RegisterReader("$File", ReadFile)

@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	"github.com/tliron/go-ard"
+	"github.com/tliron/puccini/assets/tosca/profiles"
 	"github.com/tliron/puccini/tosca/normal"
 	"github.com/tliron/puccini/tosca/parsing"
-	profile "github.com/tliron/puccini/tosca/profiles/implicit/v2_0"
 	"github.com/tliron/yamlkeys"
 )
 
@@ -26,19 +26,19 @@ import (
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
 //
 
-const functionPathPrefix = "/tosca/implicit/2.0/js/functions/"
+const functionPathPrefix = "implicit/2.0/js/functions/"
 
 var FunctionScriptlets = map[string]string{
-	parsing.MetadataFunctionPrefix + "concat":               profile.Profile[functionPathPrefix+"concat.js"],
-	parsing.MetadataFunctionPrefix + "join":                 profile.Profile[functionPathPrefix+"join.js"], // introduced in TOSCA 1.2
-	parsing.MetadataFunctionPrefix + "token":                profile.Profile[functionPathPrefix+"token.js"],
-	parsing.MetadataFunctionPrefix + "get_input":            profile.Profile[functionPathPrefix+"get_input.js"],
-	parsing.MetadataFunctionPrefix + "get_property":         profile.Profile[functionPathPrefix+"get_property.js"],
-	parsing.MetadataFunctionPrefix + "get_attribute":        profile.Profile[functionPathPrefix+"get_attribute.js"],
-	parsing.MetadataFunctionPrefix + "get_operation_output": profile.Profile[functionPathPrefix+"get_operation_output.js"],
-	parsing.MetadataFunctionPrefix + "get_nodes_of_type":    profile.Profile[functionPathPrefix+"get_nodes_of_type.js"],
-	parsing.MetadataFunctionPrefix + "get_artifact":         profile.Profile[functionPathPrefix+"get_artifact.js"],
-	parsing.MetadataFunctionPrefix + "_get_target_name":     profile.Profile[functionPathPrefix+"_get_target_name.js"],
+	parsing.MetadataFunctionPrefix + "concat":               profiles.GetString(functionPathPrefix + "concat.js"),
+	parsing.MetadataFunctionPrefix + "join":                 profiles.GetString(functionPathPrefix + "join.js"), // introduced in TOSCA 1.2
+	parsing.MetadataFunctionPrefix + "token":                profiles.GetString(functionPathPrefix + "token.js"),
+	parsing.MetadataFunctionPrefix + "get_input":            profiles.GetString(functionPathPrefix + "get_input.js"),
+	parsing.MetadataFunctionPrefix + "get_property":         profiles.GetString(functionPathPrefix + "get_property.js"),
+	parsing.MetadataFunctionPrefix + "get_attribute":        profiles.GetString(functionPathPrefix + "get_attribute.js"),
+	parsing.MetadataFunctionPrefix + "get_operation_output": profiles.GetString(functionPathPrefix + "get_operation_output.js"),
+	parsing.MetadataFunctionPrefix + "get_nodes_of_type":    profiles.GetString(functionPathPrefix + "get_nodes_of_type.js"),
+	parsing.MetadataFunctionPrefix + "get_artifact":         profiles.GetString(functionPathPrefix + "get_artifact.js"),
+	parsing.MetadataFunctionPrefix + "$get_target_name":     profiles.GetString(functionPathPrefix + "$get_target_name.js"),
 }
 
 func ParseFunctionCall(context *parsing.Context) bool {

@@ -12,7 +12,7 @@ import (
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 	"github.com/tliron/puccini/tosca/parsing"
 
-	_ "github.com/tliron/puccini/tosca/profiles"
+	_ "github.com/tliron/puccini/assets/tosca/profiles"
 )
 
 func init() {
