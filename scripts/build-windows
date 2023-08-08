@@ -11,7 +11,6 @@ function build () {
 	local EXE=$ROOT/dist/$TOOL.exe
 	pushd "$ROOT/$TOOL" > /dev/null
 	GOOS=windows go build \
-		-pgo=auto \
 		-o "$EXE" \
 		-ldflags " \
 			-X 'github.com/tliron/kutil/version.GitVersion=$VERSION' \

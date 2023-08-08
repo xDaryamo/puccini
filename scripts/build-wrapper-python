@@ -25,7 +25,7 @@ cd "$DIST"
 rsync --recursive "$ROOT/wrappers/python"/* .
 rsync --recursive "$ROOT/go.mod" "$ROOT/tosca" "$ROOT/clout" "$ROOT/library" puccini/go-source/
 
-echo "go 1.20
+echo "go 1.21
 use ." > puccini/go-source/go.work
 
 # KUTIL=$(readlink --canonicalize "$ROOT/../kutil")

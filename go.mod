@@ -1,6 +1,6 @@
 module github.com/tliron/puccini
 
-go 1.20
+go 1.21
 
 require (
 	github.com/dop251/goja v0.0.0-20230806174421-c933cf95e127
