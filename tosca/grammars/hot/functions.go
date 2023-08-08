@@ -17,32 +17,32 @@ import (
 const functionPathPrefix = "/hot/1.0/js/functions/"
 
 var FunctionScriptlets = map[string]string{
-	parsing.METADATA_FUNCTION_PREFIX + "and":                 profile.Profile[functionPathPrefix+"and.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "contains":            profile.Profile[functionPathPrefix+"contains.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "digest":              profile.Profile[functionPathPrefix+"digest.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "equals":              profile.Profile[functionPathPrefix+"equals.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "filter":              profile.Profile[functionPathPrefix+"filter.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_attr":            profile.Profile[functionPathPrefix+"get_attr.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_file":            profile.Profile[functionPathPrefix+"get_file.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_param":           profile.Profile[functionPathPrefix+"get_param.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_resource":        profile.Profile[functionPathPrefix+"get_resource.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "if":                  profile.Profile[functionPathPrefix+"if.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "list_concat_unique":  profile.Profile[functionPathPrefix+"list_concat_unique.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "list_concat":         profile.Profile[functionPathPrefix+"list_concat.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "list_join":           profile.Profile[functionPathPrefix+"list_join.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "make_url":            profile.Profile[functionPathPrefix+"make_url.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "map_merge":           profile.Profile[functionPathPrefix+"map_merge.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "map_replace":         profile.Profile[functionPathPrefix+"map_replace.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "not":                 profile.Profile[functionPathPrefix+"not.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "or":                  profile.Profile[functionPathPrefix+"or.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "repeat":              profile.Profile[functionPathPrefix+"repeat.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "resolve":             profile.Profile[functionPathPrefix+"resolve.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "resource_facade":     profile.Profile[functionPathPrefix+"resource_facade.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "str_replace_strict":  profile.Profile[functionPathPrefix+"str_replace_strict.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "str_replace_vstrict": profile.Profile[functionPathPrefix+"str_replace_vstrict.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "str_replace":         profile.Profile[functionPathPrefix+"str_replace.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "str_split":           profile.Profile[functionPathPrefix+"str_split.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "yaql":                profile.Profile[functionPathPrefix+"yaql.js"],
+	parsing.MetadataFunctionPrefix + "and":                 profile.Profile[functionPathPrefix+"and.js"],
+	parsing.MetadataFunctionPrefix + "contains":            profile.Profile[functionPathPrefix+"contains.js"],
+	parsing.MetadataFunctionPrefix + "digest":              profile.Profile[functionPathPrefix+"digest.js"],
+	parsing.MetadataFunctionPrefix + "equals":              profile.Profile[functionPathPrefix+"equals.js"],
+	parsing.MetadataFunctionPrefix + "filter":              profile.Profile[functionPathPrefix+"filter.js"],
+	parsing.MetadataFunctionPrefix + "get_attr":            profile.Profile[functionPathPrefix+"get_attr.js"],
+	parsing.MetadataFunctionPrefix + "get_file":            profile.Profile[functionPathPrefix+"get_file.js"],
+	parsing.MetadataFunctionPrefix + "get_param":           profile.Profile[functionPathPrefix+"get_param.js"],
+	parsing.MetadataFunctionPrefix + "get_resource":        profile.Profile[functionPathPrefix+"get_resource.js"],
+	parsing.MetadataFunctionPrefix + "if":                  profile.Profile[functionPathPrefix+"if.js"],
+	parsing.MetadataFunctionPrefix + "list_concat_unique":  profile.Profile[functionPathPrefix+"list_concat_unique.js"],
+	parsing.MetadataFunctionPrefix + "list_concat":         profile.Profile[functionPathPrefix+"list_concat.js"],
+	parsing.MetadataFunctionPrefix + "list_join":           profile.Profile[functionPathPrefix+"list_join.js"],
+	parsing.MetadataFunctionPrefix + "make_url":            profile.Profile[functionPathPrefix+"make_url.js"],
+	parsing.MetadataFunctionPrefix + "map_merge":           profile.Profile[functionPathPrefix+"map_merge.js"],
+	parsing.MetadataFunctionPrefix + "map_replace":         profile.Profile[functionPathPrefix+"map_replace.js"],
+	parsing.MetadataFunctionPrefix + "not":                 profile.Profile[functionPathPrefix+"not.js"],
+	parsing.MetadataFunctionPrefix + "or":                  profile.Profile[functionPathPrefix+"or.js"],
+	parsing.MetadataFunctionPrefix + "repeat":              profile.Profile[functionPathPrefix+"repeat.js"],
+	parsing.MetadataFunctionPrefix + "resolve":             profile.Profile[functionPathPrefix+"resolve.js"],
+	parsing.MetadataFunctionPrefix + "resource_facade":     profile.Profile[functionPathPrefix+"resource_facade.js"],
+	parsing.MetadataFunctionPrefix + "str_replace_strict":  profile.Profile[functionPathPrefix+"str_replace_strict.js"],
+	parsing.MetadataFunctionPrefix + "str_replace_vstrict": profile.Profile[functionPathPrefix+"str_replace_vstrict.js"],
+	parsing.MetadataFunctionPrefix + "str_replace":         profile.Profile[functionPathPrefix+"str_replace.js"],
+	parsing.MetadataFunctionPrefix + "str_split":           profile.Profile[functionPathPrefix+"str_split.js"],
+	parsing.MetadataFunctionPrefix + "yaql":                profile.Profile[functionPathPrefix+"yaql.js"],
 }
 
 func ParseFunctionCall(context *parsing.Context) bool {
@@ -59,7 +59,7 @@ func ParseFunctionCall(context *parsing.Context) bool {
 	for key, data := range map_ {
 		name := yamlkeys.KeyString(key)
 
-		scriptletName := parsing.METADATA_FUNCTION_PREFIX + name
+		scriptletName := parsing.MetadataFunctionPrefix + name
 		_, ok := context.ScriptletNamespace.Lookup(scriptletName)
 		if !ok {
 			// Not a function call, despite having the right data structure

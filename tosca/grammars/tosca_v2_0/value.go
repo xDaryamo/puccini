@@ -204,13 +204,13 @@ func (self *Value) render(dataType *DataType, dataDefinition DataDefinition, bar
 		var converter *parsing.FunctionCall
 		if dataDefinition != nil {
 			if metadata := dataDefinition.GetTypeMetadata(); metadata != nil {
-				if converter_, ok := metadata[parsing.METADATA_CONVERTER]; ok {
+				if converter_, ok := metadata[parsing.MetadataConverter]; ok {
 					converter = self.Context.NewFunctionCall(converter_, nil)
 				}
 			}
 		}
 		if converter == nil {
-			if converter_, ok := dataType.GetMetadataValue(parsing.METADATA_CONVERTER); ok {
+			if converter_, ok := dataType.GetMetadataValue(parsing.MetadataConverter); ok {
 				converter = self.Context.NewFunctionCall(converter_, nil)
 			}
 		}
@@ -219,11 +219,11 @@ func (self *Value) render(dataType *DataType, dataDefinition DataDefinition, bar
 		}
 	}
 
-	if comparer, ok := dataType.GetMetadataValue(parsing.METADATA_COMPARER); ok {
+	if comparer, ok := dataType.GetMetadataValue(parsing.MetadataComparer); ok {
 		if hasComparer, ok := self.Context.Data.(HasComparer); ok {
 			hasComparer.SetComparer(comparer)
 		} else {
-			panic(fmt.Sprintf("type has %q metadata but does not support HasComparer interface: %T", parsing.METADATA_COMPARER, self.Context.Data))
+			panic(fmt.Sprintf("type has %q metadata but does not support HasComparer interface: %T", parsing.MetadataComparer, self.Context.Data))
 		}
 	}
 }

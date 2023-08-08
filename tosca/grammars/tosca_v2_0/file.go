@@ -82,6 +82,6 @@ func (self *File) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
 	}
 
 	if len(self.Context.Quirks) > 0 {
-		normalServiceTemplate.Metadata[parsing.METADATA_QUIRKS] = self.Context.Quirks.String()
+		normalServiceTemplate.Metadata[parsing.MetadataQuirks] = self.Context.Quirks.String()
 	}
 }

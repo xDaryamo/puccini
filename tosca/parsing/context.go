@@ -29,22 +29,6 @@ func GetContext(entityPtr EntityPtr) *Context {
 	}
 }
 
-func GetCanonicalName(entityPtr EntityPtr) string {
-	if metadata, ok := GetMetadata(entityPtr); ok {
-		if canonicalName, ok := metadata[METADATA_CANONICAL_NAME]; ok {
-			return canonicalName
-		}
-	}
-
-	context := GetContext(entityPtr)
-	canonicalNamespace := context.GetCanonicalNamespace()
-	if canonicalNamespace != nil {
-		return fmt.Sprintf("%s::%s", *canonicalNamespace, context.Name)
-	} else {
-		return context.Name
-	}
-}
-
 //
 // Context
 //

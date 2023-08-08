@@ -21,8 +21,9 @@ func (self GrammarVersions) Add(keyword string, version string, implicitProfileP
 //
 
 type Grammar struct {
-	Versions GrammarVersions
-	Readers  Readers
+	Versions                   GrammarVersions
+	Readers                    Readers
+	InvalidNamespaceCharacters string
 }
 
 func NewGrammar() Grammar {

@@ -99,7 +99,7 @@ func (self *DataType) render() {
 }
 
 func (self *DataType) GetInternalTypeName() (ard.TypeName, bool) {
-	if typeName, ok := self.GetMetadataValue(parsing.METADATA_TYPE); ok {
+	if typeName, ok := self.GetMetadataValue(parsing.MetadataType); ok {
 		return ard.TypeName(typeName), ok
 	} else if self.Parent != nil {
 		// The internal type metadata is inherited

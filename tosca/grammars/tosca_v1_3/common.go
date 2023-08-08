@@ -87,4 +87,6 @@ func init() {
 
 	DefaultScriptletNamespace.RegisterScriptlets(tosca_v2_0.FunctionScriptlets, nil)
 	DefaultScriptletNamespace.RegisterScriptlets(tosca_v2_0.ConstraintClauseScriptlets, tosca_v2_0.ConstraintClauseNativeArgumentIndexes)
+
+	Grammar.InvalidNamespaceCharacters = ":"
 }

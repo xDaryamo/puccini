@@ -29,16 +29,16 @@ import (
 const functionPathPrefix = "/tosca/implicit/2.0/js/functions/"
 
 var FunctionScriptlets = map[string]string{
-	parsing.METADATA_FUNCTION_PREFIX + "concat":               profile.Profile[functionPathPrefix+"concat.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "join":                 profile.Profile[functionPathPrefix+"join.js"], // introduced in TOSCA 1.2
-	parsing.METADATA_FUNCTION_PREFIX + "token":                profile.Profile[functionPathPrefix+"token.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_input":            profile.Profile[functionPathPrefix+"get_input.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_property":         profile.Profile[functionPathPrefix+"get_property.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_attribute":        profile.Profile[functionPathPrefix+"get_attribute.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_operation_output": profile.Profile[functionPathPrefix+"get_operation_output.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_nodes_of_type":    profile.Profile[functionPathPrefix+"get_nodes_of_type.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_artifact":         profile.Profile[functionPathPrefix+"get_artifact.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "_get_target_name":     profile.Profile[functionPathPrefix+"_get_target_name.js"],
+	parsing.MetadataFunctionPrefix + "concat":               profile.Profile[functionPathPrefix+"concat.js"],
+	parsing.MetadataFunctionPrefix + "join":                 profile.Profile[functionPathPrefix+"join.js"], // introduced in TOSCA 1.2
+	parsing.MetadataFunctionPrefix + "token":                profile.Profile[functionPathPrefix+"token.js"],
+	parsing.MetadataFunctionPrefix + "get_input":            profile.Profile[functionPathPrefix+"get_input.js"],
+	parsing.MetadataFunctionPrefix + "get_property":         profile.Profile[functionPathPrefix+"get_property.js"],
+	parsing.MetadataFunctionPrefix + "get_attribute":        profile.Profile[functionPathPrefix+"get_attribute.js"],
+	parsing.MetadataFunctionPrefix + "get_operation_output": profile.Profile[functionPathPrefix+"get_operation_output.js"],
+	parsing.MetadataFunctionPrefix + "get_nodes_of_type":    profile.Profile[functionPathPrefix+"get_nodes_of_type.js"],
+	parsing.MetadataFunctionPrefix + "get_artifact":         profile.Profile[functionPathPrefix+"get_artifact.js"],
+	parsing.MetadataFunctionPrefix + "_get_target_name":     profile.Profile[functionPathPrefix+"_get_target_name.js"],
 }
 
 func ParseFunctionCall(context *parsing.Context) bool {
@@ -78,7 +78,7 @@ func ParseFunctionCall(context *parsing.Context) bool {
 					return false
 				}
 
-				scriptletName = parsing.METADATA_FUNCTION_PREFIX + scriptletName
+				scriptletName = parsing.MetadataFunctionPrefix + scriptletName
 				if _, ok := context.ScriptletNamespace.Lookup(scriptletName); !ok {
 					// Not a function call, despite having the right data structure
 					context.Clone(scriptletName).ReportValueInvalid("function", "unsupported")
@@ -96,7 +96,7 @@ func ParseFunctionCall(context *parsing.Context) bool {
 
 		// Only one iteration
 		for key, data := range map_ {
-			scriptletName := parsing.METADATA_FUNCTION_PREFIX + yamlkeys.KeyString(key)
+			scriptletName := parsing.MetadataFunctionPrefix + yamlkeys.KeyString(key)
 
 			if _, ok := context.ScriptletNamespace.Lookup(scriptletName); !ok {
 				// Not a function call, despite having the right data structure

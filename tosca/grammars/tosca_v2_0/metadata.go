@@ -26,11 +26,11 @@ func ReadMetadata(context *parsing.Context) parsing.EntityPtr {
 
 	if self != nil {
 		for key, value := range self {
-			if strings.HasPrefix(key, parsing.METADATA_SCRIPTLET_IMPORT_PREFIX) {
-				context.ImportScriptlet(key[len(parsing.METADATA_SCRIPTLET_IMPORT_PREFIX):], value)
+			if strings.HasPrefix(key, parsing.MetadataScriptletImportPrefix) {
+				context.ImportScriptlet(key[len(parsing.MetadataScriptletImportPrefix):], value)
 				delete(self, key)
-			} else if strings.HasPrefix(key, parsing.METADATA_SCRIPTLET_PREFIX) {
-				context.EmbedScriptlet(key[len(parsing.METADATA_SCRIPTLET_PREFIX):], value)
+			} else if strings.HasPrefix(key, parsing.MetadataScriptletPrefix) {
+				context.EmbedScriptlet(key[len(parsing.MetadataScriptletPrefix):], value)
 				delete(self, key)
 			}
 		}

@@ -12,6 +12,22 @@ import (
 
 type NameTransformer = func(string, EntityPtr) []string
 
+func GetCanonicalName(entityPtr EntityPtr) string {
+	if metadata, ok := GetMetadata(entityPtr); ok {
+		if canonicalName, ok := metadata[MetadataCanonicalName]; ok {
+			return canonicalName
+		}
+	}
+
+	context := GetContext(entityPtr)
+	canonicalNamespace := context.GetCanonicalNamespace()
+	if canonicalNamespace != nil {
+		return fmt.Sprintf("%s::%s", *canonicalNamespace, context.Name)
+	} else {
+		return context.Name
+	}
+}
+
 //
 // Namespace
 //
@@ -36,20 +52,29 @@ func NewNamespaceFor(entityPtr EntityPtr) *Namespace {
 				panic(fmt.Sprintf("\"namespace\" tag can only be used on \"string\" field in struct: %T", entityPtr))
 			}
 
+			name := field.String()
+
 			if context := GetContext(entityPtr); context != nil {
 				if context.HasQuirk(QuirkNamespaceNormativeIgnore) {
 					// Do not add normative types to the namespace
 					if metadata, ok := GetMetadata(entityPtr); ok {
-						if normative, ok := metadata[METADATA_NORMATIVE]; ok {
+						if normative, ok := metadata[MetadataNormative]; ok {
 							if normative == "true" {
 								continue
 							}
 						}
 					}
 				}
+
+				// Check for invalid characters
+				if context.Grammar.InvalidNamespaceCharacters != "" {
+					if strings.Contains(name, context.Grammar.InvalidNamespaceCharacters) {
+						context.ReportNameInvalid(entityPtr, name)
+					}
+				}
 			}
 
-			self.set(field.String(), entityPtr)
+			self.set(name, entityPtr)
 		}
 		return true
 	})

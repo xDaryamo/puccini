@@ -17,12 +17,12 @@ import (
 const functionPathPrefix = "/cloudify/5.0.5/js/functions/"
 
 var FunctionScriptlets = map[string]string{
-	parsing.METADATA_FUNCTION_PREFIX + "concat":         profile.Profile[functionPathPrefix+"get_secret.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_attribute":  profile.Profile[functionPathPrefix+"get_attribute.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_capability": profile.Profile[functionPathPrefix+"get_capability.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_input":      profile.Profile[functionPathPrefix+"get_input.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_property":   profile.Profile[functionPathPrefix+"get_property.js"],
-	parsing.METADATA_FUNCTION_PREFIX + "get_secret":     profile.Profile[functionPathPrefix+"get_secret.js"],
+	parsing.MetadataFunctionPrefix + "concat":         profile.Profile[functionPathPrefix+"get_secret.js"],
+	parsing.MetadataFunctionPrefix + "get_attribute":  profile.Profile[functionPathPrefix+"get_attribute.js"],
+	parsing.MetadataFunctionPrefix + "get_capability": profile.Profile[functionPathPrefix+"get_capability.js"],
+	parsing.MetadataFunctionPrefix + "get_input":      profile.Profile[functionPathPrefix+"get_input.js"],
+	parsing.MetadataFunctionPrefix + "get_property":   profile.Profile[functionPathPrefix+"get_property.js"],
+	parsing.MetadataFunctionPrefix + "get_secret":     profile.Profile[functionPathPrefix+"get_secret.js"],
 }
 
 func ParseFunctionCall(context *parsing.Context) bool {
@@ -37,7 +37,7 @@ func ParseFunctionCall(context *parsing.Context) bool {
 	}
 
 	for key, data := range map_ {
-		scriptletName := parsing.METADATA_FUNCTION_PREFIX + yamlkeys.KeyString(key)
+		scriptletName := parsing.MetadataFunctionPrefix + yamlkeys.KeyString(key)
 		_, ok := context.ScriptletNamespace.Lookup(scriptletName)
 		if !ok {
 			// Not a function call, despite having the right data structure

@@ -126,7 +126,7 @@ func newImportNameTransformer(prefix *string, appendShortCutnames bool) parsing.
 		var names []string
 
 		if metadata, ok := parsing.GetMetadata(entityPtr); ok {
-			if normative, ok := metadata[parsing.METADATA_NORMATIVE]; ok {
+			if normative, ok := metadata[parsing.MetadataNormative]; ok {
 				if normative == "true" {
 					// Reserved "tosca." names also get shorthand and prefixed names
 					names = getNormativeNames(entityPtr, names, name, "tosca", appendShortCutnames)
@@ -168,7 +168,7 @@ func getNormativeNames(entityPtr parsing.EntityPtr, names []string, name string,
 	names = append(names, fmt.Sprintf("%s:%s", prefix, short))
 
 	// Override canonical name
-	parsing.SetMetadata(entityPtr, parsing.METADATA_CANONICAL_NAME, fmt.Sprintf("%s::%s", prefix, short))
+	parsing.SetMetadata(entityPtr, parsing.MetadataCanonicalName, fmt.Sprintf("%s::%s", prefix, short))
 
 	// Shortcut
 	if appendShortcut {

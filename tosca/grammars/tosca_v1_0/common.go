@@ -68,4 +68,6 @@ func init() {
 	Grammar.RegisterReader("timestamp", tosca_v2_0.ReadTimestamp)
 	Grammar.RegisterReader("Value", tosca_v2_0.ReadValue)
 	Grammar.RegisterReader("version", tosca_v2_0.ReadVersion)
+
+	Grammar.InvalidNamespaceCharacters = ":"
 }

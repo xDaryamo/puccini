@@ -92,6 +92,8 @@ func init() {
 
 	DefaultScriptletNamespace.RegisterScriptlets(FunctionScriptlets, nil)
 	DefaultScriptletNamespace.RegisterScriptlets(ConstraintClauseScriptlets, ConstraintClauseNativeArgumentIndexes)
+
+	Grammar.InvalidNamespaceCharacters = ":"
 }
 
 func CompareUint32(v1 uint32, v2 uint32) int {

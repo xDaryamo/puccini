@@ -138,6 +138,11 @@ func (self *Context) ReportDuplicateMapKey(key string) bool {
 // Namespaces
 //
 
+func (self *Context) ReportNameInvalid(entityPtr EntityPtr, name string) bool {
+	typeName := entityTypeName(reflect.TypeOf(entityPtr).Elem())
+	return self.Reportf(1, "invalid %s name %s", typeName, self.Problems.Stylist.Name(quote(name)))
+}
+
 func (self *Context) ReportNameAmbiguous(type_ reflect.Type, name string, entityPtrs ...EntityPtr) bool {
 	return self.Reportf(1, "ambiguous %s name %s, can be in %s", entityTypeName(type_), self.Problems.Stylist.Name(quote(name)), terminal.StylizedOptions(urlsOfEntityPtrs(entityPtrs), self.Problems.Stylist.Value))
 }

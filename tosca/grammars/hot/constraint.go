@@ -12,12 +12,12 @@ const constraintPathPrefix = "/hot/1.0/js/constraints/"
 
 // Built-in constraint functions
 var ConstraintScriptlets = map[string]string{
-	parsing.METADATA_CONSTRAINT_PREFIX + "length":            profile.Profile[constraintPathPrefix+"length.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "range":             profile.Profile[constraintPathPrefix+"range.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "modulo":            profile.Profile[constraintPathPrefix+"modulo.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "allowed_values":    profile.Profile[constraintPathPrefix+"allowed_values.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "allowed_pattern":   profile.Profile[constraintPathPrefix+"allowed_pattern.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "custom_constraint": profile.Profile[constraintPathPrefix+"custom_constraint.js"],
+	parsing.MetadataContraintPrefix + "length":            profile.Profile[constraintPathPrefix+"length.js"],
+	parsing.MetadataContraintPrefix + "range":             profile.Profile[constraintPathPrefix+"range.js"],
+	parsing.MetadataContraintPrefix + "modulo":            profile.Profile[constraintPathPrefix+"modulo.js"],
+	parsing.MetadataContraintPrefix + "allowed_values":    profile.Profile[constraintPathPrefix+"allowed_values.js"],
+	parsing.MetadataContraintPrefix + "allowed_pattern":   profile.Profile[constraintPathPrefix+"allowed_pattern.js"],
+	parsing.MetadataContraintPrefix + "custom_constraint": profile.Profile[constraintPathPrefix+"custom_constraint.js"],
 }
 
 var ConstraintNativeArgumentIndexes = map[string][]int{}
@@ -60,7 +60,7 @@ func ReadConstraint(context *parsing.Context) parsing.EntityPtr {
 				continue
 			}
 
-			scriptletName := parsing.METADATA_CONSTRAINT_PREFIX + operator
+			scriptletName := parsing.MetadataContraintPrefix + operator
 			if _, ok := context.ScriptletNamespace.Lookup(scriptletName); !ok {
 				context.Clone(operator).ReportValueMalformed("constraint", "unsupported operator")
 				return self
@@ -80,7 +80,7 @@ func ReadConstraint(context *parsing.Context) parsing.EntityPtr {
 }
 
 func (self *Constraint) NewFunctionCall(context *parsing.Context) *parsing.FunctionCall {
-	return context.NewFunctionCall(parsing.METADATA_CONSTRAINT_PREFIX+self.Operator, self.Arguments)
+	return context.NewFunctionCall(parsing.MetadataContraintPrefix+self.Operator, self.Arguments)
 }
 
 //

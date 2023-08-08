@@ -12,28 +12,28 @@ const constraintPathPrefix = "/tosca/implicit/2.0/js/constraints/"
 
 // Built-in constraint functions
 var ConstraintClauseScriptlets = map[string]string{
-	parsing.METADATA_CONSTRAINT_PREFIX + "equal":            profile.Profile[constraintPathPrefix+"equal.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "greater_than":     profile.Profile[constraintPathPrefix+"greater_than.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "greater_or_equal": profile.Profile[constraintPathPrefix+"greater_or_equal.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "less_than":        profile.Profile[constraintPathPrefix+"less_than.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "less_or_equal":    profile.Profile[constraintPathPrefix+"less_or_equal.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "in_range":         profile.Profile[constraintPathPrefix+"in_range.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "valid_values":     profile.Profile[constraintPathPrefix+"valid_values.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "length":           profile.Profile[constraintPathPrefix+"length.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "min_length":       profile.Profile[constraintPathPrefix+"min_length.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "max_length":       profile.Profile[constraintPathPrefix+"max_length.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "pattern":          profile.Profile[constraintPathPrefix+"pattern.js"],
-	parsing.METADATA_CONSTRAINT_PREFIX + "schema":           profile.Profile[constraintPathPrefix+"schema.js"], // introduced in TOSCA 1.3
+	parsing.MetadataContraintPrefix + "equal":            profile.Profile[constraintPathPrefix+"equal.js"],
+	parsing.MetadataContraintPrefix + "greater_than":     profile.Profile[constraintPathPrefix+"greater_than.js"],
+	parsing.MetadataContraintPrefix + "greater_or_equal": profile.Profile[constraintPathPrefix+"greater_or_equal.js"],
+	parsing.MetadataContraintPrefix + "less_than":        profile.Profile[constraintPathPrefix+"less_than.js"],
+	parsing.MetadataContraintPrefix + "less_or_equal":    profile.Profile[constraintPathPrefix+"less_or_equal.js"],
+	parsing.MetadataContraintPrefix + "in_range":         profile.Profile[constraintPathPrefix+"in_range.js"],
+	parsing.MetadataContraintPrefix + "valid_values":     profile.Profile[constraintPathPrefix+"valid_values.js"],
+	parsing.MetadataContraintPrefix + "length":           profile.Profile[constraintPathPrefix+"length.js"],
+	parsing.MetadataContraintPrefix + "min_length":       profile.Profile[constraintPathPrefix+"min_length.js"],
+	parsing.MetadataContraintPrefix + "max_length":       profile.Profile[constraintPathPrefix+"max_length.js"],
+	parsing.MetadataContraintPrefix + "pattern":          profile.Profile[constraintPathPrefix+"pattern.js"],
+	parsing.MetadataContraintPrefix + "schema":           profile.Profile[constraintPathPrefix+"schema.js"], // introduced in TOSCA 1.3
 }
 
 var ConstraintClauseNativeArgumentIndexes = map[string][]int{
-	parsing.METADATA_CONSTRAINT_PREFIX + "equal":            {0},
-	parsing.METADATA_CONSTRAINT_PREFIX + "greater_than":     {0},
-	parsing.METADATA_CONSTRAINT_PREFIX + "greater_or_equal": {0},
-	parsing.METADATA_CONSTRAINT_PREFIX + "less_than":        {0},
-	parsing.METADATA_CONSTRAINT_PREFIX + "less_or_equal":    {0},
-	parsing.METADATA_CONSTRAINT_PREFIX + "in_range":         {0, 1},
-	parsing.METADATA_CONSTRAINT_PREFIX + "valid_values":     {-1}, // -1 means all
+	parsing.MetadataContraintPrefix + "equal":            {0},
+	parsing.MetadataContraintPrefix + "greater_than":     {0},
+	parsing.MetadataContraintPrefix + "greater_or_equal": {0},
+	parsing.MetadataContraintPrefix + "less_than":        {0},
+	parsing.MetadataContraintPrefix + "less_or_equal":    {0},
+	parsing.MetadataContraintPrefix + "in_range":         {0, 1},
+	parsing.MetadataContraintPrefix + "valid_values":     {-1}, // -1 means all
 }
 
 //
@@ -74,7 +74,7 @@ func ReadConstraintClause(context *parsing.Context) parsing.EntityPtr {
 		for key, value := range map_ {
 			operator := yamlkeys.KeyString(key)
 
-			scriptletName := parsing.METADATA_CONSTRAINT_PREFIX + operator
+			scriptletName := parsing.MetadataContraintPrefix + operator
 			scriptlet, ok := context.ScriptletNamespace.Lookup(scriptletName)
 			if !ok {
 				context.Clone(operator).ReportValueMalformed("constraint clause", "unsupported operator")
@@ -106,7 +106,7 @@ func (self *ConstraintClause) ToFunctionCall(context *parsing.Context, strict bo
 		if rangeType, ok := self.Context.Namespace.Lookup("range"); ok {
 			if isRangeInRange = self.Context.Hierarchy.IsCompatible(rangeType, self.DataType); isRangeInRange {
 				range_ := ReadRange(context.Clone(self.Arguments)).(*Range)
-				return context.NewFunctionCall(parsing.METADATA_CONSTRAINT_PREFIX+self.Operator, []any{
+				return context.NewFunctionCall(parsing.MetadataContraintPrefix+self.Operator, []any{
 					ReadValue(context.ListChild(0, range_.Lower)).(*Value),
 					ReadValue(context.ListChild(1, range_.Upper)).(*Value),
 				})
@@ -131,7 +131,7 @@ func (self *ConstraintClause) ToFunctionCall(context *parsing.Context, strict bo
 		arguments[index] = argument
 	}
 
-	return context.NewFunctionCall(parsing.METADATA_CONSTRAINT_PREFIX+self.Operator, arguments)
+	return context.NewFunctionCall(parsing.MetadataContraintPrefix+self.Operator, arguments)
 }
 
 func (self *ConstraintClause) IsNativeArgument(index int) bool {

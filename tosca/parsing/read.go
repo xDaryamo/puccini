@@ -139,11 +139,11 @@ func (self *Context) appendUnique(field reflect.Value, item any) reflect.Value {
 type ReadMode int
 
 const (
-	ReadFieldModeDefault             = ReadMode(0)
-	ReadFieldModeList                = ReadMode(1)
-	ReadFieldModeSequencedList       = ReadMode(2)
-	ReadFieldModeUniqueSequencedList = ReadMode(3)
-	ReadFieldModeItem                = ReadMode(4)
+	ReadFieldModeDefault             ReadMode = 0
+	ReadFieldModeList                ReadMode = 1
+	ReadFieldModeSequencedList       ReadMode = 2
+	ReadFieldModeUniqueSequencedList ReadMode = 3
+	ReadFieldModeItem                ReadMode = 4
 )
 
 type ReadField struct {
