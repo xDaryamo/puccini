@@ -4,13 +4,13 @@ import (
 	"github.com/tliron/puccini/tosca/parsing"
 )
 
-func (self *ServiceContext) Render() parsing.EntityPtrs {
-	self.Context.lock.Lock()
-	defer self.Context.lock.Unlock()
+func (self *Context) Render() parsing.EntityPtrs {
+	self.Parser.lock.Lock()
+	defer self.Parser.lock.Unlock()
 
 	var entityPtrs parsing.EntityPtrs
 
-	self.Context.renderWork.TraverseEntities(self.Root.EntityPtr, func(entityPtr parsing.EntityPtr) bool {
+	self.Parser.renderWork.TraverseEntities(self.Root.EntityPtr, func(entityPtr parsing.EntityPtr) bool {
 		if parsing.Render(entityPtr) {
 			entityPtrs = append(entityPtrs, entityPtr)
 		}

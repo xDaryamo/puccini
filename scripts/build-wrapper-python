@@ -23,7 +23,7 @@ mkdir --parents "$DIST"
 cd "$DIST"
 
 rsync --recursive "$ROOT/wrappers/python"/* .
-rsync --recursive "$ROOT/go.mod" "$ROOT/tosca" "$ROOT/clout" "$ROOT/library" puccini/go-source/
+rsync --recursive "$ROOT/go.mod" "$ROOT/tosca" "$ROOT/normal" "$ROOT/clout" "$ROOT/library" "$ROOT/assets" --exclude=media puccini/go-source/
 
 echo "go 1.21
 use ." > puccini/go-source/go.work

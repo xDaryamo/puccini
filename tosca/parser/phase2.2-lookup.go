@@ -9,16 +9,16 @@ import (
 	"github.com/tliron/puccini/tosca/parsing"
 )
 
-func (self *ServiceContext) LookupNames() {
-	self.Context.lock.Lock()
-	defer self.Context.lock.Unlock()
+func (self *Context) LookupNames() {
+	self.Parser.lock.Lock()
+	defer self.Parser.lock.Unlock()
 
-	self.TraverseEntities(logLookup, self.Context.lookupFieldsWork, self.lookupFields)
+	self.TraverseEntities(logLookup, self.Parser.lookupFieldsWork, self.lookupFields)
 }
 
 // From "lookup" tags
 // reflection.EntityTraverser signature
-func (self *ServiceContext) lookupFields(entityPtr parsing.EntityPtr) bool {
+func (self *Context) lookupFields(entityPtr parsing.EntityPtr) bool {
 	lookupProblems := make(LookupProblems)
 
 	context := parsing.GetContext(entityPtr)
@@ -184,14 +184,14 @@ func (self LookupProblems) SetFound(key string, index int, name string, found bo
 	self.Field(key).setFound(index, name, found)
 }
 
-func (self LookupProblems) Report(context *parsing.Context) {
+func (self LookupProblems) Report(parsingContext *parsing.Context) {
 	for key, field := range self {
 		for _, name := range field.Names {
 			if !name.Found {
 				if name.Index == -1 {
-					context.FieldChild(key, name.Name).ReportFieldReferenceNotFound(field.Types...)
+					parsingContext.FieldChild(key, name.Name).ReportFieldReferenceNotFound(field.Types...)
 				} else {
-					context.FieldChild(key, nil).ListChild(name.Index, name.Name).ReportFieldReferenceNotFound(field.Types...)
+					parsingContext.FieldChild(key, nil).ListChild(name.Index, name.Name).ReportFieldReferenceNotFound(field.Types...)
 				}
 			}
 		}

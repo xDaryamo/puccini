@@ -15,16 +15,16 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-func (self *ServiceContext) ReadRoot(context contextpkg.Context, url exturl.URL, origins []exturl.URL, template string) bool {
-	toscaContext := parsing.NewContext(self.Stylist, self.Quirks)
-	toscaContext.Origins = origins
+func (self *Context) ReadRoot(context contextpkg.Context, url exturl.URL, origins []exturl.URL, template string) bool {
+	parsingContext := parsing.NewContext(self.Stylist, self.Quirks)
+	parsingContext.Origins = origins
 
-	toscaContext.URL = url
+	parsingContext.URL = url
 
 	var ok bool
 
 	self.readWork.Add(1)
-	self.Root, ok = self.read(context, nil, toscaContext, nil, nil, "$Root", template)
+	self.Root, ok = self.read(context, nil, parsingContext, nil, nil, "$Root", template)
 	self.readWork.Wait()
 
 	self.filesLock.Lock()
@@ -34,21 +34,21 @@ func (self *ServiceContext) ReadRoot(context contextpkg.Context, url exturl.URL,
 	return ok
 }
 
-func (self *ServiceContext) read(context contextpkg.Context, promise util.Promise, toscaContext *parsing.Context, container *File, nameTransformer parsing.NameTransformer, readerName string, serviceTemplateName string) (*File, bool) {
+func (self *Context) read(context contextpkg.Context, promise util.Promise, parsingContext *parsing.Context, container *File, nameTransformer parsing.NameTransformer, readerName string, serviceTemplateName string) (*File, bool) {
 	defer self.readWork.Done()
 	if promise != nil {
 		// For the goroutines waiting for our cached entityPtr
 		defer promise.Release()
 	}
 
-	logRead.Infof("%s: %s", readerName, toscaContext.URL.Key())
+	logRead.Infof("%s: %s", readerName, parsingContext.URL.Key())
 
 	// TODO: allow override of CSAR format
-	if format := toscaContext.URL.Format(); csar.IsValidFormat(format) {
+	if format := parsingContext.URL.Format(); csar.IsValidFormat(format) {
 		var err error
-		if toscaContext.URL, err = csar.GetServiceTemplateURL(context, toscaContext.URL, format, serviceTemplateName); err != nil {
-			toscaContext.ReportError(err)
-			file := NewFileNoEntity(toscaContext, container, nameTransformer)
+		if parsingContext.URL, err = csar.GetServiceTemplateURL(context, parsingContext.URL, format, serviceTemplateName); err != nil {
+			parsingContext.ReportError(err)
+			file := NewEmptyFile(parsingContext, container, nameTransformer)
 			self.AddFile(file)
 			return file, false
 		}
@@ -56,29 +56,29 @@ func (self *ServiceContext) read(context contextpkg.Context, promise util.Promis
 
 	// Read ARD
 	var err error
-	if toscaContext.Data, toscaContext.Locator, err = ard.ReadURL(context, toscaContext.URL, true); err != nil {
+	if parsingContext.Data, parsingContext.Locator, err = ard.ReadURL(context, parsingContext.URL, true); err != nil {
 		if decodeError, ok := err.(*yamlkeys.DecodeError); ok {
 			err = NewYAMLDecodeError(decodeError)
 		}
-		toscaContext.ReportError(err)
-		file := NewFileNoEntity(toscaContext, container, nameTransformer)
+		parsingContext.ReportError(err)
+		file := NewEmptyFile(parsingContext, container, nameTransformer)
 		self.AddFile(file)
 		return file, false
 	}
 
 	// Detect grammar
-	if !grammars.Detect(toscaContext) {
-		file := NewFileNoEntity(toscaContext, container, nameTransformer)
+	if !grammars.Detect(parsingContext) {
+		file := NewEmptyFile(parsingContext, container, nameTransformer)
 		self.AddFile(file)
 		return file, false
 	}
 
 	// Read entityPtr
-	read, ok := toscaContext.Grammar.Readers[readerName]
+	read, ok := parsingContext.Grammar.Readers[readerName]
 	if !ok {
 		panic(fmt.Sprintf("grammar does not support reader %q", readerName))
 	}
-	entityPtr := read(toscaContext)
+	entityPtr := read(parsingContext)
 	if entityPtr == nil {
 		// Even if there are problems, the reader should return an entityPtr
 		panic(fmt.Sprintf("reader %q returned a non-entity: %T", reflection.GetFunctionName(read), entityPtr))
@@ -87,13 +87,13 @@ func (self *ServiceContext) read(context contextpkg.Context, promise util.Promis
 	// Validate required fields
 	reflection.TraverseEntities(entityPtr, false, parsing.ValidateRequiredFields)
 
-	self.Context.readCache.Store(toscaContext.URL.Key(), entityPtr)
+	self.Parser.readCache.Store(parsingContext.URL.Key(), entityPtr)
 
 	return self.AddImportFile(context, entityPtr, container, nameTransformer), true
 }
 
 // From tosca.Importer interface
-func (self *ServiceContext) goReadImports(context contextpkg.Context, container *File) {
+func (self *Context) goReadImports(context contextpkg.Context, container *File) {
 	importSpecs := parsing.GetImportSpecs(container.EntityPtr)
 
 	// Implicit import
@@ -124,7 +124,7 @@ func (self *ServiceContext) goReadImports(context contextpkg.Context, container 
 		}
 
 		promise := util.NewPromise()
-		if cached, inCache := self.Context.readCache.LoadOrStore(key, promise); inCache {
+		if cached, inCache := self.Parser.readCache.LoadOrStore(key, promise); inCache {
 			switch cached_ := cached.(type) {
 			case util.Promise:
 				// Wait for promise
@@ -147,13 +147,13 @@ func (self *ServiceContext) goReadImports(context contextpkg.Context, container 
 	}
 }
 
-func (self *ServiceContext) waitForPromise(context contextpkg.Context, promise util.Promise, key string, container *File, nameTransformer parsing.NameTransformer) {
+func (self *Context) waitForPromise(context contextpkg.Context, promise util.Promise, key string, container *File, nameTransformer parsing.NameTransformer) {
 	defer self.readWork.Done()
 	if err := promise.Wait(context); err != nil {
 		logRead.Debugf("promise interrupted: %s, %s", key, err.Error())
 	}
 
-	if cached, inCache := self.Context.readCache.Load(key); inCache {
+	if cached, inCache := self.Parser.readCache.Load(key); inCache {
 		switch cached.(type) {
 		case util.Promise:
 			logRead.Debugf("promise broken: %s", key)

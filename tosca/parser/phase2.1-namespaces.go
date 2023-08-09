@@ -5,9 +5,9 @@ import (
 	"github.com/tliron/puccini/tosca/parsing"
 )
 
-func (self *ServiceContext) AddNamespaces() {
-	self.Context.lock.Lock()
-	defer self.Context.lock.Unlock()
+func (self *Context) AddNamespaces() {
+	self.Parser.lock.Lock()
+	defer self.Parser.lock.Unlock()
 
 	self.Root.mergeNamespaces()
 }
@@ -31,7 +31,7 @@ func (self *File) mergeNamespaces() {
 
 // Print
 
-func (self *ServiceContext) PrintNamespaces(indent int) {
+func (self *Context) PrintNamespaces(indent int) {
 	self.filesLock.RLock()
 	defer self.filesLock.RUnlock()
 

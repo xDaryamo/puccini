@@ -53,10 +53,9 @@ If you need more diagnostics for TOSCA parsing use the `parse` command. It works
 `compile` but does not emit Clout. Instead, it provides you various flages for examining the
 internal workings of Puccini's TOSCA parser.
 
-By default Puccini will attempt all [5 parser phases](../tosca/parser/). This is in order to give
+By default Puccini will attempt all [6 parser phases](../tosca/parser/). This is in order to give
 users as complete a problem report as possible. However, if you're getting too many problems it
-may be useful to specify `--stop/-s` with a phase number (1-5) at which you wish the to stop. Note
-that `-s 0` will skip the TOSCA parser entirely and just check that the YAML input is readable.
+may be useful to specify `--stop/-s` with a phase number (1-6) at which you wish the to stop.
 
 `--dump/-d` is used to dump the internal data of phases. You may specify multiple phases to dump
 using ",", e.g. `-d 2,3,4`. Per phase you will see:
@@ -68,6 +67,7 @@ using ",", e.g. `-d 2,3,4`. Per phase you will see:
 * Phase 4: Inheritance. A tree of all inheritance tasks and their dependencies by path.  
 * Phase 5: Rendering. Dumps the rendered entities.
   More useful, perhaps, would be the `--filter/-r` flag (see below).
+* Phase 6: Normalization. Dumps the normalized structures.
 
 The `--filter/-r` flag can be used to filter for specific parsed entities. Each entity is given a
 path that more-or-less follows JSON. For example, a path can be:

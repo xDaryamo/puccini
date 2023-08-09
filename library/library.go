@@ -17,11 +17,14 @@ import (
 	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
+import "github.com/tliron/puccini/normal"
 
-var parserContext = parser.NewContext()
+var parser_ = parser.NewParser()
 
 //export Compile
 func Compile(url *C.char, inputs *C.char, quirks *C.char, resolve C.char, coerce C.char) *C.char {
+	context := contextpkg.TODO()
+
 	inputs_ := make(map[string]ard.Value)
 
 	if data, err := yamlkeys.DecodeAll(strings.NewReader(C.GoString(inputs))); err == nil {
@@ -58,30 +61,34 @@ func Compile(url *C.char, inputs *C.char, quirks *C.char, resolve C.char, coerce
 		return result(nil, nil, err)
 	}
 
-	var url_ exturl.URL
-	var result_ parser.Result
-	var clout *cloutpkg.Clout
-	var err error
-
 	urlContext := exturl.NewContext()
 	defer urlContext.Release()
-	context := contextpkg.TODO()
 
+	var url_ exturl.URL
+	var err error
 	if url_, err = urlContext.NewValidURL(context, C.GoString(url), nil); err != nil {
 		return result(nil, nil, err)
 	}
 
-	if result_, err = parserContext.Parse(context, parser.ParseContext{URL: url_, Quirks: quirks_, Inputs: inputs_}); err != nil {
-		return result(nil, result_.Problems, err)
+	parserContext := parser_.NewContext()
+	parserContext.URL = url_
+	parserContext.Quirks = quirks_
+	parserContext.Inputs = inputs_
+	var normalServiceTemplate *normal.ServiceTemplate
+	if normalServiceTemplate, err = parserContext.Parse(context); err != nil {
+		return result(nil, parserContext.GetProblems(), err)
 	}
 
-	if clout, err = result_.NormalServiceTemplate.Compile(); err != nil {
-		return result(clout, result_.Problems, err)
+	problems := parserContext.GetProblems()
+
+	var clout *cloutpkg.Clout
+	if clout, err = normalServiceTemplate.Compile(); err != nil {
+		return result(clout, problems, err)
 	}
 
 	execContext := js.ExecContext{
 		Clout:      clout,
-		Problems:   result_.Problems,
+		Problems:   problems,
 		URLContext: urlContext,
 		History:    true,
 		Format:     "yaml",
@@ -91,19 +98,19 @@ func Compile(url *C.char, inputs *C.char, quirks *C.char, resolve C.char, coerce
 
 	if resolve != 0 {
 		execContext.Resolve()
-		if !result_.Problems.Empty() {
-			return result(clout, result_.Problems, nil)
+		if !problems.Empty() {
+			return result(clout, problems, nil)
 		}
 	}
 
 	if coerce != 0 {
 		execContext.Coerce()
-		if !result_.Problems.Empty() {
-			return result(clout, result_.Problems, nil)
+		if !problems.Empty() {
+			return result(clout, problems, nil)
 		}
 	}
 
-	return result(clout, result_.Problems, nil)
+	return result(clout, problems, nil)
 }
 
 func result(clout *cloutpkg.Clout, problems *problems.Problems, err error) *C.char {

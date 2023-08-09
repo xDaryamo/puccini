@@ -4,7 +4,7 @@ import (
 	contextpkg "context"
 	"path/filepath"
 
-	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/normal"
 	"github.com/tliron/puccini/tosca/parsing"
 )
 

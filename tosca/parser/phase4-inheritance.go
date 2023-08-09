@@ -9,9 +9,9 @@ import (
 	"github.com/tliron/puccini/tosca/parsing"
 )
 
-func (self *ServiceContext) Inherit(debug func(Tasks)) {
-	self.Context.lock.Lock()
-	defer self.Context.lock.Unlock()
+func (self *Context) Inherit(debug func(Tasks)) {
+	self.Parser.lock.Lock()
+	defer self.Parser.lock.Unlock()
 
 	tasks := self.getInheritTasks()
 	if debug != nil {
@@ -20,9 +20,9 @@ func (self *ServiceContext) Inherit(debug func(Tasks)) {
 	tasks.Drain()
 }
 
-func (self *ServiceContext) getInheritTasks() Tasks {
+func (self *Context) getInheritTasks() Tasks {
 	inheritContext := NewInheritContext()
-	self.TraverseEntities(logInheritance, self.Context.getInheritTaskWork, func(entityPtr parsing.EntityPtr) bool {
+	self.TraverseEntities(logInheritance, self.Parser.getInheritTaskWork, func(entityPtr parsing.EntityPtr) bool {
 		inheritContext.GetInheritTask(entityPtr)
 		return true
 	})

@@ -6,11 +6,11 @@ import (
 	"github.com/tliron/puccini/tosca/parsing"
 )
 
-func (self *ServiceContext) AddHierarchies() {
-	self.Context.lock.Lock()
-	defer self.Context.lock.Unlock()
+func (self *Context) AddHierarchies() {
+	self.Parser.lock.Lock()
+	defer self.Parser.lock.Unlock()
 
-	self.Root.mergeHierarchies(make(parsing.HierarchyContext), self.Context.addHierarchyWork)
+	self.Root.mergeHierarchies(make(parsing.HierarchyContext), self.Parser.addHierarchyWork)
 }
 
 func (self *File) mergeHierarchies(hierarchyContext parsing.HierarchyContext, work reflection.EntityWork) {
@@ -33,7 +33,7 @@ func (self *File) mergeHierarchies(hierarchyContext parsing.HierarchyContext, wo
 
 // Print
 
-func (self *ServiceContext) PrintHierarchies(indent int) {
+func (self *Context) PrintHierarchies(indent int) {
 	self.filesLock.RLock()
 	defer self.filesLock.RUnlock()
 

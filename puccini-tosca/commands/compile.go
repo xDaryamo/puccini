@@ -47,6 +47,7 @@ var compileCommand = &cobra.Command{
 			url = args[0]
 		}
 
+		dumpPhases = nil
 		Compile(contextpkg.TODO(), url)
 	},
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/normal"
 	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )

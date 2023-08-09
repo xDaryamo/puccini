@@ -3,8 +3,8 @@ module github.com/tliron/puccini
 go 1.21
 
 require (
-	github.com/dop251/goja v0.0.0-20230806174421-c933cf95e127
-	github.com/fxamacker/cbor/v2 v2.4.0
+	github.com/dop251/goja v0.0.0-20230812105242-81d76064690d
+	github.com/fxamacker/cbor/v2 v2.5.0
 	github.com/klauspost/compress v1.16.7
 	github.com/klauspost/pgzip v1.2.6
 	github.com/segmentio/ksuid v1.0.4
@@ -13,7 +13,7 @@ require (
 	github.com/tliron/commonlog v0.1.1
 	github.com/tliron/exturl v0.2.4
 	github.com/tliron/go-ard v0.1.1
-	github.com/tliron/kutil v0.2.8
+	github.com/tliron/kutil v0.2.9
 	github.com/tliron/yamlkeys v1.3.6
 	github.com/vmihailenco/msgpack/v5 v5.3.5
 )
@@ -71,13 +71,13 @@ require (
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
-	golang.org/x/crypto v0.11.0 // indirect
+	golang.org/x/crypto v0.12.0 // indirect
 	golang.org/x/mod v0.10.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
-	golang.org/x/term v0.10.0 // indirect
-	golang.org/x/text v0.11.0 // indirect
+	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/term v0.11.0 // indirect
+	golang.org/x/text v0.12.0 // indirect
 	golang.org/x/tools v0.8.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect

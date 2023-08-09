@@ -10,6 +10,7 @@ import (
 	"github.com/tliron/exturl"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
+	"github.com/tliron/puccini/normal"
 	"github.com/tliron/puccini/tosca/parser"
 
 	_ "github.com/tliron/commonlog/simple"
@@ -66,10 +67,10 @@ func TestParse(t *testing.T) {
 //
 
 type Context struct {
-	t             *testing.T
-	root          string
-	urlContext    *exturl.Context
-	parserContext *parser.Context
+	t          *testing.T
+	root       string
+	urlContext *exturl.Context
+	parser     *parser.Parser
 }
 
 func NewContext(t *testing.T) *Context {
@@ -83,10 +84,10 @@ func NewContext(t *testing.T) *Context {
 	}
 
 	return &Context{
-		t:             t,
-		root:          root,
-		urlContext:    exturl.NewContext(),
-		parserContext: parser.NewContext(),
+		t:          t,
+		root:       root,
+		urlContext: exturl.NewContext(),
+		parser:     parser.NewParser(),
 	}
 }
 
@@ -96,25 +97,29 @@ func (self *Context) compile(url string, inputs map[string]any) {
 		// it actually helps us to find concurrency bugs
 		t.Parallel()
 
-		var result parser.Result
+		var normalServiceTemplate *normal.ServiceTemplate
 		var clout *cloutpkg.Clout
 		var err error
 
 		url_ := self.urlContext.NewFileURL(path.Join(filepath.ToSlash(self.root), "examples", url))
 
-		if result, err = self.parserContext.Parse(contextpkg.TODO(), parser.ParseContext{URL: url_, Inputs: inputs}); err != nil {
-			t.Errorf("%s\n%s", err.Error(), result.Problems.ToString(true))
+		parserContext := self.parser.NewContext()
+		parserContext.URL = url_
+		parserContext.Inputs = inputs
+		if normalServiceTemplate, err = parserContext.Parse(contextpkg.TODO()); err != nil {
+			t.Errorf("%s\n%s", err.Error(), parserContext.GetProblems().ToString(true))
 			return
 		}
 
-		if clout, err = result.NormalServiceTemplate.Compile(); err != nil {
-			t.Errorf("%s\n%s", err.Error(), result.Problems.ToString(true))
+		problems := parserContext.GetProblems()
+		if clout, err = normalServiceTemplate.Compile(); err != nil {
+			t.Errorf("%s\n%s", err.Error(), problems.ToString(true))
 			return
 		}
 
 		execContext := js.ExecContext{
 			Clout:      clout,
-			Problems:   result.Problems,
+			Problems:   problems,
 			URLContext: self.urlContext,
 			History:    true,
 			Format:     "yaml",
@@ -123,14 +128,14 @@ func (self *Context) compile(url string, inputs map[string]any) {
 		}
 
 		execContext.Resolve()
-		if !result.Problems.Empty() {
-			t.Errorf("%s", result.Problems.ToString(true))
+		if !problems.Empty() {
+			t.Errorf("%s", problems.ToString(true))
 			return
 		}
 
 		execContext.Coerce()
-		if !result.Problems.Empty() {
-			t.Errorf("%s", result.Problems.ToString(true))
+		if !problems.Empty() {
+			t.Errorf("%s", problems.ToString(true))
 			return
 		}
 	})

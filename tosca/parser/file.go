@@ -10,23 +10,6 @@ import (
 )
 
 //
-// NoEntity
-//
-
-type NoEntity struct {
-	Context *parsing.Context
-}
-
-func NewNoEntity(toscaContext *parsing.Context) *NoEntity {
-	return &NoEntity{toscaContext}
-}
-
-// parsing.Contextual interface
-func (self *NoEntity) GetContext() *parsing.Context {
-	return self.Context
-}
-
-//
 // File
 //
 
@@ -39,8 +22,8 @@ type File struct {
 	importsLock util.RWLocker
 }
 
-func NewFileNoEntity(toscaContext *parsing.Context, container *File, nameTransformer parsing.NameTransformer) *File {
-	return NewFile(NewNoEntity(toscaContext), container, nameTransformer)
+func NewEmptyFile(parsingContext *parsing.Context, container *File, nameTransformer parsing.NameTransformer) *File {
+	return NewFile(parsing.NewContextContainer(parsingContext), container, nameTransformer)
 }
 
 func NewFile(entityPtr parsing.EntityPtr, container *File, nameTransformer parsing.NameTransformer) *File {
@@ -48,7 +31,7 @@ func NewFile(entityPtr parsing.EntityPtr, container *File, nameTransformer parsi
 		EntityPtr:       entityPtr,
 		Container:       container,
 		NameTransformer: nameTransformer,
-		importsLock:     util.NewDebugRWLocker(),
+		importsLock:     util.NewDefaultRWLocker(),
 	}
 
 	if container != nil {

@@ -4,8 +4,9 @@ import (
 	contextpkg "context"
 	"sync"
 
+	"github.com/tliron/exturl"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/problems"
-	"github.com/tliron/kutil/reflection"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca/grammars"
@@ -17,53 +18,33 @@ import (
 //
 
 type Context struct {
-	readCache          sync.Map // entityPtr or Promise
-	lookupFieldsWork   reflection.EntityWork
-	addHierarchyWork   reflection.EntityWork
-	getInheritTaskWork reflection.EntityWork
-	renderWork         reflection.EntityWork
-	lock               util.RWLocker
-}
+	Parser *Parser
 
-func NewContext() *Context {
-	return &Context{
-		lookupFieldsWork:   make(reflection.EntityWork),
-		addHierarchyWork:   make(reflection.EntityWork),
-		getInheritTaskWork: make(reflection.EntityWork),
-		renderWork:         make(reflection.EntityWork),
-		lock:               util.NewDefaultRWLocker(),
-	}
-}
-
-//
-// ServiceContext
-//
-
-type ServiceContext struct {
-	Context *Context
-	Root    *File
-	Stylist *terminal.Stylist
+	URL     exturl.URL
+	Origins []exturl.URL
 	Quirks  parsing.Quirks
-	Files   Files
+	Inputs  map[string]ard.Value
+	Stylist *terminal.Stylist
+
+	Root  *File
+	Files Files
 
 	readWork  sync.WaitGroup
 	filesLock util.RWLocker
 }
 
-func (self *Context) NewServiceContext(stylist *terminal.Stylist, quirks parsing.Quirks) *ServiceContext {
-	return &ServiceContext{
-		Context:   self,
-		Stylist:   stylist,
-		Quirks:    quirks,
-		filesLock: util.NewDebugRWLocker(),
+func (self *Parser) NewContext() *Context {
+	return &Context{
+		Parser:    self,
+		filesLock: util.NewDefaultRWLocker(),
 	}
 }
 
-func (self *ServiceContext) GetProblems() *problems.Problems {
+func (self *Context) GetProblems() *problems.Problems {
 	return self.Root.GetContext().Problems
 }
 
-func (self *ServiceContext) MergeProblems() {
+func (self *Context) MergeProblems() {
 	self.filesLock.RLock()
 	defer self.filesLock.RUnlock()
 
@@ -73,14 +54,14 @@ func (self *ServiceContext) MergeProblems() {
 	}
 }
 
-func (self *ServiceContext) AddFile(file *File) {
+func (self *Context) AddFile(file *File) {
 	self.filesLock.Lock()
 	defer self.filesLock.Unlock()
 
 	self.Files = append(self.Files, file)
 }
 
-func (self *ServiceContext) AddImportFile(context contextpkg.Context, entityPtr parsing.EntityPtr, container *File, nameTransformer parsing.NameTransformer) *File {
+func (self *Context) AddImportFile(context contextpkg.Context, entityPtr parsing.EntityPtr, container *File, nameTransformer parsing.NameTransformer) *File {
 	file := NewFile(entityPtr, container, nameTransformer)
 
 	if container != nil {
@@ -103,7 +84,7 @@ func (self *ServiceContext) AddImportFile(context contextpkg.Context, entityPtr 
 
 // Print
 
-func (self *ServiceContext) PrintImports(indent int) {
+func (self *Context) PrintImports(indent int) {
 	terminal.PrintIndent(indent)
 	terminal.Printf("%s\n", terminal.DefaultStylist.Value(self.Root.GetContext().URL.String()))
 	self.Root.PrintImports(indent, terminal.TreePrefix{})

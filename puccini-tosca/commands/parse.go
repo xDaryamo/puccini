@@ -8,11 +8,10 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tliron/exturl"
 	"github.com/tliron/go-ard"
-	problemspkg "github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
-	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/normal"
 	"github.com/tliron/puccini/tosca/parser"
 	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
@@ -32,8 +31,8 @@ func init() {
 	parseCommand.Flags().StringSliceVarP(&quirks, "quirk", "x", nil, "parser quirk")
 	parseCommand.Flags().StringToStringVarP(&urlMappings, "map-url", "u", nil, "map a URL (format is from=to)")
 
-	parseCommand.Flags().Uint32VarP(&stopAtPhase, "stop", "s", 5, "parser phase at which to end")
-	parseCommand.Flags().UintSliceVarP(&dumpPhases, "dump", "d", nil, "dump phase internals")
+	parseCommand.Flags().Uint32VarP(&stopAtPhase, "stop", "s", 6, "parser phase at which to end")
+	parseCommand.Flags().UintSliceVarP(&dumpPhases, "dump", "d", []uint{6}, "dump phase internals")
 	parseCommand.Flags().StringVarP(&filter, "filter", "r", "", "filter output by entity path; use '*' for wildcard matching (disables --stop and --dump)")
 }
 
@@ -48,22 +47,28 @@ var parseCommand = &cobra.Command{
 			url = args[0]
 		}
 
+		if stopAtPhase > 6 {
+			util.Failf("--stop cannot be > 6: %d", stopAtPhase)
+		}
+
+		for _, dumpPhase := range dumpPhases {
+			if dumpPhase > 6 {
+				util.Failf("--dump entry cannot be > 6: %d", dumpPhase)
+			}
+		}
+
 		if filter != "" {
-			stopAtPhase = 5
+			stopAtPhase = 6
 			dumpPhases = nil
 		}
 
-		_, serviceTemplate := Parse(contextpkg.TODO(), url)
-
-		if (filter == "") && (len(dumpPhases) == 0) {
-			transcribe.Print(serviceTemplate, format, os.Stdout, strict, pretty)
-		}
+		Parse(contextpkg.TODO(), url)
 	},
 }
 
-var parserContext = parser.NewContext()
+var parser_ = parser.NewParser()
 
-func Parse(context contextpkg.Context, url string) (*parser.ServiceContext, *normal.ServiceTemplate) {
+func Parse(context contextpkg.Context, url string) (*parser.Context, *normal.ServiceTemplate) {
 	ParseInputs(context)
 
 	urlContext := exturl.NewContext()
@@ -94,105 +99,117 @@ func Parse(context contextpkg.Context, url string) (*parser.ServiceContext, *nor
 	}
 	util.FailOnError(err)
 
-	stylist := terminal.DefaultStylist
+	parserContext := parser_.NewContext()
+	parserContext.Quirks = parsing.NewQuirks(quirks...)
+	parserContext.Stylist = terminal.DefaultStylist
 	if problemsFormat != "" {
-		stylist = terminal.NewStylist(false)
+		parserContext.Stylist = terminal.NewStylist(false)
 	}
 
-	serviceContext := parserContext.NewServiceContext(stylist, parsing.NewQuirks(quirks...))
-
-	var problems *problemspkg.Problems
+	if stopAtPhase == 0 {
+		return nil, nil
+	}
 
 	// Phase 1: Read
-	if stopAtPhase >= 1 {
-		ok := serviceContext.ReadRoot(context, url_, origins, template)
+	ok := parserContext.ReadRoot(context, url_, origins, template)
 
-		serviceContext.MergeProblems()
-		problems = serviceContext.GetProblems()
-		FailOnProblems(problems)
+	parserContext.MergeProblems()
+	problems := parserContext.GetProblems()
+	FailOnProblems(problems)
 
-		if !ok {
-			// Stop here if failed to read
-			util.Exit(1)
+	if !ok {
+		// Stop here if failed to read
+		util.Exit(1)
+	}
+
+	if ToPrintPhase(1) {
+		if len(dumpPhases) > 1 {
+			terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Imports"))
+			parserContext.PrintImports(1)
+		} else {
+			parserContext.PrintImports(0)
 		}
+	}
 
-		if ToPrintPhase(1) {
-			if len(dumpPhases) > 1 {
-				terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Imports"))
-				serviceContext.PrintImports(1)
-			} else {
-				serviceContext.PrintImports(0)
-			}
-		}
+	if stopAtPhase == 1 {
+		return parserContext, nil
 	}
 
 	// Phase 2: Namespaces
-	if stopAtPhase >= 2 {
-		serviceContext.AddNamespaces()
-		serviceContext.LookupNames()
-		if ToPrintPhase(2) {
-			if len(dumpPhases) > 1 {
-				terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Namespaces"))
-				serviceContext.PrintNamespaces(1)
-			} else {
-				serviceContext.PrintNamespaces(0)
-			}
+	parserContext.AddNamespaces()
+	parserContext.LookupNames()
+	if ToPrintPhase(2) {
+		if len(dumpPhases) > 1 {
+			terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Namespaces"))
+			parserContext.PrintNamespaces(1)
+		} else {
+			parserContext.PrintNamespaces(0)
 		}
+	}
+
+	if stopAtPhase == 2 {
+		return parserContext, nil
 	}
 
 	// Phase 3: Hieararchies
-	if stopAtPhase >= 3 {
-		serviceContext.AddHierarchies()
-		if ToPrintPhase(3) {
-			if len(dumpPhases) > 1 {
-				terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Hierarchies"))
-				serviceContext.PrintHierarchies(1)
-			} else {
-				serviceContext.PrintHierarchies(0)
-			}
+	parserContext.AddHierarchies()
+	if ToPrintPhase(3) {
+		if len(dumpPhases) > 1 {
+			terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Hierarchies"))
+			parserContext.PrintHierarchies(1)
+		} else {
+			parserContext.PrintHierarchies(0)
 		}
+	}
+
+	if stopAtPhase == 3 {
+		return parserContext, nil
 	}
 
 	// Phase 4: Inheritance
-	if stopAtPhase >= 4 {
-		if ToPrintPhase(4) {
-			serviceContext.Inherit(func(tasks parser.Tasks) {
-				if len(dumpPhases) > 1 {
-					terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Inheritance Tasks"))
-					tasks.Print(1)
-				} else {
-					tasks.Print(0)
-				}
-			})
-		} else {
-			serviceContext.Inherit(nil)
-		}
+	if ToPrintPhase(4) {
+		parserContext.Inherit(func(tasks parser.Tasks) {
+			if len(dumpPhases) > 1 {
+				terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Inheritance Tasks"))
+				tasks.Print(1)
+			} else {
+				tasks.Print(0)
+			}
+		})
+	} else {
+		parserContext.Inherit(nil)
 	}
 
-	if serviceContext.Root == nil {
-		return serviceContext, nil
+	if stopAtPhase == 4 {
+		return parserContext, nil
 	}
 
-	serviceContext.SetInputs(inputValues)
+	if parserContext.Root == nil {
+		return parserContext, nil
+	}
+
+	parserContext.SetInputs(inputValues)
 
 	// Phase 5: Rendering
-	if stopAtPhase >= 5 {
-		entityPtrs := serviceContext.Render()
-		if ToPrintPhase(5) {
-			sort.Sort(entityPtrs)
-			if len(dumpPhases) > 1 {
-				terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Rendering"))
-			}
-			for _, entityPtr := range entityPtrs {
-				terminal.Printf("%s:\n", terminal.DefaultStylist.Path(parsing.GetContext(entityPtr).Path.String()))
-				err = transcribe.Print(entityPtr, format, os.Stdout, strict, pretty)
-				util.FailOnError(err)
-			}
+	entityPtrs := parserContext.Render()
+	if ToPrintPhase(5) {
+		sort.Sort(entityPtrs)
+		if len(dumpPhases) > 1 {
+			terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Rendering"))
 		}
+		for _, entityPtr := range entityPtrs {
+			terminal.Printf("%s:\n", terminal.DefaultStylist.Path(parsing.GetContext(entityPtr).Path.String()))
+			err = transcribe.Print(entityPtr, format, os.Stdout, strict, pretty)
+			util.FailOnError(err)
+		}
+	}
+
+	if stopAtPhase == 5 {
+		return parserContext, nil
 	}
 
 	if filter != "" {
-		entityPtrs := serviceContext.Gather(filter)
+		entityPtrs := parserContext.Gather(filter)
 		if len(entityPtrs) == 0 {
 			util.Failf("No paths found matching filter: %q\n", filter)
 		} else if !terminal.Quiet {
@@ -202,17 +219,25 @@ func Parse(context contextpkg.Context, url string) (*parser.ServiceContext, *nor
 				util.FailOnError(err)
 			}
 		}
+		return parserContext, nil
 	}
 
-	serviceContext.MergeProblems()
+	parserContext.MergeProblems()
 	FailOnProblems(problems)
 
-	// Normalize
-	if serviceTemplate, ok := serviceContext.Normalize(); ok {
-		return serviceContext, serviceTemplate
+	// Phase 6: Normalization
+	if serviceTemplate, ok := parserContext.Normalize(); ok {
+		FailOnProblems(problems)
+		if ToPrintPhase(6) {
+			if len(dumpPhases) > 1 {
+				terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Normalization"))
+			}
+			transcribe.Print(serviceTemplate, format, os.Stdout, strict, pretty)
+		}
+		return parserContext, serviceTemplate
 	} else {
 		util.Fail("grammar does not support normalization")
-		return serviceContext, nil
+		return parserContext, nil
 	}
 }
 

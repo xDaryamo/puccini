@@ -30,6 +30,23 @@ func GetContext(entityPtr EntityPtr) *Context {
 }
 
 //
+// ContextContainer
+//
+
+type ContextContainer struct {
+	Context *Context
+}
+
+func NewContextContainer(context *Context) *ContextContainer {
+	return &ContextContainer{context}
+}
+
+// Contextual interface
+func (self *ContextContainer) GetContext() *Context {
+	return self.Context
+}
+
+//
 // Context
 //
 

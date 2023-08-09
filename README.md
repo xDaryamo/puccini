@@ -93,9 +93,9 @@ other tools, [`puccini-csar`](puccini-csar/).
 
 ### Design Principles
 
-Puccini's TOSCA parser comprises 5 multi-threaded [phases](tosca/parser/) that handle validation,
+Puccini's TOSCA parser comprises 6 multi-threaded [phases](tosca/parser/) that handle validation,
 inheritance, assignment, and normalization of TOSCA's many types and templates, resulting in a
-[flat, serializable data structure](tosca/normal/) that can be directly consumed by your program.
+[flat, serializable data structure](normal/) that can be directly consumed by your program.
 Validation error messages are precise and useful.
 
 

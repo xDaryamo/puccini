@@ -30,7 +30,6 @@ documentation: make coders aware of these systems and what they do. We will cons
 documentation to be a crucial component of the codebase.
 
 * [Field Tags](TAGS.md)
-* [Interfaces and Signatures](INTERFACES.md)
 
 
 Phase 1: Read
@@ -42,7 +41,7 @@ This first phase validates syntax. Higher level grammar is validated in subseque
     * Files/URLs not found
     * I/O errors
     * Textual decoding errors
-2. Parse YAML to [ARD](https://github.com/tliron/kutil/tree/master/ard/)
+2. Parse YAML to [ARD](https://github.com/tliron/go-ard/blob/main/ARD.md)
     * YAML parsing errors
 3. Parse ARD to TOSCA data structures, normalizing all short notations to their full form
     * Required fields not set
@@ -152,3 +151,9 @@ for you.
 
 At the end of this phase the templates are considered "complete" in that we should not have to
 access their types for any data. All fields have been rendered.
+
+
+Phase 6: Normalization
+----------------------
+
+Converts all the parser's results to Puccini's [normalized structures](../../normal/).

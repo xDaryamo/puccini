@@ -2,7 +2,7 @@ package cloudify_v1_3
 
 import (
 	"github.com/tliron/go-ard"
-	"github.com/tliron/puccini/tosca/normal"
+	"github.com/tliron/puccini/normal"
 	"github.com/tliron/puccini/tosca/parsing"
 )
 
