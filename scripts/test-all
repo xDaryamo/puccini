@@ -13,6 +13,8 @@ m 'build-csars...'
 
 export NOBUILD=true
 
+m 'test-formats...'
+"$HERE/test-formats"
 m 'test-js...'
 "$HERE/test-js"
 m 'test-https...'

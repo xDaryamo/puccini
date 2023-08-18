@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
+. "$HERE/_env"
+
+"$HERE/build"
+
+function t () {
+	m "testing format: $1..."
+	puccini-tosca compile --format="$1" "$ROOT/examples/tosca/data-types.yaml" |
+	puccini-clout --input-format="$1" --format="$1" scriptlet exec tosca.coerce > /dev/null
+}
+
+t yaml
+t json
+t cjson
+t xml
+t cbor
+t messagepack

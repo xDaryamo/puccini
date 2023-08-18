@@ -1,28 +1,19 @@
 package profiles
 
 import (
+	"context"
 	"embed"
-	"io/fs"
 
 	"github.com/tliron/exturl"
 	"github.com/tliron/kutil/util"
 )
 
-//go:embed *
+//go:embed cloudify/* common/* hot/* implicit/* simple/* simple-for-nfv/*
 var profiles embed.FS
 
 func init() {
-	if err := fs.WalkDir(profiles, ".", func(path string, dirEntry fs.DirEntry, err error) error {
-		if !dirEntry.IsDir() {
-			if content, err := profiles.ReadFile(path); err == nil {
-				if err := exturl.RegisterInternalURL("/profiles/"+path, content); err != nil {
-					return err
-				}
-			} else {
-				return err
-			}
-		}
-		return nil
+	if err := exturl.ReadToInternalURLsFromFS(context.TODO(), profiles, "", func(path string) (string, bool) {
+		return "/profiles/" + path, true
 	}); err != nil {
 		panic(err)
 	}

@@ -75,6 +75,10 @@ func CreateCSAR(csarPath string, dir string) {
 		prefix := len(dir) + 1
 		var hasMeta bool
 		err = filepath.WalkDir(dir, func(path string, dirEntry fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+
 			if !dirEntry.IsDir() {
 				internalPath := path[prefix:]
 				if internalPath == csar.TOSCA_META_PATH {
@@ -91,6 +95,7 @@ func CreateCSAR(csarPath string, dir string) {
 				defer file.Close()
 				return w(internalPath, nil, file)
 			}
+
 			return nil
 		})
 		util.FailOnError(err)

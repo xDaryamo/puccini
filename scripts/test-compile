@@ -1,9 +1,0 @@
-#!/bin/bash
-set -e
-
-HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
-. "$HERE/_env"
-
-"$HERE/build"
-
-puccini-tosca compile "$ROOT/examples/openstack/hello-world.yaml" "$@" 
