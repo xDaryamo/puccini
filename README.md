@@ -53,7 +53,7 @@ Overview
 Each tool is a self-contained executable file, allowing them to be easily distributed with and
 embedded in toolchains, orchestration, and development environments. They are coded in 100%
 [Go](https://golang.org/) and are very portable, even available for
-[WebAssembly](https://webassembly.org/) (which is how the in-browser demo linked above works).
+[WebAssembly](https://webassembly.org/), which is how the in-browser demo linked above works.
 
 You can also embed Puccini into your program as a library. Puccini is immediately usable from Go,
 but can be used in many other programming languages via self-contained shared C libraries. See
@@ -76,15 +76,16 @@ Additionally, Puccini can parse the following TOSCA-like dialects:
 * [OpenStack Heat Orchestration Template language (HOT) 2021-04-16](https://docs.openstack.org/heat/wallaby/template_guide/hot_guide.html)
 
 TOSCA is a complex object-oriented language. We put considerable effort into adhering to every
-aspect of the grammar, especially in regards to value type checking and type inheritance contracts,
+aspect of the grammar, especially in regards to data type checking and type inheritance contracts,
 which are key to delivering the object-oriented promise of extensibility while maintaining reliable
-base type compatibility. Unfortunately, the TOSCA specification can be inconsistent and imprecise.
-For this reason, Puccini also supports [quirk modes](tosca/parsing/QUIRKS.md) that enable alternative
-behaviors based on differing interpretations of the spec.
+base-type compatibility. Unfortunately, in earlier versions of TOSCA some grammatical features and
+even some syntax have been specified in ways that are open to interpretation. Puccini picks one
+interpretation by default, but also supports [quirk modes](tosca/parsing/QUIRKS.md) that enable
+alternative behaviors.
 
 ### Packaging
 
-The TOSCA source can be accessed by URL, on the local file systems or via HTTP/HTTPS, as
+The TOSCA source can be accessed by URL, either on the local file systems or via HTTP/HTTPS, as
 individual files as well as packaged in
 [CSAR files](https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html#_Toc302251718).
 

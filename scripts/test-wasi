@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
+. "$HERE/_env"
+
+GOOS=wasip1 "$HERE/build-wasm"
+
+RUNTIME=${RUNTIME:-wasmtime} # TODO: broken with wasmer
+
+if ! command -v "$RUNTIME" > /dev/null 2>&1; then
+	m "$RUNTIME must be installed" "$RED"
+	exit 1
+fi
+
+function run () {
+	local TOOL=$1
+	"$RUNTIME" run --dir=/ "$ROOT/dist/$TOOL.wasm" "${@:2}"
+}
+
+run puccini-tosca compile \
+"$ROOT/examples/tosca/data-types.yaml" "$@"
+
+run puccini-tosca compile \
+"$ROOT/dist/cloud.csar" "$@"
+
+#run puccini-tosca compile \
+#https://raw.githubusercontent.com/tliron/puccini/main/examples/tosca/data-types.yaml "$@"

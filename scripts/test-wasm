@@ -18,4 +18,8 @@ function run () {
 	env --ignore-environment "$WASM_EXEC" "$ROOT/dist/$TOOL.wasm" "${@:2}"
 }
 
-run puccini-tosca compile "$ROOT/examples/openstack/hello-world.yaml" "$@" 
+run puccini-tosca compile \
+"$ROOT/examples/tosca/data-types.yaml" "$@" 
+
+run puccini-tosca compile \
+"$ROOT/dist/cloud.csar" "$@"

@@ -11,7 +11,7 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/tliron/commonjs-goja v0.1.0
 	github.com/tliron/commonlog v0.1.1
-	github.com/tliron/exturl v0.2.7
+	github.com/tliron/exturl v0.2.9
 	github.com/tliron/go-ard v0.1.3
 	github.com/tliron/kutil v0.2.11
 	github.com/tliron/yamlkeys v1.3.6

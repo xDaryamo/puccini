@@ -7,4 +7,4 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 "$HERE/build"
 
 puccini-tosca compile \
-https://raw.githubusercontent.com/apache/incubator-ariatosca/master/examples/hello-world/hello-world.yaml "$@"
+'git:https://github.com/tliron/puccini.git#main!examples/tosca/data-types.yaml' "$@"

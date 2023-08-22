@@ -13,24 +13,30 @@ m 'build-csars...'
 
 export NOBUILD=true
 
+m 'test-parse...'
+"$HERE/test-parse"
+
 m 'test-formats...'
 "$HERE/test-formats"
-m 'test-js...'
-"$HERE/test-js"
-m 'test-https...'
-"$HERE/test-https"
+
 m 'test-csar...'
 "$HERE/test-csar"
-m 'test-csar-http...'
-"$HERE/test-csar-http"
+
+m 'test-https-url...'
+"$HERE/test-https-url"
+m 'test-git-url...'
+"$HERE/test-git-url"
+m 'test-csar-http-url...'
+"$HERE/test-csar-http-url"
 m 'test-archive-url...'
 "$HERE/test-archive-url"
 m 'test-archive-url-http...'
 "$HERE/test-archive-url-http"
-m 'test-git...'
-"$HERE/test-git"
+
 m 'test-wasm...'
 "$HERE/test-wasm"
+m 'test-wasip1...'
+"$HERE/test-wasip1"
 m 'test-java...'
 "$HERE/test-java"
 m 'test-python...'
