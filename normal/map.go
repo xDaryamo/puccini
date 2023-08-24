@@ -12,7 +12,7 @@ type Map struct {
 }
 
 func NewMap() *Map {
-	return new(Map)
+	return &Map{Entries: ValueList{}}
 }
 
 // Value interface

@@ -244,8 +244,8 @@ func (self *Value) normalize(bare bool) normal.Value {
 		// This is for complex types (the "map" type is a ValueMap, below)
 		normalMap := normal.NewMap()
 		for key, value := range data {
-			if v, ok := value.(*Value); ok {
-				normalMap.Put(key, v.normalize(false))
+			if value_, ok := value.(*Value); ok {
+				normalMap.Put(key, value_.normalize(false))
 			} else {
 				normalMap.Put(key, normal.NewPrimitive(value))
 			}

@@ -35,8 +35,8 @@ m 'test-archive-url-http...'
 
 m 'test-wasm...'
 "$HERE/test-wasm"
-m 'test-wasip1...'
-"$HERE/test-wasip1"
+m 'test-wasi...'
+"$HERE/test-wasi"
 m 'test-java...'
 "$HERE/test-java"
 m 'test-python...'
