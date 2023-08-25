@@ -10,6 +10,8 @@ import (
 	"github.com/tliron/puccini/tosca/parsing"
 )
 
+var emptyMap = make(ard.StringMap)
+
 func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 	clout := cloutpkg.NewClout()
 
@@ -45,7 +47,11 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 
 	tosca := make(ard.StringMap)
 	tosca["description"] = serviceTemplate.Description
-	tosca["metadata"] = serviceTemplate.Metadata
+	if serviceTemplate.Metadata != nil {
+		tosca["metadata"] = serviceTemplate.Metadata
+	} else {
+		tosca["metadata"] = emptyMap
+	}
 	tosca["inputs"] = serviceTemplate.Inputs
 	tosca["outputs"] = serviceTemplate.Outputs
 	clout.Properties["tosca"] = tosca
@@ -60,7 +66,11 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 
 		SetMetadata(vertex, "NodeTemplate")
 		vertex.Properties["name"] = nodeTemplate.Name
-		vertex.Properties["metadata"] = nodeTemplate.Metadata
+		if nodeTemplate.Metadata != nil {
+			vertex.Properties["metadata"] = nodeTemplate.Metadata
+		} else {
+			vertex.Properties["metadata"] = emptyMap
+		}
 		vertex.Properties["description"] = nodeTemplate.Description
 		vertex.Properties["types"] = nodeTemplate.Types
 		vertex.Properties["directives"] = nodeTemplate.Directives
@@ -82,7 +92,11 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 
 		SetMetadata(vertex, "Group")
 		vertex.Properties["name"] = group.Name
-		vertex.Properties["metadata"] = group.Metadata
+		if group.Metadata != nil {
+			vertex.Properties["metadata"] = group.Metadata
+		} else {
+			vertex.Properties["metadata"] = emptyMap
+		}
 		vertex.Properties["description"] = group.Description
 		vertex.Properties["types"] = group.Types
 		vertex.Properties["properties"] = group.Properties
@@ -193,7 +207,11 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 
 		SetMetadata(vertex, "Policy")
 		vertex.Properties["name"] = policy.Name
-		vertex.Properties["metadata"] = policy.Metadata
+		if policy.Metadata != nil {
+			vertex.Properties["metadata"] = policy.Metadata
+		} else {
+			vertex.Properties["metadata"] = emptyMap
+		}
 		vertex.Properties["description"] = policy.Description
 		vertex.Properties["types"] = policy.Types
 		vertex.Properties["properties"] = policy.Properties
@@ -241,7 +259,11 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 
 		SetMetadata(vertex, "Substitution")
 		vertex.Properties["type"] = serviceTemplate.Substitution.Type
-		vertex.Properties["typeMetadata"] = serviceTemplate.Substitution.TypeMetadata
+		if serviceTemplate.Substitution.TypeMetadata != nil {
+			vertex.Properties["typeMetadata"] = serviceTemplate.Substitution.TypeMetadata
+		} else {
+			vertex.Properties["typeMetadata"] = emptyMap
+		}
 		vertex.Properties["inputs"] = inputs
 		vertex.Properties["properties"] = properties
 
