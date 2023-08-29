@@ -49,7 +49,7 @@ func Meta(url string) {
 	context := contextpkg.TODO()
 
 	var csarUrl exturl.URL
-	csarUrl, err = urlContext.NewValidURL(context, url, nil)
+	csarUrl, err = urlContext.NewValidAnyOrFileURL(context, url, Bases(urlContext))
 	util.FailOnError(err)
 
 	var meta *csar.Meta

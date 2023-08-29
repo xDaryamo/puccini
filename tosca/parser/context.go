@@ -21,7 +21,7 @@ type Context struct {
 	Parser *Parser
 
 	URL     exturl.URL
-	Origins []exturl.URL
+	Bases   []exturl.URL
 	Quirks  parsing.Quirks
 	Inputs  map[string]ard.Value
 	Stylist *terminal.Stylist

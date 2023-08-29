@@ -9,6 +9,7 @@ import (
 	"github.com/dop251/goja"
 	"github.com/fxamacker/cbor/v2"
 	"github.com/tliron/commonjs-goja"
+	"github.com/tliron/exturl"
 	"github.com/tliron/go-ard"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/vmihailenco/msgpack/v5"
@@ -36,8 +37,14 @@ func (self *CloutAPI) Load(context contextpkg.Context, data any) (*CloutAPI, err
 	var err error
 
 	switch data_ := data.(type) {
+	case exturl.URL:
+		if clout, err = cloutpkg.Load(context, data_); err != nil {
+			return nil, err
+		}
+
 	case string:
-		if clout, err = cloutpkg.Load(context, data_, "", self.cloutContext.Context.URLContext); err != nil {
+		url := self.cloutContext.Context.URLContext.NewAnyOrFileURL(data_)
+		if clout, err = cloutpkg.Load(context, url); err != nil {
 			return nil, err
 		}
 
@@ -62,6 +69,7 @@ func (self *CloutAPI) Call(scriptletName string, functionName string, arguments 
 	return executionContext.Call(scriptletName, functionName, arguments)
 }
 
+// TODO: unused?
 func (self *CloutAPI) CallAll(function goja.FunctionCall) goja.Value {
 	if len(function.Arguments) >= 2 {
 		if scriptletBaseName, ok := function.Arguments[0].Export().(string); ok {

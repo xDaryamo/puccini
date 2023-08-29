@@ -13,13 +13,13 @@ import (
 	"github.com/tliron/kutil/transcribe"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
-	"github.com/tliron/puccini/tosca/parser"
+	"github.com/tliron/puccini/normal"
+	parserpkg "github.com/tliron/puccini/tosca/parser"
 	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
-import "github.com/tliron/puccini/normal"
 
-var parser_ = parser.NewParser()
+var parser = parserpkg.NewParser()
 
 //export Compile
 func Compile(url *C.char, inputs *C.char, quirks *C.char, resolve C.char, coerce C.char) *C.char {
@@ -66,11 +66,11 @@ func Compile(url *C.char, inputs *C.char, quirks *C.char, resolve C.char, coerce
 
 	var url_ exturl.URL
 	var err error
-	if url_, err = urlContext.NewValidURL(context, C.GoString(url), nil); err != nil {
+	if url_, err = urlContext.NewValidAnyOrFileURL(context, C.GoString(url), nil); err != nil {
 		return result(nil, nil, err)
 	}
 
-	parserContext := parser_.NewContext()
+	parserContext := parser.NewContext()
 	parserContext.URL = url_
 	parserContext.Quirks = quirks_
 	parserContext.Inputs = inputs_

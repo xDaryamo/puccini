@@ -99,7 +99,7 @@ func Exec(context contextpkg.Context, scriptletName string, arguments map[string
 
 	if err != nil {
 		// Try loading JavaScript from path or URL
-		url, err := urlContext.NewValidURL(context, scriptletName, nil)
+		url, err := urlContext.NewValidAnyOrFileURL(context, scriptletName, Bases(urlContext, false))
 		util.FailOnError(err)
 
 		scriptlet, err = exturl.ReadString(context, url)
@@ -111,5 +111,5 @@ func Exec(context contextpkg.Context, scriptletName string, arguments map[string
 
 	jsContext := js.NewContext(scriptletName, log, arguments, terminal.Quiet, format, strict, pretty, output, urlContext)
 	_, err = jsContext.Require(clout, scriptletName, nil)
-	return js.UnwrapException(err)
+	return err
 }

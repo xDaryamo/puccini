@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/tliron/commonlog"
+	"github.com/tliron/exturl"
 	problemspkg "github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/transcribe"
@@ -34,4 +35,20 @@ func FailOnProblems(problems *problemspkg.Problems) {
 		}
 		util.Exit(1)
 	}
+}
+
+func Bases(urlContext *exturl.Context, withImportPaths bool) []exturl.URL {
+	var bases []exturl.URL
+
+	if withImportPaths {
+		for _, importPath := range importPaths {
+			bases = append(bases, urlContext.NewAnyOrFileURL(importPath))
+		}
+	}
+
+	workingDir, err := urlContext.NewWorkingDirFileURL()
+	util.FailOnError(err)
+	bases = append(bases, workingDir)
+
+	return bases
 }

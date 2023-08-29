@@ -85,7 +85,7 @@ func (self *Import) NewImportSpec(unit *File) (*parsing.ImportSpec, bool) {
 		}
 	}
 
-	var origins []exturl.URL
+	var bases []exturl.URL
 	var urlContext *exturl.Context
 
 	if repository != nil {
@@ -95,17 +95,17 @@ func (self *Import) NewImportSpec(unit *File) (*parsing.ImportSpec, bool) {
 			return nil, false
 		}
 
-		origins = []exturl.URL{repositoryUrl}
+		bases = []exturl.URL{repositoryUrl}
 		urlContext = repositoryUrl.Context()
 	} else {
-		origin := self.Context.URL.Origin()
-		origins = []exturl.URL{origin}
-		urlContext = origin.Context()
+		base := self.Context.URL.Base()
+		bases = []exturl.URL{base}
+		urlContext = base.Context()
 	}
 
-	origins = append(origins, self.Context.Origins...)
+	bases = append(bases, self.Context.Bases...)
 
-	url, err := urlContext.NewValidURL(context.TODO(), *self.URL, origins)
+	url, err := urlContext.NewValidAnyOrFileURL(context.TODO(), *self.URL, bases)
 	if err != nil {
 		self.Context.ReportError(err)
 		return nil, false

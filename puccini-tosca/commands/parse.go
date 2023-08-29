@@ -12,7 +12,7 @@ import (
 	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/normal"
-	"github.com/tliron/puccini/tosca/parser"
+	parserpkg "github.com/tliron/puccini/tosca/parser"
 	"github.com/tliron/puccini/tosca/parsing"
 	"github.com/tliron/yamlkeys"
 )
@@ -66,9 +66,9 @@ var parseCommand = &cobra.Command{
 	},
 }
 
-var parser_ = parser.NewParser()
+var parser = parserpkg.NewParser()
 
-func Parse(context contextpkg.Context, url string) (*parser.Context, *normal.ServiceTemplate) {
+func Parse(context contextpkg.Context, url string) (*parserpkg.Context, *normal.ServiceTemplate) {
 	ParseInputs(context)
 
 	urlContext := exturl.NewContext()
@@ -79,15 +79,6 @@ func Parse(context contextpkg.Context, url string) (*parser.Context, *normal.Ser
 		urlContext.Map(fromUrl, toUrl)
 	}
 
-	var origins []exturl.URL
-	for _, importPath := range importPaths {
-		origin, err := urlContext.NewURL(importPath)
-		if err != nil {
-			origin = urlContext.NewFileURL(importPath)
-		}
-		origins = append(origins, origin)
-	}
-
 	var url_ exturl.URL
 	var err error
 	if url == "" {
@@ -95,11 +86,11 @@ func Parse(context contextpkg.Context, url string) (*parser.Context, *normal.Ser
 		url_, err = urlContext.ReadToInternalURLFromStdin(context, "yaml")
 	} else {
 		log.Infof("parsing %q", url)
-		url_, err = urlContext.NewValidURL(context, url, origins)
+		url_, err = urlContext.NewValidAnyOrFileURL(context, url, Bases(urlContext, false))
 	}
 	util.FailOnError(err)
 
-	parserContext := parser_.NewContext()
+	parserContext := parser.NewContext()
 	parserContext.Quirks = parsing.NewQuirks(quirks...)
 	parserContext.Stylist = terminal.DefaultStylist
 	if problemsFormat != "" {
@@ -111,7 +102,7 @@ func Parse(context contextpkg.Context, url string) (*parser.Context, *normal.Ser
 	}
 
 	// Phase 1: Read
-	ok := parserContext.ReadRoot(context, url_, origins, template)
+	ok := parserContext.ReadRoot(context, url_, Bases(urlContext, true), template)
 
 	parserContext.MergeProblems()
 	problems := parserContext.GetProblems()
@@ -168,7 +159,7 @@ func Parse(context contextpkg.Context, url string) (*parser.Context, *normal.Ser
 
 	// Phase 4: Inheritance
 	if ToPrintPhase(4) {
-		parserContext.Inherit(func(tasks parser.Tasks) {
+		parserContext.Inherit(func(tasks parserpkg.Tasks) {
 			if len(dumpPhases) > 1 {
 				terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Inheritance Tasks"))
 				tasks.Print(1)
@@ -259,7 +250,7 @@ func ParseInputs(context contextpkg.Context) {
 		urlContext := exturl.NewContext()
 		util.OnExitError(urlContext.Release)
 
-		url, err := urlContext.NewValidURL(context, inputsUrl, nil)
+		url, err := urlContext.NewValidAnyOrFileURL(context, inputsUrl, Bases(urlContext, false))
 		util.FailOnError(err)
 		reader, err := url.Open(context)
 		util.FailOnError(err)
@@ -278,11 +269,9 @@ func ParseInputs(context contextpkg.Context) {
 		}
 	}
 
-	if inputs != nil {
-		for name, input := range inputs {
-			input_, _, err := ard.DecodeYAML(input, false)
-			util.FailOnError(err)
-			inputValues[name] = input_
-		}
+	for name, input := range inputs {
+		input_, _, err := ard.DecodeYAML(input, false)
+		util.FailOnError(err)
+		inputValues[name] = input_
 	}
 }

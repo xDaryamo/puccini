@@ -8,7 +8,6 @@ import (
 	"github.com/tliron/exturl"
 	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
-	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
 )
 
@@ -35,10 +34,9 @@ var putCommand = &cobra.Command{
 		defer urlContext.Release()
 		context := contextpkg.TODO()
 
-		clout, err := cloutpkg.Load(context, url, inputFormat, urlContext)
-		util.FailOnError(err)
+		clout := LoadClout(context, url, urlContext)
 
-		scriptletUrl_, err := urlContext.NewValidURL(context, scriptletUrl, nil)
+		scriptletUrl_, err := urlContext.NewValidAnyOrFileURL(context, scriptletUrl, Bases(urlContext))
 		util.FailOnError(err)
 
 		scriptlet, err := exturl.ReadString(context, scriptletUrl_)

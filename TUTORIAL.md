@@ -262,13 +262,13 @@ The `puccini-clout scriptlet exec` command can also execute scriptlets that are 
 embedded in the Clout. Let's use a scriptlet that creates an HTML page that visualizes
 the topology:
 
-    puccini-clout scriptlet exec assets/profiles/common/1.0/js/visualize.js clout.yaml --output=tosca.html
+    puccini-clout scriptlet exec assets/tosca/profiles/common/1.0/js/visualize.js clout.yaml --output=tosca.html
     xdg-open tosca.html
 
 Note another shortcut for `puccini-tosca compile`: you can use the `--exec` flag to
 execute scriptlets right after compilation, thus skipping the Clout intermediary:
 
-    puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml --exec=assets/profiles/common/1.0/js/visualize.js
+    puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml --exec=assets/tosca/profiles/common/1.0/js/visualize.js
 
 See [here](puccini-clout/) for more information about the `puccini-clout` tool.
 

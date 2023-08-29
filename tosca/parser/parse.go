@@ -9,7 +9,7 @@ import (
 
 func (self *Context) Parse(context contextpkg.Context) (*normal.ServiceTemplate, error) {
 	// Phase 1: Read
-	ok := self.ReadRoot(context, self.URL, self.Origins, "")
+	ok := self.ReadRoot(context, self.URL, self.Bases, "")
 	self.MergeProblems()
 	problems := self.GetProblems()
 

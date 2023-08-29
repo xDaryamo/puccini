@@ -13,7 +13,7 @@ func (self *Context) ImportScriptlet(name string, path string) {
 	var nativeArgumentIndexes []int
 	name, nativeArgumentIndexes = parseScriptletName(name)
 	self.ScriptletNamespace.Set(name, &Scriptlet{
-		Origin:                self.URL.Origin(),
+		Base:                  self.URL.Base(),
 		Path:                  path,
 		NativeArgumentIndexes: nativeArgumentIndexes,
 	})
@@ -30,7 +30,7 @@ func (self *Context) EmbedScriptlet(name string, scriptlet string) {
 //
 
 type Scriptlet struct {
-	Origin                exturl.URL `json:"origin" yaml:"origin"`
+	Base                  exturl.URL `json:"base" yaml:"base"`
 	Path                  string     `json:"path" yaml:"path"`
 	Scriptlet             string     `json:"scriptlet" yaml:"scriptlet"`
 	NativeArgumentIndexes []int      `json:"nativeArgumentIndexes" yaml:"nativeArgumentIndexes"`
@@ -38,17 +38,17 @@ type Scriptlet struct {
 
 func (self *Scriptlet) Read(context contextpkg.Context) (string, error) {
 	if self.Path != "" {
-		var origins []exturl.URL
+		var bases []exturl.URL
 		var urlContext *exturl.Context
-		if self.Origin != nil {
-			origins = []exturl.URL{self.Origin}
-			urlContext = self.Origin.Context()
+		if self.Base != nil {
+			bases = []exturl.URL{self.Base}
+			urlContext = self.Base.Context()
 		} else {
 			urlContext = exturl.NewContext()
 			defer urlContext.Release()
 		}
 
-		url, err := urlContext.NewValidURL(context, self.Path, origins)
+		url, err := urlContext.NewValidAnyOrFileURL(context, self.Path, bases)
 		if err != nil {
 			return "", err
 		}

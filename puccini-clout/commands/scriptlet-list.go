@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"context"
+	contextpkg "context"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -31,8 +31,7 @@ var listCommand = &cobra.Command{
 		urlContext := exturl.NewContext()
 		defer urlContext.Release()
 
-		clout, err := cloutpkg.Load(context.TODO(), url, inputFormat, urlContext)
-		util.FailOnError(err)
+		clout := LoadClout(contextpkg.TODO(), url, urlContext)
 
 		List(clout)
 	},

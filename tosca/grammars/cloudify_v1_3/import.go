@@ -52,9 +52,9 @@ func (self *Import) NewImportSpec(unit *File) (*parsing.ImportSpec, bool) {
 		file = s[1]
 	}
 
-	origin := self.Context.URL.Origin()
-	var origins = []exturl.URL{origin}
-	url, err := origin.Context().NewValidURL(contextpkg.TODO(), file, origins)
+	base := self.Context.URL.Base()
+	var bases = []exturl.URL{base}
+	url, err := base.Context().NewValidAnyOrFileURL(contextpkg.TODO(), file, bases)
 	if err != nil {
 		self.Context.ReportError(err)
 		return nil, false

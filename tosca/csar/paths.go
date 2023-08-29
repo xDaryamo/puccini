@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/klauspost/compress/zip"
-
 	"github.com/tliron/exturl"
 )
 

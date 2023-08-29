@@ -110,7 +110,7 @@ func (self *PucciniAPI) Write(data any, path string, dontOverwrite bool) {
 
 func (self *PucciniAPI) LoadString(url string) (string, error) {
 	context := contextpkg.TODO()
-	if url_, err := self.context.URLContext.NewValidURL(context, url, nil); err == nil {
+	if url_, err := self.context.URLContext.NewValidAnyOrFileURL(context, url, nil); err == nil {
 		return exturl.ReadString(context, url_)
 	} else {
 		return "", err

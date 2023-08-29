@@ -51,13 +51,7 @@ var createCommand = &cobra.Command{
 
 func CreateCSAR(csarPath string, dir string) {
 	if (compressionLevel < 0) || (compressionLevel > 9) {
-		util.Failf("invalid compression level: %d", compressionLevel)
-	}
-
-	stat, err := os.Stat(dir)
-	util.FailOnError(err)
-	if !stat.IsDir() {
-		util.Failf("not a directory: %s", dir)
+		util.Failf("invalid compression level, must be >=0 and <=9: %d", compressionLevel)
 	}
 
 	if archiveFormat == "" {
@@ -68,147 +62,162 @@ func CreateCSAR(csarPath string, dir string) {
 		util.Failf("unsupported CSAR archive format: %q", archiveFormat)
 	}
 
+	stat, err := os.Stat(dir)
+	util.FailOnError(err)
+	if !stat.IsDir() {
+		util.Failf("not a directory: %s", dir)
+	}
+
 	file, err := os.OpenFile(csarPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
 	util.FailOnError(err)
 
-	write := func(w func(string, []byte, *os.File) error) {
-		prefix := len(dir) + 1
-		var hasMeta bool
-		err = filepath.WalkDir(dir, func(path string, dirEntry fs.DirEntry, err error) error {
-			if err != nil {
-				return err
-			}
-
-			if !dirEntry.IsDir() {
-				internalPath := path[prefix:]
-				if internalPath == csar.TOSCA_META_PATH {
-					// Validate meta
-					_, err = csar.ReadMetaFromPath(path)
-					util.FailOnError(err)
-
-					hasMeta = true
-					log.Infof("using included %s", csar.TOSCA_META_PATH)
-				}
-				log.Infof("adding: %s", internalPath)
-				file, err := os.Open(path)
-				util.FailOnError(err)
-				defer file.Close()
-				return w(internalPath, nil, file)
-			}
-
-			return nil
-		})
-		util.FailOnError(err)
-
-		if !hasMeta {
-			if entryDefinitions == "" {
-				dirEntries, err := os.ReadDir(dir)
-				util.FailOnError(err)
-				for _, dirEntry := range dirEntries {
-					name := dirEntry.Name()
-					if strings.HasSuffix(name, ".yaml") || strings.HasSuffix(name, ".yml") {
-						if entryDefinitions != "" {
-							util.Failf("dir has more than one potential service template at the root: %s", dir)
-						} else {
-							entryDefinitions = name
-						}
-					}
-				}
-			}
-
-			log.Infof("generating new %s", csar.TOSCA_META_PATH)
-
-			toscaMetaFileVersion_, err := csar.ParseVersion(toscaMetaFileVersion)
-			util.FailOnError(err)
-			csarVersion_, err := csar.ParseVersion(csarVersion)
-			util.FailOnError(err)
-
-			meta := csar.Meta{
-				Version:          toscaMetaFileVersion_,
-				CsarVersion:      csarVersion_,
-				CreatedBy:        createdBy,
-				EntryDefinitions: entryDefinitions,
-				OtherDefinitions: otherDefinitions,
-			}
-
-			meta_, err := meta.ToBytes()
-			util.FailOnError(err)
-
-			err = w(csar.TOSCA_META_PATH, meta_, nil)
-			util.FailOnError(err)
-		}
-	}
-
-	writeTar := func(writer io.Writer) {
-		tarWriter := tar.NewWriter(writer)
-		util.OnExitError(tarWriter.Close)
-
-		write(func(internalPath string, buffer []byte, file *os.File) error {
-			internalPath = filepath.ToSlash(internalPath)
-
-			header := tar.Header{
-				Name: internalPath,
-				Mode: 0600,
-			}
-
-			if buffer != nil {
-				header.Size = int64(len(buffer))
-			} else {
-				if stat, err := file.Stat(); err == nil {
-					header.Size = stat.Size()
-				} else {
-					return err
-				}
-			}
-
-			if err = tarWriter.WriteHeader(&header); err == nil {
-				if buffer != nil {
-					_, err = tarWriter.Write(buffer)
-				} else {
-					_, err = io.Copy(tarWriter, file)
-				}
-				return err
-			} else {
-				return err
-			}
-		})
-	}
-
 	switch archiveFormat {
 	case "tar":
-		writeTar(file)
+		CreateTarCSAR(dir, file)
 
 	case "tar.gz":
-		gzipWriter, err := pgzip.NewWriterLevel(file, compressionLevel)
-		util.FailOnError(err)
-		util.OnExitError(gzipWriter.Close)
-
-		writeTar(gzipWriter)
+		CreateGzipTarCSAR(dir, file)
 
 	case "zip", "csar":
-		zipWriter := zip.NewWriter(file)
-		util.OnExitError(zipWriter.Close)
-
-		zipWriter.RegisterCompressor(zip.Deflate, func(out io.Writer) (io.WriteCloser, error) {
-			return flate.NewWriter(out, compressionLevel)
-		})
-
-		write(func(internalPath string, buffer []byte, file *os.File) error {
-			internalPath = filepath.ToSlash(internalPath)
-			if writer, err := zipWriter.Create(internalPath); err == nil {
-				if buffer != nil {
-					_, err = writer.Write(buffer)
-				} else {
-					_, err = io.Copy(writer, file)
-				}
-				return err
-			} else {
-				return err
-			}
-		})
+		CreateZipCSAR(dir, file)
 	}
 
 	util.OnExit(func() {
 		log.Noticef("created CSAR: %s", csarPath)
 	})
+}
+
+func CreateTarCSAR(dir string, writer io.Writer) {
+	tarWriter := tar.NewWriter(writer)
+	util.OnExitError(tarWriter.Close)
+
+	createCsar(dir, func(internalPath string, buffer []byte, file *os.File) error {
+		internalPath = filepath.ToSlash(internalPath)
+
+		header := tar.Header{
+			Name: internalPath,
+			Mode: 0600,
+		}
+
+		if buffer != nil {
+			header.Size = int64(len(buffer))
+		} else {
+			if stat, err := file.Stat(); err == nil {
+				header.Size = stat.Size()
+			} else {
+				return err
+			}
+		}
+
+		if err := tarWriter.WriteHeader(&header); err == nil {
+			if buffer != nil {
+				_, err = tarWriter.Write(buffer)
+			} else {
+				_, err = io.Copy(tarWriter, file)
+			}
+			return err
+		} else {
+			return err
+		}
+	})
+}
+
+func CreateGzipTarCSAR(dir string, writer io.Writer) {
+	gzipWriter, err := pgzip.NewWriterLevel(writer, compressionLevel)
+	util.FailOnError(err)
+	util.OnExitError(gzipWriter.Close)
+
+	CreateTarCSAR(dir, gzipWriter)
+}
+
+func CreateZipCSAR(dir string, file *os.File) {
+	zipWriter := zip.NewWriter(file)
+	util.OnExitError(zipWriter.Close)
+
+	zipWriter.RegisterCompressor(zip.Deflate, func(out io.Writer) (io.WriteCloser, error) {
+		return flate.NewWriter(out, compressionLevel)
+	})
+
+	createCsar(dir, func(internalPath string, buffer []byte, file *os.File) error {
+		internalPath = filepath.ToSlash(internalPath)
+		if writer, err := zipWriter.Create(internalPath); err == nil {
+			if buffer != nil {
+				_, err = writer.Write(buffer)
+			} else {
+				_, err = io.Copy(writer, file)
+			}
+			return err
+		} else {
+			return err
+		}
+	})
+}
+
+func createCsar(dir string, writeEntry func(string, []byte, *os.File) error) {
+	prefix := len(dir) + 1
+	var hasMeta bool
+
+	err := filepath.WalkDir(dir, func(path string, dirEntry fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !dirEntry.IsDir() {
+			internalPath := path[prefix:]
+			if internalPath == csar.TOSCA_META_PATH {
+				// Validate meta
+				_, err = csar.ReadMetaFromPath(path)
+				util.FailOnError(err)
+
+				hasMeta = true
+				log.Infof("using included %s", csar.TOSCA_META_PATH)
+			}
+			log.Infof("adding: %s", internalPath)
+			file, err := os.Open(path)
+			util.FailOnError(err)
+			defer file.Close()
+			return writeEntry(internalPath, nil, file)
+		}
+
+		return nil
+	})
+	util.FailOnError(err)
+
+	if !hasMeta {
+		if entryDefinitions == "" {
+			dirEntries, err := os.ReadDir(dir)
+			util.FailOnError(err)
+			for _, dirEntry := range dirEntries {
+				name := dirEntry.Name()
+				if strings.HasSuffix(name, ".yaml") || strings.HasSuffix(name, ".yml") {
+					if entryDefinitions != "" {
+						util.Failf("dir has more than one potential service template at the root: %s", dir)
+					} else {
+						entryDefinitions = name
+					}
+				}
+			}
+		}
+
+		log.Infof("generating new %s", csar.TOSCA_META_PATH)
+
+		toscaMetaFileVersion_, err := csar.ParseVersion(toscaMetaFileVersion)
+		util.FailOnError(err)
+		csarVersion_, err := csar.ParseVersion(csarVersion)
+		util.FailOnError(err)
+
+		meta := csar.Meta{
+			Version:          toscaMetaFileVersion_,
+			CsarVersion:      csarVersion_,
+			CreatedBy:        createdBy,
+			EntryDefinitions: entryDefinitions,
+			OtherDefinitions: otherDefinitions,
+		}
+
+		meta_, err := meta.ToBytes()
+		util.FailOnError(err)
+
+		err = writeEntry(csar.TOSCA_META_PATH, meta_, nil)
+		util.FailOnError(err)
+	}
 }

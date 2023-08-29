@@ -24,8 +24,7 @@ type Repository struct {
 	URL         *string `read:"url" mandatory:""`
 	Credential  *Value  `read:"credential,Value"` // tosca:Credential
 
-	url                exturl.URL
-	urlProblemReported bool
+	url exturl.URL
 }
 
 func NewRepository(context *parsing.Context) *Repository {
@@ -64,15 +63,7 @@ func (self *Repository) render() {
 
 func (self *Repository) GetURL() exturl.URL {
 	if (self.url == nil) && (self.URL != nil) {
-		origin := self.Context.URL.Origin()
-		var err error
-		if self.url, err = origin.Context().NewURL(*self.URL); err != nil {
-			// Avoid reporting more than once
-			if !self.urlProblemReported {
-				self.Context.ReportError(err)
-				self.urlProblemReported = true
-			}
-		}
+		self.url = self.Context.URL.Context().NewAnyOrFileURL(*self.URL)
 	}
 
 	return nil

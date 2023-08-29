@@ -9,7 +9,6 @@ import (
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
-	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
 )
 
@@ -34,8 +33,7 @@ var getCommand = &cobra.Command{
 		urlContext := exturl.NewContext()
 		defer urlContext.Release()
 
-		clout, err := cloutpkg.Load(contextpkg.TODO(), url, inputFormat, urlContext)
-		util.FailOnError(err)
+		clout := LoadClout(contextpkg.TODO(), url, urlContext)
 
 		scriptlet, err := js.GetScriptlet(scriptletName, clout)
 		util.FailOnError(err)

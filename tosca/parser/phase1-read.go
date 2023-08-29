@@ -15,9 +15,9 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-func (self *Context) ReadRoot(context contextpkg.Context, url exturl.URL, origins []exturl.URL, template string) bool {
+func (self *Context) ReadRoot(context contextpkg.Context, url exturl.URL, bases []exturl.URL, template string) bool {
 	parsingContext := parsing.NewContext(self.Stylist, self.Quirks)
-	parsingContext.Origins = origins
+	parsingContext.Bases = bases
 
 	parsingContext.URL = url
 

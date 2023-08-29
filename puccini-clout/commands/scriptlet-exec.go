@@ -36,15 +36,14 @@ var execCommand = &cobra.Command{
 		defer urlContext.Release()
 		context := contextpkg.TODO()
 
-		clout, err := cloutpkg.Load(context, url, inputFormat, urlContext)
-		util.FailOnError(err)
+		clout := LoadClout(context, url, urlContext)
 
 		// Try loading JavaScript from Clout
 		scriptlet, err := js.GetScriptlet(scriptletName, clout)
 
 		if err != nil {
 			// Try loading JavaScript from path or URL
-			scriptletUrl, err := urlContext.NewValidURL(context, scriptletName, nil)
+			scriptletUrl, err := urlContext.NewValidAnyOrFileURL(context, scriptletName, Bases(urlContext))
 			util.FailOnError(err)
 
 			scriptlet, err = exturl.ReadString(context, scriptletUrl)
@@ -62,5 +61,5 @@ var execCommand = &cobra.Command{
 func Exec(scriptletName string, scriptlet string, clout *cloutpkg.Clout, urlContext *exturl.Context) error {
 	jsContext := js.NewContext(scriptletName, log, arguments, terminal.Quiet, format, strict, pretty, output, urlContext)
 	_, err := jsContext.Require(clout, scriptletName, nil)
-	return js.UnwrapException(err)
+	return err
 }

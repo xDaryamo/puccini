@@ -3,16 +3,16 @@ module github.com/tliron/puccini
 go 1.21
 
 require (
-	github.com/dop251/goja v0.0.0-20230812105242-81d76064690d
+	github.com/dop251/goja v0.0.0-20230828202809-3dbe69dd2b8e
 	github.com/fxamacker/cbor/v2 v2.5.0
 	github.com/klauspost/compress v1.16.7
 	github.com/klauspost/pgzip v1.2.6
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/cobra v1.7.0
-	github.com/tliron/commonjs-goja v0.1.0
+	github.com/tliron/commonjs-goja v0.1.2
 	github.com/tliron/commonlog v0.1.1
-	github.com/tliron/exturl v0.2.9
-	github.com/tliron/go-ard v0.1.3
+	github.com/tliron/exturl v0.4.0
+	github.com/tliron/go-ard v0.1.4
 	github.com/tliron/kutil v0.2.11
 	github.com/tliron/yamlkeys v1.3.6
 	github.com/vmihailenco/msgpack/v5 v5.3.5

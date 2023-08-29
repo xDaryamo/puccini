@@ -79,10 +79,10 @@ func (self *ArtifactDefinition) GetURL(context contextpkg.Context) exturl.URL {
 				self.url = url.Relative(*self.File)
 			}
 		} else {
-			origin := self.Context.URL.Origin()
-			origins := []exturl.URL{origin}
+			base := self.Context.URL.Base()
+			bases := []exturl.URL{base}
 			var err error
-			if self.url, err = origin.Context().NewValidURL(context, *self.File, origins); err != nil {
+			if self.url, err = base.Context().NewValidAnyOrFileURL(context, *self.File, bases); err != nil {
 				// Avoid reporting more than once
 				if !self.urlProblemReported {
 					self.Context.ReportError(err)
