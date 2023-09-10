@@ -71,29 +71,29 @@ func (self *Capability) Marshalable() any {
 	}
 }
 
-// json.Marshaler interface
+// ([json.Marshaler] interface)
 func (self *Capability) MarshalJSON() ([]byte, error) {
 	return json.Marshal(self.Marshalable())
 }
 
-// yaml.Marshaler interface
+// ([yaml.Marshaler] interface)
 func (self *Capability) MarshalYAML() (any, error) {
 	return self.Marshalable(), nil
 }
 
-// cbor.Marshaler interface
+// ([cbor.Marshaler] interface)
 func (self *Capability) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(self.Marshalable())
 }
 
-// msgpack.Marshaler interface
+// ([msgpack.Marshaler] interface)
 func (self *Capability) MarshalMsgpack() ([]byte, error) {
 	return util.MarshalMessagePack(self.Marshalable())
 }
 
-// ard.ToARD interface
+// ([ard.ToARD] interface)
 func (self *Capability) ToARD(reflector *ard.Reflector) (any, error) {
-	return reflector.Unpack(self.Marshalable())
+	return reflector.Unpack(self.Marshalable(), false)
 }
 
 //

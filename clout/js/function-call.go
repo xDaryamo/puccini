@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/tliron/go-ard"
-	"github.com/tliron/kutil/transcribe"
+	"github.com/tliron/go-transcribe"
 )
 
 //
@@ -226,7 +226,7 @@ func encodeArgument(argument ard.Value) string {
 		argument_ = strings.ReplaceAll(argument_, "\n", "¶")
 		return fmt.Sprintf("%q", argument_)
 	default:
-		argument__, _ := transcribe.EncodeJSON(argument, "")
+		argument__, _ := transcribe.StringifyJSON(argument, "")
 		return argument__
 	}
 }

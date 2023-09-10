@@ -54,13 +54,13 @@ type MarshalableVertexStringMaps struct {
 
 func (self *Vertex) MarshalableStringMaps() any {
 	return &MarshalableVertexStringMaps{
-		Metadata:   ard.EnsureStringMaps(self.Metadata),
-		Properties: ard.EnsureStringMaps(self.Properties),
+		Metadata:   ard.CopyMapsToStringMaps(self.Metadata).(ard.StringMap),
+		Properties: ard.CopyMapsToStringMaps(self.Properties).(ard.StringMap),
 		EdgesOut:   self.EdgesOut,
 	}
 }
 
-// json.Marshaler interface
+// ([json.Marshaler] interface)
 func (self *Vertex) MarshalJSON() ([]byte, error) {
 	// JavaScript requires keys to be strings, so we would lose complex keys
 	return json.Marshal(self.MarshalableStringMaps())
@@ -75,8 +75,8 @@ func (self *Vertex) copy(toArd bool) (*Vertex, error) {
 	var err error
 	if vertex.EdgesOut, err = self.EdgesOut.copy(toArd); err == nil {
 		if toArd {
-			if metadata, err := ard.NormalizeStringMapsCopyToARD(self.Metadata); err == nil {
-				if properties, err := ard.NormalizeStringMapsCopyToARD(self.Properties); err == nil {
+			if metadata, err := ard.ValidCopyMapsToStringMaps(self.Metadata, nil); err == nil {
+				if properties, err := ard.ValidCopyMapsToStringMaps(self.Properties, nil); err == nil {
 					vertex.Metadata = metadata.(ard.StringMap)
 					vertex.Properties = properties.(ard.StringMap)
 				} else {
@@ -86,8 +86,8 @@ func (self *Vertex) copy(toArd bool) (*Vertex, error) {
 				return nil, err
 			}
 		} else {
-			vertex.Metadata = ard.SimpleCopy(self.Metadata).(ard.StringMap)
-			vertex.Properties = ard.SimpleCopy(self.Properties).(ard.StringMap)
+			vertex.Metadata = ard.CopyMapsToStringMaps(self.Metadata).(ard.StringMap)
+			vertex.Properties = ard.CopyMapsToStringMaps(self.Properties).(ard.StringMap)
 		}
 	} else {
 		return nil, err

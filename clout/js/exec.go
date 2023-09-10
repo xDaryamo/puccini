@@ -19,10 +19,11 @@ type ExecContext struct {
 	Format     string
 	Strict     bool
 	Pretty     bool
+	Base64     bool
 }
 
 func (self *ExecContext) NewContext(scriptletName string, arguments map[string]string) *Context {
-	return NewContext(scriptletName, log, arguments, true, self.Format, self.Strict, self.Pretty, "", self.URLContext)
+	return NewContext(scriptletName, log, arguments, true, self.Format, self.Strict, self.Pretty, self.Base64, "", self.URLContext)
 }
 
 func (self *ExecContext) Exec(scriptletName string, arguments map[string]string) *goja.Object {

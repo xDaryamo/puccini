@@ -11,8 +11,8 @@ import (
 	"github.com/tliron/commonjs-goja"
 	"github.com/tliron/commonlog"
 	"github.com/tliron/exturl"
+	"github.com/tliron/go-transcribe"
 	"github.com/tliron/kutil/terminal"
-	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 )
 
@@ -35,6 +35,7 @@ type PucciniAPI struct {
 	Format    string
 	Strict    bool
 	Pretty    bool
+	Base64    bool
 
 	context *Context
 }
@@ -56,6 +57,7 @@ func (self *Context) NewPucciniAPI() *PucciniAPI {
 		Format:    format,
 		Strict:    self.Strict,
 		Pretty:    self.Pretty,
+		Base64:    self.Base64,
 		context:   self,
 	}
 }
@@ -105,7 +107,7 @@ func (self *PucciniAPI) Write(data any, path string, dontOverwrite bool) {
 		}
 	}
 
-	self.failOnError(transcribe.WriteOrPrint(data, self.Format, self.Stdout, self.Strict, self.Pretty, output))
+	self.failOnError(transcribe.WriteOrPrint(data, self.Format, self.Stdout, self.Strict, self.Pretty, self.Base64, output, nil))
 }
 
 func (self *PucciniAPI) LoadString(url string) (string, error) {

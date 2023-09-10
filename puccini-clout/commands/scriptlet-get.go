@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/tliron/exturl"
+	"github.com/tliron/go-transcribe"
 	"github.com/tliron/kutil/terminal"
-	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/clout/js"
 )
@@ -39,7 +39,7 @@ var getCommand = &cobra.Command{
 		util.FailOnError(err)
 
 		if !terminal.Quiet {
-			err = transcribe.WriteOrPrint(scriptlet, format, os.Stdout, strict, pretty, output)
+			err = transcribe.WriteOrPrint(scriptlet, format, os.Stdout, strict, pretty, false, output, nil)
 			util.FailOnError(err)
 		}
 	},

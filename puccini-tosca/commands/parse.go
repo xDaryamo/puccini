@@ -8,8 +8,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tliron/exturl"
 	"github.com/tliron/go-ard"
+	"github.com/tliron/go-transcribe"
 	"github.com/tliron/kutil/terminal"
-	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/normal"
 	parserpkg "github.com/tliron/puccini/tosca/parser"
@@ -27,7 +27,7 @@ func init() {
 	parseCommand.Flags().StringVarP(&template, "template", "t", "", "select service template in CSAR (leave empty for root, or use path or integer index)")
 	parseCommand.Flags().StringToStringVarP(&inputs, "input", "i", nil, "specify an input (format is name=YAML)")
 	parseCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
-	parseCommand.Flags().StringVarP(&problemsFormat, "problems-format", "m", "", "problems format (\"yaml\", \"json\", \"cjson\", \"xml\", \"cbor\", \"messagepack\", or \"go\")")
+	parseCommand.Flags().StringVarP(&problemsFormat, "problems-format", "m", "", "problems format (\"yaml\", \"json\", \"xjson\", \"xml\", \"cbor\", \"messagepack\", or \"go\")")
 	parseCommand.Flags().StringSliceVarP(&quirks, "quirk", "x", nil, "parser quirk")
 	parseCommand.Flags().StringToStringVarP(&urlMappings, "map-url", "u", nil, "map a URL (format is from=to)")
 
@@ -190,7 +190,7 @@ func Parse(context contextpkg.Context, url string) (*parserpkg.Context, *normal.
 		}
 		for _, entityPtr := range entityPtrs {
 			terminal.Printf("%s:\n", terminal.DefaultStylist.Path(parsing.GetContext(entityPtr).Path.String()))
-			err = transcribe.Print(entityPtr, format, os.Stdout, strict, pretty)
+			err = transcribe.Print(entityPtr, format, os.Stdout, strict, pretty, false, nil)
 			util.FailOnError(err)
 		}
 	}
@@ -206,7 +206,7 @@ func Parse(context contextpkg.Context, url string) (*parserpkg.Context, *normal.
 		} else if !terminal.Quiet {
 			for _, entityPtr := range entityPtrs {
 				terminal.Printf("%s\n", terminal.DefaultStylist.Path(parsing.GetContext(entityPtr).Path.String()))
-				err = transcribe.Print(entityPtr, format, os.Stdout, strict, pretty)
+				err = transcribe.Print(entityPtr, format, os.Stdout, strict, pretty, false, nil)
 				util.FailOnError(err)
 			}
 		}
@@ -223,7 +223,7 @@ func Parse(context contextpkg.Context, url string) (*parserpkg.Context, *normal.
 			if len(dumpPhases) > 1 {
 				terminal.Printf("%s\n", terminal.DefaultStylist.Heading("Normalization"))
 			}
-			transcribe.Print(serviceTemplate, format, os.Stdout, strict, pretty)
+			transcribe.Print(serviceTemplate, format, os.Stdout, strict, pretty, false, nil)
 		}
 		return parserContext, serviceTemplate
 	} else {
@@ -270,7 +270,7 @@ func ParseInputs(context contextpkg.Context) {
 	}
 
 	for name, input := range inputs {
-		input_, _, err := ard.DecodeYAML(input, false)
+		input_, _, err := ard.DecodeYAML(util.StringToBytes(input), false)
 		util.FailOnError(err)
 		inputValues[name] = input_
 	}

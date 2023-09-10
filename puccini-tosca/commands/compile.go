@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/tliron/exturl"
+	"github.com/tliron/go-transcribe"
 	"github.com/tliron/kutil/terminal"
-	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
@@ -25,7 +25,7 @@ func init() {
 	compileCommand.Flags().StringVarP(&template, "template", "t", "", "select service template in CSAR (leave empty for root, or use \"all\", path, or integer index)")
 	compileCommand.Flags().StringToStringVarP(&inputs, "input", "i", nil, "specify input (format is name=value)")
 	compileCommand.Flags().StringVarP(&inputsUrl, "inputs", "n", "", "load inputs from a PATH or URL to YAML content")
-	compileCommand.Flags().StringVarP(&problemsFormat, "problems-format", "m", "", "problems format (\"yaml\", \"json\", \"cjson\", \"xml\", \"cbor\", \"messagepack\", or \"go\")")
+	compileCommand.Flags().StringVarP(&problemsFormat, "problems-format", "m", "", "problems format (\"yaml\", \"json\", \"xjson\", \"xml\", \"cbor\", \"messagepack\", or \"go\")")
 	compileCommand.Flags().StringSliceVarP(&quirks, "quirk", "x", nil, "parser quirk")
 	compileCommand.Flags().StringToStringVarP(&urlMappings, "map-url", "u", nil, "map a URL (format is from=to)")
 
@@ -88,7 +88,7 @@ func Compile(context contextpkg.Context, url string) {
 		err = Exec(context, exec, arguments, clout, urlContext)
 		util.FailOnError(err)
 	} else if !terminal.Quiet || (output != "") {
-		err = transcribe.WriteOrPrint(clout, format, os.Stdout, strict, pretty, output)
+		err = transcribe.WriteOrPrint(clout, format, os.Stdout, strict, pretty, false, output, nil)
 		util.FailOnError(err)
 	}
 }
@@ -109,7 +109,7 @@ func Exec(context contextpkg.Context, scriptletName string, arguments map[string
 		util.FailOnError(err)
 	}
 
-	jsContext := js.NewContext(scriptletName, log, arguments, terminal.Quiet, format, strict, pretty, output, urlContext)
+	jsContext := js.NewContext(scriptletName, log, arguments, terminal.Quiet, format, strict, pretty, false, output, urlContext)
 	_, err = jsContext.Require(clout, scriptletName, nil)
 	return err
 }

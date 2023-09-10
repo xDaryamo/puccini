@@ -73,10 +73,10 @@ Controlling the Output
 ----------------------
 
 The default output format is YAML but other formats are supported: JSON (and
-[ARD](https://github.com/tliron/kutil/tree/master/ard/)-compatible JSON), XML, CBOR,
-and MessagePack. Here's ARD-compatible JSON:
+[ARD](https://github.com/tliron/kutil/tree/master/ard/)-compatible extended JSON), XML,
+CBOR, and MessagePack. Here's ARD-compatible XJSON:
 
-    puccini-tosca compile examples/tosca/descriptions.yaml --format=cjson
+    puccini-tosca compile examples/tosca/descriptions.yaml --format=xjson
 
 By default the output is nicely indented and and colorized for human readability. You can
 turn off prettification if you're interested in the most compact output:

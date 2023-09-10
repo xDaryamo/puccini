@@ -7,32 +7,32 @@ import (
 	"github.com/tliron/go-ard"
 )
 
-func Parse(map_ ard.Map) (*Clout, error) {
+func Unpack(map_ ard.Map) (*Clout, error) {
 	clout := NewClout()
 
 	if data, ok := map_["version"]; ok {
 		if version, ok := data.(string); ok {
 			clout.Version = version
 		} else {
-			return nil, fmt.Errorf("malformed clout: \"version\" not a string: %T", data)
+			return nil, fmt.Errorf("malformed Clout: \"version\" not a string: %T", data)
 		}
 	} else {
-		return nil, errors.New("malformed clout: no \"version\"")
+		return nil, errors.New("malformed Clout: no \"version\"")
 	}
 
 	if data, ok := map_["metadata"]; ok {
 		if metadata, ok := data.(ard.Map); ok {
-			clout.Metadata = ard.MapToStringMap(metadata)
+			clout.Metadata = ard.CopyMapsToStringMaps(metadata).(ard.StringMap)
 		} else {
-			return nil, fmt.Errorf("malformed clout: \"metadata\" not a map: %T", data)
+			return nil, fmt.Errorf("malformed Clout: \"metadata\" not a map: %T", data)
 		}
 	}
 
 	if data, ok := map_["properties"]; ok {
 		if properties, ok := data.(ard.Map); ok {
-			clout.Properties = ard.MapToStringMap(properties)
+			clout.Properties = ard.CopyMapsToStringMaps(properties).(ard.StringMap)
 		} else {
-			return nil, fmt.Errorf("malformed clout: \"properties\" not a map: %T", data)
+			return nil, fmt.Errorf("malformed Clout: \"properties\" not a map: %T", data)
 		}
 	}
 
@@ -45,7 +45,7 @@ func Parse(map_ ard.Map) (*Clout, error) {
 
 						if data, ok := map_["metadata"]; ok {
 							if metadata, ok := data.(ard.Map); ok {
-								vertex.Metadata = ard.MapToStringMap(metadata)
+								vertex.Metadata = ard.CopyMapsToStringMaps(metadata).(ard.StringMap)
 							} else {
 								return nil, fmt.Errorf("malformed vertex: \"metadata\" not a map: %T", data)
 							}
@@ -53,7 +53,7 @@ func Parse(map_ ard.Map) (*Clout, error) {
 
 						if data, ok := map_["properties"]; ok {
 							if properties, ok := data.(ard.Map); ok {
-								vertex.Properties = ard.MapToStringMap(properties)
+								vertex.Properties = ard.CopyMapsToStringMaps(properties).(ard.StringMap)
 							} else {
 								return nil, fmt.Errorf("malformed vertex: \"properties\" not a map: %T", data)
 							}
@@ -69,7 +69,7 @@ func Parse(map_ ard.Map) (*Clout, error) {
 
 												if data, ok := map_["metadata"]; ok {
 													if metadata, ok := data.(ard.Map); ok {
-														edge.Metadata = ard.MapToStringMap(metadata)
+														edge.Metadata = ard.CopyMapsToStringMaps(metadata).(ard.StringMap)
 													} else {
 														return nil, fmt.Errorf("malformed edge: \"metadata\" not a map: %T", data)
 													}
@@ -77,7 +77,7 @@ func Parse(map_ ard.Map) (*Clout, error) {
 
 												if data, ok := map_["properties"]; ok {
 													if properties, ok := data.(ard.Map); ok {
-														edge.Properties = ard.MapToStringMap(properties)
+														edge.Properties = ard.CopyMapsToStringMaps(properties).(ard.StringMap)
 													} else {
 														return nil, fmt.Errorf("malformed edge: \"properties\" not a map: %T", data)
 													}
@@ -102,7 +102,7 @@ func Parse(map_ ard.Map) (*Clout, error) {
 				}
 			}
 		} else {
-			return nil, fmt.Errorf("malformed clout: \"vertexes\" not a map: %T", data)
+			return nil, fmt.Errorf("malformed Clout: \"vertexes\" not a map: %T", data)
 		}
 	}
 

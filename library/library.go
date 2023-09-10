@@ -2,15 +2,14 @@ package main
 
 import (
 	"C"
-	"bytes"
 	contextpkg "context"
 	"errors"
 	"strings"
 
 	"github.com/tliron/exturl"
 	"github.com/tliron/go-ard"
+	"github.com/tliron/go-transcribe"
 	"github.com/tliron/kutil/problems"
-	"github.com/tliron/kutil/transcribe"
 	cloutpkg "github.com/tliron/puccini/clout"
 	"github.com/tliron/puccini/clout/js"
 	"github.com/tliron/puccini/normal"
@@ -125,7 +124,6 @@ func result(clout *cloutpkg.Clout, problems *problems.Problems, err error) *C.ch
 		result["error"] = err.Error()
 	}
 
-	buffer := bytes.NewBuffer(nil)
-	transcribe.WriteYAML(result, buffer, "  ", true) // TODO: err
-	return C.CString(buffer.String())
+	result_, _ := transcribe.StringifyYAML(result, "  ", true, nil) // TODO: err
+	return C.CString(result_)
 }

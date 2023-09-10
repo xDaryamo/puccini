@@ -35,13 +35,13 @@ type MarshalableCloutStringMaps Clout
 func (self *Clout) MarshalableStringMaps() any {
 	return &MarshalableCloutStringMaps{
 		Version:    self.Version,
-		Metadata:   ard.EnsureStringMaps(self.Metadata),
-		Properties: ard.EnsureStringMaps(self.Properties),
+		Metadata:   ard.CopyMapsToStringMaps(self.Metadata).(ard.StringMap),
+		Properties: ard.CopyMapsToStringMaps(self.Properties).(ard.StringMap),
 		Vertexes:   self.Vertexes,
 	}
 }
 
-// json.Marshaler interface
+// ([json.Marshaler] interface)
 func (self *Clout) MarshalJSON() ([]byte, error) {
 	// JavaScript requires keys to be strings, so we would lose complex keys
 	return json.Marshal(self.MarshalableStringMaps())
@@ -55,10 +55,10 @@ func (self *Clout) Resolve() error {
 		return fmt.Errorf("unsupported Clout version: %q", self.Version)
 	}
 
-	return self.ResolveTopology()
+	return self.ResolveEdges()
 }
 
-func (self *Clout) ResolveTopology() error {
+func (self *Clout) ResolveEdges() error {
 	for id, vertex := range self.Vertexes {
 		vertex.Clout = self
 		vertex.ID = id
@@ -78,11 +78,13 @@ func (self *Clout) ResolveTopology() error {
 	return nil
 }
 
+// Creates a copy of the Clout in which ARD is used for all data.
 func (self *Clout) Copy() (*Clout, error) {
 	return self.copy(true)
 }
 
-func (self *Clout) SimpleCopy() *Clout {
+// Creates a copy of the Clout in which non-ARD data is left as is.
+func (self *Clout) CopyAsIs() *Clout {
 	clout, _ := self.copy(false)
 	return clout
 }
@@ -95,8 +97,8 @@ func (self *Clout) copy(toArd bool) (*Clout, error) {
 	var err error
 	if clout.Vertexes, err = self.Vertexes.copy(toArd); err == nil {
 		if toArd {
-			if metadata, err := ard.NormalizeStringMapsCopyToARD(self.Metadata); err == nil {
-				if properties, err := ard.NormalizeStringMapsCopyToARD(self.Properties); err == nil {
+			if metadata, err := ard.ValidCopyMapsToStringMaps(self.Metadata, nil); err == nil {
+				if properties, err := ard.ValidCopyMapsToStringMaps(self.Properties, nil); err == nil {
 					clout.Metadata = metadata.(ard.StringMap)
 					clout.Properties = properties.(ard.StringMap)
 				} else {
@@ -106,14 +108,14 @@ func (self *Clout) copy(toArd bool) (*Clout, error) {
 				return nil, err
 			}
 		} else {
-			clout.Metadata = ard.SimpleCopy(self.Metadata).(ard.StringMap)
-			clout.Properties = ard.SimpleCopy(self.Properties).(ard.StringMap)
+			clout.Metadata = ard.CopyMapsToStringMaps(self.Metadata).(ard.StringMap)
+			clout.Properties = ard.CopyMapsToStringMaps(self.Properties).(ard.StringMap)
 		}
 	} else {
 		return nil, err
 	}
 
-	if err := clout.ResolveTopology(); err == nil {
+	if err := clout.ResolveEdges(); err == nil {
 		return &clout, nil
 	} else {
 		return nil, err

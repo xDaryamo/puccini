@@ -5,9 +5,9 @@ import (
 
 	"github.com/tliron/commonlog"
 	"github.com/tliron/exturl"
+	"github.com/tliron/go-transcribe"
 	problemspkg "github.com/tliron/kutil/problems"
 	"github.com/tliron/kutil/terminal"
-	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 )
 
@@ -28,7 +28,7 @@ func FailOnProblems(problems *problemspkg.Problems) {
 	if !problems.Empty() {
 		if !terminal.Quiet {
 			if problemsFormat != "" {
-				transcribe.Print(problems, problemsFormat, os.Stderr, strict, pretty)
+				transcribe.Print(problems, problemsFormat, os.Stderr, strict, pretty, false, nil)
 			} else {
 				problems.Print(verbose > 0)
 			}

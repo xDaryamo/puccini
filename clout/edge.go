@@ -80,8 +80,8 @@ func (self *Edge) Marshalable(stringMaps bool) any {
 
 	if stringMaps {
 		return &MarshalableEdgeStringMaps{
-			Metadata:   ard.EnsureStringMaps(self.Metadata),
-			Properties: ard.EnsureStringMaps(self.Properties),
+			Metadata:   ard.CopyMapsToStringMaps(self.Metadata).(ard.StringMap),
+			Properties: ard.CopyMapsToStringMaps(self.Properties).(ard.StringMap),
 			TargetID:   targetID,
 		}
 	} else {
@@ -104,30 +104,30 @@ func (self *Edge) Unmarshal(f func(m *MarshalableEdge) error) error {
 	return nil
 }
 
-// json.Marshaler interface
+// ([json.Marshaler] interface)
 func (self *Edge) MarshalJSON() ([]byte, error) {
 	// JavaScript requires keys to be strings, so we would lose complex keys
 	return json.Marshal(self.Marshalable(true))
 }
 
-// yaml.Marshaler interface
+// ([yaml.Marshaler] interface)
 func (self *Edge) MarshalYAML() (any, error) {
 	return self.Marshalable(false), nil
 }
 
-// cbor.Marshaler interface
+// ([cbor.Marshaler] interface)
 func (self *Edge) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(self.Marshalable(false))
 }
 
-// msgpack.Marshaler interface
+// ([msgpack.Marshaler] interface)
 func (self *Edge) MarshalMsgpack() ([]byte, error) {
 	return msgpack.Marshal(self.Marshalable(false))
 }
 
-// ard.ToARD interface
+// ([ard.ToARD] interface)
 func (self *Edge) ToARD(reflector *ard.Reflector) (any, error) {
-	return reflector.Unpack(self.Marshalable(false))
+	return reflector.Unpack(self.Marshalable(false), false)
 }
 
 // json.Unmarshaler interface
@@ -164,8 +164,8 @@ func (self *Edge) copy(toArd bool) (*Edge, error) {
 	}
 
 	if toArd {
-		if metadata, err := ard.NormalizeStringMapsCopyToARD(self.Metadata); err == nil {
-			if properties, err := ard.NormalizeStringMapsCopyToARD(self.Properties); err == nil {
+		if metadata, err := ard.ValidCopyMapsToStringMaps(self.Metadata, nil); err == nil {
+			if properties, err := ard.ValidCopyMapsToStringMaps(self.Properties, nil); err == nil {
 				edge.Metadata = metadata.(ard.StringMap)
 				edge.Properties = properties.(ard.StringMap)
 			} else {
@@ -175,8 +175,8 @@ func (self *Edge) copy(toArd bool) (*Edge, error) {
 			return nil, err
 		}
 	} else {
-		edge.Metadata = ard.SimpleCopy(self.Metadata).(ard.StringMap)
-		edge.Properties = ard.SimpleCopy(self.Properties).(ard.StringMap)
+		edge.Metadata = ard.CopyMapsToStringMaps(self.Metadata).(ard.StringMap)
+		edge.Properties = ard.CopyMapsToStringMaps(self.Properties).(ard.StringMap)
 	}
 
 	return &edge, nil

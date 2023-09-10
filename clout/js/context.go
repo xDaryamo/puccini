@@ -23,6 +23,7 @@ type Context struct {
 	Format     string
 	Strict     bool
 	Pretty     bool
+	Base64     bool
 	Output     string
 	Log        commonlog.Logger
 	Stdout     io.Writer
@@ -34,7 +35,7 @@ type Context struct {
 	programCache sync.Map
 }
 
-func NewContext(name string, log commonlog.Logger, arguments map[string]string, quiet bool, format string, strict bool, pretty bool, output string, urlContext *exturl.Context) *Context {
+func NewContext(name string, log commonlog.Logger, arguments map[string]string, quiet bool, format string, strict bool, pretty bool, base64 bool, output string, urlContext *exturl.Context) *Context {
 	if arguments == nil {
 		arguments = make(map[string]string)
 	}
@@ -45,6 +46,7 @@ func NewContext(name string, log commonlog.Logger, arguments map[string]string, 
 		Format:     format,
 		Strict:     strict,
 		Pretty:     pretty,
+		Base64:     base64,
 		Output:     output,
 		Log:        commonlog.NewScopeLogger(log, name),
 		Stdout:     os.Stdout,

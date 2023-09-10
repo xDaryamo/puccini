@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/tliron/exturl"
+	"github.com/tliron/go-transcribe"
 	"github.com/tliron/kutil/terminal"
-	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/puccini/tosca/csar"
 )
@@ -23,7 +23,7 @@ func init() {
 
 	metaCommand.Flags().StringVarP(&archiveFormat, "archive-format", "a", "", "force archive format (\"tar.gz\", \"tar\", or \"zip\"); leave empty to determine automatically from extension")
 	metaCommand.Flags().StringVarP(&output, "output", "o", "", "output metadata to file (leave empty for stdout)")
-	metaCommand.Flags().StringVarP(&format, "format", "f", "", "force output format (\"yaml\", \"json\", \"cjson\", \"xml\", \"cbor\", \"messagepack\", or \"go\")")
+	metaCommand.Flags().StringVarP(&format, "format", "f", "", "force output format (\"yaml\", \"json\", \"xjson\", \"xml\", \"cbor\", \"messagepack\", or \"go\")")
 	metaCommand.Flags().StringVarP(&colorize, "colorize", "z", "true", "colorize output (boolean or \"force\")")
 	metaCommand.Flags().BoolVarP(&strict, "strict", "y", false, "strict output (for \"yaml\" format only)")
 	metaCommand.Flags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
@@ -57,7 +57,7 @@ func Meta(url string) {
 	util.FailOnError(err)
 
 	if !terminal.Quiet || (output != "") {
-		err = transcribe.WriteOrPrint(meta, format, os.Stdout, strict, pretty, output)
+		err = transcribe.WriteOrPrint(meta, format, os.Stdout, strict, pretty, false, output, nil)
 		util.FailOnError(err)
 	}
 }

@@ -28,7 +28,7 @@ func CopyTemplate(context *parsing.Context) {
 }
 
 func CopyAndMerge(target ard.Value, source ard.Value, copiedNames []string, targets ard.Map) (ard.Value, bool) {
-	target = ard.SimpleCopy(target)
+	target = ard.Copy(target)
 
 	if targetMap, ok := target.(ard.Map); ok {
 		// Recurse target?

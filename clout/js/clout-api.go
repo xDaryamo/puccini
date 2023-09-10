@@ -49,7 +49,7 @@ func (self *CloutAPI) Load(context contextpkg.Context, data any) (*CloutAPI, err
 		}
 
 	case ard.Map:
-		if clout, err = cloutpkg.Parse(data_); err != nil {
+		if clout, err = cloutpkg.Unpack(data_); err != nil {
 			return nil, err
 		}
 
@@ -165,22 +165,22 @@ func (self *CloutAPI) Unwrap(value any) any {
 	}
 }
 
-// json.Marshaler interface
+// ([json.Marshaler] interface)
 func (self *CloutAPI) MarshalJSON() ([]byte, error) {
 	return json.Marshal(self.Clout)
 }
 
-// yaml.Marshaler interface
+// ([yaml.Marshaler] interface)
 func (self *CloutAPI) MarshalYAML() (any, error) {
 	return self.Clout, nil
 }
 
-// cbor.Marshaler interface
+// ([cbor.Marshaler] interface)
 func (self *CloutAPI) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(self.Clout)
 }
 
-// msgpack.Marshaler interface
+// ([msgpack.Marshaler] interface)
 func (self *CloutAPI) MarshalMsgpack() ([]byte, error) {
 	return msgpack.Marshal(self.Clout)
 }
