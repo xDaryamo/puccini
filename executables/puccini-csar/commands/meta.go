@@ -10,12 +10,14 @@ import (
 	"github.com/tliron/puccini/tosca/csar"
 )
 
-var output string
-var format string
-var colorize string
-var strict bool
-var pretty bool
-var base64 bool
+var (
+	output   string
+	format   string
+	colorize string
+	strict   bool
+	pretty   bool
+	base64   bool
+)
 
 func init() {
 	rootCommand.AddCommand(metaCommand)

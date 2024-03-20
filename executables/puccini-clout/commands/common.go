@@ -13,9 +13,11 @@ import (
 
 const toolName = "puccini-clout"
 
-var log = commonlog.GetLogger(toolName)
+var (
+	log = commonlog.GetLogger(toolName)
 
-var output string
+	output string
+)
 
 func Transcriber() *transcribe.Transcriber {
 	return &transcribe.Transcriber{

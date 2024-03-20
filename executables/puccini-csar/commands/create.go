@@ -17,12 +17,14 @@ import (
 	"github.com/tliron/puccini/tosca/csar"
 )
 
-var compressionLevel int
-var toscaMetaFileVersion string
-var csarVersion string
-var createdBy string
-var entryDefinitions string
-var otherDefinitions []string
+var (
+	compressionLevel     int
+	toscaMetaFileVersion string
+	csarVersion          string
+	createdBy            string
+	entryDefinitions     string
+	otherDefinitions     []string
+)
 
 func init() {
 	rootCommand.AddCommand(createCommand)

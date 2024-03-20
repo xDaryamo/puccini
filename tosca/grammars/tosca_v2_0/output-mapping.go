@@ -1,8 +1,6 @@
 package tosca_v2_0
 
 import (
-	"reflect"
-
 	"github.com/tliron/puccini/normal"
 	"github.com/tliron/puccini/tosca/parsing"
 )
@@ -118,8 +116,7 @@ func (self *OutputMapping) RenderForGroup() {
 }
 
 func (self *OutputMapping) renderForNodeTypeByTemplateName(nodeTemplateName string) {
-	var nodeTemplateType *NodeTemplate
-	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
+	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, nodeTemplatePtrType); ok {
 		self.renderForNodeType(nodeTemplate.(*NodeTemplate).NodeType)
 	} else {
 		self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")

@@ -11,11 +11,13 @@ import (
 	"github.com/tliron/puccini/clout/js"
 )
 
-var output string
-var resolve bool
-var coerce bool
-var exec string
-var arguments map[string]string
+var (
+	output    string
+	resolve   bool
+	coerce    bool
+	exec      string
+	arguments map[string]string
+)
 
 func init() {
 	rootCommand.AddCommand(compileCommand)

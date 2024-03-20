@@ -7,9 +7,11 @@ import (
 	"github.com/tliron/kutil/util"
 )
 
-var logTo string
-var verbose int
-var cpuProfilePath string
+var (
+	logTo          string
+	verbose        int
+	cpuProfilePath string
+)
 
 func init() {
 	rootCommand.PersistentFlags().BoolVarP(&terminal.Quiet, "quiet", "q", false, "suppress output")

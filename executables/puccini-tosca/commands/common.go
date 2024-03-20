@@ -13,16 +13,18 @@ import (
 
 const toolName = "puccini-tosca"
 
-var log = commonlog.GetLogger(toolName)
+var (
+	log = commonlog.GetLogger(toolName)
 
-var importPaths []string
-var template string
-var inputs map[string]string
-var inputsUrl string
-var inputValues = make(map[string]any)
-var problemsFormat string
-var quirks []string
-var urlMappings map[string]string
+	importPaths    []string
+	template       string
+	inputs         map[string]string
+	inputsUrl      string
+	inputValues    = make(map[string]any)
+	problemsFormat string
+	quirks         []string
+	urlMappings    map[string]string
+)
 
 func Transcriber() *transcribe.Transcriber {
 	return &transcribe.Transcriber{

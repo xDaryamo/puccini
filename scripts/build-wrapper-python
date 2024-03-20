@@ -26,13 +26,13 @@ cd "$DIST"
 rsync --recursive "$ROOT/wrappers/python"/* .
 rsync --recursive "$ROOT/go.mod" "$ROOT/tosca" "$ROOT/normal" "$ROOT/clout" "$ROOT/library" "$ROOT/assets" --exclude=media puccini/go-source/
 
-echo "go 1.21
+echo "go 1.22
 use ." > puccini/go-source/go.work
 
 # KUTIL=$(readlink --canonicalize "$ROOT/../kutil")
 # KUTIL=${KUTIL//\\/\\\\}
 # KUTIL=${KUTIL//\"/\\\"}
-# echo "go 1.21
+# echo "go 1.22
 # replace github.com/tliron/kutil => \"$KUTIL\"
 # use ." > puccini/go-source/go.work
 

@@ -1,6 +1,8 @@
 package tosca_v2_0
 
 import (
+	"reflect"
+
 	"github.com/tliron/commonlog"
 	"github.com/tliron/puccini/tosca/parsing"
 )
@@ -15,6 +17,9 @@ var True = true
 var Grammar = parsing.NewGrammar()
 
 var DefaultScriptletNamespace = parsing.NewScriptletNamespace()
+
+var nodeTemplatePtrType = reflect.TypeFor[*NodeTemplate]()
+var dataTypePtrType = reflect.TypeFor[*DataType]()
 
 func init() {
 	Grammar.RegisterVersion("tosca_definitions_version", "tosca_2_0", "/profiles/implicit/2.0/profile.yaml")

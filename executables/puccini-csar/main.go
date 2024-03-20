@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/tliron/kutil/util"
-	"github.com/tliron/puccini/puccini-tosca/commands"
+	"github.com/tliron/puccini/executables/puccini-csar/commands"
 
 	_ "github.com/tliron/commonlog/simple"
 )

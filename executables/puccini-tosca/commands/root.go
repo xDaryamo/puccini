@@ -7,15 +7,16 @@ import (
 	"github.com/tliron/kutil/util"
 )
 
-var logTo string
-var verbose int
-var format string
-var inputFormat string
-var colorize string
-var strict bool
-var pretty bool
-var base64 bool
-var cpuProfilePath string
+var (
+	logTo          string
+	verbose        int
+	format         string
+	colorize       string
+	strict         bool
+	pretty         bool
+	base64         bool
+	cpuProfilePath string
+)
 
 func init() {
 	rootCommand.PersistentFlags().BoolVarP(&terminal.Quiet, "quiet", "q", false, "suppress output")
@@ -23,7 +24,6 @@ func init() {
 	rootCommand.PersistentFlags().CountVarP(&verbose, "verbose", "v", "add a log verbosity level (can be used twice)")
 	rootCommand.PersistentFlags().BoolVarP(&commonlog.Trace, "trace", "", false, "add stack trace to log messages")
 	rootCommand.PersistentFlags().StringVarP(&format, "format", "f", "", "force output format (\"yaml\", \"json\", \"xjson\", \"xml\", \"cbor\", \"messagepack\", or \"go\")")
-	rootCommand.PersistentFlags().StringVarP(&inputFormat, "input-format", "i", "yaml", "force input format for Clout (\"yaml\", \"json\", \"xjson\", \"xml\", \"cbor\", or \"messagepack\")")
 	rootCommand.PersistentFlags().StringVarP(&colorize, "colorize", "z", "true", "colorize output (boolean or \"force\")")
 	rootCommand.PersistentFlags().BoolVarP(&strict, "strict", "y", false, "strict output (for \"yaml\" format only)")
 	rootCommand.PersistentFlags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
@@ -33,7 +33,7 @@ func init() {
 
 var rootCommand = &cobra.Command{
 	Use:   toolName,
-	Short: "Clout processor",
+	Short: "TOSCA parser and compiler",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		util.InitializeCPUProfiling(cpuProfilePath)
 		util.InitializeColorization(colorize)

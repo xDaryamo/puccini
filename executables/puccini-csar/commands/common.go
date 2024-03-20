@@ -9,9 +9,11 @@ import (
 
 const toolName = "puccini-csar"
 
-var log = commonlog.GetLogger(toolName)
+var (
+	log = commonlog.GetLogger(toolName)
 
-var archiveFormat string
+	archiveFormat string
+)
 
 func Transcriber() *transcribe.Transcriber {
 	return &transcribe.Transcriber{

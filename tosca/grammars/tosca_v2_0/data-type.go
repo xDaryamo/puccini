@@ -1,8 +1,6 @@
 package tosca_v2_0
 
 import (
-	"reflect"
-
 	"github.com/tliron/go-ard"
 	"github.com/tliron/puccini/normal"
 	"github.com/tliron/puccini/tosca/parsing"
@@ -166,8 +164,7 @@ func (self *DataType) NewValueMeta() *normal.ValueMeta {
 }
 
 func LookupDataType(context *parsing.Context, name string) (*DataType, bool) {
-	var dataType *DataType
-	if entityPtr, ok := context.Namespace.LookupForType(name, reflect.TypeOf(dataType)); ok {
+	if entityPtr, ok := context.Namespace.LookupForType(name, dataTypePtrType); ok {
 		return entityPtr.(*DataType), true
 	} else {
 		return nil, false

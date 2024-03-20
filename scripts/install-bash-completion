@@ -13,7 +13,15 @@ if [ -z "$USER_DIR" ]; then
 	USER_DIR=$DATA_HOME/bash-completion
 fi
 
+function c () {
+	local NAME=$1
+	"$NAME" completion bash > "$USER_DIR/completions/$NAME"
+}
+
 mkdir --parents "$USER_DIR/completions"
-puccini-tosca completion bash > "$USER_DIR/completions/puccini-tosca"
-puccini-clout completion bash > "$USER_DIR/completions/puccini-clout"
-puccini-csar completion bash > "$USER_DIR/completions/puccini-csar"
+
+c puccini-tosca
+c puccini-clout
+c puccini-csar
+
+reset

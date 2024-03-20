@@ -1,8 +1,6 @@
 package tosca_v2_0
 
 import (
-	"reflect"
-
 	"github.com/tliron/go-ard"
 	"github.com/tliron/puccini/tosca/parsing"
 )
@@ -85,8 +83,7 @@ func (self *PropertyMapping) Render(inputDefinitions ParameterDefinitions) {
 	} else if (self.NodeTemplateName != nil) && (self.PropertyName != nil) {
 		// Deprecated in TOSCA 1.3
 		nodeTemplateName := *self.NodeTemplateName
-		var nodeTemplateType *NodeTemplate
-		if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, reflect.TypeOf(nodeTemplateType)); ok {
+		if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, nodeTemplatePtrType); ok {
 			self.NodeTemplate = nodeTemplate.(*NodeTemplate)
 
 			self.NodeTemplate.Render()

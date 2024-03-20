@@ -16,9 +16,11 @@ import (
 	"github.com/tliron/yamlkeys"
 )
 
-var stopAtPhase uint32
-var dumpPhases []uint
-var filter string
+var (
+	stopAtPhase uint32
+	dumpPhases  []uint
+	filter      string
+)
 
 func init() {
 	rootCommand.AddCommand(parseCommand)
