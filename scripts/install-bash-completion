@@ -24,4 +24,6 @@ c puccini-tosca
 c puccini-clout
 c puccini-csar
 
-reset
+if [ "$1" == -r ]; then
+	reset
+fi

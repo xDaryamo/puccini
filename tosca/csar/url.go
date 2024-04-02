@@ -8,28 +8,28 @@ import (
 	"github.com/tliron/exturl"
 )
 
-func NewURL(csarUrl exturl.URL, format string, path string) (exturl.URL, error) {
+func NewURL(csarUrl exturl.URL, format string, path string) (exturl.URL, exturl.URL, error) {
 	if format == "" {
 		format = csarUrl.Format()
 	}
 
 	if exturl.IsValidTarballArchiveFormat(format) {
-		return exturl.NewTarballURL(path, csarUrl, format), nil
+		return exturl.NewTarballURL(path, csarUrl, format), exturl.NewTarballURL("", csarUrl, format), nil
 	}
 
 	switch format {
 	case "zip", "csar":
-		return exturl.NewZipURL(path, csarUrl), nil
+		return exturl.NewZipURL(path, csarUrl), exturl.NewZipURL("", csarUrl), nil
 	default:
-		return nil, fmt.Errorf("unsupported CSAR archive format: %q", format)
+		return nil, nil, fmt.Errorf("unsupported CSAR archive format: %q", format)
 	}
 }
 
-func GetDefaultServiceTemplateURL(context contextpkg.Context, csarUrl exturl.URL, format string) (exturl.URL, error) {
+func GetDefaultServiceTemplateURL(context contextpkg.Context, csarUrl exturl.URL, format string) (exturl.URL, exturl.URL, error) {
 	return GetServiceTemplateURL(context, csarUrl, format, "")
 }
 
-func GetServiceTemplateURL(context contextpkg.Context, csarUrl exturl.URL, format string, serviceTemplateName string) (exturl.URL, error) {
+func GetServiceTemplateURL(context contextpkg.Context, csarUrl exturl.URL, format string, serviceTemplateName string) (exturl.URL, exturl.URL, error) {
 	if format == "" {
 		format = csarUrl.Format()
 	}
@@ -38,10 +38,10 @@ func GetServiceTemplateURL(context contextpkg.Context, csarUrl exturl.URL, forma
 	if err != nil {
 		if exturl.IsNotFound(err) {
 			if meta, err = NewMetaFor(context, csarUrl, format); err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 		} else {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
@@ -57,7 +57,7 @@ func GetServiceTemplateURL(context contextpkg.Context, csarUrl exturl.URL, forma
 		if path, err := GetRootPath(context, csarUrl, format); err == nil {
 			return NewURL(csarUrl, format, path)
 		} else {
-			return nil, err
+			return nil, nil, err
 		}
 	} else {
 		// Alternative entry points
@@ -77,5 +77,5 @@ func GetServiceTemplateURL(context contextpkg.Context, csarUrl exturl.URL, forma
 		}
 	}
 
-	return nil, fmt.Errorf("CSAR does not have service template %q: %s", serviceTemplateName, csarUrl.String())
+	return nil, nil, fmt.Errorf("CSAR does not have service template %q: %s", serviceTemplateName, csarUrl.String())
 }

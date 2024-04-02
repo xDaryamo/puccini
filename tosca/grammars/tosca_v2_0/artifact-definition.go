@@ -2,6 +2,7 @@ package tosca_v2_0
 
 import (
 	contextpkg "context"
+	"path"
 	"strings"
 
 	"github.com/tliron/exturl"
@@ -74,20 +75,21 @@ func (self *ArtifactDefinition) GetURL(context contextpkg.Context) exturl.URL {
 	}
 
 	if self.url == nil {
-		if self.Repository != nil {
+		if (self.Context.RepositoryURL != nil) && path.IsAbs(*self.File) {
+			// Absolute paths are relative to the implicit repository
+			path := (*self.File)[1:]
+			self.url = self.Context.RepositoryURL.Relative(path)
+		} else if self.Repository != nil {
 			if url := self.Repository.GetURL(); url != nil {
 				self.url = url.Relative(*self.File)
 			}
 		} else {
 			base := self.Context.URL.Base()
-			bases := []exturl.URL{base}
-			var err error
-			if self.url, err = base.Context().NewValidAnyOrFileURL(context, *self.File, bases); err != nil {
-				// Avoid reporting more than once
-				if !self.urlProblemReported {
-					self.Context.ReportError(err)
-					self.urlProblemReported = true
-				}
+			if url, err := base.Context().NewValidAnyOrFileURL(context, *self.File, []exturl.URL{base}); err == nil {
+				self.url = url
+			} else if !self.urlProblemReported { // avoid reporting more than once
+				self.Context.ReportError(err)
+				self.urlProblemReported = true
 			}
 		}
 	}

@@ -35,7 +35,7 @@ func GetRootPaths(context contextpkg.Context, csarUrl exturl.URL, format string)
 		format = csarUrl.Format()
 	}
 
-	url, err := NewURL(csarUrl, format, "")
+	url, _, err := NewURL(csarUrl, format, "")
 	if err != nil {
 		return nil, err
 	}

@@ -122,7 +122,7 @@ func ReadMetaFromURL(context contextpkg.Context, csarUrl exturl.URL, format stri
 		format = csarUrl.Format()
 	}
 
-	if url, err := NewURL(csarUrl, format, TOSCA_META_PATH); err == nil {
+	if url, _, err := NewURL(csarUrl, format, TOSCA_META_PATH); err == nil {
 		if reader, err := url.Open(context); err == nil {
 			reader = util.NewContextualReadCloser(context, reader)
 			defer commonlog.CallAndLogWarning(reader.Close, "csar.ReadMetaFromURL", log)

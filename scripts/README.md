@@ -23,7 +23,7 @@ be `~/go/bin/puccini-tosca`, etc.
 You might find it convenient to have `~/go/bin` on your search path. For Bash, add this to your
 `~/.bashrc` file:
 
-    export PATH="~/go/bin:$PATH" 
+    export PATH=~/go/bin:$PATH
 
 The Go compiler will only compile changed files. Also, it's a very fast compiler. So, generally you
 should not be concerned about this step in your toolchain.
@@ -36,6 +36,8 @@ introduced in Go 1.11. See the files `go.mod` and `go.sum`.
 
 Installs bash completion scripts for the current user, for the current build of Puccini. This allows
 you to press TAB to complete commands starting with `puccini-tosca`, `puccini-clout`, etc.
+
+    scripts/install-bash-completion -r
 
 [embed](embed)
 --------------

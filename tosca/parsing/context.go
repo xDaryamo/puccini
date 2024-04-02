@@ -58,6 +58,7 @@ type Context struct {
 	Name               string
 	Path               ard.Path
 	URL                exturl.URL
+	RepositoryURL      exturl.URL
 	Bases              []exturl.URL
 	Data               ard.Value
 	Locator            ard.Locator
@@ -91,6 +92,7 @@ func (self *Context) NewImportContext(url exturl.URL) *Context {
 		Name:               self.Name,
 		Path:               self.Path,
 		URL:                url,
+		RepositoryURL:      self.RepositoryURL,
 		Bases:              self.Bases,
 		CanonicalNamespace: self.CanonicalNamespace,
 		Namespace:          NewNamespace(),
@@ -178,6 +180,7 @@ func (self *Context) Clone(data ard.Value) *Context {
 		Name:               self.Name,
 		Path:               self.Path,
 		URL:                self.URL,
+		RepositoryURL:      self.RepositoryURL,
 		Bases:              self.Bases,
 		Data:               data,
 		Locator:            self.Locator,
@@ -199,6 +202,7 @@ func (self *Context) FieldChild(name ard.Value, data ard.Value) *Context {
 		Name:               nameString,
 		Path:               self.Path.AppendField(nameString),
 		URL:                self.URL,
+		RepositoryURL:      self.RepositoryURL,
 		Bases:              self.Bases,
 		Data:               data,
 		Locator:            self.Locator,
@@ -246,6 +250,7 @@ func (self *Context) MapChild(name ard.Value, data ard.Value) *Context {
 		Name:               nameString,
 		Path:               self.Path.AppendMap(nameString),
 		URL:                self.URL,
+		RepositoryURL:      self.RepositoryURL,
 		Bases:              self.Bases,
 		Data:               data,
 		Locator:            self.Locator,
@@ -266,6 +271,7 @@ func (self *Context) ListChild(index int, data ard.Value) *Context {
 		Name:               strconv.FormatInt(int64(index), 10),
 		Path:               self.Path.AppendList(index),
 		URL:                self.URL,
+		RepositoryURL:      self.RepositoryURL,
 		Bases:              self.Bases,
 		Data:               data,
 		Locator:            self.Locator,
@@ -286,6 +292,7 @@ func (self *Context) SequencedListChild(index int, name string, data ard.Value) 
 		Name:               name,
 		Path:               self.Path.AppendSequencedList(index),
 		URL:                self.URL,
+		RepositoryURL:      self.RepositoryURL,
 		Bases:              self.Bases,
 		Data:               data,
 		Locator:            self.Locator,

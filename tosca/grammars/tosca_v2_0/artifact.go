@@ -119,8 +119,7 @@ func (self *Artifact) Normalize(normalNodeTemplate *normal.NodeTemplate) *normal
 	if self.File != nil {
 		normalArtifact.Filename = filepath.Base(*self.File)
 	}
-	url := self.GetURL(contextpkg.TODO())
-	if url != nil {
+	if url := self.GetURL(contextpkg.TODO()); url != nil {
 		normalArtifact.SourcePath = url.String()
 	}
 	if self.DeployPath != nil {
