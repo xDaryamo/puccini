@@ -2,7 +2,7 @@
 builds:
 
 - id: puccini-tosca
-  main: ./puccini-tosca
+  main: ./executables/puccini-tosca
   binary: puccini-tosca
   goarch:
   - amd64
@@ -18,7 +18,7 @@ builds:
   - -X 'github.com/tliron/kutil/version.Timestamp={{.Env.TIMESTAMP}}'
 
 - id: puccini-clout
-  main: ./puccini-clout
+  main: ./executables/puccini-clout
   binary: puccini-clout
   goarch:
   - amd64
@@ -34,7 +34,7 @@ builds:
   - -X 'github.com/tliron/kutil/version.Timestamp={{.Env.TIMESTAMP}}'
 
 - id: puccini-csar
-  main: ./puccini-csar
+  main: ./executables/puccini-csar
   binary: puccini-csar
   goarch:
   - amd64
