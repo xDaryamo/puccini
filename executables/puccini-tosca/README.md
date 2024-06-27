@@ -40,12 +40,6 @@ The list of supported quirks is maintained [here](../tosca/parsing/QUIRKS.md).
 See the [tutorial](../TUTORIAL.md) for more detail.
 
 
-`meta`
-------
-
-Extracts, validate, and outputs the CSAR metadata.
-
-
 `parse`
 -------
 

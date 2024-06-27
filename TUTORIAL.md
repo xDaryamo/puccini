@@ -5,9 +5,9 @@ Puccini Tutorial
 
 The distribution comes with three executables:
 
-* [`puccini-tosca`](puccini-tosca/): compiles TOSCA into a Clout
-* [`puccini-clout`](puccini-clout/): processes a Clout, e.g. by running scriptlets on it
-* [`puccini-csar`](puccini-csar/): packs TOSCA sources and artifacts into a CSAR
+* [`puccini-tosca`](executables/puccini-tosca/): compiles TOSCA into a Clout
+* [`puccini-clout`](executables/puccini-clout/): processes a Clout, e.g. by running scriptlets on it
+* [`puccini-csar`](executables/puccini-csar/): packs TOSCA sources and artifacts into a CSAR
 
 
 Basic Usage
@@ -119,7 +119,8 @@ To suppress all output (if you're only interested in the return error code):
 Also note that there is a `puccini-tosca parse` command that provides a lot
 of internal diagnostic information about the language parser. It's generally
 useful for Puccini developers rather than Puccini users, so it is out of scope
-for this quickstart guide. See [here](puccini-tosca/) for more information.
+for this quickstart guide. See [here](executables/puccini-tosca/) for more
+information.
 
 
 More on Compilation
@@ -163,7 +164,8 @@ reports:
 When you turn off the resolution phase you will indeed see no relationships in the Clout
 (you'll see that the `edgesOut` for all vertexes is an empty list).
 
-Read more about how Puccini implements resolution [here](assets/profiles/common/1.0/js/RESOLUTION.md).
+Read more about how Puccini implements resolution
+[here](assets/tosca/profiles/common/1.0/js/RESOLUTION.md).
 
 
 TOSCA Functions and Constraints
@@ -270,7 +272,8 @@ execute scriptlets right after compilation, thus skipping the Clout intermediary
 
     puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml --exec=assets/tosca/profiles/common/1.0/js/visualize.js
 
-See [here](puccini-clout/) for more information about the `puccini-clout` tool.
+See [here](executables/puccini-clout/) for more information about the `puccini-clout`
+tool.
 
 
 Why Scriptlets?
@@ -305,11 +308,11 @@ scriptlets for TOSCA, see [here](examples/javascript/).
 More on CSARs
 -------------
 
-The [`tosca-csar`](puccini-csar/) tool supports tarball CSARs (`.tar.gz` or `.tar`) as well
-as zip (`.zip` or the `.csar` alias). Note that tarballs have the advantage that they can be
-streamed (e.g. from a HTTP URL) whereas using the zip format would require `puccini-tosca`
-to first download the entire archive to the system's temporary directory. Both will work,
-but tarballs are far more efficient.
+The [`tosca-csar`](executables/puccini-csar/) tool supports tarball CSARs (`.tar.gz`
+or `.tar`) as well as zip (`.zip` or the `.csar` alias). Note that tarballs have the
+advantage that they can be streamed (e.g. from a HTTP URL) whereas using the zip
+format would require `puccini-tosca` to first download the entire archive to the
+system's temporary directory. Both will work, but tarballs are far more efficient.
 
 Try zip via the `.csar` alias:
 
@@ -334,7 +337,7 @@ would be the first "Other-Definitions", and so on:
 
     puccini-tosca compile cloud.tar.gz --template=2
 
-Puccini also supports "tar:" and "zip:" prefix schemes for URLs, allowing you to refer
+Puccini also supports `tar:` and `zip:` prefix schemes for URLs, allowing you to refer
 to an entry within any archive file, CSAR or otherwise. Any valid URL can follow the
 prefix, whether it's a local file URL, HTTP, etc. Note that for files it does require
 absolute file system paths. Then follow with a "!" and the path within the archive.
@@ -354,6 +357,3 @@ Next Steps
 
 Now that you know how to use Puccini and understand how it works, check out all the
 various included [examples](examples/).
-
-And also check out [Turandot](https://turandot.puccini.cloud/), an orchestrator
-for Kubernetes based on Puccini and Clout.
