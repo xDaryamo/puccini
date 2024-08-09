@@ -9,13 +9,22 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 # The service template can have optional metadata
 metadata:
-  # The following fields are "normative" and expected in TOSCA 
+  # The following fields are "normative" and expected in TOSCA
   template_name: Metadata Example
   template_author: Puccini
   template_version: '1.0' # (must be a string so we add quotes to avoid being read as a float)
   # And you can add your custom metadata
   # (The "." has no special general meaning for metadata names)
   galactic.planet: Mercury
+
+data_types:
+
+  Planet:
+    properties:
+      radius:
+        type: float
+        metadata:
+          galaxy: Milky Way
 
 node_types:
 
@@ -29,6 +38,10 @@ node_types:
       galactic.planet: Jupiter
     # Types can also have a semantic version
     version: 1.0.0
+    properties:
+      planet:
+        type: Planet
+        required: false
 
 topology_template:
 
@@ -41,7 +54,7 @@ topology_template:
         galactic.planet: Venus
       # You can also assign a list of string directives to node templates
       # The only "normative" directive mentioned in the TOSCA spec is "substitutable"
-      # (See: substitution-mapping-client.yaml) 
+      # (See: substitution-mapping-client.yaml)
       directives:
       - proxy
       - mock

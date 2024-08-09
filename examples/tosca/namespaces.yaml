@@ -10,7 +10,7 @@ imports:
 # The short notation of import merges the names into this namespace
 - imports/nginx.yaml
 
-# Use the long notation of import to specify "namespace_prefix" 
+# Use the long notation of import to specify "namespace_prefix"
 - namespace_prefix: mongodb
   file: imports/mongodb.yaml
 
@@ -18,7 +18,7 @@ imports:
 # (In Puccini it appears only in the compiled Clout output with a "::" separator)
 # It is typically used when designing type profiles
 # In this file it does nothing, because we do not declare types here
-# But see its use in "imports/nginx.yaml" and "imports/mongodb.yaml" 
+# But see its use in "imports/nginx.yaml" and "imports/mongodb.yaml"
 namespace: example
 
 topology_template:

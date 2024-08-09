@@ -20,12 +20,12 @@ type AttributeDefinition struct {
 	*Entity `name:"attribute definition"`
 	Name    string
 
-	Metadata          Metadata          `read:"metadata,Metadata"` // introduced in TOSCA 1.3
+	Metadata          Metadata          `read:"metadata,Metadata"` // introduced in TOSCA 1.2, but only for properties
 	Description       *string           `read:"description"`
-	DataTypeName      *string           `read:"type"`                                             // mandatory only if cannot be inherited or discovered
-	ConstraintClauses ConstraintClauses `read:"constraints,[]ConstraintClause" traverse:"ignore"` // introduced in TOSCA 2.0
-	KeySchema         *Schema           `read:"key_schema,Schema"`                                // introduced in TOSCA 1.3
-	EntrySchema       *Schema           `read:"entry_schema,Schema"`                              // mandatory if list or map
+	DataTypeName      *string           `read:"type"` // mandatory only if cannot be inherited or discovered
+	ConstraintClauses ConstraintClauses `read:"constraints,[]ConstraintClause" traverse:"ignore"`
+	KeySchema         *Schema           `read:"key_schema,Schema"`   // introduced in TOSCA 1.3
+	EntrySchema       *Schema           `read:"entry_schema,Schema"` // mandatory if list or map
 	Default           *Value            `read:"default,Value"`
 	Status            *string           `read:"status"`
 

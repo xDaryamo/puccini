@@ -15,7 +15,6 @@ import (
 
 // ([parsing.Reader] signature)
 func ReadPropertyDefinition(context *parsing.Context) parsing.EntityPtr {
-	context.SetReadTag("Metadata", "")
 	context.SetReadTag("KeySchema", "")
 
 	return tosca_v2_0.ReadPropertyDefinition(context)
