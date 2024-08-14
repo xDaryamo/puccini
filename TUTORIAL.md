@@ -15,7 +15,7 @@ Basic Usage
 
 Let's start by compiling a self-contained local file:
 
-    puccini-tosca compile examples/tosca/descriptions.yaml
+    puccini-tosca compile examples/1.3/descriptions.yaml
 
 What if the file imports other files? TOSCA `imports` can refer to either absolute
 URLs or relative URLs ([RFC 1808](https://tools.ietf.org/html/rfc1808)). Note that
@@ -47,7 +47,7 @@ or wrap it in single quotes:
 
 Puccini can also compile YAML from stdin:
 
-    cat examples/tosca/descriptions.yaml | puccini-tosca compile
+    cat examples/1.3/descriptions.yaml | puccini-tosca compile
 
 Be aware that a stdin source does not have a path and thus cannot support relative
 URLs.
@@ -76,45 +76,45 @@ The default output format is YAML but other formats are supported: JSON (and
 [ARD](https://github.com/tliron/kutil/tree/master/ard/)-compatible extended JSON), XML,
 CBOR, and MessagePack. Here's ARD-compatible XJSON:
 
-    puccini-tosca compile examples/tosca/descriptions.yaml --format=xjson
+    puccini-tosca compile examples/1.3/descriptions.yaml --format=xjson
 
 By default the output is nicely indented and and colorized for human readability. You can
 turn off prettification if you're interested in the most compact output:
 
-    puccini-tosca compile examples/tosca/descriptions.yaml --pretty=false
+    puccini-tosca compile examples/1.3/descriptions.yaml --pretty=false
 
 Note that colorization will *always* be disabled in contexts that do not support it. In
 other words it will likely only appear in stdout for terminal emulators that support ANSI
 color codes. However, you can also specifically turn off colorization:
 
-    puccini-tosca compile examples/tosca/descriptions.yaml --colorize=false
+    puccini-tosca compile examples/1.3/descriptions.yaml --colorize=false
 
 By default the output is sent to stdout but you can also send it to a file (without
 colorization):
 
-    puccini-tosca compile examples/tosca/descriptions.yaml --output=clout.yaml
+    puccini-tosca compile examples/1.3/descriptions.yaml --output=clout.yaml
 
 Of course if running in a shell you can also redirect stdout to a file (again, without
 colorization):
 
-    puccini-tosca compile examples/tosca/descriptions.yaml > clout.yaml
+    puccini-tosca compile examples/1.3/descriptions.yaml > clout.yaml
 
 You can increase the verbosity of logging using `-v` or even `-vv`:
 
-    puccini-tosca compile examples/tosca/descriptions.yaml -vv
+    puccini-tosca compile examples/1.3/descriptions.yaml -vv
 
 By default all the log messages go to stderr but we can send them to a file:
 
-    puccini-tosca compile examples/tosca/descriptions.yaml -vv --log=puccini.log
+    puccini-tosca compile examples/1.3/descriptions.yaml -vv --log=puccini.log
     cat puccini.log
 
 If you only want to see the logs and not the Clout output:
 
-    puccini-tosca compile examples/tosca/descriptions.yaml -vv > /dev/null
+    puccini-tosca compile examples/1.3/descriptions.yaml -vv > /dev/null
 
 To suppress all output (if you're only interested in the return error code):
 
-    puccini-tosca compile examples/tosca/descriptions.yaml --quiet
+    puccini-tosca compile examples/1.3/descriptions.yaml --quiet
 
 Also note that there is a `puccini-tosca parse` command that provides a lot
 of internal diagnostic information about the language parser. It's generally
@@ -128,7 +128,7 @@ More on Compilation
 
 Let's try to compile a TOSCA service template that requires inputs:
 
-    puccini-tosca compile examples/tosca/inputs-and-outputs.yaml
+    puccini-tosca compile examples/1.3/inputs-and-outputs.yaml
 
 You'll see that Puccini reported a "problem" regarding the unassigned input. Any and all
 compilation errors, whether they are syntactical, grammatical, or topological, are
@@ -138,11 +138,11 @@ problem reporting is one of its most powerful features.
 By default problems are reported in a human-readable format. However, like the Clout
 output, problems can be formatted for easier consumption by other tools:
 
-    puccini-tosca compile examples/tosca/inputs-and-outputs.yaml --problems-format=json
+    puccini-tosca compile examples/1.3/inputs-and-outputs.yaml --problems-format=json
 
 Let's set that missing input:
 
-    puccini-tosca compile examples/tosca/inputs-and-outputs.yaml --input=ram=1gib
+    puccini-tosca compile examples/1.3/inputs-and-outputs.yaml --input=ram=1gib
 
 In this case the input is a string (actually a TOSCA `scalar-unit.size`), but note that
 the the input format is YAML, which is also JSON-compatible, so that complex input
@@ -152,14 +152,14 @@ you can use the `--input` flag more than once to provide multiple inputs.
 Inputs can also be loaded from a file (locally or at a URL) as straightforward YAML:
 
     echo 'ram: 1 gib' > inputs.yaml
-    puccini-tosca compile examples/tosca/inputs-and-outputs.yaml --inputs=inputs.yaml
+    puccini-tosca compile examples/1.3/inputs-and-outputs.yaml --inputs=inputs.yaml
 
 By default the compiler will "resolve" the topology, meaning that it will atempt to satisfy
 all node template requirements and create relationships, thus completing the graph. However,
 sometimes it may be useful to disable the resolution phase in order to avoid excessive problem
 reports:
 
-    puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml --resolve=false
+    puccini-tosca compile examples/1.3/requirements-and-capabilities.yaml --resolve=false
 
 When you turn off the resolution phase you will indeed see no relationships in the Clout
 (you'll see that the `edgesOut` for all vertexes is an empty list).
@@ -180,14 +180,14 @@ from runtime resources.
 
 You can see the call stubs by compiling this example:
 
-    puccini-tosca compile examples/tosca/functions.yaml
+    puccini-tosca compile examples/1.3/functions.yaml
 
 You'll notice that the call stubs all have the special `$functionCall` key.
 
 How do we call the functions? In Puccini we refer to this as "value coercion". As a
 convenience we can use the `--coerce` flag to coerce the values during compilation:
 
-    puccini-tosca compile examples/tosca/functions.yaml --coerce
+    puccini-tosca compile examples/1.3/functions.yaml --coerce
 
 You'll see that all properties now have their actual values rather than call stubs.
 
@@ -201,19 +201,19 @@ data type.
 
 Let's try this example:
 
-    puccini-tosca compile examples/tosca/data-types.yaml --coerce
+    puccini-tosca compile examples/1.3/data-types.yaml --coerce
 
-Now, edit `examples/tosca/data-types.yaml` and break a constraint. For example, the
+Now, edit `examples/1.3/data-types.yaml` and break a constraint. For example, the
 `constrained_string` property requires a minimum length of 2 and a maximum length of
 5, so let's set its value to a string with length 6, `ABCDEF` (at line 267), and
 compile and coerce again:
 
-    puccini-tosca compile examples/tosca/data-types.yaml --coerce
+    puccini-tosca compile examples/1.3/data-types.yaml --coerce
 
 You'll see a problem reported telling you exactly which constraint failed and where.
 Now, let's compile this same file without coercion (the default behavior):
 
-    puccini-tosca compile examples/tosca/data-types.yaml
+    puccini-tosca compile examples/1.3/data-types.yaml
 
 The problem was not reported this time.
 
@@ -233,13 +233,13 @@ function and constraint call stubs are implemented.
 
 Let's use the `puccini-clout` tool to list these embedded scriptlets:
 
-    puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml --output=clout.yaml
+    puccini-tosca compile examples/1.3/requirements-and-capabilities.yaml --output=clout.yaml
     puccini-clout scriptlet list clout.yaml
 
 Note that `puccini-clout` can also accept Clout input from stdin, allowing us to pipe
 the two tools:
 
-    puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml | puccini-clout scriptlet list
+    puccini-tosca compile examples/1.3/requirements-and-capabilities.yaml | puccini-clout scriptlet list
 
 Let's extract a scriptlet's source code:
 
@@ -270,7 +270,7 @@ the topology:
 Note another shortcut for `puccini-tosca compile`: you can use the `--exec` flag to
 execute scriptlets right after compilation, thus skipping the Clout intermediary:
 
-    puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml --exec=assets/tosca/profiles/common/1.0/js/visualize.js
+    puccini-tosca compile examples/1.3/requirements-and-capabilities.yaml --exec=assets/tosca/profiles/common/1.0/js/visualize.js
 
 See [here](executables/puccini-clout/) for more information about the `puccini-clout`
 tool.

@@ -6,4 +6,4 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 
 "$HERE/build"
 
-puccini-tosca parse "$ROOT/examples/tosca/data-types.yaml" "$@"
+puccini-tosca parse "$ROOT/examples/1.3/data-types.yaml" "$@"

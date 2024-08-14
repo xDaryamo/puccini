@@ -8,4 +8,4 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 
 gem install "$ROOT/dist/puccini.gem"
 
-"$ROOT/examples/ruby/compile.rb" "$ROOT/examples/tosca/inputs-and-outputs.yaml" --input=ram=1gib --input=cores=6 "$@"
+"$ROOT/examples/ruby/compile.rb" "$ROOT/examples/1.3/inputs-and-outputs.yaml" --input=ram=1gib --input=cores=6 "$@"

@@ -19,10 +19,10 @@ function run () {
 }
 
 run puccini-tosca compile \
-"$ROOT/examples/tosca/data-types.yaml" "$@"
+"$ROOT/examples/1.3/data-types.yaml" "$@"
 
 run puccini-tosca compile \
 "$ROOT/dist/cloud.csar" "$@"
 
 #run puccini-tosca compile \
-#https://raw.githubusercontent.com/tliron/puccini/main/examples/tosca/data-types.yaml "$@"
+#https://raw.githubusercontent.com/tliron/puccini/main/examples/1.3/data-types.yaml "$@"

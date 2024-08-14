@@ -17,7 +17,7 @@ I know, right? Now imagine writing a parser for it... Not only is it a complex l
 Please join [OASIS's TOSCA community](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=tosca)
 to help improve the language!
 
-Meanwhile, Puccini includes [examples](examples/tosca/) of TOSCA's grammatical features with some
+Meanwhile, Puccini includes [examples](examples/) of TOSCA's grammatical features with some
 running commentary. Treat them as your playground. Also, if you have 4 hours to spare, grab some
 snacks, get comfortable, and watch the author's free online course for TOSCA 1.0:
 [part 1](https://www.youtube.com/watch?v=aMkqLI6o-58),
@@ -115,7 +115,7 @@ processor in Python, Ruby, etc., to do exactly what you need, e.g.:
 Also check out [yq](https://mikefarah.gitbook.io/yq/), a great little tool for extracting YAML and
 even performing simple manipulations. Example:
 
-    puccini-tosca compile examples/tosca/requirements-and-capabilities.yaml | yq '.vertexes.[]|select(.properties.name=="light6")'
+    puccini-tosca compile examples/1.3/requirements-and-capabilities.yaml | yq '.vertexes.[]|select(.properties.name=="light6")'
 
 ### Can I use text templating instead of TOSCA functions like `get_input`?
 
@@ -147,8 +147,8 @@ requiring Jinja2 template processing, after which the `.j2` extension would be s
 TOSCA has a feature called "substitution mapping", which is useful for modeling service composition.
 It is, however, a *design* feature. The implementation is up to your orchestration toolchain. See
 our examples
-[here](examples/tosca/substitution-mapping.yaml) and
-[here](examples/tosca/substitution-mapping-client.yaml).
+[here](examples/1.3/substitution-mapping.yaml) and
+[here](examples/1.3/substitution-mapping-client.yaml).
 
 Puccini intentionally does *not* support service composition. Each Clout file is its own graph
 universe. If you need to create graph edges between vertexes in one Clout file and vertexes in other

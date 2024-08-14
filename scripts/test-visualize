@@ -6,6 +6,6 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 
 "$HERE/build"
 
-puccini-tosca compile "$ROOT/examples/tosca/requirements-and-capabilities.yaml" \
+puccini-tosca compile "$ROOT/examples/1.3/requirements-and-capabilities.yaml" \
     --exec="$ROOT/assets/profiles/common/1.0/js/visualize.js" > /tmp/puccini.html && \
     xdg-open /tmp/puccini.html

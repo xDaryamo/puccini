@@ -5,4 +5,4 @@ This relies on the [Python wrapper](../../wrappers/python/), so make sure to ins
 
 You can now run the example:
 
-    examples/python/compile.py examples/tosca/data-types.yaml
+    examples/python/compile.py examples/1.3/data-types.yaml

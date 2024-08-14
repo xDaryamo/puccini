@@ -82,7 +82,7 @@ General implementation-specific properties for the whole topology.
 The difference between `metadata` and `properties` is a matter of convention. Generally, `properties`
 should be used for data that is implementation-specific while `metadata` should be used for tooling.
 It is understood that this distinction might not always be clear and thus you should not treat the
-two areas differently in terms of state management.  
+two areas differently in terms of state management.
 
 ### `vertexes` (map of string to Vertex)
 
@@ -254,7 +254,7 @@ It may also have the follow optional fields for debugging information:
 * `typeMetadata`: a map of strings associated with the value's type
 * `localMetadata`: a map of strings associated with the value itself
 
-Example (generated from [this TOSCA example](../examples/tosca/data-types.yaml)):
+Example (generated from [this TOSCA example](../examples/1.3/data-types.yaml)):
 
 ```yaml
 lowercase_string_map:
@@ -271,7 +271,7 @@ lowercase_string_map:
           name: tosca.function.concat
           path: topology_template.node_templates["data"].properties["lowercase_string_map"]["concat:¶  - recip¶  - ient"]
           row: 194
-          url: file:/Depot/Projects/RedHat/puccini/examples/tosca/data-types.yaml
+          url: file:/Depot/Projects/RedHat/puccini/examples/1.3/data-types.yaml
       $primitive: Puccini
   $meta:
     type: map
@@ -286,7 +286,7 @@ lowercase_string_map:
             name: tosca.constraint.pattern
             path: topology_template.node_templates["data"].properties["lowercase_string_map"]
             row: 194
-            url: file:/Depot/Projects/RedHat/puccini/examples/tosca/data-types.yaml
+            url: file:/Depot/Projects/RedHat/puccini/examples/1.3/data-types.yaml
     value:
       type: string
 ```

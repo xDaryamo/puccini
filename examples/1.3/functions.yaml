@@ -72,7 +72,7 @@ topology_template:
           - ::1
         # Some functions support special "modelable entity names", such as "SELF":
         management_port: { get_property: [ SELF, admin_port ] }
-        # (Also see: examples/tosca/source-and-target.yaml)
+        # (Also see: examples/1.3/source-and-target.yaml)
       capabilities:
         ingress:
           properties:

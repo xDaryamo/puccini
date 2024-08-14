@@ -31,12 +31,14 @@ Usage
 
 Example:
 
-    import sys, puccini.tosca, ard
+```python
+import sys, puccini.tosca, ard
 
-    try:
-        clout = puccini.tosca.compile('/path/to/my-tosca-service.csar') # can also be a URL
-        ard.write(clout, sys.stdout)
-    except puccini.tosca.Problems as e:
-        print('Problems:', file=sys.stderr)
-        for problem in e.problems:
-            ard.write(problem, sys.stderr)
+try:
+  clout = puccini.tosca.compile('/path/to/my-tosca-service.csar') # can also be a URL
+  ard.write(clout, sys.stdout)
+except puccini.tosca.Problems as e:
+  print('Problems:', file=sys.stderr)
+  for problem in e.problems:
+    ard.write(problem, sys.stderr)
+```

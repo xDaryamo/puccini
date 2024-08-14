@@ -30,7 +30,7 @@ author:
 EXAMPLES = r'''
 - name: Compile TOSCA service template
   puccini.tosca.compile:
-    service_template: ../../examples/tosca/requirements-and-capabilities.yaml
+    service_template: ../../examples/1.3/requirements-and-capabilities.yaml
     inputs: {}
   register: service
 '''

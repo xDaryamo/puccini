@@ -12,4 +12,4 @@ export PATH=$GOPATH/bin:$ROOT:$PATH
 
 export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java}
 
-ANSIBLE_VERSION=10.2.0
+ANSIBLE_VERSION=10.3.0

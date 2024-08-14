@@ -6,7 +6,7 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 # Note that by default "puccini-tosca compile" will attempt to resolve the topoloy
 # (meaning: satisfy all requirements)
 # But it's possible to disable it:
-#   puccini-tosca compile --resolve=false examples/tosca/requirements-and-capabilities.yaml
+#   puccini-tosca compile --resolve=false examples/1.3/requirements-and-capabilities.yaml
 
 metadata:
 
@@ -170,7 +170,7 @@ topology_template:
                 properties:
                 - frequency:
                     greater_than: 100 # 100 hz
- 
+
     # You can add a relationship type to the requirement
     # (If you don't, Puccini creates an empty relationship with no properties)
     light9:

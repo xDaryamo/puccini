@@ -19,7 +19,7 @@ function run () {
 }
 
 run puccini-tosca compile \
-"$ROOT/examples/tosca/data-types.yaml" "$@" 
+"$ROOT/examples/1.3/data-types.yaml" "$@"
 
 run puccini-tosca compile \
 "$ROOT/dist/cloud.csar" "$@"
