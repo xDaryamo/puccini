@@ -16,6 +16,7 @@ var (
 	strict         bool
 	pretty         bool
 	base64         bool
+	timeout        float64
 	cpuProfilePath string
 )
 
@@ -30,6 +31,7 @@ func init() {
 	rootCommand.PersistentFlags().BoolVarP(&strict, "strict", "y", false, "strict output (for \"yaml\" format only)")
 	rootCommand.PersistentFlags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
 	rootCommand.PersistentFlags().BoolVarP(&base64, "base64", "", false, "output base64 (for \"cbor\", \"messagepack\" formats)")
+	rootCommand.PersistentFlags().Float64Var(&timeout, "timeout", 30.0, "timeout in seconds")
 	rootCommand.PersistentFlags().StringVarP(&cpuProfilePath, "cpu-profile", "", "", "CPU profile file path")
 }
 

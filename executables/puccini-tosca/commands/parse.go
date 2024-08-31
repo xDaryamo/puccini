@@ -3,6 +3,7 @@ package commands
 import (
 	contextpkg "context"
 	"sort"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/tliron/commonlog"
@@ -63,7 +64,10 @@ var parseCommand = &cobra.Command{
 			dumpPhases = nil
 		}
 
-		Parse(contextpkg.TODO(), url)
+		context, cancel := contextpkg.WithTimeout(contextpkg.Background(), time.Duration(timeout*float64(time.Second)))
+		util.OnExit(cancel)
+
+		Parse(context, url)
 	},
 }
 

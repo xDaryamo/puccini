@@ -3,7 +3,7 @@ module github.com/tliron/puccini
 go 1.23
 
 require (
-	github.com/dop251/goja v0.0.0-20240806095544-3491d4a58fbe
+	github.com/dop251/goja v0.0.0-20240828124009-016eb7256539
 	github.com/fxamacker/cbor/v2 v2.7.0
 	github.com/klauspost/compress v1.17.9
 	github.com/klauspost/pgzip v1.2.6

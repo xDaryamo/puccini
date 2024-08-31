@@ -2,6 +2,7 @@ package commands
 
 import (
 	contextpkg "context"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/tliron/exturl"
@@ -48,7 +49,9 @@ func Meta(url string) {
 
 	urlContext := exturl.NewContext()
 	util.OnExitError(urlContext.Release)
-	context := contextpkg.TODO()
+
+	context, cancel := contextpkg.WithTimeout(contextpkg.Background(), time.Duration(timeout*float64(time.Second)))
+	util.OnExit(cancel)
 
 	var csarUrl exturl.URL
 	csarUrl, err = urlContext.NewValidAnyOrFileURL(context, url, Bases(urlContext))

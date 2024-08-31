@@ -10,28 +10,27 @@ The distribution comes with three executables:
 * [`puccini-csar`](executables/puccini-csar/): packs TOSCA sources and artifacts into a CSAR
 
 
-Basic Usage
------------
+Files, Archives, and URLs
+-------------------------
 
-Let's start by compiling a self-contained local file:
+Let's start by compiling a TOSCA service template in a self-contained local file:
 
     puccini-tosca compile examples/1.3/descriptions.yaml
 
-What if the file imports other files? TOSCA `imports` can refer to either absolute
-URLs or relative URLs ([RFC 1808](https://tools.ietf.org/html/rfc1808)). Note that
-if the URL scheme is not provided it defaults to "file:", so that it can be treated
-as a platform-independent file system path. Also note that relative URLs support
-Unix-like `.` and `..` components, allowing you to refer to resources upwards in the
-directory tree.
-
-Let's compile a local example for OpenStack that uses imports (relative URLs):
+Now let's compile a local example for OpenStack that uses imports (relative URLs):
 
     puccini-tosca compile examples/openstack/hello-world.yaml
 
-Note that you can also use relative URLs in TOSCA artifacts (their `file` keyword).
+TOSCA `imports` can refer to either absolute URLs or relative URLs
+([RFC 1808](https://tools.ietf.org/html/rfc1808)). Note that if the URL scheme is not
+provided it defaults to "file:", so that it can be treated as a platform-independent
+file system path. Also note that relative URLs support Unix-like `.` and `..` components,
+allowing you to refer to resources upwards in the directory tree.
 
-Puccini can also compile directly from a URL. Let's use the same OpenStack example as
-above:
+Puccini also supports relative URLs in TOSCA artifacts (their `file` keyword).
+
+We can also compile directly from a URL. Let's use the same OpenStack example as
+above, but point to it on the web:
 
     puccini-tosca compile https://raw.githubusercontent.com/tliron/puccini/main/examples/openstack/hello-world.yaml
 
@@ -49,8 +48,8 @@ Puccini can also compile YAML from stdin:
 
     cat examples/1.3/descriptions.yaml | puccini-tosca compile
 
-Be aware that a stdin source does not have a path and thus cannot support relative
-URLs.
+Just be aware that a stdin source does not have a path and thus cannot support relative
+URL imports. Absolute URLs will work.
 
 For the above examples we referred to a single, root YAML file. However, Puccini can also
 compile from a CSAR package and, again, the CSAR can be a local file or at a URL. Let's create
@@ -59,8 +58,7 @@ a local CSAR and then compile it:
     puccini-csar create openstack.tar.gz examples/openstack
     puccini-tosca compile openstack.tar.gz
 
-The `puccini-csar` tool will archive the entire directory and automatically create a
-"TOSCA-Metadata" section for us, resulting in a compliant CSAR file.
+(More on the `puccini-csar` tool below.)
 
 For TOSCA files within the CSAR the relative URLs refer to the internal structure of the
 archive. Note that Puccini does *not* unpack the archive into individual files, but rather
@@ -69,62 +67,8 @@ in our TOSCA imports, the same exact OpenStack example works whether it's access
 at a URL, or from within a CSAR, and even a CSAR at a URL.
 
 
-Controlling the Output
-----------------------
-
-The default output format is YAML but other formats are supported: JSON (and
-[ARD](https://github.com/tliron/kutil/tree/master/ard/)-compatible extended JSON), XML,
-CBOR, and MessagePack. Here's ARD-compatible XJSON:
-
-    puccini-tosca compile examples/1.3/descriptions.yaml --format=xjson
-
-By default the output is nicely indented and and colorized for human readability. You can
-turn off prettification if you're interested in the most compact output:
-
-    puccini-tosca compile examples/1.3/descriptions.yaml --pretty=false
-
-Note that colorization will *always* be disabled in contexts that do not support it. In
-other words it will likely only appear in stdout for terminal emulators that support ANSI
-color codes. However, you can also specifically turn off colorization:
-
-    puccini-tosca compile examples/1.3/descriptions.yaml --colorize=false
-
-By default the output is sent to stdout but you can also send it to a file (without
-colorization):
-
-    puccini-tosca compile examples/1.3/descriptions.yaml --output=clout.yaml
-
-Of course if running in a shell you can also redirect stdout to a file (again, without
-colorization):
-
-    puccini-tosca compile examples/1.3/descriptions.yaml > clout.yaml
-
-You can increase the verbosity of logging using `-v` or even `-vv`:
-
-    puccini-tosca compile examples/1.3/descriptions.yaml -vv
-
-By default all the log messages go to stderr but we can send them to a file:
-
-    puccini-tosca compile examples/1.3/descriptions.yaml -vv --log=puccini.log
-    cat puccini.log
-
-If you only want to see the logs and not the Clout output:
-
-    puccini-tosca compile examples/1.3/descriptions.yaml -vv > /dev/null
-
-To suppress all output (if you're only interested in the return error code):
-
-    puccini-tosca compile examples/1.3/descriptions.yaml --quiet
-
-Also note that there is a `puccini-tosca parse` command that provides a lot
-of internal diagnostic information about the language parser. It's generally
-useful for Puccini developers rather than Puccini users, so it is out of scope
-for this quickstart guide. See [here](executables/puccini-tosca/) for more
-information.
-
-
-More on Compilation
--------------------
+Problems
+--------
 
 Let's try to compile a TOSCA service template that requires inputs:
 
@@ -132,39 +76,48 @@ Let's try to compile a TOSCA service template that requires inputs:
 
 You'll see that Puccini reported a "problem" regarding the unassigned input. Any and all
 compilation errors, whether they are syntactical, grammatical, or topological, are
-gathered and organized by file, row, and column. Indeed, Puccini's strict and detailed
-problem reporting is one of its most powerful features.
+gathered and organized by file, row, and column.
 
-By default problems are reported in a human-readable format. However, like the Clout
-output, problems can be formatted for easier consumption by other tools:
+Puccini's strict and detailed problem reporting is one of its most powerful features.
 
-    puccini-tosca compile examples/1.3/inputs-and-outputs.yaml --problems-format=json
 
-Let's set that missing input:
+Inputs
+------
+
+Let's set that missing input that caused us a problem above:
 
     puccini-tosca compile examples/1.3/inputs-and-outputs.yaml --input=ram=1gib
 
 In this case the input is a string (actually a TOSCA `scalar-unit.size`), but note that
-the the input format is YAML, which is also JSON-compatible, so that complex input
-values can be provided, e.g. `--input=myinput={key1:value1,key2:value2}`. Also Note that
-you can use the `--input` flag more than once to provide multiple inputs.
+the the input format is actually YAML, so that complex input values can be provided,
+e.g. `--input=myinput={key1:value1,key2:value2}`.
 
-Inputs can also be loaded from a file (locally or at a URL) as straightforward YAML:
+(Does that look like JSON to you and not YAML? Actually, JSON is compatible with YAML
+so a YAML parser can parse JSON.)
+
+Also note that you can use the `--input` flag more than once to provide multiple inputs.
+
+All inputs can also be loaded from a file (locally or at a URL) as straightforward YAML
+using `--inputs`:
 
     echo 'ram: 1 gib' > inputs.yaml
     puccini-tosca compile examples/1.3/inputs-and-outputs.yaml --inputs=inputs.yaml
 
+
+Topology Resolution
+-------------------
+
 By default the compiler will "resolve" the topology, meaning that it will atempt to satisfy
 all node template requirements and create relationships, thus completing the graph. However,
 sometimes it may be useful to disable the resolution phase in order to avoid excessive problem
-reports:
+reports while designing:
 
     puccini-tosca compile examples/1.3/requirements-and-capabilities.yaml --resolve=false
 
 When you turn off the resolution phase you will indeed see no relationships in the Clout
 (you'll see that the `edgesOut` for all vertexes is an empty list).
 
-Read more about how Puccini implements resolution
+Read more about how Puccini implements topology resolution
 [here](assets/tosca/profiles/common/1.0/js/RESOLUTION.md).
 
 
@@ -191,10 +144,7 @@ convenience we can use the `--coerce` flag to coerce the values during compilati
 
 You'll see that all properties now have their actual values rather than call stubs.
 
-(In a real-world orchestration scenario we would want to coerce a Clout later as its
-attribute values change. We'll discuss that below.)
-
-Puccini handles TOSCA constraints in exactly the same way, the reason being that,
+Puccini handles TOSCA data constraints during coercion, too. The reason is that,
 like functions, constraints would have to be applied to data that might not be
 available during compilation, e.g. constraints associated with an attribute or its
 data type.
@@ -217,10 +167,43 @@ Now, let's compile this same file without coercion (the default behavior):
 
 The problem was not reported this time.
 
-**IMPORTANT! The implication is that by default you will not see constraint-related
-problems reported during compilation, even for values that are known! Thus it's common
-to use the `--coerce` flag with `puccini-tosca compile` when your goal is to validate
-the TOSCA.**
+You might be wondering why `compile` doesn't coerce values by default. The reason is
+that in real world orchestration environments you would normally want an *un*-coerced
+Clout, because you would actually be evaluating values at runtime, on demand, as they
+may very well depend on runtime attributes derived from the deployment environment.
+Thus every time you coerce the Clout you would get different values. None of these
+values exist when you just compile TOSCA to Clout.
+
+Similarly, even though `--resolve` is true by default, you may prefer to use an
+*un*-resolved Clout, so that the topology can be resolved later, in the deployment
+environment. In that case just set `--resolve=false`.
+
+Not that by contrast, the `puccini-tosca validate` command (see below) *does* enable
+coercion by default. That is the most significant difference between the two commands.
+
+
+Validation
+----------
+
+If you don't need the Clout output and only need to know whether the TOSCA is valid or
+if there are problems, then you can use the `puccini-tosca validate` command:
+
+    puccini-tosca validate examples/1.3/descriptions.yaml
+
+`puccini-tosca validate` accepts most of the flags supported by `compile`, e.g. you can
+provide example inputs via `--input`.
+
+One important difference is that `puccini-tosca validate` automatically sets
+`--coerce=true`, unlike `puccini-tosca compile` in which it defaults to false. You can
+of course turn this off explicitly for `validate` if necessary. Just note that you are
+coercing based on default values for attributes.
+
+If you don't even need the problem report and only need the exit code (0 when valid, 1
+when invalid) then add the `--quiet` flag. This can be useful in conditional scripts:
+
+    if puccini-tosca validate examples/1.3/descriptions.yaml --quiet; then
+      deploy examples/1.3/descriptions.yaml
+    fi
 
 
 Scriptlets
@@ -305,16 +288,20 @@ For examples of how to create your own custom functions, constraints, and other
 scriptlets for TOSCA, see [here](examples/javascript/).
 
 
-More on CSARs
--------------
+Creating CSARs
+--------------
 
-The [`tosca-csar`](executables/puccini-csar/) tool supports tarball CSARs (`.tar.gz`
-or `.tar`) as well as zip (`.zip` or the `.csar` alias). Note that tarballs have the
-advantage that they can be streamed (e.g. from a HTTP URL) whereas using the zip
-format would require `puccini-tosca` to first download the entire archive to the
-system's temporary directory. Both will work, but tarballs are far more efficient.
+The [`tosca-csar`](executables/puccini-csar/) tool can create compliant CSAR files
+by archiving a directory and its subdirectories and automatically creating a
+"TOSCA-Metadata" section.
 
-Try zip via the `.csar` alias:
+It supports tarball CSARs (`.tar.gz` or `.tgz` or `.tar`) as well as zip (`.zip`
+or the `.csar` alias). Note that tarballs have the advantage that they can be streamed
+(e.g. from a HTTP URL) whereas using the zip format would require `puccini-tosca` to
+first download the entire archive to the system's temporary directory. Both will work,
+but tarballs are more efficient for network access.
+
+Let's try zip via the `.csar` alias:
 
     puccini-csar create openstack.csar examples/openstack
     puccini-tosca compile openstack.csar
@@ -345,11 +332,74 @@ Example:
 
     puccini-tosca compile "tar:$PWD/cloud.tar.gz\!main.yaml"
 
-(We are using a backslash to escape the "!" for bash.)
+(Since we need an absolute path, we are using "$PWD" to get the current working
+directory. Also note that we are using a backslash to escape the "!" for bash.)
 
-Also useful is the `meta` command to validate and extract the CSAR metadata:
+Also useful is the `meta` command to validate and extract metadata from existing
+CSAR files:
 
     puccini-csar meta cloud.tar.gz
+
+
+Controlling the Output
+----------------------
+
+The default output format is YAML but other formats are supported: JSON (and
+[ARD](https://github.com/tliron/kutil/tree/master/ard/)-compatible extended JSON), XML,
+CBOR, and MessagePack. Here's ARD-compatible XJSON:
+
+    puccini-tosca compile examples/1.3/descriptions.yaml --format=xjson
+
+By default the output is nicely indented and and colorized for human readability. You can
+turn off prettification if you want the most compact output:
+
+    puccini-tosca compile examples/1.3/descriptions.yaml --pretty=false
+
+Note that colorization will *always* be disabled in contexts that do not support it. In
+other words it will likely only appear in stdout for terminal emulators that support ANSI
+color codes. However, you can also specifically turn off colorization:
+
+    puccini-tosca compile examples/1.3/descriptions.yaml --colorize=false
+
+By default the output is sent to stdout but you can also send it to a file (without
+colorization):
+
+    puccini-tosca compile examples/1.3/descriptions.yaml --output=clout.yaml
+
+Of course if running in a shell you can also redirect stdout to a file (again, without
+colorization):
+
+    puccini-tosca compile examples/1.3/descriptions.yaml > clout.yaml
+
+By default problems are reported in a human-readable format. However, like the Clout
+output, problems can be formatted for easier consumption by other tools:
+
+    puccini-tosca compile examples/1.3/inputs-and-outputs.yaml --problems-format=json
+
+
+Debugging
+---------
+
+You can increase the verbosity of logging using `-v` or even `-vv`:
+
+    puccini-tosca compile examples/1.3/descriptions.yaml -vv
+
+By default all the log messages go to stderr but you can send them to a file
+instead:
+
+    puccini-tosca compile examples/1.3/descriptions.yaml -vv --log=puccini.log
+    cat puccini.log
+
+If you only want to see the logs and not the Clout output, send stdout to
+null:
+
+    puccini-tosca compile examples/1.3/descriptions.yaml -vv > /dev/null
+
+Also note that there is a `puccini-tosca parse` command that provides a lot
+of internal diagnostic information about the language parser. It's generally
+useful for Puccini developers rather than Puccini users, so it is out of scope
+for this quickstart guide. See [here](executables/puccini-tosca/) for more
+information.
 
 
 Next Steps

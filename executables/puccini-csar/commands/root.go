@@ -10,6 +10,7 @@ import (
 var (
 	logTo          string
 	verbose        int
+	timeout        float64
 	cpuProfilePath string
 )
 
@@ -18,6 +19,7 @@ func init() {
 	rootCommand.PersistentFlags().StringVarP(&logTo, "log", "l", "", "log to file (defaults to stderr)")
 	rootCommand.PersistentFlags().CountVarP(&verbose, "verbose", "v", "add a log verbosity level (can be used twice)")
 	rootCommand.PersistentFlags().BoolVarP(&commonlog.Trace, "trace", "", false, "add stack trace to log messages")
+	rootCommand.PersistentFlags().Float64Var(&timeout, "timeout", 30.0, "timeout in seconds")
 	rootCommand.PersistentFlags().StringVarP(&cpuProfilePath, "cpu-profile", "", "", "CPU profile file path")
 }
 

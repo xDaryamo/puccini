@@ -2,6 +2,7 @@ package commands
 
 import (
 	contextpkg "context"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/tliron/exturl"
@@ -29,9 +30,12 @@ var getCommand = &cobra.Command{
 		}
 
 		urlContext := exturl.NewContext()
-		defer urlContext.Release()
+		util.OnExitError(urlContext.Release)
 
-		clout := LoadClout(contextpkg.TODO(), url, urlContext)
+		context, cancel := contextpkg.WithTimeout(contextpkg.Background(), time.Duration(timeout*float64(time.Second)))
+		util.OnExit(cancel)
+
+		clout := LoadClout(context, url, urlContext)
 
 		scriptlet, err := js.GetScriptlet(scriptletName, clout)
 		util.FailOnError(err)
