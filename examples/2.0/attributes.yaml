@@ -18,7 +18,7 @@ node_types:
       days:
         type: list
         entry_schema: DayOfWeek
-      max_size:
+      max-size:
         description: Max size
         type: scalar-unit.size
 
@@ -38,12 +38,12 @@ service_template:
       attributes:
         # You can assign initial values to attributes
         # Though it's expected that they may change
-        max_size: 10 gib
+        max-size: 10 gib
 
     backup2:
       type: Backup
       attributes:
         # There is also a long notation that lets you override the description
-        max_size:
+        max-size:
           description: Current max size
           value: 10 gib

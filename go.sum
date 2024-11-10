@@ -39,8 +39,8 @@ github.com/docker/docker v24.0.0+incompatible h1:z4bf8HvONXX9Tde5lGBMQ7yCJgNahmJ
 github.com/docker/docker v24.0.0+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
 github.com/docker/docker-credential-helpers v0.7.0 h1:xtCHsjxogADNZcdv1pKUHXryefjlVRqWqIhk/uXJp0A=
 github.com/docker/docker-credential-helpers v0.7.0/go.mod h1:rETQfLdHNT3foU5kuNkFR1R1V12OJRRO5lzt2D1b5X0=
-github.com/dop251/goja v0.0.0-20240828124009-016eb7256539 h1:YIxvsQAoCLGScK2c9ag+4sFCgiQFpMzywJG6dQZFu9k=
-github.com/dop251/goja v0.0.0-20240828124009-016eb7256539/go.mod h1:MxLav0peU43GgvwVgNbLAj1s/bSGboKkhuULvq/7hx4=
+github.com/dop251/goja v0.0.0-20241024094426-79f3a7efcdbd h1:QMSNEh9uQkDjyPwu/J541GgSH+4hw+0skJDIj9HJ3mE=
+github.com/dop251/goja v0.0.0-20241024094426-79f3a7efcdbd/go.mod h1:MxLav0peU43GgvwVgNbLAj1s/bSGboKkhuULvq/7hx4=
 github.com/elazarl/goproxy v0.0.0-20230808193330-2592e75ae04a h1:mATvB/9r/3gvcejNsXKSkQ6lcIaNec2nyfOdlTBR2lU=
 github.com/elazarl/goproxy v0.0.0-20230808193330-2592e75ae04a/go.mod h1:Ro8st/ElPeALwNFlcTpWmkr6IoMFfkjXAvTHpevnDsM=
 github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=
@@ -83,8 +83,8 @@ github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOl
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
 github.com/kevinburke/ssh_config v1.2.0 h1:x584FjTGwHzMwvHx18PXxbBVzfnxogHaAReU4gf13a4=
 github.com/kevinburke/ssh_config v1.2.0/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF4nAY/ojJ6r6mM=
-github.com/klauspost/compress v1.17.9 h1:6KIumPrER1LHsvBVuDa0r5xaG0Es51mhhB9BQB2qeMA=
-github.com/klauspost/compress v1.17.9/go.mod h1:Di0epgTjJY877eYKx5yC51cX2A2Vl2ibi7bDH9ttBbw=
+github.com/klauspost/compress v1.17.11 h1:In6xLpyWOi1+C7tXUUWv2ot1QvBjxevKAaI6IXrJmUc=
+github.com/klauspost/compress v1.17.11/go.mod h1:pMDklpSncoRMuLFrf1W9Ss9KT+0rH90U12bZKk7uwG0=
 github.com/klauspost/pgzip v1.2.6 h1:8RXeL5crjEUFnR2/Sn6GJNWtSQ3Dk8pq4CL3jvdDyjU=
 github.com/klauspost/pgzip v1.2.6/go.mod h1:Ch1tH69qFZu15pkjo5kYi6mth2Zzwzt50oCQKQE9RUs=
 github.com/kortschak/utter v1.6.0 h1:h3hC7i9z+8Hn/PZNZ2S4Eq7ZCTLWF0CMdTFJgzRF9TA=
@@ -159,8 +159,8 @@ github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcU
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
 github.com/tliron/commonjs-goja v0.2.4 h1:nUH0bbw1TYw0wQN7ckGGFMowsLfZ9tdlKd7aJNg/gDI=
 github.com/tliron/commonjs-goja v0.2.4/go.mod h1:E3gLRcfHp04i9lVUoRhNBkolqIflZ+Erilx+yifKzgQ=
-github.com/tliron/commonlog v0.2.18 h1:F0zY09VDGTasPCpP9KvE8xqqVNMUfwMJQ0Xvo5Y6BRs=
-github.com/tliron/commonlog v0.2.18/go.mod h1:7f3OMSgVyGAFbRKwlvfUErnB6U75LgW8wa6NlWuswGg=
+github.com/tliron/commonlog v0.2.19 h1:v1mOH1TyzFLqkshR03khw7ENAZPjAyZTQBQrqN+vX9c=
+github.com/tliron/commonlog v0.2.19/go.mod h1:AcdhfcUqlAWukDrzTGyaPhUgYiNdZhS4dKzD/e0tjcY=
 github.com/tliron/exturl v0.4.4 h1:zsyfNRdswIrdJJsvS3g6h8NnrMb/rIBX1Ulevb18a40=
 github.com/tliron/exturl v0.4.4/go.mod h1:3qhlToI3jc6+kVtVkf7lCaVzJgGH0DGWS6TUxe0tX0U=
 github.com/tliron/go-ard v0.2.17 h1:cNZEXmoPe4/UiJwcQqAqCJ3FB635jviEEfv0ox64HoQ=

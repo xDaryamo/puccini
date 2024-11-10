@@ -3,14 +3,14 @@ module github.com/tliron/puccini
 go 1.23
 
 require (
-	github.com/dop251/goja v0.0.0-20240828124009-016eb7256539
+	github.com/dop251/goja v0.0.0-20241024094426-79f3a7efcdbd
 	github.com/fxamacker/cbor/v2 v2.7.0
-	github.com/klauspost/compress v1.17.9
+	github.com/klauspost/compress v1.17.11
 	github.com/klauspost/pgzip v1.2.6
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/cobra v1.8.1
 	github.com/tliron/commonjs-goja v0.2.4
-	github.com/tliron/commonlog v0.2.18
+	github.com/tliron/commonlog v0.2.19
 	github.com/tliron/exturl v0.4.4
 	github.com/tliron/go-ard v0.2.17
 	github.com/tliron/go-transcribe v0.3.5

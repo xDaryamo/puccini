@@ -15,13 +15,13 @@ node_types:
 
   Ports:
     properties:
-      user_port:
+      user-port:
         type: tosca:PortInfo
         required: false
-      admin_port:
+      admin-port:
         type: tosca:PortInfo
         required: false
-      management_port:
+      management-port:
         type: tosca:PortInfo
         required: false
     capabilities:
@@ -54,7 +54,7 @@ service_template:
     ports1:
       type: Ports
       properties:
-        user_port:
+        user-port:
           addresses:
           # You can call functions in property, attribute, input, or output assignments
           # (and *only* there)
@@ -67,11 +67,11 @@ service_template:
           - concat:
             - '::'
             - 1
-        admin_port:
+        admin-port:
           addresses:
           - ::1
         # Some functions support special "modelable entity names", such as "SELF":
-        management_port: { get_property: [ SELF, admin_port ] }
+        management-port: { get_property: [ SELF, admin-port ] }
         # (Also see: examples/2.0/source-and-target.yaml)
       capabilities:
         ingress:
@@ -83,13 +83,13 @@ service_template:
     ports2:
       type: Ports
       properties:
-        user_port:
+        user-port:
           # This function returns a list
           addresses: { get_nodes_of_type: Ports }
-        management_port:
+        management-port:
           addresses:
           # "get_property" can extract nested values, even from lists:
-          - { get_property: [ ports1, management_port, addresses, 0 ] }
+          - { get_property: [ ports1, management-port, addresses, 0 ] }
           # The second argument for "get_property" can be a cabability name:
           - { get_property: [ ports1, ingress, ingress_port, addresses, 0 ] }
           # Or a requirement name (in which case the properties would be that of the relationship):
