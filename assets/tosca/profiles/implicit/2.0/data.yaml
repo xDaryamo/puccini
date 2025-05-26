@@ -51,7 +51,7 @@ data_types:
   # Special
   #
 
-  version?:
+  version:
     metadata:
       puccini.type: version
       puccini.comparer: tosca.comparer.version
