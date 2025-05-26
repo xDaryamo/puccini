@@ -13,18 +13,14 @@ type HasComparer interface {
 //
 // DataType
 //
-// [TOSCA-v2.0] @ ?
-// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.7.6
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.7.6
-// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.6
-// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.6.5
+// [TOSCA-v2.0] @ 9.11
 //
 
 type DataType struct {
 	*Type `name:"data type"`
 
 	PropertyDefinitions PropertyDefinitions `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
-	ConstraintClauses   ConstraintClauses   `read:"constraints,[]ConstraintClause" traverse:"ignore"`
+	ValidationClause    *ValidationClause   `read:"validation,ValidationClause" traverse:"ignore"`
 	KeySchema           *Schema             `read:"key_schema,Schema"`   // introduced in TOSCA 1.3
 	EntrySchema         *Schema             `read:"entry_schema,Schema"` // introduced in TOSCA 1.3
 
@@ -71,8 +67,8 @@ func (self *DataType) Inherit() {
 	if (self.EntrySchema == nil) && (self.Parent.EntrySchema != nil) {
 		self.EntrySchema = self.Parent.EntrySchema
 	}
-	if self.Parent.ConstraintClauses != nil {
-		self.ConstraintClauses = self.Parent.ConstraintClauses.Append(self.ConstraintClauses)
+	if (self.ValidationClause == nil) && (self.Parent.ValidationClause != nil) {
+		self.ValidationClause = self.Parent.ValidationClause
 	}
 
 	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)

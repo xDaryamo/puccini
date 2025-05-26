@@ -14,7 +14,7 @@ import (
 //
 // (attribute, property, and parameter assignments)
 //
-// [TOSCA-v2.0] @ ?
+// [TOSCA-v2.0] @ 9.11
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.11, 3.6.13
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.10, 3.6.12
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.9, 3.5.11
@@ -25,8 +25,8 @@ type Value struct {
 	*Entity `name:"value"`
 	Name    string
 
-	ConstraintClauses ConstraintClauses
-	Description       *string // not used since TOSCA 2.0
+	ValidationClause *ValidationClause
+	Description      *string // not used since TOSCA 2.0
 
 	DataType *DataType         `traverse:"ignore" json:"-" yaml:"-"`
 	Meta     *normal.ValueMeta `traverse:"ignore" json:"-" yaml:"-"`
@@ -88,7 +88,7 @@ func (self *Value) render(dataType *DataType, dataDefinition DataDefinition, bar
 	dataType.CompleteData(self.Context)
 
 	if !bare {
-		self.Meta = NewValueMeta(self.Context, dataType, dataDefinition, self.ConstraintClauses)
+		self.Meta = NewValueMeta(self.Context, dataType, dataDefinition, self.ValidationClause)
 
 		// Not used since TOSCA 2.0
 		if self.Description != nil {
@@ -130,7 +130,7 @@ func (self *Value) render(dataType *DataType, dataDefinition DataDefinition, bar
 				case ard.TypeList:
 					if entrySchema := GetListSchemas(dataType, dataDefinition); entrySchema != nil {
 						slice := self.Context.Data.(ard.List)
-						valueList := NewValueList(len(slice), entrySchema.GetConstraints())
+						valueList := NewValueList(len(slice), entrySchema.GetValidation())
 
 						for index, data := range slice {
 							value := ReadAndRenderBare(self.Context.ListChild(index, data), entrySchema.DataType, entrySchema)
@@ -142,7 +142,7 @@ func (self *Value) render(dataType *DataType, dataDefinition DataDefinition, bar
 
 				case ard.TypeMap:
 					if keySchema, valueSchema := GetMapSchemas(dataType, dataDefinition); (keySchema != nil) && (valueSchema != nil) {
-						valueMap := NewValueMap(keySchema.GetConstraints(), valueSchema.GetConstraints())
+						valueMap := NewValueMap(keySchema.GetValidation(), valueSchema.GetValidation())
 
 						for key, data := range self.Context.Data.(ard.Map) {
 							// Complex keys are stringified for the purpose of the contexts
@@ -375,7 +375,7 @@ func (self Values) Normalize(normalConstrainables normal.Values) {
 
 // Utils
 
-func NewValueMeta(context *parsing.Context, dataType *DataType, dataDefinition DataDefinition, constraintClauses ConstraintClauses) *normal.ValueMeta {
+func NewValueMeta(context *parsing.Context, dataType *DataType, dataDefinition DataDefinition, validationClause *ValidationClause) *normal.ValueMeta {
 	if dataType == nil {
 		return nil
 	}
@@ -385,17 +385,45 @@ func NewValueMeta(context *parsing.Context, dataType *DataType, dataDefinition D
 	if dataDefinition != nil {
 		meta.Description = dataDefinition.GetDescription()
 		meta.Metadata = dataDefinition.GetTypeMetadata()
-		constraintClauses = dataDefinition.GetConstraintClauses().Append(constraintClauses)
+
+		// Get ValidationClause from definition
+		definitionValidation := dataDefinition.GetValidationClause()
+		if definitionValidation != nil {
+			if validationClause == nil {
+				validationClause = definitionValidation
+			} else {
+				// Create a composite validation using $and
+				compositeValidation := NewValidationClause(context)
+				compositeValidation.Operator = "and"
+				compositeValidation.Arguments = ard.List{validationClause, definitionValidation}
+				validationClause = compositeValidation
+			}
+		}
 	}
 
-	constraintClauses = dataType.ConstraintClauses.Append(constraintClauses)
-
-	for _, constraintClause := range constraintClauses {
-		constraintClause.DataType = dataType
-		constraintClause.Definition = dataDefinition
+	// Get ValidationClause from dataType
+	if dataType.ValidationClause != nil {
+		if validationClause == nil {
+			validationClause = dataType.ValidationClause
+		} else {
+			// Create a composite validation using $and
+			compositeValidation := NewValidationClause(context)
+			compositeValidation.Operator = "and"
+			compositeValidation.Arguments = ard.List{validationClause, dataType.ValidationClause}
+			validationClause = compositeValidation
+		}
 	}
 
-	constraintClauses.AddToMeta(context, meta)
+	// Process ValidationClause if present
+	if validationClause != nil {
+		validationClause.DataType = dataType
+		validationClause.Definition = dataDefinition
+
+		// Add validation function to meta
+		functionCall := validationClause.ToFunctionCall(context, true)
+		NormalizeFunctionCallArguments(functionCall, context)
+		meta.AddValidator(functionCall)
+	}
 
 	if internalTypeName, ok := dataType.GetInternalTypeName(); ok {
 		switch internalTypeName {

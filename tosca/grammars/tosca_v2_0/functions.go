@@ -39,6 +39,18 @@ var FunctionScriptlets = map[string]string{
 	parsing.MetadataFunctionPrefix + "get_nodes_of_type":    profiles.GetString(functionPathPrefix + "get_nodes_of_type.js"),
 	parsing.MetadataFunctionPrefix + "get_artifact":         profiles.GetString(functionPathPrefix + "get_artifact.js"),
 	parsing.MetadataFunctionPrefix + "$get_target_name":     profiles.GetString(functionPathPrefix + "$get_target_name.js"),
+	parsing.MetadataFunctionPrefix + "value":                profiles.GetString(functionPathPrefix + "value.js"),
+	parsing.MetadataFunctionPrefix + "length":               profiles.GetString(functionPathPrefix + "length.js"),
+	parsing.MetadataFunctionPrefix + "union":                profiles.GetString(functionPathPrefix + "union.js"),        // TOSCA 2.0 set function
+	parsing.MetadataFunctionPrefix + "intersection":         profiles.GetString(functionPathPrefix + "intersection.js"), // TOSCA 2.0 set function
+	parsing.MetadataFunctionPrefix + "sum":                  profiles.GetString(functionPathPrefix + "sum.js"),          // TOSCA 2.0 arithmetic function
+	parsing.MetadataFunctionPrefix + "difference":           profiles.GetString(functionPathPrefix + "difference.js"),   // TOSCA 2.0 arithmetic function
+	parsing.MetadataFunctionPrefix + "product":              profiles.GetString(functionPathPrefix + "product.js"),      // TOSCA 2.0 arithmetic function
+	parsing.MetadataFunctionPrefix + "quotient":             profiles.GetString(functionPathPrefix + "quotient.js"),     // TOSCA 2.0 arithmetic function
+	parsing.MetadataFunctionPrefix + "remainder":            profiles.GetString(functionPathPrefix + "remainder.js"),    // TOSCA 2.0 arithmetic function
+	parsing.MetadataFunctionPrefix + "round":                profiles.GetString(functionPathPrefix + "round.js"),        // TOSCA 2.0 arithmetic function
+	parsing.MetadataFunctionPrefix + "floor":                profiles.GetString(functionPathPrefix + "floor.js"),        // TOSCA 2.0 arithmetic function
+	parsing.MetadataFunctionPrefix + "ceil":                 profiles.GetString(functionPathPrefix + "ceil.js"),         // TOSCA 2.0 arithmetic function
 }
 
 func ParseFunctionCall(context *parsing.Context) bool {

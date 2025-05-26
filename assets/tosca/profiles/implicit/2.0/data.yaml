@@ -3,7 +3,7 @@ tosca_definitions_version: tosca_2_0
 metadata:
 
   puccini.scriptlet.import:tosca.comparer.version: js/comparers/version.js
-  puccini.scriptlet.import:tosca.constraint._format: js/constraints/$format.js
+  puccini.scriptlet.import:tosca.validation._format: js/constraints/$format.js
 
 data_types:
 
@@ -80,8 +80,7 @@ data_types:
       The json type is a TOSCA data Type used to define a string that contains data in the
       JavaScript Object Notation (JSON) format.
     derived_from: string
-    constraints:
-    - _format: json
+    validation: { _format: json }
 
   tosca.datatypes.xml?:
     metadata:
@@ -93,8 +92,7 @@ data_types:
       The xml type is a TOSCA data Type used to define a string that contains data in the
       Extensible Markup Language (XML) format.
     derived_from: string
-    constraints:
-    - _format: xml
+    validation: { _format: xml }
 
   #
   # Scalar

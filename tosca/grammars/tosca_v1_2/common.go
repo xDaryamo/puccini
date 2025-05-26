@@ -33,7 +33,7 @@ func init() {
 	Grammar.RegisterReader("CapabilityType", tosca_v2_0.ReadCapabilityType)
 	Grammar.RegisterReader("ConditionClause", tosca_v2_0.ReadConditionClause)
 	Grammar.RegisterReader("ConditionClauseAnd", tosca_v2_0.ReadConditionClauseAnd)
-	Grammar.RegisterReader("ConstraintClause", tosca_v2_0.ReadConstraintClause)
+	Grammar.RegisterReader("ConstraintClause", tosca_v1_3.ReadConstraintClause)
 	Grammar.RegisterReader("DataType", ReadDataType) // override
 	Grammar.RegisterReader("EventFilter", tosca_v2_0.ReadEventFilter)
 	Grammar.RegisterReader("Group", ReadGroup)                                  // override
@@ -84,7 +84,7 @@ func init() {
 	Grammar.RegisterReader("WorkflowStepDefinition", tosca_v2_0.ReadWorkflowStepDefinition)                 // introduced in TOSCA 1.1
 
 	DefaultScriptletNamespace.RegisterScriptlets(tosca_v2_0.FunctionScriptlets, nil, parsing.MetadataFunctionPrefix+"join")
-	DefaultScriptletNamespace.RegisterScriptlets(tosca_v2_0.ConstraintClauseScriptlets, tosca_v2_0.ConstraintClauseNativeArgumentIndexes)
+	DefaultScriptletNamespace.RegisterScriptlets(tosca_v1_3.ConstraintClauseScriptlets, tosca_v1_3.ConstraintClauseNativeArgumentIndexes)
 
 	Grammar.InvalidNamespaceCharacters = ":"
 }

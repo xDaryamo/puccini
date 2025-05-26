@@ -41,7 +41,7 @@ func init() {
 	Grammar.RegisterReader("CapabilityType", ReadCapabilityType)
 	Grammar.RegisterReader("ConditionClause", ReadConditionClause)
 	Grammar.RegisterReader("ConditionClauseAnd", ReadConditionClauseAnd)
-	Grammar.RegisterReader("ConstraintClause", ReadConstraintClause)
+	Grammar.RegisterReader("ValidationClause", ReadValidationClause)
 	Grammar.RegisterReader("DataType", ReadDataType)
 	Grammar.RegisterReader("EventFilter", ReadEventFilter)
 	Grammar.RegisterReader("Group", ReadGroup)
@@ -96,7 +96,7 @@ func init() {
 	Grammar.RegisterReader("WorkflowStepDefinition", ReadWorkflowStepDefinition)                 // introduced in TOSCA 1.1
 
 	DefaultScriptletNamespace.RegisterScriptlets(FunctionScriptlets, nil)
-	DefaultScriptletNamespace.RegisterScriptlets(ConstraintClauseScriptlets, ConstraintClauseNativeArgumentIndexes)
+	DefaultScriptletNamespace.RegisterScriptlets(ValidationClauseScriptlets, ValidationClauseNativeArgumentIndexes)
 
 	Grammar.InvalidNamespaceCharacters = ":"
 }
