@@ -39,7 +39,6 @@ var FunctionScriptlets = map[string]string{
 	parsing.MetadataFunctionPrefix + "get_nodes_of_type":    profiles.GetString(functionPathPrefix + "get_nodes_of_type.js"),
 	parsing.MetadataFunctionPrefix + "get_artifact":         profiles.GetString(functionPathPrefix + "get_artifact.js"),
 	parsing.MetadataFunctionPrefix + "$get_target_name":     profiles.GetString(functionPathPrefix + "$get_target_name.js"),
-	parsing.MetadataFunctionPrefix + "value":                profiles.GetString(functionPathPrefix + "value.js"),
 	parsing.MetadataFunctionPrefix + "length":               profiles.GetString(functionPathPrefix + "length.js"),
 	parsing.MetadataFunctionPrefix + "union":                profiles.GetString(functionPathPrefix + "union.js"),        // TOSCA 2.0 set function
 	parsing.MetadataFunctionPrefix + "intersection":         profiles.GetString(functionPathPrefix + "intersection.js"), // TOSCA 2.0 set function
