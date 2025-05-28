@@ -46,6 +46,12 @@ func (self *Artifact) Copy(definition *ArtifactDefinition) {
 	if self.Description == nil {
 		self.Description = definition.Description
 	}
+	if len(self.Metadata) == 0 && len(definition.Metadata) > 0 {
+		self.Metadata = make(Metadata)
+		for key, value := range definition.Metadata {
+			self.Metadata[key] = value
+		}
+	}
 	for name, value := range definition.Properties {
 		if _, ok := self.Properties[name]; !ok {
 			self.Properties[name] = value
