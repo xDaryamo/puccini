@@ -2,6 +2,7 @@ package tosca_v2_0
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/tliron/go-ard"
 	"github.com/tliron/puccini/assets/tosca/profiles"
@@ -12,7 +13,7 @@ import (
 
 const validationPathPrefix = "implicit/2.0/js/constraints/"
 
-// Built-in validation functions - reuse existing constraint JavaScript implementations where possible
+// Built‑in validation functions — reuse existing JavaScript implementations when possible
 var ValidationClauseScriptlets = map[string]string{
 	parsing.MetadataValidationPrefix + "equal":            profiles.GetString(validationPathPrefix + "equal.js"),
 	parsing.MetadataValidationPrefix + "greater_than":     profiles.GetString(validationPathPrefix + "greater_than.js"),
@@ -41,6 +42,7 @@ var ValidationClauseScriptlets = map[string]string{
 	parsing.MetadataValidationPrefix + "xor":              profiles.GetString(validationPathPrefix + "xor.js"),
 }
 
+// Indexes of arguments that must be converted to native Go types before evaluation
 var ValidationClauseNativeArgumentIndexes = map[string][]int{
 	parsing.MetadataValidationPrefix + "equal":            {0},
 	parsing.MetadataValidationPrefix + "greater_than":     {0},
@@ -48,7 +50,7 @@ var ValidationClauseNativeArgumentIndexes = map[string][]int{
 	parsing.MetadataValidationPrefix + "less_than":        {0},
 	parsing.MetadataValidationPrefix + "less_or_equal":    {0},
 	parsing.MetadataValidationPrefix + "in_range":         {0, 1},
-	parsing.MetadataValidationPrefix + "valid_values":     {-1}, // -1 means all
+	parsing.MetadataValidationPrefix + "valid_values":     {-1}, // -1 = all arguments
 	parsing.MetadataValidationPrefix + "matches":          {1},
 	parsing.MetadataValidationPrefix + "has_entry":        {0},
 	parsing.MetadataValidationPrefix + "has_key":          {0},
@@ -74,117 +76,108 @@ func NewValidationClause(context *parsing.Context) *ValidationClause {
 	return &ValidationClause{Entity: NewEntity(context)}
 }
 
-// Reads a validation clause from context
+// Read a validation clause from the parsing context
 func ReadValidationClause(context *parsing.Context) parsing.EntityPtr {
 	self := NewValidationClause(context)
 
 	if context.ValidateType(ard.TypeMap) {
-		map_ := context.Data.(ard.Map)
-		if len(map_) != 1 {
+		m := context.Data.(ard.Map)
+		if len(m) != 1 {
 			context.ReportValueMalformed("validation clause", "map size not 1")
 			return self
 		}
 
-		for key, value := range map_ {
-			originalOperator := yamlkeys.KeyString(key)
-			operator := originalOperator
+		for key, value := range m {
+			originalOp := yamlkeys.KeyString(key)
+			op := strings.TrimPrefix(originalOp, "$") // remove leading '$' if present
 
-			// Remove '$' prefix for internal processing (TOSCA 2.0)
-			if len(operator) > 0 && operator[0] == '$' {
-				operator = operator[1:]
-			}
-
-			scriptletName := parsing.MetadataValidationPrefix + operator
+			scriptletName := parsing.MetadataValidationPrefix + op
 			scriptlet, ok := context.ScriptletNamespace.Lookup(scriptletName)
 			if !ok {
-				context.Clone(originalOperator).ReportValueMalformed("validation clause", "unsupported operator")
+				context.Clone(originalOp).ReportValueMalformed("validation clause", "unsupported operator")
 				return self
 			}
 
-			self.Operator = operator
+			self.Operator = op
 
-			if list, ok := value.(ard.List); ok {
-				self.Arguments = list
-			} else {
-				self.Arguments = ard.List{value}
+			switch v := value.(type) {
+			case ard.List:
+				self.Arguments = v
+			default:
+				self.Arguments = ard.List{v}
 			}
 
 			self.NativeArgumentIndexes = scriptlet.NativeArgumentIndexes
-			break // Only one key is allowed
+			break
 		}
 	}
 
 	return self
 }
 
-// Recursively process an argument for a validation clause
-func (self *ValidationClause) processValidationArgument(arg any, validationContext *parsing.Context) any {
-	// Case 1: Argument is the string "$value"
-	if strArg, ok := arg.(string); ok && strArg == "$value" {
-		return validationContext.Data
+// Recursively process an argument, expanding "$value" and nested functions
+func (self *ValidationClause) processValidationArgument(arg any, ctx *parsing.Context) any {
+	// "$value" placeholder -> replace with the current value being validated
+	if s, ok := arg.(string); ok && s == "$value" {
+		return ctx.Data
 	}
 
-	// Case 2: Argument is a map with a single key
-	if mapArg, ok := arg.(ard.Map); ok && len(mapArg) == 1 {
-		var key, value any
-		for k, v := range mapArg {
-			key = k
-			value = v
+	// Map with exactly one key may represent nested function or dereference path
+	if m, ok := arg.(ard.Map); ok && len(m) == 1 {
+		var k, v any
+		for key, val := range m {
+			k, v = key, val
 			break
 		}
-		keyStr := yamlkeys.KeyString(key)
+		keyStr := yamlkeys.KeyString(k)
 
-		// Case 2a: Map is { "$value": [...] }
+		// Path dereference syntax: { "$value": ["foo", 0, "bar"] }
 		if keyStr == "$value" {
-			return dereferenceValuePath(validationContext.Data, value)
+			return dereferenceValuePath(ctx.Data, v)
 		}
 
-		// Case 2b: Map could be a function { "$length": [...] }, { "$concat": [...] }, etc.
-		if len(keyStr) > 0 && keyStr[0] == '$' {
-			functionName := keyStr[1:] // Remove '$' prefix
-			scriptletName := parsing.MetadataFunctionPrefix + functionName
+		// Nested function call: { "$length": [...] }, { "$concat": [...] }, etc.
+		if strings.HasPrefix(keyStr, "$") {
+			fnName := keyStr[1:]
+			scriptletName := parsing.MetadataFunctionPrefix + fnName
 
-			if _, isFunction := validationContext.ScriptletNamespace.Lookup(scriptletName); isFunction {
-				// Recursively process function arguments
-				var funcArgs ard.List
-				if listVal, isList := value.(ard.List); isList {
-					funcArgs = listVal
+			if _, isFn := ctx.ScriptletNamespace.Lookup(scriptletName); isFn {
+				var fnArgs ard.List
+				if listVal, isList := v.(ard.List); isList {
+					fnArgs = listVal
 				} else {
-					funcArgs = ard.List{value}
+					fnArgs = ard.List{v}
 				}
 
-				processedArgs := make([]any, len(funcArgs))
-				for i, funcArg := range funcArgs {
-					processedArgs[i] = self.processValidationArgument(funcArg, validationContext)
+				processed := make(ard.List, len(fnArgs))
+				for i, a := range fnArgs {
+					processed[i] = self.processValidationArgument(a, ctx)
 				}
-
-				// Create a function call
-				return validationContext.NewFunctionCall(scriptletName, processedArgs)
+				return ctx.NewFunctionCall(scriptletName, processed)
 			}
 		}
 	}
 
-	// Case 3: Literal value
+	// Literal value, leave as‑is
 	return arg
 }
 
-// Converts the validation clause into a function call for validation
-func (self *ValidationClause) ToFunctionCall(context *parsing.Context, strict bool) *parsing.FunctionCall {
-	processedArguments := make([]any, len(self.Arguments))
-	for i, argument := range self.Arguments {
-		processedArguments[i] = self.processValidationArgument(argument, context)
+// Convert the clause into a FunctionCall that Puccini can evaluate
+func (self *ValidationClause) ToFunctionCall(ctx *parsing.Context, strict bool) *parsing.FunctionCall {
+	processed := make(ard.List, len(self.Arguments))
 
-		// VALUTA LE FUNCTION CALL PRIMA DI PASSARLE ALLE VALIDAZIONI
-		processedArguments[i] = self.evaluateNestedFunctions(processedArguments[i], context)
+	for i, arg := range self.Arguments {
+		processed[i] = self.processValidationArgument(arg, ctx)
+		processed[i] = self.evaluateNestedFunctions(processed[i], ctx)
 
-		// Normalize only if not already a FunctionCall
+		// Convert native arguments to *Value when a datatype is available
 		if self.IsNativeArgument(i) {
-			if _, isValue := processedArguments[i].(*Value); !isValue {
-				if _, isFuncCall := processedArguments[i].(*parsing.FunctionCall); !isFuncCall {
+			if _, isVal := processed[i].(*Value); !isVal {
+				if _, isCall := processed[i].(*parsing.FunctionCall); !isCall {
 					if self.DataType != nil {
-						value := ReadValue(self.Context.ListChild(i, processedArguments[i])).(*Value)
-						value.Render(self.DataType, self.Definition, true, false)
-						processedArguments[i] = value
+						val := ReadValue(self.Context.ListChild(i, processed[i])).(*Value)
+						val.Render(self.DataType, self.Definition, true, false)
+						processed[i] = val
 					} else if strict {
 						panic(fmt.Sprintf("no data type for native argument at index %d", i))
 					}
@@ -193,48 +186,39 @@ func (self *ValidationClause) ToFunctionCall(context *parsing.Context, strict bo
 		}
 	}
 
-	return context.NewFunctionCall(parsing.MetadataValidationPrefix+self.Operator, processedArguments)
+	return ctx.NewFunctionCall(parsing.MetadataValidationPrefix+self.Operator, processed)
 }
 
-// Nuova funzione helper per valutare le funzioni annidate
-func (self *ValidationClause) evaluateNestedFunctions(arg any, context *parsing.Context) any {
-	// Se è già una FunctionCall, lascia che il sistema la gestisca automaticamente
-	// Il trucco è che dobbiamo assicurarci che sia valutata prima di arrivare alle validazioni
-	if functionCall, isFuncCall := arg.(*parsing.FunctionCall); isFuncCall {
-		// Valuta ricorsivamente gli argomenti della funzione
-		evaluatedArgs := make([]any, len(functionCall.Arguments))
-		for i, arg := range functionCall.Arguments {
-			evaluatedArgs[i] = self.evaluateNestedFunctions(arg, context)
+// Evaluate nested functions contained inside an argument before validation
+func (self *ValidationClause) evaluateNestedFunctions(arg any, ctx *parsing.Context) any {
+	if fc, ok := arg.(*parsing.FunctionCall); ok {
+		evaluated := make(ard.List, len(fc.Arguments))
+		for i, a := range fc.Arguments {
+			evaluated[i] = self.evaluateNestedFunctions(a, ctx)
 		}
-
-		// Crea una nuova function call con argomenti valutati
-		return context.NewFunctionCall(functionCall.Name, evaluatedArgs)
+		return ctx.NewFunctionCall(fc.Name, evaluated)
 	}
 
-	// GESTIONE DIRETTA: Se l'argomento è ancora una mappa con funzione non risolta
-	if mapArg, ok := arg.(ard.Map); ok && len(mapArg) == 1 {
-		for key, value := range mapArg {
-			keyStr := yamlkeys.KeyString(key)
-			if len(keyStr) > 0 && keyStr[0] == '$' {
-				functionName := keyStr[1:]
-				scriptletName := parsing.MetadataFunctionPrefix + functionName
-
-				if _, exists := context.ScriptletNamespace.Lookup(scriptletName); exists {
-					// Valuta gli argomenti della funzione ricorsivamente
-					var funcArgs ard.List
-					if listVal, isList := value.(ard.List); isList {
-						funcArgs = listVal
+	// Handle map‑style function notation that hasn't yet been converted
+	if m, ok := arg.(ard.Map); ok && len(m) == 1 {
+		for k, v := range m {
+			keyStr := yamlkeys.KeyString(k)
+			if strings.HasPrefix(keyStr, "$") {
+				fnName := keyStr[1:]
+				scriptletName := parsing.MetadataFunctionPrefix + fnName
+				if _, exists := ctx.ScriptletNamespace.Lookup(scriptletName); exists {
+					var fnArgs ard.List
+					if listVal, isList := v.(ard.List); isList {
+						fnArgs = listVal
 					} else {
-						funcArgs = ard.List{value}
+						fnArgs = ard.List{v}
 					}
 
-					evaluatedArgs := make([]any, len(funcArgs))
-					for i, funcArg := range funcArgs {
-						evaluatedArgs[i] = self.evaluateNestedFunctions(funcArg, context)
+					evaluated := make(ard.List, len(fnArgs))
+					for i, a := range fnArgs {
+						evaluated[i] = self.evaluateNestedFunctions(a, ctx)
 					}
-
-					// Crea una function call che dovrebbe essere valutata dal sistema
-					return context.NewFunctionCall(scriptletName, evaluatedArgs)
+					return ctx.NewFunctionCall(scriptletName, evaluated)
 				}
 			}
 		}
@@ -243,7 +227,7 @@ func (self *ValidationClause) evaluateNestedFunctions(arg any, context *parsing.
 	return arg
 }
 
-// Helper to dereference a path like { $value: [ "foo", 0, "bar" ] }
+// Dereference a path such as { $value: ["foo", 0, "bar"] }
 func dereferenceValuePath(data any, path any) any {
 	list, ok := path.(ard.List)
 	if !ok {
@@ -269,38 +253,39 @@ func dereferenceValuePath(data any, path any) any {
 	return current
 }
 
-// Checks if the argument at the given index is native
+// IsNativeArgument reports whether the argument at the given index must be treated as a native value
 func (self *ValidationClause) IsNativeArgument(index int) bool {
 	for _, i := range self.NativeArgumentIndexes {
-		if (i == -1) || (i == index) {
+		if i == -1 || i == index {
 			return true
 		}
 	}
 	return false
 }
 
-// ValidationClauses is a slice of ValidationClause pointers
+// --- Collections ----------------------------------------------------------
+
 type ValidationClauses []*ValidationClause
 
-func (self ValidationClauses) Append(validations ValidationClauses) ValidationClauses {
-	r := append(self[:0:0], self...)
-	return append(r, validations...)
+func (self ValidationClauses) Append(v ValidationClauses) ValidationClauses {
+	out := append(self[:0:0], self...)
+	return append(out, v...)
 }
 
-func (self ValidationClauses) Normalize(context *parsing.Context) normal.FunctionCalls {
-	var normalFunctionCalls normal.FunctionCalls
-	for _, validationClause := range self {
-		functionCall := validationClause.ToFunctionCall(context, false)
-		NormalizeFunctionCallArguments(functionCall, context)
-		normalFunctionCalls = append(normalFunctionCalls, normal.NewFunctionCall(functionCall))
+func (self ValidationClauses) Normalize(ctx *parsing.Context) normal.FunctionCalls {
+	var calls normal.FunctionCalls
+	for _, c := range self {
+		fc := c.ToFunctionCall(ctx, false)
+		NormalizeFunctionCallArguments(fc, ctx)
+		calls = append(calls, normal.NewFunctionCall(fc))
 	}
-	return normalFunctionCalls
+	return calls
 }
 
-func (self ValidationClauses) AddToMeta(context *parsing.Context, normalValueMeta *normal.ValueMeta) {
-	for _, validationClause := range self {
-		functionCall := validationClause.ToFunctionCall(context, true)
-		NormalizeFunctionCallArguments(functionCall, context)
-		normalValueMeta.AddValidator(functionCall)
+func (self ValidationClauses) AddToMeta(ctx *parsing.Context, meta *normal.ValueMeta) {
+	for _, c := range self {
+		fc := c.ToFunctionCall(ctx, true)
+		NormalizeFunctionCallArguments(fc, ctx)
+		meta.AddValidator(fc)
 	}
 }
