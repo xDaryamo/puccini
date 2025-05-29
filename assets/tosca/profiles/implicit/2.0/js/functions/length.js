@@ -2,7 +2,6 @@
 // [TOSCA-v2.0] @ 10.2.3.1
 
 exports.evaluate = function(arg) {
-    console.log('Argumentssss:', arg);
     if (arguments.length !== 1) {
         throw 'The $length function expects exactly one argument.';
     }
