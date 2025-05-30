@@ -1,4 +1,3 @@
-
 exports.isTosca = function(o, kind) {
 	if (o.metadata === undefined)
 		return false;
@@ -177,20 +176,21 @@ exports.getModelableEntity = function(entity) {
 };
 
 exports.getHost = function(vertex) {
-	for (let e = 0, l = vertex.edgesOut.size(); e < l; e++) {
-		let edge = vertex.edgesOut[e];
-		if (exports.isTosca(edge, 'Relationship')) {
-			for (let typeName in edge.properties.types) {
-				let type = edge.properties.types[typeName];
-				if (type.metadata.role === 'host')
-					return edge.target;
-			}
-		}
-	}
-	if (exports.isNodeTemplate(vertex))
-		throw util.sprintf('"HOST" not found for node template %q', vertex.properties.name);
-	else
-		throw '"HOST" not found';
+    for (let e = 0, l = vertex.edgesOut.size(); e < l; e++) {
+        let edge = vertex.edgesOut[e];
+        if (exports.isTosca(edge, 'Relationship')) {
+            for (let typeName in edge.properties.types) {
+                let type = edge.properties.types[typeName];
+                if (type && type.metadata && type.metadata.role === 'host') {
+                    return edge.target;
+                }
+            }
+        }
+    }
+    if (exports.isNodeTemplate(vertex))
+        throw util.sprintf('"HOST" not found for node template %q', vertex.properties.name);
+    else
+        throw '"HOST" not found';
 };
 
 exports.getComparable = function(v) {
