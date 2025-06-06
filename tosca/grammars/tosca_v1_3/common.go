@@ -74,10 +74,10 @@ func init() {
 	Grammar.RegisterReader("RequirementDefinition", ReadRequirementDefinition) // override
 	Grammar.RegisterReader("RequirementMapping", tosca_v2_0.ReadRequirementMapping)
 	Grammar.RegisterReader("ServiceTemplate", tosca_v2_0.ReadServiceTemplate)
-	Grammar.RegisterReader("scalar-unit.bitrate", tosca_v2_0.ReadScalarUnitBitrate) // introduced in TOSCA 1.3
-	Grammar.RegisterReader("scalar-unit.frequency", tosca_v2_0.ReadScalarUnitFrequency)
-	Grammar.RegisterReader("scalar-unit.size", tosca_v2_0.ReadScalarUnitSize)
-	Grammar.RegisterReader("scalar-unit.time", tosca_v2_0.ReadScalarUnitTime)
+	Grammar.RegisterReader("scalar-unit.bitrate", ReadScalarUnitBitrate) // introduced in TOSCA 1.3
+	Grammar.RegisterReader("scalar-unit.frequency", ReadScalarUnitFrequency)
+	Grammar.RegisterReader("scalar-unit.size", ReadScalarUnitSize)
+	Grammar.RegisterReader("scalar-unit.time", ReadScalarUnitTime)
 	Grammar.RegisterReader("Schema", ReadSchema)
 	Grammar.RegisterReader("SubstitutionMappings", tosca_v2_0.ReadSubstitutionMappings)
 	Grammar.RegisterReader("timestamp", tosca_v2_0.ReadTimestamp)
@@ -95,4 +95,40 @@ func init() {
 	DefaultScriptletNamespace.RegisterScriptlets(ConstraintClauseScriptlets, ConstraintClauseNativeArgumentIndexes)
 
 	Grammar.InvalidNamespaceCharacters = ":"
+}
+
+func CompareUint32(v1 uint32, v2 uint32) int {
+	if v1 < v2 {
+		return -1
+	} else if v2 > v1 {
+		return 1
+	}
+	return 0
+}
+
+func CompareUint64(v1 uint64, v2 uint64) int {
+	if v1 < v2 {
+		return -1
+	} else if v2 > v1 {
+		return 1
+	}
+	return 0
+}
+
+func CompareInt64(v1 int64, v2 int64) int {
+	if v1 < v2 {
+		return -1
+	} else if v2 > v1 {
+		return 1
+	}
+	return 0
+}
+
+func CompareFloat64(v1 float64, v2 float64) int {
+	if v1 < v2 {
+		return -1
+	} else if v2 > v1 {
+		return 1
+	}
+	return 0
 }

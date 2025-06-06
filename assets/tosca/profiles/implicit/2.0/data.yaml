@@ -97,30 +97,16 @@ data_types:
   #
   # Scalar
   #
-
-  scalar-unit.size:
+  
+  scalar:
     metadata:
-      puccini.type: scalar-unit.size
+      puccini.type: scalar
       specification.citation: '[TOSCA-v2.0]'
-      specification.location: '?'
-
-  scalar-unit.time:
-    metadata:
-      puccini.type: scalar-unit.time
-      specification.citation: '[TOSCA-v2.0]'
-      specification.location: '?'
-
-  scalar-unit.frequency:
-    metadata:
-      puccini.type: scalar-unit.frequency
-      specification.citation: '[TOSCA-v2.0]'
-      specification.location: '?'
-
-  scalar-unit.bitrate:
-    metadata:
-      puccini.type: scalar-unit.bitrate
-      specification.citation: '[TOSCA-v2.0]'
-      specification.location: '?'
+      specification.location: '9.1.2.2'
+    description: >-
+      The scalar type is an abstract TOSCA data type used to define scalar values 
+      along with an associated unit. It cannot be used directly but must be refined 
+      into a concrete scalar type.
 
   #
   # Collections

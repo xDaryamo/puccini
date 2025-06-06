@@ -104,6 +104,12 @@ func (self *Value) render(dataType *DataType, dataDefinition DataDefinition, bar
 		return
 	}
 
+	// Check if this is a scalar type (TOSCA 2.0)
+	if dataType.IsScalarType() {
+		self.Context.Data = ReadScalar(self.Context, dataType)
+		return
+	}
+
 	// Internal types
 	if internal := dataType.GetInternal(); internal != nil {
 		if internal.Validator != nil {

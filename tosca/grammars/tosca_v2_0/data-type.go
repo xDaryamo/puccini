@@ -24,7 +24,29 @@ type DataType struct {
 	KeySchema           *Schema             `read:"key_schema,Schema"`   // introduced in TOSCA 1.3
 	EntrySchema         *Schema             `read:"entry_schema,Schema"` // introduced in TOSCA 1.3
 
+	// TOSCA 2.0 scalar type fields - usa reader custom
+	DataTypeName  *string `read:"data_type"`               // introduced in TOSCA 2.0
+	Units         ard.Map `read:"units,UnitsReader"`       // introduced in TOSCA 2.0
+	CanonicalUnit *string `read:"canonical_unit"`          // introduced in TOSCA 2.0
+	Prefixes      ard.Map `read:"prefixes,PrefixesReader"` // introduced in TOSCA 2.0
+
 	Parent *DataType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
+}
+
+// Custom reader for units field
+func ReadUnitsField(context *parsing.Context) parsing.EntityPtr {
+	if context.ValidateType(ard.TypeMap) {
+		return context.Data.(ard.Map)
+	}
+	return nil
+}
+
+// Custom reader for prefixes field
+func ReadPrefixesField(context *parsing.Context) parsing.EntityPtr {
+	if context.ValidateType(ard.TypeMap) {
+		return context.Data.(ard.Map)
+	}
+	return nil
 }
 
 func NewDataType(context *parsing.Context) *DataType {
@@ -37,7 +59,25 @@ func NewDataType(context *parsing.Context) *DataType {
 // ([parsing.Reader] signature)
 func ReadDataType(context *parsing.Context) parsing.EntityPtr {
 	self := NewDataType(context)
+
+	// Read fields normally
 	context.ValidateUnsupportedFields(context.ReadFields(self))
+
+	// Manually handle Units and Prefixes fields
+	if context.ValidateType(ard.TypeMap) {
+		if data, ok := context.Data.(ard.Map)["units"]; ok {
+			if unitsMap, ok := data.(ard.Map); ok {
+				self.Units = unitsMap
+			}
+		}
+
+		if data, ok := context.Data.(ard.Map)["prefixes"]; ok {
+			if prefixesMap, ok := data.(ard.Map); ok {
+				self.Prefixes = prefixesMap
+			}
+		}
+	}
+
 	return self
 }
 
@@ -71,7 +111,40 @@ func (self *DataType) Inherit() {
 		self.ValidationClause = self.Parent.ValidationClause
 	}
 
+	// TOSCA 2.0 scalar inheritance
+	if (self.DataTypeName == nil) && (self.Parent.DataTypeName != nil) {
+		self.DataTypeName = self.Parent.DataTypeName
+	}
+	if (self.Units == nil) && (self.Parent.Units != nil) {
+		self.Units = make(ard.Map)
+		for k, v := range self.Parent.Units {
+			self.Units[k] = v
+		}
+	}
+	if (self.CanonicalUnit == nil) && (self.Parent.CanonicalUnit != nil) {
+		self.CanonicalUnit = self.Parent.CanonicalUnit
+	}
+	if (self.Prefixes == nil) && (self.Parent.Prefixes != nil) {
+		self.Prefixes = make(ard.Map)
+		for k, v := range self.Parent.Prefixes {
+			self.Prefixes[k] = v
+		}
+	}
+
 	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
+}
+
+// Check if this is a scalar type
+func (self *DataType) IsScalarType() bool {
+	// Check if derived from scalar
+	current := self
+	for current != nil {
+		if current.Name == "scalar" {
+			return true
+		}
+		current = current.Parent
+	}
+	return false
 }
 
 // ([parsing.Renderable] interface)

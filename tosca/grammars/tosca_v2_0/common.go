@@ -78,10 +78,6 @@ func init() {
 	Grammar.RegisterReader("RequirementDefinition", ReadRequirementDefinition)
 	Grammar.RegisterReader("RequirementMapping", ReadRequirementMapping)
 	Grammar.RegisterReader("ServiceTemplate", ReadServiceTemplate)
-	Grammar.RegisterReader("scalar-unit.bitrate", ReadScalarUnitBitrate) // introduced in TOSCA 1.3
-	Grammar.RegisterReader("scalar-unit.frequency", ReadScalarUnitFrequency)
-	Grammar.RegisterReader("scalar-unit.size", ReadScalarUnitSize)
-	Grammar.RegisterReader("scalar-unit.time", ReadScalarUnitTime)
 	Grammar.RegisterReader("Schema", ReadSchema)
 	Grammar.RegisterReader("SubstitutionMappings", ReadSubstitutionMappings)
 	Grammar.RegisterReader("timestamp", ReadTimestamp)
@@ -99,6 +95,13 @@ func init() {
 	DefaultScriptletNamespace.RegisterScriptlets(ValidationClauseScriptlets, ValidationClauseNativeArgumentIndexes)
 
 	Grammar.InvalidNamespaceCharacters = ":"
+
+	// Add scalar reader
+	Grammar.RegisterReader("scalar", ReadScalarValue) // introduced in TOSCA 2.0
+
+	// Add readers for scalar type fields
+	Grammar.RegisterReader("UnitsReader", ReadUnitsField)
+	Grammar.RegisterReader("PrefixesReader", ReadPrefixesField)
 }
 
 func CompareUint32(v1 uint32, v2 uint32) int {

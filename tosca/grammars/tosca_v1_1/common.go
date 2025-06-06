@@ -64,9 +64,9 @@ func init() {
 	Grammar.RegisterReader("RequirementDefinition", tosca_v1_3.ReadRequirementDefinition) // 1.3
 	Grammar.RegisterReader("RequirementMapping", tosca_v2_0.ReadRequirementMapping)
 	Grammar.RegisterReader("ServiceTemplate", tosca_v2_0.ReadServiceTemplate)
-	Grammar.RegisterReader("scalar-unit.frequency", tosca_v2_0.ReadScalarUnitFrequency)
-	Grammar.RegisterReader("scalar-unit.size", tosca_v2_0.ReadScalarUnitSize)
-	Grammar.RegisterReader("scalar-unit.time", tosca_v2_0.ReadScalarUnitTime)
+	Grammar.RegisterReader("scalar-unit.frequency", tosca_v1_3.ReadScalarUnitFrequency)
+	Grammar.RegisterReader("scalar-unit.size", tosca_v1_3.ReadScalarUnitSize)
+	Grammar.RegisterReader("scalar-unit.time", tosca_v1_3.ReadScalarUnitTime)
 	Grammar.RegisterReader("Schema", tosca_v2_0.ReadSchema)
 	Grammar.RegisterReader("SubstitutionMappings", ReadSubstitutionMappings) // override
 	Grammar.RegisterReader("timestamp", tosca_v2_0.ReadTimestamp)
