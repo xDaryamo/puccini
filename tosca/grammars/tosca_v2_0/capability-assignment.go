@@ -98,9 +98,9 @@ type CapabilityAssignments map[string]*CapabilityAssignment
 func (self *CapabilityAssignment) Render(definition *CapabilityDefinition) {
 	self.Properties.RenderProperties(definition.PropertyDefinitions, self.Context.FieldChild("properties", nil))
 	self.Attributes.RenderAttributes(definition.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
-	if self.Occurrences == nil {
-		self.Occurrences = definition.Occurrences
-	}
+	// if self.Occurrences == nil {
+	// 	self.Occurrences = definition.Occurrences
+	// }
 }
 
 func (self CapabilityAssignments) Render(definitions CapabilityDefinitions, context *parsing.Context) {

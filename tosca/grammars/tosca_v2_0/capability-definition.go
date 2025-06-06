@@ -8,7 +8,7 @@ import (
 //
 // CapabilityDefinition
 //
-// [TOSCA-v2.0] @ ?
+// [TOSCA-v2.0] @ 8.2
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.7.2
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.7.2
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.2
@@ -19,15 +19,17 @@ type CapabilityDefinition struct {
 	*Entity `name:"capability definition"`
 	Name    string
 
-	Description              *string              `read:"description"`
-	CapabilityTypeName       *string              `read:"type"` // mandatory only if cannot be inherited
-	PropertyDefinitions      PropertyDefinitions  `read:"properties,PropertyDefinition" inherit:"properties,CapabilityType"`
-	AttributeDefinitions     AttributeDefinitions `read:"attributes,AttributeDefinition" inherit:"attributes,CapabilityType"`
-	ValidSourceNodeTypeNames *[]string            `read:"valid_source_types" inherit:"valid_source_types,CapabilityType"`
-	Occurrences              *RangeEntity         `read:"occurrences,RangeEntity"`
+	Description                *string              `read:"description"`
+	Metadata                   Metadata             `read:"metadata,Metadata"`
+	CapabilityTypeName         *string              `read:"type"` // mandatory only if cannot be inherited
+	PropertyDefinitions        PropertyDefinitions  `read:"properties,PropertyDefinition" inherit:"properties,CapabilityType"`
+	AttributeDefinitions       AttributeDefinitions `read:"attributes,AttributeDefinition" inherit:"attributes,CapabilityType"`
+	ValidSourceNodeTypeNames   *[]string            `read:"valid_source_node_types" inherit:"valid_source_node_types,CapabilityType"`
+	ValidRelationshipTypeNames *[]string            `read:"valid_relationship_types" inherit:"valid_relationship_types,CapabilityType"`
 
-	CapabilityType       *CapabilityType `lookup:"type,CapabilityTypeName" traverse:"ignore" json:"-" yaml:"-"`
-	ValidSourceNodeTypes NodeTypes       `lookup:"valid_source_types,ValidSourceNodeTypeNames" traverse:"ignore" json:"-" yaml:"-"`
+	CapabilityType         *CapabilityType   `lookup:"type,CapabilityTypeName" traverse:"ignore" json:"-" yaml:"-"`
+	ValidSourceNodeTypes   NodeTypes         `lookup:"valid_source_node_types,ValidSourceNodeTypeNames" traverse:"ignore" json:"-" yaml:"-"`
+	ValidRelationshipTypes RelationshipTypes `lookup:"valid_relationship_types,ValidRelationshipTypeNames" traverse:"ignore" json:"-" yaml:"-"`
 
 	typeMissingProblemReported bool
 }
@@ -73,20 +75,28 @@ func (self *CapabilityDefinition) Inherit(parentDefinition *CapabilityDefinition
 	if ((self.Description == nil) || ((self.CapabilityType != nil) && (self.Description == self.CapabilityType.Description))) && (parentDefinition.Description != nil) {
 		self.Description = parentDefinition.Description
 	}
+	
+	// For capability refinement: inherit type if not specified
 	if (self.CapabilityTypeName == nil) && (parentDefinition.CapabilityTypeName != nil) {
 		self.CapabilityTypeName = parentDefinition.CapabilityTypeName
+		// Mark this as inherited so render() knows not to complain
+		self.typeMissingProblemReported = true
 	}
+	
 	if (self.ValidSourceNodeTypeNames == nil) && (parentDefinition.ValidSourceNodeTypeNames != nil) {
 		self.ValidSourceNodeTypeNames = parentDefinition.ValidSourceNodeTypeNames
 	}
-	if (self.Occurrences == nil) && (parentDefinition.Occurrences != nil) {
-		self.Occurrences = parentDefinition.Occurrences
+	if (self.ValidRelationshipTypeNames == nil) && (parentDefinition.ValidRelationshipTypeNames != nil) {
+		self.ValidRelationshipTypeNames = parentDefinition.ValidRelationshipTypeNames
 	}
 	if (self.CapabilityType == nil) && (parentDefinition.CapabilityType != nil) {
 		self.CapabilityType = parentDefinition.CapabilityType
 	}
 	if (self.ValidSourceNodeTypes == nil) && (parentDefinition.ValidSourceNodeTypes != nil) {
 		self.ValidSourceNodeTypes = parentDefinition.ValidSourceNodeTypes
+	}
+	if (self.ValidRelationshipTypes == nil) && (parentDefinition.ValidRelationshipTypes != nil) {
+		self.ValidRelationshipTypes = parentDefinition.ValidRelationshipTypes
 	}
 
 	self.PropertyDefinitions.Inherit(parentDefinition.PropertyDefinitions)
@@ -107,6 +117,20 @@ func (self *CapabilityDefinition) render() {
 		if !self.typeMissingProblemReported {
 			self.Context.FieldChild("type", nil).ReportKeynameMissing()
 			self.typeMissingProblemReported = true
+		}
+	} else {
+		// If we have a capability type, inherit property definitions from it
+		if self.CapabilityType != nil {
+			// Inherit property definitions from capability type
+			for name, propDef := range self.CapabilityType.PropertyDefinitions {
+				if existingPropDef, exists := self.PropertyDefinitions[name]; exists {
+					// If property exists but has no type, inherit from capability type
+					if existingPropDef.DataTypeName == nil && propDef.DataTypeName != nil {
+						existingPropDef.DataTypeName = propDef.DataTypeName
+						existingPropDef.DataType = propDef.DataType
+					}
+				}
+			}
 		}
 	}
 }

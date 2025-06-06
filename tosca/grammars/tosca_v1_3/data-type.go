@@ -28,6 +28,12 @@ func ReadDataType(ctx *parsing.Context) parsing.EntityPtr {
 		}
 	}
 
+	// Disable TOSCA 2.0 specific fields that require UnitsReader
+	ctx.SetReadTag("Units", "")         // disable Units field
+	ctx.SetReadTag("CanonicalUnit", "") // disable CanonicalUnit field
+	ctx.SetReadTag("Prefixes", "")      // disable Prefixes field
+	ctx.SetReadTag("DataTypeName", "")  // disable DataTypeName field
+
 	// Call TOSCA 2.0 reader
 	v2dt := tosca_v2_0.ReadDataType(ctx).(*tosca_v2_0.DataType)
 

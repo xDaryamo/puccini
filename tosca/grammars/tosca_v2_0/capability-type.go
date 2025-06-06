@@ -7,7 +7,7 @@ import (
 //
 // CapabilityType
 //
-// [TOSCA-v2.0] @ ?
+// [TOSCA-v2.0] @ 8.1
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.7.7
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.7.7
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.7
@@ -17,12 +17,14 @@ import (
 type CapabilityType struct {
 	*Type `name:"capability type"`
 
-	PropertyDefinitions      PropertyDefinitions  `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
-	AttributeDefinitions     AttributeDefinitions `read:"attributes,AttributeDefinition" inherit:"attributes,Parent"`
-	ValidSourceNodeTypeNames *[]string            `read:"valid_source_types" inherit:"valid_source_types,Parent"`
+	PropertyDefinitions        PropertyDefinitions  `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
+	AttributeDefinitions       AttributeDefinitions `read:"attributes,AttributeDefinition" inherit:"attributes,Parent"`
+	ValidSourceNodeTypeNames   *[]string            `read:"valid_source_node_types" inherit:"valid_source_node_types,Parent"`
+	ValidRelationshipTypeNames *[]string            `read:"valid_relationship_types" inherit:"valid_relationship_types,Parent"`
 
-	Parent               *CapabilityType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
-	ValidSourceNodeTypes NodeTypes       `lookup:"valid_source_types,ValidSourceNodeTypeNames" inherit:"valid_source_types,Parent" traverse:"ignore" json:"-" yaml:"-"`
+	Parent                 *CapabilityType   `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
+	ValidSourceNodeTypes   NodeTypes         `lookup:"valid_source_node_types,ValidSourceNodeTypeNames" inherit:"valid_source_node_types,Parent" traverse:"ignore" json:"-" yaml:"-"`
+	ValidRelationshipTypes RelationshipTypes `lookup:"valid_relationship_types,ValidRelationshipTypeNames" inherit:"valid_relationship_types,Parent" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewCapabilityType(context *parsing.Context) *CapabilityType {

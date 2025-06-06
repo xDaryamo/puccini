@@ -1,7 +1,6 @@
 package tosca_v1_3
 
 import (
-	"github.com/tliron/commonlog"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 	"github.com/tliron/puccini/tosca/parsing"
 )
@@ -10,8 +9,6 @@ type (
 	ConstraintClause  = tosca_v2_0.ValidationClause
 	ConstraintClauses = tosca_v2_0.ValidationClauses
 )
-
-var log = commonlog.GetLogger("puccini.grammars.tosca_v1_3")
 
 var Grammar = parsing.NewGrammar()
 
@@ -30,7 +27,7 @@ func init() {
 	Grammar.RegisterReader("AttributeMapping", tosca_v2_0.ReadAttributeMapping) // introduced in TOSCA 1.3
 	Grammar.RegisterReader("AttributeValue", ReadAttributeValue)                // override
 	Grammar.RegisterReader("CapabilityAssignment", tosca_v2_0.ReadCapabilityAssignment)
-	Grammar.RegisterReader("CapabilityDefinition", tosca_v2_0.ReadCapabilityDefinition)
+	Grammar.RegisterReader("CapabilityDefinition", ReadCapabilityDefinition) // override
 	Grammar.RegisterReader("CapabilityFilter", tosca_v2_0.ReadCapabilityFilter)
 	Grammar.RegisterReader("CapabilityMapping", tosca_v2_0.ReadCapabilityMapping)
 	Grammar.RegisterReader("CapabilityType", tosca_v2_0.ReadCapabilityType)
