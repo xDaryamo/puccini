@@ -6,21 +6,20 @@
 // TOSCA 2.0 operator: matches
 const tosca = require('tosca.lib.utils');
 
-exports.validate = function() {
-    // Extract the actual values we need to compare
+exports.validate = function(currentPropertyValue) {
+    // Extract pattern from arguments
     let stringToTest, pattern;
     
     if (arguments.length === 2) {
-        // Simple case: string value and pattern
+        // Standard case: currentPropertyValue and pattern
         stringToTest = arguments[0];
         pattern = arguments[1];
-    } else if (arguments.length >= 3) {
-        // When function calls are involved, the last two arguments 
-        // contain the values we need to compare
-        stringToTest = arguments[arguments.length - 2];
-        pattern = arguments[arguments.length - 1];
+    } else if (arguments.length === 3) {
+        // Case with expanded arguments: currentPropertyValue, stringToTest, pattern
+        stringToTest = arguments[1];
+        pattern = arguments[2];
     } else {
-        throw new Error("matches requires at least 2 arguments");
+        throw new Error("matches requires 2 or 3 arguments");
     }
     
     // Validate arguments
@@ -37,8 +36,10 @@ exports.validate = function() {
         stringToTest = String(stringToTest);
         pattern = String(pattern);
         
+        // Handle YAML escaping: convert \\d to \d, \\w to \w, etc.
+        pattern = pattern.replace(/\\\\([dwsWDSbBnrtfv])/g, '\\$1');
+        
         // Perform regex matching
-        console.log(`Matching string "${stringToTest}" against pattern "${pattern}"`);
         return new RegExp(pattern).test(stringToTest);
     } catch (e) {
         console.error(`Error in regex test: ${e.message}`);
