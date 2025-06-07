@@ -250,5 +250,164 @@ exports.deepEqual = function(v1, v2) {
 };
 
 exports.isPrimitive = function(obj) {
-	return obj !== Object(obj);
+    return obj !== Object(obj);
+};
+
+exports.tryParseScalar = function(valueString, scalarTypeInfo) {
+    if (typeof valueString !== 'string' || !scalarTypeInfo || !scalarTypeInfo.units || !scalarTypeInfo.canonicalUnit || !scalarTypeInfo.baseType) {
+        return null;
+    }
+
+    const units = scalarTypeInfo.units;
+    const canonicalUnit = scalarTypeInfo.canonicalUnit;
+    const baseType = scalarTypeInfo.baseType;
+    // const prefixes = scalarTypeInfo.prefixes || {}; // Simplified: no full prefix handling here yet
+
+    const match = valueString.match(/^([+-]?[0-9]*\.?[0-9]+(?:[eE][+-]?[0-9]+)?)\s+(.+)$/);
+    if (!match) {
+        return null;
+    }
+
+    const numberPart = parseFloat(match[1]);
+    if (isNaN(numberPart)) {
+        return null;
+    }
+
+    const unitPart = match[2];
+    let multiplier = units[unitPart];
+
+    // TODO: Add prefix handling if necessary, similar to Go's getUnitMultiplier
+    // For now, assume direct unit match or simple prefix+baseUnit if only one base unit defined.
+    if (multiplier === undefined) {
+        // Basic prefix check if only one unit is defined (the base unit)
+        const unitKeys = Object.keys(units);
+        if (unitKeys.length === 1) {
+            const baseUnitName = unitKeys[0];
+            if (unitPart.endsWith(baseUnitName)) {
+                const prefix = unitPart.substring(0, unitPart.length - baseUnitName.length);
+                // This would require prefixes to be part of scalarTypeInfo and checked here.
+                // For simplicity, this example won't fully implement prefix parsing in JS.
+                // If a full prefix system is needed, scalarTypeInfo.prefixes would be used.
+            }
+        }
+        if (multiplier === undefined) return null; // Unit not found
+    }
+
+    let canonicalNumber = numberPart * multiplier;
+    let canonicalString;
+
+    if (baseType === 'integer') {
+        canonicalNumber = Math.round(canonicalNumber);
+        canonicalString = String(canonicalNumber) + ' ' + canonicalUnit;
+    } else {
+        // Formatting to match Go's %g is tricky in JS.
+        // For comparison, canonicalNumber is the most important.
+        // A simple string representation:
+        canonicalString = String(canonicalNumber) + ' ' + canonicalUnit;
+    }
+
+    return {
+        '$originalString': valueString,
+        '$number': canonicalNumber,
+        '$string': canonicalString,
+        'scalar': numberPart,
+        'unit': unitPart,
+        '$scalarTypeInfo': scalarTypeInfo // Carry forward for potential nested parsing
+    };
+};
+
+// Helper function to dereference a path within an object
+exports.dereferencePathHelper = function(obj, pathArray) {
+    let current = obj;
+    // Ensure pathArray is an array, supporting {$value: "property"} as {$value: ["property"]}
+    const path = Array.isArray(pathArray) ? pathArray : [pathArray];
+
+    for (const key of path) {
+        if (current === null || typeof current !== 'object' || !current.hasOwnProperty(key)) {
+            return undefined; // Path not found or invalid intermediate value
+        }
+        current = current[key];
+    }
+    return current;
+};
+
+// Check if a function name corresponds to a validation operator
+exports.isValidationOperator = function(functionName) {
+    try {
+        const validatorModule = require('tosca.validation.' + functionName);
+        return validatorModule && typeof validatorModule.validate === 'function';
+    } catch (e) {
+        return false;
+    }
+};
+
+// Check if a function name corresponds to a TOSCA function
+exports.isToscaFunction = function(functionName) {
+    try {
+        const functionModule = require('tosca.function.' + functionName);
+        return functionModule && typeof functionModule.evaluate === 'function';
+    } catch (e) {
+        return false;
+    }
+};
+
+// Evaluate nested functions in validation/function arguments
+exports.evaluateNestedFunction = function(arg, currentPropertyValue) {
+    if (typeof arg !== 'object' || arg === null || Array.isArray(arg)) {
+        return arg;
+    }
+    
+    const keys = Object.keys(arg);
+    if (keys.length === 1) {
+        const key = keys[0];
+        if (key.startsWith('$')) {
+            const functionName = key.substring(1);
+            const functionArgs = arg[key];
+            
+            // SPECIAL HANDLING: For $value or {$value: ["path", ...]}
+            if (functionName === 'value') {
+                return exports.dereferencePathHelper(currentPropertyValue, functionArgs);
+            }
+            
+            // Check if it's a validation operator (to handle recursive structure)
+            if (exports.isValidationOperator(functionName)) {
+                // Recursively process operator arguments
+                if (Array.isArray(functionArgs)) {
+                    const processedArgs = functionArgs.map(subArg => exports.evaluateNestedFunction(subArg, currentPropertyValue));
+                    return { [key]: processedArgs };
+                } else {
+                    return { [key]: exports.evaluateNestedFunction(functionArgs, currentPropertyValue) };
+                }
+            }
+            
+            // Try to evaluate it as a function (length, concat, etc.)
+            if (exports.isToscaFunction(functionName)) {
+                try {
+                    const functionModule = require('tosca.function.' + functionName);
+                    const processedFunctionArgs = [];
+                    const argsArray = Array.isArray(functionArgs) ? functionArgs : [functionArgs];
+                    
+                    for (const fnArg of argsArray) {
+                        if (fnArg === '$value') {
+                            processedFunctionArgs.push(currentPropertyValue);
+                        } else {
+                            processedFunctionArgs.push(exports.evaluateNestedFunction(fnArg, currentPropertyValue));
+                        }
+                    }
+                    
+                    return functionModule.evaluate.apply(null, processedFunctionArgs);
+                } catch (e) {
+                    // If the function can't be evaluated, return the processed argument
+                    if (Array.isArray(functionArgs)) {
+                        const processedArgs = functionArgs.map(subArg => exports.evaluateNestedFunction(subArg, currentPropertyValue));
+                        return { [key]: processedArgs };
+                    } else {
+                        return { [key]: exports.evaluateNestedFunction(functionArgs, currentPropertyValue) };
+                    }
+                }
+            }
+        }
+    }
+    
+    return arg;
 };
