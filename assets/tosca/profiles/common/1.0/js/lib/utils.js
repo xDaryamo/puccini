@@ -253,15 +253,38 @@ exports.isPrimitive = function(obj) {
     return obj !== Object(obj);
 };
 
-exports.tryParseScalar = function(valueString, scalarTypeInfo) {
-    if (typeof valueString !== 'string' || !scalarTypeInfo || !scalarTypeInfo.units || !scalarTypeInfo.canonicalUnit || !scalarTypeInfo.baseType) {
+exports.tryParseScalar = function(valueString, scalarObject) {
+    if (typeof valueString !== 'string' || !scalarObject) {
         return null;
     }
 
-    const units = scalarTypeInfo.units;
-    const canonicalUnit = scalarTypeInfo.canonicalUnit;
-    const baseType = scalarTypeInfo.baseType;
-    // const prefixes = scalarTypeInfo.prefixes || {}; // Simplified: no full prefix handling here yet
+    // Read from direct fields (which are now always present)
+    const units = scalarObject.units || 
+                  scalarObject.Units || 
+                  (scalarObject.scalarType && scalarObject.scalarType.Units) ||
+                  (scalarObject.$scalarTypeInfo && scalarObject.$scalarTypeInfo.units);
+    
+    const canonicalUnit = scalarObject.canonicalUnit || 
+                         scalarObject.CanonicalUnit ||
+                         (scalarObject.scalarType && scalarObject.scalarType.CanonicalUnit) ||
+                         (scalarObject.$scalarTypeInfo && scalarObject.$scalarTypeInfo.canonicalUnit);
+    
+    const baseType = scalarObject.baseType || 
+                    scalarObject.BaseType || 
+                    scalarObject.dataType ||
+                    (scalarObject.scalarType && scalarObject.scalarType.DataTypeName) ||
+                    (scalarObject.$scalarTypeInfo && scalarObject.$scalarTypeInfo.baseType);
+
+    const dataTypeName = scalarObject.dataTypeName || 
+                        scalarObject.DataTypeName || 
+                        (scalarObject.scalarType && scalarObject.scalarType.Name) ||
+                        (scalarObject.$scalarTypeInfo && scalarObject.$scalarTypeInfo.name) || 
+                        '';
+
+    // Verify that we have all necessary information
+    if (!units || !canonicalUnit || !baseType) {
+        return null;
+    }
 
     const match = valueString.match(/^([+-]?[0-9]*\.?[0-9]+(?:[eE][+-]?[0-9]+)?)\s+(.+)$/);
     if (!match) {
@@ -276,21 +299,59 @@ exports.tryParseScalar = function(valueString, scalarTypeInfo) {
     const unitPart = match[2];
     let multiplier = units[unitPart];
 
-    // TODO: Add prefix handling if necessary, similar to Go's getUnitMultiplier
-    // For now, assume direct unit match or simple prefix+baseUnit if only one base unit defined.
+    // Handle case-insensitive matching for TOSCA 1.3
     if (multiplier === undefined) {
-        // Basic prefix check if only one unit is defined (the base unit)
-        const unitKeys = Object.keys(units);
-        if (unitKeys.length === 1) {
-            const baseUnitName = unitKeys[0];
-            if (unitPart.endsWith(baseUnitName)) {
-                const prefix = unitPart.substring(0, unitPart.length - baseUnitName.length);
-                // This would require prefixes to be part of scalarTypeInfo and checked here.
-                // For simplicity, this example won't fully implement prefix parsing in JS.
-                // If a full prefix system is needed, scalarTypeInfo.prefixes would be used.
+        for (const [unit, mult] of Object.entries(units)) {
+            if (unit.toLowerCase() === unitPart.toLowerCase()) {
+                multiplier = mult;
+                break;
             }
         }
-        if (multiplier === undefined) return null; // Unit not found
+    }
+
+    // Handle prefixes for TOSCA 2.0
+    if (multiplier === undefined) {
+        const prefixes = (scalarObject.scalarType && scalarObject.scalarType.Prefixes) ||
+                        scalarObject.prefixes || 
+                        scalarObject.Prefixes;
+        
+        if (prefixes) {
+            // Find the longest match: prefix+unit, then unit only
+            let bestMatch = null;
+            let bestPrefixLength = 0;
+            
+            for (const [unit, unitMultiplier] of Object.entries(units)) {
+                // Check if unitPart ends with this unit
+                if (unitPart.endsWith(unit)) {
+                    const potentialPrefix = unitPart.substring(0, unitPart.length - unit.length);
+                    
+                    if (potentialPrefix === '') {
+                        // No prefix, direct unit
+                        if (bestMatch === null || potentialPrefix.length > bestPrefixLength) {
+                            bestMatch = { unit, unitMultiplier, prefix: '', prefixMultiplier: 1 };
+                            bestPrefixLength = potentialPrefix.length;
+                        }
+                    } else if (prefixes[potentialPrefix] !== undefined) {
+                        // Prefix found
+                        if (potentialPrefix.length > bestPrefixLength) {
+                            bestMatch = { 
+                                unit, 
+                                unitMultiplier, 
+                                prefix: potentialPrefix, 
+                                prefixMultiplier: prefixes[potentialPrefix] 
+                            };
+                            bestPrefixLength = potentialPrefix.length;
+                        }
+                    }
+                }
+            }
+            
+            if (bestMatch) {
+                multiplier = bestMatch.unitMultiplier * bestMatch.prefixMultiplier;
+            }
+        }
+        
+        if (multiplier === undefined) return null;
     }
 
     let canonicalNumber = numberPart * multiplier;
@@ -300,11 +361,15 @@ exports.tryParseScalar = function(valueString, scalarTypeInfo) {
         canonicalNumber = Math.round(canonicalNumber);
         canonicalString = String(canonicalNumber) + ' ' + canonicalUnit;
     } else {
-        // Formatting to match Go's %g is tricky in JS.
-        // For comparison, canonicalNumber is the most important.
-        // A simple string representation:
         canonicalString = String(canonicalNumber) + ' ' + canonicalUnit;
     }
+
+    const scalarTypeInfo = {
+        name: dataTypeName,
+        baseType: baseType,
+        units: units,
+        canonicalUnit: canonicalUnit
+    };
 
     return {
         '$originalString': valueString,
@@ -312,7 +377,7 @@ exports.tryParseScalar = function(valueString, scalarTypeInfo) {
         '$string': canonicalString,
         'scalar': numberPart,
         'unit': unitPart,
-        '$scalarTypeInfo': scalarTypeInfo // Carry forward for potential nested parsing
+        '$scalarTypeInfo': scalarTypeInfo
     };
 };
 

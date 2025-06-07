@@ -32,6 +32,13 @@ type Scalar struct {
 	Scalar float64 `json:"scalar" yaml:"scalar"`
 	Unit   string  `json:"unit" yaml:"unit"`
 
+	// Fields exposed for JavaScript consumption
+	DataTypeName  string             `json:"dataTypeName,omitempty"`
+	BaseType      string             `json:"baseType,omitempty"`
+	Units         map[string]float64 `json:"units,omitempty"`
+	CanonicalUnit string             `json:"canonicalUnit,omitempty"`
+	Prefixes      map[string]float64 `json:"prefixes,omitempty"`
+
 	ScalarType    *DataType `traverse:"ignore" json:"-" yaml:"-"`
 	canonicalUnit string
 	dataType      string // "float" or "integer"
@@ -39,7 +46,6 @@ type Scalar struct {
 	prefixes      map[string]float64
 }
 
-// Parse scalar string according to TOSCA 2.0 specification
 func ReadScalar(context *parsing.Context, scalarType *DataType) *Scalar {
 	self := &Scalar{
 		ScalarType: scalarType,
@@ -49,16 +55,23 @@ func ReadScalar(context *parsing.Context, scalarType *DataType) *Scalar {
 		return self
 	}
 
-	// Original
 	self.OriginalString = *context.ReadString()
 
-	// Get scalar type configuration
 	if err := self.loadScalarTypeConfig(); err != nil {
 		context.ReportValueMalformed("scalar", err.Error())
 		return self
 	}
 
-	// Parse using regex: number followed by whitespace followed by unit
+	// Populate fields for JavaScript consumption
+	if scalarType != nil {
+		self.DataTypeName = scalarType.Name
+		self.BaseType = self.dataType
+		self.Units = self.units
+		self.CanonicalUnit = self.canonicalUnit
+		self.Prefixes = self.prefixes
+	}
+
+	// Parse format: number followed by whitespace followed by unit
 	re := regexp.MustCompile(`^([+-]?[0-9]*\.?[0-9]+(?:[eE][+-]?[0-9]+)?)\s+(.+)$`)
 	matches := re.FindStringSubmatch(self.OriginalString)
 	if len(matches) != 3 {
@@ -102,13 +115,13 @@ func (self *Scalar) loadScalarTypeConfig() error {
 		return errors.New("scalar type not set")
 	}
 
-	// Load data_type (default: float)
+	// Default data type is float
 	self.dataType = "float"
 	if self.ScalarType.DataTypeName != nil {
 		self.dataType = *self.ScalarType.DataTypeName
 	}
 
-	// Load units directly from DataType struct (now ard.Map)
+	// Load units from DataType
 	self.units = make(map[string]float64)
 	if self.ScalarType.Units != nil {
 		for unitNameInterface, multiplierValue := range self.ScalarType.Units {
@@ -124,7 +137,7 @@ func (self *Scalar) loadScalarTypeConfig() error {
 		}
 	}
 
-	// Load prefixes directly from DataType struct (now ard.Map)
+	// Load prefixes from DataType
 	self.prefixes = make(map[string]float64)
 	if self.ScalarType.Prefixes != nil {
 		for prefixNameInterface, multiplierValue := range self.ScalarType.Prefixes {
@@ -140,7 +153,7 @@ func (self *Scalar) loadScalarTypeConfig() error {
 		}
 	}
 
-	// Load canonical_unit directly from DataType struct
+	// Load canonical unit from DataType
 	if self.ScalarType.CanonicalUnit != nil {
 		self.canonicalUnit = *self.ScalarType.CanonicalUnit
 	}
@@ -159,14 +172,14 @@ func (self *Scalar) loadScalarTypeConfig() error {
 }
 
 func (self *Scalar) getUnitMultiplier(unitStr string) (float64, error) {
-	// First try direct unit match
+	// Try direct unit match first
 	if multiplier, ok := self.units[unitStr]; ok {
 		return multiplier, nil
 	}
 
 	// If prefixes are defined, try to match prefix + base unit
 	if len(self.prefixes) > 0 && len(self.units) == 1 {
-		// Get the base unit (should be the only one with multiplier 1)
+		// Get the base unit
 		var baseUnit string
 		var baseMultiplier float64
 		for unit, multiplier := range self.units {
@@ -205,7 +218,6 @@ func (self *Scalar) Compare(data any) (int, error) {
 
 // ([parsing.Reader] signature) for generic scalar reading
 func ReadScalarValue(context *parsing.Context) parsing.EntityPtr {
-	// Per ora ritorna un errore che aiuta nel debug
 	context.ReportValueMalformed("scalar", "scalar value reading not yet fully implemented")
 	return nil
 }
