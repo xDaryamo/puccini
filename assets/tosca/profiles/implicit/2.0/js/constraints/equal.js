@@ -6,36 +6,28 @@
 // TOSCA 2.0 operator: equal
 const tosca = require('tosca.lib.utils');
 
-exports.validate = function() {
-    if (arguments.length < 2) {
-        throw new Error("equal requires at least 2 arguments");
-    }
-    
-    // Extract the actual values we need to compare
-    let v1, v2;
-    
-    if (arguments.length === 2) {
-        // Simple case: property value and constraint value
-        v1 = arguments[0];
-        v2 = arguments[1];
-    } else if (arguments.length >= 3) {
-        // When function calls are involved, the last two arguments 
-        // contain the values we need to compare
-        v1 = arguments[arguments.length - 2];
-        v2 = arguments[arguments.length - 1];
-    }
-    
-    if (v1 === undefined || v2 === undefined) {
+exports.validate = function(currentPropertyValue) {
+    // Handle both old (3 args) and new (2 args) calling conventions
+    let expectedValue;
+    if (arguments.length === 3) {
+        expectedValue = arguments[2];
+    } else if (arguments.length === 2) {
+        expectedValue = arguments[1];
+    } else {
         return false;
     }
-
-    // Handle arrays and objects with deepEqual instead of compare
-    if ((Array.isArray(v1) && Array.isArray(v2)) || 
-        (typeof v1 === 'object' && v1 !== null && 
-         typeof v2 === 'object' && v2 !== null)) {
-        return tosca.deepEqual(v1, v2);
+    
+    // Parse expectedValue if it's a string and we have scalar context
+    if (typeof expectedValue === 'string' && currentPropertyValue && 
+        currentPropertyValue.$originalString !== undefined) {
+        const parsedExpectedValue = tosca.tryParseScalar(expectedValue, currentPropertyValue);
+        if (parsedExpectedValue) {
+            expectedValue = parsedExpectedValue;
+        }
     }
     
-    // For primitive types, use the standard compare function
-    return tosca.compare(v1, v2) === 0;
+    const currentComparable = tosca.getComparable(currentPropertyValue);
+    const expectedComparable = tosca.getComparable(expectedValue);
+    
+    return currentComparable === expectedComparable;
 };

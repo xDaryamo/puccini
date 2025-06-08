@@ -6,27 +6,27 @@
 // TOSCA 2.0 operator: greater_than
 const tosca = require('tosca.lib.utils');
 
-exports.validate = function() {
-    // Extract the actual values we need to compare (ignoring property value)
-    let v1, v2;
-    
-    if (arguments.length === 2) {
-        // Simple case: property value and constraint value
-        v1 = arguments[0];
-        v2 = arguments[1];
-    } else if (arguments.length >= 3) {
-        // When function calls are involved, the last two arguments 
-        // contain the values we need to compare
-        v1 = arguments[arguments.length - 2];
-        v2 = arguments[arguments.length - 1];
+exports.validate = function(currentPropertyValue) {
+    // Handle both old (3 args) and new (2 args) calling conventions
+    let compareValue;
+    if (arguments.length === 3) {
+        // Old style: arguments[0] = currentPropertyValue, arguments[1] = currentPropertyValue, arguments[2] = compareValue
+        compareValue = arguments[2];
+    } else if (arguments.length === 2) {
+        // New style: arguments[0] = currentPropertyValue, arguments[1] = compareValue
+        compareValue = arguments[1];
     } else {
-        throw new Error("greater_than requires at least 2 arguments");
-    }
-    
-    // Make sure both values are of the same type
-    if (typeof v1 !== typeof v2) {
         return false;
     }
     
-    return tosca.compare(v1, v2) > 0;
+    // Parse compareValue if it's a string and we have scalar context
+    if (typeof compareValue === 'string' && currentPropertyValue && 
+        currentPropertyValue.$originalString !== undefined) {
+        const parsedCompareValue = tosca.tryParseScalar(compareValue, currentPropertyValue);
+        if (parsedCompareValue) {
+            compareValue = parsedCompareValue;
+        }
+    }
+    
+    return tosca.compare(currentPropertyValue, compareValue) > 0;
 };

@@ -6,19 +6,39 @@
 // TOSCA 2.0 operator: valid_values
 const tosca = require('tosca.lib.utils');
 
-exports.validate = function() {
-    if (arguments.length < 2) {
-        throw new Error("valid_values requires at least 2 arguments");
+exports.validate = function(currentPropertyValue) {
+    // Handle both old (3+ args) and new (2+ args) calling conventions
+    let validValuesArray;
+    if (arguments.length === 3) {
+        validValuesArray = arguments[2];
+    } else if (arguments.length === 2) {
+        validValuesArray = arguments[1];
+    } else {
+        return false;
     }
     
-    // First argument is always the value to check
-    const value = arguments[0];
+    if (!Array.isArray(validValuesArray)) {
+        return false;
+    }
     
-    // All remaining arguments are valid values to compare against
-    for (let i = 1; i < arguments.length; i++) {
-        let validValue = arguments[i];
+    // Check if currentPropertyValue matches any of the valid values
+    for (const validValue of validValuesArray) {
+        // If validValue is a string and currentPropertyValue is a scalar, parse the string
+        if (typeof validValue === 'string' && currentPropertyValue && 
+            currentPropertyValue.$originalString !== undefined) {
+            const parsedValidValue = tosca.tryParseScalar(validValue, currentPropertyValue);
+            if (parsedValidValue) {
+                // For scalars, compare canonical values ($number)
+                const currentComparable = tosca.getComparable(currentPropertyValue);
+                const validComparable = tosca.getComparable(parsedValidValue);
+                if (currentComparable === validComparable) {
+                    return true;
+                }
+            }
+        }
         
-        if (tosca.deepEqual(value, validValue)) {
+        // Direct comparison (for non-scalar types or if parsing fails)
+        if (tosca.deepEqual(currentPropertyValue, validValue)) {
             return true;
         }
     }

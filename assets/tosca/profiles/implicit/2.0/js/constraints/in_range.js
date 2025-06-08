@@ -7,34 +7,21 @@
 const tosca = require('tosca.lib.utils');
 
 exports.validate = function(currentPropertyValue) {
-    // Requires exactly 4 arguments (currentPropertyValue + 3 YAML args)
-    if (arguments.length !== 4) {
-        return false;
-    }
-
-    let valueToTest;
-    let lowerBound;
-    let upperBound;
-
-    // Resolve first YAML argument (value to test)
-    if (arguments[1] === '$value') {
-        valueToTest = currentPropertyValue;
-    } else {
+    // Handle both old (4 args) and new (3 args) calling conventions
+    let valueToTest, lowerBound, upperBound;
+    
+    if (arguments.length === 4) {
+        // Old style: arguments[0] = currentPropertyValue, arguments[1] = currentPropertyValue, arguments[2] = lowerBound, arguments[3] = upperBound
         valueToTest = arguments[1];
-    }
-
-    // Resolve second YAML argument (lower bound)
-    if (arguments[2] === '$value') {
-        lowerBound = currentPropertyValue;
-    } else {
         lowerBound = arguments[2];
-    }
-
-    // Resolve third YAML argument (upper bound)
-    if (arguments[3] === '$value') {
-        upperBound = currentPropertyValue;
-    } else {
         upperBound = arguments[3];
+    } else if (arguments.length === 3) {
+        // New style: arguments[0] = currentPropertyValue, arguments[1] = lowerBound, arguments[2] = upperBound
+        valueToTest = currentPropertyValue;
+        lowerBound = arguments[1];
+        upperBound = arguments[2];
+    } else {
+        return false;
     }
 
     if (valueToTest === undefined || valueToTest === null ||
@@ -43,26 +30,25 @@ exports.validate = function(currentPropertyValue) {
         return false;
     }
 
-    // Special case for timestamps
-    if (valueToTest.$number !== undefined) {
-        // Extract numeric value from timestamp objects if needed
-        const valueNum = valueToTest.$number;
-        const lowerNum = lowerBound.$number !== undefined ? lowerBound.$number : 
-                         (typeof lowerBound === 'string' ? Date.parse(lowerBound) * 1000000 : lowerBound);
-        const upperNum = upperBound.$number !== undefined ? upperBound.$number : 
-                         (typeof upperBound === 'string' ? Date.parse(upperBound) * 1000000 : upperBound);
-        
-        return valueNum >= lowerNum && valueNum <= upperNum;
+    // Parse upperBound if it's a string and we have scalar context
+    if (typeof upperBound === 'string' && currentPropertyValue && 
+        currentPropertyValue.$originalString !== undefined) {
+        const parsedUpperBound = tosca.tryParseScalar(upperBound, currentPropertyValue);
+        if (parsedUpperBound) {
+            upperBound = parsedUpperBound;
+        }
     }
-    
-    // Special case: if valueToTest is itself a range
-    if ((valueToTest.lower !== undefined) && (valueToTest.upper !== undefined)) {
-        // Check if the range is within the bounds
-        return (tosca.compare(valueToTest.lower, lowerBound) >= 0) && 
-               (tosca.compare(valueToTest.upper, upperBound) <= 0);
-    } else {
-        // Regular case: check if value is within bounds
-        return (tosca.compare(valueToTest, lowerBound) >= 0) && 
-               (tosca.compare(valueToTest, upperBound) <= 0);
+
+    // Parse lowerBound if it's a string and we have scalar context
+    if (typeof lowerBound === 'string' && currentPropertyValue && 
+        currentPropertyValue.$originalString !== undefined) {
+        const parsedLowerBound = tosca.tryParseScalar(lowerBound, currentPropertyValue);
+        if (parsedLowerBound) {
+            lowerBound = parsedLowerBound;
+        }
     }
+
+    // Use canonical comparison for scalars and other comparable types
+    return (tosca.compare(valueToTest, lowerBound) >= 0) && 
+           (tosca.compare(valueToTest, upperBound) <= 0);
 };
