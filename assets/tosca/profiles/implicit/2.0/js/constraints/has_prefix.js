@@ -1,22 +1,14 @@
 // TOSCA 2.0 operator: has_prefix
 const tosca = require('tosca.lib.utils');
 
-exports.validate = function() {
-    // Extract the actual values we need to compare
-    let valueToTest, prefix;
-    
-    if (arguments.length === 2) {
-        // Simple case: value and prefix
-        valueToTest = arguments[0];
-        prefix = arguments[1];
-    } else if (arguments.length >= 3) {
-        // When function calls are involved, the last two arguments 
-        // contain the values we need to compare
-        valueToTest = arguments[arguments.length - 2];
-        prefix = arguments[arguments.length - 1];
-    } else {
-        throw new Error("has_prefix requires at least 2 arguments");
+exports.validate = function(currentPropertyValue) {
+    const parsed = tosca.parseComparisonArguments(currentPropertyValue, arguments);
+    if (!parsed) {
+        return false;
     }
+    
+    const valueToTest = parsed.val1;
+    const prefix = parsed.val2;
     
     // Validate arguments
     if (valueToTest === undefined || valueToTest === null) {

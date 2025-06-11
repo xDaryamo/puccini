@@ -1,22 +1,14 @@
 // TOSCA 2.0 operator: has_any_entry
 const tosca = require('tosca.lib.utils');
 
-exports.validate = function() {
-    // Extract the actual values we need to compare
-    let container, candidateEntries;
-    
-    if (arguments.length === 2) {
-        // Simple case: container and candidate entries list
-        container = arguments[0];
-        candidateEntries = arguments[1];
-    } else if (arguments.length >= 3) {
-        // When function calls are involved, the last two arguments 
-        // contain the values we need to compare
-        container = arguments[arguments.length - 2];
-        candidateEntries = arguments[arguments.length - 1];
-    } else {
-        throw new Error("has_any_entry requires at least 2 arguments");
+exports.validate = function(currentPropertyValue) {
+    const parsed = tosca.parseComparisonArguments(currentPropertyValue, arguments);
+    if (!parsed) {
+        return false;
     }
+    
+    const container = parsed.val1;
+    const candidateEntries = parsed.val2;
     
     // Validate arguments
     if (container === undefined || container === null) {

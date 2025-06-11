@@ -10,57 +10,58 @@ exports.validate = function(currentPropertyValue) {
 
     // Process each sub-clause
     for (let i = 1; i < arguments.length; i++) {
-        const subclauseMap = arguments[i];
-
-        const operatorKey = Object.keys(subclauseMap)[0];
-        if (!operatorKey) {
-            return false; // Empty or malformed sub-clause makes AND false
-        }
-
-        const operatorFunctionName = operatorKey.startsWith('$') ? operatorKey.substring(1) : operatorKey;
-        let originalOperatorArgs = subclauseMap[operatorKey];
-
-        if (!Array.isArray(originalOperatorArgs)) {
-            originalOperatorArgs = [originalOperatorArgs];
-        }
-
-        // Process and evaluate nested functions in arguments
-        const processedArgsForSubclause = [];
-        for (const arg of originalOperatorArgs) {
-            if (arg === '$value') {
-                processedArgsForSubclause.push(currentPropertyValue);
-            } else if (typeof arg === 'object' && arg !== null && !Array.isArray(arg)) {
-                // Check if the argument is a function to evaluate
-                const functionResult = tosca.evaluateNestedFunction(arg, currentPropertyValue);
-                processedArgsForSubclause.push(functionResult);
-            } else if (typeof arg === 'string' && currentPropertyValue) {
-                const parsed = tosca.tryParseScalar(arg, currentPropertyValue);
-                processedArgsForSubclause.push(parsed || arg);
-            } else {
-                processedArgsForSubclause.push(arg);
+        const subclauseArg = arguments[i];
+        
+        // Handle structured objects from parser
+        if (subclauseArg && typeof subclauseArg === 'object' && subclauseArg.Operator && subclauseArg.Arguments) {
+            // This is a structured constraint object from the parser
+            const operatorName = subclauseArg.Operator;
+            const constraintArgs = subclauseArg.Arguments || [];
+            
+            // Validate the structured subclause
+            const isSubclauseValid = tosca.validateConstraintSubclause.call(this, operatorName, constraintArgs, currentPropertyValue);
+            
+            if (!isSubclauseValid) {
+                return false; // Short-circuit on first failure
             }
+            continue;
         }
         
-        try {
-            const validatorModule = require('tosca.validation.' + operatorFunctionName);
+        // Handle simple constraint map format (legacy)
+        const subclauseMap = subclauseArg;
+        
+        // Parse the subclause
+        const parsed = tosca.parseConstraintSubclause(subclauseMap);
+        if (!parsed) {
+            return false; // Malformed sub-clause -> fail AND
+        }
 
-            if (validatorModule && typeof validatorModule.validate === 'function') {
-                const subValidator = validatorModule.validate;
+        const { operatorFunctionName, originalOperatorArgs } = parsed;
 
-                // Always use the same argument pattern: currentPropertyValue followed by constraint arguments
-                const isSubclauseValid = subValidator.apply(null, [currentPropertyValue, ...processedArgsForSubclause]);
-                
-                if (!isSubclauseValid) {
-                    return false; // Short-circuit if a sub-clause is false
-                }
+        // Process arguments - handle complex objects but preserve simple "$value" strings
+        const processedArgs = [];
+        for (const arg of originalOperatorArgs) {
+            let processed;
+            if (arg === '$value') {
+                // Handle string literal "$value" - don't process, let individual constraints handle it
+                processed = arg;
+            } else if (typeof arg === 'object' && arg !== null && !Array.isArray(arg)) {
+                // Handle complex objects like {"$value":["count"]} - these need processing
+                processed = tosca.evaluateConstraintArgument.call(this, arg, currentPropertyValue);
             } else {
-                return false; // Module or function not found
+                // Handle arrays and primitives - pass through
+                processed = arg;
             }
-        } catch (e) {
-            console.warn(`Warning: Error validating ${operatorFunctionName}: ${e.message}`);
-            return false; // Error during sub-clause validation
+            processedArgs.push(processed);
+        }
+        
+        // Validate the subclause
+        const isSubclauseValid = tosca.validateConstraintSubclause.call(this, operatorFunctionName, processedArgs, currentPropertyValue);
+        
+        if (!isSubclauseValid) {
+            return false; // Short-circuit on first failure
         }
     }
 
-    return true; // All sub-clauses are true
+    return true; // All clauses passed
 };

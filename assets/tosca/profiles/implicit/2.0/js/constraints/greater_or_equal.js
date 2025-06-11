@@ -6,26 +6,10 @@
 const tosca = require('tosca.lib.utils');
 
 exports.validate = function(currentPropertyValue) {
-    // Handle both old (3 args) and new (2 args) calling conventions
-    let compareValue;
-    if (arguments.length === 3) {
-        // Old style: arguments[0] = currentPropertyValue, arguments[1] = currentPropertyValue, arguments[2] = compareValue
-        compareValue = arguments[2];
-    } else if (arguments.length === 2) {
-        // New style: arguments[0] = currentPropertyValue, arguments[1] = compareValue
-        compareValue = arguments[1];
-    } else {
+    const parsed = tosca.parseComparisonArguments(currentPropertyValue, arguments);
+    if (!parsed) {
         return false;
     }
     
-    // Parse compareValue if it's a string and we have scalar context
-    if (typeof compareValue === 'string' && currentPropertyValue && 
-        currentPropertyValue.$originalString !== undefined) {
-        const parsedCompareValue = tosca.tryParseScalar(compareValue, currentPropertyValue);
-        if (parsedCompareValue) {
-            compareValue = parsedCompareValue;
-        }
-    }
-    
-    return tosca.compare(currentPropertyValue, compareValue) >= 0;
+    return tosca.compare(parsed.val1, parsed.val2) >= 0;
 };

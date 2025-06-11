@@ -3,31 +3,16 @@
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
 
-// TOSCA 2.0 operator: equal
 const tosca = require('tosca.lib.utils');
 
 exports.validate = function(currentPropertyValue) {
-    // Handle both old (3 args) and new (2 args) calling conventions
-    let expectedValue;
-    if (arguments.length === 3) {
-        expectedValue = arguments[2];
-    } else if (arguments.length === 2) {
-        expectedValue = arguments[1];
-    } else {
+    const parsed = tosca.parseComparisonArguments(currentPropertyValue, arguments);
+    if (!parsed) {
         return false;
     }
     
-    // Parse expectedValue if it's a string and we have scalar context
-    if (typeof expectedValue === 'string' && currentPropertyValue && 
-        currentPropertyValue.$originalString !== undefined) {
-        const parsedExpectedValue = tosca.tryParseScalar(expectedValue, currentPropertyValue);
-        if (parsedExpectedValue) {
-            expectedValue = parsedExpectedValue;
-        }
-    }
+    const comparable1 = tosca.getComparable(parsed.val1);
+    const comparable2 = tosca.getComparable(parsed.val2);
     
-    const currentComparable = tosca.getComparable(currentPropertyValue);
-    const expectedComparable = tosca.getComparable(expectedValue);
-    
-    return currentComparable === expectedComparable;
+    return comparable1 === comparable2;
 };

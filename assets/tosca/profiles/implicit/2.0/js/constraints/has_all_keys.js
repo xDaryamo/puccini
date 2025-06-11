@@ -1,22 +1,14 @@
 // TOSCA 2.0 operator: has_all_keys
 const tosca = require('tosca.lib.utils');
 
-exports.validate = function() {
-    // Extract the actual values we need to compare
-    let mapToTest, requiredKeys;
-    
-    if (arguments.length === 2) {
-        // Simple case: map and required keys list
-        mapToTest = arguments[0];
-        requiredKeys = arguments[1];
-    } else if (arguments.length >= 3) {
-        // When function calls are involved, the last two arguments 
-        // contain the values we need to compare
-        mapToTest = arguments[arguments.length - 2];
-        requiredKeys = arguments[arguments.length - 1];
-    } else {
-        throw new Error("has_all_keys requires at least 2 arguments");
+exports.validate = function(currentPropertyValue) {
+    const parsed = tosca.parseComparisonArguments(currentPropertyValue, arguments);
+    if (!parsed) {
+        return false;
     }
+    
+    const mapToTest = parsed.val1;
+    const requiredKeys = parsed.val2;
     
     // Validate arguments
     if (mapToTest === undefined || mapToTest === null) {
@@ -44,16 +36,7 @@ exports.validate = function() {
     
     // Check if ALL keys in requiredKeys exist in the map
     for (let i = 0; i < requiredKeys.length; i++) {
-        let found = false;
-        for (let key in mapToTest) {
-            if (mapToTest.hasOwnProperty(key)) {
-                if (tosca.deepEqual(key, requiredKeys[i])) {
-                    found = true;
-                    break;
-                }
-            }
-        }
-        if (!found) {
+        if (!mapToTest.hasOwnProperty(requiredKeys[i])) {
             return false;
         }
     }

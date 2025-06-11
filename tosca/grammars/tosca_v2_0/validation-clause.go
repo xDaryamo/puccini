@@ -50,7 +50,7 @@ var ValidationClauseNativeArgumentIndexes = map[string][]int{
 	parsing.MetadataValidationPrefix + "less_than":        {0},
 	parsing.MetadataValidationPrefix + "less_or_equal":    {0},
 	parsing.MetadataValidationPrefix + "in_range":         {0, 1},
-	parsing.MetadataValidationPrefix + "valid_values":     {-1}, // -1 = all arguments
+	parsing.MetadataValidationPrefix + "valid_values":     {0}, // Only first argument (value to test)
 	parsing.MetadataValidationPrefix + "matches":          {1},
 	parsing.MetadataValidationPrefix + "has_entry":        {0},
 	parsing.MetadataValidationPrefix + "has_key":          {0},

@@ -7,42 +7,33 @@
 const tosca = require('tosca.lib.utils');
 
 exports.validate = function(currentPropertyValue) {
-    // Extract pattern from arguments
-    let stringToTest, pattern;
-    
-    if (arguments.length === 2) {
-        // Standard case: currentPropertyValue and pattern
-        stringToTest = arguments[0];
-        pattern = arguments[1];
-    } else if (arguments.length === 3) {
-        // Case with expanded arguments: currentPropertyValue, stringToTest, pattern
-        stringToTest = arguments[1];
-        pattern = arguments[2];
-    } else {
-        throw new Error("matches requires 2 or 3 arguments");
+    const parsed = tosca.parseComparisonArguments(currentPropertyValue, arguments);
+    if (!parsed) {
+        return false;
     }
+    
+    const stringToTest = parsed.val1;
+    const regexPattern = parsed.val2;
     
     // Validate arguments
     if (stringToTest === undefined || stringToTest === null) {
         return false;
     }
     
-    if (pattern === undefined || pattern === null) {
+    if (regexPattern === undefined || regexPattern === null) {
+        return false;
+    }
+    
+    // Both arguments must be strings
+    if (typeof stringToTest !== 'string' || typeof regexPattern !== 'string') {
         return false;
     }
     
     try {
-        // Convert both arguments to strings
-        stringToTest = String(stringToTest);
-        pattern = String(pattern);
-        
-        // Handle YAML escaping: convert \\d to \d, \\w to \w, etc.
-        pattern = pattern.replace(/\\\\([dwsWDSbBnrtfv])/g, '\\$1');
-        
-        // Perform regex matching
-        return new RegExp(pattern).test(stringToTest);
+        const regex = new RegExp(regexPattern);
+        return regex.test(stringToTest);
     } catch (e) {
-        console.error(`Error in regex test: ${e.message}`);
+        // Invalid regex pattern
         return false;
     }
 };

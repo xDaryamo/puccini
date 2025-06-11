@@ -253,12 +253,13 @@ exports.isPrimitive = function(obj) {
     return obj !== Object(obj);
 };
 
+// Parse scalar value using context from another scalar object
 exports.tryParseScalar = function(valueString, scalarObject) {
     if (typeof valueString !== 'string' || !scalarObject) {
         return null;
     }
 
-    // Read from direct fields (which are now always present)
+    // Read scalar type information from various possible sources
     const units = scalarObject.units || 
                   scalarObject.Units || 
                   (scalarObject.scalarType && scalarObject.scalarType.Units) ||
@@ -281,11 +282,17 @@ exports.tryParseScalar = function(valueString, scalarObject) {
                         (scalarObject.$scalarTypeInfo && scalarObject.$scalarTypeInfo.name) || 
                         '';
 
+    const prefixes = scalarObject.prefixes ||
+                    scalarObject.Prefixes ||
+                    (scalarObject.scalarType && scalarObject.scalarType.Prefixes) ||
+                    (scalarObject.$scalarTypeInfo && scalarObject.$scalarTypeInfo.prefixes);
+
     // Verify that we have all necessary information
     if (!units || !canonicalUnit || !baseType) {
         return null;
     }
 
+    // Parse the scalar value string (number + unit)
     const match = valueString.match(/^([+-]?[0-9]*\.?[0-9]+(?:[eE][+-]?[0-9]+)?)\s+(.+)$/);
     if (!match) {
         return null;
@@ -297,8 +304,43 @@ exports.tryParseScalar = function(valueString, scalarObject) {
     }
 
     const unitPart = match[2];
-    let multiplier = units[unitPart];
+    let multiplier = exports.findUnitMultiplier(unitPart, units, prefixes);
 
+    if (multiplier === null) {
+        return null;
+    }
+
+    // Calculate canonical value
+    let canonicalNumber = numberPart * multiplier;
+    let canonicalString;
+
+    if (baseType === 'integer') {
+        canonicalNumber = Math.round(canonicalNumber);
+        canonicalString = String(canonicalNumber) + ' ' + canonicalUnit;
+    } else {
+        canonicalString = String(canonicalNumber) + ' ' + canonicalUnit;
+    }
+
+    // Create scalar object with all necessary properties
+    return {
+        $originalString: valueString,
+        $number: canonicalNumber,
+        $string: canonicalString,
+        scalar: numberPart,
+        unit: unitPart,
+        baseType: baseType,
+        canonicalUnit: canonicalUnit,
+        dataTypeName: dataTypeName,
+        units: units,
+        prefixes: prefixes || {}
+    };
+};
+
+// Find unit multiplier considering prefixes
+exports.findUnitMultiplier = function(unitPart, units, prefixes) {
+    // First try direct unit match
+    let multiplier = units[unitPart];
+    
     // Handle case-insensitive matching for TOSCA 1.3
     if (multiplier === undefined) {
         for (const [unit, mult] of Object.entries(units)) {
@@ -310,88 +352,224 @@ exports.tryParseScalar = function(valueString, scalarObject) {
     }
 
     // Handle prefixes for TOSCA 2.0
-    if (multiplier === undefined) {
-        const prefixes = (scalarObject.scalarType && scalarObject.scalarType.Prefixes) ||
-                        scalarObject.prefixes || 
-                        scalarObject.Prefixes;
+    if (multiplier === undefined && prefixes) {
+        // Find the longest match: prefix+unit, then unit only
+        let bestMatch = null;
+        let bestPrefixLength = 0;
         
-        if (prefixes) {
-            // Find the longest match: prefix+unit, then unit only
-            let bestMatch = null;
-            let bestPrefixLength = 0;
-            
-            for (const [unit, unitMultiplier] of Object.entries(units)) {
-                // Check if unitPart ends with this unit
-                if (unitPart.endsWith(unit)) {
-                    const potentialPrefix = unitPart.substring(0, unitPart.length - unit.length);
-                    
-                    if (potentialPrefix === '') {
-                        // No prefix, direct unit
-                        if (bestMatch === null || potentialPrefix.length > bestPrefixLength) {
-                            bestMatch = { unit, unitMultiplier, prefix: '', prefixMultiplier: 1 };
-                            bestPrefixLength = potentialPrefix.length;
-                        }
-                    } else if (prefixes[potentialPrefix] !== undefined) {
-                        // Prefix found
-                        if (potentialPrefix.length > bestPrefixLength) {
-                            bestMatch = { 
-                                unit, 
-                                unitMultiplier, 
-                                prefix: potentialPrefix, 
-                                prefixMultiplier: prefixes[potentialPrefix] 
-                            };
-                            bestPrefixLength = potentialPrefix.length;
-                        }
+        for (const [unit, unitMultiplier] of Object.entries(units)) {
+            // Check if unitPart ends with this unit
+            if (unitPart.endsWith(unit)) {
+                const potentialPrefix = unitPart.substring(0, unitPart.length - unit.length);
+                
+                if (potentialPrefix === '') {
+                    // No prefix, direct unit
+                    if (bestMatch === null || potentialPrefix.length > bestPrefixLength) {
+                        bestMatch = { unit, unitMultiplier, prefix: '', prefixMultiplier: 1 };
+                        bestPrefixLength = potentialPrefix.length;
+                    }
+                } else if (prefixes[potentialPrefix] !== undefined) {
+                    // Prefix found
+                    if (potentialPrefix.length > bestPrefixLength) {
+                        bestMatch = { 
+                            unit, 
+                            unitMultiplier, 
+                            prefix: potentialPrefix, 
+                            prefixMultiplier: prefixes[potentialPrefix] 
+                        };
+                        bestPrefixLength = potentialPrefix.length;
                     }
                 }
             }
-            
-            if (bestMatch) {
-                multiplier = bestMatch.unitMultiplier * bestMatch.prefixMultiplier;
+        }
+        
+        if (bestMatch) {
+            multiplier = bestMatch.unitMultiplier * bestMatch.prefixMultiplier;
+        }
+    }
+
+    return multiplier !== undefined ? multiplier : null;
+};
+
+// Parse comparison arguments for constraint validators
+exports.parseComparisonArguments = function(currentPropertyValue, argumentsArray) {
+    if (argumentsArray.length === 3) {
+        // New calling convention: currentPropertyValue, val1, val2
+        let val1 = argumentsArray[1];
+        let val2 = argumentsArray[2];
+        
+        // Handle "$value" substitution for val1
+        if (val1 === '$value') {
+            val1 = currentPropertyValue;
+        }
+        
+        // Handle "$value" substitution for val2
+        if (val2 === '$value') {
+            val2 = currentPropertyValue;
+        }
+        
+        // Parse val2 if it's a string and val1 is a scalar object
+        if (typeof val2 === 'string' && val1 && typeof val1 === 'object' && val1.$number !== undefined) {
+            const parsed = exports.tryParseScalar(val2, val1);
+            if (parsed) {
+                val2 = parsed;
             }
         }
         
-        if (multiplier === undefined) return null;
-    }
-
-    let canonicalNumber = numberPart * multiplier;
-    let canonicalString;
-
-    if (baseType === 'integer') {
-        canonicalNumber = Math.round(canonicalNumber);
-        canonicalString = String(canonicalNumber) + ' ' + canonicalUnit;
+        // Parse val1 if it's a string and val2 is a scalar object
+        if (typeof val1 === 'string' && val2 && typeof val2 === 'object' && val2.$number !== undefined) {
+            const parsed = exports.tryParseScalar(val1, val2);
+            if (parsed) {
+                val1 = parsed;
+            }
+        }
+        
+        return { val1, val2 };
+    } else if (argumentsArray.length === 2) {
+        // Legacy calling convention: currentPropertyValue, compareValue
+        const compareValue = argumentsArray[1];
+        
+        // Handle "$value" substitution
+        let val2 = compareValue;
+        if (compareValue === '$value') {
+            val2 = currentPropertyValue;
+        }
+        
+        // Parse compareValue if it's a string and we have scalar context
+        let parsedCompareValue = val2;
+        if (typeof val2 === 'string' && currentPropertyValue && 
+            currentPropertyValue.$number !== undefined) {
+            const parsed = exports.tryParseScalar(val2, currentPropertyValue);
+            if (parsed) {
+                parsedCompareValue = parsed;
+            }
+        }
+        
+        return { val1: currentPropertyValue, val2: parsedCompareValue };
     } else {
-        canonicalString = String(canonicalNumber) + ' ' + canonicalUnit;
+        return null;
     }
+};
 
-    const scalarTypeInfo = {
-        name: dataTypeName,
-        baseType: baseType,
-        units: units,
-        canonicalUnit: canonicalUnit
-    };
+// Evaluate constraint argument with potential nested functions
+exports.evaluateConstraintArgument = function(arg, currentPropertyValue) {
+    // Handle string literal "$value"
+    if (arg === '$value') {
+        return currentPropertyValue;
+    }
+    
+    if (typeof arg !== 'object' || arg === null || Array.isArray(arg)) {
+        return arg;
+    }
+    
+    const keys = Object.keys(arg);
+    if (keys.length === 1) {
+        const key = keys[0];
+        if (key.startsWith('$')) {
+            const functionName = key.substring(1);
+            const functionArgs = arg[key];
+            
+            // SPECIAL HANDLING: For $value or {$value: ["path", ...]}
+            if (functionName === 'value') {
+                if (Array.isArray(functionArgs)) {
+                    return exports.dereferencePathHelper(currentPropertyValue, functionArgs);
+                } else if (functionArgs === null || functionArgs === undefined) {
+                    return currentPropertyValue;
+                } else {
+                    return exports.dereferencePathHelper(currentPropertyValue, [functionArgs]);
+                }
+            }
+            
+            // Check if it's a validation operator (to handle recursive structure)
+            if (exports.isValidationOperator(functionName)) {
+                // Return the processed constraint for later evaluation
+                if (Array.isArray(functionArgs)) {
+                    const processedArgs = functionArgs.map(subArg => exports.evaluateConstraintArgument.call(this, subArg, currentPropertyValue));
+                    return { [key]: processedArgs };
+                } else {
+                    return { [key]: exports.evaluateConstraintArgument.call(this, functionArgs, currentPropertyValue) };
+                }
+            }
+            
+            // Try to evaluate it as a function (length, concat, etc.)
+            if (exports.isToscaFunction(functionName)) {
+                try {
+                    const functionModule = require('tosca.function.' + functionName);
+                    const processedFunctionArgs = [];
+                    const argsArray = Array.isArray(functionArgs) ? functionArgs : [functionArgs];
+                    
+                    for (const fnArg of argsArray) {
+                        processedFunctionArgs.push(exports.evaluateConstraintArgument.call(this, fnArg, currentPropertyValue));
+                    }
+                    
+                    return functionModule.evaluate.apply(this, processedFunctionArgs);
+                } catch (e) {
+                    // If the function can't be evaluated, return the processed argument
+                    if (Array.isArray(functionArgs)) {
+                        const processedArgs = functionArgs.map(subArg => exports.evaluateConstraintArgument.call(this, subArg, currentPropertyValue));
+                        return { [key]: processedArgs };
+                    } else {
+                        return { [key]: exports.evaluateConstraintArgument.call(this, functionArgs, currentPropertyValue) };
+                    }
+                }
+            }
+        }
+    }
+    
+    return arg;
+};
 
-    return {
-        '$originalString': valueString,
-        '$number': canonicalNumber,
-        '$string': canonicalString,
-        'scalar': numberPart,
-        'unit': unitPart,
-        '$scalarTypeInfo': scalarTypeInfo
-    };
+// Validate a constraint subclause
+exports.validateConstraintSubclause = function(operatorFunctionName, originalArgs, currentPropertyValue) {
+    try {
+        const validatorModule = require('tosca.validation.' + operatorFunctionName);
+
+        if (validatorModule && typeof validatorModule.validate === 'function') {
+            const subValidator = validatorModule.validate;
+            
+            // For constraints like $greater_or_equal: ["$value", "4 GB"]
+            // We need to call: greater_or_equal.validate(currentPropertyValue, "$value", "4 GB")
+            // The individual constraint will handle "$value" replacement and scalar parsing
+            
+            const result = subValidator.call(this, currentPropertyValue, ...originalArgs);
+            return result;
+        } else {
+            return false; // Module or function not found
+        }
+    } catch (e) {
+        return false; // Error during sub-clause validation
+    }
 };
 
 // Helper function to dereference a path within an object
 exports.dereferencePathHelper = function(obj, pathArray) {
     let current = obj;
+    // Handle both array paths and single property access
+    if (pathArray === undefined || pathArray === null) {
+        return current;
+    }
+    
     // Ensure pathArray is an array, supporting {$value: "property"} as {$value: ["property"]}
     const path = Array.isArray(pathArray) ? pathArray : [pathArray];
 
     for (const key of path) {
-        if (current === null || typeof current !== 'object' || !current.hasOwnProperty(key)) {
+        if (current === null || typeof current !== 'object') {
             return undefined; // Path not found or invalid intermediate value
         }
-        current = current[key];
+        
+        // Handle both object property access and array index access
+        if (Array.isArray(current)) {
+            const index = parseInt(key);
+            if (isNaN(index) || index < 0 || index >= current.length) {
+                return undefined;
+            }
+            current = current[index];
+        } else {
+            if (!current.hasOwnProperty(key)) {
+                return undefined;
+            }
+            current = current[key];
+        }
     }
     return current;
 };
@@ -416,63 +594,22 @@ exports.isToscaFunction = function(functionName) {
     }
 };
 
-// Evaluate nested functions in validation/function arguments
-exports.evaluateNestedFunction = function(arg, currentPropertyValue) {
-    if (typeof arg !== 'object' || arg === null || Array.isArray(arg)) {
-        return arg;
+// Parse constraint subclause from map
+exports.parseConstraintSubclause = function(subclauseMap) {
+    const operatorKey = Object.keys(subclauseMap)[0];
+    if (!operatorKey) {
+        return null; // Empty or malformed sub-clause
     }
-    
-    const keys = Object.keys(arg);
-    if (keys.length === 1) {
-        const key = keys[0];
-        if (key.startsWith('$')) {
-            const functionName = key.substring(1);
-            const functionArgs = arg[key];
-            
-            // SPECIAL HANDLING: For $value or {$value: ["path", ...]}
-            if (functionName === 'value') {
-                return exports.dereferencePathHelper(currentPropertyValue, functionArgs);
-            }
-            
-            // Check if it's a validation operator (to handle recursive structure)
-            if (exports.isValidationOperator(functionName)) {
-                // Recursively process operator arguments
-                if (Array.isArray(functionArgs)) {
-                    const processedArgs = functionArgs.map(subArg => exports.evaluateNestedFunction(subArg, currentPropertyValue));
-                    return { [key]: processedArgs };
-                } else {
-                    return { [key]: exports.evaluateNestedFunction(functionArgs, currentPropertyValue) };
-                }
-            }
-            
-            // Try to evaluate it as a function (length, concat, etc.)
-            if (exports.isToscaFunction(functionName)) {
-                try {
-                    const functionModule = require('tosca.function.' + functionName);
-                    const processedFunctionArgs = [];
-                    const argsArray = Array.isArray(functionArgs) ? functionArgs : [functionArgs];
-                    
-                    for (const fnArg of argsArray) {
-                        if (fnArg === '$value') {
-                            processedFunctionArgs.push(currentPropertyValue);
-                        } else {
-                            processedFunctionArgs.push(exports.evaluateNestedFunction(fnArg, currentPropertyValue));
-                        }
-                    }
-                    
-                    return functionModule.evaluate.apply(null, processedFunctionArgs);
-                } catch (e) {
-                    // If the function can't be evaluated, return the processed argument
-                    if (Array.isArray(functionArgs)) {
-                        const processedArgs = functionArgs.map(subArg => exports.evaluateNestedFunction(subArg, currentPropertyValue));
-                        return { [key]: processedArgs };
-                    } else {
-                        return { [key]: exports.evaluateNestedFunction(functionArgs, currentPropertyValue) };
-                    }
-                }
-            }
-        }
+
+    const operatorFunctionName = operatorKey.startsWith('$') ? operatorKey.substring(1) : operatorKey;
+    let originalOperatorArgs = subclauseMap[operatorKey];
+
+    if (!Array.isArray(originalOperatorArgs)) {
+        originalOperatorArgs = [originalOperatorArgs];
     }
-    
-    return arg;
+
+    return {
+        operatorFunctionName,
+        originalOperatorArgs
+    };
 };
