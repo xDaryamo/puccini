@@ -3,9 +3,9 @@
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 4.3.1
 // [TOSCA-Simple-Profile-YAML-v1.0] @ 4.3.1
 
-// TOSCA 2.0 $concat function
-// Section 10.2.3.2: The $concat function takes one or more arguments that must be 
-// all of type string or all of type list (with the same entry_schema of the list)
+// TOSCA 1.3/2.0 compatible $concat function
+// TOSCA 1.3: Allows implicit conversion of compatible types to strings
+// TOSCA 2.0: Strict type checking with no implicit conversion
 
 exports.evaluate = function() {
     if (arguments.length === 0) {
@@ -21,15 +21,19 @@ exports.evaluate = function() {
     }
     
     const isFirstArgString = typeof firstArg === 'string';
+    const isFirstArgNumber = typeof firstArg === 'number';
     const isFirstArgArray = Array.isArray(firstArg);
     
-    if (!isFirstArgString && !isFirstArgArray) {
-        throw new Error('$concat function arguments must be all of type string or all of type list, got: ' + 
+    // For TOSCA 1.3 compatibility: treat numbers as strings for concatenation
+    const isStringConcatenation = isFirstArgString || isFirstArgNumber;
+    
+    if (!isStringConcatenation && !isFirstArgArray) {
+        throw new Error('$concat function arguments must be all of type string/number or all of type list, got: ' + 
                        (typeof firstArg) + ' for first argument');
     }
     
-    if (isFirstArgString) {
-        // String concatenation mode
+    if (isStringConcatenation) {
+        // String concatenation mode (TOSCA 1.3 compatible)
         let result = [];
         
         for (let i = 0; i < arguments.length; i++) {
@@ -38,18 +42,28 @@ exports.evaluate = function() {
             // Handle scalar objects with $string property
             if (argument && typeof argument === 'object' && argument.$string !== undefined) {
                 argument = argument.$string;
+            } else if (argument && typeof argument === 'object' && argument.$number !== undefined) {
+                // Handle scalar numbers
+                argument = argument.$number;
             }
             
-            // TOSCA 2.0 Rule: NO implicit type conversion
-            // Section 9.1.1.1: A TOSCA parser "MUST NOT attempt to automatically 
-            // convert other primitive types to strings if a string type is required"
-            if (typeof argument !== 'string') {
+            // TOSCA 1.3: Allow implicit conversion of compatible types
+            if (typeof argument === 'string') {
+                result.push(argument);
+            } else if (typeof argument === 'number') {
+                // Implicit conversion: number to string
+                result.push(String(argument));
+            } else if (typeof argument === 'boolean') {
+                // Implicit conversion: boolean to string
+                result.push(String(argument));
+            } else if (argument === null || argument === undefined) {
+                // Handle null/undefined as empty string
+                result.push('');
+            } else {
                 throw new Error('$concat function with string arguments cannot accept argument of type: ' + 
                                (typeof argument) + ' at position ' + i + 
-                               '. All arguments must be strings. No implicit type conversion is allowed.');
+                               '. Supported types: string, number, boolean.');
             }
-            
-            result.push(argument);
         }
         
         return result.join('');
