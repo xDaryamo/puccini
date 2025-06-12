@@ -22,8 +22,15 @@ func ReadSchema(ctx *parsing.Context) parsing.EntityPtr {
 
 	// Convert "constraints" to "validation" for compatibility with 2.0
 	if m, ok := ctx.Data.(ard.Map); ok {
-		if c, ok := m["constraints"]; ok {
-			m["validation"] = c
+		if c, ok := m["constraints"].(ard.List); ok && len(c) > 0 {
+			// Convert TOSCA 1.3 constraints list to TOSCA 2.0 validation clause
+			if len(c) == 1 {
+				// Single constraint: use it directly
+				m["validation"] = c[0]
+			} else {
+				// Multiple constraints: wrap in $and
+				m["validation"] = ard.Map{"$and": c}
+			}
 			delete(m, "constraints")
 		}
 	}

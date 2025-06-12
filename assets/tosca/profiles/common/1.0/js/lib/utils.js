@@ -98,6 +98,22 @@ exports.getNestedValue = function(singular, plural, args) {
 	let length = args.length;
 	if (length < 2)
 		throw 'must have at least 2 arguments';
+	
+	// Check if this looks like TOSCA 2.0 syntax (contains keywords)
+	let isTosca20 = false;
+	for (let i = 1; i < args.length; i++) {
+		if (typeof args[i] === 'string' && 
+			['RELATIONSHIP', 'TARGET', 'SOURCE', 'CAPABILITY'].includes(args[i])) {
+			isTosca20 = true;
+			break;
+		}
+	}
+	
+	if (isTosca20) {
+		return exports.getNestedValueTosca20.call(this, singular, plural, args);
+	}
+	
+	// Original implementation for backward compatibility
 	let vertex = exports.getModelableEntity.call(this, args[0]);
 	let nodeTemplate = vertex.properties;
 	let value = nodeTemplate[plural];
@@ -105,29 +121,35 @@ exports.getNestedValue = function(singular, plural, args) {
 	let arg = args[a];
 	let nextArg = args[a+1];
 	let count = 0;
+	
 	if (arg in nodeTemplate.capabilities) {
 		value = nodeTemplate.capabilities[arg][plural];
 		singular = util.sprintf('capability %q %s', arg, singular);
 		arg = args[++a];
-	} else for (let e = 0, l = vertex.edgesOut.size(); e < l; e++) {
-		let edge = vertex.edgesOut[e];
-		if (!exports.isTosca(edge, 'Relationship'))
-			continue;
-		let relationship = edge.properties;
-		if (relationship.name === arg)
-			if (count++ === nextArg) {
-				value = relationship[plural];
-				singular = util.sprintf('relationship %q %s', arg, singular);
-				a += 2;
-				arg = args[a];
-				break;
-			}
+	} else {
+		for (let e = 0, l = vertex.edgesOut.size(); e < l; e++) {
+			let edge = vertex.edgesOut[e];
+			if (!exports.isTosca(edge, 'Relationship'))
+				continue;
+			let relationship = edge.properties;
+			if (relationship.name === arg)
+				if (count++ === nextArg) {
+					value = relationship[plural];
+					singular = util.sprintf('relationship %q %s', arg, singular);
+					a += 2;
+					arg = args[a];
+					break;
+				}
+		}
 	}
+	
 	if ((typeof value === 'object') && (value !== null) && (arg in value))
 		value = value[arg];
 	else
 		throw util.sprintf('%s %q not found in %q', singular, arg, nodeTemplate.name);
+	
 	value = clout.coerce(value);
+	
 	for (let i = a + 1; i < length; i++) {
 		arg = args[i];
 		if ((typeof value === 'object') && (value !== null) && (arg in value))
@@ -136,6 +158,127 @@ exports.getNestedValue = function(singular, plural, args) {
 			throw util.sprintf('nested %s %q not found in %q', singular, args.slice(a, i+1).join('.'), nodeTemplate.name);
 	}
 	return value;
+};
+
+// TOSCA 2.0 path traversal following BNF grammar
+exports.getNestedValueTosca20 = function(singular, plural, args) {
+    args = Array.prototype.slice.call(args);
+    let length = args.length;
+    if (length < 2)
+        throw 'must have at least 2 arguments';
+    
+    let currentVertex = exports.getModelableEntity.call(this, args[0]);
+    let pathIndex = 1;
+    let propertyName = args[args.length - 1]; // Last argument is always property name
+    
+    // Parse according to BNF grammar: <tosca_path>
+    while (pathIndex < args.length - 1) {
+        let step = args[pathIndex];
+        
+        switch (step) {
+            case 'RELATIONSHIP':
+                // <node_context> ::= RELATIONSHIP, <requirement_name>, <idx>, <rel_context>
+                pathIndex++;
+                if (pathIndex >= args.length - 1)
+                    throw 'RELATIONSHIP keyword must be followed by requirement name';
+                
+                let requirementName = args[pathIndex];
+                pathIndex++;
+                
+                // Check for optional index
+                let relationshipIndex = 0;
+                if (pathIndex < args.length - 1 && typeof args[pathIndex] === 'number') {
+                    relationshipIndex = args[pathIndex];
+                    pathIndex++;
+                }
+                
+                // Find the relationship by requirement name and index
+                let relationshipFound = false;
+                let relationshipCount = 0;
+                
+                for (let e = 0, l = currentVertex.edgesOut.size(); e < l; e++) {
+                    let edge = currentVertex.edgesOut[e];
+                    if (!exports.isTosca(edge, 'Relationship'))
+                        continue;
+                    
+                    let relationship = edge.properties;
+                    if (relationship.name === requirementName) {
+                        if (relationshipCount === relationshipIndex) {
+                            currentVertex = edge; // Now in relationship context
+                            relationshipFound = true;
+                            break;
+                        }
+                        relationshipCount++;
+                    }
+                }
+                
+                if (!relationshipFound)
+                    throw util.sprintf('relationship %q (index %d) not found', requirementName, relationshipIndex);
+                break;
+                
+            case 'TARGET':
+                // <rel_context> ::= TARGET, <node_context>
+                if (!exports.isTosca(currentVertex, 'Relationship'))
+                    throw 'TARGET can only be used in relationship context';
+                
+                currentVertex = currentVertex.target;
+                pathIndex++;
+                break;
+                
+            case 'SOURCE':
+                // <rel_context> ::= SOURCE, <node_context>
+                if (!exports.isTosca(currentVertex, 'Relationship'))
+                    throw 'SOURCE can only be used in relationship context';
+                
+                currentVertex = currentVertex.source;
+                pathIndex++;
+                break;
+                
+            case 'CAPABILITY':
+                // <node_context> ::= CAPABILITY, <capability_name>, <cap_context>
+                pathIndex++;
+                if (pathIndex >= args.length - 1)
+                    throw 'CAPABILITY keyword must be followed by capability name';
+                
+                if (!exports.isNodeTemplate(currentVertex))
+                    throw 'CAPABILITY can only be used in node context';
+                
+                let capabilityName = args[pathIndex];
+                if (!(capabilityName in currentVertex.properties.capabilities))
+                    throw util.sprintf('capability %q not found in node %q', capabilityName, currentVertex.properties.name);
+                
+                // Get property from capability
+                let capabilityProperties = currentVertex.properties.capabilities[capabilityName].properties;
+                if (!(propertyName in capabilityProperties))
+                    throw util.sprintf('property %q not found in capability %q', propertyName, capabilityName);
+                
+                let value = capabilityProperties[propertyName];
+                return clout.coerce(value);
+                
+            default:
+                throw util.sprintf('unexpected token in TOSCA path: %s', step);
+        }
+    }
+    
+    // Get the final property from current context
+    let targetProperties;
+    let entityName;
+    
+    if (exports.isTosca(currentVertex, 'Relationship')) {
+        targetProperties = currentVertex.properties.properties;
+        entityName = currentVertex.properties.name;
+    } else if (exports.isNodeTemplate(currentVertex)) {
+        targetProperties = currentVertex.properties.properties;
+        entityName = currentVertex.properties.name;
+    } else {
+        throw 'Invalid final context for property access';
+    }
+    
+    if (!(propertyName in targetProperties))
+        throw util.sprintf('property %q not found in %q', propertyName, entityName);
+    
+    let finalValue = targetProperties[propertyName];
+    return clout.coerce(finalValue);
 };
 
 exports.getModelableEntity = function(entity) {
@@ -612,4 +755,194 @@ exports.parseConstraintSubclause = function(subclauseMap) {
         operatorFunctionName,
         originalOperatorArgs
     };
+};
+
+// Enhanced getNestedValue to support both old and new syntax
+exports.getNestedValue = function(singular, plural, args) {
+    args = Array.prototype.slice.call(args);
+    let length = args.length;
+    if (length < 2)
+        throw 'must have at least 2 arguments';
+    
+    // Check if this looks like TOSCA 2.0 syntax (contains keywords)
+    let isTosca20 = false;
+    for (let i = 1; i < args.length; i++) {
+        if (typeof args[i] === 'string' && 
+            ['RELATIONSHIP', 'TARGET', 'SOURCE', 'CAPABILITY'].includes(args[i])) {
+            isTosca20 = true;
+            break;
+        }
+    }
+    
+    if (isTosca20) {
+        return exports.getNestedValueTosca20.call(this, singular, plural, args);
+    }
+    
+    // Original implementation for backward compatibility
+    let vertex = exports.getModelableEntity.call(this, args[0]);
+    let nodeTemplate = vertex.properties;
+    let value = nodeTemplate[plural];
+    let a = 1;
+    let arg = args[a];
+    let nextArg = args[a+1];
+    let count = 0;
+    
+    if (arg in nodeTemplate.capabilities) {
+        value = nodeTemplate.capabilities[arg][plural];
+        singular = util.sprintf('capability %q %s', arg, singular);
+        arg = args[++a];
+    } else {
+        for (let e = 0, l = vertex.edgesOut.size(); e < l; e++) {
+            let edge = vertex.edgesOut[e];
+            if (!exports.isTosca(edge, 'Relationship'))
+                continue;
+            let relationship = edge.properties;
+            if (relationship.name === arg)
+                if (count++ === nextArg) {
+                    value = relationship[plural];
+                    singular = util.sprintf('relationship %q %s', arg, singular);
+                    a += 2;
+                    arg = args[a];
+                    break;
+                }
+        }
+    }
+    
+    if ((typeof value === 'object') && (value !== null) && (arg in value))
+        value = value[arg];
+    else
+        throw util.sprintf('%s %q not found in %q', singular, arg, nodeTemplate.name);
+    
+    value = clout.coerce(value);
+    
+    for (let i = a + 1; i < length; i++) {
+        arg = args[i];
+        if ((typeof value === 'object') && (value !== null) && (arg in value))
+            value = value[arg];
+        else
+            throw util.sprintf('nested %s %q not found in %q', singular, args.slice(a, i+1).join('.'), nodeTemplate.name);
+    }
+    
+    return value;
+};
+
+// TOSCA 2.0 path traversal following BNF grammar
+exports.getNestedValueTosca20 = function(singular, plural, args) {
+    args = Array.prototype.slice.call(args);
+    let length = args.length;
+    if (length < 2)
+        throw 'must have at least 2 arguments';
+    
+    let currentVertex = exports.getModelableEntity.call(this, args[0]);
+    let pathIndex = 1;
+    let propertyName = args[args.length - 1]; // Last argument is always property name
+    
+    // Parse according to BNF grammar: <tosca_path>
+    while (pathIndex < args.length - 1) {
+        let step = args[pathIndex];
+        
+        switch (step) {
+            case 'RELATIONSHIP':
+                // <node_context> ::= RELATIONSHIP, <requirement_name>, <idx>, <rel_context>
+                pathIndex++;
+                if (pathIndex >= args.length - 1)
+                    throw 'RELATIONSHIP keyword must be followed by requirement name';
+                
+                let requirementName = args[pathIndex];
+                pathIndex++;
+                
+                // Check for optional index
+                let relationshipIndex = 0;
+                if (pathIndex < args.length - 1 && typeof args[pathIndex] === 'number') {
+                    relationshipIndex = args[pathIndex];
+                    pathIndex++;
+                }
+                
+                // Find the relationship by requirement name and index
+                let relationshipFound = false;
+                let relationshipCount = 0;
+                
+                for (let e = 0, l = currentVertex.edgesOut.size(); e < l; e++) {
+                    let edge = currentVertex.edgesOut[e];
+                    if (!exports.isTosca(edge, 'Relationship'))
+                        continue;
+                    
+                    let relationship = edge.properties;
+                    if (relationship.name === requirementName) {
+                        if (relationshipCount === relationshipIndex) {
+                            currentVertex = edge; // Now in relationship context
+                            relationshipFound = true;
+                            break;
+                        }
+                        relationshipCount++;
+                    }
+                }
+                
+                if (!relationshipFound)
+                    throw util.sprintf('relationship %q (index %d) not found', requirementName, relationshipIndex);
+                break;
+                
+            case 'TARGET':
+                // <rel_context> ::= TARGET, <node_context>
+                if (!exports.isTosca(currentVertex, 'Relationship'))
+                    throw 'TARGET can only be used in relationship context';
+                
+                currentVertex = currentVertex.target;
+                pathIndex++;
+                break;
+                
+            case 'SOURCE':
+                // <rel_context> ::= SOURCE, <node_context>
+                if (!exports.isTosca(currentVertex, 'Relationship'))
+                    throw 'SOURCE can only be used in relationship context';
+                
+                currentVertex = currentVertex.source;
+                pathIndex++;
+                break;
+                
+            case 'CAPABILITY':
+                // <node_context> ::= CAPABILITY, <capability_name>, <cap_context>
+                pathIndex++;
+                if (pathIndex >= args.length - 1)
+                    throw 'CAPABILITY keyword must be followed by capability name';
+                
+                if (!exports.isNodeTemplate(currentVertex))
+                    throw 'CAPABILITY can only be used in node context';
+                
+                let capabilityName = args[pathIndex];
+                if (!(capabilityName in currentVertex.properties.capabilities))
+                    throw util.sprintf('capability %q not found in node %q', capabilityName, currentVertex.properties.name);
+                
+                // Get property from capability
+                let capabilityProperties = currentVertex.properties.capabilities[capabilityName].properties;
+                if (!(propertyName in capabilityProperties))
+                    throw util.sprintf('property %q not found in capability %q', propertyName, capabilityName);
+                
+                let value = capabilityProperties[propertyName];
+                return clout.coerce(value);
+                
+            default:
+                throw util.sprintf('unexpected token in TOSCA path: %s', step);
+        }
+    }
+    
+    // Get the final property from current context
+    let targetProperties;
+    let entityName;
+    
+    if (exports.isTosca(currentVertex, 'Relationship')) {
+        targetProperties = currentVertex.properties.properties;
+        entityName = currentVertex.properties.name;
+    } else if (exports.isNodeTemplate(currentVertex)) {
+        targetProperties = currentVertex.properties.properties;
+        entityName = currentVertex.properties.name;
+    } else {
+        throw 'Invalid final context for property access';
+    }
+    
+    if (!(propertyName in targetProperties))
+        throw util.sprintf('property %q not found in %q', propertyName, entityName);
+    
+    let finalValue = targetProperties[propertyName];
+    return clout.coerce(finalValue);
 };

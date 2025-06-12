@@ -7,24 +7,18 @@ const tosca = require('tosca.lib.utils');
 
 exports.validate = function(currentPropertyValue) {
     if (arguments.length === 3) {
-        // TOSCA 2.0 syntax: $in_range: [ <value_to_test>, [<lower_bound>, <upper_bound>] ]
-        // Called as: in_range(currentPropertyValue, valueToTest, [lowerBound, upperBound])
-        let valueToTest = arguments[1];
-        const boundsArray = arguments[2];
+        // Legacy TOSCA 1.3 style: in_range(currentPropertyValue, lowerBound, upperBound)
+        let valueToTest = currentPropertyValue;
+        let lowerBound = arguments[1];
+        let upperBound = arguments[2];
         
-        // Handle "$value" substitution
-        if (valueToTest === '$value') {
-            valueToTest = currentPropertyValue;
-        }
-        
-        if (!Array.isArray(boundsArray) || boundsArray.length !== 2) {
+        if (valueToTest === undefined || valueToTest === null ||
+            lowerBound === undefined || lowerBound === null ||
+            upperBound === undefined || upperBound === null) {
             return false;
         }
-        
-        let lowerBound = boundsArray[0];
-        let upperBound = boundsArray[1];
-        
-        // Parse bounds if they're strings and we have scalar context
+
+        // Parse lowerBound if it's a string and we have scalar context
         if (typeof lowerBound === 'string' && valueToTest && 
             valueToTest.$number !== undefined) {
             const parsed = tosca.tryParseScalar(lowerBound, valueToTest);
@@ -33,6 +27,7 @@ exports.validate = function(currentPropertyValue) {
             }
         }
 
+        // Parse upperBound if it's a string and we have scalar context
         if (typeof upperBound === 'string' && valueToTest && 
             valueToTest.$number !== undefined) {
             const parsed = tosca.tryParseScalar(upperBound, valueToTest);
@@ -46,7 +41,8 @@ exports.validate = function(currentPropertyValue) {
                (tosca.compare(valueToTest, upperBound) <= 0);
                
     } else if (arguments.length === 4) {
-        // Legacy style: arguments[0] = currentPropertyValue, arguments[1] = valueToTest, arguments[2] = lowerBound, arguments[3] = upperBound
+        // TOSCA 2.0 syntax: $in_range: [ <value_to_test>, [<lower_bound>, <upper_bound>] ]
+        // Called as: in_range(currentPropertyValue, valueToTest, lowerBound, upperBound)
         let valueToTest = arguments[1];
         let lowerBound = arguments[2];
         let upperBound = arguments[3];
