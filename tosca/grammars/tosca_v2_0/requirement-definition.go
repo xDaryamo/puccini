@@ -19,11 +19,11 @@ type RequirementDefinition struct {
 	*Entity `name:"requirement definition"`
 	Name    string
 
-	Description              *string                 `read:"description"`
 	TargetCapabilityTypeName *string                 `read:"capability"` // mandatory only if cannot be inherited
 	TargetNodeTypeName       *string                 `read:"node"`
 	RelationshipDefinition   *RelationshipDefinition `read:"relationship,RelationshipDefinition"`
 	CountRange               *RangeEntity            `read:"count_range,RangeEntity"` // "occurrences" in TOSCA 1.3
+	NodeFilter               *NodeFilter             `read:"node_filter,NodeFilter"`  // Added for TOSCA 2.0
 
 	TargetCapabilityType *CapabilityType `lookup:"capability,TargetCapabilityTypeName" traverse:"ignore" json:"-" yaml:"-"`
 	TargetNodeType       *NodeType       `lookup:"node,TargetNodeTypeName" traverse:"ignore" json:"-" yaml:"-"`
@@ -71,9 +71,6 @@ func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefiniti
 		self.Context.ReportIncompatibleType(self.TargetNodeType, parentDefinition.TargetNodeType)
 	}
 
-	if (self.Description == nil) && (parentDefinition.Description != nil) {
-		self.Description = parentDefinition.Description
-	}
 	if (self.TargetCapabilityTypeName == nil) && (parentDefinition.TargetCapabilityTypeName != nil) {
 		self.TargetCapabilityTypeName = parentDefinition.TargetCapabilityTypeName
 	}
@@ -117,15 +114,6 @@ func (self *RequirementDefinition) render() {
 			self.Context.FieldChild("capability", nil).ReportKeynameMissing()
 			self.capabilityMissingProblemReported = true
 		}
-	}
-}
-
-// Helper method to get description
-func (self *RequirementDefinition) GetDescription() string {
-	if self.Description != nil {
-		return *self.Description
-	} else {
-		return ""
 	}
 }
 

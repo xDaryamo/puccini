@@ -107,8 +107,13 @@ func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalN
 		nodeTemplate.RequirementTargetsNodeFilter.Normalize(normalRequirement)
 	}
 
+	// Handle node filter: first from assignment, then inherit from definition
 	if self.TargetNodeFilter != nil {
+		// Node filter specified directly in the assignment
 		self.TargetNodeFilter.Normalize(normalRequirement)
+	} else if definition, ok := self.GetDefinition(nodeTemplate); ok && definition.NodeFilter != nil {
+		// Inherit node filter from requirement definition
+		definition.NodeFilter.Normalize(normalRequirement)
 	}
 
 	if self.Relationship != nil {
