@@ -19,7 +19,9 @@ exports.validate = function(currentPropertyValue) {
         }
         
         if (!Array.isArray(validValuesArray)) {
-            return false;
+            // Fallback: if third argument is not an array, treat all arguments from 1 onwards as valid values
+            const validValuesArrayFromArgs = Array.prototype.slice.call(arguments, 1);
+            return exports.checkValueInList(currentPropertyValue, validValuesArrayFromArgs);
         }
         
         return exports.checkValueInList(valueToTest, validValuesArray);
@@ -39,7 +41,6 @@ exports.validate = function(currentPropertyValue) {
         // Alternative: $valid_values: [ val1, val2, val3, ... ]
         // Called as: valid_values(currentPropertyValue, val1, val2, val3, ...)
         const validValuesArray = Array.prototype.slice.call(arguments, 1);
-        
         return exports.checkValueInList(currentPropertyValue, validValuesArray);
         
     } else {

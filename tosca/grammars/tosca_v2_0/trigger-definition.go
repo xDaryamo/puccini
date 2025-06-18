@@ -8,7 +8,7 @@ import (
 //
 // TriggerDefinition
 //
-// [TOSCA-v2.0] @ ?
+// [TOSCA-v2.0] @ 16.5
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.22
 //
 
@@ -16,12 +16,10 @@ type TriggerDefinition struct {
 	*Entity `name:"trigger definition" json:"-" yaml:"-"`
 	Name    string
 
-	Description  *string                     `read:"description"`
-	Event        *string                     `read:"event" mandatory:""`
-	Schedule     *Value                      `read:"schedule,Value"` // tosca:TimeInterval
-	TargetFilter *EventFilter                `read:"target_filter,EventFilter"`
-	Condition    *TriggerDefinitionCondition `read:"condition,TriggerDefinitionCondition"`
-	Action       WorkflowActivityDefinitions `read:"action,[]WorkflowActivityDefinition" mandatory:""`
+	Description *string                     `read:"description"`
+	Event       *string                     `read:"event" mandatory:""`
+	Condition   *ValidationClause           `read:"condition,ValidationClause"`
+	Action      WorkflowActivityDefinitions `read:"action,[]WorkflowActivityDefinition" mandatory:""`
 }
 
 func NewTriggerDefinition(context *parsing.Context) *TriggerDefinition {
@@ -51,16 +49,29 @@ func (self *TriggerDefinition) Render() {
 
 func (self *TriggerDefinition) render() {
 	logRender.Debugf("trigger definition: %s", self.Name)
-
-	if self.Schedule != nil {
-		self.Schedule.RenderDataType("tosca:TimeInterval")
-	}
 }
 
 func (self *TriggerDefinition) Normalize(normalPolicy *normal.Policy) *normal.PolicyTrigger {
 	normalPolicyTrigger := normalPolicy.NewTrigger()
 
-	// TODO: missing fields
+	if self.Description != nil {
+		normalPolicyTrigger.Description = *self.Description
+	}
+
+	if self.Event != nil {
+		normalPolicyTrigger.Event = *self.Event
+		// Maintain backward compatibility
+		normalPolicyTrigger.EventType = *self.Event
+	}
+
+	// Normalize condition as boolean FunctionCall
+	if self.Condition != nil {
+		fc := self.Condition.ToFunctionCall(self.Context, false)
+		NormalizeFunctionCallArguments(fc, self.Context)
+		normalPolicyTrigger.Condition = normal.NewFunctionCall(fc)
+	}
+
+	// TODO: normalize actions
 
 	return normalPolicyTrigger
 }
