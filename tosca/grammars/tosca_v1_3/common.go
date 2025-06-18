@@ -54,7 +54,7 @@ func init() {
 	Grammar.RegisterReader("OperationDefinition", tosca_v2_0.ReadOperationDefinition)
 	Grammar.RegisterReader("OutputMapping", tosca_v2_0.ReadOutputMapping) // introduced in TOSCA 1.3
 	Grammar.RegisterReader("InterfaceImplementation", tosca_v2_0.ReadInterfaceImplementation)
-	Grammar.RegisterReader("ParameterDefinition", tosca_v2_0.ReadParameterDefinition)
+	Grammar.RegisterReader("ParameterDefinition", ReadParameterDefinition) // override
 	Grammar.RegisterReader("Policy", tosca_v2_0.ReadPolicy)
 	Grammar.RegisterReader("PolicyType", tosca_v2_0.ReadPolicyType)
 	Grammar.RegisterReader("PropertyDefinition", ReadPropertyDefinition)
