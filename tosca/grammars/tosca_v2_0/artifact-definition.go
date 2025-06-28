@@ -31,7 +31,7 @@ type ArtifactDefinition struct {
 	ArtifactTypeName  *string  `read:"type"` // mandatory only if cannot be inherited
 	Description       *string  `read:"description"`
 	Metadata          Metadata `read:"metadata,Metadata"`
-	ArtifactVersion   *string  `read:"version"`          // changed from "artifact_version" to "version" per TOSCA 2.0
+	ArtifactVersion   *string  `read:"artifact_version"`
 	Properties        Values   `read:"properties,Value"` // ERRATUM: ommited in TOSCA 1.0-1.2 (appears in artifact type)
 	RepositoryName    *string  `read:"repository"`
 	File              *string  `read:"file"` // mandatory only if cannot be inherited
