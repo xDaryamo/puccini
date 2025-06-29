@@ -19,6 +19,7 @@ type RequirementDefinition struct {
 	*Entity `name:"requirement definition"`
 	Name    string
 
+	Description               *string                 `read:"description"`  // Added description field
 	TargetCapabilityTypeName *string                 `read:"capability"` // mandatory only if cannot be inherited
 	TargetNodeTypeName       *string                 `read:"node"`
 	RelationshipDefinition   *RelationshipDefinition `read:"relationship,RelationshipDefinition"`
@@ -71,6 +72,11 @@ func (self *RequirementDefinition) Inherit(parentDefinition *RequirementDefiniti
 		self.Context.ReportIncompatibleType(self.TargetNodeType, parentDefinition.TargetNodeType)
 	}
 
+	// Inherit description if not set
+	if (self.Description == nil) && (parentDefinition.Description != nil) {
+		self.Description = parentDefinition.Description
+	}
+
 	if (self.TargetCapabilityTypeName == nil) && (parentDefinition.TargetCapabilityTypeName != nil) {
 		self.TargetCapabilityTypeName = parentDefinition.TargetCapabilityTypeName
 	}
@@ -114,6 +120,11 @@ func (self *RequirementDefinition) render() {
 			self.Context.FieldChild("capability", nil).ReportKeynameMissing()
 			self.capabilityMissingProblemReported = true
 		}
+	}
+
+	// Render description (no specific validation needed)
+	if self.Description != nil {
+		logRender.Debugf("requirement definition %s: description = %s", self.Name, *self.Description)
 	}
 }
 
