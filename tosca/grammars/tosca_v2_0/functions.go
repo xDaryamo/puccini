@@ -70,6 +70,10 @@ func ParseFunctionCall(context *parsing.Context) bool {
 			return false
 		}
 
+		var singleFunctionKey interface{}
+		var singleFunctionValue interface{}
+		functionKeyCount := 0
+
 		for key, value := range map_ {
 			key_ := yamlkeys.KeyString(key)
 
@@ -84,22 +88,28 @@ func ParseFunctionCall(context *parsing.Context) bool {
 					continue
 				}
 
-				if count != 1 {
-					context.ReportValueMalformed("function", "more than one entry in map")
-					return false
-				}
-
-				scriptletName = parsing.MetadataFunctionPrefix + scriptletName
-				if _, ok := context.ScriptletNamespace.Lookup(scriptletName); !ok {
-					// Not a function call, despite having the right data structure
-					context.Clone(scriptletName).ReportValueInvalid("function", "unsupported")
-					return false
-				}
-
-				setFunctionCall(context, scriptletName, value)
-				return true
+				functionKeyCount++
+				singleFunctionKey = key
+				singleFunctionValue = value
 			}
 		}
+
+		// Only treat as function call if:
+		// 1. There's exactly one entry in the map AND
+		// 2. That entry is a function
+		// This allows functions to be used as keys in maps with other entries
+		if count == 1 && functionKeyCount == 1 {
+			key_ := yamlkeys.KeyString(singleFunctionKey)
+			scriptletName := key_[prefixLength:]
+
+			// Add the metadata prefix to match how functions are registered
+			fullScriptletName := parsing.MetadataFunctionPrefix + scriptletName
+			setFunctionCall(context, fullScriptletName, singleFunctionValue)
+			return true
+		}
+
+		// If there are multiple entries, don't treat the map as a function call
+		// The function keys will be processed later during normalization
 	} else {
 		if count != 1 {
 			return false
@@ -107,15 +117,26 @@ func ParseFunctionCall(context *parsing.Context) bool {
 
 		// Only one iteration
 		for key, data := range map_ {
-			scriptletName := parsing.MetadataFunctionPrefix + yamlkeys.KeyString(key)
+			keyStr := yamlkeys.KeyString(key)
 
-			if _, ok := context.ScriptletNamespace.Lookup(scriptletName); !ok {
-				// Not a function call, despite having the right data structure
-				return false
+			// Try with the original key first
+			scriptletName := parsing.MetadataFunctionPrefix + keyStr
+			if _, ok := context.ScriptletNamespace.Lookup(scriptletName); ok {
+				setFunctionCall(context, scriptletName, data)
+				return true
 			}
 
-			setFunctionCall(context, scriptletName, data)
-			return true
+			// If not found and doesn't start with $, try adding $ prefix (for TOSCA 2.0 compatibility)
+			if !strings.HasPrefix(keyStr, "$") {
+				scriptletNameWithDollar := parsing.MetadataFunctionPrefix + "$" + keyStr
+				if _, ok := context.ScriptletNamespace.Lookup(scriptletNameWithDollar); ok {
+					setFunctionCall(context, scriptletNameWithDollar, data)
+					return true
+				}
+			}
+
+			// Not a function call, despite having the right data structure
+			return false
 		}
 	}
 
