@@ -186,7 +186,8 @@ func (self *ValidationClause) ToFunctionCall(ctx *parsing.Context, strict bool) 
 		}
 	}
 
-	return ctx.NewFunctionCall(parsing.MetadataValidationPrefix+self.Operator, processed)
+	functionName := parsing.MetadataValidationPrefix + self.Operator
+	return ctx.NewFunctionCall(functionName, processed)
 }
 
 // Evaluate nested functions contained inside an argument before validation
@@ -255,6 +256,14 @@ func dereferenceValuePath(data any, path any) any {
 
 // IsNativeArgument reports whether the argument at the given index must be treated as a native value
 func (self *ValidationClause) IsNativeArgument(index int) bool {
+	// First check if it's a $value token - these shouldn't be treated as native values
+	if index < len(self.Arguments) {
+		if s, ok := self.Arguments[index].(string); ok && s == "$value" {
+			return false
+		}
+	}
+
+	// Then check if it's in the native argument indexes list
 	for _, i := range self.NativeArgumentIndexes {
 		if i == -1 || i == index {
 			return true
@@ -283,6 +292,19 @@ func (self ValidationClauses) Normalize(ctx *parsing.Context) normal.FunctionCal
 }
 
 func (self ValidationClauses) AddToMeta(ctx *parsing.Context, meta *normal.ValueMeta) {
+	// Skip direct validation for lists when validation should be applied to elements
+	if meta.Type == "list" && meta.Element != nil {
+		// Instead of just returning, ensure validations are added to the element schema
+		if len(self) > 0 && meta.Element != nil {
+			for _, c := range self {
+				fc := c.ToFunctionCall(ctx, true)
+				NormalizeFunctionCallArguments(fc, ctx)
+				meta.Element.AddValidator(fc)
+			}
+		}
+		return
+	}
+
 	for _, c := range self {
 		fc := c.ToFunctionCall(ctx, true)
 		NormalizeFunctionCallArguments(fc, ctx)

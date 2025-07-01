@@ -6,6 +6,29 @@
 const tosca = require('tosca.lib.utils');
 
 exports.validate = function(currentPropertyValue) {
+    // First handle the case where we're being incorrectly called with a list value in a list context
+    if (arguments.length === 3 && Array.isArray(arguments[1]) && Array.isArray(arguments[2])) {
+        // This indicates we're incorrectly being called with in_range(firstElement, entireList, bounds)
+        // Let's validate each element individually
+        const firstElement = currentPropertyValue; // First element already extracted
+        const valuesList = arguments[1];
+        const bounds = arguments[2];
+        
+        // Check if the first element is in range
+        if (tosca.compare(firstElement, bounds[0]) < 0 || tosca.compare(firstElement, bounds[1]) > 0) {
+            return false;
+        }
+        
+        // Check remaining elements in the list
+        for (let i = 1; i < valuesList.length; i++) {
+            if (tosca.compare(valuesList[i], bounds[0]) < 0 || tosca.compare(valuesList[i], bounds[1]) > 0) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
     if (arguments.length === 3) {
         // TOSCA 1.3 syntax: constraint calls in_range(currentValue, lowerBound, upperBound)
         // Or TOSCA 2.0 syntax: $in_range: [ <value_to_test>, [<lower_bound>, <upper_bound>] ]
