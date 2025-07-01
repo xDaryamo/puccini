@@ -55,21 +55,8 @@ exports.validate = function(currentPropertyValue) {
             }
 
             // Parse bounds with scalar context
-            if (typeof lowerBound === 'string' && valueToTest && 
-                valueToTest.$number !== undefined) {
-                const parsed = tosca.tryParseScalar(lowerBound, valueToTest);
-                if (parsed) {
-                    lowerBound = parsed;
-                }
-            }
-
-            if (typeof upperBound === 'string' && valueToTest && 
-                valueToTest.$number !== undefined) {
-                const parsed = tosca.tryParseScalar(upperBound, valueToTest);
-                if (parsed) {
-                    upperBound = parsed;
-                }
-            }
+            lowerBound = tosca.parseScalarOrVersionBound(lowerBound, valueToTest);
+            upperBound = tosca.parseScalarOrVersionBound(upperBound, valueToTest);
 
             return (tosca.compare(valueToTest, lowerBound) >= 0) && 
                    (tosca.compare(valueToTest, upperBound) <= 0);
@@ -86,22 +73,9 @@ exports.validate = function(currentPropertyValue) {
                 return false;
             }
 
-            // Parse bounds with scalar context
-            if (typeof lowerBound === 'string' && valueToTest && 
-                valueToTest.$number !== undefined) {
-                const parsed = tosca.tryParseScalar(lowerBound, valueToTest);
-                if (parsed) {
-                    lowerBound = parsed;
-                }
-            }
-
-            if (typeof upperBound === 'string' && valueToTest && 
-                valueToTest.$number !== undefined) {
-                const parsed = tosca.tryParseScalar(upperBound, valueToTest);
-                if (parsed) {
-                    upperBound = parsed;
-                }
-            }
+            // Parse bounds with scalar context for TOSCA 1.3
+            lowerBound = tosca.parseScalarOrVersionBound(lowerBound, valueToTest);
+            upperBound = tosca.parseScalarOrVersionBound(upperBound, valueToTest);
 
             return (tosca.compare(valueToTest, lowerBound) >= 0) && 
                    (tosca.compare(valueToTest, upperBound) <= 0);
@@ -130,21 +104,8 @@ exports.validate = function(currentPropertyValue) {
                 }
 
                 // Parse bounds with scalar context
-                if (typeof lowerBound === 'string' && valueToTest && 
-                    valueToTest.$number !== undefined) {
-                    const parsed = tosca.tryParseScalar(lowerBound, valueToTest);
-                    if (parsed) {
-                        lowerBound = parsed;
-                    }
-                }
-
-                if (typeof upperBound === 'string' && valueToTest && 
-                    valueToTest.$number !== undefined) {
-                    const parsed = tosca.tryParseScalar(upperBound, valueToTest);
-                    if (parsed) {
-                        upperBound = parsed;
-                    }
-                }
+                lowerBound = tosca.parseScalarOrVersionBound(lowerBound, valueToTest);
+                upperBound = tosca.parseScalarOrVersionBound(upperBound, valueToTest);
 
                 return (tosca.compare(valueToTest, lowerBound) >= 0) && 
                        (tosca.compare(valueToTest, upperBound) <= 0);
@@ -156,21 +117,8 @@ exports.validate = function(currentPropertyValue) {
                 let upperBound = secondElement;
                 
                 // Parse bounds with scalar context
-                if (typeof lowerBound === 'string' && currentPropertyValue && 
-                    currentPropertyValue.$number !== undefined) {
-                    const parsed = tosca.tryParseScalar(lowerBound, currentPropertyValue);
-                    if (parsed) {
-                        lowerBound = parsed;
-                    }
-                }
-
-                if (typeof upperBound === 'string' && currentPropertyValue && 
-                    currentPropertyValue.$number !== undefined) {
-                    const parsed = tosca.tryParseScalar(upperBound, currentPropertyValue);
-                    if (parsed) {
-                        upperBound = parsed;
-                    }
-                }
+                lowerBound = tosca.parseScalarOrVersionBound(lowerBound, currentPropertyValue);
+                upperBound = tosca.parseScalarOrVersionBound(upperBound, currentPropertyValue);
 
                 return (tosca.compare(currentPropertyValue, lowerBound) >= 0) && 
                        (tosca.compare(currentPropertyValue, upperBound) <= 0);

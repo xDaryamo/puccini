@@ -501,10 +501,14 @@ exports.tryParseScalar = function(valueString, scalarObject) {
         return null;
     }
 
-    // Parse the scalar value string (number + unit)
-    const match = valueString.match(/^([+-]?[0-9]*\.?[0-9]+(?:[eE][+-]?[0-9]+)?)\s+(.+)$/);
+    // Parse the scalar value string - handle both with and without spaces (TOSCA 1.3)
+    let match = valueString.match(/^([+-]?[0-9]*\.?[0-9]+(?:[eE][+-]?[0-9]+)?)\s*(.+)$/);
     if (!match) {
-        return null;
+        // Try without any space requirement for TOSCA 1.3 compatibility
+        match = valueString.match(/^([+-]?[0-9]*\.?[0-9]+(?:[eE][+-]?[0-9]+)?)([a-zA-Z].*)$/);
+        if (!match) {
+            return null;
+        }
     }
 
     const numberPart = parseFloat(match[1]);
@@ -603,9 +607,19 @@ exports.findUnitMultiplier = function(unitPart, units, prefixes) {
 // Parse comparison arguments for constraint validators
 exports.parseComparisonArguments = function(currentPropertyValue, argumentsArray) {
     if (argumentsArray.length === 3) {
-        // New calling convention: currentPropertyValue, val1, val2
+        // Check if this is a map key validation scenario
+        // In this case: args = [keyValue, entireMap, pattern]
+        // We should only use: [keyValue, pattern]
         let val1 = argumentsArray[1];
         let val2 = argumentsArray[2];
+        
+        // If val1 is an object (the entire map) and we have a string currentPropertyValue,
+        // this indicates map key validation - skip the map object
+        if (typeof currentPropertyValue === 'string' && 
+            typeof val1 === 'object' && val1 !== null && 
+            typeof val2 === 'string') {
+            return { val1: currentPropertyValue, val2: val2 };
+        }
         
         // Handle "$value" substitution for val1
         if (val1 === '$value') {
@@ -615,22 +629,6 @@ exports.parseComparisonArguments = function(currentPropertyValue, argumentsArray
         // Handle "$value" substitution for val2
         if (val2 === '$value') {
             val2 = currentPropertyValue;
-        }
-        
-        // Parse val2 if it's a string and val1 is a scalar object
-        if (typeof val2 === 'string' && val1 && typeof val1 === 'object' && val1.$number !== undefined) {
-            const parsed = exports.tryParseScalar(val2, val1);
-            if (parsed) {
-                val2 = parsed;
-            }
-        }
-        
-        // Parse val1 if it's a string and val2 is a scalar object
-        if (typeof val1 === 'string' && val2 && typeof val2 === 'object' && val2.$number !== undefined) {
-            const parsed = exports.tryParseScalar(val1, val2);
-            if (parsed) {
-                val1 = parsed;
-            }
         }
         
         return { val1, val2 };
@@ -644,17 +642,7 @@ exports.parseComparisonArguments = function(currentPropertyValue, argumentsArray
             val2 = currentPropertyValue;
         }
         
-        // Parse compareValue if it's a string and we have scalar context
-        let parsedCompareValue = val2;
-        if (typeof val2 === 'string' && currentPropertyValue && 
-            currentPropertyValue.$number !== undefined) {
-            const parsed = exports.tryParseScalar(val2, currentPropertyValue);
-            if (parsed) {
-                parsedCompareValue = parsed;
-            }
-        }
-        
-        return { val1: currentPropertyValue, val2: parsedCompareValue };
+        return { val1: currentPropertyValue, val2: val2 };
     } else {
         return null;
     }
@@ -877,4 +865,66 @@ exports.validateRelationshipAttributeAccess = function(vertex, requirementName, 
     }
     
     return true;
+};
+
+// Parse scalar unit or version bound, with proper type conversion for TOSCA 1.3
+exports.parseScalarOrVersionBound = function(bound, contextValue) {
+    if (typeof bound !== 'string') {
+        return bound; // Already parsed or not a string
+    }
+    
+    // Try to parse as scalar unit using context from the value being tested
+    if (contextValue && (contextValue.$number !== undefined || contextValue.units)) {
+        const parsed = exports.tryParseScalar(bound, contextValue);
+        if (parsed) {
+            return parsed;
+        }
+    }
+    
+    // Try to parse as version if context value is a version
+    if (contextValue && contextValue.$comparer === 'tosca.comparer.version') {
+        // Check if bound looks like a version string
+        if (/^\d+(\.\d+)*(\.\w+(-\d+)?)?$/.test(bound)) {
+            try {
+                // Create a version object similar to contextValue
+                return {
+                    $comparer: 'tosca.comparer.version',
+                    $originalString: bound,
+                    $string: bound,
+                    // Parse version components
+                    ...exports.parseVersionString(bound)
+                };
+            } catch (e) {
+                // Fall back to string comparison
+                return bound;
+            }
+        }
+    }
+    
+    return bound; // Return as-is if no parsing applies
+};
+
+// Helper to parse version string components
+exports.parseVersionString = function(versionStr) {
+    const parts = versionStr.split('.');
+    const result = {
+        major: parseInt(parts[0]) || 0,
+        minor: parseInt(parts[1]) || 0,
+        fix: parseInt(parts[2]) || 0
+    };
+    
+    // Handle qualifier and build number (e.g., "beta-4")
+    if (parts.length > 3) {
+        const qualifierPart = parts[3];
+        const dashIndex = qualifierPart.indexOf('-');
+        if (dashIndex !== -1) {
+            result.qualifier = qualifierPart.substring(0, dashIndex);
+            result.build = parseInt(qualifierPart.substring(dashIndex + 1)) || 0;
+        } else {
+            result.qualifier = qualifierPart;
+            result.build = 0;
+        }
+    }
+    
+    return result;
 };
