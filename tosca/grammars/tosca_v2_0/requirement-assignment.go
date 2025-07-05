@@ -2,6 +2,7 @@ package tosca_v2_0
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/tliron/go-ard"
 	"github.com/tliron/puccini/normal"
@@ -80,6 +81,58 @@ func (self *RequirementAssignment) GetDefinition(nodeTemplate *NodeTemplate) (*R
 	}
 	definition, ok := nodeTemplate.NodeType.RequirementDefinitions[self.Name]
 	return definition, ok
+}
+
+// validateValidCapabilityTypes validates that the target capability type is compatible with
+// the relationship type's valid_capability_types constraint
+func (self *RequirementAssignment) validateValidCapabilityTypes() {
+	// Only validate if we have a relationship and a target capability type
+	if self.Relationship == nil || self.TargetCapabilityType == nil {
+		return
+	}
+
+	// Get the relationship type
+	relationshipType := self.Relationship.GetType(nil)
+	if relationshipType == nil {
+		return
+	}
+
+	// Check if the relationship type has valid_capability_types constraint
+	validCapabilityTypeNames := relationshipType.ValidCapabilityTypeNames
+	if validCapabilityTypeNames == nil || len(*validCapabilityTypeNames) == 0 {
+		// No constraint defined, so any capability type is valid
+		return
+	}
+
+	// Check if the target capability type is in the valid list
+	targetCapabilityTypeName := parsing.GetCanonicalName(self.TargetCapabilityType)
+	for _, validTypeName := range *validCapabilityTypeNames {
+		if targetCapabilityTypeName == validTypeName {
+			// Valid capability type found
+			return
+		}
+	}
+
+	// Also check if the target capability type is compatible (derived from) any of the valid types
+	var capabilityTypePtr *CapabilityType
+	for _, validTypeName := range *validCapabilityTypeNames {
+		if validCapabilityType, ok := self.Context.Namespace.LookupForType(validTypeName, reflect.TypeOf(capabilityTypePtr)); ok {
+			if self.Context.Hierarchy.IsCompatible(validCapabilityType, self.TargetCapabilityType) {
+				// Target capability type is derived from a valid type
+				return
+			}
+		}
+	}
+
+	// If we reach here, the target capability type is not valid
+	relationshipTypeName := parsing.GetCanonicalName(relationshipType)
+	validTypeNames := make([]string, len(*validCapabilityTypeNames))
+	copy(validTypeNames, *validCapabilityTypeNames)
+
+	// Report the error with a custom message
+	self.Context.FieldChild("capability", nil).ReportPathf(0,
+		"capability type %q is not valid for relationship type %q (valid_capability_types: %v)",
+		targetCapabilityTypeName, relationshipTypeName, validTypeNames)
 }
 
 func (self *RequirementAssignment) Normalize(nodeTemplate *NodeTemplate, normalNodeTemplate *normal.NodeTemplate) *normal.Requirement {
@@ -220,6 +273,9 @@ func (self *RequirementAssignments) Render(sourceNodeTemplate *NodeTemplate, con
 				}
 
 				assignment.Relationship.Render(definition.RelationshipDefinition, sourceNodeTemplate)
+
+				// Validate valid_capability_types constraint
+				assignment.validateValidCapabilityTypes()
 			}
 		} else {
 			assignment.Context.ReportUndeclared("requirement")

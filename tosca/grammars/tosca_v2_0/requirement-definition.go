@@ -19,8 +19,8 @@ type RequirementDefinition struct {
 	*Entity `name:"requirement definition"`
 	Name    string
 
-	Description               *string                 `read:"description"`  // Added description field
-	TargetCapabilityTypeName *string                 `read:"capability"` // mandatory only if cannot be inherited
+	Description              *string                 `read:"description"` // Added description field
+	TargetCapabilityTypeName *string                 `read:"capability"`  // mandatory only if cannot be inherited
 	TargetNodeTypeName       *string                 `read:"node"`
 	RelationshipDefinition   *RelationshipDefinition `read:"relationship,RelationshipDefinition"`
 	CountRange               *RangeEntity            `read:"count_range,RangeEntity"` // "occurrences" in TOSCA 1.3
