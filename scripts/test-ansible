@@ -13,5 +13,5 @@ SUFFIX=$SUFFIX "$HERE/build-wrapper-ansible"
 cd "$ROOT/examples/ansible/tasks"
 ansible-playbook playbook.yaml
 
-cd "$ROOT/examples/ansible/hosts"
-ansible-playbook playbook.yaml
+# cd "$ROOT/examples/ansible/hosts"
+# ansible-playbook playbook.yaml

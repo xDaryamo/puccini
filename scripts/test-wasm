@@ -11,7 +11,7 @@ if ! command -v node > /dev/null 2>&1; then
 	exit 1
 fi
 
-WASM_EXEC=$(go env GOROOT)/misc/wasm/go_js_wasm_exec
+WASM_EXEC=$(go env GOROOT)/lib/wasm/go_js_wasm_exec
 
 function run () {
 	local TOOL=$1

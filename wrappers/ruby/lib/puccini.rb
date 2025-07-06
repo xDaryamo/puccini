@@ -20,7 +20,7 @@ module Puccini
     def compile(url, inputs=nil, quirks=nil, resolve=true, coerce=true)
       inputs = YAML.dump (inputs || {})
       quirks = YAML.dump (quirks || [])
-      result = YAML.load Puccini::Compile(url, inputs, quirks, resolve ? 1 : 0, coerce ? 1 : 0).to_s
+      result = YAML.unsafe_load Puccini::Compile(url, inputs, quirks, resolve ? 1 : 0, coerce ? 1 : 0).to_s
       if result.key? 'problems'
         raise Problems.new result['problems']
       elsif result.key? 'error'
