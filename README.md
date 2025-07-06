@@ -1,3 +1,5 @@
+**Notice: This repository is in maintenance mode. Development is proceeding in [rust-puccini](https://github.com/tliron/rust-puccini).**
+
 Puccini
 =======
 
