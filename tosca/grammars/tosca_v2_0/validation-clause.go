@@ -119,7 +119,30 @@ func ReadValidationClause(context *parsing.Context) parsing.EntityPtr {
 func (self *ValidationClause) processValidationArgument(arg any, ctx *parsing.Context) any {
 	// "$value" placeholder -> replace with the current value being validated
 	if s, ok := arg.(string); ok && s == "$value" {
+		// Special handling: if DataType is a scalar type, we're likely validating individual elements
+		// In this case, keep $value as string to let JavaScript handle it properly
+		if self.DataType != nil && self.DataType.IsScalarType() {
+			return "$value"
+		}
 		return ctx.Data
+	}
+
+	// Auto-convert numeric values to strings with canonical units for scalar types
+	if self.DataType != nil && self.DataType.IsScalarType() {
+		if canonicalUnit := self.getCanonicalUnit(); canonicalUnit != "" {
+			switch v := arg.(type) {
+			case int:
+				return fmt.Sprintf("%d %s", v, canonicalUnit)
+			case int32:
+				return fmt.Sprintf("%d %s", v, canonicalUnit)
+			case int64:
+				return fmt.Sprintf("%d %s", v, canonicalUnit)
+			case float32:
+				return fmt.Sprintf("%g %s", v, canonicalUnit)
+			case float64:
+				return fmt.Sprintf("%g %s", v, canonicalUnit)
+			}
+		}
 	}
 
 	// Map with exactly one key may represent nested function or dereference path
@@ -139,9 +162,17 @@ func (self *ValidationClause) processValidationArgument(arg any, ctx *parsing.Co
 		// Nested function call: { "$length": [...] }, { "$concat": [...] }, etc.
 		if strings.HasPrefix(keyStr, "$") {
 			fnName := keyStr[1:]
-			scriptletName := parsing.MetadataFunctionPrefix + fnName
 
-			if _, isFn := ctx.ScriptletNamespace.Lookup(scriptletName); isFn {
+			// Check if it's a validation clause first
+			validationScriptletName := parsing.MetadataValidationPrefix + fnName
+			if _, exists := ctx.ScriptletNamespace.Lookup(validationScriptletName); exists {
+				// It's a validation clause, leave as-is for proper processing
+				return arg
+			}
+
+			// Then check if it's a function
+			functionScriptletName := parsing.MetadataFunctionPrefix + fnName
+			if _, isFn := ctx.ScriptletNamespace.Lookup(functionScriptletName); isFn {
 				var fnArgs ard.List
 				if listVal, isList := v.(ard.List); isList {
 					fnArgs = listVal
@@ -153,13 +184,53 @@ func (self *ValidationClause) processValidationArgument(arg any, ctx *parsing.Co
 				for i, a := range fnArgs {
 					processed[i] = self.processValidationArgument(a, ctx)
 				}
-				return ctx.NewFunctionCall(scriptletName, processed)
+				return ctx.NewFunctionCall(functionScriptletName, processed)
 			}
 		}
 	}
 
 	// Literal value, leave as‑is
 	return arg
+}
+
+// Helper function to get canonical unit from DataType
+func (self *ValidationClause) getCanonicalUnit() string {
+	if self.DataType == nil || !self.DataType.IsScalarType() {
+		return ""
+	}
+
+	// First check if CanonicalUnit is explicitly set
+	if self.DataType.CanonicalUnit != nil {
+		return *self.DataType.CanonicalUnit
+	}
+
+	// If no canonical unit specified, find the unit with multiplier 1
+	if self.DataType.Units != nil {
+		for unitInterface, multiplierInterface := range self.DataType.Units {
+			if unitName, ok := unitInterface.(string); ok {
+				// Try to convert multiplier to float64
+				var multiplier float64
+				switch m := multiplierInterface.(type) {
+				case float64:
+					multiplier = m
+				case int:
+					multiplier = float64(m)
+				case int32:
+					multiplier = float64(m)
+				case int64:
+					multiplier = float64(m)
+				default:
+					continue
+				}
+
+				if multiplier == 1.0 {
+					return unitName
+				}
+			}
+		}
+	}
+
+	return ""
 }
 
 // Convert the clause into a FunctionCall that Puccini can evaluate
@@ -174,12 +245,15 @@ func (self *ValidationClause) ToFunctionCall(ctx *parsing.Context, strict bool) 
 		if self.IsNativeArgument(i) {
 			if _, isVal := processed[i].(*Value); !isVal {
 				if _, isCall := processed[i].(*parsing.FunctionCall); !isCall {
-					if self.DataType != nil {
-						val := ReadValue(self.Context.ListChild(i, processed[i])).(*Value)
-						val.Render(self.DataType, self.Definition, true, false)
-						processed[i] = val
-					} else if strict {
-						panic(fmt.Sprintf("no data type for native argument at index %d", i))
+					// Skip if it's already a ValidationClause (this can happen with nested validations)
+					if _, isValidationClause := processed[i].(*ValidationClause); !isValidationClause {
+						if self.DataType != nil {
+							val := ReadValue(self.Context.ListChild(i, processed[i])).(*Value)
+							val.Render(self.DataType, self.Definition, true, false)
+							processed[i] = val
+						} else if strict {
+							panic(fmt.Sprintf("no data type for native argument at index %d", i))
+						}
 					}
 				}
 			}
@@ -206,8 +280,17 @@ func (self *ValidationClause) evaluateNestedFunctions(arg any, ctx *parsing.Cont
 			keyStr := yamlkeys.KeyString(k)
 			if strings.HasPrefix(keyStr, "$") {
 				fnName := keyStr[1:]
-				scriptletName := parsing.MetadataFunctionPrefix + fnName
-				if _, exists := ctx.ScriptletNamespace.Lookup(scriptletName); exists {
+
+				// Check if it's a validation clause first
+				validationScriptletName := parsing.MetadataValidationPrefix + fnName
+				if _, exists := ctx.ScriptletNamespace.Lookup(validationScriptletName); exists {
+					// It's a validation clause, leave as-is for proper processing
+					return arg
+				}
+
+				// Then check if it's a function
+				functionScriptletName := parsing.MetadataFunctionPrefix + fnName
+				if _, exists := ctx.ScriptletNamespace.Lookup(functionScriptletName); exists {
 					var fnArgs ard.List
 					if listVal, isList := v.(ard.List); isList {
 						fnArgs = listVal
@@ -219,7 +302,7 @@ func (self *ValidationClause) evaluateNestedFunctions(arg any, ctx *parsing.Cont
 					for i, a := range fnArgs {
 						evaluated[i] = self.evaluateNestedFunctions(a, ctx)
 					}
-					return ctx.NewFunctionCall(scriptletName, evaluated)
+					return ctx.NewFunctionCall(functionScriptletName, evaluated)
 				}
 			}
 		}
@@ -261,6 +344,26 @@ func (self *ValidationClause) IsNativeArgument(index int) bool {
 		if s, ok := self.Arguments[index].(string); ok && s == "$value" {
 			return false
 		}
+
+		// Check if it's a validation clause map - these shouldn't be treated as native values
+		if m, ok := self.Arguments[index].(ard.Map); ok && len(m) == 1 {
+			for key := range m {
+				keyStr := yamlkeys.KeyString(key)
+				if strings.HasPrefix(keyStr, "$") {
+					fnName := keyStr[1:]
+					validationScriptletName := parsing.MetadataValidationPrefix + fnName
+					if _, exists := self.Context.ScriptletNamespace.Lookup(validationScriptletName); exists {
+						// It's a validation clause, don't treat as native
+						return false
+					}
+				}
+			}
+		}
+	}
+
+	// Special handling for scalar types: all non-validation-clause arguments should be native
+	if self.DataType != nil && self.DataType.IsScalarType() {
+		return true
 	}
 
 	// Then check if it's in the native argument indexes list
@@ -269,6 +372,7 @@ func (self *ValidationClause) IsNativeArgument(index int) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -300,6 +404,19 @@ func (self ValidationClauses) AddToMeta(ctx *parsing.Context, meta *normal.Value
 				fc := c.ToFunctionCall(ctx, true)
 				NormalizeFunctionCallArguments(fc, ctx)
 				meta.Element.AddValidator(fc)
+			}
+		}
+		return
+	}
+
+	// Skip direct validation for maps when validation should be applied to values
+	if meta.Type == "map" && meta.Value != nil {
+		// Instead of just returning, ensure validations are added to the value schema
+		if len(self) > 0 && meta.Value != nil {
+			for _, c := range self {
+				fc := c.ToFunctionCall(ctx, true)
+				NormalizeFunctionCallArguments(fc, ctx)
+				meta.Value.AddValidator(fc)
 			}
 		}
 		return

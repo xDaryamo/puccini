@@ -116,7 +116,39 @@ func (self *RequirementAssignment) validateValidCapabilityTypes() {
 	// Also check if the target capability type is compatible (derived from) any of the valid types
 	var capabilityTypePtr *CapabilityType
 	for _, validTypeName := range *validCapabilityTypeNames {
-		if validCapabilityType, ok := self.Context.Namespace.LookupForType(validTypeName, reflect.TypeOf(capabilityTypePtr)); ok {
+		// Try to find the capability type in the namespace
+		var validCapabilityType *CapabilityType
+		var found bool
+
+		// First try direct lookup
+		if entityPtr, ok := self.Context.Namespace.LookupForType(validTypeName, reflect.TypeOf(capabilityTypePtr)); ok {
+			if validCapabilityType, found = entityPtr.(*CapabilityType); found {
+				// Success with direct lookup
+			}
+		}
+
+		// If not found, try with namespace prefixes (for imported types)
+		if !found {
+			// Try with tosca namespace (as used in standard imports)
+			namespacedTypeName := "tosca:" + validTypeName
+			if entityPtr, ok := self.Context.Namespace.LookupForType(namespacedTypeName, reflect.TypeOf(capabilityTypePtr)); ok {
+				if validCapabilityType, found = entityPtr.(*CapabilityType); found {
+					// Found with tosca namespace
+				}
+			}
+		}
+
+		// If still not found, try with full canonical namespace
+		if !found {
+			namespacedTypeName := "org.oasis-open.simple:2.0::" + validTypeName
+			if entityPtr, ok := self.Context.Namespace.LookupForType(namespacedTypeName, reflect.TypeOf(capabilityTypePtr)); ok {
+				if validCapabilityType, found = entityPtr.(*CapabilityType); found {
+					// Found with full namespace
+				}
+			}
+		}
+
+		if found {
 			if self.Context.Hierarchy.IsCompatible(validCapabilityType, self.TargetCapabilityType) {
 				// Target capability type is derived from a valid type
 				return

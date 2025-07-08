@@ -425,10 +425,42 @@ func NewValueMeta(context *parsing.Context, dataType *DataType, dataDefinition D
 		validationClause.DataType = dataType
 		validationClause.Definition = dataDefinition
 
-		// Add validation function to meta
-		functionCall := validationClause.ToFunctionCall(context, true)
-		NormalizeFunctionCallArguments(functionCall, context)
-		meta.AddValidator(functionCall)
+		// Add validation function to meta using the same logic as ValidationClauses.AddToMeta
+		// Check if this is a map and should apply validation to values instead
+		if meta.Type == "map" && meta.Value != nil {
+			// Set the DataType to the element type for proper $value handling
+			originalDataType := validationClause.DataType
+			originalDefinition := validationClause.Definition
+			if _, valueSchema := GetMapSchemas(dataType, dataDefinition); valueSchema != nil {
+				validationClause.DataType = valueSchema.DataType
+				validationClause.Definition = valueSchema
+			}
+			functionCall := validationClause.ToFunctionCall(context, true)
+			// Restore original values
+			validationClause.DataType = originalDataType
+			validationClause.Definition = originalDefinition
+			NormalizeFunctionCallArguments(functionCall, context)
+			meta.Value.AddValidator(functionCall)
+		} else if meta.Type == "list" && meta.Element != nil {
+			// Set the DataType to the element type for proper $value handling
+			originalDataType := validationClause.DataType
+			originalDefinition := validationClause.Definition
+			if entrySchema := GetListSchemas(dataType, dataDefinition); entrySchema != nil {
+				validationClause.DataType = entrySchema.DataType
+				validationClause.Definition = entrySchema
+			}
+			functionCall := validationClause.ToFunctionCall(context, true)
+			// Restore original values
+			validationClause.DataType = originalDataType
+			validationClause.Definition = originalDefinition
+			NormalizeFunctionCallArguments(functionCall, context)
+			meta.Element.AddValidator(functionCall)
+		} else {
+			// Add validation function to meta
+			functionCall := validationClause.ToFunctionCall(context, true)
+			NormalizeFunctionCallArguments(functionCall, context)
+			meta.AddValidator(functionCall)
+		}
 	}
 
 	if internalTypeName, ok := dataType.GetInternalTypeName(); ok {

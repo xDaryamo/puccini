@@ -107,7 +107,7 @@ func init() {
 func CompareUint32(v1 uint32, v2 uint32) int {
 	if v1 < v2 {
 		return -1
-	} else if v2 > v1 {
+	} else if v1 > v2 {
 		return 1
 	}
 	return 0
@@ -116,7 +116,7 @@ func CompareUint32(v1 uint32, v2 uint32) int {
 func CompareUint64(v1 uint64, v2 uint64) int {
 	if v1 < v2 {
 		return -1
-	} else if v2 > v1 {
+	} else if v1 > v2 {
 		return 1
 	}
 	return 0
@@ -125,7 +125,7 @@ func CompareUint64(v1 uint64, v2 uint64) int {
 func CompareInt64(v1 int64, v2 int64) int {
 	if v1 < v2 {
 		return -1
-	} else if v2 > v1 {
+	} else if v1 > v2 {
 		return 1
 	}
 	return 0
@@ -134,7 +134,7 @@ func CompareInt64(v1 int64, v2 int64) int {
 func CompareFloat64(v1 float64, v2 float64) int {
 	if v1 < v2 {
 		return -1
-	} else if v2 > v1 {
+	} else if v1 > v2 {
 		return 1
 	}
 	return 0

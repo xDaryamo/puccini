@@ -31,7 +31,8 @@ func (self *ValueList) Normalize(context *parsing.Context) *normal.List {
 
 	for index, value := range self.Slice {
 		if value_, ok := value.(*Value); ok {
-			normalList.Set(index, value_.normalize(true))
+			bare := value_.Meta == nil || value_.Meta.Empty()
+			normalList.Set(index, value_.normalize(bare))
 		} else {
 			normalList.Set(index, normal.NewPrimitive(value))
 		}
@@ -67,10 +68,12 @@ func (self *ValueMap) Normalize(context *parsing.Context) *normal.Map {
 
 	for key, value := range self.Map {
 		if key_, ok := key.(*Value); ok {
-			key = key_.normalize(true)
+			keyBare := key_.Meta == nil || key_.Meta.Empty()
+			key = key_.normalize(keyBare)
 		}
 		if value_, ok := value.(*Value); ok {
-			normalMap.Put(key, value_.normalize(true))
+			valueBare := value_.Meta == nil || value_.Meta.Empty()
+			normalMap.Put(key, value_.normalize(valueBare))
 		} else {
 			normalMap.Put(key, normal.NewPrimitive(value))
 		}

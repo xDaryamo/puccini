@@ -119,6 +119,16 @@ func ParseFunctionCall(context *parsing.Context) bool {
 		for key, data := range map_ {
 			keyStr := yamlkeys.KeyString(key)
 
+			// Check if it's a validation clause first - don't convert these to function calls
+			if strings.HasPrefix(keyStr, "$") {
+				fnName := keyStr[1:]
+				validationScriptletName := parsing.MetadataValidationPrefix + fnName
+				if _, ok := context.ScriptletNamespace.Lookup(validationScriptletName); ok {
+					// It's a validation clause, don't convert to function call
+					return false
+				}
+			}
+
 			// Try with the original key first
 			scriptletName := parsing.MetadataFunctionPrefix + keyStr
 			if _, ok := context.ScriptletNamespace.Lookup(scriptletName); ok {
