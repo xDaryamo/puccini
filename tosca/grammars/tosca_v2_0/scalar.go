@@ -178,20 +178,14 @@ func (self *Scalar) getUnitMultiplier(unitStr string) (float64, error) {
 	}
 
 	// If prefixes are defined, try to match prefix + base unit
-	if len(self.prefixes) > 0 && len(self.units) == 1 {
-		// Get the base unit
-		var baseUnit string
-		var baseMultiplier float64
-		for unit, multiplier := range self.units {
-			baseUnit = unit
-			baseMultiplier = multiplier
-			break
-		}
-
-		// Try to match prefix + base unit
-		for prefix, prefixMultiplier := range self.prefixes {
-			if unitStr == prefix+baseUnit {
-				return baseMultiplier * prefixMultiplier, nil
+	if len(self.prefixes) > 0 {
+		// Try to match prefix + base unit for each defined unit
+		for unit, baseMultiplier := range self.units {
+			// Try to match prefix + base unit
+			for prefix, prefixMultiplier := range self.prefixes {
+				if unitStr == prefix+unit {
+					return baseMultiplier * prefixMultiplier, nil
+				}
 			}
 		}
 	}
