@@ -135,13 +135,38 @@ function gatherCandidateNodeTemplates(sourceVertex, requirement) {
             continue;
         }
 
-        // Node filter
+        let candidateCapabilities = candidateNodeTemplate.capabilities;
+
+        // CRITICAL FIX: Check if the node has any compatible capabilities BEFORE applying node_filter
+        // This prevents evaluation of node_filter on nodes that can't satisfy the requirement anyway
+        let hasCompatibleCapability = false;
+        let capabilityName = requirement.capabilityName;
+        let capabilityTypeName = requirement.capabilityTypeName;
+
+        for (let candidateCapabilityName in candidateCapabilities) {
+            let candidateCapability = candidateCapabilities[candidateCapabilityName];
+
+            // Check if this capability could match the requirement
+            let capabilityNameMatches = (capabilityName === '') || (capabilityName === candidateCapabilityName);
+            let capabilityTypeMatches = (capabilityTypeName === '') || (capabilityTypeName in candidateCapability.types);
+
+            if (capabilityNameMatches && capabilityTypeMatches) {
+                hasCompatibleCapability = true;
+                break;
+            }
+        }
+
+        if (!hasCompatibleCapability) {
+            env.log.debugf('%s: node template %q has no compatible capabilities for requirement (capability: %q, type: %q)', 
+                path, candidateNodeTemplateName, capabilityName, capabilityTypeName);
+            continue;
+        }
+
+        // NOW it's safe to apply node_filter since we know the node has compatible capabilities
         if ((Object.keys(nodeTemplatePropertyValidators).length !== 0) && !arePropertiesValid(path, sourceVertex, 'node template', candidateNodeTemplateName, candidateNodeTemplate, nodeTemplatePropertyValidators)) {
             env.log.debugf('%s: properties of node template %q do not validate', path, candidateNodeTemplateName);
             continue;
         }
-
-        let candidateCapabilities = candidateNodeTemplate.capabilities;
 
         // Capability filter
         if (Object.keys(capabilityPropertyValidatorsMap).length !== 0) {
@@ -216,6 +241,60 @@ function gatherCandidateCapabilities(requirement, candidateNodeTemplates) {
             if ((capabilityTypeName !== '') && !(capabilityTypeName in candidateCapability.types)) {
                 env.log.debugf('%s: capability %q in node template %q is not of type %q', path, candidateCapabilityName, candidateNodeTemplateName, capabilityTypeName);
                 continue;
+            }
+
+            // TOSCA 2.0: Validate relationship type valid_capability_types
+            if (requirement.relationship && requirement.relationship.types) {
+                let relationshipTypeValidationFailed = false;
+                for (let relationshipTypeName in requirement.relationship.types) {
+                    let relationshipType = requirement.relationship.types[relationshipTypeName];
+                    
+                    // Debug: Log the relationship type structure
+                    env.log.debugf('%s: Examining relationship type %q: %s', 
+                        path, relationshipTypeName, JSON.stringify(relationshipType, null, 2));
+                    
+                    // Check valid_capability_types (TOSCA 2.0) or valid_target_types (TOSCA 1.3 compatibility)
+                    let validCapabilityTypes = relationshipType.validCapabilityTypes || relationshipType.validTargetTypes;
+                    
+                    env.log.debugf('%s: validCapabilityTypes for %q: %s', 
+                        path, relationshipTypeName, validCapabilityTypes ? JSON.stringify(validCapabilityTypes) : 'null');
+                    
+                    if (validCapabilityTypes && validCapabilityTypes.length > 0) {
+                        let capabilityTypeValid = false;
+                        
+                        env.log.debugf('%s: Checking candidate capability types: %s', 
+                            path, Object.keys(candidateCapability.types).join(', '));
+                        
+                        // Check if any of the candidate capability's types are in the valid list
+                        for (let candidateCapabilityTypeName in candidateCapability.types) {
+                            for (let v = 0; v < validCapabilityTypes.length; v++) {
+                                if (candidateCapabilityTypeName === validCapabilityTypes[v]) {
+                                    capabilityTypeValid = true;
+                                    env.log.debugf('%s: Found matching capability type: %q', 
+                                        path, candidateCapabilityTypeName);
+                                    break;
+                                }
+                            }
+                            if (capabilityTypeValid) break;
+                        }
+                        
+                        if (!capabilityTypeValid) {
+                            env.log.debugf('%s: capability %q (types: %s) in node template %q is not valid for relationship type %q (valid_capability_types: %s)', 
+                                path, candidateCapabilityName, Object.keys(candidateCapability.types).join(', '), 
+                                candidateNodeTemplateName, relationshipTypeName, validCapabilityTypes.join(', '));
+                            relationshipTypeValidationFailed = true;
+                            break;
+                        }
+                    } else {
+                        env.log.debugf('%s: No valid_capability_types constraint for relationship type %q', 
+                            path, relationshipTypeName);
+                    }
+                }
+                
+                if (relationshipTypeValidationFailed) {
+                    env.log.debugf('%s: Rejecting candidate due to relationship type validation failure', path);
+                    continue;
+                }
             }
 
             if (enforceCapabilityOccurrences) {
