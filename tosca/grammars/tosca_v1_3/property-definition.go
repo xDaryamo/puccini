@@ -35,8 +35,8 @@ func ReadPropertyDefinition(ctx *parsing.Context) parsing.EntityPtr {
 		}
 	}
 
-	// Annotations "metadata" not supported in 1.x
-	ctx.SetReadTag("Metadata", "")
+	// Metadata supported in TOSCA 1.3
+	// ctx.SetReadTag("Metadata", "") // Removed: metadata is supported in 1.3
 
 	// Use the tosca_v2_0 parser
 	v2prop := tosca_v2_0.ReadPropertyDefinition(ctx).(*tosca_v2_0.PropertyDefinition)

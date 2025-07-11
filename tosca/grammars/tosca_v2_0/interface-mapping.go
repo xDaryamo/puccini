@@ -68,6 +68,12 @@ func (self *InterfaceMapping) Render() {
 func (self *InterfaceMapping) render() {
 	logRender.Debug("interface mapping")
 
+	// Check if this is a TOSCA 1.3 interface mapping
+	if _, isTosca13 := self.OperationMappings["__TOSCA_1_3__"]; isTosca13 {
+		// Skip workflow validation for TOSCA 1.3 format
+		return
+	}
+
 	// TOSCA 2.0: Validate that workflows exist in the service template
 	if self.OperationMappings != nil {
 		for operationName, workflowName := range self.OperationMappings {

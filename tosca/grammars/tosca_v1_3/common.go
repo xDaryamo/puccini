@@ -42,7 +42,7 @@ func init() {
 	Grammar.RegisterReader("Import", ReadImport) // override
 	Grammar.RegisterReader("InterfaceAssignment", tosca_v2_0.ReadInterfaceAssignment)
 	Grammar.RegisterReader("InterfaceDefinition", tosca_v2_0.ReadInterfaceDefinition)
-	Grammar.RegisterReader("InterfaceMapping", tosca_v2_0.ReadInterfaceMapping) // introduced in TOSCA 1.2
+	Grammar.RegisterReader("InterfaceMapping", ReadInterfaceMapping) // override - TOSCA 1.3 format
 	Grammar.RegisterReader("InterfaceType", tosca_v2_0.ReadInterfaceType)
 	Grammar.RegisterReader("Metadata", tosca_v2_0.ReadMetadata)
 	Grammar.RegisterReader("NodeFilter", tosca_v2_0.ReadNodeFilter)
@@ -65,7 +65,7 @@ func init() {
 	Grammar.RegisterReader("RelationshipAssignment", tosca_v2_0.ReadRelationshipAssignment)
 	Grammar.RegisterReader("RelationshipDefinition", tosca_v2_0.ReadRelationshipDefinition)
 	Grammar.RegisterReader("RelationshipTemplate", tosca_v2_0.ReadRelationshipTemplate)
-	Grammar.RegisterReader("RelationshipType", tosca_v2_0.ReadRelationshipType)
+	Grammar.RegisterReader("RelationshipType", ReadRelationshipType) // override
 	Grammar.RegisterReader("Repository", tosca_v2_0.ReadRepository)
 	Grammar.RegisterReader("RequirementAssignment", ReadRequirementAssignment) // override
 	Grammar.RegisterReader("RequirementDefinition", ReadRequirementDefinition) // override
@@ -76,9 +76,9 @@ func init() {
 	Grammar.RegisterReader("scalar-unit.size", ReadScalarUnitSize)
 	Grammar.RegisterReader("scalar-unit.time", ReadScalarUnitTime)
 	Grammar.RegisterReader("Schema", ReadSchema)
-	Grammar.RegisterReader("SubstitutionMappings", tosca_v2_0.ReadSubstitutionMappings)
+	Grammar.RegisterReader("SubstitutionMappings", ReadSubstitutionMappings) // override
 	Grammar.RegisterReader("timestamp", tosca_v2_0.ReadTimestamp)
-	Grammar.RegisterReader("TriggerDefinition", tosca_v2_0.ReadTriggerDefinition)
+	Grammar.RegisterReader("TriggerDefinition", ReadTriggerDefinition) // override
 	Grammar.RegisterReader("TriggerDefinitionCondition", tosca_v2_0.ReadTriggerDefinitionCondition)
 	Grammar.RegisterReader("Value", tosca_v2_0.ReadValue)
 	Grammar.RegisterReader("version", tosca_v2_0.ReadVersion)
