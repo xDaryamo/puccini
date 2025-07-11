@@ -50,7 +50,7 @@ node_types:
     capabilities:
       host:
         type: Compute
-        valid_source_types: []
+        valid_source_node_types: []
 
   Compute:
     description: >
@@ -95,7 +95,7 @@ node_types:
     capabilities:
       host:
         type: Compute
-        valid_source_types: [SoftwareComponent]
+        valid_source_node_types: [SoftwareComponent]
       endpoint:
         type: Endpoint.Admin
       os:
@@ -141,7 +141,7 @@ node_types:
       admin_endpoint: Endpoint.Admin
       host:
         type: Compute
-        valid_source_types: [ WebApplication ]
+        valid_source_node_types: [ WebApplication ]
 
   WebApplication:
     description: >-
@@ -186,7 +186,7 @@ node_types:
     capabilities:
       host:
         type: Compute
-        valid_source_types: [ Database ]
+        valid_source_node_types: [ Database ]
 
   Database:
     description: >

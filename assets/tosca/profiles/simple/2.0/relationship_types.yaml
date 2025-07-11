@@ -33,7 +33,7 @@ relationship_types:
       The DependsOn type represents a general dependency relationship
       between two nodes.
     derived_from: Root
-    valid_target_types: [ Node ]
+    valid_capability_types: [ Node ]
 
   HostedOn:
     description: >-

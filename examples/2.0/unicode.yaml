@@ -1,5 +1,9 @@
 tosca_definitions_version: tosca_2_0
 
+imports:
+  - url: https://raw.githubusercontent.com/xDaryamo/tosca-community-contributions/refs/heads/master/profiles/org/oasis-open/simple/2.0/profile.yaml
+    namespace: tosca
+
 # Puccini supports Unicode everywhere
 
 metadata:
@@ -16,7 +20,7 @@ node_types:
   電源面板:
     properties:
       年齡:
-        type: scalar-unit.time
+        type: tosca:Time
     capabilities:
       主要: 插座
 
@@ -29,7 +33,7 @@ capability_types:
       電壓:
         type: float
       電頻:
-        type: scalar-unit.frequency
+        type: tosca:Frequency
 
 relationship_types:
 
@@ -63,4 +67,4 @@ service_template:
           properties:
             標準: 高頻
             電壓: 110.0
-            電頻: 120 hz
+            電頻: 120 Hz

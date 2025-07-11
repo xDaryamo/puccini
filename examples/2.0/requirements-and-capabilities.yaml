@@ -1,5 +1,9 @@
 tosca_definitions_version: tosca_2_0
 
+imports:
+  - url: https://raw.githubusercontent.com/xDaryamo/tosca-community-contributions/refs/heads/master/profiles/org/oasis-open/simple/2.0/profile.yaml
+    namespace: tosca
+
 # This is by far the most elaborate aspect of TOSCA
 # There are many ways to define and assign requirements and relationships
 
@@ -32,26 +36,19 @@ node_types:
         relationship: SmartPlug
         # You can also control the number of times the requirement *must* be assigned per node template
         # The implied default is the range of [ 1, 1 ]
-        # Note that if you don't specify "occurrences" then a requirement will be automatically assigned
+        # Note that if you don't specify "count_range" then a requirement will be automatically assigned
         # (That is the situation with the short notation we used in "LightBulb", above)
-        occurrences: [ 2, UNBOUNDED ]
+        count_range: [ 2, UNBOUNDED ]
 
   PowerPanel:
     properties:
       age:
-        type: scalar-unit.time
+        type: tosca:Time
     capabilities:
       main: Socket
       aux: Socket
       emergency:
         type: SuperSocket
-        # The long notation for capabilities lets us specify "occurrences",
-        # which is how many times the capability *must* be required
-        # This functionality applies to the requirements resolution phase
-        # and does *not* have a grammatical (parsing) effect
-        # (It's thus *very* different from the meaning of the "occurrences" keyword in requirements)
-        # The default if not specified is [ 0, UNBOUNDED ]
-        occurrences: [ 2, 4 ]
 
 capability_types:
 
@@ -62,7 +59,7 @@ capability_types:
       voltage:
         type: float
       frequency:
-        type: scalar-unit.frequency
+        type: tosca:Frequency
 
   SuperSocket:
     derived_from: Socket
@@ -91,7 +88,7 @@ service_template:
 
   inputs:
     age:
-      type: scalar-unit.time
+      type: tosca:Time
       default: 5 d
 
   node_templates:
@@ -141,19 +138,31 @@ service_template:
       - socket:
           capability: Socket
           node_filter:
-            properties:
-            - age:
-              # Note that special data types are not supported here
-                less_than: 8640000 # 100 d -> seconds
+            # TOSCA 2.0 requires Boolean expression syntax for filters
+            $less_than: 
+            - $get_property: [ TARGET, age ]
+            - 8640000 s # 100 days in seconds
 
-    # You can also put "node_filter" at the node itself, in which case the filter will
-    # apply to *all* requirements
+    # You can also put "node_filter" at the node itself, but ONLY with "select" directive
+    # The "select" directive tells TOSCA to find an existing node that matches the filter
+    # instead of creating a new one
     light7:
       type: LightBulb
+      directives: [ select ]
       node_filter:
-        properties:
-        - age:
-            less_than: 8640000 # 100 d -> seconds
+        # TOSCA 2.0 Boolean expression syntax
+        $less_than:
+        - $get_property: [ SELF, age ]
+        - 8640000 s # 100 days in seconds
+      requirements:
+      - socket:
+          capability: Socket
+
+    # Alternative: If you want to validate properties during creation (not selection),
+    # use validation constraints in the node type or data type definition, not node_filter
+    light7_alternative:
+      type: LightBulb
+      # No node_filter here - property validation should be in the type definition
       requirements:
       - socket:
           capability: Socket
@@ -165,11 +174,9 @@ service_template:
       - socket:
           capability: Socket
           node_filter:
-            capabilities:
-            - emergency:
-                properties:
-                - frequency:
-                    greater_than: 100 # 100 hz
+            $greater_than: # Il filtro deve essere una funzione booleana
+              - $get_property: [ TARGET, CAPABILITY, emergency, frequency ] # Percorso corretto: TARGET, poi CAPABILITY, poi il nome della capability, infine la proprietà.
+              - 100 Hz # Valore con unità, supportato per i tipi scalari. 
 
     # You can add a relationship type to the requirement
     # (If you don't, Puccini creates an empty relationship with no properties)
@@ -219,23 +226,23 @@ service_template:
     main_panel:
       type: PowerPanel
       properties:
-        age: { get_input: age }
+        age: { $get_input: age }
       capabilities:
         main:
           properties:
             standard: People's Republic of China
             voltage: 220.0
-            frequency: 50 hz
+            frequency: 50 Hz
         aux:
           properties:
             standard: United States of America
             voltage: 110.0
-            frequency: 60 hz
+            frequency: 60 Hz
         emergency:
           properties:
             standard: High Frequency
             voltage: 110.0
-            frequency: 120 hz
+            frequency: 120 Hz
             failsafe: true
 
   relationship_templates:

@@ -1,5 +1,9 @@
 tosca_definitions_version: tosca_2_0
 
+imports:
+  - url: https://raw.githubusercontent.com/xDaryamo/tosca-community-contributions/refs/heads/master/profiles/org/oasis-open/simple/2.0/profile.yaml
+    namespace: tosca
+
 metadata:
 
   template_name: Interfaces Example
@@ -57,8 +61,8 @@ data_types:
 
   Retries:
     derived_from: integer
-    constraints:
-    - greater_or_equal: 0
+    validation:
+      $greater_or_equal: [ $value, 0 ]
 
 capability_types:
 
@@ -77,8 +81,8 @@ interface_types:
     inputs:
       mode:
         type: string
-        constraints:
-        - valid_values: [ staging, production ]
+        validation:
+          $valid_values: [ $value, [ staging, production ] ]
     operations:
       maintenance-on:
         description: Turn maintenance mode on
@@ -107,7 +111,7 @@ relationship_types:
           pre_configure_source:
             inputs:
               ip-pool:
-                value: { get_attribute: [ TARGET, dhcp, ip-pool ] }
+                value: { $get_attribute: [ TARGET, dhcp, ip-pool ] }
             outputs:
               # Inside a relationship, output mappings can target
               # SOURCE and TARGET entities
@@ -160,7 +164,6 @@ service_template:
                 - scripts/utils.sh
                 - scripts/config.yaml
                 timeout: 3
-                operation_host: SELF
 
         Maintenance:
           inputs:

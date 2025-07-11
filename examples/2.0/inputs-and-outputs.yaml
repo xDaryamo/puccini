@@ -3,8 +3,11 @@ tosca_definitions_version: tosca_2_0
 # To see the constraints and outputs in action run:
 #   puccini-tosca compile --coerce --input ram=1gib inputs-and-outputs.yaml
 
-metadata:
+imports:
+  - url: https://raw.githubusercontent.com/xDaryamo/tosca-community-contributions/refs/heads/master/profiles/org/oasis-open/simple/2.0/profile.yaml
+    namespace: tosca
 
+metadata:
   template_name: Inputs and Outputs Example
   template_author: Puccini
 
@@ -18,11 +21,11 @@ service_template:
       type: integer
       # You can also assign the "value" field here, but it really works identically to "default"
       default: 4
-      # Inputs can have constraints
-      constraints:
-      - less_than: 8
+      # Inputs can have validation
+      validation:
+        $less_than: [ $value, 8 ]
     ram:
-      type: scalar-unit.size
+      type: tosca:Size
       # This property is required and doesn't have "default" (or "value"),
       # So you *must* specify it in the CLI:
       #   puccini-tosca --input ram=1gib ...
@@ -35,17 +38,17 @@ service_template:
       capabilities:
         host:
           properties:
-            num_cpus: { get_input: cores }
-            mem_size: { get_input: ram }
+            num_cpus: { $get_input: cores }
+            mem_size: { $get_input: ram }
       attributes:
         # Let's give the attribute an initial value (see: attributes.yaml)
         # But the idea is that it would be updated by the deployment
         # (That's outside the scope of puccini-tosca)
         public_address: <unknown>
 
-  # Outputs are commonly used for the "get_attribute" function
+  # Outputs are commonly used for the "$get_attribute" function
   outputs:
     url:
       type: string
       # You can also assign the "default" field here, but it really works identically to "value"
-      value: { concat: [ 'http://', { get_attribute: [ server, public_address ] }, ':8080' ] }
+      value: { $concat: [ 'http://', { $get_attribute: [ server, public_address ] }, ':8080' ] }
