@@ -1964,6 +1964,12 @@ func (self *SubstitutionMappings) validateInterfaceMapping(name string, mapping 
 		return
 	}
 
+	// Check if this is a TOSCA 1.3 interface mapping
+	if _, isTosca13 := mapping.OperationMappings["__TOSCA_1_3__"]; isTosca13 {
+		// Skip validation for TOSCA 1.3 format - it uses different semantics
+		return
+	}
+
 	// TOSCA 2.0: Validate that each operation in the mapping exists in the interface definition
 	if definition.InterfaceType != nil {
 		for operationName, workflowName := range mapping.OperationMappings {
@@ -2051,17 +2057,35 @@ func (self *SubstitutionMappings) normalizeAttributes(normalSubstitution *normal
 // normalizeInterfaces normalizes interface mappings
 func (self *SubstitutionMappings) normalizeInterfaces(normalSubstitution *normal.Substitution, normalServiceTemplate *normal.ServiceTemplate) {
 	// TOSCA 2.0: Interface mappings map operations to workflows
+	// TOSCA 1.3: Interface mappings map interfaces to node templates (stored with special key)
 	for interfaceName, mapping := range self.InterfaceMappings {
-		for operationName, workflowName := range mapping.OperationMappings {
-			// Create a unique key for the interface operation mapping
-			key := fmt.Sprintf("%s.%s", interfaceName, operationName)
+		// Check for TOSCA 1.3 format first
+		if tosca13Info, ok := mapping.OperationMappings["__TOSCA_1_3__"]; ok {
+			// Parse the special format: "nodeTemplate:interfaceName"
+			parts := strings.Split(tosca13Info, ":")
+			if len(parts) == 2 {
+				nodeTemplateName := parts[0]
+				targetInterfaceName := parts[1]
 
-			// Check if the workflow exists in the service template
-			if normalServiceTemplate.Workflows != nil {
-				if _, ok := normalServiceTemplate.Workflows[workflowName]; ok {
-					// Create a pointer to the workflow for interface mapping
-					// This creates a connection between the interface operation and the workflow
-					normalSubstitution.InterfacePointers[key] = normal.NewPointer(workflowName)
+				// Check if the node template exists
+				if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[nodeTemplateName]; ok {
+					// Create interface pointer that points to the node template's interface
+					normalSubstitution.InterfacePointers[interfaceName] = normalNodeTemplate.NewPointer(targetInterfaceName)
+				}
+			}
+		} else {
+			// Standard TOSCA 2.0 processing
+			for operationName, workflowName := range mapping.OperationMappings {
+				// Create a unique key for the interface operation mapping
+				key := fmt.Sprintf("%s.%s", interfaceName, operationName)
+
+				// Check if the workflow exists in the service template
+				if normalServiceTemplate.Workflows != nil {
+					if _, ok := normalServiceTemplate.Workflows[workflowName]; ok {
+						// Create a pointer to the workflow for interface mapping
+						// This creates a connection between the interface operation and the workflow
+						normalSubstitution.InterfacePointers[key] = normal.NewPointer(workflowName)
+					}
 				}
 			}
 		}
