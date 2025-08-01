@@ -42,6 +42,17 @@ exports.evaluate = function() {
     if (nestedPath && nestedPath.length > 0) {
         for (let i = 0; i < nestedPath.length; i++) {
             let key = nestedPath[i];
+            
+            // If key is "$node_index", evaluate it as a function
+            if (key === '$node_index') {
+                try {
+                    const nodeIndexFunction = require('tosca.function.$node_index');
+                    key = nodeIndexFunction.evaluate.call(this);
+                } catch (e) {
+                    throw util.sprintf('failed to evaluate $node_index: %s', e);
+                }
+            }
+            
             if (Array.isArray(r)) {
                 // Array index access
                 let index = parseInt(key);

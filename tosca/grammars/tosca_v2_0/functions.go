@@ -50,6 +50,7 @@ var FunctionScriptlets = map[string]string{
 	parsing.MetadataFunctionPrefix + "round":                profiles.GetString(functionPathPrefix + "round.js"),        // TOSCA 2.0 arithmetic function
 	parsing.MetadataFunctionPrefix + "floor":                profiles.GetString(functionPathPrefix + "floor.js"),        // TOSCA 2.0 arithmetic function
 	parsing.MetadataFunctionPrefix + "ceil":                 profiles.GetString(functionPathPrefix + "ceil.js"),         // TOSCA 2.0 arithmetic function
+	parsing.MetadataFunctionPrefix + "$node_index":          profiles.GetString(functionPathPrefix + "$node_index.js"),  // TOSCA 2.0 node index function
 }
 
 func ParseFunctionCall(context *parsing.Context) bool {

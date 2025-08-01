@@ -81,6 +81,7 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 		vertex.Properties["capabilities"] = nodeTemplate.Capabilities
 		vertex.Properties["interfaces"] = nodeTemplate.Interfaces
 		vertex.Properties["artifacts"] = nodeTemplate.Artifacts
+		vertex.Properties["nodeIndex"] = nodeTemplate.NodeIndex
 	}
 
 	groups := make(map[string]*cloutpkg.Vertex)

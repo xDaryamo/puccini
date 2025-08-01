@@ -22,6 +22,8 @@ type NodeTemplate struct {
 	Capabilities Capabilities      `json:"capabilities" yaml:"capabilities"`
 	Interfaces   Interfaces        `json:"interfaces" yaml:"interfaces"`
 	Artifacts    Artifacts         `json:"artifacts" yaml:"artifacts"`
+	Count        int64             `json:"count" yaml:"count"`         // Original count value from template
+	NodeIndex    int64             `json:"nodeIndex" yaml:"nodeIndex"` // Index of this specific instance (for $node_index)
 }
 
 func (self *ServiceTemplate) NewNodeTemplate(name string) *NodeTemplate {
@@ -37,6 +39,8 @@ func (self *ServiceTemplate) NewNodeTemplate(name string) *NodeTemplate {
 		Capabilities:    make(Capabilities),
 		Interfaces:      make(Interfaces),
 		Artifacts:       make(Artifacts),
+		Count:           1, // Default count is 1 as per TOSCA 2.0 specification
+		NodeIndex:       0, // Default node index
 	}
 	self.NodeTemplates[name] = nodeTemplate
 	return nodeTemplate
