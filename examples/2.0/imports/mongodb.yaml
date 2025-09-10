@@ -1,11 +1,15 @@
 tosca_definitions_version: tosca_2_0
 
+imports:
+  - url: https://raw.githubusercontent.com/xDaryamo/tosca-community-contributions/refs/heads/master/profiles/org/oasis-open/simple/2.0/profile.yaml
+    namespace: tosca
+
 metadata:
 
   template_name: MongoDB Example
   template_author: Puccini
 
-namespace: mongodb
+profile: mongodb
 
 node_types:
 

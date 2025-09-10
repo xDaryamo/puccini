@@ -214,117 +214,154 @@ func (self *ReadField) Read() {
 	field := self.Entity.FieldByName(self.FieldName)
 	fieldType := field.Type()
 
+	//----------------------------------------------------------------------
+	// 0) Is the key present at all?
+	//----------------------------------------------------------------------
 	childData, ok := self.Context.Data.(ard.Map)[self.Key]
 	if !ok {
 		if reflection.IsSliceOfPointerToStruct(fieldType) {
-			// If we have no items, at least have an empty slice
-			// so that "mandatory" will not see a nil here
+			// Ensure “mandatory” logic sees an empty (not nil) slice
 			field.Set(reflect.MakeSlice(fieldType, 0, 0))
 		}
 		return
 	}
 
+	//----------------------------------------------------------------------
+	// 1) Paths that use a custom reader
+	//----------------------------------------------------------------------
 	if self.Reader != nil {
+
+		//--------------------------------------------------------------
+		// 1a) Destination is []*Struct
+		//--------------------------------------------------------------
 		if reflection.IsSliceOfPointerToStruct(fieldType) {
-			// Field is compatible with []*any
 			slice := field
 			switch self.Mode {
+
 			case ReadFieldModeList:
-				self.Context.FieldChild(self.Key, childData).ReadListItems(self.Reader, func(item any) {
-					slice = reflect.Append(slice, reflect.ValueOf(item))
-				})
+				self.Context.FieldChild(self.Key, childData).
+					ReadListItems(self.Reader, func(item any) {
+						if item != nil { // <-- guard
+							slice = reflect.Append(slice, reflect.ValueOf(item))
+						}
+					})
+
 			case ReadFieldModeSequencedList:
-				self.Context.FieldChild(self.Key, childData).ReadSequencedListItems(self.Reader, func(item any) {
-					slice = reflect.Append(slice, reflect.ValueOf(item))
-				})
+				self.Context.FieldChild(self.Key, childData).
+					ReadSequencedListItems(self.Reader, func(item any) {
+						if item != nil { // <-- guard
+							slice = reflect.Append(slice, reflect.ValueOf(item))
+						}
+					})
+
 			case ReadFieldModeUniqueSequencedList:
 				context := self.Context.FieldChild(self.Key, childData)
 				context.ReadSequencedListItems(self.Reader, func(item any) {
-					slice = context.appendUnique(slice, item)
+					if item != nil { // <-- guard
+						slice = context.appendUnique(slice, item)
+					}
 				})
+
 			case ReadFieldModeItem:
 				length := slice.Len()
-				slice = reflect.Append(slice, reflect.ValueOf(self.Reader(self.Context.ListChild(length, childData))))
-			default:
-				self.Context.FieldChild(self.Key, childData).ReadMapItems(self.Reader, func(item any) {
-					slice = reflect.Append(slice, reflect.ValueOf(item))
-				})
+				if itm := self.Reader(self.Context.ListChild(length, childData)); itm != nil {
+					slice = reflect.Append(slice, reflect.ValueOf(itm))
+				}
+
+			default: // map-style syntax
+				self.Context.FieldChild(self.Key, childData).
+					ReadMapItems(self.Reader, func(item any) {
+						if item != nil { // <-- guard
+							slice = reflect.Append(slice, reflect.ValueOf(item))
+						}
+					})
 			}
+
 			if slice.IsNil() {
-				// If we have no items, at least have an empty slice
-				// so that "mandatory" will not see a nil here
 				slice = reflect.MakeSlice(fieldType, 0, 0)
 			}
 			field.Set(slice)
+
+			//--------------------------------------------------------------
+			// 1b) Destination is map[string]*Struct
+			//--------------------------------------------------------------
 		} else if reflection.IsMapOfStringToPointerToStruct(fieldType) {
-			// Field is compatible with map[string]*any
 			switch self.Mode {
+
 			case ReadFieldModeList:
-				context := self.Context.FieldChild(self.Key, childData)
-				context.ReadListItems(self.Reader, func(item any) {
-					context.setMapItem(field, item)
+				ctx := self.Context.FieldChild(self.Key, childData)
+				ctx.ReadListItems(self.Reader, func(item any) {
+					if item != nil { // <-- guard
+						ctx.setMapItem(field, item)
+					}
 				})
+
 			case ReadFieldModeSequencedList, ReadFieldModeUniqueSequencedList:
-				context := self.Context.FieldChild(self.Key, childData)
-				context.ReadSequencedListItems(self.Reader, func(item any) {
-					context.setMapItem(field, item)
+				ctx := self.Context.FieldChild(self.Key, childData)
+				ctx.ReadSequencedListItems(self.Reader, func(item any) {
+					if item != nil { // <-- guard
+						ctx.setMapItem(field, item)
+					}
 				})
+
 			case ReadFieldModeItem:
-				context := self.Context.FieldChild(self.Key, childData)
-				context.setMapItem(field, self.Reader(context))
+				ctx := self.Context.FieldChild(self.Key, childData)
+				if itm := self.Reader(ctx); itm != nil {
+					ctx.setMapItem(field, itm)
+				}
+
 			default:
-				context := self.Context.FieldChild(self.Key, childData)
-				context.ReadMapItems(self.Reader, func(item any) {
-					context.setMapItem(field, item)
+				ctx := self.Context.FieldChild(self.Key, childData)
+				ctx.ReadMapItems(self.Reader, func(item any) {
+					if item != nil { // <-- guard
+						ctx.setMapItem(field, item)
+					}
 				})
 			}
+
+			//--------------------------------------------------------------
+			// 1c) Destination is *Struct
+			//--------------------------------------------------------------
 		} else {
-			// Field is compatible with *any
-			item := self.Reader(self.Context.FieldChild(self.Key, childData))
-			if item != nil {
+			if item := self.Reader(self.Context.FieldChild(self.Key, childData)); item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
 		}
+
+		//----------------------------------------------------------------------
+		// 2) Paths that rely on the built-in scalar readers
+		//----------------------------------------------------------------------
 	} else {
 		fieldEntityPtr := field.Interface()
-		if reflection.IsPointerToString(fieldEntityPtr) {
-			// Field is *string
-			item := self.Context.FieldChild(self.Key, childData).ReadString()
-			if item != nil {
+
+		switch {
+		case reflection.IsPointerToString(fieldEntityPtr):
+			if item := self.Context.FieldChild(self.Key, childData).ReadString(); item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
-		} else if reflection.IsPointerToInt64(fieldEntityPtr) {
-			// Field is *int64
-			item := self.Context.FieldChild(self.Key, childData).ReadInteger()
-			if item != nil {
+		case reflection.IsPointerToInt64(fieldEntityPtr):
+			if item := self.Context.FieldChild(self.Key, childData).ReadInteger(); item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
-		} else if reflection.IsPointerToFloat64(fieldEntityPtr) {
-			// Field is *float64
-			item := self.Context.FieldChild(self.Key, childData).ReadFloat()
-			if item != nil {
+		case reflection.IsPointerToFloat64(fieldEntityPtr):
+			if item := self.Context.FieldChild(self.Key, childData).ReadFloat(); item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
-		} else if reflection.IsPointerToBool(fieldEntityPtr) {
-			// Field is *bool
-			item := self.Context.FieldChild(self.Key, childData).ReadBoolean()
-			if item != nil {
+		case reflection.IsPointerToBool(fieldEntityPtr):
+			if item := self.Context.FieldChild(self.Key, childData).ReadBoolean(); item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
-		} else if reflection.IsPointerToSliceOfString(fieldEntityPtr) {
-			// Field is *[]string
-			item := self.Context.FieldChild(self.Key, childData).ReadStringList()
-			if item != nil {
+		case reflection.IsPointerToSliceOfString(fieldEntityPtr):
+			if item := self.Context.FieldChild(self.Key, childData).ReadStringList(); item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
-		} else if reflection.IsPointerToMapOfStringToString(fieldEntityPtr) {
-			// Field is *map[string]string
-			item := self.Context.FieldChild(self.Key, childData).ReadStringStringMap()
-			if item != nil {
+		case reflection.IsPointerToMapOfStringToString(fieldEntityPtr):
+			if item := self.Context.FieldChild(self.Key, childData).ReadStringStringMap(); item != nil {
 				field.Set(reflect.ValueOf(item))
 			}
-		} else {
-			panic(fmt.Sprintf("\"read\" tag's field type \"%T\" is not supported in struct: %T.%s", fieldEntityPtr, self.Entity.Interface(), self.FieldName))
+		default:
+			panic(fmt.Sprintf("\"read\" tag's field type \"%T\" is not supported in struct: %T.%s",
+				fieldEntityPtr, self.Entity.Interface(), self.FieldName))
 		}
 	}
 }

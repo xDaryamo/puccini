@@ -10,6 +10,7 @@ type Substitution struct {
 	Type               string            `json:"type" yaml:"type"`
 	TypeMetadata       map[string]string `json:"typeMetadata" yaml:"typeMetadata"`
 	InputPointers      Pointers          `json:"inputPointers" yaml:"inputPointers"`
+	OutputPointers     Pointers          `json:"outputPointers" yaml:"outputPointers"`
 	CapabilityPointers Pointers          `json:"capabilityPointers" yaml:"capabilityPointers"`
 	RequirementPointer Pointers          `json:"requirementPointers" yaml:"requirementPointers"`
 	PropertyPointers   Pointers          `json:"propertyPointers" yaml:"propertyPointers"`
@@ -23,6 +24,7 @@ func (self *ServiceTemplate) NewSubstitution() *Substitution {
 		ServiceTemplate:    self,
 		TypeMetadata:       make(map[string]string),
 		InputPointers:      make(Pointers),
+		OutputPointers:     make(Pointers),
 		CapabilityPointers: make(Pointers),
 		RequirementPointer: make(Pointers),
 		PropertyPointers:   make(Pointers),

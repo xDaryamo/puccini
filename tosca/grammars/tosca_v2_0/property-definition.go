@@ -49,9 +49,6 @@ func (self *PropertyDefinition) Inherit(parentDefinition *PropertyDefinition) {
 	if (self.Required == nil) && (parentDefinition.Required != nil) {
 		self.Required = parentDefinition.Required
 	}
-	if parentDefinition.ConstraintClauses != nil {
-		self.ConstraintClauses = parentDefinition.ConstraintClauses.Append(self.ConstraintClauses)
-	}
 }
 
 // ([parsing.Renderable] interface)

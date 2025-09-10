@@ -67,7 +67,7 @@ func (self *Repository) GetURL() exturl.URL {
 		self.url = self.Context.URL.Context().NewAnyOrFileURL(*self.URL)
 	}
 
-	return nil
+	return self.url
 }
 
 //

@@ -21,6 +21,8 @@ type CapabilityAssignment struct {
 	*Entity `name:"capability"`
 	Name    string
 
+	Description *string      `read:"description"`
+	Metadata    Metadata     `read:"metadata,Metadata"`
 	Properties  Values       `read:"properties,Value"`
 	Attributes  Values       `read:"attributes,AttributeValue"`
 	Occurrences *RangeEntity `read:"occurrences,RangeEntity"` // introduced in TOSCA 1.3
@@ -32,6 +34,7 @@ func NewCapabilityAssignment(context *parsing.Context) *CapabilityAssignment {
 		Name:       context.Name,
 		Properties: make(Values),
 		Attributes: make(Values),
+		Metadata:   make(Metadata),
 	}
 }
 
@@ -60,7 +63,10 @@ func (self *CapabilityAssignment) Normalize(normalNodeTemplate *normal.NodeTempl
 
 	normalCapability := normalNodeTemplate.NewCapability(self.Name, normal.NewLocationForContext(self.Context))
 
-	if definition.Description != nil {
+	// Use assignment description if available, otherwise use definition description
+	if self.Description != nil {
+		normalCapability.Description = *self.Description
+	} else if definition.Description != nil {
 		normalCapability.Description = *definition.Description
 	}
 
@@ -92,9 +98,9 @@ type CapabilityAssignments map[string]*CapabilityAssignment
 func (self *CapabilityAssignment) Render(definition *CapabilityDefinition) {
 	self.Properties.RenderProperties(definition.PropertyDefinitions, self.Context.FieldChild("properties", nil))
 	self.Attributes.RenderAttributes(definition.AttributeDefinitions, self.Context.FieldChild("attributes", nil))
-	if self.Occurrences == nil {
-		self.Occurrences = definition.Occurrences
-	}
+	// if self.Occurrences == nil {
+	// 	self.Occurrences = definition.Occurrences
+	// }
 }
 
 func (self CapabilityAssignments) Render(definitions CapabilityDefinitions, context *parsing.Context) {

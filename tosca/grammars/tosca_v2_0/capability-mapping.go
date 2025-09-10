@@ -9,7 +9,7 @@ import (
 //
 // Attaches to SubstitutionMappings
 //
-// [TOSCA-v2.0] @ ?
+// [TOSCA-v2.0] @ 15.4
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.8.10
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.8.9
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 2.10, 2.11
@@ -20,8 +20,8 @@ type CapabilityMapping struct {
 	*Entity `name:"capability mapping"`
 	Name    string
 
-	NodeTemplateName *string
-	CapabilityName   *string
+	NodeTemplateName             *string
+	NodeTemplateCapabilityName   *string
 
 	NodeTemplate *NodeTemplate         `traverse:"ignore" json:"-" yaml:"-"`
 	Capability   *CapabilityAssignment `traverse:"ignore" json:"-" yaml:"-"`
@@ -40,7 +40,7 @@ func ReadCapabilityMapping(context *parsing.Context) parsing.EntityPtr {
 
 	if strings := context.ReadStringListFixed(2); strings != nil {
 		self.NodeTemplateName = &(*strings)[0]
-		self.CapabilityName = &(*strings)[1]
+		self.NodeTemplateCapabilityName = &(*strings)[1]
 	}
 
 	return self
@@ -68,20 +68,38 @@ func (self *CapabilityMapping) Render() {
 func (self *CapabilityMapping) render() {
 	logRender.Debug("capability mapping")
 
-	if (self.NodeTemplateName == nil) || (self.CapabilityName == nil) {
+	if (self.NodeTemplateName == nil) || (self.NodeTemplateCapabilityName == nil) {
+		self.Context.ReportValueMalformed("capability mapping", "must specify both node template name and node template capability name")
 		return
 	}
 
 	nodeTemplateName := *self.NodeTemplateName
+	nodeTemplateCapabilityName := *self.NodeTemplateCapabilityName
+
+	// Validate node template name is not empty
+	if nodeTemplateName == "" {
+		self.Context.ListChild(0, nodeTemplateName).ReportValueMalformed("node template name", "cannot be empty")
+		return
+	}
+
+	// Validate node template capability name is not empty
+	if nodeTemplateCapabilityName == "" {
+		self.Context.ListChild(1, nodeTemplateCapabilityName).ReportValueMalformed("node template capability name", "cannot be empty")
+		return
+	}
+
+	// Look up the node template within the substituting service template
 	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, nodeTemplatePtrType); ok {
 		self.NodeTemplate = nodeTemplate.(*NodeTemplate)
 
+		// Ensure the node template is rendered
 		self.NodeTemplate.Render()
 
-		name := *self.CapabilityName
-		var ok bool
-		if self.Capability, ok = self.NodeTemplate.Capabilities[name]; !ok {
-			self.Context.ListChild(1, name).ReportReferenceNotFound("capability", self.NodeTemplate)
+		// Look up the capability definition within the node template
+		if capability, ok := self.NodeTemplate.Capabilities[nodeTemplateCapabilityName]; ok {
+			self.Capability = capability
+		} else {
+			self.Context.ListChild(1, nodeTemplateCapabilityName).ReportReferenceNotFound("capability", self.NodeTemplate)
 		}
 	} else {
 		self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")

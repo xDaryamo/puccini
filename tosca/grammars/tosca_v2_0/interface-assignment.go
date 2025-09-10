@@ -104,8 +104,18 @@ func (self *InterfaceAssignment) RenderForGroup(definition *InterfaceDefinition)
 func (self *InterfaceAssignment) Normalize(normalInterface *normal.Interface, definition *InterfaceDefinition) {
 	logNormalize.Debugf("interface: %s", self.Name)
 
-	if (definition.InterfaceType != nil) && (definition.InterfaceType.Description != nil) {
+	// Use description from InterfaceDefinition if available, otherwise from InterfaceType
+	if (definition != nil) && (definition.Description != nil) {
+		normalInterface.Description = *definition.Description
+	} else if (definition.InterfaceType != nil) && (definition.InterfaceType.Description != nil) {
 		normalInterface.Description = *definition.InterfaceType.Description
+	}
+
+	// Copy metadata from InterfaceDefinition
+	if (definition != nil) && (definition.Metadata != nil) && (len(definition.Metadata) > 0) {
+		for key, value := range definition.Metadata {
+			normalInterface.Metadata[key] = value
+		}
 	}
 
 	if types, ok := normal.GetEntityTypes(self.Context.Hierarchy, definition.InterfaceType); ok {

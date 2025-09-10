@@ -41,7 +41,7 @@ func init() {
 	Grammar.RegisterReader("CapabilityType", ReadCapabilityType)
 	Grammar.RegisterReader("ConditionClause", ReadConditionClause)
 	Grammar.RegisterReader("ConditionClauseAnd", ReadConditionClauseAnd)
-	Grammar.RegisterReader("ConstraintClause", ReadConstraintClause)
+	Grammar.RegisterReader("ValidationClause", ReadValidationClause)
 	Grammar.RegisterReader("DataType", ReadDataType)
 	Grammar.RegisterReader("EventFilter", ReadEventFilter)
 	Grammar.RegisterReader("Group", ReadGroup)
@@ -78,10 +78,6 @@ func init() {
 	Grammar.RegisterReader("RequirementDefinition", ReadRequirementDefinition)
 	Grammar.RegisterReader("RequirementMapping", ReadRequirementMapping)
 	Grammar.RegisterReader("ServiceTemplate", ReadServiceTemplate)
-	Grammar.RegisterReader("scalar-unit.bitrate", ReadScalarUnitBitrate) // introduced in TOSCA 1.3
-	Grammar.RegisterReader("scalar-unit.frequency", ReadScalarUnitFrequency)
-	Grammar.RegisterReader("scalar-unit.size", ReadScalarUnitSize)
-	Grammar.RegisterReader("scalar-unit.time", ReadScalarUnitTime)
 	Grammar.RegisterReader("Schema", ReadSchema)
 	Grammar.RegisterReader("SubstitutionMappings", ReadSubstitutionMappings)
 	Grammar.RegisterReader("timestamp", ReadTimestamp)
@@ -96,15 +92,22 @@ func init() {
 	Grammar.RegisterReader("WorkflowStepDefinition", ReadWorkflowStepDefinition)                 // introduced in TOSCA 1.1
 
 	DefaultScriptletNamespace.RegisterScriptlets(FunctionScriptlets, nil)
-	DefaultScriptletNamespace.RegisterScriptlets(ConstraintClauseScriptlets, ConstraintClauseNativeArgumentIndexes)
+	DefaultScriptletNamespace.RegisterScriptlets(ValidationClauseScriptlets, ValidationClauseNativeArgumentIndexes)
 
 	Grammar.InvalidNamespaceCharacters = ":"
+
+	// Add scalar reader
+	Grammar.RegisterReader("scalar", ReadScalarValue) // introduced in TOSCA 2.0
+
+	// Add readers for scalar type fields
+	Grammar.RegisterReader("UnitsReader", ReadUnitsField)
+	Grammar.RegisterReader("PrefixesReader", ReadPrefixesField)
 }
 
 func CompareUint32(v1 uint32, v2 uint32) int {
 	if v1 < v2 {
 		return -1
-	} else if v2 > v1 {
+	} else if v1 > v2 {
 		return 1
 	}
 	return 0
@@ -113,7 +116,7 @@ func CompareUint32(v1 uint32, v2 uint32) int {
 func CompareUint64(v1 uint64, v2 uint64) int {
 	if v1 < v2 {
 		return -1
-	} else if v2 > v1 {
+	} else if v1 > v2 {
 		return 1
 	}
 	return 0
@@ -122,7 +125,7 @@ func CompareUint64(v1 uint64, v2 uint64) int {
 func CompareInt64(v1 int64, v2 int64) int {
 	if v1 < v2 {
 		return -1
-	} else if v2 > v1 {
+	} else if v1 > v2 {
 		return 1
 	}
 	return 0
@@ -131,7 +134,7 @@ func CompareInt64(v1 int64, v2 int64) int {
 func CompareFloat64(v1 float64, v2 float64) int {
 	if v1 < v2 {
 		return -1
-	} else if v2 > v1 {
+	} else if v1 > v2 {
 		return 1
 	}
 	return 0

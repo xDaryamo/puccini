@@ -8,9 +8,8 @@ metadata:
   template_author: Puccini
 
 imports:
-
-# (Make sure to take a look at the import)
-- imports/super-load-balancer.yaml
+  # (Make sure to take a look at the import)
+  - imports/super-load-balancer.yaml
 
 service_template:
 
@@ -49,18 +48,39 @@ service_template:
       client: [ loadbalancer, client ]
     requirements:
       # Expose the requirements of our software components
-      # Any requirement can be mapped
       admin_host: [ admin, host ]
       db_host: [ db, host ]
     properties:
-      # Properties are mapped to inputs
-      # (You can also map properties to node template properties, though this use is deprecated in TOSCA 1.3)
-      # The data types must be compatible
+      # Map property to input
       redundancy: [ scale ]
     attributes:
-      # The data types must be compatible
+      # Map internal node attributes
       admin_state: [ admin, state ]
       db_state: [ db, state ]
     interfaces:
-      # The interface types must be compatible
-      Standard: [ admin, Standard ]
+      Standard:
+        create: admin_create_workflow
+        configure: admin_configure_workflow
+        start: admin_start_workflow
+        modify: admin_modify_workflow
+        stop: admin_stop_workflow
+        delete: admin_delete_workflow
+
+  workflows:
+    admin_create_workflow:
+      steps: {}
+
+    admin_configure_workflow:
+      steps: {}
+
+    admin_start_workflow:
+      steps: {}
+
+    admin_modify_workflow:
+      steps: {}
+
+    admin_stop_workflow:
+      steps: {}
+
+    admin_delete_workflow:
+      steps: {}

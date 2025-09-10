@@ -12,7 +12,7 @@ type DataDefinition interface {
 	ToValueMeta() *normal.ValueMeta
 	GetDescription() string
 	GetTypeMetadata() Metadata
-	GetConstraintClauses() ConstraintClauses
+	GetValidationClause() *ValidationClause
 	GetKeySchema() *Schema
 	GetEntrySchema() *Schema
 }

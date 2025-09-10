@@ -7,23 +7,27 @@ import (
 //
 // RelationshipType
 //
-// [TOSCA-v2.0] @ ?
-// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.7.10
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.7.10
-// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.10
-// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.6.9
+// [TOSCA-v2.0] @ 7.3 Relationship Type
 //
 
 type RelationshipType struct {
 	*Type `name:"relationship type"`
 
-	PropertyDefinitions            PropertyDefinitions  `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
-	AttributeDefinitions           AttributeDefinitions `read:"attributes,AttributeDefinition" inherit:"attributes,Parent"`
-	InterfaceDefinitions           InterfaceDefinitions `read:"interfaces,InterfaceDefinition" inherit:"interfaces,Parent"`
-	ValidTargetCapabilityTypeNames *[]string            `read:"valid_target_types" inherit:"valid_target_types,Parent"`
+	PropertyDefinitions  PropertyDefinitions  `read:"properties,PropertyDefinition" inherit:"properties,Parent"`
+	AttributeDefinitions AttributeDefinitions `read:"attributes,AttributeDefinition" inherit:"attributes,Parent"`
+	InterfaceDefinitions InterfaceDefinitions `read:"interfaces,InterfaceDefinition" inherit:"interfaces,Parent"`
 
-	Parent                     *RelationshipType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
-	ValidTargetCapabilityTypes CapabilityTypes   `lookup:"valid_target_types,ValidTargetCapabilityTypeNames" inherit:"valid_target_types,Parent" traverse:"ignore" json:"-" yaml:"-"`
+	// TOSCA 2.0: valid_capability_types
+	ValidCapabilityTypeNames *[]string `read:"valid_capability_types" inherit:"valid_capability_types,Parent"`
+
+	// TOSCA 2.0: New fields for target and source node type validation
+	ValidTargetNodeTypeNames *[]string `read:"valid_target_node_types" inherit:"valid_target_node_types,Parent"`
+	ValidSourceNodeTypeNames *[]string `read:"valid_source_node_types" inherit:"valid_source_node_types,Parent"`
+
+	Parent               *RelationshipType `lookup:"derived_from,ParentName" traverse:"ignore" json:"-" yaml:"-"`
+	ValidCapabilityTypes CapabilityTypes   `lookup:"valid_capability_types,ValidCapabilityTypeNames" inherit:"valid_capability_types,Parent" traverse:"ignore" json:"-" yaml:"-"`
+	ValidTargetNodeTypes NodeTypes         `lookup:"valid_target_node_types,ValidTargetNodeTypeNames" inherit:"valid_target_node_types,Parent" traverse:"ignore" json:"-" yaml:"-"`
+	ValidSourceNodeTypes NodeTypes         `lookup:"valid_source_node_types,ValidSourceNodeTypeNames" inherit:"valid_source_node_types,Parent" traverse:"ignore" json:"-" yaml:"-"`
 }
 
 func NewRelationshipType(context *parsing.Context) *RelationshipType {
@@ -58,6 +62,9 @@ func (self *RelationshipType) Inherit() {
 	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
 	self.AttributeDefinitions.Inherit(self.Parent.AttributeDefinitions)
 	self.InterfaceDefinitions.Inherit(self.Parent.InterfaceDefinitions)
+
+	// Inherit validation rules for capability types, target node types, and source node types
+	// Note: Derived types can only further restrict, not expand these lists
 }
 
 //

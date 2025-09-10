@@ -1,4 +1,4 @@
-package tosca_v2_0
+package tosca_v1_3
 
 import (
 	"errors"
@@ -30,6 +30,12 @@ type ScalarUnit struct {
 
 	Scalar float64 `json:"scalar" yaml:"scalar"`
 	Unit   string  `json:"unit" yaml:"unit"`
+
+	// Add fields for JavaScript consumption
+	DataTypeName  string             `json:"dataTypeName,omitempty"`
+	BaseType      string             `json:"baseType,omitempty"`
+	Units         map[string]float64 `json:"units,omitempty"`
+	CanonicalUnit string             `json:"canonicalUnit,omitempty"`
 
 	countable             bool // if true, CanonicalNumber is uint64
 	canonicalUnitSingular string
@@ -67,6 +73,19 @@ func ReadScalarUnit(context *parsing.Context, name string, canonicalUnit string,
 	// Unit
 	var measure float64
 	self.Unit, measure = measures.Get(matches[2], caseSensitive)
+
+	// Populate fields for JavaScript consumption
+	self.DataTypeName = name
+	if countable {
+		self.BaseType = "integer"
+	} else {
+		self.BaseType = "float"
+	}
+	self.Units = make(map[string]float64)
+	for unit, multiplier := range measures {
+		self.Units[unit] = multiplier
+	}
+	self.CanonicalUnit = canonicalUnit
 
 	// Canonical
 	if countable {

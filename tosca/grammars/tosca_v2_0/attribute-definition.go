@@ -20,14 +20,14 @@ type AttributeDefinition struct {
 	*Entity `name:"attribute definition"`
 	Name    string
 
-	Metadata          Metadata          `read:"metadata,Metadata"` // introduced in TOSCA 1.2, but only for properties
-	Description       *string           `read:"description"`
-	DataTypeName      *string           `read:"type"` // mandatory only if cannot be inherited or discovered
-	ConstraintClauses ConstraintClauses `read:"constraints,[]ConstraintClause" traverse:"ignore"`
-	KeySchema         *Schema           `read:"key_schema,Schema"`   // introduced in TOSCA 1.3
-	EntrySchema       *Schema           `read:"entry_schema,Schema"` // mandatory if list or map
-	Default           *Value            `read:"default,Value"`
-	Status            *string           `read:"status"`
+	Metadata         Metadata          `read:"metadata,Metadata"` // introduced in TOSCA 1.2, but only for properties
+	Description      *string           `read:"description"`
+	DataTypeName     *string           `read:"type"` // mandatory only if cannot be inherited or discovered
+	ValidationClause *ValidationClause `read:"validation,ValidationClause" traverse:"ignore"`
+	KeySchema        *Schema           `read:"key_schema,Schema"`   // introduced in TOSCA 1.3
+	EntrySchema      *Schema           `read:"entry_schema,Schema"` // mandatory if list or map
+	Default          *Value            `read:"default,Value"`
+	Status           *string           `read:"status"`
 
 	DataType *DataType `lookup:"type,DataTypeName" traverse:"ignore" json:"-" yaml:"-"`
 
@@ -82,8 +82,8 @@ func (self *AttributeDefinition) GetTypeMetadata() Metadata {
 }
 
 // ([DataDefinition] interface)
-func (self *AttributeDefinition) GetConstraintClauses() ConstraintClauses {
-	return self.ConstraintClauses
+func (self *AttributeDefinition) GetValidationClause() *ValidationClause {
+	return self.ValidationClause
 }
 
 // ([DataDefinition] interface)
@@ -125,6 +125,9 @@ func (self *AttributeDefinition) Inherit(parentDefinition *AttributeDefinition) 
 	}
 	if (self.DataType == nil) && (parentDefinition.DataType != nil) {
 		self.DataType = parentDefinition.DataType
+	}
+	if (self.ValidationClause == nil) && (parentDefinition.ValidationClause != nil) {
+		self.ValidationClause = parentDefinition.ValidationClause
 	}
 }
 

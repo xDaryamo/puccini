@@ -32,7 +32,7 @@ func init() {
 	Grammar.RegisterReader("CapabilityType", tosca_v2_0.ReadCapabilityType)
 	Grammar.RegisterReader("ConditionClause", tosca_v2_0.ReadConditionClause)
 	Grammar.RegisterReader("ConditionClauseAnd", tosca_v2_0.ReadConditionClauseAnd)
-	Grammar.RegisterReader("ConstraintClause", tosca_v2_0.ReadConstraintClause)
+	Grammar.RegisterReader("ConstraintClause", tosca_v1_3.ReadConstraintClause)
 	Grammar.RegisterReader("DataType", tosca_v1_2.ReadDataType) // 1.2
 	Grammar.RegisterReader("EventFilter", tosca_v2_0.ReadEventFilter)
 	Grammar.RegisterReader("Group", tosca_v1_2.ReadGroup)                             // 1.2
@@ -64,9 +64,9 @@ func init() {
 	Grammar.RegisterReader("RequirementDefinition", tosca_v1_3.ReadRequirementDefinition) // 1.3
 	Grammar.RegisterReader("RequirementMapping", tosca_v2_0.ReadRequirementMapping)
 	Grammar.RegisterReader("ServiceTemplate", tosca_v2_0.ReadServiceTemplate)
-	Grammar.RegisterReader("scalar-unit.frequency", tosca_v2_0.ReadScalarUnitFrequency)
-	Grammar.RegisterReader("scalar-unit.size", tosca_v2_0.ReadScalarUnitSize)
-	Grammar.RegisterReader("scalar-unit.time", tosca_v2_0.ReadScalarUnitTime)
+	Grammar.RegisterReader("scalar-unit.frequency", tosca_v1_3.ReadScalarUnitFrequency)
+	Grammar.RegisterReader("scalar-unit.size", tosca_v1_3.ReadScalarUnitSize)
+	Grammar.RegisterReader("scalar-unit.time", tosca_v1_3.ReadScalarUnitTime)
 	Grammar.RegisterReader("Schema", tosca_v2_0.ReadSchema)
 	Grammar.RegisterReader("SubstitutionMappings", ReadSubstitutionMappings) // override
 	Grammar.RegisterReader("timestamp", tosca_v2_0.ReadTimestamp)
@@ -81,7 +81,7 @@ func init() {
 	Grammar.RegisterReader("WorkflowStepDefinition", tosca_v2_0.ReadWorkflowStepDefinition)                 // introduced in TOSCA 1.1
 
 	DefaultScriptletNamespace.RegisterScriptlets(tosca_v2_0.FunctionScriptlets, nil, parsing.MetadataFunctionPrefix+"join")
-	DefaultScriptletNamespace.RegisterScriptlets(tosca_v2_0.ConstraintClauseScriptlets, tosca_v2_0.ConstraintClauseNativeArgumentIndexes, parsing.MetadataContraintPrefix+"schema")
+	DefaultScriptletNamespace.RegisterScriptlets(tosca_v1_3.ConstraintClauseScriptlets, tosca_v1_3.ConstraintClauseNativeArgumentIndexes, parsing.MetadataContraintPrefix+"schema")
 
 	Grammar.InvalidNamespaceCharacters = ":"
 }

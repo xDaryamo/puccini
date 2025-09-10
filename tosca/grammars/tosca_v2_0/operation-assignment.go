@@ -9,7 +9,7 @@ import (
 //
 // OperationAssignment
 //
-// [TOSCA-v2.0] @ ?
+// [TOSCA-v2.0] @ 11.5
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.17
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.15
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.13
@@ -23,7 +23,7 @@ type OperationAssignment struct {
 	Description    *string                  `read:"description"`
 	Implementation *InterfaceImplementation `read:"implementation,InterfaceImplementation"`
 	Inputs         Values                   `read:"inputs,Value"`
-	Outputs        OutputMappings           `read:"outputs,OutputMapping"` // introduced in TOSCA 1.3
+	Outputs        OutputMappings           `read:"outputs,OutputMapping"` // parameter mapping assignments
 }
 
 func NewOperationAssignment(context *parsing.Context) *OperationAssignment {
@@ -141,7 +141,11 @@ func (self OperationAssignments) render(definitions OperationDefinitions, contex
 		}
 
 		assignment.Inputs.RenderInputs(definition.InputDefinitions, assignment.Context.FieldChild("inputs", nil))
-		assignment.Outputs.Inherit(definition.Outputs)
+
+		// Convert output parameter definitions to output mappings for assignment
+		// This handles the case where operation definitions have parameter definitions
+		// but assignments need output mappings (attribute mappings)
+		self.convertOutputDefinitionsToMappings(assignment, definition.OutputDefinitions)
 	}
 
 	for key, assignment := range self {
@@ -150,6 +154,23 @@ func (self OperationAssignments) render(definitions OperationDefinitions, contex
 			assignment.Context.ReportUndeclared("operation")
 			delete(self, key)
 		}
+	}
+}
+
+// Helper method to convert output parameter definitions to output mappings
+func (self OperationAssignments) convertOutputDefinitionsToMappings(assignment *OperationAssignment, outputDefinitions ParameterDefinitions) {
+	for name, paramDef := range outputDefinitions {
+		// If the parameter definition has a mapping, create an output mapping
+		if paramDef.IsIncoming() && paramDef.NodeTemplate != nil && paramDef.AttributeName != nil {
+			if _, exists := assignment.Outputs[name]; !exists {
+				outputMapping := NewOutputMapping(assignment.Context.FieldChild("outputs", nil).FieldChild(name, nil))
+				outputMapping.EntityName = paramDef.NodeTemplate
+				outputMapping.AttributePath = []string{*paramDef.AttributeName}
+				assignment.Outputs[name] = outputMapping
+			}
+		}
+		// Note: Outgoing parameters (with values) are not converted to output mappings
+		// as they represent fixed output values, not attribute mappings
 	}
 }
 

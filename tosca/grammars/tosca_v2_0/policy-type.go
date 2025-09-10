@@ -56,16 +56,27 @@ func (self *PolicyType) Inherit() {
 
 	self.PropertyDefinitions.Inherit(self.Parent.PropertyDefinitions)
 
-	// TODO: inherit TriggerDefinitions?
+	// TOSCA spec: "existing trigger definitions may not be changed; new trigger definitions may be added"
+	if len(self.TriggerDefinitions) == 0 {
+		self.TriggerDefinitions = self.Parent.TriggerDefinitions
+	} else {
+		// Merge parent triggers with new triggers without overriding existing ones
+		for name, parentTrigger := range self.Parent.TriggerDefinitions {
+			if _, exists := self.TriggerDefinitions[name]; !exists {
+				self.TriggerDefinitions[name] = parentTrigger
+			}
+		}
+	}
 
-	// (Note we are checking for TargetNodeTypeOrGroupTypeNames and not TargetNodeTypes/TargetGroupTypes, because the latter will never be nil)
+	// Note: checking TargetNodeTypeOrGroupTypeNames instead of TargetNodeTypes/TargetGroupTypes
+	// because the latter will never be nil
 	if self.TargetNodeTypeOrGroupTypeNames == nil {
 		self.TargetNodeTypeOrGroupTypeNames = self.Parent.TargetNodeTypeOrGroupTypeNames
 		self.TargetNodeTypes = self.Parent.TargetNodeTypes
 		self.TargetGroupTypes = self.Parent.TargetGroupTypes
 	}
-	// We cannot handle the "else" case here, because the node type hierarchy may not have been created yet,
-	// So we will do that check in the rendering phase, below
+	// Cannot handle the "else" case here because the node type hierarchy may not have been created yet
+	// This check is performed in the rendering phase below
 }
 
 // ([parsing.Renderable] interface)
@@ -77,7 +88,8 @@ func (self *PolicyType) Render() {
 func (self *PolicyType) render() {
 	logRender.Debugf("policy type: %s", self.Name)
 
-	// (Note we are checking for TargetNodeTypeOrGroupTypeNames and not TargetNodeTypes/TargetGroupTypes, because the latter will never be nil)
+	// Note: checking TargetNodeTypeOrGroupTypeNames instead of TargetNodeTypes/TargetGroupTypes
+	// because the latter will never be nil
 	if self.Parent == nil {
 		return
 	}

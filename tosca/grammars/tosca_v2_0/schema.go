@@ -9,16 +9,18 @@ import (
 //
 // Schema
 //
+// [TOSCA-v2.0] @ 9.11
+//
 
 type Schema struct {
 	*Entity `name:"schema"`
 
-	Metadata          Metadata          `read:"metadata,Metadata"` // introduced in TOSCA 1.3
-	Description       *string           `read:"description"`
-	DataTypeName      *string           `read:"type" mandatory:""`
-	ConstraintClauses ConstraintClauses `read:"constraints,[]ConstraintClause" traverse:"ignore"`
-	KeySchema         *Schema           `read:"key_schema,Schema"`   // introduced in TOSCA 1.3
-	EntrySchema       *Schema           `read:"entry_schema,Schema"` // mandatory if list or map
+	Metadata         Metadata          `read:"metadata,Metadata"` // introduced in TOSCA 1.3
+	Description      *string           `read:"description"`
+	DataTypeName     *string           `read:"type" mandatory:""`
+	ValidationClause *ValidationClause `read:"validation,ValidationClause" traverse:"ignore"`
+	KeySchema        *Schema           `read:"key_schema,Schema"`   // introduced in TOSCA 1.3
+	EntrySchema      *Schema           `read:"entry_schema,Schema"` // mandatory if list or map
 
 	DataType *DataType `lookup:"type,DataTypeName" traverse:"ignore" json:"-" yaml:"-"`
 }
@@ -62,8 +64,8 @@ func (self *Schema) GetTypeMetadata() Metadata {
 }
 
 // ([DataDefinition] interface)
-func (self *Schema) GetConstraintClauses() ConstraintClauses {
-	return self.ConstraintClauses
+func (self *Schema) GetValidationClause() *ValidationClause {
+	return self.ValidationClause
 }
 
 // ([DataDefinition] interface)
@@ -134,14 +136,13 @@ func (self *Schema) LookupDataType() bool {
 	return false
 }
 
-func (self *Schema) GetConstraints() ConstraintClauses {
-	if self.DataType != nil {
-		constraints := self.DataType.ConstraintClauses.Append(self.ConstraintClauses)
-		for _, constraint := range constraints {
-			constraint.DataType = self.DataType
+func (self *Schema) GetValidation() *ValidationClause {
+	if self.DataType != nil && self.DataType.ValidationClause != nil {
+		// Se non abbiamo una ValidationClause locale, ereditiamo quella del DataType
+		if self.ValidationClause == nil {
+			return self.DataType.ValidationClause
 		}
-		return constraints
-	} else {
-		return self.ConstraintClauses.Append(nil)
+		// Altrimenti usiamo la nostra
 	}
+	return self.ValidationClause
 }

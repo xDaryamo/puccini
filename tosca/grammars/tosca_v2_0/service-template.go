@@ -83,6 +83,10 @@ func (self *ServiceTemplate) SetInputs(inputs map[string]ard.Value) {
 			childContext.ReportUndeclared("input")
 		}
 	}
+
+	// Apply parameter mappings IMMEDIATELY after setting inputs
+	// This must happen before rendering to satisfy property requirements
+	self.InputDefinitions.ApplyMappings(self.NodeTemplates, inputs)
 }
 
 // ([parsing.Renderable] interface)

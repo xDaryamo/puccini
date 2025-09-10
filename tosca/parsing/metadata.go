@@ -17,10 +17,11 @@ const (
 	MetadataScriptletPrefix       = "puccini.scriptlet:"
 	MetadataScriptletImportPrefix = "puccini.scriptlet.import:"
 
-	MetadataCanonicalName   = "tosca.canonical-name"
-	MetadataNormative       = "tosca.normative"
-	MetadataFunctionPrefix  = "tosca.function."
-	MetadataContraintPrefix = "tosca.constraint."
+	MetadataCanonicalName    = "tosca.canonical-name"
+	MetadataNormative        = "tosca.normative"
+	MetadataFunctionPrefix   = "tosca.function."
+	MetadataContraintPrefix  = "tosca.constraint."
+	MetadataValidationPrefix = "tosca.validation."
 )
 
 type HasMetadata interface {
