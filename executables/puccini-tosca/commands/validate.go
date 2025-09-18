@@ -9,6 +9,10 @@ import (
 	"github.com/tliron/kutil/util"
 )
 
+var (
+	validateCoerce bool
+)
+
 func init() {
 	rootCommand.AddCommand(validateCommand)
 	validateCommand.Flags().StringSliceVarP(&importPaths, "path", "b", nil, "specify an import path or base URL")
@@ -20,7 +24,7 @@ func init() {
 	validateCommand.Flags().StringToStringVarP(&urlMappings, "map-url", "u", nil, "map a URL (format is from=to)")
 
 	validateCommand.Flags().BoolVarP(&resolve, "resolve", "r", true, "resolves the topology (attempts to satisfy all requirements with capabilities)")
-	validateCommand.Flags().BoolVarP(&coerce, "coerce", "c", false, "coerces all values (calls functions and applies constraints)")
+	validateCommand.Flags().BoolVarP(&validateCoerce, "coerce", "c", true, "coerces all values (calls functions and applies constraints)")
 }
 
 var validateCommand = &cobra.Command{
@@ -35,6 +39,7 @@ var validateCommand = &cobra.Command{
 		}
 
 		dumpPhases = nil
+		coerce = validateCoerce
 
 		context, cancel := contextpkg.WithTimeout(contextpkg.Background(), time.Duration(timeout*float64(time.Second)))
 		util.OnExit(cancel)

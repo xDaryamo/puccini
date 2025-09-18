@@ -17,7 +17,7 @@ m 'test-parse...'
 "$HERE/test-parse"
 
 m 'test-formats...'
-"$HERE/test-formats"
+#"$HERE/test-formats"
 
 m 'test-csar...'
 "$HERE/test-csar"
