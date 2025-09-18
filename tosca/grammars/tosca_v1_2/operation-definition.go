@@ -15,7 +15,9 @@ import (
 
 // ([parsing.Reader] signature)
 func ReadOperationDefinition(context *parsing.Context) parsing.EntityPtr {
-	context.SetReadTag("Outputs", "")
+	// TOSCA 1.2 doesn't support the "OutputDefinitions" field that exists in TOSCA 2.0
+	// This disables reading of the OutputDefinitions field
+	context.SetReadTag("OutputDefinitions", "")
 
 	return tosca_v2_0.ReadOperationDefinition(context)
 }

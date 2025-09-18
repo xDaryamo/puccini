@@ -22,15 +22,15 @@ func init() {
 	Grammar.RegisterReader("Artifact", tosca_v1_2.ReadArtifact)                     // 1.2
 	Grammar.RegisterReader("ArtifactDefinition", tosca_v1_2.ReadArtifactDefinition) // 1.2
 	Grammar.RegisterReader("ArtifactType", tosca_v2_0.ReadArtifactType)
-	Grammar.RegisterReader("AttributeDefinition", tosca_v1_2.ReadAttributeDefinition)   // 1.2
+	Grammar.RegisterReader("AttributeDefinition", ReadAttributeDefinition) // override
 	Grammar.RegisterReader("AttributeValue", tosca_v1_3.ReadAttributeValue)             // 1.3
 	Grammar.RegisterReader("CapabilityAssignment", tosca_v1_2.ReadCapabilityAssignment) // 1.2
-	Grammar.RegisterReader("CapabilityDefinition", tosca_v2_0.ReadCapabilityDefinition)
+	Grammar.RegisterReader("CapabilityDefinition", ReadCapabilityDefinition) // override
 	Grammar.RegisterReader("CapabilityFilter", tosca_v2_0.ReadCapabilityFilter)
 	Grammar.RegisterReader("CapabilityMapping", tosca_v2_0.ReadCapabilityMapping)
 	Grammar.RegisterReader("CapabilityType", tosca_v2_0.ReadCapabilityType)
-	Grammar.RegisterReader("ConstraintClause", tosca_v2_0.ReadConstraintClause)
-	Grammar.RegisterReader("DataType", tosca_v1_2.ReadDataType)                       // 1.2
+	Grammar.RegisterReader("ConstraintClause", tosca_v1_3.ReadConstraintClause)
+	Grammar.RegisterReader("DataType", ReadDataType) // override
 	Grammar.RegisterReader("Group", ReadGroup)                                        // override
 	Grammar.RegisterReader("GroupType", tosca_v1_2.ReadGroupType)                     // 1.2
 	Grammar.RegisterReader("Import", tosca_v1_3.ReadImport)                           /// 1.3
@@ -47,26 +47,27 @@ func init() {
 	Grammar.RegisterReader("ParameterDefinition", tosca_v2_0.ReadParameterDefinition)
 	Grammar.RegisterReader("Policy", ReadPolicy)                                    // override
 	Grammar.RegisterReader("PolicyType", ReadPolicyType)                            // override
-	Grammar.RegisterReader("PropertyDefinition", tosca_v1_2.ReadPropertyDefinition) // 1.2
+	Grammar.RegisterReader("PropertyDefinition", ReadPropertyDefinition) // override
 	Grammar.RegisterReader("PropertyFilter", tosca_v2_0.ReadPropertyFilter)
 	Grammar.RegisterReader("range", tosca_v2_0.ReadRange)
 	Grammar.RegisterReader("RangeEntity", tosca_v2_0.ReadRangeEntity)
 	Grammar.RegisterReader("RelationshipAssignment", tosca_v2_0.ReadRelationshipAssignment)
 	Grammar.RegisterReader("RelationshipDefinition", tosca_v2_0.ReadRelationshipDefinition)
 	Grammar.RegisterReader("RelationshipTemplate", ReadRelationshipTemplate) // override
-	Grammar.RegisterReader("RelationshipType", tosca_v2_0.ReadRelationshipType)
+	Grammar.RegisterReader("RelationshipType", ReadRelationshipType) // override
 	Grammar.RegisterReader("Repository", tosca_v2_0.ReadRepository)
 	Grammar.RegisterReader("RequirementAssignment", tosca_v1_2.ReadRequirementAssignment) // 1.2
 	Grammar.RegisterReader("RequirementDefinition", tosca_v1_3.ReadRequirementDefinition) // 1.3
 	Grammar.RegisterReader("RequirementMapping", tosca_v2_0.ReadRequirementMapping)
 	Grammar.RegisterReader("ServiceTemplate", ReadServiceTemplate) // override
-	Grammar.RegisterReader("scalar-unit.frequency", tosca_v2_0.ReadScalarUnitFrequency)
-	Grammar.RegisterReader("scalar-unit.size", tosca_v2_0.ReadScalarUnitSize)
-	Grammar.RegisterReader("scalar-unit.time", tosca_v2_0.ReadScalarUnitTime)
-	Grammar.RegisterReader("Schema", tosca_v2_0.ReadSchema)
+	Grammar.RegisterReader("scalar-unit.frequency", tosca_v1_3.ReadScalarUnitFrequency)
+	Grammar.RegisterReader("scalar-unit.size", tosca_v1_3.ReadScalarUnitSize)
+	Grammar.RegisterReader("scalar-unit.time", tosca_v1_3.ReadScalarUnitTime)
+	Grammar.RegisterReader("Schema", tosca_v1_2.ReadSchema) // 1.2
 	Grammar.RegisterReader("SubstitutionMappings", tosca_v1_1.ReadSubstitutionMappings) // 1.1
 	Grammar.RegisterReader("timestamp", tosca_v2_0.ReadTimestamp)
 	Grammar.RegisterReader("Value", tosca_v2_0.ReadValue)
+	Grammar.RegisterReader("ValidationClause", tosca_v2_0.ReadValidationClause)
 	Grammar.RegisterReader("version", tosca_v2_0.ReadVersion)
 
 	Grammar.InvalidNamespaceCharacters = ":"

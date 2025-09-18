@@ -23,17 +23,17 @@ func init() {
 	Grammar.RegisterReader("Artifact", tosca_v1_2.ReadArtifact)                     // 1.2
 	Grammar.RegisterReader("ArtifactDefinition", tosca_v1_2.ReadArtifactDefinition) // 1.2
 	Grammar.RegisterReader("ArtifactType", tosca_v2_0.ReadArtifactType)
-	Grammar.RegisterReader("AttributeDefinition", tosca_v1_2.ReadAttributeDefinition)   // 1.2
+	Grammar.RegisterReader("AttributeDefinition", ReadAttributeDefinition) // override
 	Grammar.RegisterReader("AttributeValue", tosca_v1_3.ReadAttributeValue)             // 1.3
 	Grammar.RegisterReader("CapabilityAssignment", tosca_v1_2.ReadCapabilityAssignment) // 1.2
-	Grammar.RegisterReader("CapabilityDefinition", tosca_v2_0.ReadCapabilityDefinition)
+	Grammar.RegisterReader("CapabilityDefinition", ReadCapabilityDefinition) // override
 	Grammar.RegisterReader("CapabilityFilter", tosca_v2_0.ReadCapabilityFilter)
 	Grammar.RegisterReader("CapabilityMapping", tosca_v2_0.ReadCapabilityMapping)
 	Grammar.RegisterReader("CapabilityType", tosca_v2_0.ReadCapabilityType)
 	Grammar.RegisterReader("ConditionClause", tosca_v2_0.ReadConditionClause)
 	Grammar.RegisterReader("ConditionClauseAnd", tosca_v2_0.ReadConditionClauseAnd)
-	Grammar.RegisterReader("ConstraintClause", tosca_v2_0.ReadConstraintClause)
-	Grammar.RegisterReader("DataType", tosca_v1_2.ReadDataType) // 1.2
+	Grammar.RegisterReader("ConstraintClause", tosca_v1_3.ReadConstraintClause)
+	Grammar.RegisterReader("DataType", ReadDataType) // override
 	Grammar.RegisterReader("EventFilter", tosca_v2_0.ReadEventFilter)
 	Grammar.RegisterReader("Group", tosca_v1_2.ReadGroup)                             // 1.2
 	Grammar.RegisterReader("GroupType", tosca_v1_2.ReadGroupType)                     // 1.2
@@ -51,27 +51,28 @@ func init() {
 	Grammar.RegisterReader("ParameterDefinition", tosca_v2_0.ReadParameterDefinition)
 	Grammar.RegisterReader("Policy", tosca_v2_0.ReadPolicy)
 	Grammar.RegisterReader("PolicyType", tosca_v2_0.ReadPolicyType)
-	Grammar.RegisterReader("PropertyDefinition", tosca_v1_2.ReadPropertyDefinition) // 1.2
+	Grammar.RegisterReader("PropertyDefinition", ReadPropertyDefinition) // override
 	Grammar.RegisterReader("PropertyFilter", tosca_v2_0.ReadPropertyFilter)
 	Grammar.RegisterReader("range", tosca_v2_0.ReadRange)
 	Grammar.RegisterReader("RangeEntity", tosca_v2_0.ReadRangeEntity)
 	Grammar.RegisterReader("RelationshipAssignment", tosca_v2_0.ReadRelationshipAssignment)
 	Grammar.RegisterReader("RelationshipDefinition", tosca_v2_0.ReadRelationshipDefinition)
 	Grammar.RegisterReader("RelationshipTemplate", tosca_v2_0.ReadRelationshipTemplate)
-	Grammar.RegisterReader("RelationshipType", tosca_v2_0.ReadRelationshipType)
+	Grammar.RegisterReader("RelationshipType", ReadRelationshipType) // override
 	Grammar.RegisterReader("Repository", tosca_v2_0.ReadRepository)
 	Grammar.RegisterReader("RequirementAssignment", tosca_v1_2.ReadRequirementAssignment) // 1.2
 	Grammar.RegisterReader("RequirementDefinition", tosca_v1_3.ReadRequirementDefinition) // 1.3
 	Grammar.RegisterReader("RequirementMapping", tosca_v2_0.ReadRequirementMapping)
 	Grammar.RegisterReader("ServiceTemplate", tosca_v2_0.ReadServiceTemplate)
-	Grammar.RegisterReader("scalar-unit.frequency", tosca_v2_0.ReadScalarUnitFrequency)
-	Grammar.RegisterReader("scalar-unit.size", tosca_v2_0.ReadScalarUnitSize)
-	Grammar.RegisterReader("scalar-unit.time", tosca_v2_0.ReadScalarUnitTime)
-	Grammar.RegisterReader("Schema", tosca_v2_0.ReadSchema)
+	Grammar.RegisterReader("scalar-unit.frequency", tosca_v1_3.ReadScalarUnitFrequency)
+	Grammar.RegisterReader("scalar-unit.size", tosca_v1_3.ReadScalarUnitSize)
+	Grammar.RegisterReader("scalar-unit.time", tosca_v1_3.ReadScalarUnitTime)
+	Grammar.RegisterReader("Schema", tosca_v1_2.ReadSchema) // 1.2
 	Grammar.RegisterReader("SubstitutionMappings", ReadSubstitutionMappings) // override
 	Grammar.RegisterReader("timestamp", tosca_v2_0.ReadTimestamp)
 	Grammar.RegisterReader("TriggerDefinition", tosca_v1_2.ReadTriggerDefinition) // 1.2
 	Grammar.RegisterReader("TriggerDefinitionCondition", tosca_v2_0.ReadTriggerDefinitionCondition)
+	Grammar.RegisterReader("ValidationClause", tosca_v2_0.ReadValidationClause)
 	Grammar.RegisterReader("Value", tosca_v2_0.ReadValue)
 	Grammar.RegisterReader("version", tosca_v2_0.ReadVersion)
 	Grammar.RegisterReader("WorkflowActivityCallOperation", tosca_v1_2.ReadWorkflowActivityCallOperation)   // 1.2
@@ -81,7 +82,7 @@ func init() {
 	Grammar.RegisterReader("WorkflowStepDefinition", tosca_v2_0.ReadWorkflowStepDefinition)                 // introduced in TOSCA 1.1
 
 	DefaultScriptletNamespace.RegisterScriptlets(tosca_v2_0.FunctionScriptlets, nil, parsing.MetadataFunctionPrefix+"join")
-	DefaultScriptletNamespace.RegisterScriptlets(tosca_v2_0.ConstraintClauseScriptlets, tosca_v2_0.ConstraintClauseNativeArgumentIndexes, parsing.MetadataContraintPrefix+"schema")
+	DefaultScriptletNamespace.RegisterScriptlets(tosca_v1_3.ConstraintClauseScriptlets, tosca_v1_3.ConstraintClauseNativeArgumentIndexes, parsing.MetadataContraintPrefix+"schema")
 
 	Grammar.InvalidNamespaceCharacters = ":"
 }

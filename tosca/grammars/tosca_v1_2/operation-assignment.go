@@ -15,7 +15,9 @@ import (
 
 // ([parsing.Reader] signature)
 func ReadOperationAssignment(context *parsing.Context) parsing.EntityPtr {
-	context.SetReadTag("Outputs", "")
+	// TOSCA 1.2 supports the "Outputs" field in assignments (this is correct)
+	// No need to disable it here as OperationAssignment in TOSCA 2.0 has "Outputs" field
+	// context.SetReadTag("Outputs", "")
 
 	return tosca_v2_0.ReadOperationAssignment(context)
 }

@@ -1,6 +1,7 @@
 package tosca_v1_2
 
 import (
+	"github.com/tliron/go-ard"
 	"github.com/tliron/puccini/tosca/grammars/tosca_v2_0"
 	"github.com/tliron/puccini/tosca/parsing"
 )
@@ -9,14 +10,47 @@ import (
 // DataType
 //
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.7.6
-// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.6.6
-// [TOSCA-Simple-Profile-YAML-v1.0] @ 3.6.5
 //
 
 // ([parsing.Reader] signature)
-func ReadDataType(context *parsing.Context) parsing.EntityPtr {
+func ReadDataTypeWithConstraints(context *parsing.Context) parsing.EntityPtr {
+	// Convert "constraints" list (1.2) to "validation" (2.0) before calling v2.0 reader
+	if context.Is(ard.TypeMap) {
+		if m, ok := context.Data.(ard.Map); ok {
+			if c, ok := m["constraints"].(ard.List); ok && len(c) > 0 {
+				// Convert constraints array to validation clause
+				processedConstraints := make(ard.List, len(c))
+				for i, constraint := range c {
+					if constraintMap, ok := constraint.(ard.Map); ok {
+						// Make a copy to avoid modifying the original
+						newConstraintMap := make(ard.Map)
+						for k, v := range constraintMap {
+							newConstraintMap[k] = v
+						}
+						processedConstraints[i] = newConstraintMap
+					} else {
+						processedConstraints[i] = constraint
+					}
+				}
+
+				if len(processedConstraints) == 1 {
+					m["validation"] = processedConstraints[0]
+				} else {
+					m["validation"] = ard.Map{"$and": processedConstraints}
+				}
+				delete(m, "constraints")
+			}
+		}
+	}
+
+	// TOSCA 1.2 doesn't support the "KeySchema" field (introduced in TOSCA 1.3)
 	context.SetReadTag("KeySchema", "")
+	// TOSCA 1.2 doesn't support the "EntrySchema" field (introduced in TOSCA 1.3)
 	context.SetReadTag("EntrySchema", "")
+	// TOSCA 1.2 doesn't support the "Units" field (introduced in TOSCA 2.0)
+	context.SetReadTag("Units", "")
+	// TOSCA 1.2 doesn't support the "Prefixes" field (introduced in TOSCA 2.0)
+	context.SetReadTag("Prefixes", "")
 
 	return tosca_v2_0.ReadDataType(context)
 }

@@ -1,4 +1,4 @@
-package tosca_v1_2
+package tosca_v1_1
 
 import (
 	"github.com/tliron/go-ard"
@@ -7,14 +7,14 @@ import (
 )
 
 //
-// PropertyDefinition
+// AttributeDefinition
 //
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.9
+// [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.10
 //
 
 // ([parsing.Reader] signature)
-func ReadPropertyDefinitionWithConstraints(context *parsing.Context) parsing.EntityPtr {
-	// Convert "constraints" list (1.2) to "validation" (2.0) before calling v2.0 reader
+func ReadAttributeDefinition(context *parsing.Context) parsing.EntityPtr {
+	// Convert "constraints" list (1.1) to "validation" (2.0) before calling v2.0 reader
 	if context.Is(ard.TypeMap) {
 		if m, ok := context.Data.(ard.Map); ok {
 			if c, ok := m["constraints"].(ard.List); ok && len(c) > 0 {
@@ -43,8 +43,8 @@ func ReadPropertyDefinitionWithConstraints(context *parsing.Context) parsing.Ent
 		}
 	}
 
-	// TOSCA 1.2 doesn't support the "KeySchema" field (introduced in TOSCA 1.3)
+	// TOSCA 1.1 doesn't support the "KeySchema" field (introduced in TOSCA 1.3)
 	context.SetReadTag("KeySchema", "")
 
-	return tosca_v2_0.ReadPropertyDefinition(context)
+	return tosca_v2_0.ReadAttributeDefinition(context)
 }
