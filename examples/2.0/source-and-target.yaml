@@ -1,5 +1,9 @@
 tosca_definitions_version: tosca_2_0
 
+imports:
+  - url: https://raw.githubusercontent.com/xDaryamo/tosca-community-contributions/refs/heads/master/profiles/org/oasis-open/simple/2.0/profile.yaml
+    namespace: tosca
+
 metadata:
 
   template_name: Source and Target Example
@@ -28,7 +32,7 @@ service_template:
             properties:
               # Within relationships you can use "SOURCE" and "TARGET" keywords
               # For both the "get_property" and "get_attribute" functions
-              location: { concat: [ /mnt/, { get_property: [ TARGET, volume_id ] } ] }
+              location: { $concat: [ /mnt/, { $get_property: [ TARGET, volume_id ] } ] }
               device: /dev/hda1
 
     app:
@@ -36,7 +40,7 @@ service_template:
       properties:
         # Another special kind of target is "HOST", which can be used in nodes and their capabilities
         # It refers to the target of any "HostedOn" relationship from the node
-        url: { get_attribute: [ HOST, public_address ] }
+        url: { $get_attribute: [ HOST, public_address ] }
       requirements:
       - host:
           relationship: tosca:HostedOn
@@ -44,6 +48,5 @@ service_template:
     storage:
       type: tosca:Storage.BlockStorage
       properties:
-        name: storage
         volume_id: bucket
-        size: 20 gib
+        size: 20 GiB

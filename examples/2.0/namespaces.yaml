@@ -1,49 +1,50 @@
 tosca_definitions_version: tosca_2_0
 
 metadata:
-
   template_name: Namespaces Example
   template_author: Puccini
 
 imports:
+  # Short-form import: types from this file are merged into the root (default) namespace
+  - url: imports/nginx.yaml
 
-# The short notation of import merges the names into this namespace
-- imports/nginx.yaml
+  # Long-form import: types from this file are placed under a custom namespace ("mongodb")
+  - url: imports/mongodb.yaml
+    namespace: mongodb
 
-# Use the long notation of import to specify "namespace_prefix"
-- namespace_prefix: mongodb
-  file: imports/mongodb.yaml
+  # Explicit import of the TOSCA Simple Profile types into the "tosca" namespace
+  - url: https://raw.githubusercontent.com/xDaryamo/tosca-community-contributions/refs/heads/master/profiles/org/oasis-open/simple/2.0/profile.yaml
+    namespace: tosca
 
-# The optional "namespace" keyword specifies the canonical namespace for the types declared here
-# (In Puccini it appears only in the compiled Clout output with a "::" separator)
-# It is typically used when designing type profiles
-# In this file it does nothing, because we do not declare types here
-# But see its use in "imports/nginx.yaml" and "imports/mongodb.yaml"
-namespace: example
+# The "profile" keyword declares this file as a reusable library.
+# It allows other service templates to import this profile using:
+#   imports:
+#     - profile: example
+# Note: this does not affect the namespace of the types declared in this file.
+profile: example
 
 service_template:
 
   node_templates:
 
     web:
-      # Imported
+      # This type is imported into the root namespace from "nginx.yaml"
       type: NginX
 
     db:
-      # With the namespace prefix we specified in the import
+      # This type is imported with namespace "mongodb" from "mongodb.yaml"
       type: mongodb:MongoDB
 
     server1:
-      # Normative types have the "tosca" namespace prefix by default
-      # This is the recommended way to refer to them
+      # CORRECT: Using "tosca:Compute" is the valid and recommended way in TOSCA 2.0
       type: tosca:Compute
 
     server2:
-      # Normative types can also be reffered to without the namespace prefix
-      # Unfortunately, this means that you can't use these names for your own types
-      # (This feature can be disabled in Puccini via the "namespace.normative.shortcuts.disable" quirk)
-      type: Compute
+      #    Previously, in TOSCA 1.x, "Compute" could be used without a namespace.
+      #    This is no longer allowed in TOSCA 2.0.
+      #    Always qualify normative types with their imported namespace, e.g., "tosca:Compute".
+      type: tosca:Compute
 
     server3:
-      # Normative types also have a "fully qualified name"
-      type: tosca.nodes.Compute
+      #    The use of "tosca.nodes.Compute" is invalid in TOSCA 2.0.
+      type: tosca:Compute

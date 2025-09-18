@@ -1,9 +1,18 @@
 tosca_definitions_version: tosca_2_0
 
-metadata:
+imports:
+  - url: https://raw.githubusercontent.com/xDaryamo/tosca-community-contributions/refs/heads/master/profiles/org/oasis-open/simple/2.0/profile.yaml
+    namespace: tosca
 
+metadata:
   template_name: Attributes Example
   template_author: Puccini
+
+data_types:
+  DayOfWeek:
+    derived_from: string
+    validation:
+      $valid_values: [ $value, [ su, mo, tu, we, th, fr, sa ] ]
 
 node_types:
 
@@ -20,14 +29,7 @@ node_types:
         entry_schema: DayOfWeek
       max-size:
         description: Max size
-        type: scalar-unit.size
-
-data_types:
-
-  DayOfWeek:
-    derived_from: string
-    constraints:
-    - valid_values: [ su, mo, tu, we, th, fr, sa ]
+        type: tosca:Size
 
 service_template:
 
@@ -38,12 +40,10 @@ service_template:
       attributes:
         # You can assign initial values to attributes
         # Though it's expected that they may change
-        max-size: 10 gib
+        max-size: 10 GiB
 
     backup2:
       type: Backup
       attributes:
         # There is also a long notation that lets you override the description
-        max-size:
-          description: Current max size
-          value: 10 gib
+        max-size: 10 GiB

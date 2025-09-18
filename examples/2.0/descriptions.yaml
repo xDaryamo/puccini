@@ -1,5 +1,9 @@
 tosca_definitions_version: tosca_2_0
 
+imports:
+  - url: https://raw.githubusercontent.com/xDaryamo/tosca-community-contributions/refs/heads/master/profiles/org/oasis-open/simple/2.0/profile.yaml
+    namespace: tosca
+
 # You can add a human-readable "description" almost anywhere in TOSCA
 # Descriptions are compiled into Clout
 
@@ -34,20 +38,14 @@ node_types:
         description: Tiers of memory
         type: map
         entry_schema:
-          type: RAMSize
+          type: tosca:Size
           # Using the long notation for "entry_schema" you can specify a description for it
           # (Which will override the type's description)
           description: Soldered RAM size
         default:
-          low: 1 gib
-          mid: 4 gib
-          hi: 16 gib
-
-data_types:
-
-  RAMSize:
-    derived_from: scalar-unit.size
-    description: RAM size
+          low: 1 GiB
+          mid: 4 GiB
+          hi: 16 GiB
 
 service_template:
 

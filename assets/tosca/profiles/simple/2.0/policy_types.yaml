@@ -1,0 +1,36 @@
+##########################################################################
+# This file contains TOSCA Simple Profile policy type
+# definitions.
+##########################################################################
+
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  template_name: policy_types.yaml
+  template_author: Oasis Open
+  template_version: "2.0"
+
+description: >
+  TOSCA Simple Profile Version policy type definitions
+
+policy_types:
+
+  Placement:
+    description: >-
+      The TOSCA Policy Type definition that is used to govern
+      placement of TOSCA nodes or groups of nodes.
+
+  Scaling:
+    description: >-
+      The TOSCA Policy Type definition that is used to govern scaling
+      of TOSCA nodes or groups of nodes.
+
+  Update:
+    description: >-
+      The TOSCA Policy Type definition that is used to govern update
+      of TOSCA nodes or groups of nodes.
+
+  Performance:
+    description: >-
+      The TOSCA Policy Type definition that is used to declare
+      performance requirements for TOSCA nodes or groups of nodes.
