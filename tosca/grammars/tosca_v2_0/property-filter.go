@@ -20,7 +20,7 @@ type PropertyFilter struct {
 	*Entity `name:"property filter"`
 	Name    string
 
-	ConstraintClauses ConstraintClauses
+	ValidationClauses ValidationClauses
 }
 
 func NewPropertyFilter(context *parsing.Context) *PropertyFilter {
@@ -35,22 +35,22 @@ func ReadPropertyFilter(context *parsing.Context) parsing.EntityPtr {
 	self := NewPropertyFilter(context)
 
 	if context.Is(ard.TypeList) {
-		context.ReadListItems(ReadConstraintClause, func(item ard.Value) {
-			self.ConstraintClauses = append(self.ConstraintClauses, item.(*ConstraintClause))
+		context.ReadListItems(ReadValidationClause, func(item ard.Value) {
+			self.ValidationClauses = append(self.ValidationClauses, item.(*ValidationClause))
 		})
 	} else {
-		self.ConstraintClauses = ConstraintClauses{ReadConstraintClause(context).(*ConstraintClause)}
+		self.ValidationClauses = ValidationClauses{ReadValidationClause(context).(*ValidationClause)}
 	}
 
 	return self
 }
 
 func (self *PropertyFilter) Normalize(normalFunctionCallMap normal.FunctionCallMap) normal.FunctionCalls {
-	if len(self.ConstraintClauses) == 0 {
+	if len(self.ValidationClauses) == 0 {
 		return nil
 	}
 
-	normalFunctionCalls := self.ConstraintClauses.Normalize(self.Context)
+	normalFunctionCalls := self.ValidationClauses.Normalize(self.Context)
 	if existing, ok := normalFunctionCallMap[self.Name]; ok {
 		normalFunctionCallMap[self.Name] = append(existing, normalFunctionCalls...)
 	} else {

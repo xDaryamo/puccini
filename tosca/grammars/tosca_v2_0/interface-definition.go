@@ -18,7 +18,9 @@ type InterfaceDefinition struct {
 	*Entity `name:"interface definition" json:"-" yaml:"-"`
 	Name    string
 
-	InterfaceTypeName         *string                 `read:"type"` // mandatory only if cannot be inherited
+	InterfaceTypeName         *string                 `read:"type"` // mandatory
+	Description               *string                 `read:"description"`
+	Metadata                  Metadata                `read:"metadata,Metadata"`
 	InputDefinitions          ParameterDefinitions    `read:"inputs,ParameterDefinition" inherit:"inputs,InterfaceType"`
 	OperationDefinitions      OperationDefinitions    `read:"operations,OperationDefinition" inherit:"operations,InterfaceType"`          // keyword since TOSCA 1.3
 	NotificationDefinitions   NotificationDefinitions `read:"notifications,NotificationDefinition" inherit:"notifications,InterfaceType"` // introduced in TOSCA 1.3
@@ -78,6 +80,24 @@ func (self *InterfaceDefinition) Inherit(parentDefinition *InterfaceDefinition) 
 		self.InterfaceType = parentDefinition.InterfaceType
 	}
 
+	// Inherit description if not set
+	if (self.Description == nil) && (parentDefinition.Description != nil) {
+		self.Description = parentDefinition.Description
+	}
+
+	// Inherit metadata
+	if (parentDefinition.Metadata != nil) && (len(parentDefinition.Metadata) > 0) {
+		if self.Metadata == nil {
+			self.Metadata = make(Metadata)
+		}
+		// Parent metadata values are inherited only if not already set in child
+		for key, value := range parentDefinition.Metadata {
+			if _, exists := self.Metadata[key]; !exists {
+				self.Metadata[key] = value
+			}
+		}
+	}
+
 	self.InputDefinitions.Inherit(parentDefinition.InputDefinitions)
 	self.OperationDefinitions.Inherit(parentDefinition.OperationDefinitions)
 	self.NotificationDefinitions.Inherit(parentDefinition.NotificationDefinitions)
@@ -97,6 +117,19 @@ func (self *InterfaceDefinition) render() {
 		if !self.typeMissingProblemReported {
 			self.Context.FieldChild("type", nil).ReportKeynameMissing()
 			self.typeMissingProblemReported = true
+		}
+	}
+
+	// Render description (no specific validation needed)
+	if self.Description != nil {
+		logRender.Debugf("interface definition %s: description = %s", self.Name, *self.Description)
+	}
+
+	// Render metadata (no specific validation needed, already processed by ReadMetadata)
+	if self.Metadata != nil && len(self.Metadata) > 0 {
+		logRender.Debugf("interface definition %s: metadata with %d entries", self.Name, len(self.Metadata))
+		for key, value := range self.Metadata {
+			logRender.Debugf("  %s: %s", key, value)
 		}
 	}
 }

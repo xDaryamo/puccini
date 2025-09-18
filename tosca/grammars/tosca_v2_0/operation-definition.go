@@ -9,7 +9,7 @@ import (
 //
 // OperationDefinition
 //
-// [TOSCA-v2.0] @ ?
+// [TOSCA-v2.0] @ 11.4
 // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.17
 // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.15
 // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.13
@@ -20,18 +20,18 @@ type OperationDefinition struct {
 	*Entity `name:"operation definition"`
 	Name    string
 
-	Description      *string                  `read:"description"`
-	Implementation   *InterfaceImplementation `read:"implementation,InterfaceImplementation"`
-	InputDefinitions ParameterDefinitions     `read:"inputs,ParameterDefinition"`
-	Outputs          OutputMappings           `read:"outputs,OutputMapping"` // introduced in TOSCA 1.3
+	Description       *string                  `read:"description"`
+	Implementation    *InterfaceImplementation `read:"implementation,InterfaceImplementation"`
+	InputDefinitions  ParameterDefinitions     `read:"inputs,ParameterDefinition"`
+	OutputDefinitions ParameterDefinitions     `read:"outputs,ParameterDefinition"` // changed from OutputMappings to ParameterDefinitions
 }
 
 func NewOperationDefinition(context *parsing.Context) *OperationDefinition {
 	return &OperationDefinition{
-		Entity:           NewEntity(context),
-		Name:             context.Name,
-		InputDefinitions: make(ParameterDefinitions),
-		Outputs:          make(OutputMappings),
+		Entity:            NewEntity(context),
+		Name:              context.Name,
+		InputDefinitions:  make(ParameterDefinitions),
+		OutputDefinitions: make(ParameterDefinitions),
 	}
 }
 
@@ -63,7 +63,7 @@ func (self *OperationDefinition) Inherit(parentDefinition *OperationDefinition) 
 	}
 
 	self.InputDefinitions.Inherit(parentDefinition.InputDefinitions)
-	self.Outputs.Inherit(parentDefinition.Outputs)
+	self.OutputDefinitions.Inherit(parentDefinition.OutputDefinitions)
 }
 
 func (self *OperationDefinition) Normalize(normalOperation *normal.Operation) {
@@ -77,6 +77,9 @@ func (self *OperationDefinition) Normalize(normalOperation *normal.Operation) {
 
 	// TODO: input definitions
 	//self.InputDefinitions.Normalize(o.Inputs)
+
+	// TODO: output definitions
+	//self.OutputDefinitions.Normalize(o.Outputs)
 }
 
 //

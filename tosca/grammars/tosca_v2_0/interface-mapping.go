@@ -8,53 +8,55 @@ import (
 //
 // InterfaceMapping
 //
-// [TOSCA-v2.0] @ ?
-// [TOSCA-Simple-Profile-YAML-v1.3] @ 3.8.12
-// [TOSCA-Simple-Profile-YAML-v1.2] @ 3.8.11
+// [TOSCA-v2.0] @ 15.6 Interface Mapping
+// Interface mapping allows an interface operation on the substituted node
+// to be mapped to workflow in the substituting service template.
+//
+// Grammar:
+// <interface_name>:
+//   <operation_name>: <workflow_name>
 //
 
 type InterfaceMapping struct {
 	*Entity `name:"interface mapping"`
 	Name    string
 
-	NodeTemplateName *string
-	InterfaceName    *string
-
-	NodeTemplate *NodeTemplate        `traverse:"ignore" json:"-" yaml:"-"`
-	Interface    *InterfaceAssignment `traverse:"ignore" json:"-" yaml:"-"`
+	// TOSCA 2.0: Maps operation names to workflow names
+	OperationMappings map[string]string `json:"operationMappings" yaml:"operationMappings"`
 }
 
 func NewInterfaceMapping(context *parsing.Context) *InterfaceMapping {
 	return &InterfaceMapping{
-		Entity: NewEntity(context),
-		Name:   context.Name,
+		Entity:            NewEntity(context),
+		Name:              context.Name,
+		OperationMappings: make(map[string]string),
 	}
 }
 
 // ([parsing.Reader] signature)
 func ReadInterfaceMapping(context *parsing.Context) parsing.EntityPtr {
 	self := NewInterfaceMapping(context)
-	if context.ValidateType(ard.TypeList) {
-		strings := context.ReadStringListFixed(2)
-		if strings != nil {
-			self.NodeTemplateName = &(*strings)[0]
-			self.InterfaceName = &(*strings)[1]
+
+	// TOSCA 2.0: Read operation mappings as a map
+	if context.ValidateType(ard.TypeMap) {
+		if operationMappings := context.ReadStringMap(); operationMappings != nil {
+			// Convert map[string]any to map[string]string
+			for operationName, workflowName := range *operationMappings {
+				if workflowNameStr, ok := workflowName.(string); ok {
+					self.OperationMappings[operationName] = workflowNameStr
+				} else {
+					context.MapChild(operationName, workflowName).ReportValueMalformed("interface mapping", "workflow name must be a string")
+				}
+			}
 		}
 	}
+
 	return self
 }
 
 // ([parsing.Mappable] interface)
 func (self *InterfaceMapping) GetKey() string {
 	return self.Name
-}
-
-func (self *InterfaceMapping) GetInterfaceDefinition() (*InterfaceDefinition, bool) {
-	if (self.Interface != nil) && (self.NodeTemplate != nil) {
-		return self.Interface.GetDefinitionForNodeTemplate(self.NodeTemplate)
-	} else {
-		return nil, false
-	}
 }
 
 // ([parsing.Renderable] interface)
@@ -66,24 +68,51 @@ func (self *InterfaceMapping) Render() {
 func (self *InterfaceMapping) render() {
 	logRender.Debug("interface mapping")
 
-	if (self.NodeTemplateName == nil) || (self.InterfaceName == nil) {
+	// Check if this is a TOSCA 1.3 interface mapping
+	if _, isTosca13 := self.OperationMappings["__TOSCA_1_3__"]; isTosca13 {
+		// Skip workflow validation for TOSCA 1.3 format
 		return
 	}
 
-	nodeTemplateName := *self.NodeTemplateName
-	if nodeTemplate, ok := self.Context.Namespace.LookupForType(nodeTemplateName, nodeTemplatePtrType); ok {
-		self.NodeTemplate = nodeTemplate.(*NodeTemplate)
-
-		self.NodeTemplate.Render()
-
-		name := *self.InterfaceName
-		var ok bool
-		if self.Interface, ok = self.NodeTemplate.Interfaces[name]; !ok {
-			self.Context.ListChild(1, name).ReportReferenceNotFound("interface", self.NodeTemplate)
+	// TOSCA 2.0: Validate that workflows exist in the service template
+	if self.OperationMappings != nil {
+		for operationName, workflowName := range self.OperationMappings {
+			if !self.validateWorkflowExists(workflowName) {
+				self.Context.MapChild(operationName, workflowName).ReportUnknown("workflow")
+			}
 		}
-	} else {
-		self.Context.ListChild(0, nodeTemplateName).ReportUnknown("node template")
 	}
+}
+
+// validateWorkflowExists checks if a workflow exists in the service template
+func (self *InterfaceMapping) validateWorkflowExists(workflowName string) bool {
+	// Find the service template context
+	serviceContext := self.findServiceTemplateContext()
+	if serviceContext == nil {
+		return false
+	}
+
+	// Check if workflows section exists
+	workflowsContext, ok := serviceContext.GetFieldChild("workflows")
+	if !ok {
+		return false
+	}
+
+	// Check if the specific workflow exists
+	_, ok = workflowsContext.GetFieldChild(workflowName)
+	return ok
+}
+
+// findServiceTemplateContext finds the parent service template context
+func (self *InterfaceMapping) findServiceTemplateContext() *parsing.Context {
+	context := self.Context
+	for context.Parent != nil && context.Name != "service_template" {
+		context = context.Parent
+	}
+	if context.Name == "service_template" {
+		return context
+	}
+	return nil
 }
 
 //
