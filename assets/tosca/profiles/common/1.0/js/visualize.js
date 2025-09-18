@@ -1,8 +1,6 @@
-
 const traversal = require('tosca.lib.traversal');
 const tosca = require('tosca.lib.utils');
 
-traversal.coerce();
 
 // From: cdnjs.com
 let jQueryVersion = '3.6.0';
@@ -37,12 +35,12 @@ if (tosca.isTosca(clout)) {
 	if (description)
 		header += '<p>' + formatDescription(description) + '</p>';
 } else {
-	header = '<h1>Clout</h1>';
+    header = '<h1>Clout</h1>';
 }
 
 for (let id in clout.vertexes) {
-	let vertex = clout.vertexes[id];
-	addVertex(id, vertex);
+    let vertex = clout.vertexes[id];
+    addVertex(id, vertex);
 }
 
 function formatDescription(description) {
@@ -101,36 +99,59 @@ function addVertex(id, vertex) {
 }
 
 function addEdge(id, e) {
-	let edge = {
-		from: id,
-		to: e.targetID,
-		arrows: {
-			to: true
-		},
-		font: {
-			align: 'middle'
-		},
-		smooth: {type: 'dynamic'},
-		length: 300,
-		data: tosca.isTosca(e) ? e.properties : e
-	};
+    if (e === undefined || e === null) {
+        return;
+    }
 
-	if (tosca.isTosca(e, 'Relationship'))
-		addRelationship(edge);
-	else if (tosca.isTosca(e, 'RequirementMapping'))
-		addRequirementMapping(edge);
-	else if (tosca.isTosca(e, 'CapabilityMapping'))
-		addCapabilityMapping(edge);
-	else if (tosca.isTosca(e, 'PropertyMapping'))
-		addPropertyMapping(edge);
-	else if (tosca.isTosca(e, 'InterfaceMapping'))
-		addInterfaceMapping(edge);
-	else if (tosca.isTosca(e, 'OnFailure'))
-		addOnFailure(edge);
-	else
-		edge.data = e;
+    // Convert 'e' (potentially a proxied object) to a plain JavaScript object
+    let plainEdgeObject;
+    try {
+        plainEdgeObject = JSON.parse(JSON.stringify(e));
+    } catch (parseError) {
+        return; // Skip this edge if parsing fails
+    }
 
-	edges.push(edge);
+    if (plainEdgeObject.targetID === undefined) {
+        return; // Skip edge if targetID is missing
+    }
+
+    let edgeData;
+    // Use plainEdgeObject for tosca.isTosca checks and accessing properties
+    if (tosca.isTosca(plainEdgeObject)) { 
+        edgeData = plainEdgeObject.properties;
+    } else {
+        edgeData = plainEdgeObject;
+    }
+
+    let edge = {
+        from: id,
+        to: plainEdgeObject.targetID, // Use targetID from the plain JavaScript object
+        arrows: {
+            to: true
+        },
+        font: {
+            align: 'middle'
+        },
+        smooth: {type: 'dynamic'},
+        length: 300,
+        data: edgeData 
+    };
+
+    // Consistently use plainEdgeObject for type checking
+    if (tosca.isTosca(plainEdgeObject, 'Relationship'))
+        addRelationship(edge);
+    else if (tosca.isTosca(plainEdgeObject, 'RequirementMapping'))
+        addRequirementMapping(edge);
+    else if (tosca.isTosca(plainEdgeObject, 'CapabilityMapping'))
+        addCapabilityMapping(edge);
+    else if (tosca.isTosca(plainEdgeObject, 'PropertyMapping'))
+        addPropertyMapping(edge);
+    else if (tosca.isTosca(plainEdgeObject, 'InterfaceMapping'))
+        addInterfaceMapping(edge);
+    else if (tosca.isTosca(plainEdgeObject, 'OnFailure'))
+        addOnFailure(edge);
+        
+    edges.push(edge);
 }
 
 function addNodeTemplate(node) {
