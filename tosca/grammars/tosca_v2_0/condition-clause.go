@@ -18,9 +18,9 @@ import (
 type ConditionClause struct {
 	*Entity `name:"condition clause"`
 
-	// Either an assertion definition (attribute with constraints)
+	// Either an assertion definition (attribute with validations)
 	AttributeName     *string
-	ConstraintClauses ConstraintClauses
+	ValidationClauses ValidationClauses
 
 	// Or one or more child condition clauses
 	Operator         *string
@@ -75,8 +75,8 @@ func ReadConditionClause(context *parsing.Context) parsing.EntityPtr {
 			default:
 				// Assertion definition
 				self.AttributeName = &name
-				context.Clone(value).ReadListItems(ReadConstraintClause, func(item ard.Value) {
-					self.ConstraintClauses = append(self.ConstraintClauses, item.(*ConstraintClause))
+				context.Clone(value).ReadListItems(ReadValidationClause, func(item ard.Value) {
+					self.ValidationClauses = append(self.ValidationClauses, item.(*ValidationClause))
 				})
 			}
 

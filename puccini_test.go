@@ -87,7 +87,7 @@ func (self *Context) compileAll() {
 	self.compile("1.3/workflows.yaml", nil)
 
 	self.compile("2.0/artifacts.yaml", nil)
-	//self.compile("2.0/attributes.yaml", nil)
+	self.compile("2.0/attributes.yaml", nil)
 
 	self.compile("javascript/artifacts.yaml", nil)
 	self.compile("javascript/constraints.yaml", nil)

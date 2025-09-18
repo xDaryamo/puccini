@@ -20,7 +20,7 @@ func init() {
 	validateCommand.Flags().StringToStringVarP(&urlMappings, "map-url", "u", nil, "map a URL (format is from=to)")
 
 	validateCommand.Flags().BoolVarP(&resolve, "resolve", "r", true, "resolves the topology (attempts to satisfy all requirements with capabilities)")
-	validateCommand.Flags().BoolVarP(&coerce, "coerce", "c", true, "coerces all values (calls functions and applies constraints)")
+	validateCommand.Flags().BoolVarP(&coerce, "coerce", "c", false, "coerces all values (calls functions and applies constraints)")
 }
 
 var validateCommand = &cobra.Command{

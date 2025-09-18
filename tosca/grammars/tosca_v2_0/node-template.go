@@ -1,6 +1,8 @@
 package tosca_v2_0
 
 import (
+	"fmt"
+	
 	"github.com/tliron/puccini/normal"
 	"github.com/tliron/puccini/tosca/parsing"
 )
@@ -31,6 +33,7 @@ type NodeTemplate struct {
 	RequirementTargetsNodeFilter *NodeFilter            `read:"node_filter,NodeFilter"`
 	Interfaces                   InterfaceAssignments   `read:"interfaces,InterfaceAssignment"`
 	Artifacts                    Artifacts              `read:"artifacts,Artifact"`
+	Count                        *int64                 `read:"count"` // introduced in TOSCA 2.0
 
 	CopyNodeTemplate *NodeTemplate `lookup:"copy,CopyNodeTemplateName" traverse:"ignore" json:"-" yaml:"-"`
 	NodeType         *NodeType     `lookup:"type,NodeTypeName" traverse:"ignore" json:"-" yaml:"-"`
@@ -104,11 +107,74 @@ func (self *NodeTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplat
 		normalNodeTemplate.Directives = *self.Directives
 	}
 
+	// Handle TOSCA 2.0 count field
+	if self.Count != nil {
+		if *self.Count < 0 {
+			// Report error for negative count values
+			self.Context.FieldChild("count", nil).ReportValueMalformed("count", "must be a non-negative integer")
+			normalNodeTemplate.Count = 1 // Use default value
+		} else {
+			normalNodeTemplate.Count = *self.Count
+		}
+	} else {
+		// Default count is 1 if not specified
+		normalNodeTemplate.Count = 1
+	}
+
 	self.Properties.Normalize(normalNodeTemplate.Properties)
 	self.Attributes.Normalize(normalNodeTemplate.Attributes)
 	self.Capabilities.Normalize(self, normalNodeTemplate)
 	self.Interfaces.NormalizeForNodeTemplate(self, normalNodeTemplate)
 	self.Artifacts.Normalize(normalNodeTemplate)
+
+	return normalNodeTemplate
+}
+
+// normalizeInstance creates a normalized node template instance with a specific name and index
+func (self *NodeTemplate) normalizeInstance(normalServiceTemplate *normal.ServiceTemplate, instanceName string, nodeIndex int64) *normal.NodeTemplate {
+	logNormalize.Debugf("node template instance: %s (index %d)", instanceName, nodeIndex)
+
+	normalNodeTemplate := normalServiceTemplate.NewNodeTemplate(instanceName)
+
+	normalNodeTemplate.Metadata = self.Metadata
+
+	if self.Description != nil {
+		normalNodeTemplate.Description = *self.Description
+	}
+
+	if types, ok := normal.GetEntityTypes(self.Context.Hierarchy, self.NodeType); ok {
+		normalNodeTemplate.Types = types
+	}
+
+	if self.Directives != nil {
+		normalNodeTemplate.Directives = *self.Directives
+	}
+
+	// Store count and node index information
+	if self.Count != nil {
+		normalNodeTemplate.Count = *self.Count
+	} else {
+		normalNodeTemplate.Count = 1
+	}
+	normalNodeTemplate.NodeIndex = nodeIndex
+
+	self.Properties.Normalize(normalNodeTemplate.Properties)
+	self.Attributes.Normalize(normalNodeTemplate.Attributes)
+	self.Capabilities.Normalize(self, normalNodeTemplate)
+	self.Interfaces.NormalizeForNodeTemplate(self, normalNodeTemplate)
+	self.Artifacts.Normalize(normalNodeTemplate)
+
+	// Normalize requirements and update their paths to reflect the instance name
+	self.Requirements.Normalize(self, normalNodeTemplate)
+	
+	// Update requirement paths to reflect the correct instance name
+	if instanceName != self.Name {
+		for _, requirement := range normalNodeTemplate.Requirements {
+			if requirement.Location != nil {
+				requirement.Location.UpdateNodeTemplatePath(self.Name, instanceName)
+			}
+		}
+	}
 
 	return normalNodeTemplate
 }
@@ -120,15 +186,27 @@ func (self *NodeTemplate) Normalize(normalServiceTemplate *normal.ServiceTemplat
 type NodeTemplates []*NodeTemplate
 
 func (self NodeTemplates) Normalize(normalServiceTemplate *normal.ServiceTemplate) {
+	// First pass: create all node template instances based on count
 	for _, nodeTemplate := range self {
-		normalServiceTemplate.NodeTemplates[nodeTemplate.Name] = nodeTemplate.Normalize(normalServiceTemplate)
-	}
+		count := int64(1) // Default count
+		if nodeTemplate.Count != nil {
+			count = *nodeTemplate.Count
+		}
 
-	// Requirements must be normalized after node templates
-	// (because they may reference other node templates)
-	for _, nodeTemplate := range self {
-		if normalNodeTemplate, ok := normalServiceTemplate.NodeTemplates[nodeTemplate.Name]; ok {
-			nodeTemplate.Requirements.Normalize(nodeTemplate, normalNodeTemplate)
+		// Create multiple instances if count > 1
+		if count > 1 {
+			for i := int64(0); i < count; i++ {
+				instanceName := fmt.Sprintf("%s_%d", nodeTemplate.Name, i)
+				normalNodeTemplate := nodeTemplate.normalizeInstance(normalServiceTemplate, instanceName, i)
+				normalServiceTemplate.NodeTemplates[instanceName] = normalNodeTemplate
+			}
+		} else {
+			// Single instance (count = 1)
+			normalNodeTemplate := nodeTemplate.normalizeInstance(normalServiceTemplate, nodeTemplate.Name, 0)
+			normalServiceTemplate.NodeTemplates[nodeTemplate.Name] = normalNodeTemplate
 		}
 	}
+
+	// Requirements normalization is now handled in normalizeInstance method
+	// This ensures paths are correctly updated for each instance
 }

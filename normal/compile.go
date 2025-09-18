@@ -81,6 +81,7 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 		vertex.Properties["capabilities"] = nodeTemplate.Capabilities
 		vertex.Properties["interfaces"] = nodeTemplate.Interfaces
 		vertex.Properties["artifacts"] = nodeTemplate.Artifacts
+		vertex.Properties["nodeIndex"] = nodeTemplate.NodeIndex
 	}
 
 	groups := make(map[string]*cloutpkg.Vertex)
@@ -256,6 +257,7 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 	if serviceTemplate.Substitution != nil {
 		vertex := clout.NewVertex(cloutpkg.NewKey())
 		inputs := make(ard.StringMap)
+		outputs := make(ard.StringMap)
 		properties := make(ard.StringMap)
 
 		SetMetadata(vertex, "Substitution")
@@ -266,10 +268,15 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 			vertex.Properties["typeMetadata"] = emptyMap
 		}
 		vertex.Properties["inputs"] = inputs
+		vertex.Properties["outputs"] = outputs
 		vertex.Properties["properties"] = properties
 
 		for name, pointer := range serviceTemplate.Substitution.InputPointers {
 			inputs[name] = pointer.Target
+		}
+
+		for name, pointer := range serviceTemplate.Substitution.OutputPointers {
+			outputs[name] = pointer.Target
 		}
 
 		for name, pointer := range serviceTemplate.Substitution.CapabilityPointers {
@@ -293,7 +300,17 @@ func (serviceTemplate *ServiceTemplate) Compile() (*cloutpkg.Clout, error) {
 		}
 
 		for name, pointer := range serviceTemplate.Substitution.InterfacePointers {
-			NewNodeTemplatePointerEdge("Interface", name, pointer, vertex, nodeTemplates)
+			// TOSCA 2.0: Interface mappings point to workflows, not node templates
+			if workflowVertex, ok := workflows[pointer.Target]; ok {
+				// Create edge to workflow for interface mapping
+				edge := vertex.NewEdgeTo(workflowVertex)
+				SetMetadata(edge, "InterfaceWorkflowPointer")
+				edge.Properties["name"] = name
+				edge.Properties["target"] = pointer.Target
+			} else {
+				// Fallback for non-workflow interface pointers (if any)
+				NewNodeTemplatePointerEdge("Interface", name, pointer, vertex, nodeTemplates)
+			}
 		}
 	}
 

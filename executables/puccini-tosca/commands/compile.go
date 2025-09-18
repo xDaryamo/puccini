@@ -52,6 +52,11 @@ var compileCommand = &cobra.Command{
 		enableOutput = true
 		dumpPhases = nil
 
+		// Set pretty to false if output is specified, otherwise keep default (true)
+		if output != "" {
+			pretty = false
+		}
+
 		context, cancel := contextpkg.WithTimeout(contextpkg.Background(), time.Duration(timeout*float64(time.Second)))
 		util.OnExit(cancel)
 
